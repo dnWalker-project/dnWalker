@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker", "dnWalker\dnWalker.csproj", "{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {902228B5-B17F-4543-8D25-217A6DFDE1AE}
+	EndGlobalSection
+EndGlobal

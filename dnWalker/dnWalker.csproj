@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>dnWalker</RootNamespace>
+    <AssemblyName>dnWalker</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MMC.MonoModelChecker</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="C5, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\C5.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.5.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractAllocations.cs" />
+    <Compile Include="ActiveState.cs" />
+    <Compile Include="AllocationList.cs" />
+    <Compile Include="AllocationSignature.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BreakPointHandler.cs" />
+    <Compile Include="CallStack.cs" />
+    <Compile Include="ChangingIntVector.cs" />
+    <Compile Include="CILDumper.cs" />
+    <Compile Include="CILUtils.cs" />
+    <Compile Include="CollapsedState.cs" />
+    <Compile Include="Collapser.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DataElement.cs" />
+    <Compile Include="DataElementList.cs" />
+    <Compile Include="DataElementStack.cs" />
+    <Compile Include="DefinitionLookup.cs" />
+    <Compile Include="DirtyList.cs" />
+    <Compile Include="DotWriter.cs" />
+    <Compile Include="DynamicAllocations.cs" />
+    <Compile Include="DynamicArea.cs" />
+    <Compile Include="DynamicBitArray.cs" />
+    <Compile Include="ExplorationLogger.cs" />
+    <Compile Include="Explorer.cs" />
+    <Compile Include="FastHashtable.cs" />
+    <Compile Include="GarbageCollection.cs" />
+    <Compile Include="HashFunctions.cs" />
+    <Compile Include="IEReturnValue.cs" />
+    <Compile Include="InstructionBase.cs" />
+    <Compile Include="InstructionExecCache.cs" />
+    <Compile Include="Instructions.cs" />
+    <Compile Include="IntArray.cs" />
+    <Compile Include="IntArrayUtil.cs" />
+    <Compile Include="InteractiveExplorer.cs" />
+    <Compile Include="InternalCalls.cs" />
+    <Compile Include="ListToString.cs" />
+    <Compile Include="Lock.cs" />
+    <Compile Include="LockManager.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="MarkSweepGC.cs" />
+    <Compile Include="MemoisedGC.cs" />
+    <Compile Include="MethodState.cs" />
+    <Compile Include="MMCExceptions.cs" />
+    <Compile Include="PartialOrderReduction.cs" />
+    <Compile Include="PlacementMapping.cs" />
+    <Compile Include="Pool.cs" />
+    <Compile Include="PoolData.cs" />
+    <Compile Include="SchedulingData.cs" />
+    <Compile Include="Setup.cs" />
+    <Compile Include="SII.cs" />
+    <Compile Include="SparseArray.cs" />
+    <Compile Include="SparseReferenceList.cs" />
+    <Compile Include="StateCollapser.cs" />
+    <Compile Include="StateDecollapser.cs" />
+    <Compile Include="StaticAllocations.cs" />
+    <Compile Include="StaticArea.cs" />
+    <Compile Include="Statistics.cs" />
+    <Compile Include="Storable.cs" />
+    <Compile Include="StorageFactory.cs" />
+    <Compile Include="StorageVisitor.cs" />
+    <Compile Include="TestDriver.cs" />
+    <Compile Include="ThreadPool.cs" />
+    <Compile Include="ThreadState.cs" />
+    <Compile Include="TracingExplorer.cs" />
+    <Compile Include="VirtualMachineDefaults.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+    <Content Include="Mono.Cecil.dll" />
+    <Content Include="README.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
