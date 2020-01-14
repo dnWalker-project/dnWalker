@@ -17,9 +17,8 @@
 
 namespace MMC.State {
 
-	using C5;
-	using Mono.Cecil;
-	using MMC.Data;
+    using dnlib.DotNet;
+    using MMC.Data;
 	using MMC.Util;
 	using System;
 	
@@ -37,64 +36,74 @@ namespace MMC.State {
 		Unknown
 	}
 
-	/// An abstract base class for all allocations.
-	abstract class Allocation : IStorageVisitable, ICleanable, IMustDispose {
+    /// An abstract base class for all allocations.
+    abstract class Allocation : IStorageVisitable, ICleanable, IMustDispose
+    {
 
-		/// Print at most this many fields.
-		public const int max_printed_fields = 4;
+        /// Print at most this many fields.
+        public const int max_printed_fields = 4;
 
-		protected TypeReference m_typeDef;
-		Lock m_lock;
+        private ITypeDefOrRef m_typeDef;
+        Lock m_lock;
 
 
-		/// A self-describing property. Should be overridden.
-		public virtual AllocationType AllocationType {
+        /// A self-describing property. Should be overridden.
+        public virtual AllocationType AllocationType
+        {
 
-			get { return AllocationType.Unknown; }
-		}
+            get { return AllocationType.Unknown; }
+        }
 
-		/// Returns the amount of fields/elements in this allocation
-		public abstract int InnerSize {
-			get;
-		}
+        /// Returns the amount of fields/elements in this allocation
+        public abstract int InnerSize
+        {
+            get;
+        }
 
-		/// The type of the allocations (check subclass for semantics).
-		public TypeReference Type {
+        /// The type of the allocations (check subclass for semantics).
+        public ITypeDefOrRef Type
+        {
+            get { return m_typeDef; }
+        }
 
-			get { return m_typeDef; }
-		}
+        /// The lock associated with the allocation.
+        public Lock Lock
+        {
 
-		/// The lock associated with the allocation.
-		public Lock Lock {
+            get
+            {
+                if (m_lock == null)
+                    m_lock = new Lock();
+                return m_lock;
+            }
+            set
+            {
+                m_lock = value;
+            }
+        }
 
-			get {
-				if (m_lock == null)
-					m_lock = new Lock();
-				return m_lock;
-			}
-			set {
-				m_lock = value;
-			}
-		}
+        /// True iff this allocation is locked.
+        public bool Locked
+        {
+            get { return m_lock != null && m_lock.Count > 0; }
+        }
 
-		/// True iff this allocation is locked.
-		public bool Locked {
+        public abstract bool IsDirty();
+        public abstract void Clean();
+        public abstract void Dispose();
+        public abstract void Accept(IStorageVisitor visitor);
 
-			get { return m_lock != null && m_lock.Count > 0; }
-		}
+        public Allocation(ITypeDefOrRef typeDef)
+        {
+            m_typeDef = typeDef ?? throw new ArgumentNullException(nameof(typeDef));
+            m_lock = null;
+        }
 
-		public abstract bool IsDirty();
-		public abstract void Clean();
-		public abstract void Dispose();
-		public abstract void Accept(IStorageVisitor visitor);
-
-		public Allocation(TypeReference typeDef) {
-
-			m_typeDef = typeDef;
-			m_lock = null;
-		}
-
-	}
+        protected Allocation()
+        {
+            m_lock = null;
+        }
+    }
 
 	abstract class DynamicAllocation : Allocation {
 
@@ -144,9 +153,8 @@ namespace MMC.State {
 			set { m_refCount = value; }
 		}
 
-		public DynamicAllocation(TypeReference typeDef)
-			: base(typeDef) {
-
+		public DynamicAllocation(ITypeDefOrRef typeDef) : base(typeDef)
+        {
 			m_refCount = 0;
 
 			/// This ensures that newly created allocations are seen
@@ -160,7 +168,23 @@ namespace MMC.State {
 			m_heapAttr = UNMARKED;
 		}
 
-		public bool ThreadShared {
+        protected DynamicAllocation() : base()
+        {
+            m_refCount = 0;
+
+            /// This ensures that newly created allocations are seen
+            /// as inconsistent and therefore become processed by the 
+            /// the MGC algorithm
+            if (Config.MemoisedGC)
+            {
+                m_rhs = int.MaxValue;
+                m_depth = int.MinValue;
+            }
+
+            m_heapAttr = UNMARKED;
+        }
+
+        public bool ThreadShared {
 			get { return m_heapAttr == SHARED; }
 		}
 

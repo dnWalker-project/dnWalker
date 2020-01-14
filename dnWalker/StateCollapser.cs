@@ -20,7 +20,7 @@ namespace MMC.State {
 	using MMC.Data;
 	using MMC.Util;
 	using MMC.Collections;
-	using Mono.Cecil;
+	
 
 	/// Implementation of a state collapser.
 	///

@@ -19,11 +19,13 @@ namespace MMC.ICall {
 
 	using System.Collections;
 	using System.Collections.Specialized;
-	using Mono.Cecil;
+	
 	using MMC.State;
 	using MMC.Data;
 
-	delegate void ICH(MethodDefinition methDef, DataElementList args);
+    using MethodDefinition = dnlib.DotNet.MethodDef;
+
+    delegate void ICH(MethodDefinition methDef, DataElementList args);
 	delegate MemoryLocation ICH_Access(MethodDefinition methDef, DataElementList args, int threadId);
 	delegate bool ICH_Dependent(MethodDefinition methDef, DataElementList args);
 

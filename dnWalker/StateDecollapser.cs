@@ -18,7 +18,9 @@
 using MMC.Data;
 using MMC.Util;
 using MMC.Collections;
-using Mono.Cecil;
+using TypeReference = dnlib.DotNet.TypeRef;
+using MethodDefinition = dnlib.DotNet.MethodDef;
+using dnlib.DotNet.Emit;
 
 namespace MMC.State {
 	class StateDecollapser {
@@ -129,7 +131,7 @@ namespace MMC.State {
 		DynamicAllocation RestoreObject(int alloc_id, WrappedIntArray co) {
 
 			// If the old allocation is still here, re-use it.
-			TypeReference type = (TypeDefinition)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
+			TypeReference type = (TypeReference)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
 			DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[alloc_id];
 
 			AllocatedObject obj;
@@ -153,7 +155,7 @@ namespace MMC.State {
 		DynamicAllocation RestoreArray(int alloc_id, WrappedIntArray ca) {
 
 			// Again, check if there is some old value we can re-use.
-			TypeReference type = (TypeReference)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
+			var type = (TypeReference)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
 
 			//int array_length = ca.Length - ArrayPartsOffsets.Count;
 			DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[alloc_id];
@@ -283,9 +285,9 @@ namespace MMC.State {
 
 			bool sameMethod = meth_def == method.Definition;
 
-			method.ProgramCounter = m_pool.GetObject(cm[MethodPartsOffsets.ProgramCounter]) as Mono.Cecil.Cil.Instruction;
+			method.ProgramCounter = m_pool.GetObject(cm[MethodPartsOffsets.ProgramCounter]) as Instruction;
 			method.IsExceptionSource = (cm[MethodPartsOffsets.IsExceptionSource] == 1) ? true : false;
-			//method.EndFinallyTarget = m_pool.GetObject(cm[MethodPartsOffsets.EndFinallyTarget]) as Mono.Cecil.Cil.Instruction;
+			//method.EndFinallyTarget = m_pool.GetObject(cm[MethodPartsOffsets.EndFinallyTarget]) as Instruction;
 			method.OnDispose = m_pool.GetObject(cm[MethodPartsOffsets.OnDispose]) as MethodStateCallback;
 			method.Definition = meth_def;
 

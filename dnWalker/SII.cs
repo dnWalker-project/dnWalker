@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MMC.Data;
-using Mono.Cecil;
+
 
 namespace MMC {
 
@@ -27,13 +27,11 @@ namespace MMC {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using Mono.Cecil.Cil;
 	using MMC.State;
 	using MMC.Util;
 	using MMC.InstructionExec;
 	using MMC.Collections;
-	using C5;
-
+	
 	/// A full blown ObjectSII represents the acceses to an object
 	///
 	/// A set of threads is represented by an integer, where the

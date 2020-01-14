@@ -19,13 +19,15 @@ namespace MMC.State {
 
 	using System.Collections;
 	using System.Diagnostics;
-	using Mono.Cecil;
+	
 	using MMC.Collections;
 	using MMC.Data;
 	using MMC.Util;
+    using MethodDefinition = dnlib.DotNet.MethodDef;
+    using TypeDefinition = dnlib.DotNet.TypeDef;
+    using FieldDefinition = dnlib.DotNet.FieldDef;
 
-
-	interface IStaticArea : ICleanable, IStorageVisitable {
+    interface IStaticArea : ICleanable, IStorageVisitable {
 
 		/// List containing all classes.
 		SparseReferenceList<AllocatedClass> Classes { get; }

@@ -19,12 +19,11 @@ using System;
 
 using MMC.Util;
 using SGC = System.Collections.Generic;
-using System.Collections.Generic;
 using System.Text;
 using MMC.Data;
-using C5;
 using MMC.Collections;
 using System.IO;
+using C5;
 
 namespace MMC.State {
 
@@ -87,7 +86,8 @@ namespace MMC.State {
 	}
 
 
-	class ObjectReferenceDepthComparer : IComparer<ObjectReference> {
+	class ObjectReferenceDepthComparer : SGC.IComparer<ObjectReference>
+    {
 
 		public static readonly ObjectReferenceDepthComparer cmp = new ObjectReferenceDepthComparer();
 
@@ -106,7 +106,7 @@ namespace MMC.State {
 		private class MyHeap {
 
 			IPriorityQueue<ObjectReference> m_pqueue;
-			C5.IDictionary<ObjectReference, IPriorityQueueHandle<ObjectReference>> m_handleDict;
+			IDictionary<ObjectReference, IPriorityQueueHandle<ObjectReference>> m_handleDict;
 
 			public MyHeap() {
 				m_pqueue = new IntervalHeap<ObjectReference>(ObjectReferenceDepthComparer.cmp);
@@ -132,7 +132,7 @@ namespace MMC.State {
 			public void Adjust(ObjectReference ida) {
 				IPriorityQueueHandle<ObjectReference> h = null;
 
-				if (m_handleDict.Find(ida, out h)) {
+				if (m_handleDict.Find(ref ida, out h)) {
 					m_pqueue.Replace(h, ida);
 				} else {
 					Insert(ida);

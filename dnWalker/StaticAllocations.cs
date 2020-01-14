@@ -17,15 +17,16 @@
 
 namespace MMC.State {
 
-	using Mono.Cecil;
+	
 	using MMC.Data;
 	using MMC.Util;
 	using MMC.Collections;
 	using C5;
+    using MethodDefinition = dnlib.DotNet.MethodDef;
+    using TypeDefinition = dnlib.DotNet.TypeDef;
+    using FieldDefinition = dnlib.DotNet.FieldDef;
 
-
-
-	interface IInitData { } // "tag"
+    interface IInitData { } // "tag"
 
 	class AllocatedClass : Allocation {
 
@@ -144,7 +145,7 @@ namespace MMC.State {
 			System.Text.StringBuilder sb = new System.Text.StringBuilder("c:");
 			sb.AppendFormat("{0} {1}", Type.Name, m_initData.ToString());
 
-			TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(m_typeDef);
+			TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(Type);
 
 			bool printed_a_field = false;
 			sb.Append(" flds: {");
@@ -170,7 +171,7 @@ namespace MMC.State {
 		public void ClearFields() {
 
 			m_staticFieldCount = 0;
-			TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(m_typeDef);
+			TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(Type);
 			for (int i = 0; i < m_fields.Length; ++i) {
 				m_fields[i] = DefinitionProvider.dp.GetNullValue(typeDef.Fields[i].FieldType);
 				if (typeDef.Fields[i].IsStatic) {

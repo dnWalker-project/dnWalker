@@ -20,16 +20,16 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle ("MoonWalker")]
+/*[assembly: AssemblyTitle ("MoonWalker")]
 [assembly: AssemblyDescription ("Model Checker for CIL bytecode programs")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyProduct ("MoonWalker")]
 [assembly: AssemblyVersion ("1.0.1.0")]
 [assembly: AssemblyCopyright("(C) 2008, University of Twente - Formal Methods and Tools group")]
-[assembly: AssemblyCulture ("")]
+[assembly: AssemblyCulture ("")]*/
 
-[assembly: CLSCompliant (false)]
-[assembly: ComVisible (false)]
+/*[assembly: CLSCompliant (false)]
+[assembly: ComVisible (false)]*/
 
 // [assembly: AssemblyKeyFile("MoonWalkerKey.snk")]
 // [assembly: AssemblyCompanyAttribute("University of Twente")]

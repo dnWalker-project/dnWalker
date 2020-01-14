@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MMC.Data;
-using Mono.Cecil;
 
 namespace MMC {
 
@@ -28,15 +27,14 @@ namespace MMC {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
-	using Mono.Cecil.Cil;
 	using MMC.State;
 	using MMC.Util;
 	using MMC.InstructionExec;
 	using MMC.Collections;
-	using C5;
+    using dnlib.DotNet.Emit;
 
-	/// This is the error tracer
-	class TracingExplorer : Explorer {
+    /// This is the error tracer
+    class TracingExplorer : Explorer {
 
 		Stack<int> m_tracingQueue;
 		string prevMethod = "";
@@ -60,7 +58,7 @@ namespace MMC {
 		public override void PrintTransition() {
 			int currentThread = ActiveState.cur.ThreadPool.CurrentThreadId;
 			MethodState currentMethod = ActiveState.cur.CurrentMethod;
-			Instruction instr = currentMethod.ProgramCounter;
+			var instr = currentMethod.ProgramCounter;
 			bool isRet = instr.OpCode.Code == Code.Ret;
 			string operandString = (instr.Operand == null ?
 					"" :

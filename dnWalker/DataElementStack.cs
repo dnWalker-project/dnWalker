@@ -29,9 +29,8 @@ namespace MMC.Data {
 		protected bool m_isDirty;
 		protected bool m_isReadonly;
 
-		public int	StackPointer { 
-
-			get { return m_stackptr; } 
+		public int	StackPointer {
+			get { return m_stackptr; }
 			set { m_stackptr = value; } // do not use
 		}
 		public int	Length { get { return StackPointer; } }
@@ -73,10 +72,18 @@ namespace MMC.Data {
 			ThreadObjectWatcher.Increment(e);
 		}
 
-		public virtual IDataElement Pop() {
+		public virtual IDataElement Pop()
+        {
+            if (m_isReadonly)
+            {
+                throw new System.InvalidOperationException("Changing read-only data element stack.");
+            }
 
-			if (m_isReadonly)
-				throw new System.InvalidOperationException("Changing read-only data element stack.");
+            if (m_stackptr - 1 < 0 || m_stackptr > m_elements.Length)// || m_stackptr > m_elements.Length)
+            {
+                throw new System.InvalidOperationException("Cannot pop " + (m_stackptr - 1));
+            }
+
 			m_isDirty = true;
 
 			IDataElement popped = m_elements[--m_stackptr];

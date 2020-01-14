@@ -37,12 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="C5, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\C5.dll</HintPath>
+      <HintPath>..\packages\C5.3.0.0-beta\lib\netstandard2.0\C5.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.5.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Mono.Cecil.dll</HintPath>
+    <Reference Include="dnlib, Version=3.3.1.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
+      <HintPath>..\packages\dnlib.3.3.1\lib\net45\dnlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -96,6 +94,7 @@
     <Compile Include="PlacementMapping.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="PoolData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchedulingData.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="SII.cs" />
@@ -118,14 +117,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Makefile" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
     <Content Include="Mono.Cecil.dll" />
     <Content Include="README.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

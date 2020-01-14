@@ -18,35 +18,35 @@
 /// \author Niels Aan de Brugh <n.h.m.aandebrugh@student.utwente.nl>
 
 namespace MMC {
-
-	using System.IO;
+    using dnlib.DotNet.Emit;
+    using System.IO;
 	using System.Text;
-	using Mono.Cecil;
-	using Mono.Cecil.Cil;
+    using MethodDefinition = dnlib.DotNet.MethodDef;
+    using TypeDefinition = dnlib.DotNet.TypeDef;
 
-	/// This is a simple tool to dump the contents of a CIL image on stdout.
-	///
-	/// It outputs the CIL data in a hierarchical way, like so:
-	/// <pre>
-	/// Assembly
-	///   Module
-	///     Class
-	///       Fields
-	///       Constructors
-	///         Parameters
-	///         Locals
-	///         Instructions
-	///       Methods
-	///         (same as for the constructors)
-	/// </pre>
-	///
-	/// Each individual method can be used to print less of the tree,
-	/// but it will recursively go into the depth. If you only want to print
-	/// one element, look at the file CILUtils.cs.
-	///
-	/// \sa CILElementPrinter
+    /// This is a simple tool to dump the contents of a CIL image on stdout.
+    ///
+    /// It outputs the CIL data in a hierarchical way, like so:
+    /// <pre>
+    /// Assembly
+    ///   Module
+    ///     Class
+    ///       Fields
+    ///       Constructors
+    ///         Parameters
+    ///         Locals
+    ///         Instructions
+    ///       Methods
+    ///         (same as for the constructors)
+    /// </pre>
+    ///
+    /// Each individual method can be used to print less of the tree,
+    /// but it will recursively go into the depth. If you only want to print
+    /// one element, look at the file CILUtils.cs.
+    ///
+    /// \sa CILElementPrinter
 
-	class CILDumper {
+    class CILDumper {
 
 		int m_indent;
 		TextWriter o;
@@ -106,21 +106,20 @@ namespace MMC {
 					meth.DeclaringType.Name,
 				   	meth.Name,
 					meth.Body.MaxStack,
-					meth.Body.CodeSize,
+					-1,//meth.Body,
 					meth.Attributes);
 			++m_indent;
 
 			Print("parameters (total {0}):", meth.Parameters.Count);
 			++m_indent;
-			foreach (ParameterDefinition par in meth.Parameters)
-				Print("{0}: {1} {2}", par.Sequence, par.ParameterType.Name, par.Name);
+			foreach (var par in meth.Parameters)
+				Print("{0}: {1} {2}", par.MethodSigIndex, par.Type.FullName, par.Name);
 			--m_indent;
 			
 			Print("locals (total {0}):", meth.Body.Variables.Count);
 			++m_indent;
-			foreach (VariableDefinition var in meth.Body.Variables)
-				Print("{0}: {1} {2} ({3})", var.Index, var.VariableType.Name, var.Name,
-						var.VariableType.IsValueType ? "val":"ref");
+            foreach (var var in meth.Body.Variables)
+                Print("?");// {0}: {1} {2} ({3})", var.Index, var.VariableType.Name, var.Name, var.VariableType.IsValueType ? "val":"ref");
 			--m_indent;
 
 			Print("instructions (total {0}):", meth.Body.Instructions.Count);
@@ -148,13 +147,13 @@ namespace MMC {
 
 			StringBuilder sb = new StringBuilder();
 
-			foreach (TypeReference iface in type.Interfaces)
+			foreach (var iface in type.Interfaces)
 				sb.AppendFormat("{0}{1}", 
 						(sb.Length > 0 ? ", " : ""),
-						iface.Name);
+						iface.Interface.FullName);
 			Print("type {0}  base {1}{2}{3}",
 					type.Name,
-					(type.BaseType != null ? type.BaseType.Name : "NONE"),
+					(type.BaseType != null ? type.BaseType.Name.String : "NONE"),
 					(type.Interfaces.Count > 0 ? " implements " : ""),
 					(type.Interfaces.Count > 0 ? sb.ToString() : ""));
 
@@ -162,19 +161,19 @@ namespace MMC {
 
 			Print("fields (total {0})", type.Fields.Count);
 			++m_indent;
-			foreach (FieldDefinition fld in type.Fields)
-				Print("{0} {1} [{2}]", fld.FieldType.Name, fld.Name, fld.Attributes);
+			foreach (var fld in type.Fields)
+				Print("{0} {1} [{2}]", fld.FieldType.FullName, fld.Name, fld.Attributes);
 			--m_indent;
 
-			Print("ctors (total {0})", type.Constructors.Count);
+            Print("ctors (total {0})", -1);// type.FindConstructors().Count());
 			++m_indent;
-			foreach (MethodDefinition ctor in type.Constructors)
+			foreach (var ctor in type.FindConstructors())
 				PrintMethod(ctor);
 			--m_indent;
 
 			Print("methods (total {0})", type.Methods.Count);
 			++m_indent;
-			foreach (MethodDefinition meth in type.Methods)
+			foreach (var meth in type.Methods)
 				PrintMethod(meth);
 			--m_indent;
 
@@ -187,7 +186,7 @@ namespace MMC {
 		///
 		/// \param mod The module to format and print.
 		/// \sa PrintType
-		public void PrintModule(ModuleDefinition mod) {
+		public void PrintModule(dnlib.DotNet.ModuleDef mod) {
 
 			Print("module {0}", mod.Name);
 			++m_indent;
@@ -207,13 +206,13 @@ namespace MMC {
 		///
 		/// \param asm The assembly format and to print.
 		/// \sa PrintModule
-		public void PrintAssembly(AssemblyDefinition asm) {
+		public void PrintAssembly(dnlib.DotNet.AssemblyDef asm) {
 
-			Print("assembly {0} kind {1}", asm.Name.Name, asm.Kind);
+			Print("assembly {0} kind {1}", asm.Name, asm.FullName);
 			
 			Print("modules (total {0})", asm.Modules.Count);
 			++m_indent;
-			foreach (ModuleDefinition mod in asm.Modules)
+			foreach (var mod in asm.Modules)
 				PrintModule(mod);
 			--m_indent;
 		}
@@ -244,9 +243,9 @@ namespace MMC {
 		///
 		/// \param args Command-line arguments.
 		/// \sa PrintAssembly
-		public static void Main(string[] args) {
+		public static void _Main(string[] args) {
 
-			if (args.Length == 0)
+			/*if (args.Length == 0)
 				Fatal("please specify the path name of the assembly to print.");
 
 			CILDumper d = new CILDumper(System.Console.Out);
@@ -257,7 +256,7 @@ namespace MMC {
 			}
 			catch (ReflectionException) {
 				Fatal("error loading assembly.");
-			}
+			}*/
 		}
 	}
 }

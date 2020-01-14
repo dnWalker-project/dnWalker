@@ -25,13 +25,12 @@ namespace MMC {
 	using MMC.Util;
 	using MMC.InstructionExec;
 	using MMC.Collections;
-	using Mono.Cecil.Cil;
-	using C5;
 	using System.Collections;
+    using dnlib.DotNet.Emit;
 
-	/// This is L in the stateful dynamic POR algorithm outlined in the 
-	/// Collapsing Interleaving Information of VY's thesis
-	class LastTransitionMapper {
+    /// This is L in the stateful dynamic POR algorithm outlined in the 
+    /// Collapsing Interleaving Information of VY's thesis
+    class LastTransitionMapper {
 
 		public static FastHashtable<MemoryLocation, Stack<SchedulingData>> m_lasttrans = new FastHashtable<MemoryLocation,Stack<SchedulingData>>(10);
 

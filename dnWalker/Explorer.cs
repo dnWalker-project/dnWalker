@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MMC.Data;
-using Mono.Cecil;
+
 
 namespace MMC {
 
@@ -28,15 +28,14 @@ namespace MMC {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Timers;
-	using Mono.Cecil.Cil;
 	using MMC.State;
 	using MMC.Util;
 	using MMC.InstructionExec;
 	using MMC.Collections;
-	using C5;
+    using dnlib.DotNet.Emit;
 
-	/// Handler for events that indicate the exploration of a state.
-	delegate void StateEventHandler(CollapsedState collapsed, SchedulingData sd);
+    /// Handler for events that indicate the exploration of a state.
+    delegate void StateEventHandler(CollapsedState collapsed, SchedulingData sd);
 	/// Handler for deadlock events.
 	delegate void DeadlockEventHandler(SchedulingData sd);
 	/// Handler for backtracking events.
@@ -45,8 +44,6 @@ namespace MMC {
 	delegate void PickThreadEventHandle(SchedulingData sd, int chosen);
 	/// Handler for the event that the exploration stops.
 	delegate void ExplorationHaltEventHandle(IIEReturnValue ier);
-
-
 
 	class Explorer {
 
@@ -82,7 +79,7 @@ namespace MMC {
 		Timer m_explorationTimer;
 		Timer m_memoryTimer;
 
-		C5.LinkedList<CollapsedState> m_atomicStates;
+		LinkedList<CollapsedState> m_atomicStates;
 
 		public Explorer() {
 			// DFS stack
@@ -136,7 +133,7 @@ namespace MMC {
 			}
 
 			if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte)) {
-				m_atomicStates = new C5.LinkedList<CollapsedState>();
+				m_atomicStates = new LinkedList<CollapsedState>();
 				StateConstructed += new StateEventHandler(this.CheckAtomicOnNewState);
 				Backtracked += new BacktrackEventHandler(this.CheckAtomicOnBacktrack);
 			}
@@ -364,16 +361,13 @@ namespace MMC {
 					sd.Done = m_emptyQueue;
 				}
 
-				StateConstructed(collapsedCurrent, sd);		
+				StateConstructed(collapsedCurrent, sd);
 			}
-
 
 			return sd;
 		}
 
-		public virtual void PrintTransition() {
-
-		}
+		public virtual void PrintTransition() {}
 
 		/*
 		 * Execute one (unsafe) instruction, followed by 0 or more safe instructions,
@@ -387,10 +381,10 @@ namespace MMC {
 			bool continueExploration;
 			IIEReturnValue ier;
 			bool canForward = false;
-			
 
 			do {
 				PrintTransition();
+                Console.Out.WriteLine(currentInstrExec.ToString());
 				ier = currentInstrExec.Execute();
 
 				currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
@@ -406,9 +400,8 @@ namespace MMC {
 				else
 					currentInstrExec = null;
 
-
-				canForward = currentInstrExec != null && ActiveState.cur.CurrentThread.IsRunnable &&
-	(currentInstrExec.IsMultiThreadSafe() || ActiveState.cur.ThreadPool.RunnableThreadCount == 1);
+				canForward = currentInstrExec != null && ActiveState.cur.CurrentThread.IsRunnable 
+                    && (currentInstrExec.IsMultiThreadSafe() || ActiveState.cur.ThreadPool.RunnableThreadCount == 1);
 
 				/*
 				 * Optimization related to merging states that have only one outgoing transition,
@@ -476,14 +469,14 @@ namespace MMC {
 
 		public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd) {
 			if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte) && ActiveState.cur.ThreadPool.RunnableThreadCount == 1)
-				m_atomicStates.InsertLast(collapsedCurrent);
+				m_atomicStates.AddLast(collapsedCurrent);
 		}
 
 		public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent) {
 			if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte)) {
 				// check if singleton transition
 				if (parent.Working.Count == 0 && parent.Done.Count == 1)
-					m_atomicStates.InsertLast(parent.State);
+					m_atomicStates.AddLast(parent.State);
 			}
 		}
 

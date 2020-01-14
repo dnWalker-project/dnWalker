@@ -17,7 +17,6 @@
 
 namespace MMC.Data {
 
-	using C5;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Text;

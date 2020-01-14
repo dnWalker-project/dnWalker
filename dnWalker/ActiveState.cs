@@ -15,161 +15,175 @@
  *
  */
 
-namespace MMC.State {
+namespace MMC.State
+{
 
-	using System.Collections;
-	using Mono.Cecil.Cil;
-	using MMC.Data;
-	using MMC.Util;
-	using MMC.ICall;
-	using MMC.InstructionExec;
+    using System.Collections;
+    using MMC.Data;
+    using MMC.Util;
+    using MMC.ICall;
+    using MMC.InstructionExec;
 
-	/// Singleton accessor class.
-	static class ActiveState {
+    /// Singleton accessor class.
+    static class ActiveState
+    {
 
-		/// \brief The currect IActiveState. 
-		///
-		/// A simple public field suffices here, no need to define a property.
-		public static readonly ExplicitActiveState cur = new ExplicitActiveState();
-	}
+        /// \brief The currect IActiveState. 
+        ///
+        /// A simple public field suffices here, no need to define a property.
+        public static readonly ExplicitActiveState cur = new ExplicitActiveState();
+    }
 
-	/// An implementation of the active state of the virtual machine.
-	class ExplicitActiveState : IStorageVisitable, ICleanable {
+    /// An implementation of the active state of the virtual machine.
+    class ExplicitActiveState : IStorageVisitable, ICleanable
+    {
 
-		DynamicArea m_dyn;
-		IStaticArea m_stat;
-		ThreadPool m_tp;
+        DynamicArea m_dyn;
+        IStaticArea m_stat;
+        ThreadPool m_tp;
 
-		/// The allocation heap, i.e. the dynamic part of the state.
-		public DynamicArea DynamicArea {
+        /// The allocation heap, i.e. the dynamic part of the state.
+        public DynamicArea DynamicArea
+        {
 
-			get { return m_dyn; }
-		}
+            get { return m_dyn; }
+        }
 
-		/// Loaded classes reside here, i.e. the static part.
-		public IStaticArea StaticArea {
+        /// Loaded classes reside here, i.e. the static part.
+        public IStaticArea StaticArea
+        {
 
-			get { return m_stat; }
-		}
+            get { return m_stat; }
+        }
 
-		/// Running sub-processes are kept in here.
-		public ThreadPool ThreadPool {
+        /// Running sub-processes are kept in here.
+        public ThreadPool ThreadPool
+        {
 
-			get { return m_tp; }
-		}
+            get { return m_tp; }
+        }
 
-		/// Currently running thread.
-		public ThreadState CurrentThread {
+        /// Currently running thread.
+        public ThreadState CurrentThread
+        {
 
-			get { return m_tp.CurrentThread; }
-		}
+            get { return m_tp.CurrentThread; }
+        }
 
-		/// Current location in the CIL image.
-		public CILLocation CurrentLocation {
+        /// Current location in the CIL image.
+        public CILLocation CurrentLocation
+        {
 
-			get { return CurrentThread.CurrentLocation; }
-		}
+            get { return CurrentThread.CurrentLocation; }
+        }
 
-		/// ID of currently running thread.
-		public int me {
+        /// ID of currently running thread.
+        public int me
+        {
 
-			get { return m_tp.CurrentThreadId; }
-		}
+            get { return m_tp.CurrentThreadId; }
+        }
 
-		/// Callstack of currently running thread.
-		public CallStack CallStack {
+        /// Callstack of currently running thread.
+        public CallStack CallStack
+        {
 
-			get { return m_tp.CurrentThread.CallStack; }
-		}
+            get { return m_tp.CurrentThread.CallStack; }
+        }
 
-		/// Top of callstack of currently running thread.
-		public MethodState CurrentMethod {
+        /// Top of callstack of currently running thread.
+        public MethodState CurrentMethod
+        {
 
-			get { return CurrentThread.CurrentMethod; }
-		}
+            get { return CurrentThread.CurrentMethod; }
+        }
 
-		/// Evaluation stack of top of callstack of currently running thread.
-		public DataElementStack EvalStack {
+        /// Evaluation stack of top of callstack of currently running thread.
+        public DataElementStack EvalStack
+        {
 
-			get {
-				DataElementStack retval = null;
-				if (CurrentMethod != null)
-					retval = CurrentMethod.EvalStack;
-				return retval;
-			}
-		}
+            get
+            {
+                DataElementStack retval = null;
+                if (CurrentMethod != null)
+                    retval = CurrentMethod.EvalStack;
+                return retval;
+            }
+        }
 
-		/// \brief Determine if we are "running" in the assembly to be checked.
-		///
-		/// This means the current thread is currently executing code that is
-		/// contained in the main assembly.
-		///
-		/// \return True iff code from the main assembly is being executed.
-		public bool IsAssemblyLocalState() {
+        /// \brief Determine if we are "running" in the assembly to be checked.
+        ///
+        /// This means the current thread is currently executing code that is
+        /// contained in the main assembly.
+        ///
+        /// \return True iff code from the main assembly is being executed.
+        public bool IsAssemblyLocalState()
+        {
+            return CurrentMethod != null &&
+                (CurrentMethod.Definition.DeclaringType.Module == //.Assembly ==
+                 DefinitionProvider.dp.AssemblyDefinition);
+        }
 
-			return CurrentMethod != null &&
-				(CurrentMethod.Definition.DeclaringType.Module.Assembly ==
-				 DefinitionProvider.dp.AssemblyDefinition);
-		}
+        /// Callback method for visitors.
+        ///
+        /// \param visitor A visitor visiting this state.
+        public void Accept(IStorageVisitor visitor)
+        {
+            visitor.VisitActiveState(this);
+        }
 
-		/// Callback method for visitors.
-		///
-		/// \param visitor A visitor visiting this state.
-		public void Accept(IStorageVisitor visitor) {
+        /// Set all state-defining parts to be clean.
+        public void Clean()
+        {
+            m_dyn.Clean();
+            m_stat.Clean();
+            m_tp.Clean();
+        }
 
-			visitor.VisitActiveState(this);
-		}
+        /// Check if any of the four state-defining parts are dirty.
+        public bool IsDirty()
+        {
+            return m_dyn.IsDirty() || m_stat.IsDirty() || m_tp.IsDirty();
+        }
 
-		/// Set all state-defining parts to be clean.
-		public void Clean() {
+        public MemoryLocation NextAccess(int threadId)
+        {
+            MethodState method = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod;
+            var instr = method.ProgramCounter;
+            InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
 
-			m_dyn.Clean();
-			m_stat.Clean();
-			m_tp.Clean();
-		}
+            return instrExec.Accessed(threadId);
+        }
 
-		/// Check if any of the four state-defining parts are dirty.
-		public bool IsDirty() {
-
-			return m_dyn.IsDirty() || m_stat.IsDirty() || m_tp.IsDirty();
-		}
-		
-		public MemoryLocation NextAccess(int threadId) {
-			MethodState method = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod;
-			Instruction instr = method.ProgramCounter;
-			InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
-
-			return instrExec.Accessed(threadId);
-		}
-		
-
-		/// Convert the active state to a somewhat large string representation.
-		///
-		/// Do not over-use this method. It is quite slow to print each and every
-		/// explored state for example. For small examples this is fine, but for
-		/// >100.000 states it turns out ~80% of the time it's building strings.
-		///
-		/// \return A string representation of the active state.
-		public override string ToString() {
-
-			return string.Format(@"------------------------- DYNAMIC AREA -------------------------
+        /// Convert the active state to a somewhat large string representation.
+        ///
+        /// Do not over-use this method. It is quite slow to print each and every
+        /// explored state for example. For small examples this is fine, but for
+        /// >100.000 states it turns out ~80% of the time it's building strings.
+        ///
+        /// \return A string representation of the active state.
+        public override string ToString()
+        {
+            return string.Format(@"------------------------- DYNAMIC AREA -------------------------
 {0}------------------------- STATIC  AREA -------------------------
 {1}------------------------- THREAD  POOL -------------------------
 {2}",
-				m_dyn.ToString(), m_stat.ToString(), m_tp.ToString() );
-		}
+                m_dyn.ToString(), m_stat.ToString(), m_tp.ToString());
+        }
 
-		public void Reset() {
+        public void Reset()
+        {
 
-			m_dyn = new DynamicArea();
-			m_stat = new StaticArea();
-			m_tp = new ThreadPool();
-			
-		}
-		
-		/// Constructor.
-		public ExplicitActiveState() {
-			Reset();
-		}
-	}
+            m_dyn = new DynamicArea();
+            m_stat = new StaticArea();
+            m_tp = new ThreadPool();
+
+        }
+
+        /// Constructor.
+        public ExplicitActiveState()
+        {
+            Reset();
+        }
+    }
 }

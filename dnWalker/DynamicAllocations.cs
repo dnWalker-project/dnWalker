@@ -18,13 +18,15 @@
 namespace MMC.State {
 
 	using System.Diagnostics;
-	using Mono.Cecil;
 	using MMC.Data;
 	using MMC.Exception;
 	using MMC.Util;
+    using dnlib.DotNet;
+    using System.Collections.Generic;
+    using System;
 
-	/// An object instances on the heap.
-	class AllocatedObject : DynamicAllocation {
+    /// An object instances on the heap.
+    class AllocatedObject : DynamicAllocation {
 
 		DataElementList m_fields;
 
@@ -50,7 +52,7 @@ namespace MMC.State {
 				bool found = false;
 				int i = 0;
 
-				TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(m_typeDef);
+				var typeDef = DefinitionProvider.dp.GetTypeDefinition(Type);
 
 				for (; !found && i < typeDef.Fields.Count; ++i)
 					found = typeDef.Fields[i].Name == VALUE_FIELD_NAME;
@@ -78,33 +80,52 @@ namespace MMC.State {
 			m_fields.Dispose();
 		}
 
-		/// Initialize / null all (inherited) fields.
-		public virtual void ClearFields() {
-			/* 
+        /// Initialize / null all (inherited) fields.
+        public virtual void ClearFields()
+        {
+            /* 
 			 * determine the field length of this object
-			 */ 
-			int fieldsCount = 0;
+			 */
+            var fields = new List<FieldDef>();
 
-			foreach (TypeDefinition typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) 
-				fieldsCount += typeDef.Fields.Count;
+            foreach (var typeDefOrRef in DefinitionProvider.dp.InheritanceEnumerator(Type))
+            {
+                if (typeDefOrRef is TypeDef typeDef)
+                {
+                    fields.AddRange(typeDef.Fields);
+                    continue;
+                }
 
-			if (m_fields == null)
-				m_fields = StorageFactory.sf.CreateList(fieldsCount);
+                if (typeDefOrRef is TypeRef typeRef)
+                {
+                    fields.AddRange(typeRef.Resolve().Fields);
+                    continue;
+                }
+            }
 
-			/*
+            if (m_fields == null)
+                m_fields = StorageFactory.sf.CreateList(fields.Count);
+
+            /*
 			 * Initialize the fields with default values
-			 */ 
+			 */
 
-			int typeOffset = 0;
+            //int typeOffset = 0;
 
-			foreach (TypeDefinition typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) {
-				for (int i = 0; i < typeDef.Fields.Count; i++) {
-					int fieldsOffset = typeOffset + i;
-					m_fields[fieldsOffset] = DefinitionProvider.dp.GetNullValue(typeDef.Fields[i].FieldType);
-				}
-				typeOffset += typeDef.Fields.Count;
-			}
-		}
+            //foreach (var typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) {
+            for (int i = 0; i < fields.Count; i++)
+            {
+                //int fieldsOffset = typeOffset + i;
+                var type = DefinitionProvider.dp.GetTypeDefinition(fields[i].FieldType);
+                if (type == null && !fields[i].FieldType.IsPrimitive)
+                {
+                    m_fields[i] = ObjectReference.Null;
+                    continue;
+                }
+                m_fields[i] = DefinitionProvider.dp.GetNullValue(type);
+            }
+            //typeOffset += typeDef.Fields.Count; 			}
+        }
 
 		public override void Accept(IStorageVisitor visitor) {
 
@@ -117,10 +138,11 @@ namespace MMC.State {
 			if (Locked)
 				sb.AppendFormat("locked by: {0}, ", Lock.ToString());
 
-			sb.Append("fields: ");
+			sb.Append("fields: N/A");
 
+            /*
 			int typeOffset = 0;
-			foreach (TypeDefinition typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) {
+			foreach (var typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) {
 				sb.AppendFormat("{0}:{{", typeDef.Name);
 				for (int i = 0; i < typeDef.Fields.Count; ++i) {
 					if (!typeDef.Fields[i].IsStatic) {
@@ -133,12 +155,12 @@ namespace MMC.State {
 
 				typeOffset += typeDef.Fields.Count;
 				sb.Append("} ");
-			}
+			}*/
 			
 			return sb.ToString();
 		}
 
-		public AllocatedObject(TypeReference typeDef) : base(typeDef) { }
+		public AllocatedObject(ITypeDefOrRef typeDef) : base(typeDef) { }
 	}
 	
 	/// VY thinks that eventually an array should not be a first-class citizen,
@@ -150,14 +172,14 @@ namespace MMC.State {
 		}
 
 		public override void ClearFields() {
-			IDataElement nullVal = DefinitionProvider.dp.GetNullValue(m_typeDef);
+			IDataElement nullVal = DefinitionProvider.dp.GetNullValue(Type);
 			for (int i = 0; i < Fields.Length; i++)
 				Fields[i] = nullVal;
 		}
 
 		public override string ToString() {
 			return string.Format("array:{0}[{1}] = [{2}]",
-					m_typeDef.Name, Fields.Length, Fields.ToString());
+					Type.Name, Fields.Length, Fields.ToString());
 		}
 
 		/*
@@ -166,7 +188,7 @@ namespace MMC.State {
 			visitor.VisitAllocatedObject(this);
 		}*/
 
-		public AllocatedArray(TypeReference arrayType, int length)
+		public AllocatedArray(ITypeDefOrRef arrayType, int length)
 			: base(arrayType) {
 			this.Fields = new DataElementList(length);
 		}
@@ -179,6 +201,8 @@ namespace MMC.State {
 		ObjectReference m_obj;
 		MethodPointer m_ptr;
 		bool m_isDirty;
+
+        private static Lazy<TypeDef> _delegateTypeLazy = new Lazy<TypeDef>(() => DefinitionProvider.dp.GetTypeDefinition("System.Delegate"));
 
 		public override AllocationType AllocationType {
 
@@ -199,39 +223,37 @@ namespace MMC.State {
 		}
 
 		/// The method referenced by the delegate.
-		public MethodPointer Method {
-
+		public MethodPointer Method
+        {
 			get { return m_ptr; }
 			set { m_ptr = value; }
 		}
 
-		public override void Dispose() {
-		}
+		public override void Dispose() {}
 
-		public override bool IsDirty() {
-
+		public override bool IsDirty()
+        {
 			return Lock.IsDirty() || m_isDirty;
 		}
 
-		public override void Clean() {
-
-			m_isDirty = false;
+		public override void Clean()
+        {
+            m_isDirty = false;
 			Lock.Clean();
 		}
 
-		public override void Accept(IStorageVisitor visitor) {
-
+		public override void Accept(IStorageVisitor visitor)
+        {
 			visitor.VisitAllocatedDelegate(this);
 		}
 
-		public override string ToString() {
-
+		public override string ToString()
+        {
 			return "delegate:" + m_obj.ToString() + "." + m_ptr.Value.Name;
 		}
 
-		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr)
-			: base(null) {
-
+		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr) : base(_delegateTypeLazy.Value)
+        {
 			m_obj = obj;
 			m_ptr = ptr;
 			m_isDirty = true;

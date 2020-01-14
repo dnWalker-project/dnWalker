@@ -19,9 +19,8 @@ namespace MMC {
 
 	using System;
 	using System.Collections;
-	using Mono.Cecil;
-	using Mono.Cecil.Cil;
-	using MMC.State;
+    using dnlib.DotNet;
+    using MMC.State;
 
 	interface IBreakPointHandler {
 
@@ -46,7 +45,7 @@ namespace MMC {
 			BreakPoint bp = new BreakPoint();
 			bp.Thread = ActiveState.cur.ThreadPool.CurrentThreadId;
 			if (ActiveState.cur.CurrentMethod != null) {
-				bp.Offset = ActiveState.cur.CurrentMethod.ProgramCounter.Offset;
+				bp.Offset = (int)ActiveState.cur.CurrentMethod.ProgramCounter.Offset;
 				bp.MethodDefinition = ActiveState.cur.CurrentMethod.Definition;
 			} else {
 				bp.Offset = -1;
@@ -66,7 +65,7 @@ namespace MMC {
 				int breakAt = methodFullName.LastIndexOf('.');
 				string typeName = methodFullName.Substring(0, breakAt);
 				string methodName = methodFullName.Substring(breakAt + 1);
-				TypeDefinition declType = DefinitionProvider.dp.GetTypeDefinition(typeName);
+				var declType = DefinitionProvider.dp.GetTypeDefinition(typeName);
 				if (declType != null)
 					bp.MethodDefinition = DefinitionProvider.dp.SearchMethod(
 						   methodName, declType);
@@ -168,7 +167,7 @@ namespace MMC {
 
 			public int Thread;
 			public int Offset;
-			public MethodDefinition MethodDefinition;
+			public MethodDef MethodDefinition;
 
 			public override string ToString() {
 

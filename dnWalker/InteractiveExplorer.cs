@@ -19,8 +19,7 @@ namespace MMC {
 
 	using System;
 	using System.Collections;
-	using Mono.Cecil;
-	using Mono.Cecil.Cil;
+	
 	using MMC.State;
 	using MMC.Data;
 	using System.Text;

@@ -19,18 +19,17 @@ namespace MMC.State {
 
 	using System.Collections;
 	using System.Diagnostics;
-	using Mono.Cecil;
-	using Mono.Cecil.Cil;
 	using MMC.Data;
 	using MMC.Util;
-	using C5;
+    using dnlib.DotNet;
+    using System.Collections.Generic;
 
-	// TODO:
-	// At least make a note if a destructor exists. If it's trivial to execute
-	// it, do it.
+    // TODO:
+    // At least make a note if a destructor exists. If it's trivial to execute
+    // it, do it.
 
-	/// Class holding the heap of the VM.
-	class DynamicArea :  ICleanable, IStorageVisitable {
+    /// Class holding the heap of the VM.
+    class DynamicArea :  ICleanable, IStorageVisitable {
 
 		/// Dynamic allocations, i.e. the heap.
 		AllocationList m_alloc;
@@ -193,7 +192,7 @@ namespace MMC.State {
 		/// \param typeDef The type of the object to create.
 		/// \return A reference to the newly created object.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateObject(int loc, TypeReference typeDef) {
+		public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef) {
 
 			AllocatedObject newObj = new AllocatedObject(typeDef);
 			newObj.ClearFields();
@@ -208,7 +207,7 @@ namespace MMC.State {
 		/// \param length The length of the array.
 		/// \return A reference to the newly created array.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateArray(int loc, TypeReference typeDef, int length) {
+		public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length) {
 
 			AllocatedArray newArr = new AllocatedArray(typeDef, length);
 			newArr.ClearFields();

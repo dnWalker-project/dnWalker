@@ -17,12 +17,16 @@
 
 namespace MMC.Data {
 	using System; // For ObsoleteAttribute :-)
-	using Mono.Cecil;
-	using Mono.Cecil.Cil;
+	
+	using dnlib.DotNet.Emit;
 	using MMC.State;
+    using dnlib.DotNet;
+    using MethodDefinition = dnlib.DotNet.MethodDef;
+    using TypeDefinition = dnlib.DotNet.TypeDef;
+    using FieldDefinition = dnlib.DotNet.FieldDef;
+    using ParameterDefinition = dnlib.DotNet.Parameter;
 
-
-	interface IDataElement : System.IComparable {
+    interface IDataElement : System.IComparable {
 
 		bool Equals(IDataElement other);
 		bool ToBool();
@@ -1327,7 +1331,7 @@ namespace MMC.Data {
 
 	class StaticFieldPointer : IManagedPointer, IAddElement, ISubElement {
 
-		TypeDefinition m_type;
+        TypeDefinition m_type;
 		int m_index;
 
 		public StaticFieldPointer(TypeDefinition or, int i) {
@@ -1363,9 +1367,9 @@ namespace MMC.Data {
 			int i = 0;
 			int byteOffset = a.ToInt4(false).Value;
 
-			TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(ac.Type);
-			foreach (FieldDefinition fld in typeDef.Fields) {
-				if (i >= fld.Offset)
+			var typeDef = DefinitionProvider.dp.GetTypeDefinition(ac.Type);
+			foreach (var fld in typeDef.Fields) {
+				if (i >= fld.FieldOffset)
 					byteOffset -= DefinitionProvider.dp.SizeOf(fld.FieldType.FullName);
 
 				i++;
@@ -1431,12 +1435,12 @@ namespace MMC.Data {
 
 	struct TypePointer : IRuntimeHandle {
 
-		TypeDefinition m_typeDef;
+		ITypeDefOrRef m_typeDef;
 
 		// maybe "System.Type"?
 		public string WrapperName { get { return ""; } }
 
-		public TypeDefinition Type {
+		public ITypeDefOrRef Type {
 
 			get { return m_typeDef; }
 		}
@@ -1464,7 +1468,7 @@ namespace MMC.Data {
 			return (int)(m_typeDef.GetHashCode() * 2311);
 		}
 
-		public TypePointer(TypeDefinition typeDef) {
+		public TypePointer(ITypeDefOrRef typeDef) {
 
 			m_typeDef = typeDef;
 		}
@@ -1491,7 +1495,7 @@ namespace MMC.Data {
 
 		public override string ToString() {
 
-			return "MP^" + (m_method != null ? Value.Name : "null");
+			return "MP^" + (m_method != null ? Value.Name.String : "null");
 		}
 
 		public int CompareTo(object other) {

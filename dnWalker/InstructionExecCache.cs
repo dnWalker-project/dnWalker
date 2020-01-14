@@ -18,8 +18,8 @@
 namespace MMC.InstructionExec {
 
 	using System.Collections;
-	using Mono.Cecil.Cil;
-	using MMC.Collections;
+    using dnlib.DotNet.Emit;
+    using MMC.Collections;
 
 	/// \brief An interface to types that return an instruction executor for a
 	/// given instruction.	
