@@ -940,11 +940,13 @@ namespace MMC.InstructionExec
 		 */
 
         private int m_offset = -1;
+
         public int GetFieldOffset(ITypeDefOrRef superType)
         {
-
             if (m_offset >= 0)
+            {
                 return m_offset;
+            }
 
             FieldDefinition fld = GetFieldDefinition();
             int typeOffset = 0;
@@ -974,7 +976,7 @@ namespace MMC.InstructionExec
 
                 if (typeDef.BaseType != null && typeDef.BaseType.FullName != "System.Object") // if base type is System.Object, stop
                 {
-                    typeOffset += typeDef.Fields.Count;
+                    typeOffset += typeDef.Fields.Count - 1;
                 }
             }
 
@@ -2230,6 +2232,13 @@ namespace MMC.InstructionExec
                     ActiveState.cur.CallStack.Push(called);*/
                     return true;
                 }
+            }
+
+            if (methDef.FullName == "System.Threading.Thread System.Threading.Thread::GetCurrentThreadNative()")
+            {
+                var currentStackDataElement = ActiveState.cur.CurrentThread.ThreadObject;
+                ActiveState.cur.EvalStack.Push(currentStackDataElement);
+                return true;
             }
 
             // Delegate Invoke call.
