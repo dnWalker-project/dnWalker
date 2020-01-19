@@ -384,7 +384,7 @@ namespace MMC {
 
 			do {
 				PrintTransition();
-                Console.Out.WriteLine(currentInstrExec.ToString());
+                //Console.Out.WriteLine(currentInstrExec.ToString());
 				ier = currentInstrExec.Execute();
 
 				currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);

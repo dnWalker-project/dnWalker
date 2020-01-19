@@ -21,6 +21,7 @@ using MMC.Collections;
 using TypeReference = dnlib.DotNet.TypeRef;
 using MethodDefinition = dnlib.DotNet.MethodDef;
 using dnlib.DotNet.Emit;
+using dnlib.DotNet;
 
 namespace MMC.State {
 	class StateDecollapser {
@@ -128,10 +129,10 @@ namespace MMC.State {
 			}
 		}
 
-		DynamicAllocation RestoreObject(int alloc_id, WrappedIntArray co) {
-
+		DynamicAllocation RestoreObject(int alloc_id, WrappedIntArray co)
+        {
 			// If the old allocation is still here, re-use it.
-			TypeReference type = (TypeReference)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
+			var type = (ITypeDefOrRef)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
 			DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[alloc_id];
 
 			AllocatedObject obj;
@@ -151,11 +152,10 @@ namespace MMC.State {
 			return obj;
 		}
 
-
-		DynamicAllocation RestoreArray(int alloc_id, WrappedIntArray ca) {
-
+		DynamicAllocation RestoreArray(int alloc_id, WrappedIntArray ca)
+        {
 			// Again, check if there is some old value we can re-use.
-			var type = (TypeReference)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
+			var type = (ITypeDefOrRef)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
 
 			//int array_length = ca.Length - ArrayPartsOffsets.Count;
 			DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[alloc_id];

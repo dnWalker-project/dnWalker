@@ -30,6 +30,8 @@ namespace MMC.InstructionExec
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using FieldDefinition = dnlib.DotNet.FieldDef;
     using ParameterDefinition = dnlib.DotNet.Parameter;
+    using MMC.ICall;
+
     //using FieldDefinition = dnlib.DotNet.Var;
 
     class BREAK : InstructionExecBase
@@ -2191,6 +2193,8 @@ namespace MMC.InstructionExec
         {
         }
 
+        protected MethodDefinition Method => Operand as MethodDefinition;
+
         /// Check if a method is empty, i.e. it has no code.
         ///
         /// \param meth The method.
@@ -2218,26 +2222,16 @@ namespace MMC.InstructionExec
             DynamicAllocation thisObject = null;
             if (args.Length > 0 && args[0] is ObjectReference)
                 thisObject = ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[0]];
-            MethodDefinition methDef = Operand as MethodDefinition;
+            MethodDefinition methDef = Method;
 
             // Determine the type of call and simulate the behaviour.
             if ((methDef.Attributes & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl)
             {
-                if (methDef.FullName == "System.UInt64 System.Threading.Thread::GetProcessDefaultStackSize()")
-                {
-                    // low = 155123712, high = 156172288
-                    ActiveState.cur.EvalStack.Push(new UnsignedInt8(155123712)); // TODO
-                    /*MethodState called = new MethodState(methDef, args);
-                    this.CheckTailCall();
-                    ActiveState.cur.CallStack.Push(called);*/
-                    return true;
-                }
             }
 
             if (methDef.FullName == "System.Threading.Thread System.Threading.Thread::GetCurrentThreadNative()")
             {
-                var currentStackDataElement = ActiveState.cur.CurrentThread.ThreadObject;
-                ActiveState.cur.EvalStack.Push(currentStackDataElement);
+                ThreadHandlers.CurrentThread_internal(null, null);
                 return true;
             }
 
@@ -2416,6 +2410,12 @@ namespace MMC.InstructionExec
             DataElementList args = CopyArgumentList(threadId);
             return MMC.ICall.IntCallManager.icm.HandleICallAccessed(methDef, args, threadId);
         }
+
+        public override string ToString()
+        {
+            var method = Method;
+            return base.ToString() + " " + method;
+        }
     }
 
     class JMP : InstructionExecBase
@@ -2561,6 +2561,17 @@ namespace MMC.InstructionExec
             MethodDefinition methDef = Operand as MethodDefinition;
             DataElementList args = CreateArgumentList();
 
+            if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
+            {
+                var threadId = ActiveState.cur.ThreadPool.FindOwningThread(args[0]);
+                if (threadId == LockManager.NoThread)
+                {
+                    throw new NotSupportedException("Owning thread not found.");
+                }
+                ActiveState.cur.ThreadPool.Threads[threadId].State = (int)System.Threading.ThreadState.Running;
+                return nextRetval;
+            }
+
             // Skip certain calls.
             if (!FilterCall())
             {
@@ -2641,6 +2652,21 @@ namespace MMC.InstructionExec
             for (int i = args.Length - 1; i > 0; --i)
             {
                 args[i] = ActiveState.cur.EvalStack.Pop();
+            }
+
+            if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
+            {
+                ThreadHandlers.Thread_internal(Method, args);
+
+                //MMC.ICall.IntCallManager.
+                /*ObjectReference threadObjectRef = ActiveState.cur.DynamicArea.AllocateObject(
+                    ActiveState.cur.DynamicArea.DeterminePlacement(false),
+                    DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"));*/
+
+                //ActiveState.cur.ThreadPool.NewThread(null, threadObjectRef);
+                //return threadObjectRef;
+                //return ActiveState.cur.EvalStack.Pop();
+                return nextRetval;
             }
 
             // Check for empty body.

@@ -84,7 +84,7 @@ namespace MMC
         IDictionary m_virtualMethodDefinitions;
         IDictionary m_methodDefinitionsByReference;
         IDictionary m_methodDefinitionsByString;
-        IDictionary m_fieldDefinitions;
+        IDictionary<string, FieldDefinition> m_fieldDefinitions;
         IDictionary m_typeSizes;
 
         static DefinitionProvider instance;
@@ -168,22 +168,26 @@ namespace MMC
                 return retval;
             }
 
-            IEnumerator types = asm.Types.GetEnumerator();
+            if (!asm.TypeExists(name, false))
+            {
+                //return null;
+            }
+
+            
+            retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+
+            /*IEnumerator types = asm.Types.GetEnumerator();
 
             while (retval == null && types.MoveNext())
             {
                 var curr = types.Current as TypeDef;
                 if (curr.FullName == name)
                     retval = curr;
-            }
+            }*/
 
             if (retval != null)
             {
                 m_typeDefinitions.Add(name, retval);
-            }
-            else
-            {
-
             }
 
             Logger.l.Lookup("SearchType: type {0} {1}found in assembly {2}", name, retval == null ? "not " : "", asm.Name.String);
@@ -214,9 +218,8 @@ namespace MMC
             //    return typeDef;
             }
 
-            Logger.l.Lookup("looking up definition for type {0} => {1}", typeSig.FullName, typeDef);
+            //Logger.l.Lookup("looking up definition for type {0} => {1}", typeSig.FullName, typeDef);
             return typeDef;
-            
 
             /*var typeDef = GetTypeDefinition(typeSig.FullName);
             if (typeDef != null)
@@ -236,12 +239,12 @@ namespace MMC
         // TODO TypeDefFinder
         public TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
         {
-            return GetTypeDefinition(typeRef.FullName);
+            return typeRef.ResolveTypeDefThrow();
         }
 
-        public TypeDef GetTypeDefinition(TypeDef typeRef)
+        public TypeDef GetTypeDefinition(TypeDef typeDef)
         {
-            return GetTypeDefinition(typeRef.FullName);
+            return typeDef;
         }
 
         /// \brief Look up a type definition by name in the main assembly
@@ -263,6 +266,15 @@ namespace MMC
                 {
                     break;
                 }
+            }
+
+            if (retval == null)
+            {
+                //var a = m_referencedAssemblies.FirstOrDefault(m => m.Name == "System.dll");
+                //a
+                //var sa = a.Types.Where(t => t.FullName.StartsWith("System.Threa")).Select(t => t.FullName).OrderBy(s => s).ToArray();
+
+                throw new NullReferenceException($"Type {name} not found.");
             }
 
             Logger.l.Lookup("looking up definition for type {0} => {1}", name, retval);
@@ -433,7 +445,9 @@ namespace MMC
 
         public FieldDefinition GetFieldDefinition(IField fieldRef)
         {
-            return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
+            //if (m_fieldDefinitions.TryGetValue()
+            //return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
+            return fieldRef.ResolveFieldDef();
         }
 
         /// \brief Look up a field definition by name, in a type given by name.
@@ -445,11 +459,8 @@ namespace MMC
         /// \return Definition of the field to look for, or null if none was found.
         public FieldDefinition GetFieldDefinition(string declTypeName, string fieldName)
         {
-
             string key = declTypeName + "::" + fieldName;
-            FieldDefinition retval = m_fieldDefinitions[key] as FieldDefinition;
-
-            if (retval == null)
+            if (!m_fieldDefinitions.TryGetValue(key, out FieldDefinition retval))
             {
                 TypeDef declType = GetTypeDefinition(declTypeName);
                 if (declType == null)
@@ -620,7 +631,7 @@ namespace MMC
             m_typeDefinitions = new Dictionary<string, TypeDef>();
             m_methodDefinitionsByReference = new Hashtable();
             m_methodDefinitionsByString = new Hashtable();
-            m_fieldDefinitions = new Hashtable();
+            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
             m_virtualMethodDefinitions = new Hashtable();
 
             /*

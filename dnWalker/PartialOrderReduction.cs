@@ -203,14 +203,18 @@ namespace MMC {
 				MarkAndSweepGC.msgc.Mark();
 				Explorer.DoSharingAnalysis = false;
 			}
-			
 
 			int oldCurrentThreadId = ActiveState.cur.ThreadPool.CurrentThreadId;
 			int retval = -1;
 
-			foreach (int threadId in ActiveState.cur.ThreadPool.RunnableThreads) {
-
+			foreach (int threadId in ActiveState.cur.ThreadPool.RunnableThreads)
+            {
 				Instruction instr = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.ProgramCounter;
+                if (instr == null)
+                {
+                    continue;
+                }
+
 				InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
 
 				ActiveState.cur.ThreadPool.CurrentThreadId = threadId;
