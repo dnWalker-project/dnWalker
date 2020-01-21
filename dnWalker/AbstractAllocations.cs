@@ -15,65 +15,70 @@
  *
  */
 
-namespace MMC.State {
-
+namespace MMC.State
+{
     using dnlib.DotNet;
     using MMC.Data;
-	using MMC.Util;
-	using System;
-	
-		
-	/// VY: I believe that in the end, there should only be two kinds of 
-	/// allocations, namely objects and classes
+    using System;
 
-	/// Types of allocations.
-	enum AllocationType : int {
-
-		Object,
-		Array, 
-		Delegate, // TODO: this one should be refactored away as delegates are actualy objects
-		Class,
-		Unknown
-	}
-
-    /// An abstract base class for all allocations.
-    abstract class Allocation : IStorageVisitable, ICleanable, IMustDispose
+    /// <summary>
+    /// Types of allocations.
+    /// </summary>
+    /// <remarks>VY: I believe that in the end, there should only be two kinds of allocations, namely objects and classes</remarks>
+    internal enum AllocationType
     {
+        Object,
+        Array,
+        Delegate, // TODO: this one should be refactored away as delegates are actualy objects
+        Class,
+        Unknown
+    }
 
+    /// <summary>
+    /// An abstract base class for all allocations.
+    /// </summary>
+    internal abstract class Allocation : IStorageVisitable, ICleanable, IMustDispose
+    {
+        /// <summary>
         /// Print at most this many fields.
+        /// </summary>
         public const int max_printed_fields = 4;
 
-        private ITypeDefOrRef m_typeDef;
-        Lock m_lock;
+        private Lock m_lock;
 
-
+        /// <summary>
         /// A self-describing property. Should be overridden.
+        /// </summary>
         public virtual AllocationType AllocationType
         {
-
             get { return AllocationType.Unknown; }
         }
 
+        /// <summary>
         /// Returns the amount of fields/elements in this allocation
+        /// </summary>
         public abstract int InnerSize
         {
             get;
         }
 
+        /// <summary>
         /// The type of the allocations (check subclass for semantics).
-        public ITypeDefOrRef Type
-        {
-            get { return m_typeDef; }
-        }
+        /// </summary>
+        public ITypeDefOrRef Type { get; }
 
+        /// <summary>
         /// The lock associated with the allocation.
+        /// </summary>
         public Lock Lock
         {
-
             get
             {
                 if (m_lock == null)
+                {
                     m_lock = new Lock();
+                }
+
                 return m_lock;
             }
             set
@@ -82,7 +87,9 @@ namespace MMC.State {
             }
         }
 
+        /// <summary>
         /// True iff this allocation is locked.
+        /// </summary>
         public bool Locked
         {
             get { return m_lock != null && m_lock.Count > 0; }
@@ -93,9 +100,9 @@ namespace MMC.State {
         public abstract void Dispose();
         public abstract void Accept(IStorageVisitor visitor);
 
-        public Allocation(ITypeDefOrRef typeDef)
+        protected Allocation(ITypeDefOrRef typeDef)
         {
-            m_typeDef = typeDef ?? throw new ArgumentNullException(nameof(typeDef));
+            Type = typeDef ?? throw new ArgumentNullException(nameof(typeDef));
             m_lock = null;
         }
 
@@ -105,70 +112,54 @@ namespace MMC.State {
         }
     }
 
-	abstract class DynamicAllocation : Allocation {
+    internal abstract class DynamicAllocation : Allocation
+    {
+        /// <summary>
+        /// Name of the value field of value type wrappers.
+        /// </summary>
+        public const string VALUE_FIELD_NAME = "m_value";
 
-		/// Name of the value field of value type wrappers.
-		public const string VALUE_FIELD_NAME = "m_value";
-		
-		/*
+        /*
 		 * Used for Mark & Sweep GC and POR using object escape analysis:
 		 * UNMARKED = known as unreachable from the callstacks
 		 * between 0 and int.MaxValue = the thread id that can reach this object
 		 * SHARED = reachable from multiple threads, i.e., thread-shared
-		 */ 
-		public const int UNMARKED = -100;
-		public const int SHARED = int.MaxValue;
-		int m_heapAttr;
-		
-		int m_refCount;
-		int m_pinCount;
+		 */
+        public const int UNMARKED = -100;
+        public const int SHARED = int.MaxValue;
+        private int m_refCount;
+        private int m_pinCount;
 
-		// For memoised GC
-		int m_depth;
-		int m_rhs;
-
-		
-
-		/// Do not use! Use DynamicArea::SetPinnedLocation(int loc, bool pin) instead.
-		public bool Pinned {
-
-			get { return m_pinCount > 0; }
-			set {
-				if (value)
-					++m_pinCount;
-				else
-					--m_pinCount;
-			}
-		}
-
-		/// Reference count.
-		
-		public int RefCount {
-
-			get {
-				// Hack: always return 1 if we're not keeping track of reference counts,
-				// so allocations are not always left out of the collapse procedure.
-				return (Config.UseRefCounting ? m_refCount : 1);
-			}
-			set { m_refCount = value; }
-		}
-
-		public DynamicAllocation(ITypeDefOrRef typeDef) : base(typeDef)
+        /// <summary>
+        /// Do not use! Use DynamicArea::SetPinnedLocation(int loc, bool pin) instead.
+        /// </summary>
+        public bool Pinned
         {
-			m_refCount = 0;
+            get { return m_pinCount > 0; }
+            set
+            {
+                if (value)
+                    ++m_pinCount;
+                else
+                    --m_pinCount;
+            }
+        }
 
-			/// This ensures that newly created allocations are seen
-			/// as inconsistent and therefore become processed by the 
-			/// the MGC algorithm
-			if (Config.MemoisedGC) {
-				m_rhs = int.MaxValue;
-				m_depth = int.MinValue;
-			}
+        /// <summary>
+        /// Reference count.
+        /// </summary>
+        public int RefCount
+        {
+            get
+            {
+                // Hack: always return 1 if we're not keeping track of reference counts,
+                // so allocations are not always left out of the collapse procedure.
+                return Config.UseRefCounting ? m_refCount : 1;
+            }
+            set { m_refCount = value; }
+        }
 
-			m_heapAttr = UNMARKED;
-		}
-
-        protected DynamicAllocation() : base()
+        protected DynamicAllocation(ITypeDefOrRef typeDef) : base(typeDef)
         {
             m_refCount = 0;
 
@@ -177,36 +168,49 @@ namespace MMC.State {
             /// the MGC algorithm
             if (Config.MemoisedGC)
             {
-                m_rhs = int.MaxValue;
-                m_depth = int.MinValue;
+                Rhs = int.MaxValue;
+                Depth = int.MinValue;
             }
 
-            m_heapAttr = UNMARKED;
+            HeapAttribute = UNMARKED;
         }
 
-        public bool ThreadShared {
-			get { return m_heapAttr == SHARED; }
-		}
+        protected DynamicAllocation()
+        {
+            m_refCount = 0;
 
-		/// See chapter on POR using object escape analysis in VY's thesis
-		public int HeapAttribute {
-			get { return m_heapAttr; }
-			set { m_heapAttr = value; }
-		}
-		
-		/// See chapter on Memoised GC in VY's thesis
-		public int Rhs {
-			get { return m_rhs; }
-			set { m_rhs = value; }
-		}
+            /// This ensures that newly created allocations are seen
+            /// as inconsistent and therefore become processed by the 
+            /// the MGC algorithm
+            if (Config.MemoisedGC)
+            {
+                Rhs = int.MaxValue;
+                Depth = int.MinValue;
+            }
 
-		public int Depth {
-			get { return m_depth; }
-			set { m_depth = value; }
-		}
+            HeapAttribute = UNMARKED;
+        }
 
-		public int Key {
-			get { return Math.Min(m_depth, m_rhs); }
-		}
-	}
+        public bool ThreadShared
+        {
+            get { return HeapAttribute == SHARED; }
+        }
+
+        /// <summary>
+        /// See chapter on POR using object escape analysis in VY's thesis
+        /// </summary>
+        public int HeapAttribute { get; set; }
+
+        /// <summary>
+        /// See chapter on Memoised GC in VY's thesis
+        /// </summary>
+        public int Rhs { get; set; }
+
+        public int Depth { get; set; }
+
+        public int Key
+        {
+            get { return Math.Min(Depth, Rhs); }
+        }
+    }
 }
