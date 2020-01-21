@@ -129,15 +129,19 @@ namespace MMC.InstructionExec
             return "exception caught, traversing callstack to find handler";
         }
 
+        /// <summary>
         /// See also the part on SEH exception handling in my thesis
+        /// </summary>
         public Instruction GetNextInstruction(MethodState current)
         {
-            ObjectReference exceptionRef = ActiveState.cur.CurrentThread.ExceptionReference;
-            AllocatedObject exceptionObj = ActiveState.cur.DynamicArea.Allocations[exceptionRef] as AllocatedObject;
+            var cur = ActiveState.cur;
+
+            ObjectReference exceptionRef = cur.CurrentThread.ExceptionReference;
+            AllocatedObject exceptionObj = cur.DynamicArea.Allocations[exceptionRef] as AllocatedObject;
 
             Instruction retval = null;
 
-            foreach (MethodState method in ActiveState.cur.CallStack)
+            foreach (MethodState method in cur.CallStack)
             {
                 method.EvalStack.PopAll();
                 ExceptionHandler eh = method.NextFilterOrCatchHandler(method.ProgramCounter, exceptionObj.Type);
@@ -167,9 +171,9 @@ namespace MMC.InstructionExec
 						 * and collapsing problems. In a sense, the fact that filter 
 						 * handling is active is encoded this by MMC.
 						 */
-                        MethodState clone = method.DeepCopy();
+                        MethodState clone = method.DeepCopy(cur);
                         clone.ProgramCounter = eh.FilterStart;
-                        ActiveState.cur.CallStack.Push(clone);
+                        cur.CallStack.Push(clone);
                         break;
                     }
                 }
@@ -177,7 +181,7 @@ namespace MMC.InstructionExec
             }
 
             if (retval == null)
-                ActiveState.cur.CallStack.StackPointer = 0;
+                cur.CallStack.StackPointer = 0;
 
             /*
 			 * if no suitable exception handler found, null is returned and the thread is terminated

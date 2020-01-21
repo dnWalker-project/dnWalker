@@ -856,8 +856,9 @@ namespace MMC.InstructionExec
                     // We are the ones who have to do the initialization.
                     cls.InitializingThread = me;
                     MethodState cctorState = new MethodState(
-                            cctorDef,
-                            StorageFactory.sf.CreateList(0));
+                        cctorDef,
+                        StorageFactory.sf.CreateList(0),
+                        cur);
                     cctorState.OnDispose = new MethodStateCallback(this.CctorDoneCallBack);
                     cur.CallStack.Push(cctorState);
                     Logger.l.Debug("found class constructor. pushed on call stack.");
@@ -1016,14 +1017,15 @@ namespace MMC.InstructionExec
 
             if (length.Value < 0)
             {
-                RaiseException("System.OverflowException");
+                RaiseException("System.OverflowException", cur);
             }
             else
             {
                 cur.EvalStack.Push(cur.DynamicArea.AllocateArray(
-                            cur.DynamicArea.DeterminePlacement(),
-                            Operand as ITypeDefOrRef,
-                            length.Value));
+                    cur.DynamicArea.DeterminePlacement(),
+                    Operand as ITypeDefOrRef,
+                    length.Value,
+                    cur.Configuration));
             }
             return nextRetval;
         }
@@ -1053,7 +1055,7 @@ namespace MMC.InstructionExec
                 cur.EvalStack.Push(objRef);
             else
             {
-                RaiseException("System.InvalidCastException");
+                RaiseException("System.InvalidCastException", cur);
             }
 
             return nextRetval;
@@ -1133,11 +1135,11 @@ namespace MMC.InstructionExec
             AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (theArray == null)
-                RaiseException("System.NullReferenceException");
+                RaiseException("System.NullReferenceException", cur);
             else if (CheckBounds(theArray, idx))
                 cur.EvalStack.Push(theArray.Fields[idx.Value]);
             else
-                RaiseException("System.IndexOutOfRangeException");
+                RaiseException("System.IndexOutOfRangeException", cur);
 
             return retval;
         }
@@ -1193,20 +1195,20 @@ namespace MMC.InstructionExec
 
             if (theArray == null)
             {
-                RaiseException("System.NullReferenceException");
+                RaiseException("System.NullReferenceException", cur);
             }
             else if (CheckBounds(theArray, idx))
             {
-                ObjectEscapePOR.UpdateReachability(theArray.ThreadShared, theArray.Fields[idx.Value], val);
+                ObjectEscapePOR.UpdateReachability(theArray.ThreadShared, theArray.Fields[idx.Value], val, cur.Configuration);
 
-                ParentWatcher.RemoveParentFromChild(arrayRef, theArray.Fields[idx.Value]);
+                ParentWatcher.RemoveParentFromChild(arrayRef, theArray.Fields[idx.Value], cur.Configuration.MemoisedGC);
                 theArray.Fields[idx.Value] = val;
-                ParentWatcher.AddParentToChild(arrayRef, val);
+                ParentWatcher.AddParentToChild(arrayRef, val, cur.Configuration.MemoisedGC);
 
             }
             else
             {
-                RaiseException("System.IndexOutOfRangeException");
+                RaiseException("System.IndexOutOfRangeException", cur);
             }
 
             return retval;
@@ -1255,7 +1257,7 @@ namespace MMC.InstructionExec
 
             if (theArray == null)
             {
-                RaiseException("System.NullReferenceException");
+                RaiseException("System.NullReferenceException", cur);
             }
             else
             {
@@ -1366,7 +1368,7 @@ namespace MMC.InstructionExec
 
             if (theObject == null)
             {
-                RaiseException("System.NullReferenceException");
+                RaiseException("System.NullReferenceException", cur);
             }
             else
             {
@@ -1444,13 +1446,13 @@ namespace MMC.InstructionExec
                     cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
                 int offset = GetFieldOffset(theObject.Type);
-                ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset]);
+                ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
 
                 /// Can be the case that an object reference was written, thereby changing the object graph
-                ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val);
+                ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val, cur.Configuration);
 
                 theObject.Fields[offset] = val;
-                ParentWatcher.AddParentToChild(objectReference, val);
+                ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC);
             }
             else if (toChange is LocalVariablePointer)
             {
@@ -1521,8 +1523,9 @@ namespace MMC.InstructionExec
         {
             // Operand is a type definition of the wrapper type to use.
             ObjectReference wrappedRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(),
-                    Operand as ITypeDefOrRef);
+                cur.DynamicArea.DeterminePlacement(),
+                Operand as ITypeDefOrRef,
+                cur.Configuration);
             AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
             wrapped.Fields[wrapped.ValueFieldOffset] = cur.EvalStack.Pop();
             cur.EvalStack.Push(wrappedRef);
@@ -1654,7 +1657,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IIEReturnValue retval = nincRetval;
             FieldDefinition fld = GetFieldDefinition();
             TypeDefinition declType = GetTypeDefinition();
@@ -1666,8 +1668,7 @@ namespace MMC.InstructionExec
                 AllocatedClass ac = cur.StaticArea.GetClass(declType);
                 ThreadObjectWatcher.Decrement(ac.Fields[(int)fld.FieldOffset]);
 
-                ObjectEscapePOR.UpdateReachability(true, ac.Fields[(int)fld.FieldOffset], val);
-
+                ObjectEscapePOR.UpdateReachability(true, ac.Fields[(int)fld.FieldOffset], val, cur.Configuration);
 
                 ac.Fields[(int)fld.FieldOffset] = val;
 
@@ -1786,7 +1787,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException)
             {
-                RaiseException("System.OverflowException");
+                RaiseException("System.OverflowException", cur);
             }
 
             return nextRetval;
@@ -1824,11 +1825,11 @@ namespace MMC.InstructionExec
             }
             catch (DivideByZeroException e)
             {
-                RaiseException(e.GetType().FullName);
+                RaiseException(e.GetType().FullName, cur);
             }
             catch (ArithmeticException e)
             {
-                RaiseException(e.GetType().FullName);
+                RaiseException(e.GetType().FullName, cur);
             }
 
             return nextRetval;
@@ -1862,7 +1863,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException)
             {
-                RaiseException("System.OverflowException");
+                RaiseException("System.OverflowException", cur);
             }
 
             return nextRetval;
@@ -1896,11 +1897,11 @@ namespace MMC.InstructionExec
             }
             catch (DivideByZeroException e)
             {
-                RaiseException(e.GetType().FullName);
+                RaiseException(e.GetType().FullName, cur);
             }
             catch (ArithmeticException e)
             {
-                RaiseException(e.GetType().FullName);
+                RaiseException(e.GetType().FullName, cur);
             }
 
             return nextRetval;
@@ -1936,7 +1937,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException)
             {
-                RaiseException("System.OverflowException");
+                RaiseException("System.OverflowException", cur);
             }
 
             return nextRetval;
@@ -2238,7 +2239,7 @@ namespace MMC.InstructionExec
                 MethodDefinition toCall =
                     ((AllocatedDelegate)thisObject).Method.Value;
                 // Create frame for the indirectly called method.
-                MethodState calleeState = new MethodState(toCall, calleePars);
+                MethodState calleeState = new MethodState(toCall, calleePars, cur);
                 cur.CallStack.Push(calleeState);
                 return true;
             }
@@ -2423,7 +2424,7 @@ namespace MMC.InstructionExec
             MethodState oldState = cur.CallStack.Pop();
 
             MethodDefinition methDef = Operand as MethodDefinition;
-            MethodState newState = new MethodState(methDef, oldState.Arguments);
+            MethodState newState = new MethodState(methDef, oldState.Arguments, cur);
             cur.CallStack.Push(newState);
 
             return nincRetval;
@@ -2474,7 +2475,7 @@ namespace MMC.InstructionExec
                     // from this call (as a up-casted Instruction instance,
                     // yuck). This is BAD idea since it requires nasty hacks
                     // (to update the PC) to get right and is poorly readable.
-                    MethodState called = new MethodState(methDef, args);
+                    MethodState called = new MethodState(methDef, args, cur);
                     this.CheckTailCall();
                     cur.CallStack.Push(called);
                 }
@@ -2518,7 +2519,7 @@ namespace MMC.InstructionExec
             if (!FilterCall())
             {
                 // Assumption: CALLI targets have a body.
-                MethodState called = new MethodState(methDef, args);
+                MethodState called = new MethodState(methDef, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
             }
@@ -2600,7 +2601,7 @@ namespace MMC.InstructionExec
 
                 MethodDefinition toCall = DefinitionProvider.dp.SearchVirtualMethod(methDef, (ObjectReference)args[0]);
 
-                MethodState called = new MethodState(toCall, args);
+                MethodState called = new MethodState(toCall, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
                 //Logger.l.Log(LogPriority.Call, "{0}: found most derived definition in type {1}",
@@ -2666,7 +2667,8 @@ namespace MMC.InstructionExec
                 {
                     IDataElement newDel = cur.DynamicArea.AllocateDelegate(
                             cur.DynamicArea.DeterminePlacement(),
-                            (ObjectReference)args[1], (MethodPointer)args[2]);
+                            (ObjectReference)args[1], (MethodPointer)args[2], 
+                            cur.Configuration);
                     cur.EvalStack.Push(newDel);
                     Logger.l.Log(LogPriority.Call, "constructor call for delegate handled by ves");
                 }
@@ -2682,11 +2684,12 @@ namespace MMC.InstructionExec
                 // Normal constructor call, create this pointer.
                 args[0] = cur.DynamicArea.AllocateObject(
                         cur.DynamicArea.DeterminePlacement(),
-                        methDef.DeclaringType);
+                        methDef.DeclaringType,
+                        cur.Configuration);
                 // Constructor calls should leave object reference on the stack.
                 cur.EvalStack.Push(args[0]);
                 // Call the constructor.
-                MethodState called = new MethodState(methDef, args);
+                MethodState called = new MethodState(methDef, args, cur);
                 cur.CallStack.Push(called);
             }
 
@@ -2727,8 +2730,8 @@ namespace MMC.InstructionExec
             if (cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
                 cur.EvalStack.Push(callee.EvalStack.Pop());
 
-            ThreadObjectWatcher.DecrementAll(callee.Arguments);
-            ThreadObjectWatcher.DecrementAll(callee.Locals);
+            ThreadObjectWatcher.DecrementAll(callee.Arguments, cur.Configuration);
+            ThreadObjectWatcher.DecrementAll(callee.Locals, cur.Configuration);
 
             /*
 			 * If the underlying method state threw an exception, and we are now returning to it,
@@ -2784,7 +2787,7 @@ namespace MMC.InstructionExec
 				 * as specified in the ECMA standard. Overflow is a subtype of
 				 * arithmetic anyway, so we just follow Microsoft here
 				 */
-                RaiseException("System.OverflowException");
+                RaiseException("System.OverflowException", cur);
             }
 
             return nextRetval;
@@ -2898,7 +2901,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException");
+                RaiseException("System.OverflowException", cur);
             }
 
             cur.EvalStack.Push(toPush);

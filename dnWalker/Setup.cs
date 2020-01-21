@@ -17,17 +17,12 @@
 
 namespace MMC
 {
-
-
     using MMC.Data;
     using MMC.State;
-    using MMC.ICall;
     using dnlib.DotNet;
-    using System.Reflection;
 
     class StateSpaceSetup
     {
-
         // Okay, this is just great. These are the fields of a Thread
         // allocation when running Mono with the --debug flag:
         //
@@ -53,61 +48,64 @@ namespace MMC
         //
         // Nice.
 
-        public static ModuleDef LoadAssemblies()
+        public static ModuleDef LoadAssemblies(IConfig config)
         {
             // Load assembly, and initialize the definition lookup and active state.
             try
             {
                 Logger.l.Notice("loading main assembly...");
-                DefinitionProvider.LoadAssembly(Config.AssemblyToCheckFileName);
-                Logger.l.Notice("loaded {0}", Config.AssemblyToCheckFileName);
+                DefinitionProvider.LoadAssembly(config.AssemblyToCheckFileName);
+                Logger.l.Notice("loaded {0}", config.AssemblyToCheckFileName);
             }
             catch (System.Exception e)
             {
-                MonoModelChecker.Fatal("error loading assembly: " + Config.AssemblyToCheckFileName + System.Environment.NewLine + e);
+                MonoModelChecker.Fatal("error loading assembly: " + config.AssemblyToCheckFileName + System.Environment.NewLine + e);
             }
 
             return DefinitionProvider.dp.AssemblyDefinition;
         }
 
-        public static void CreateInitialState()
+        public static void CreateInitialState(IConfig config)
         {
-            var asmDef = LoadAssemblies();
+            var asmDef = LoadAssemblies(config);
+            var cur = ActiveState.cur;
 
-            //StorageFactory.UseRefCounting(Config.UseRefCounting);
-            if (Config.UseRefCounting)
-                Logger.l.Notice("using reference counting");
-
-            // Wrap run arguments in ConstantString objects, and create the method 
-            // state for Main().
-            ObjectReference runArgsRef = ActiveState.cur.DynamicArea.AllocateArray(
-                    ActiveState.cur.DynamicArea.DeterminePlacement(false),
-                    DefinitionProvider.dp.GetTypeDefinition("System.String"),
-                    Config.RunTimeParameters.Length);
-
-
-            if (Config.RunTimeParameters.Length > 0)
+            //StorageFactory.UseRefCounting(_config.UseRefCounting);
+            if (config.UseRefCounting)
             {
-                AllocatedArray runArgs = (AllocatedArray)
-                    ActiveState.cur.DynamicArea.Allocations[runArgsRef];
-                for (int i = 0; i < Config.RunTimeParameters.Length; ++i)
-                    runArgs.Fields[i] = new ConstantString(Config.RunTimeParameters[i]);
+                Logger.l.Notice("using reference counting");
+            }
+
+            // Wrap run arguments in ConstantString objects, and create the method state for Main().
+            ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
+                cur.DynamicArea.DeterminePlacement(false),
+                DefinitionProvider.dp.GetTypeDefinition("System.String"),
+                cur.Configuration.RunTimeParameters.Length,
+                cur.Configuration);
+
+            if (config.RunTimeParameters.Length > 0)
+            {
+                AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
+                for (int i = 0; i < config.RunTimeParameters.Length; ++i)
+                {
+                    runArgs.Fields[i] = new ConstantString(config.RunTimeParameters[i]);
+                }
             }
             MethodState mainState = new MethodState(
-                    asmDef.EntryPoint,
-                    StorageFactory.sf.CreateSingleton(runArgsRef));
+                asmDef.EntryPoint,
+                StorageFactory.sf.CreateSingleton(runArgsRef),
+                cur);
 
             // Initialize main thread.
-            int mainThreadId = ActiveState.cur.ThreadPool.NewThread(
-                    mainState, CreateMainThreadObject(asmDef.EntryPoint));
-            ActiveState.cur.ThreadPool.CurrentThreadId = mainThreadId;
+            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(
+                mainState, CreateMainThreadObject(asmDef.EntryPoint), cur.Configuration);
 
-            ActiveState.cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
+            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
         }
 
         static ObjectReference CreateMainThreadObject(MethodDef mainDefinition)
         {
-
+            var cur = ActiveState.cur;
             // A thread is created as follows:
             // 1. A threadstart delegate is created: newobj ThreadStart::.ctor(Object, IntPtr),
             //    the first argument being null, the second being a function pointer to the
@@ -128,17 +126,20 @@ namespace MMC
 
             // 1
             MethodPointer mainMethodPtr = new MethodPointer(mainDefinition);
-            ObjectReference mainMethodDelegate = ActiveState.cur.DynamicArea.AllocateDelegate(
-                    ActiveState.cur.DynamicArea.DeterminePlacement(false),
+            ObjectReference mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
+                    cur.DynamicArea.DeterminePlacement(false),
                     ObjectReference.Null,
-                    mainMethodPtr);
+                    mainMethodPtr,
+                    cur.Configuration);
 
             // 2
-            ObjectReference threadObjectRef = ActiveState.cur.DynamicArea.AllocateObject(
-                    ActiveState.cur.DynamicArea.DeterminePlacement(false),
-                    DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"));
+            ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
+                    cur.DynamicArea.DeterminePlacement(false),
+                    DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"),
+                    cur.Configuration);
+
             AllocatedObject threadObject =
-                ActiveState.cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
+                cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
             // 2b
             // Note from corlib Thread.cs sources:
@@ -149,13 +150,14 @@ namespace MMC
             if (synch_lockField != null)
             {
                 // Simply skip if not found.
-                ObjectReference newObjectRef = ActiveState.cur.DynamicArea.AllocateObject(
-                        ActiveState.cur.DynamicArea.DeterminePlacement(false),
-                        DefinitionProvider.dp.GetTypeDefinition("System.Object"));
+                ObjectReference newObjectRef = cur.DynamicArea.AllocateObject(
+                    cur.DynamicArea.DeterminePlacement(false),
+                    DefinitionProvider.dp.GetTypeDefinition("System.Object"),
+                    cur.Configuration);
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
                 // TODO: HV for maintaining the parents references in the incremental heap visitor
-                //ActiveState.cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
-                ParentWatcher.AddParentToChild(threadObjectRef, newObjectRef);
+                //cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
+                ParentWatcher.AddParentToChild(threadObjectRef, newObjectRef, cur.Configuration.MemoisedGC);
             }
             else
             {
@@ -170,8 +172,8 @@ namespace MMC
             {
                 threadObject.Fields[(int)threadstartField.FieldOffset] = mainMethodDelegate;
                 // TODO: HV 
-                //ActiveState.cur.DynamicArea.Allocations[mainMethodDelegate].Parents.Add(threadObjectRef);
-                ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate);
+                //cur.DynamicArea.Allocations[mainMethodDelegate].Parents.Add(threadObjectRef);
+                ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC);
             }
             else
                 Logger.l.Warning("No thread field found for storing Main delegate!");

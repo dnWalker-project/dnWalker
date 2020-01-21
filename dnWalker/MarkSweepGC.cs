@@ -157,6 +157,7 @@ namespace MMC.State
         public int Sweep()
         {
             int retval = 0;
+            // var cur = ActiveState.cur;
             AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
             for (int i = 0; i < m_alloc.Length; ++i)
             {
@@ -166,7 +167,7 @@ namespace MMC.State
                     // If marked, unmark (for next run), else delete.
                     if (ida.HeapAttribute == AllocatedObject.UNMARKED && !ida.Pinned)
                     {
-                        ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1));
+                        ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), ActiveState.cur);
                         ActiveState.cur.DynamicArea.DisposeLocation(i);
                         ++retval;
                     }

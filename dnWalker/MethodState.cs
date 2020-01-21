@@ -49,14 +49,13 @@ namespace MMC.State
         Instruction m_pc;
         //	Instruction m_finallyTarget;
 
-
-        public MethodState DeepCopy()
+        public MethodState DeepCopy(ExplicitActiveState cur)
         {
             DataElementList copiedArgs = m_inArguments.StorageCopy() as DataElementList;
             DataElementList copiedLocals = m_locals.StorageCopy() as DataElementList;
             DataElementStack copiedStack = m_evalStack.StorageCopy() as DataElementStack;
 
-            MethodState copy = new MethodState(m_methodDefinition, copiedArgs, copiedLocals, copiedStack);
+            MethodState copy = new MethodState(m_methodDefinition, copiedArgs, copiedLocals, copiedStack, cur);
             copy.m_onDipose = this.m_onDipose.Clone() as MethodStateCallback;
             return copy;
         }
@@ -314,7 +313,7 @@ namespace MMC.State
             }
         }
 
-        internal MethodState(MethodDef meth, DataElementList pars, DataElementList locals, DataElementStack evalstack)
+        internal MethodState(MethodDef meth, DataElementList pars, DataElementList locals, DataElementStack evalstack, ExplicitActiveState cur)
         {
             m_isDirty = true;
             m_methodDefinition = meth;
@@ -325,11 +324,11 @@ namespace MMC.State
             m_pc = meth.Body.Instructions[0]; // safe; body always contains 'ret'.
             m_isExceptionSource = false;
 
-            ThreadObjectWatcher.IncrementAll(ActiveState.cur.ThreadPool.CurrentThreadId, pars);
+            ThreadObjectWatcher.IncrementAll(cur.ThreadPool.CurrentThreadId, pars, cur.Configuration);
         }
 
-        public MethodState(MethodDef meth, DataElementList pars)
-            : this(meth, pars, null, null)
+        public MethodState(MethodDef meth, DataElementList pars, ExplicitActiveState cur)
+            : this(meth, pars, null, null, cur)
         {
             InitStructures();
         }

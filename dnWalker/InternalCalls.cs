@@ -190,11 +190,11 @@ namespace MMC.ICall {
 			AllocatedArray sourceArr = ActiveState.cur.DynamicArea.Allocations[source] as AllocatedArray;
 			AllocatedArray destArr = ActiveState.cur.DynamicArea.Allocations[dest] as AllocatedArray;
 
-			ParentWatcher.RemoveParentFromAllChilds(dest);
+			ParentWatcher.RemoveParentFromAllChilds(dest, ActiveState.cur);
 
 			for (int i = 0; i < length; i++, destIdx++, sourceIdx++) 
 				destArr.Fields[destIdx] = sourceArr.Fields[sourceIdx];
-			ParentWatcher.AddParentToAllChilds(dest);
+			ParentWatcher.AddParentToAllChilds(dest, ActiveState.cur);
 
 			ActiveState.cur.EvalStack.Push(new Int4(1));
 		}
@@ -351,7 +351,8 @@ namespace MMC.ICall {
         {
             ObjectReference threadObjectRef = ActiveState.cur.DynamicArea.AllocateObject(
                     ActiveState.cur.DynamicArea.DeterminePlacement(false),
-                    methDef.DeclaringType);
+                    methDef.DeclaringType,
+                    ActiveState.cur.Configuration);
             AllocatedObject threadObject =
                 ActiveState.cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
@@ -369,9 +370,9 @@ namespace MMC.ICall {
 				delPars = StorageFactory.sf.CreateList(1);
 				delPars[0] = del.Object;
 			}
-			MethodState newThreadState = new MethodState(del.Method.Value, delPars);
+			MethodState newThreadState = new MethodState(del.Method.Value, delPars, ActiveState.cur);
 
-            int newThreadId = ActiveState.cur.ThreadPool.NewThread(newThreadState, threadObjectRef);// (ObjectReference)args[0]);
+            int newThreadId = ActiveState.cur.ThreadPool.NewThread(newThreadState, threadObjectRef, ActiveState.cur.Configuration);// (ObjectReference)args[0]);
 
             // Push ID on stack as an IntPointer.
             ActiveState.cur.EvalStack.Push(threadObjectRef);// new IntPointer(newThreadId));

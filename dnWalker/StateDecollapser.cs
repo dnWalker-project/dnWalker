@@ -40,27 +40,28 @@ namespace MMC.State {
 
 		public void RestoreState(CollapsedStateDelta delta) {
 
-			// We restore the state in the following order:
-			//   - Restore allocations.
-			//   - Delete allocations.
-			//   - Restore classes.
-			//   - Restore call stacks.	
-			//   - Reset thread states.
+            // We restore the state in the following order:
+            //   - Restore allocations.
+            //   - Delete allocations.
+            //   - Restore classes.
+            //   - Restore call stacks.	
+            //   - Reset thread states.
+            var cur = ActiveState.cur;
 
-
-			for (ISparseElement d = delta.Allocations; d != null; d = d.Next) {
+            for (ISparseElement d = delta.Allocations; d != null; d = d.Next) {
 				int pool_index = d.DeltaVal;
 				int i = d.Index;
 
 				if (pool_index == deleted) {
-					ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1));
-					ActiveState.cur.DynamicArea.DisposeLocation(i);
+                    
+                    ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), cur);
+					cur.DynamicArea.DisposeLocation(i);
 				} else if (pool_index != not_set) {
 					/// The removal of childs is done by the RestoreAllocation method
 					///
 					/// TODO: should be cleaned up, and moves here
 					RestoreAllocation(i, pool_index);
-					ParentWatcher.AddParentToAllChilds(new ObjectReference(i + 1));
+					ParentWatcher.AddParentToAllChilds(new ObjectReference(i + 1), cur);
 				}
 			}
 
@@ -72,12 +73,12 @@ namespace MMC.State {
 				// so a class may be "unloaded" here.
 				if (pool_index != not_set && pool_index != deleted) {
 					AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(i);
-					ThreadObjectWatcher.DecrementAll(ac.Fields);
+					ThreadObjectWatcher.DecrementAll(ac.Fields, cur.Configuration);
 					RestoreClass(i, pool_index);
 					ThreadObjectWatcher.IncrementAll(ac.Fields);
 				} else if (pool_index == deleted) {
 					AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(i);
-					ThreadObjectWatcher.DecrementAll(ac.Fields);
+					ThreadObjectWatcher.DecrementAll(ac.Fields, cur.Configuration);
 					ActiveState.cur.StaticArea.DeleteClassAtLocation(i);
 				}
 			}
@@ -138,7 +139,7 @@ namespace MMC.State {
 			AllocatedObject obj;
 
 			if (alloc == null) {
-				obj = new AllocatedObject(type);
+				obj = new AllocatedObject(type, ActiveState.cur.Configuration);
 			} else {
 				obj = (AllocatedObject)alloc;
 				ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), obj.Fields);
@@ -162,7 +163,7 @@ namespace MMC.State {
 
 			DataElementList newFields = m_pool.GetDataElementList(ca[ArrayPartsOffsets.Elements]);
 			int array_length = newFields.Length;
-			AllocatedArray arr = (alloc == null) ? new AllocatedArray(type, array_length) : (AllocatedArray)alloc;
+			AllocatedArray arr = (alloc == null) ? new AllocatedArray(type, array_length, ActiveState.cur.Configuration) : (AllocatedArray)alloc;
 
 			// Overwrite the elements.
 			ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), arr.Fields);
@@ -171,17 +172,18 @@ namespace MMC.State {
 		}
 
 		DynamicAllocation RestoreDelegate(int alloc_id, WrappedIntArray cd) {
-			ObjectReference obj_ref = (ObjectReference)m_pool.GetElement(cd[DelegatePartsOffsets.Object]);
+            var cur = ActiveState.cur;
+            ObjectReference obj_ref = (ObjectReference)m_pool.GetElement(cd[DelegatePartsOffsets.Object]);
 			MethodPointer meth_ptr = (MethodPointer)m_pool.GetElement(cd[DelegatePartsOffsets.MethodPointer]);
-			DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[alloc_id];
+			DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
 
 			if (alloc != null) {
 				AllocatedDelegate ad = (AllocatedDelegate)alloc;
-				ParentWatcher.RemoveParentFromChild(new ObjectReference(alloc_id + 1), ad.Object);
+				ParentWatcher.RemoveParentFromChild(new ObjectReference(alloc_id + 1), ad.Object, cur.Configuration.MemoisedGC);
 				ad.Method = meth_ptr;
 				ad.Object = obj_ref;
 			} else {
-				alloc = new AllocatedDelegate(obj_ref, meth_ptr);
+				alloc = new AllocatedDelegate(obj_ref, meth_ptr, cur.Configuration);
 			}
 
 			return alloc;
@@ -230,45 +232,50 @@ namespace MMC.State {
 				RestoreCallStack(thread_id, collapsed_trd[ThreadPartOffsets.CallStack]);
 		}
 
-		void RestoreCallStack(int thread_id, int pool_index) {
+        void RestoreCallStack(int thread_id, int pool_index)
+        {
+            var cur = ActiveState.cur;
+            WrappedIntArray collapsed_frames = m_pool.GetList(pool_index);
 
-			WrappedIntArray collapsed_frames = m_pool.GetList(pool_index);
-
-			/*
+            /*
 			 * This was originally done */
-			/*			ActiveState.cur.ThreadPool.Threads[thread_id].CallStack.StackPointer =
+            /*			ActiveState.cur.ThreadPool.Threads[thread_id].CallStack.StackPointer =
 							collapsed_frames.Length;*/
 
-			/* 
+            /* 
 			 * Compensate when the collapsed frame is smaller than the stackpointer. We need to decrements the root objects
 			 * count here */
-			int stackptr = ActiveState.cur.ThreadPool.Threads[thread_id].CallStack.StackPointer;
-			if (collapsed_frames.Length < stackptr) {
-				for (int i = collapsed_frames.Length; i < stackptr; i++) {
-					MethodState method = ActiveState.cur.ThreadPool.Threads[thread_id].CallStack[i];
-					ThreadObjectWatcher.DecrementAll(thread_id, method.Locals);
-					ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments);
-					ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack);
-				}
-			}
+            int stackptr = cur.ThreadPool.Threads[thread_id].CallStack.StackPointer;
+            if (collapsed_frames.Length < stackptr)
+            {
+                for (int i = collapsed_frames.Length; i < stackptr; i++)
+                {
+                    MethodState method = cur.ThreadPool.Threads[thread_id].CallStack[i];
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Locals, cur.Configuration);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments, cur.Configuration);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack, cur.Configuration);
+                }
+            }
 
-			for (int i = 0; i < collapsed_frames.Length; ++i)
-				if (collapsed_frames[i] != not_set)
-					RestoreMethod(thread_id, i, collapsed_frames[i]);
-			ActiveState.cur.ThreadPool.Threads[thread_id].CallStack.StackPointer =
-							collapsed_frames.Length;
+            for (int i = 0; i < collapsed_frames.Length; ++i)
+            {
+                if (collapsed_frames[i] != not_set)
+                {
+                    RestoreMethod(thread_id, i, collapsed_frames[i]);
+                }
+            }
+            cur.ThreadPool.Threads[thread_id].CallStack.StackPointer = collapsed_frames.Length;
+        }
 
-
-		}
-
-		void RestoreMethod(int thread_id, int method_id, int pool_index) {
-
-			WrappedIntArray cm = m_pool.GetList(pool_index);
+		void RestoreMethod(int thread_id, int method_id, int pool_index)
+        {
+            var cur = ActiveState.cur;
+            WrappedIntArray cm = m_pool.GetList(pool_index);
 
 			// Check if we can re-use the value on the current stack. If we only
 			// have a partially collapsed method here, this is mandatory, not just
 			// an optimalization.
-			MethodState method = ActiveState.cur.ThreadPool.Threads[thread_id].CallStack[method_id];
+			MethodState method = cur.ThreadPool.Threads[thread_id].CallStack[method_id];
 
 			MethodDefinition meth_def = (MethodDefinition)m_pool.GetObject(cm[MethodPartsOffsets.Definition]);
 			/*
@@ -278,10 +285,12 @@ namespace MMC.State {
 			 * 
 			 * However, now we have to compensate that during counting object references
 			 */
-			bool stillOnStack = method_id < ActiveState.cur.ThreadPool.Threads[thread_id].CallStack.StackPointer;
+			bool stillOnStack = method_id < cur.ThreadPool.Threads[thread_id].CallStack.StackPointer;
 
-			if (method == null)
-				method = new MethodState(null, null, null, null);
+            if (method == null)
+            {
+                method = new MethodState(null, null, null, null, cur);
+            }
 
 			bool sameMethod = meth_def == method.Definition;
 
@@ -291,68 +300,85 @@ namespace MMC.State {
 			method.OnDispose = m_pool.GetObject(cm[MethodPartsOffsets.OnDispose]) as MethodStateCallback;
 			method.Definition = meth_def;
 
-			if (cm[MethodPartsOffsets.Arguments] != not_set) {
+			if (cm[MethodPartsOffsets.Arguments] != not_set)
+            {
 				DataElementList args = m_pool.GetDataElementList(cm[MethodPartsOffsets.Arguments]);
 
-				/*
+                /*
 				 * When the lengths match, it is likely that the lists are similar 
 				 * and therefore we can use our difference updater in this
 				 * scenario, which is calls childs' parent-objectreferencebag less 
 				 * often */
-				if (args.Length == method.Arguments.Length && stillOnStack)
-					ThreadObjectWatcher.UpdateDifference(thread_id, method.Arguments, args);
-				else if (stillOnStack) {
-					ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments);
-					ThreadObjectWatcher.IncrementAll(thread_id, args);
-				} else {
-					ThreadObjectWatcher.IncrementAll(thread_id, args);
-				}
+                if (args.Length == method.Arguments.Length && stillOnStack)
+                {
+                    ThreadObjectWatcher.UpdateDifference(thread_id, method.Arguments, args, cur.Configuration);
+                }
+                else if (stillOnStack)
+                {
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments, cur.Configuration);
+                    ThreadObjectWatcher.IncrementAll(thread_id, args, cur.Configuration);
+                }
+                else
+                {
+                    ThreadObjectWatcher.IncrementAll(thread_id, args, cur.Configuration);
+                }
 
 				method.Arguments = args;
+            }
 
-			}
-
-			if (cm[MethodPartsOffsets.Locals] != not_set) {
+			if (cm[MethodPartsOffsets.Locals] != not_set)
+            {
 				DataElementList locals = m_pool.GetDataElementList(cm[MethodPartsOffsets.Locals]);
 
-				/*
+                /*
 				 * When the lengths match, it is likely that the lists are similar 
 				 * and therefore we can use our difference updater in this
 				 * scenario, which is calls childs' parent-objectreferencebag less 
 				 * often */
-				if (locals.Length == method.Locals.Length && stillOnStack)
-					ThreadObjectWatcher.UpdateDifference(thread_id, method.Locals, locals);
-				else if (stillOnStack) {
-					ThreadObjectWatcher.DecrementAll(thread_id, method.Locals);
-					ThreadObjectWatcher.IncrementAll(thread_id, locals);
-				} else {
-					ThreadObjectWatcher.IncrementAll(thread_id, locals);
-				}
+                if (locals.Length == method.Locals.Length && stillOnStack)
+                {
+                    ThreadObjectWatcher.UpdateDifference(thread_id, method.Locals, locals, cur.Configuration);
+                }
+                else if (stillOnStack)
+                {
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Locals, cur.Configuration);
+                    ThreadObjectWatcher.IncrementAll(thread_id, locals, cur.Configuration);
+                }
+                else
+                {
+                    ThreadObjectWatcher.IncrementAll(thread_id, locals, cur.Configuration);
+                }
 
 				method.Locals = locals;
 			}
 
-			if (cm[MethodPartsOffsets.EvalStack] != not_set) {
+			if (cm[MethodPartsOffsets.EvalStack] != not_set)
+            {
 				DataElementStack stack = m_pool.GetDataElementStack(cm[MethodPartsOffsets.EvalStack]);
 
-				/*
+                /*
 				 * When the lengths match, it is likely that the lists are similar 
 				 * and therefore we can use our difference updater in this
 				 * scenario, with as effect that the childs' parent-objectreferencebag are 
 				 * calle less often */
-				if (stack.Length == method.EvalStack.Length && stillOnStack)
-					ThreadObjectWatcher.UpdateDifference(thread_id, method.EvalStack, stack);
-				else if (stillOnStack) {
-					ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack);
-					ThreadObjectWatcher.IncrementAll(thread_id, stack);
-				} else {
-					ThreadObjectWatcher.IncrementAll(thread_id, stack);
-				}
+                if (stack.Length == method.EvalStack.Length && stillOnStack)
+                {
+                    ThreadObjectWatcher.UpdateDifference(thread_id, method.EvalStack, stack, cur.Configuration);
+                }
+                else if (stillOnStack)
+                {
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack, cur.Configuration);
+                    ThreadObjectWatcher.IncrementAll(thread_id, stack, cur.Configuration);
+                }
+                else
+                {
+                    ThreadObjectWatcher.IncrementAll(thread_id, stack, cur.Configuration);
+                }
 
 				method.EvalStack = stack;
 			}
 
-			ActiveState.cur.ThreadPool.Threads[thread_id].CallStack[method_id] = method;
+			cur.ThreadPool.Threads[thread_id].CallStack[method_id] = method;
 		}
 	}
 }

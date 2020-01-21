@@ -180,14 +180,14 @@ namespace MMC.State {
 			}
 		}
 
-		public AllocatedClass(TypeDefinition typeDef)
-			: base(typeDef) {
-
-			m_fields = StorageFactory.sf.CreateList(typeDef.Fields.Count);
-			m_initData = new InitDataContainer();
-			m_isDirty = true;
-			ClearFields();
-		}
+        public AllocatedClass(TypeDefinition typeDef, IConfig config)
+            : base(typeDef, config)
+        {
+            m_fields = StorageFactory.sf.CreateList(typeDef.Fields.Count);
+            m_initData = new InitDataContainer();
+            m_isDirty = true;
+            ClearFields();
+        }
 
 		private class InitDataContainer : IInitData, IStorable {
 

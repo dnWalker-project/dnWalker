@@ -39,7 +39,7 @@ namespace MMC.InstructionExec {
 
 			get {
 				if (instance == null) {
-					if (Config.UseInstructionCache)
+					if (Config.Instance.UseInstructionCache)
 						instance = new HashedIEC();
 					else
 						instance = new NoStorageIEC();

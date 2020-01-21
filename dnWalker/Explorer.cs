@@ -78,14 +78,17 @@ namespace MMC {
 		IGarbageCollector m_gc;
 		Timer m_explorationTimer;
 		Timer m_memoryTimer;
+        private readonly IConfig _config;
 
 		LinkedList<CollapsedState> m_atomicStates;
 
-		public Explorer() {
-			// DFS stack
-			m_dfs = new Stack<SchedulingData>();
+		public Explorer(IConfig config)
+        {
+            _config = config;
+            // DFS stack
+            m_dfs = new Stack<SchedulingData>();
 			m_stateConvertor = new Collapser();
-			
+
 			// hashtable
 			m_stateStorage = new FastHashtable<CollapsedState, int>(20);
 
@@ -103,42 +106,42 @@ namespace MMC {
 			Deadlocked += new DeadlockEventHandler(el.LogDeadlock);
 			ThreadPicked += new PickThreadEventHandle(el.LogPickedThread);
 			ExplorationHalted += new ExplorationHaltEventHandle(el.ExplorationHalted);
-			
+
 			if (DotWriter.IsEnabled()) {
 				StateConstructed += new StateEventHandler(el.GraphNewState);
 				StateRevisited += new StateEventHandler(el.GraphRevisitState);
 				Backtracked += new BacktrackEventHandler(el.GraphBacktrack);
 			}
 
-			if (Config.UseStatefulDynamicPOR) {
-				m_dpor = new StatefulDynamicPOR(m_dfs);
+			if (config.UseStatefulDynamicPOR) {
+				m_dpor = new StatefulDynamicPOR(m_dfs, config);
 				Backtracked += new BacktrackEventHandler(m_dpor.Backtracked);
 				StateConstructed += new StateEventHandler(m_dpor.OnNewState);
 				StateRevisited += new StateEventHandler(m_dpor.OnSeenState);
 				ThreadPicked += new PickThreadEventHandle(m_dpor.ThreadPicked);
 			}
 
-			if (Config.UseObjectEscapePOR) {
+			if (config.UseObjectEscapePOR) {
 				m_spor = new ObjectEscapePOR();
 				BacktrackStart += new BacktrackEventHandler(m_spor.CheckStoreThreadSharingData);
 				StateConstructed += new StateEventHandler(m_spor.StoreThreadSharingData);
 				BacktrackStop += new BacktrackEventHandler(m_spor.RestoreThreadSharingData);
 			}
 
-			if (!Double.IsInfinity(Config.MaxExploreInMinutes)) {
+			if (!double.IsInfinity(config.MaxExploreInMinutes)) {
 				m_explorationTimer = new Timer();
 				m_explorationTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-				m_explorationTimer.Interval = Config.MaxExploreInMinutes * 60 * 1000;
+				m_explorationTimer.Interval = config.MaxExploreInMinutes * 60 * 1000;
 				m_explorationTimer.Enabled = true;
 			}
 
-			if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte)) {
+			if (!double.IsInfinity(config.OptimizeStorageAtMegabyte)) {
 				m_atomicStates = new LinkedList<CollapsedState>();
 				StateConstructed += new StateEventHandler(this.CheckAtomicOnNewState);
 				Backtracked += new BacktrackEventHandler(this.CheckAtomicOnBacktrack);
 			}
 
-			if (Config.OneTraceAndStop)
+			if (config.OneTraceAndStop)
 				Backtracked += new BacktrackEventHandler(this.OnBacktrackAndStop);
 
 			m_memoryTimer = new Timer();
@@ -146,15 +149,15 @@ namespace MMC {
 			m_memoryTimer.Interval = 5 * 1000;
 			m_memoryTimer.Enabled = true;
 
-
 			/*
 			 * Pick out the garbage collector. Note that only memoised GC and
 			 * Mark & sweep are available. Reference counting is broken. */
-			m_gc = (Config.MemoisedGC) ?
+			m_gc = (config.MemoisedGC) ?
 								   IncrementalHeapVisitor.ihv as IGarbageCollector :
 								   MarkAndSweepGC.msgc as IGarbageCollector;
-
 		}
+
+        public IConfig Config => _config;
 
 		private void OnTimedEvent(object source, ElapsedEventArgs e) {
 			Logger.l.Notice("Ran out of time");
@@ -189,7 +192,7 @@ namespace MMC {
 				/*
 				 * Execute instructions. 
 				 */
-				if (Config.UseObjectEscapePOR)
+				if (_config.UseObjectEscapePOR)
 					noErrors = ExecutePorStep(threadId);
 				else
 					noErrors = ExecuteStep(threadId, out dummyBool);
@@ -203,7 +206,7 @@ namespace MMC {
 						Logger.l.Message("Assertion violation detected");
 					logAssert = true;
 
-					if (Config.StopOnError)
+					if (_config.StopOnError)
 						break;
 				} else if (CheckDeadlock()) { // deadlock found?
 					Statistics.s.Deadlock();
@@ -212,7 +215,7 @@ namespace MMC {
 					logDeadlock = true;
 					noErrors = false;
 
-					if (Config.StopOnError)
+					if (_config.StopOnError)
 						break;
 				}
 
@@ -277,7 +280,7 @@ namespace MMC {
 				Statistics.s.MeasureMemory(memUsed);
 				
 				/// If ex post facto transition merging is enabled...
-				if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > Config.OptimizeStorageAtMegabyte) {
+				if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > _config.OptimizeStorageAtMegabyte) {
 					int count = m_atomicStates.Count;
 
 					foreach (CollapsedState cs in m_atomicStates)
@@ -291,7 +294,7 @@ namespace MMC {
 				}
 
 				/// If memory limiting is enabled...
-				if (!Double.IsInfinity(Config.MemoryLimit) && (memUsed / 1024 / 1024) > Config.MemoryLimit) {
+				if (!Double.IsInfinity(_config.MemoryLimit) && (memUsed / 1024 / 1024) > _config.MemoryLimit) {
 					Logger.l.Notice("Ran out of memory");
 					this.m_continue = false;
 				}
@@ -410,7 +413,7 @@ namespace MMC {
 				 * need to ensure stateful DPOR correctness
 				 */
 				if (canForward
-						&& Config.UseStatefulDynamicPOR
+						&& _config.UseStatefulDynamicPOR
 						&& !currentInstrExec.IsMultiThreadSafe(cur)
 						&& cur.ThreadPool.RunnableThreadCount == 1) {
 					MemoryLocation ml = cur.NextAccess(threadId);
@@ -431,7 +434,7 @@ namespace MMC {
 			bool noErrors;
 			bool threadTerm;
 
-			if (Config.OneTraceAndStop)
+			if (_config.OneTraceAndStop)
 				PrintTransition(threadId);
 
 			do {
@@ -470,12 +473,12 @@ namespace MMC {
 		}
 
 		public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd) {
-			if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte) && ActiveState.cur.ThreadPool.RunnableThreadCount == 1)
+			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && ActiveState.cur.ThreadPool.RunnableThreadCount == 1)
 				m_atomicStates.AddLast(collapsedCurrent);
 		}
 
 		public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent) {
-			if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte)) {
+			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte)) {
 				// check if singleton transition
 				if (parent.Working.Count == 0 && parent.Done.Count == 1)
 					m_atomicStates.AddLast(parent.State);

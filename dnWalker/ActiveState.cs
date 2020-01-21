@@ -17,91 +17,102 @@
 
 namespace MMC.State
 {
-
-    using System.Collections;
     using MMC.Data;
     using MMC.Util;
-    using MMC.ICall;
     using MMC.InstructionExec;
 
+    /// <summary>
     /// Singleton accessor class.
+    /// </summary>
     static class ActiveState
     {
-
-        /// \brief The currect IActiveState. 
-        ///
+        /// <summary>
         /// A simple public field suffices here, no need to define a property.
-        public static readonly ExplicitActiveState cur = new ExplicitActiveState();
+        /// </summary>
+        public static readonly ExplicitActiveState cur = new ExplicitActiveState(Config.Instance);
     }
 
+    /// <summary>
     /// An implementation of the active state of the virtual machine.
+    /// </summary>
     class ExplicitActiveState : IStorageVisitable, ICleanable
     {
-
+        private IConfig _config;
         DynamicArea m_dyn;
         IStaticArea m_stat;
         ThreadPool m_tp;
 
+        /// <summary>
         /// The allocation heap, i.e. the dynamic part of the state.
+        /// </summary>
         public DynamicArea DynamicArea
         {
-
             get { return m_dyn; }
         }
 
+        /// <summary>
         /// Loaded classes reside here, i.e. the static part.
+        /// </summary>
         public IStaticArea StaticArea
         {
-
             get { return m_stat; }
         }
 
+        /// <summary>
         /// Running sub-processes are kept in here.
+        /// </summary>
         public ThreadPool ThreadPool
         {
-
             get { return m_tp; }
         }
 
+        /// <summary>
         /// Currently running thread.
+        /// </summary>
         public ThreadState CurrentThread
         {
-
             get { return m_tp.CurrentThread; }
         }
 
+        /// <summary>
         /// Current location in the CIL image.
+        /// </summary>
         public CILLocation CurrentLocation
         {
-
             get { return CurrentThread.CurrentLocation; }
         }
 
+        /// <summary>
         /// ID of currently running thread.
+        /// </summary>
         public int me
         {
-
             get { return m_tp.CurrentThreadId; }
         }
 
+        /// <summary>
         /// Callstack of currently running thread.
+        /// </summary>
         public CallStack CallStack
         {
-
             get { return m_tp.CurrentThread.CallStack; }
         }
 
+        /// <summary>
         /// Top of callstack of currently running thread.
+        /// </summary>
         public MethodState CurrentMethod
         {
-
             get { return CurrentThread.CurrentMethod; }
         }
 
+        public IConfig Configuration => _config;
+
+        /// <summary>
         /// Evaluation stack of top of callstack of currently running thread.
+        /// </summary>
         public DataElementStack EvalStack
         {
-
             get
             {
                 DataElementStack retval = null;
@@ -111,12 +122,11 @@ namespace MMC.State
             }
         }
 
-        /// \brief Determine if we are "running" in the assembly to be checked.
-        ///
-        /// This means the current thread is currently executing code that is
-        /// contained in the main assembly.
-        ///
-        /// \return True iff code from the main assembly is being executed.
+        /// <summary>
+        /// Determine if we are "running" in the assembly to be checked.
+        /// </summary>
+        /// <remarks>This means the current thread is currently executing code that is contained in the main assembly.</remarks>
+        /// <returns>True iff code from the main assembly is being executed.</returns>
         public bool IsAssemblyLocalState()
         {
             return CurrentMethod != null &&
@@ -161,13 +171,15 @@ namespace MMC.State
             return instrExec.Accessed(threadId, cur);
         }
 
+        /// <summary>
         /// Convert the active state to a somewhat large string representation.
-        ///
+        /// </summary>
+        /// <remarks>
         /// Do not over-use this method. It is quite slow to print each and every
         /// explored state for example. For small examples this is fine, but for
         /// >100.000 states it turns out ~80% of the time it's building strings.
-        ///
-        /// \return A string representation of the active state.
+        /// </remarks>
+        /// <returns>A string representation of the active state.</returns>
         public override string ToString()
         {
             return string.Format(@"------------------------- DYNAMIC AREA -------------------------
@@ -179,16 +191,17 @@ namespace MMC.State
 
         public void Reset()
         {
-            m_dyn = new DynamicArea();
-            m_stat = new StaticArea();
+            m_dyn = new DynamicArea(Configuration);
+            m_stat = new StaticArea(Configuration);
             m_tp = new ThreadPool();
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExplicitActiveState()
+        public ExplicitActiveState(IConfig config)
         {
+            _config = config;
             Reset();
         }
     }

@@ -127,7 +127,7 @@ namespace MMC.State {
 		// Create new threads.
 		////////////////////////////////////////////////////////////////////
 
-		public int NewThread(MethodState entry, ObjectReference threadObj) {
+		public int NewThread(MethodState entry, ObjectReference threadObj, IConfig config) {
 
 			int thread_id = m_tl.Length;
 			ThreadState newThread = new ThreadState(threadObj, thread_id);
@@ -137,8 +137,8 @@ namespace MMC.State {
 
 			// these arguments were added by the parent thread, but they should be 
 			// marked from the child thread for heap analysis
-			ThreadObjectWatcher.DecrementAll(entry.Arguments);
-			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments);
+			ThreadObjectWatcher.DecrementAll(entry.Arguments, config);
+			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments, config);
 
 			Explorer.DoSharingAnalysis = true;
 

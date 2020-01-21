@@ -164,7 +164,7 @@ namespace MMC.State {
             return sb.ToString();
         }
 
-		public AllocatedObject(ITypeDefOrRef typeDef) : base(typeDef) { }
+		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config) { }
 	}
 	
 	/// VY thinks that eventually an array should not be a first-class citizen,
@@ -186,18 +186,19 @@ namespace MMC.State {
 					Type.Name, Fields.Length, Fields.ToString());
 		}
 
-		/*
+        /*
 		public override void Accept(IStorageVisitor visitor) {
 
 			visitor.VisitAllocatedObject(this);
 		}*/
 
-		public AllocatedArray(ITypeDefOrRef arrayType, int length)
-			: base(arrayType) {
-			this.Fields = new DataElementList(length);
-		}
+        public AllocatedArray(ITypeDefOrRef arrayType, int length, IConfig config)
+            : base(arrayType, config)
+        {
+            this.Fields = new DataElementList(length);
+        }
 	}
-	
+
 	/// VY thinks that delegates should not be first class citizens
 	/// They should be just an object of a particular delegate type
 	class AllocatedDelegate : DynamicAllocation {
@@ -256,7 +257,7 @@ namespace MMC.State {
 			return "delegate:" + m_obj.ToString() + "." + m_ptr.Value.Name;
 		}
 
-		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr) : base(_delegateTypeLazy.Value)
+		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(_delegateTypeLazy.Value, config)
         {
 			m_obj = obj;
 			m_ptr = ptr;

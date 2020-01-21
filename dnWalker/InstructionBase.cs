@@ -215,19 +215,20 @@ namespace MMC.InstructionExec
                     null, null, new object[] { instr, operand, attr });
         }
 
-        public void RaiseException(String type)
+        public void RaiseException(string type, ExplicitActiveState cur)
         {
             var exceptionType = DefinitionProvider.dp.GetTypeDefinition(type);
 
-            ObjectReference exceptionRef = ActiveState.cur.DynamicArea.AllocateObject(
-                ActiveState.cur.DynamicArea.DeterminePlacement(),
-                exceptionType);
+            ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
+                cur.DynamicArea.DeterminePlacement(),
+                exceptionType,
+                cur.Configuration);
 
-            ActiveState.cur.CurrentThread.ExceptionReference = exceptionRef;
-            ActiveState.cur.CurrentMethod.IsExceptionSource = true;
+            cur.CurrentThread.ExceptionReference = exceptionRef;
+            cur.CurrentMethod.IsExceptionSource = true;
 
             // Constructor calls should leave object reference on the stack.
-            ActiveState.cur.EvalStack.Push(exceptionRef);
+            cur.EvalStack.Push(exceptionRef);
 
             /*
 			 * lookup the constructor with no arguments
@@ -243,13 +244,12 @@ namespace MMC.InstructionExec
             }
 
             // Call the constructor.
-            MethodState called = new MethodState(noArgsCtor, StorageFactory.sf.CreateSingleton(exceptionRef));
-            ActiveState.cur.CallStack.Push(called);
+            MethodState called = new MethodState(noArgsCtor, StorageFactory.sf.CreateSingleton(exceptionRef), cur);
+            cur.CallStack.Push(called);
         }
 
         public virtual bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
-
             // Note that the current implementation of safe vs. unsafe
             // instruction is NOT enough to guarentee termination of even very
             // simple single-threaded programs like 'while (true) ;'.  The

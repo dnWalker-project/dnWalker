@@ -62,9 +62,10 @@ namespace MMC.State {
 		/// \brief An object that provides IEnumerator objects to iterate over
 		/// the loaded classes.
 		LoadedClassEnumeratorProvider m_enumeratorProvider;
+        private readonly IConfig _config;
 
-		/// List containing all classes.
-		public SparseReferenceList<AllocatedClass> Classes { get { return m_classes; } }
+        /// List containing all classes.
+        public SparseReferenceList<AllocatedClass> Classes { get { return m_classes; } }
 		/// List containing all dirty classes.
 		public IEnumerable LoadedClasses { get { return m_enumeratorProvider; } }
 
@@ -90,7 +91,7 @@ namespace MMC.State {
 			if (retval == null) {
 				retval = m_typeToLocation.Count;
 				m_typeToLocation[typeDef] = retval;
-				AllocatedClass new_class = new AllocatedClass(typeDef);
+				AllocatedClass new_class = new AllocatedClass(typeDef, _config);
 				m_classes[(int)retval] = new_class;
 			}
 			return (int)retval;
@@ -174,12 +175,13 @@ namespace MMC.State {
 				m_classes[lcls].Clean();
 		}
 
-		public StaticArea() {
+		public StaticArea(IConfig config) {
 
 			m_typeToLocation = new Hashtable();
 			m_classes = new SparseReferenceList<AllocatedClass>(); // TODO need to fix this default size in an option
 			m_enumeratorProvider = new LoadedClassEnumeratorProvider(this);
-		}
+            _config = config;
+        }
 
 		private class LoadedClassEnumeratorProvider : IEnumerable {
 

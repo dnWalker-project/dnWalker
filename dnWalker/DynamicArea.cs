@@ -41,8 +41,9 @@ namespace MMC.State {
 		HashSet<ObjectReference> m_pinned;
 		/// First really free slot.
 		int m_freeSlot;
+        private readonly IConfig _config;
 
-		public override string ToString() {
+        public override string ToString() {
 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
@@ -148,41 +149,49 @@ namespace MMC.State {
 		///
 		/// \param objRef Reference to the allocation being pinned down.
 		/// \param pin True iff the object is to be pinned-down.
-		public void SetPinnedAllocation(ObjectReference objRef, bool pin) {
-
-			if (objRef.Location > 0) {
-				DynamicAllocation alloc = m_alloc[objRef];
-				Debug.Assert(alloc != null, "(Un)pinning non-existent allocation " + objRef + ".");
-				if (pin) {
-					Logger.l.Debug("pinning allocation " + objRef + ".");
-					alloc.Pinned = true;
-					m_pinned.Add(objRef);
-					ParentWatcher.AddParentToChild(ParentWatcher.RootObjectReference, objRef);
-				} else {
-					Debug.Assert(m_pinned.Contains(objRef), "Unpinning unpinned " + objRef + ". (chk 1)");
-					Debug.Assert(alloc.Pinned, "Unpinning unpinned " + objRef + ". (chk 2)");
-					Logger.l.Debug("unpinning allocation " + objRef + ".");
-					alloc.Pinned = false;
-					if (!alloc.Pinned) {
-						m_pinned.Remove(objRef);
-						ParentWatcher.RemoveParentFromChild(ParentWatcher.RootObjectReference, objRef);
-					}
-				}
-			}
+		public void SetPinnedAllocation(ObjectReference objRef, bool pin)
+        {
+            if (objRef.Location > 0)
+            {
+                DynamicAllocation alloc = m_alloc[objRef];
+                Debug.Assert(alloc != null, "(Un)pinning non-existent allocation " + objRef + ".");
+                if (pin)
+                {
+                    Logger.l.Debug("pinning allocation " + objRef + ".");
+                    alloc.Pinned = true;
+                    m_pinned.Add(objRef);
+                    ParentWatcher.AddParentToChild(ParentWatcher.RootObjectReference, objRef, _config.MemoisedGC);
+                }
+                else
+                {
+                    Debug.Assert(m_pinned.Contains(objRef), "Unpinning unpinned " + objRef + ". (chk 1)");
+                    Debug.Assert(alloc.Pinned, "Unpinning unpinned " + objRef + ". (chk 2)");
+                    Logger.l.Debug("unpinning allocation " + objRef + ".");
+                    alloc.Pinned = false;
+                    if (!alloc.Pinned)
+                    {
+                        m_pinned.Remove(objRef);
+                        ParentWatcher.RemoveParentFromChild(ParentWatcher.RootObjectReference, objRef, _config.MemoisedGC);
+                    }
+                }
+            }
 
 			// TODO, all increments are done at the places there SetPinnedAllocation is called.., it should be different)
 		}
 
-		public DynamicArea() {
+        public DynamicArea(IConfig config)
+        {
+            m_lockManager = new LockManager();
+            m_alloc = new AllocationList();
+            m_pinned = new HashSet<ObjectReference>();
+            m_freeSlot = 0;
+            _config = config;
 
-			m_lockManager = new LockManager();
-			m_alloc = new AllocationList();
-			m_pinned = new HashSet<ObjectReference>();
-			m_freeSlot = 0;
-
-			if (Config.SymmetryReduction)
-				m_placementMapping = new PlacementMapping();
-		}
+            if (config.SymmetryReduction)
+            {
+                m_placementMapping = new PlacementMapping();
+            }
+        }
 
 		// ------------------------- Allocation Related -------------------------
 
@@ -192,9 +201,9 @@ namespace MMC.State {
 		/// \param typeDef The type of the object to create.
 		/// \return A reference to the newly created object.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef) {
+		public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef, IConfig config) {
 
-			AllocatedObject newObj = new AllocatedObject(typeDef);
+			AllocatedObject newObj = new AllocatedObject(typeDef, config);
 			newObj.ClearFields();
 			m_alloc[loc] = newObj;
 			return new ObjectReference(loc + 1);
@@ -207,9 +216,9 @@ namespace MMC.State {
 		/// \param length The length of the array.
 		/// \return A reference to the newly created array.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length) {
-
-			AllocatedArray newArr = new AllocatedArray(typeDef, length);
+		public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length, IConfig config)
+        {
+			AllocatedArray newArr = new AllocatedArray(typeDef, length, config);
 			newArr.ClearFields();
 			m_alloc[loc] = newArr;
 			return new ObjectReference(loc + 1);
@@ -222,54 +231,60 @@ namespace MMC.State {
 		/// \param ptr A pointer to the method to invoke.
 		/// \return A reference to the newly created delegate.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr) {
-
-			AllocatedDelegate newDel = new AllocatedDelegate(obj, ptr);
-			m_alloc[loc] = newDel;
+		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr, IConfig config)
+        {
+			m_alloc[loc] = new AllocatedDelegate(obj, ptr, config);
 			ObjectReference newDelRef = new ObjectReference(loc + 1);
-			ParentWatcher.AddParentToChild(newDelRef, obj);
+			ParentWatcher.AddParentToChild(newDelRef, obj, config.MemoisedGC);
 			return newDelRef;
 		}
 
-		/// Increase the reference count of the referenced allocation.
-		///
-		/// \param obj A reference to the allocation.
-		public void IncRefCount(ObjectReference obj) {
+        /// <summary>
+        /// Increase the reference count of the referenced allocation.
+        /// </summary>
+        /// <param name="obj">A reference to the allocation.</param>
+        public void IncRefCount(ObjectReference obj)
+        {
+            if (obj.Location != 0 && _config.UseRefCounting)
+            {
+                DynamicAllocation alloc = Allocations[obj];
+                Debug.Assert(alloc != null, "allocation of to change ref.count is null");
+                alloc.RefCount++;
+            }
+        }
 
-			if (obj.Location != 0 && Config.UseRefCounting) {
-				DynamicAllocation alloc = Allocations[obj];
-				Debug.Assert(alloc != null, "allocation of to change ref.count is null");
-				alloc.RefCount++;
-			}
-		}
-
-		/// Decrease the reference count of the referenced allocation.
-		///
-		/// If the reference count reaches zero, this deletes the allocation!
-		///
-		/// \param obj A reference to the allocation.
-		public void DecRefCount(ObjectReference obj) {
-
-			if (obj.Location != 0 && Config.UseRefCounting) {
-				DynamicAllocation alloc = Allocations[obj];
-				Debug.Assert(alloc != null, "allocation of to change ref.count is null");
-				alloc.RefCount--;
-				if (alloc.RefCount == 0)
-					DisposeAllocation(obj);
-			}
-		}
+        /// Decrease the reference count of the referenced allocation.
+        ///
+        /// If the reference count reaches zero, this deletes the allocation!
+        ///
+        /// \param obj A reference to the allocation.
+        public void DecRefCount(ObjectReference obj)
+        {
+            if (obj.Location != 0 && _config.UseRefCounting)
+            {
+                DynamicAllocation alloc = Allocations[obj];
+                Debug.Assert(alloc != null, "allocation of to change ref.count is null");
+                alloc.RefCount--;
+                if (alloc.RefCount == 0)
+                    DisposeAllocation(obj);
+            }
+        }
 
 		// ------------------------- Accessors -------------------------
 
+		/// <summary>
 		/// List of all allocation on this heap.
-		public AllocationList Allocations {
-
+		/// </summary>
+		public AllocationList Allocations
+        {
 			get { return m_alloc; }
 		}
 
+		/// <summary>
 		/// Manager class for locking of the allocations.
-		public LockManager LockManager {
-
+		/// </summary>
+		public LockManager LockManager
+        {
 			get { return m_lockManager; }
 		}
 
@@ -349,10 +364,10 @@ namespace MMC.State {
 		/// \return The place to put the allocation.
 		/// \sa PlacementMapping
 		/// \sa FreeSlot
-		public int DeterminePlacement(bool byCil) {
-
+		public int DeterminePlacement(bool byCil)
+        {
 			int retval;
-			if (!Config.SymmetryReduction || !byCil)
+			if (!_config.SymmetryReduction || !byCil)
 				retval = FreeSlot();
 			else
 				retval = m_placementMapping.GetLocation();

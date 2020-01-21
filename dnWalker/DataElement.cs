@@ -1232,19 +1232,20 @@ namespace MMC.Data {
 			}
 		}
 
-		public IDataElement Value {
-			get {
-				AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
-				return ao.Fields[m_index];
-			}
-
-			set {
-				AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
-				ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value);
-				ao.Fields[m_index] = value;
-			}
-		}
-		
+		public IDataElement Value
+        {
+            get
+            {
+                AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
+                return ao.Fields[m_index];
+            }
+            set
+            {
+                AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
+                ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value, ActiveState.cur.Configuration);
+                ao.Fields[m_index] = value;
+            }
+        }
 
 		public bool ToBool() { return !m_objectRef.Equals(ObjectReference.Null); }
 
@@ -1381,27 +1382,30 @@ namespace MMC.Data {
 			return new StaticFieldPointer(m_type, i);
 		}
 
-		public MemoryLocation MemoryLocation {
-			get { return new MemoryLocation(m_index, m_type); }
-		}
-		
+		public MemoryLocation MemoryLocation
+        {
+            get { return new MemoryLocation(m_index, m_type); }
+        }
 
-		public ISubElement Sub(INumericElement a, bool checkOverflow) {
+		public ISubElement Sub(INumericElement a, bool checkOverflow)
+        {
 			throw new System.InvalidOperationException("Sub ptr manipulation not implemented (yet)");
 		}
 
-		public IDataElement Value {
-			get {
-				AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type) as AllocatedClass;
-				return ac.Fields[m_index];
-			}
-
-			set {
-				AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type) as AllocatedClass;
-				ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value);
-				ac.Fields[m_index] = value;
-			}
-		}
+		public IDataElement Value
+        {
+            get
+            {
+                AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type);
+                return ac.Fields[m_index];
+            }
+            set
+            {
+                AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type);
+                ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value, ActiveState.cur.Configuration);
+                ac.Fields[m_index] = value;
+            }
+        }
 
 		public string WrapperName { get { return ""; } }
 

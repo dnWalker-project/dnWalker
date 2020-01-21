@@ -15,112 +15,123 @@
  *
  */
 
-namespace MMC {
+namespace MMC
+{
 
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using MMC.InstructionExec;
-	using MMC.State;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using MMC.InstructionExec;
+    using MMC.State;
 
-	class ExplorationLogger  {
+    class ExplorationLogger
+    {
 
-		const int newstate_progress_delta = 25000; // states
-		const int revisit_progress_delta = 25000; // times
-		const int progressIndicatorDelta = 250;
+        const int newstate_progress_delta = 25000; // states
+        const int revisit_progress_delta = 25000; // times
+        const int progressIndicatorDelta = 250;
 
-		/// ID of the last visited (or popped) state: for the graph.
-		int	m_lastState = -1; // some illegal value.
-		int m_lastRunThread = 0; // first thread (main) will have ID 0.
-
-
-		Stack<SchedulingData> m_stack;
-
-		// --------------------------------- Exploration --------------------------------
+        /// ID of the last visited (or popped) state: for the graph.
+        int m_lastState = -1; // some illegal value.
+        int m_lastRunThread = 0; // first thread (main) will have ID 0.
 
 
+        Stack<SchedulingData> m_stack;
 
-		public void LogNewState(CollapsedState collapsed, SchedulingData sd) {
-
-			Logger.l.Debug("found new state: {0}", sd.ID);
-			Statistics.s.NewState();
-		}
-
-		public void LogRevisitState(CollapsedState collapsed, SchedulingData sd) {
-
-			Logger.l.Debug("re-visit of state: {0}", sd.ID);
-			Statistics.s.RevisitState();
-		}
-
-		// --------------------------------- Scheduling ---------------------------------
-
-		public void LogDeadlock(SchedulingData sd) {
-
-			Logger.l.Log(LogPriority.Severe, "DEADLOCK!");
-		}
-
-		public void LogPickedThread(SchedulingData sd, int chosen) {
-
-			Logger.l.Debug("to be run next: {0}", chosen);
-			m_lastRunThread = chosen;
-		}
-
-		// -------------------------------- Backtracking --------------------------------
-
-		public void LogBacktrackDummy(Stack<SchedulingData> stack, SchedulingData fromSd) {
-		}
-
-		public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd) {
-			
-			Logger.l.Debug("backtracked.");
-			Statistics.s.Backtrack();
-		}
-
-		// -------------------------------- Exploration Halt ----------------------------
-
-		public void ExplorationHalted(IIEReturnValue ier) {
-
-			Logger.l.Log(LogPriority.Severe, "exploraton halted: {0}", ier.ToString());
-		}
-
-		// -------------------------------- Graph Writing -------------------------------
-
-		public void GraphNewState (CollapsedState collapsed, SchedulingData sd ) {
-
-			DotWriter.NewNode(sd.ID, sd.Enabled.ToArray());
-			DotWriter.NewEdge(m_lastState, sd.ID, m_lastRunThread);
-			m_lastState = sd.ID;
-		}
-
-		public void GraphRevisitState (CollapsedState collapsed, SchedulingData sd) {
-
-			DotWriter.NewEdge(m_lastState, sd.ID, m_lastRunThread);
-			m_lastState = sd.ID;
-		}
-
-		public void GraphBacktrack (Stack<SchedulingData> stack, SchedulingData fromSd) {
-			
-			DotWriter.NewEdge(m_lastState, stack.Peek().ID, DotGraph.BacktrackEdge);
-			m_lastState = stack.Peek().ID;
-		}
+        // --------------------------------- Exploration --------------------------------
 
 
-		private System.Timers.Timer timer;
-		private Explorer m_explorer;
 
+        public void LogNewState(CollapsedState collapsed, SchedulingData sd)
+        {
 
-		public ExplorationLogger(Explorer ex) {
-			if (!Config.Quiet) {
-				timer = new System.Timers.Timer();
-				timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
-				timer.Interval = 5 * 1000;
-				timer.Enabled = true;
-			}
+            Logger.l.Debug("found new state: {0}", sd.ID);
+            Statistics.s.NewState();
+        }
 
-			m_explorer = ex;
-		}
+        public void LogRevisitState(CollapsedState collapsed, SchedulingData sd)
+        {
 
-		private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e) {
-			Logger.l.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.s.StateCount, Statistics.s.RevisitCount, m_explorer.GetDFSStackSize());
-		}
-	}
+            Logger.l.Debug("re-visit of state: {0}", sd.ID);
+            Statistics.s.RevisitState();
+        }
+
+        // --------------------------------- Scheduling ---------------------------------
+
+        public void LogDeadlock(SchedulingData sd)
+        {
+
+            Logger.l.Log(LogPriority.Severe, "DEADLOCK!");
+        }
+
+        public void LogPickedThread(SchedulingData sd, int chosen)
+        {
+
+            Logger.l.Debug("to be run next: {0}", chosen);
+            m_lastRunThread = chosen;
+        }
+
+        // -------------------------------- Backtracking --------------------------------
+
+        public void LogBacktrackDummy(Stack<SchedulingData> stack, SchedulingData fromSd)
+        {
+        }
+
+        public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd)
+        {
+
+            Logger.l.Debug("backtracked.");
+            Statistics.s.Backtrack();
+        }
+
+        // -------------------------------- Exploration Halt ----------------------------
+
+        public void ExplorationHalted(IIEReturnValue ier)
+        {
+
+            Logger.l.Log(LogPriority.Severe, "exploraton halted: {0}", ier.ToString());
+        }
+
+        // -------------------------------- Graph Writing -------------------------------
+
+        public void GraphNewState(CollapsedState collapsed, SchedulingData sd)
+        {
+            DotWriter.NewNode(sd.ID, sd.Enabled.ToArray());
+            DotWriter.NewEdge(m_lastState, sd.ID, m_lastRunThread);
+            m_lastState = sd.ID;
+        }
+
+        public void GraphRevisitState(CollapsedState collapsed, SchedulingData sd)
+        {
+            DotWriter.NewEdge(m_lastState, sd.ID, m_lastRunThread);
+            m_lastState = sd.ID;
+        }
+
+        public void GraphBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd)
+        {
+            DotWriter.NewEdge(m_lastState, stack.Peek().ID, DotGraph.BacktrackEdge);
+            m_lastState = stack.Peek().ID;
+        }
+
+        private System.Timers.Timer timer;
+
+        private Explorer m_explorer;
+
+        public ExplorationLogger(Explorer ex)
+        {
+            if (!ex.Config.Quiet)
+            {
+                timer = new System.Timers.Timer();
+                timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
+                timer.Interval = 5 * 1000;
+                timer.Enabled = true;
+            }
+
+            m_explorer = ex;
+        }
+
+        private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
+        {
+            Logger.l.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.s.StateCount, Statistics.s.RevisitCount, m_explorer.GetDFSStackSize());
+        }
+    }
 }

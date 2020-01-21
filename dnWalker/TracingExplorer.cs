@@ -40,11 +40,11 @@ namespace MMC {
 		string prevMethod = "";
 		TextWriter tw;
 
-		public TracingExplorer(Stack<int> tracingQueue, TextWriter tw)
-			: base() {
+		public TracingExplorer(Stack<int> tracingQueue, TextWriter tw, IConfig config)
+			: base(config) {
 			this.m_tracingQueue = tracingQueue;
 			// disable stats
-			Config.ShowStatistics = false;
+			config.ShowStatistics = false;
 			this.tw = tw;
 		}
 

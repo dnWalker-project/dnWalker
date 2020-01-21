@@ -76,11 +76,13 @@ namespace MMC {
 	class StatefulDynamicPOR {
 		private Stack<SchedulingData> backtrack;
 		private LastTransitionMapper mapper;
+        private readonly IConfig _config;
 
-		public StatefulDynamicPOR(Stack<SchedulingData> stack) {
+        public StatefulDynamicPOR(Stack<SchedulingData> stack, IConfig config) {
 			backtrack = stack;
 			mapper = new LastTransitionMapper();
-		}
+            _config = config;
+        }
 
 		/// Update L
 		public void ThreadPicked(SchedulingData sd, int chosen) {
@@ -91,7 +93,7 @@ namespace MMC {
 		public void Backtracked(Stack<SchedulingData> stack, SchedulingData fromSD) {
 
 			if (fromSD.State.SII == null) {
-				if (Config.UseDPORCollapser)
+				if (_config.UseDPORCollapser)
 					fromSD.State.SII = new CollapsedSII(fromSD.SII as SimplifiedSII);
 				else
 					fromSD.State.SII = fromSD.SII;
@@ -167,9 +169,9 @@ namespace MMC {
 		/// 1. An objectreference is written to object o
 		/// 2. o is threadshared, and the o' referenced by
 		/// the objectreference is not
-		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef) {
+		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, IConfig config) {
 
-			if (!Config.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
+			if (!config.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
 				return;
 
 			// literally and shamelessly mimiced from JPF:
