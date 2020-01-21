@@ -43,12 +43,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
@@ -64,7 +64,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             /*
 			 * Prevents infinite looping with local vars 
@@ -72,19 +72,19 @@ namespace MMC.InstructionExec
 			 * VYN: disabled this, this cannot detect whether two threads fail to make progress, and run infinitely
 			 */
             return true;
-            //return ActiveState.cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) > 1;
+            //return cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) > 1;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
             /*
-			 * Same reason as for IsMultiThreadSafe(), only we have to "fool" the 
+			 * Same reason as for IsMultiThreadSafe(ExplicitActiveState cur), only we have to "fool" the 
 			 * POR that a branch instruction is dependent in case of a single thread 
 			 * 
 			 * VYN: disabled this, this cannot detect whether two threads fail to make progress, and run infinitely
 			 */
             return false;
-            //return ActiveState.cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) == 1;
+            //return cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) == 1;
         }
     }
 
@@ -98,11 +98,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (a.Equals(b) ? new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
     }
@@ -117,11 +117,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (a.CompareTo(b) >= 0 ?
                     new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
@@ -137,11 +137,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (a.CompareTo(b) > 0 ?
                     new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
@@ -157,11 +157,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (a.CompareTo(b) <= 0 ?
                     new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
@@ -177,11 +177,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (a.CompareTo(b) < 0 ?
                     new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
@@ -197,11 +197,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (!a.Equals(b) ?
                     new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
@@ -217,7 +217,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             return new JumpReturnValue((Instruction)Operand);
@@ -234,10 +234,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
     }
@@ -252,10 +252,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             return (!a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval);
         }
     }
@@ -270,10 +270,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            Int4 a = (Int4)ActiveState.cur.EvalStack.Pop();
+            Int4 a = (Int4)cur.EvalStack.Pop();
             Instruction[] targets = Operand as Instruction[];
             return (a.Value < targets.Length ?
                   new JumpReturnValue(targets[a.Value]) : nextRetval);
@@ -288,7 +288,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             return nextRetval;
         }
@@ -305,7 +305,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             return nextRetval;
         }
@@ -332,12 +332,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement b = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            IIntegerElement a = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.And(b));
+            IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
+            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.And(b));
             return nextRetval;
         }
     }
@@ -352,11 +352,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement a = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.Not());
+            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.Not());
             return nextRetval;
         }
     }
@@ -371,12 +371,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement b = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            IIntegerElement a = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.Or(b));
+            IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
+            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.Or(b));
             return nextRetval;
         }
     }
@@ -391,12 +391,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement b = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            IIntegerElement a = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.Xor(b));
+            IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
+            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.Xor(b));
             return nextRetval;
         }
     }
@@ -411,12 +411,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            int shiftBy = ((Int4)ActiveState.cur.EvalStack.Pop()).Value;
-            IIntegerElement a = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.Shl(shiftBy));
+            int shiftBy = ((Int4)cur.EvalStack.Pop()).Value;
+            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.Shl(shiftBy));
             return nextRetval;
         }
     }
@@ -431,12 +431,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            int shiftBy = ((Int4)ActiveState.cur.EvalStack.Pop()).Value;
-            IIntegerElement a = (IIntegerElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.Shr(shiftBy));
+            int shiftBy = ((Int4)cur.EvalStack.Pop()).Value;
+            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.Shr(shiftBy));
             return nextRetval;
         }
     }
@@ -460,10 +460,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            ActiveState.cur.EvalStack.Push(ActiveState.cur.EvalStack.Peek());
+            cur.EvalStack.Push(cur.EvalStack.Peek());
             return nextRetval;
         }
     }
@@ -475,7 +475,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // Operand is either an implicit Int4, or a ParameterDefinition object.
             int argIndex;
@@ -485,12 +485,12 @@ namespace MMC.InstructionExec
             {
                 argIndex = ((ParameterDefinition)Operand).MethodSigIndex;
 
-                if (!ActiveState.cur.CurrentMethod.Definition.HasThis)
+                if (!cur.CurrentMethod.Definition.HasThis)
                     argIndex--;
             }
 
 
-            ActiveState.cur.EvalStack.Push(ActiveState.cur.CurrentMethod.Arguments[argIndex]);
+            cur.EvalStack.Push(cur.CurrentMethod.Arguments[argIndex]);
             return nextRetval;
         }
     }
@@ -504,15 +504,15 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             int argIndex = (Operand as ParameterDefinition).MethodSigIndex;
 
-            if (ActiveState.cur.CurrentMethod.Definition.IsStatic)
+            if (cur.CurrentMethod.Definition.IsStatic)
                 argIndex--;
 
-            ActiveState.cur.EvalStack.Push(new ArgumentPointer(ActiveState.cur.CurrentMethod, argIndex));
+            cur.EvalStack.Push(new ArgumentPointer(cur.CurrentMethod, argIndex));
 
             return nextRetval;
         }
@@ -531,7 +531,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
 
@@ -585,7 +585,7 @@ namespace MMC.InstructionExec
                     break;
             }
 
-            ActiveState.cur.EvalStack.Push(toPush);
+            cur.EvalStack.Push(toPush);
 
             return nextRetval;
         }
@@ -600,10 +600,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             MethodDefinition method = Operand as MethodDefinition;
-            ActiveState.cur.EvalStack.Push(new MethodPointer(method));
+            cur.EvalStack.Push(new MethodPointer(method));
             return nextRetval;
         }
     }
@@ -617,13 +617,13 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference or = (ObjectReference)ActiveState.cur.EvalStack.Pop();
+            ObjectReference or = (ObjectReference)cur.EvalStack.Pop();
             MethodDefinition method = Operand as MethodDefinition;
 
             MethodDefinition toCall = DefinitionProvider.dp.SearchVirtualMethod(method, or);
-            ActiveState.cur.EvalStack.Push(new MethodPointer(toCall));
+            cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
         }
@@ -638,28 +638,28 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IManagedPointer mmp = ActiveState.cur.EvalStack.Pop() as IManagedPointer;
-            ActiveState.cur.EvalStack.Push(mmp.Value);
+            IManagedPointer mmp = cur.EvalStack.Pop() as IManagedPointer;
+            cur.EvalStack.Push(mmp.Value);
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
-            IDataElement reference = ActiveState.cur.EvalStack.Peek();
+            IDataElement reference = cur.EvalStack.Peek();
             return !(reference is ObjectFieldPointer || reference is StaticFieldPointer);
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
 
-            IDataElement reference = ActiveState.cur.EvalStack.Peek();
+            IDataElement reference = cur.EvalStack.Peek();
 
             if (reference is ObjectFieldPointer)
             {
                 ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
-                AllocatedObject theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
+                AllocatedObject theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
 
                 return theObject.ThreadShared;
             }
@@ -671,9 +671,9 @@ namespace MMC.InstructionExec
                 return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            IDataElement reference = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
+            IDataElement reference = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
 
             if (reference is ObjectFieldPointer)
             {
@@ -686,7 +686,7 @@ namespace MMC.InstructionExec
                 return sfp.MemoryLocation;
             }
 
-            return base.Accessed(threadId);
+            return base.Accessed(threadId, cur);
         }
     }
 
@@ -701,23 +701,23 @@ namespace MMC.InstructionExec
         }
 
         /*
-		public override IIEReturnValue Execute() {
-			IManagedPointer mmp = ActiveState.cur.EvalStack.Pop() as IManagedPointer;
-			ActiveState.cur.EvalStack.Push(mmp.Value);
+		public override IIEReturnValue Execute(ExplicitActiveState cur) {
+			IManagedPointer mmp = cur.EvalStack.Pop() as IManagedPointer;
+			cur.EvalStack.Push(mmp.Value);
 			return nextRetval;
 		}
 
-		public override bool IsMultiThreadSafe() {
-			IDataElement reference = ActiveState.cur.EvalStack.Peek();
+		public override bool IsMultiThreadSafe(ExplicitActiveState cur) {
+			IDataElement reference = cur.EvalStack.Peek();
 			return !(reference is ObjectFieldPointer || reference is StaticFieldPointer);
 		}
 
-		public override bool IsDependent() {
-			IDataElement reference = ActiveState.cur.EvalStack.Peek();
+		public override bool IsDependent(ExplicitActiveState cur) {
+			IDataElement reference = cur.EvalStack.Peek();
 
 			if (reference is ObjectFieldPointer) {
 				ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
-				AllocatedObject theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
+				AllocatedObject theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
 
 				return theObject.ThreadShared;
 			} else if (reference is StaticFieldPointer) {
@@ -726,8 +726,8 @@ namespace MMC.InstructionExec
 				return false;
 		}
 
-		public override MemoryLocation Accessed(int threadId) {
-			IDataElement reference = ActiveState.cur.EvalStack.Peek();
+		public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur) {
+			IDataElement reference = cur.EvalStack.Peek();
 
 			if (reference is ObjectFieldPointer) {
 				ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
@@ -749,14 +749,14 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             int index;
             if (HasImplicitOperand)
                 index = ((Int4)Operand).Value;
             else
                 index = ((Local)Operand).Index;
-            ActiveState.cur.EvalStack.Push(ActiveState.cur.CurrentMethod.Locals[index]);
+            cur.EvalStack.Push(cur.CurrentMethod.Locals[index]);
             return nextRetval;
         }
     }
@@ -769,10 +769,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             int index = ((Local)Operand).Index;
-            ActiveState.cur.EvalStack.Push(new LocalVariablePointer(ActiveState.cur.CurrentMethod, index));
+            cur.EvalStack.Push(new LocalVariablePointer(cur.CurrentMethod, index));
             return nextRetval;
         }
     }
@@ -786,10 +786,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            ActiveState.cur.EvalStack.Push(ObjectReference.Null);
+            cur.EvalStack.Push(ObjectReference.Null);
             return nextRetval;
         }
     }
@@ -803,10 +803,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            ActiveState.cur.EvalStack.Push(new ConstantString(Operand as string));
+            cur.EvalStack.Push(new ConstantString(Operand as string));
             return nextRetval;
         }
     }
@@ -835,12 +835,12 @@ namespace MMC.InstructionExec
         /// it's okay to access the static fields).
         public bool LoadClass(TypeDefinition type)
         {
-
-            int me = ActiveState.cur.ThreadPool.CurrentThreadId;
+            var cur = ActiveState.cur;
+            int me = cur.ThreadPool.CurrentThreadId;
 
             bool allow_access = true;
 
-            AllocatedClass cls = ActiveState.cur.StaticArea.GetClass(type);
+            AllocatedClass cls = cur.StaticArea.GetClass(type);
             if (!cls.Initialized)
             {
                 Logger.l.Debug("thread {0} wants access to uninitialized class {1}", me, type.Name);
@@ -859,14 +859,14 @@ namespace MMC.InstructionExec
                             cctorDef,
                             StorageFactory.sf.CreateList(0));
                     cctorState.OnDispose = new MethodStateCallback(this.CctorDoneCallBack);
-                    ActiveState.cur.CallStack.Push(cctorState);
+                    cur.CallStack.Push(cctorState);
                     Logger.l.Debug("found class constructor. pushed on call stack.");
                     // Do not allow access now. We should first execute the cctor.
                     allow_access = false;
                 }
                 else
                 {
-                    ThreadPool tp = ActiveState.cur.ThreadPool;
+                    ThreadPool tp = cur.ThreadPool;
                     int wait_for = cls.InitializingThread;
                     Logger.l.Debug("thread {0} is currently initializing the class", wait_for);
 
@@ -905,7 +905,7 @@ namespace MMC.InstructionExec
         {
             Logger.l.Debug("completed running cctor. class initialized");
             TypeDefinition type = GetTypeDefinition();
-
+            var cur = ActiveState.cur;
             /*
 			 * It is possible that during state decollapsion, that 
 			 * this callback is called when the initialising thread 
@@ -913,9 +913,9 @@ namespace MMC.InstructionExec
 			 * 
 			 * This if prevents that the callback is actually executed
 			 */
-            if (ActiveState.cur.StaticArea.ClassLoaded(type))
+            if (cur.StaticArea.ClassLoaded(type))
             {
-                AllocatedClass cls = ActiveState.cur.StaticArea.GetClass(type);
+                AllocatedClass cls = cur.StaticArea.GetClass(type);
                 cls.Initialized = true;
                 cls.InitializingThread = LockManager.NoThread;
                 cls.AwakenWaitingThreads();
@@ -1010,10 +1010,8 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            ExplicitActiveState cur = ActiveState.cur;
             Int4 length = (Int4)cur.EvalStack.Pop();
 
             if (length.Value < 0)
@@ -1041,18 +1039,18 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference objRef = (ObjectReference)ActiveState.cur.EvalStack.Pop();
+            ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
             var toCastToType = (ITypeDefOrRef)Operand;
 
             /*
 			 * TODO: make this work for arrays! See ECMA spec on this
 			 */
-            AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
 
             if (DefinitionProvider.dp.IsSubtype(ao.Type, toCastToType))
-                ActiveState.cur.EvalStack.Push(objRef);
+                cur.EvalStack.Push(objRef);
             else
             {
                 RaiseException("System.InvalidCastException");
@@ -1070,8 +1068,8 @@ namespace MMC.InstructionExec
 			: base(instr, operand, atr) {
 		}
 
-		public override IIEReturnValue Execute() {
-			IManagedPointer ptr = ActiveState.cur.EvalStack.Pop() as IManagedPointer;
+		public override IIEReturnValue Execute(ExplicitActiveState cur) {
+			IManagedPointer ptr = cur.EvalStack.Pop() as IManagedPointer;
 			TypeReference typeRef = (TypeReference)Operand;
 
 			if (typeRef.IsValueType) {
@@ -1092,27 +1090,27 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            Int4 idx = (Int4)ActiveState.cur.EvalStack.Pop();
-            ObjectReference objRef = (ObjectReference)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(new ObjectFieldPointer(objRef, idx.Value));
+            Int4 idx = (Int4)cur.EvalStack.Pop();
+            ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
+            cur.EvalStack.Push(new ObjectFieldPointer(objRef, idx.Value));
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            return base.Accessed(threadId);
+            return base.Accessed(threadId, cur);
         }
     }
 
@@ -1125,46 +1123,46 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement ida = ActiveState.cur.EvalStack.Peek();
-            Int4 idx = (Int4)ActiveState.cur.EvalStack.Pop();
-            ObjectReference arrayRef = (ObjectReference)ActiveState.cur.EvalStack.Pop();
+            IDataElement ida = cur.EvalStack.Peek();
+            Int4 idx = (Int4)cur.EvalStack.Pop();
+            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
             IIEReturnValue retval = nextRetval;
-            AllocatedArray theArray = ActiveState.cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (theArray == null)
                 RaiseException("System.NullReferenceException");
             else if (CheckBounds(theArray, idx))
-                ActiveState.cur.EvalStack.Push(theArray.Fields[idx.Value]);
+                cur.EvalStack.Push(theArray.Fields[idx.Value]);
             else
                 RaiseException("System.IndexOutOfRangeException");
 
             return retval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return false;
 
-            //return ActiveState.cur.ThreadPool.RunnableThreadCount == 1;
+            //return cur.ThreadPool.RunnableThreadCount == 1;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
 
-            int length = ActiveState.cur.EvalStack.Length;
+            int length = cur.EvalStack.Length;
 
-            ObjectReference arrayRef = (ObjectReference)ActiveState.cur.EvalStack[length - 2];
-            AllocatedArray theArray = ActiveState.cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            ObjectReference arrayRef = (ObjectReference)cur.EvalStack[length - 2];
+            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
             return theArray.ThreadShared;
 
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            DataElementStack des = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
+            DataElementStack des = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
             int length = des.Length;
 
             Int4 idx = (Int4)des.Peek();
@@ -1183,16 +1181,15 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            IDataElement val = ActiveState.cur.EvalStack.Pop();
-            Int4 idx = (Int4)ActiveState.cur.EvalStack.Pop();
-            ObjectReference arrayRef = (ObjectReference)ActiveState.cur.EvalStack.Pop();
+            IDataElement val = cur.EvalStack.Pop();
+            Int4 idx = (Int4)cur.EvalStack.Pop();
+            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
             IIEReturnValue retval = nextRetval;
             AllocatedArray theArray =
-                ActiveState.cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+                cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (theArray == null)
             {
@@ -1215,24 +1212,24 @@ namespace MMC.InstructionExec
             return retval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return false;
-            //return ActiveState.cur.ThreadPool.RunnableThreadCount == 1;
+            //return cur.ThreadPool.RunnableThreadCount == 1;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
-            int length = ActiveState.cur.EvalStack.Length;
+            int length = cur.EvalStack.Length;
 
-            ObjectReference arrayRef = (ObjectReference)ActiveState.cur.EvalStack[length - 3];
-            AllocatedArray theArray = ActiveState.cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            ObjectReference arrayRef = (ObjectReference)cur.EvalStack[length - 3];
+            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
             return theArray.ThreadShared;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            DataElementStack des = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
+            DataElementStack des = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
             int length = des.Length;
 
             Int4 idx = (Int4)des[length - 2];
@@ -1251,11 +1248,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            ObjectReference arrayRef = (ObjectReference)ActiveState.cur.EvalStack.Pop();
-            AllocatedArray theArray = (AllocatedArray)ActiveState.cur.DynamicArea.Allocations[arrayRef];
+            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
+            AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
 
             if (theArray == null)
             {
@@ -1263,7 +1259,7 @@ namespace MMC.InstructionExec
             }
             else
             {
-                ActiveState.cur.EvalStack.Push(new UnsignedInt4((uint)theArray.Fields.Length));
+                cur.EvalStack.Push(new UnsignedInt4((uint)theArray.Fields.Length));
             }
 
             return nextRetval;
@@ -1285,22 +1281,22 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement reference = ActiveState.cur.EvalStack.Pop();
-            DynamicAllocation obj = (DynamicAllocation)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)reference];
+            IDataElement reference = cur.EvalStack.Pop();
+            DynamicAllocation obj = (DynamicAllocation)cur.DynamicArea.Allocations[(ObjectReference)reference];
 
             var typeDef = Operand as ITypeDefOrRef;
 
             if (DefinitionProvider.dp.IsSubtype(obj.Type, typeDef))
-                ActiveState.cur.EvalStack.Push(reference);
+                cur.EvalStack.Push(reference);
             else
-                ActiveState.cur.EvalStack.Push(ObjectReference.Null);
+                cur.EvalStack.Push(ObjectReference.Null);
 
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
@@ -1314,55 +1310,53 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference objRef = (ObjectReference)ActiveState.cur.EvalStack.Pop();
-            AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+            ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
+            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
             int offset = GetFieldOffset(ao.Type);
 
-            ActiveState.cur.EvalStack.Push(new ObjectFieldPointer(objRef, offset));
+            cur.EvalStack.Push(new ObjectFieldPointer(objRef, offset));
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            return base.Accessed(threadId);
+            return base.Accessed(threadId, cur);
         }
     }
 
-
     class LDFLD : ObjectModelInstructionExec
     {
-
         public LDFLD(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement reference = ActiveState.cur.EvalStack.Pop();
+            IDataElement reference = cur.EvalStack.Pop();
 
             AllocatedObject theObject;
 
             if (reference is ObjectReference)
-                theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)reference];
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)reference];
             else if (reference is MethodMemberPointer)
             {
                 // Points to a ObjectReference
-                theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)((MethodMemberPointer)reference).Value];
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)((MethodMemberPointer)reference).Value];
             }
             else
             {
@@ -1378,20 +1372,20 @@ namespace MMC.InstructionExec
             {
                 int offset = GetFieldOffset(theObject.Type);
                 //			FieldDefinition fld = GetFieldDefinition();
-                ActiveState.cur.EvalStack.Push(theObject.Fields[offset]);
+                cur.EvalStack.Push(theObject.Fields[offset]);
             }
 
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return false;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
-            IDataElement reference = ActiveState.cur.EvalStack.Peek();
+            IDataElement reference = cur.EvalStack.Peek();
 
             AllocatedObject theObject = null;
 
@@ -1400,19 +1394,19 @@ namespace MMC.InstructionExec
                 return false;
 
             if (reference is ObjectReference)
-                theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)reference];
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)reference];
             else if (reference is MethodMemberPointer)
             {
                 // Points to a ObjectReference
-                theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)((MethodMemberPointer)reference).Value];
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)((MethodMemberPointer)reference).Value];
             }
 
             return theObject.ThreadShared;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            IDataElement refVal = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
+            IDataElement refVal = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
             ObjectReference or;
 
             if (refVal is ObjectReference)
@@ -1420,7 +1414,7 @@ namespace MMC.InstructionExec
             else
                 or = (ObjectReference)((MethodMemberPointer)refVal).Value;
 
-            AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[or] as AllocatedObject;
+            AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
             int offset = GetFieldOffset(ao.Type);
 
             return new MemoryLocation(offset, or);
@@ -1436,11 +1430,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            IDataElement val = ActiveState.cur.EvalStack.Pop();
-            IDataElement toChange = ActiveState.cur.EvalStack.Pop();
+            IDataElement val = cur.EvalStack.Pop();
+            IDataElement toChange = cur.EvalStack.Pop();
             //FieldDefinition fld = GetFieldDefinition();
 
             // This is somewhat rancid, but for now we'll do it like this.
@@ -1448,7 +1441,7 @@ namespace MMC.InstructionExec
             {
                 // Change a field of an object.
                 AllocatedObject theObject =
-                    ActiveState.cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
+                    cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
                 int offset = GetFieldOffset(theObject.Type);
                 ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset]);
@@ -1471,12 +1464,12 @@ namespace MMC.InstructionExec
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return false;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
 
             FieldDefinition fieldDef = GetFieldDefinition();
@@ -1484,21 +1477,21 @@ namespace MMC.InstructionExec
                 return false;
 
 
-            int length = ActiveState.cur.EvalStack.Length;
-            IDataElement toChange = ActiveState.cur.EvalStack[length - 2];
+            int length = cur.EvalStack.Length;
+            IDataElement toChange = cur.EvalStack[length - 2];
 
             if (toChange is ObjectReference)
             {
-                AllocatedObject theObject = ActiveState.cur.DynamicArea.Allocations[(ObjectReference)toChange] as AllocatedObject;
+                AllocatedObject theObject = cur.DynamicArea.Allocations[(ObjectReference)toChange] as AllocatedObject;
                 return theObject.ThreadShared;
             }
 
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            DataElementStack des = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
+            DataElementStack des = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
 
             int length = des.Length;
             IDataElement toChange = des[length - 2];
@@ -1507,12 +1500,12 @@ namespace MMC.InstructionExec
             {
                 ObjectReference or = (ObjectReference)toChange;
                 //FieldDefinition fld = GetFieldDefinition();
-                AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[or] as AllocatedObject;
+                AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
                 int offset = GetFieldOffset(ao.Type);
                 return new MemoryLocation(offset, or);
             }
 
-            return base.Accessed(threadId);
+            return base.Accessed(threadId, cur);
         }
     }
 
@@ -1524,10 +1517,8 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            ExplicitActiveState cur = ActiveState.cur;
             // Operand is a type definition of the wrapper type to use.
             ObjectReference wrappedRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(),
@@ -1547,10 +1538,8 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            ExplicitActiveState cur = ActiveState.cur;
             // Operand is a type definition of the wrapper type to use.
             ObjectReference wrappedRef = (ObjectReference)cur.EvalStack.Pop();
             AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
@@ -1573,7 +1562,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             IIEReturnValue retval = nincRetval;
@@ -1582,21 +1571,21 @@ namespace MMC.InstructionExec
 
             if (LoadClass(declType))
             {
-                AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(declType);
-                ActiveState.cur.EvalStack.Push(ac.Fields[(int)fld.FieldOffset]);
+                AllocatedClass ac = cur.StaticArea.GetClass(declType);
+                cur.EvalStack.Push(ac.Fields[(int)fld.FieldOffset]);
                 retval = nextRetval;
             }
 
             return retval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return false;
-            //return ActiveState.cur.ThreadPool.RunnableThreadCount == 1;
+            //return cur.ThreadPool.RunnableThreadCount == 1;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
             if (GetFieldDefinition().IsInitOnly)
                 return false;
@@ -1604,7 +1593,7 @@ namespace MMC.InstructionExec
                 return true;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             var fld = GetFieldDefinition();
             var declType = GetTypeDefinition();
@@ -1622,7 +1611,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             IIEReturnValue retval = nincRetval;
@@ -1631,26 +1620,26 @@ namespace MMC.InstructionExec
 
             if (LoadClass(declType))
             {
-                ActiveState.cur.EvalStack.Push(new StaticFieldPointer(declType, (int)fld.FieldOffset));
+                cur.EvalStack.Push(new StaticFieldPointer(declType, (int)fld.FieldOffset));
                 retval = nextRetval;
             }
 
             return retval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            return base.Accessed(threadId);
+            return base.Accessed(threadId, cur);
         }
     }
 
@@ -1663,7 +1652,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             IIEReturnValue retval = nincRetval;
@@ -1672,9 +1661,9 @@ namespace MMC.InstructionExec
 
             if (LoadClass(declType))
             {
-                IDataElement val = ActiveState.cur.EvalStack.Pop();
+                IDataElement val = cur.EvalStack.Pop();
 
-                AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(declType);
+                AllocatedClass ac = cur.StaticArea.GetClass(declType);
                 ThreadObjectWatcher.Decrement(ac.Fields[(int)fld.FieldOffset]);
 
                 ObjectEscapePOR.UpdateReachability(true, ac.Fields[(int)fld.FieldOffset], val);
@@ -1690,13 +1679,13 @@ namespace MMC.InstructionExec
             return retval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return false;
-            //return ActiveState.cur.ThreadPool.RunnableThreadCount == 1;
+            //return cur.ThreadPool.RunnableThreadCount == 1;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
 
             if (GetFieldDefinition().IsInitOnly)
@@ -1705,7 +1694,7 @@ namespace MMC.InstructionExec
                 return true;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             FieldDefinition fld = GetFieldDefinition();
             TypeDefinition declType = GetTypeDefinition();
@@ -1723,7 +1712,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             IIEReturnValue retval = nincRetval;
@@ -1732,7 +1721,7 @@ namespace MMC.InstructionExec
                 TypeDefinition typeDef = Operand as TypeDefinition;
                 if (LoadClass(typeDef))
                     retval = nextRetval;
-                ActiveState.cur.EvalStack.Push(new TypePointer(typeDef));
+                cur.EvalStack.Push(new TypePointer(typeDef));
             }
             // TODO: handle field and method definitions
             return retval;
@@ -1759,11 +1748,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
 
             IAddElement left;
             INumericElement right;
@@ -1793,7 +1782,7 @@ namespace MMC.InstructionExec
 
             try
             {
-                ActiveState.cur.EvalStack.Push(left.Add(right, CheckOverflow));
+                cur.EvalStack.Push(left.Add(right, CheckOverflow));
             }
             catch (OverflowException)
             {
@@ -1817,11 +1806,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            INumericElement b = (INumericElement)ActiveState.cur.EvalStack.Pop();
-            INumericElement a = (INumericElement)ActiveState.cur.EvalStack.Pop();
+            INumericElement b = (INumericElement)cur.EvalStack.Pop();
+            INumericElement a = (INumericElement)cur.EvalStack.Pop();
 
             if (Unsigned)
             {
@@ -1831,7 +1820,7 @@ namespace MMC.InstructionExec
 
             try
             {
-                ActiveState.cur.EvalStack.Push(a.Div(b));
+                cur.EvalStack.Push(a.Div(b));
             }
             catch (DivideByZeroException e)
             {
@@ -1855,11 +1844,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            INumericElement b = (INumericElement)ActiveState.cur.EvalStack.Pop();
-            INumericElement a = (INumericElement)ActiveState.cur.EvalStack.Pop();
+            INumericElement b = (INumericElement)cur.EvalStack.Pop();
+            INumericElement a = (INumericElement)cur.EvalStack.Pop();
 
             if (Unsigned)
             {
@@ -1869,7 +1858,7 @@ namespace MMC.InstructionExec
 
             try
             {
-                ActiveState.cur.EvalStack.Push(a.Mul(b, CheckOverflow));
+                cur.EvalStack.Push(a.Mul(b, CheckOverflow));
             }
             catch (OverflowException)
             {
@@ -1889,11 +1878,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            INumericElement b = (INumericElement)ActiveState.cur.EvalStack.Pop();
-            INumericElement a = (INumericElement)ActiveState.cur.EvalStack.Pop();
+            INumericElement b = (INumericElement)cur.EvalStack.Pop();
+            INumericElement a = (INumericElement)cur.EvalStack.Pop();
 
             if (Unsigned)
             {
@@ -1903,7 +1892,7 @@ namespace MMC.InstructionExec
 
             try
             {
-                ActiveState.cur.EvalStack.Push(a.Rem(b));
+                cur.EvalStack.Push(a.Rem(b));
             }
             catch (DivideByZeroException e)
             {
@@ -1927,10 +1916,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
 
             ISubElement left = (ISubElement)b;
             INumericElement right = (INumericElement)a;
@@ -1943,7 +1932,7 @@ namespace MMC.InstructionExec
 
             try
             {
-                ActiveState.cur.EvalStack.Push(left.Sub(right, CheckOverflow));
+                cur.EvalStack.Push(left.Sub(right, CheckOverflow));
             }
             catch (OverflowException)
             {
@@ -1963,11 +1952,11 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            ISignedNumericElement a = (ISignedNumericElement)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push(a.Neg());
+            ISignedNumericElement a = (ISignedNumericElement)cur.EvalStack.Pop();
+            cur.EvalStack.Push(a.Neg());
             return nextRetval;
         }
     }
@@ -1991,12 +1980,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push((a.Equals(b) ? new Int4(1) : new Int4(0)));
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
+            cur.EvalStack.Push((a.Equals(b) ? new Int4(1) : new Int4(0)));
             return nextRetval;
         }
     }
@@ -2010,12 +1999,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement b = ActiveState.cur.EvalStack.Pop();
-            IDataElement a = ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push((a.CompareTo(b) > 0 ? new Int4(1) : new Int4(0)));
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
+            cur.EvalStack.Push((a.CompareTo(b) > 0 ? new Int4(1) : new Int4(0)));
             return nextRetval;
         }
     }
@@ -2029,12 +2018,12 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IDataElement value2 = ActiveState.cur.EvalStack.Pop();
-            IDataElement value1 = ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.Push((value1.CompareTo(value2) < 0 ? new Int4(1) : new Int4(0)));
+            IDataElement value2 = cur.EvalStack.Pop();
+            IDataElement value1 = cur.EvalStack.Pop();
+            cur.EvalStack.Push((value1.CompareTo(value2) < 0 ? new Int4(1) : new Int4(0)));
             return nextRetval;
         }
     }
@@ -2058,17 +2047,17 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             /*
 			 * leave only the exception reference on the stack
 			 */
-            IDataElement exceptionRef = ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.EvalStack.PopAll();
+            IDataElement exceptionRef = cur.EvalStack.Pop();
+            cur.EvalStack.PopAll();
 
             // signals all exception related instructions that an exception has been thrown
-            ActiveState.cur.CurrentThread.ExceptionReference = (ObjectReference)exceptionRef;
-            ActiveState.cur.CurrentMethod.IsExceptionSource = true;
+            cur.CurrentThread.ExceptionReference = (ObjectReference)exceptionRef;
+            cur.CurrentMethod.IsExceptionSource = true;
 
             // now find the accompanied handler
             return ehLookupRetval;
@@ -2084,7 +2073,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // now find the accompanied handler
             //TODO: zie endfiltert
@@ -2101,10 +2090,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            Int4 val = (Int4)ActiveState.cur.EvalStack.Pop();
-            ActiveState.cur.CallStack.Pop(); // pop off the methodstate made for only filtering
+            Int4 val = (Int4)cur.EvalStack.Pop();
+            cur.CallStack.Pop(); // pop off the methodstate made for only filtering
 
             if (val.Value == 0)
             {
@@ -2127,14 +2116,14 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             IIEReturnValue retval;
             ExceptionHandler eh;
-            MethodState current = ActiveState.cur.CurrentMethod;
+            MethodState current = cur.CurrentMethod;
 
-            if (ObjectReference.Null.Equals(ActiveState.cur.CurrentThread.ExceptionReference))
+            if (ObjectReference.Null.Equals(cur.CurrentThread.ExceptionReference))
             {
                 eh = current.NextFinallyHandler(current.ProgramCounter);
             }
@@ -2149,7 +2138,7 @@ namespace MMC.InstructionExec
                 retval = new JumpReturnValue(eh.HandlerStart);
 
             // reset, stating that all exception issues are handled
-            ActiveState.cur.CurrentThread.ExceptionReference = ObjectReference.Null;
+            cur.CurrentThread.ExceptionReference = ObjectReference.Null;
 
             return retval;
         }
@@ -2164,7 +2153,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             /*
 			 * TODO, two situations in which this method is called
@@ -2174,7 +2163,7 @@ namespace MMC.InstructionExec
 			 * 2. an exception has been handled, and we are currently finalising the current
 			 * try catch block in the current method
 			 */
-            if (ObjectReference.Null.Equals(ActiveState.cur.CurrentThread.ExceptionReference))
+            if (ObjectReference.Null.Equals(cur.CurrentThread.ExceptionReference))
             {
                 return nextRetval;
             }
@@ -2218,10 +2207,11 @@ namespace MMC.InstructionExec
         /// \sa IntCallManager
         protected bool HandleEmptyMethod(DataElementList args)
         {
+            var cur = ActiveState.cur;
             bool handled = false;
             DynamicAllocation thisObject = null;
             if (args.Length > 0 && args[0] is ObjectReference)
-                thisObject = ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[0]];
+                thisObject = cur.DynamicArea.Allocations[(ObjectReference)args[0]];
             MethodDefinition methDef = Method;
 
             // Determine the type of call and simulate the behaviour.
@@ -2249,7 +2239,7 @@ namespace MMC.InstructionExec
                     ((AllocatedDelegate)thisObject).Method.Value;
                 // Create frame for the indirectly called method.
                 MethodState calleeState = new MethodState(toCall, calleePars);
-                ActiveState.cur.CallStack.Push(calleeState);
+                cur.CallStack.Push(calleeState);
                 return true;
             }
 
@@ -2338,34 +2328,34 @@ namespace MMC.InstructionExec
         /// \return A list containing the arguments.
         protected DataElementList CreateArgumentList()
         {
-
+            var cur = ActiveState.cur;
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.ParamDefs.Count + (methDef.HasThis ? 1 : 0);
             DataElementList retval = StorageFactory.sf.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
-                retval[size] = ActiveState.cur.EvalStack.Pop();
+                retval[size] = cur.EvalStack.Pop();
 
             return retval;
         }
 
         protected DataElementList CopyArgumentList(int threadId)
         {
-
+            var cur = ActiveState.cur;
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.Parameters.Count + (methDef.HasThis ? 1 : 0);
             DataElementList retval = StorageFactory.sf.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
-                retval[size] = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Pop();
+                retval[size] = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Pop();
 
             /*
 			 * Restore the eval stack
 			 */
             for (int i = 0; i < retval.Length; i++)
-                ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Push(retval[i]);
+                cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Push(retval[i]);
 
             return retval;
         }
@@ -2382,7 +2372,7 @@ namespace MMC.InstructionExec
         /// internal calls. In this case, return the value given by the ICM.
         ///
         /// \return True iff the call is safe.
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             bool safe = true;
             MethodDefinition methDef = Operand as MethodDefinition;
@@ -2392,19 +2382,19 @@ namespace MMC.InstructionExec
             return safe;
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
-                DataElementList args = CopyArgumentList(ActiveState.cur.ThreadPool.CurrentThreadId);
+                DataElementList args = CopyArgumentList(cur.ThreadPool.CurrentThreadId);
                 return MMC.ICall.IntCallManager.icm.IsDependent(methDef, args);
             }
             else
                 return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             DataElementList args = CopyArgumentList(threadId);
@@ -2427,14 +2417,14 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            MethodState oldState = ActiveState.cur.CallStack.Pop();
+            MethodState oldState = cur.CallStack.Pop();
 
             MethodDefinition methDef = Operand as MethodDefinition;
             MethodState newState = new MethodState(methDef, oldState.Arguments);
-            ActiveState.cur.CallStack.Push(newState);
+            cur.CallStack.Push(newState);
 
             return nincRetval;
         }
@@ -2453,7 +2443,7 @@ namespace MMC.InstructionExec
         /// Execute the CALL instruction.
         /// </summary>
         /// <returns></returns>
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
 
@@ -2486,7 +2476,7 @@ namespace MMC.InstructionExec
                     // (to update the PC) to get right and is poorly readable.
                     MethodState called = new MethodState(methDef, args);
                     this.CheckTailCall();
-                    ActiveState.cur.CallStack.Push(called);
+                    cur.CallStack.Push(called);
                 }
             }
             else
@@ -2515,12 +2505,12 @@ namespace MMC.InstructionExec
         }
 
         /// Execute the CALLI instruction.
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // See MMC.InstructionExec.CALL.Execute(...) for comments.
 
-            MethodPointer methPtr = (MethodPointer)ActiveState.cur.EvalStack.Pop();
+            MethodPointer methPtr = (MethodPointer)cur.EvalStack.Pop();
             MethodDefinition methDef = methPtr.Value;
 
             DataElementList args = CreateArgumentList();
@@ -2530,11 +2520,11 @@ namespace MMC.InstructionExec
                 // Assumption: CALLI targets have a body.
                 MethodState called = new MethodState(methDef, args);
                 this.CheckTailCall();
-                ActiveState.cur.CallStack.Push(called);
+                cur.CallStack.Push(called);
             }
             else
             {
-                //ThreadObjectWatcher.RemoveAllInContainer(ActiveState.cur.ThreadPool.CurrentThreadId, args);
+                //ThreadObjectWatcher.RemoveAllInContainer(cur.ThreadPool.CurrentThreadId, args);
                 args.Dispose();
             }
 
@@ -2552,7 +2542,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // Virtual calls use the run-time type of an object to determine
@@ -2563,12 +2553,12 @@ namespace MMC.InstructionExec
 
             if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
             {
-                var threadId = ActiveState.cur.ThreadPool.FindOwningThread(args[0]);
+                var threadId = cur.ThreadPool.FindOwningThread(args[0]);
                 if (threadId == LockManager.NoThread)
                 {
                     throw new NotSupportedException("Owning thread not found.");
                 }
-                ActiveState.cur.ThreadPool.Threads[threadId].State = (int)System.Threading.ThreadState.Running;
+                cur.ThreadPool.Threads[threadId].State = (int)System.Threading.ThreadState.Running;
                 return nextRetval;
             }
 
@@ -2599,7 +2589,7 @@ namespace MMC.InstructionExec
 					// Else get type from dynamic area.
 					Debug.Assert(args[0] != null, "No object to call on. How can this be static?");
 					AllocatedObject theObject = (AllocatedObject)(
-							ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[0]]);
+							cur.DynamicArea.Allocations[(ObjectReference)args[0]]);
 					Debug.Assert(theObject != null,
 							"BAD! Ohhhh sooooo bad! Object to perform CALLVIRT on is null. " +
 							"Got object from reference " + args[0].ToString());
@@ -2612,7 +2602,7 @@ namespace MMC.InstructionExec
 
                 MethodState called = new MethodState(toCall, args);
                 this.CheckTailCall();
-                ActiveState.cur.CallStack.Push(called);
+                cur.CallStack.Push(called);
                 //Logger.l.Log(LogPriority.Call, "{0}: found most derived definition in type {1}",
                 //		methDef.Name, type.Name);		
 
@@ -2620,7 +2610,7 @@ namespace MMC.InstructionExec
             else
             {
                 // End Filter If //
-                //ThreadObjectWatcher.RemoveAllInContainer(ActiveState.cur.ThreadPool.CurrentThreadId, args);
+                //ThreadObjectWatcher.RemoveAllInContainer(cur.ThreadPool.CurrentThreadId, args);
                 args.Dispose();
             }
 
@@ -2638,7 +2628,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // Basically the same as a normal call, except first we need
@@ -2651,7 +2641,7 @@ namespace MMC.InstructionExec
             DataElementList args = StorageFactory.sf.CreateList(methDef.ParamDefs.Count + 1);
             for (int i = args.Length - 1; i > 0; --i)
             {
-                args[i] = ActiveState.cur.EvalStack.Pop();
+                args[i] = cur.EvalStack.Pop();
             }
 
             if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
@@ -2659,13 +2649,13 @@ namespace MMC.InstructionExec
                 ThreadHandlers.Thread_internal(Method, args);
 
                 //MMC.ICall.IntCallManager.
-                /*ObjectReference threadObjectRef = ActiveState.cur.DynamicArea.AllocateObject(
-                    ActiveState.cur.DynamicArea.DeterminePlacement(false),
+                /*ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
+                    cur.DynamicArea.DeterminePlacement(false),
                     DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"));*/
 
-                //ActiveState.cur.ThreadPool.NewThread(null, threadObjectRef);
+                //cur.ThreadPool.NewThread(null, threadObjectRef);
                 //return threadObjectRef;
-                //return ActiveState.cur.EvalStack.Pop();
+                //return cur.EvalStack.Pop();
                 return nextRetval;
             }
 
@@ -2674,10 +2664,10 @@ namespace MMC.InstructionExec
             {
                 if ((args[1] is ObjectReference) && (args[2] is MethodPointer))
                 {
-                    IDataElement newDel = ActiveState.cur.DynamicArea.AllocateDelegate(
-                            ActiveState.cur.DynamicArea.DeterminePlacement(),
+                    IDataElement newDel = cur.DynamicArea.AllocateDelegate(
+                            cur.DynamicArea.DeterminePlacement(),
                             (ObjectReference)args[1], (MethodPointer)args[2]);
-                    ActiveState.cur.EvalStack.Push(newDel);
+                    cur.EvalStack.Push(newDel);
                     Logger.l.Log(LogPriority.Call, "constructor call for delegate handled by ves");
                 }
                 else
@@ -2690,14 +2680,14 @@ namespace MMC.InstructionExec
             else
             {
                 // Normal constructor call, create this pointer.
-                args[0] = ActiveState.cur.DynamicArea.AllocateObject(
-                        ActiveState.cur.DynamicArea.DeterminePlacement(),
+                args[0] = cur.DynamicArea.AllocateObject(
+                        cur.DynamicArea.DeterminePlacement(),
                         methDef.DeclaringType);
                 // Constructor calls should leave object reference on the stack.
-                ActiveState.cur.EvalStack.Push(args[0]);
+                cur.EvalStack.Push(args[0]);
                 // Call the constructor.
                 MethodState called = new MethodState(methDef, args);
-                ActiveState.cur.CallStack.Push(called);
+                cur.CallStack.Push(called);
             }
 
             return nextRetval;
@@ -2705,7 +2695,7 @@ namespace MMC.InstructionExec
 
         // NEWOBJ calls are safe. Since a new object is being created just now,
         // only one thread can own a reference to it.
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
@@ -2722,7 +2712,7 @@ namespace MMC.InstructionExec
         }
 
         /// Execute the RET instruction.
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // If there's something on the evaluation stack of the callee, we
@@ -2733,9 +2723,9 @@ namespace MMC.InstructionExec
             // NOTE: Popping has a side-effect! If reference counting is enabled,
             // it calls the Dispose() method on the methodstate, which, in turn,
             // calls Dispose() on all members (like locals and argument lists).
-            MethodState callee = ActiveState.cur.CallStack.Pop() as MethodState;
-            if (ActiveState.cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
-                ActiveState.cur.EvalStack.Push(callee.EvalStack.Pop());
+            MethodState callee = cur.CallStack.Pop() as MethodState;
+            if (cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
+                cur.EvalStack.Push(callee.EvalStack.Pop());
 
             ThreadObjectWatcher.DecrementAll(callee.Arguments);
             ThreadObjectWatcher.DecrementAll(callee.Locals);
@@ -2745,7 +2735,7 @@ namespace MMC.InstructionExec
 			 * means that we return from the ctor of the thrown exception and that we should
 			 * start finding the appropiate handlers, if any
 			 */
-            if (ActiveState.cur.CallStack.StackPointer > 0 && ActiveState.cur.CurrentMethod.IsExceptionSource)
+            if (cur.CallStack.StackPointer > 0 && cur.CurrentMethod.IsExceptionSource)
                 return ehLookupRetval;
             else
                 return nextRetval;
@@ -2753,7 +2743,7 @@ namespace MMC.InstructionExec
 
         /// Return is always safe. 
         /// Locks are released in MethodState.Dispose().
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;
         }
@@ -2778,13 +2768,13 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IRealElement ida = (IRealElement)ActiveState.cur.EvalStack.Pop();
+            IRealElement ida = (IRealElement)cur.EvalStack.Pop();
 
             if (ida.IsFinite())
             {
-                ActiveState.cur.EvalStack.Push(ida);
+                cur.EvalStack.Push(ida);
             }
             else
             {
@@ -2810,7 +2800,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // Determine the desired type. The PushBehaviour enum is no
@@ -2819,7 +2809,7 @@ namespace MMC.InstructionExec
             // conv.[iru][1248], where not all combinations are legal.
             string[] tokens = Instruction.OpCode.Name.Split(new char[] { '.' });
             INumericElement toPush = null;
-            IDataElement popped = ActiveState.cur.EvalStack.Pop();
+            IDataElement popped = cur.EvalStack.Pop();
 
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
@@ -2911,7 +2901,7 @@ namespace MMC.InstructionExec
                 RaiseException("System.OverflowException");
             }
 
-            ActiveState.cur.EvalStack.Push(toPush);
+            cur.EvalStack.Push(toPush);
 
             return nextRetval;
         }
@@ -2935,7 +2925,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // Operand is a VariableDefinition. In all but the rarest of cases
@@ -2943,17 +2933,17 @@ namespace MMC.InstructionExec
             // 256 arguments (programmers defining method with that many arguments
             // should be in the circus).
             int index = ((ParameterDefinition)Operand).Index;
-            if (!ActiveState.cur.CurrentMethod.Definition.HasThis)
+            if (!cur.CurrentMethod.Definition.HasThis)
                 index--;
 
 
-            IDataElement ide = ActiveState.cur.EvalStack.Pop();
+            IDataElement ide = cur.EvalStack.Pop();
 
             /*
 			 * For heap analysis, TODO this should be done in a much cleaner fashion... */
             if (ide is ObjectReference)
             {
-                IDataElement oldIde = ActiveState.cur.CurrentMethod.Arguments[index];
+                IDataElement oldIde = cur.CurrentMethod.Arguments[index];
                 ThreadObjectWatcher.Decrement((ObjectReference)oldIde);
                 ThreadObjectWatcher.Increment((ObjectReference)ide);
 
@@ -2961,7 +2951,7 @@ namespace MMC.InstructionExec
                 //	Explorer.ActivateGC = true;
             }
 
-            ActiveState.cur.CurrentMethod.Arguments[index] = ide;
+            cur.CurrentMethod.Arguments[index] = ide;
 
             return nextRetval;
         }
@@ -2976,7 +2966,7 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             // Operand is either a number 0-3, or a VariableDefinition, which
@@ -2987,13 +2977,13 @@ namespace MMC.InstructionExec
             else
                 index = ((Local)Operand).Index;
             
-            IDataElement ide = ActiveState.cur.EvalStack.Pop();
+            IDataElement ide = cur.EvalStack.Pop();
 
             /*
 			 * For heap analysis, TODO this should be done in a much cleaner fashion... */
             if (ide is ObjectReference)
             {
-                IDataElement oldIde = ActiveState.cur.CurrentMethod.Locals[index];
+                IDataElement oldIde = cur.CurrentMethod.Locals[index];
                 ThreadObjectWatcher.Decrement((ObjectReference)oldIde);
                 ThreadObjectWatcher.Increment((ObjectReference)ide);
 
@@ -3001,7 +2991,7 @@ namespace MMC.InstructionExec
                 //	Explorer.ActivateGC = true;
             }
 
-            ActiveState.cur.CurrentMethod.Locals[index] = ide;
+            cur.CurrentMethod.Locals[index] = ide;
 
             return nextRetval;
         }
@@ -3017,10 +3007,10 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            ActiveState.cur.EvalStack.Pop();
+            cur.EvalStack.Pop();
             return nextRetval;
         }
     }
@@ -3034,24 +3024,24 @@ namespace MMC.InstructionExec
         {
         }
         /*
-		public override IIEReturnValue Execute() {
-			IDataElement val = ActiveState.cur.EvalStack.Pop();
-			IManagedPointer mmp = ActiveState.cur.EvalStack.Pop() as IManagedPointer;
+		public override IIEReturnValue Execute(ExplicitActiveState cur) {
+			IDataElement val = cur.EvalStack.Pop();
+			IManagedPointer mmp = cur.EvalStack.Pop() as IManagedPointer;
 			mmp.Value = val;
 			return nextRetval;
 		}
 
-		public override bool IsMultiThreadSafe() {
-			IDataElement reference = ActiveState.cur.EvalStack.Peek();
+		public override bool IsMultiThreadSafe(ExplicitActiveState cur) {
+			IDataElement reference = cur.EvalStack.Peek();
 			return !(reference is ObjectFieldPointer || reference is StaticFieldPointer);
 		}
 
-		public override bool IsDependent() {
-			IDataElement reference = ActiveState.cur.EvalStack.Peek();
+		public override bool IsDependent(ExplicitActiveState cur) {
+			IDataElement reference = cur.EvalStack.Peek();
 
 			if (reference is ObjectFieldPointer) {
 				ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
-				AllocatedObject theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
+				AllocatedObject theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
 
 				return theObject.ThreadShared;
 			} else if (reference is StaticFieldPointer) {
@@ -3060,8 +3050,8 @@ namespace MMC.InstructionExec
 				return false;
 		}
 
-		public override MemoryLocation Accessed(int threadId) {
-			IDataElement reference = ActiveState.cur.EvalStack.Peek();
+		public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur) {
+			IDataElement reference = cur.EvalStack.Peek();
 
 			if (reference is ObjectFieldPointer) {
 				ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
@@ -3084,31 +3074,31 @@ namespace MMC.InstructionExec
         {
         }
 
-        public override IIEReturnValue Execute()
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement val = ActiveState.cur.EvalStack.Pop();
-            IManagedPointer mmp = ActiveState.cur.EvalStack.Pop() as IManagedPointer;
+            IDataElement val = cur.EvalStack.Pop();
+            IManagedPointer mmp = cur.EvalStack.Pop() as IManagedPointer;
             mmp.Value = val;
             return nextRetval;
         }
 
-        public override bool IsMultiThreadSafe()
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
-            int length = ActiveState.cur.EvalStack.Length;
-            IDataElement reference = ActiveState.cur.EvalStack[length - 2];
+            int length = cur.EvalStack.Length;
+            IDataElement reference = cur.EvalStack[length - 2];
             return !(reference is ObjectFieldPointer || reference is StaticFieldPointer);
         }
 
-        public override bool IsDependent()
+        public override bool IsDependent(ExplicitActiveState cur)
         {
-            int length = ActiveState.cur.EvalStack.Length;
-            IDataElement reference = ActiveState.cur.EvalStack[length - 2];
+            int length = cur.EvalStack.Length;
+            IDataElement reference = cur.EvalStack[length - 2];
 
 
             if (reference is ObjectFieldPointer)
             {
                 ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
-                AllocatedObject theObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
+                AllocatedObject theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
 
                 return theObject.ThreadShared;
             }
@@ -3120,10 +3110,10 @@ namespace MMC.InstructionExec
                 return false;
         }
 
-        public override MemoryLocation Accessed(int threadId)
+        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
-            int length = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Length;
-            IDataElement reference = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack[length - 2];
+            int length = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Length;
+            IDataElement reference = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack[length - 2];
 
             if (reference is ObjectFieldPointer)
             {
@@ -3136,7 +3126,7 @@ namespace MMC.InstructionExec
                 return sfp.MemoryLocation;
             }
 
-            return base.Accessed(threadId);
+            return base.Accessed(threadId, cur);
         }
     }
 

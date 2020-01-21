@@ -108,7 +108,7 @@ namespace MMC.InstructionExec
             m_flags = atr;
         }
 
-        public virtual IIEReturnValue Execute()
+        public virtual IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
             Logger.l.Warning("Execution for instruction not implemented.");
@@ -247,7 +247,7 @@ namespace MMC.InstructionExec
             ActiveState.cur.CallStack.Push(called);
         }
 
-        public virtual bool IsMultiThreadSafe()
+        public virtual bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
 
             // Note that the current implementation of safe vs. unsafe
@@ -264,12 +264,12 @@ namespace MMC.InstructionExec
         /*
 		 * This is overloaded by specific instructions for POR using object escape analysis
 		 */
-        public virtual bool IsDependent()
+        public virtual bool IsDependent(ExplicitActiveState cur)
         {
             return false;
         }
 
-        public virtual MemoryLocation Accessed(int threadId)
+        public virtual MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             return MemoryLocation.Null;
         }

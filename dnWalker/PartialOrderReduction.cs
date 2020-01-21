@@ -204,12 +204,14 @@ namespace MMC {
 				Explorer.DoSharingAnalysis = false;
 			}
 
-			int oldCurrentThreadId = ActiveState.cur.ThreadPool.CurrentThreadId;
+            var cur = ActiveState.cur;
+
+            int oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
 			int retval = -1;
 
-			foreach (int threadId in ActiveState.cur.ThreadPool.RunnableThreads)
+			foreach (int threadId in cur.ThreadPool.RunnableThreads)
             {
-				Instruction instr = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod.ProgramCounter;
+				Instruction instr = cur.ThreadPool.Threads[threadId].CurrentMethod.ProgramCounter;
                 if (instr == null)
                 {
                     continue;
@@ -217,9 +219,9 @@ namespace MMC {
 
 				InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
 
-				ActiveState.cur.ThreadPool.CurrentThreadId = threadId;
+				cur.ThreadPool.CurrentThreadId = threadId;
 
-				if (!instrExec.IsDependent() || instrExec.IsMultiThreadSafe()) {
+				if (!instrExec.IsDependent(cur) || instrExec.IsMultiThreadSafe(cur)) {
 					retval = threadId;
 					break;
 				}

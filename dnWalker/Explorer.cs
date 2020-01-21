@@ -383,16 +383,18 @@ namespace MMC {
 			bool canForward = false;
 
 			do {
-				PrintTransition();
+                var cur = ActiveState.cur;
+
+                PrintTransition();
                 //Console.Out.WriteLine(currentInstrExec.ToString());
-				ier = currentInstrExec.Execute();
+				ier = currentInstrExec.Execute(cur);
 
 				currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
 				/* if a RET was performed, currentMethod.ProgramCounter is null
 				 * and the PC should be set to programcounter of the current method, i.e.,
 				 * the method jumped to
 				 */
-				currentMethod = ActiveState.cur.CurrentMethod;
+				currentMethod = cur.CurrentMethod;
 				continueExploration = ier.ContinueExploration(currentMethod);
 
 				if (currentMethod != null && continueExploration)
@@ -400,8 +402,8 @@ namespace MMC {
 				else
 					currentInstrExec = null;
 
-				canForward = currentInstrExec != null && ActiveState.cur.CurrentThread.IsRunnable 
-                    && (currentInstrExec.IsMultiThreadSafe() || ActiveState.cur.ThreadPool.RunnableThreadCount == 1);
+				canForward = currentInstrExec != null && cur.CurrentThread.IsRunnable 
+                    && (currentInstrExec.IsMultiThreadSafe(cur) || cur.ThreadPool.RunnableThreadCount == 1);
 
 				/*
 				 * Optimization related to merging states that have only one outgoing transition,
@@ -409,9 +411,9 @@ namespace MMC {
 				 */
 				if (canForward
 						&& Config.UseStatefulDynamicPOR
-						&& !currentInstrExec.IsMultiThreadSafe()
-						&& ActiveState.cur.ThreadPool.RunnableThreadCount == 1) {
-					MemoryLocation ml = ActiveState.cur.NextAccess(threadId);
+						&& !currentInstrExec.IsMultiThreadSafe(cur)
+						&& cur.ThreadPool.RunnableThreadCount == 1) {
+					MemoryLocation ml = cur.NextAccess(threadId);
 					m_dpor.ExpandSelectedSet(new MemoryAccess(ml, threadId));
 				}
 			} while (canForward);

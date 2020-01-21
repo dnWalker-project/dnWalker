@@ -124,15 +124,18 @@ namespace MMC.State
                  DefinitionProvider.dp.AssemblyDefinition);
         }
 
+        /// <summary>
         /// Callback method for visitors.
-        ///
-        /// \param visitor A visitor visiting this state.
+        /// </summary>
+        /// <param name="visitor">A visitor visiting this state.</param>
         public void Accept(IStorageVisitor visitor)
         {
             visitor.VisitActiveState(this);
         }
 
+        /// <summary>
         /// Set all state-defining parts to be clean.
+        /// </summary>
         public void Clean()
         {
             m_dyn.Clean();
@@ -140,7 +143,9 @@ namespace MMC.State
             m_tp.Clean();
         }
 
+        /// <summary>
         /// Check if any of the four state-defining parts are dirty.
+        /// </summary>
         public bool IsDirty()
         {
             return m_dyn.IsDirty() || m_stat.IsDirty() || m_tp.IsDirty();
@@ -148,11 +153,12 @@ namespace MMC.State
 
         public MemoryLocation NextAccess(int threadId)
         {
-            MethodState method = ActiveState.cur.ThreadPool.Threads[threadId].CurrentMethod;
+            var cur = ActiveState.cur;
+            MethodState method = cur.ThreadPool.Threads[threadId].CurrentMethod;
             var instr = method.ProgramCounter;
             InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
 
-            return instrExec.Accessed(threadId);
+            return instrExec.Accessed(threadId, cur);
         }
 
         /// Convert the active state to a somewhat large string representation.
@@ -173,14 +179,14 @@ namespace MMC.State
 
         public void Reset()
         {
-
             m_dyn = new DynamicArea();
             m_stat = new StaticArea();
             m_tp = new ThreadPool();
-
         }
 
-        /// Constructor.
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ExplicitActiveState()
         {
             Reset();

@@ -127,38 +127,42 @@ namespace MMC.State {
             //typeOffset += typeDef.Fields.Count; 			}
         }
 
-		public override void Accept(IStorageVisitor visitor) {
-
+		public override void Accept(IStorageVisitor visitor)
+        {
 			visitor.VisitAllocatedObject(this);
 		}
 
-		public override string ToString() {
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder();
 
-			if (Locked)
-				sb.AppendFormat("locked by: {0}, ", Lock.ToString());
+            if (Locked)
+            {
+                sb.AppendFormat("locked by: {0}, ", Lock.ToString());
+            }
 
-			sb.Append("fields: N/A");
+            int typeOffset = 0;
+            foreach (var t in DefinitionProvider.dp.InheritanceEnumerator(Type))
+            {
+                var typeDef = t.ResolveTypeDef();
+                sb.AppendFormat("{0}:{{", typeDef.Name);
+                for (int i = 0; i < typeDef.Fields.Count; ++i)
+                {
+                    if (!typeDef.Fields[i].IsStatic)
+                    {
+                        sb.AppendFormat("{1}={2}{0}",
+                                i == m_fields.Length ? "" : ", ",
+                                typeDef.Fields[i].Name,
+                                m_fields[typeOffset + i].ToString());
+                    }
+                }
 
-            /*
-			int typeOffset = 0;
-			foreach (var typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) {
-				sb.AppendFormat("{0}:{{", typeDef.Name);
-				for (int i = 0; i < typeDef.Fields.Count; ++i) {
-					if (!typeDef.Fields[i].IsStatic) {
-						sb.AppendFormat("{1}={2}{0}",
-								(i == m_fields.Length ? "" : ", "),
-								typeDef.Fields[i].Name,
-								m_fields[typeOffset + i].ToString());
-					}
-				}
+                typeOffset += typeDef.Fields.Count;
+                sb.Append("} ");
+            }
 
-				typeOffset += typeDef.Fields.Count;
-				sb.Append("} ");
-			}*/
-			
-			return sb.ToString();
-		}
+            return sb.ToString();
+        }
 
 		public AllocatedObject(ITypeDefOrRef typeDef) : base(typeDef) { }
 	}
