@@ -256,11 +256,11 @@ namespace MMC.State
         internal void InitStructures()
         {
             if (EvalStack == null)
-                EvalStack = StorageFactory.sf.CreateStack(Definition.Body.MaxStack);
+                EvalStack = cur.StorageFactory.CreateStack(Definition.Body.MaxStack);
 
             if (Locals == null)
             {
-                Locals = StorageFactory.sf.CreateList(Definition.Body.Variables.Count);
+                Locals = cur.StorageFactory.CreateList(Definition.Body.Variables.Count);
                 for (int i = 0; i < Locals.Length; ++i)
                     Locals[i] = DefinitionProvider.dp.GetNullValue(
                             Definition.Body.Variables[i].Type);
@@ -269,7 +269,7 @@ namespace MMC.State
             if (Arguments == null)
             {
                 throw new NotImplementedException("XX");/*
-                m_inArguments = StorageFactory.sf.CreateList(m_methodDefinition.Par amDefs.Count);
+                m_inArguments = cur.StorageFactory.CreateList(m_methodDefinition.Par amDefs.Count);
                 for (int i = 0; i < m_inArguments.Length; ++i)
                     m_inArguments[i] = DefinitionProvider.dp.GetParameterNullOrDefaultValue(m_methodDefinition.Parame ters[i].ParamDef);*/
             }
@@ -288,7 +288,7 @@ namespace MMC.State
             m_pc = meth.Body.Instructions[0]; // safe; body always contains 'ret'.
             m_isExceptionSource = false;
 
-            ThreadObjectWatcher.IncrementAll(cur.ThreadPool.CurrentThreadId, pars, cur.Configuration);
+            ThreadObjectWatcher.IncrementAll(cur.ThreadPool.CurrentThreadId, pars, cur);
         }
 
         public MethodState(MethodDef meth, DataElementList pars, ExplicitActiveState cur)

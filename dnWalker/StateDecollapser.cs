@@ -39,30 +39,33 @@ namespace MMC.State {
 			m_pool = pool;
 		}
 
-		public void RestoreState(CollapsedStateDelta delta) {
-
+		public void RestoreState(CollapsedStateDelta delta)
+        {
             // We restore the state in the following order:
             //   - Restore allocations.
             //   - Delete allocations.
             //   - Restore classes.
             //   - Restore call stacks.	
             //   - Reset thread states.
-            for (ISparseElement d = delta.Allocations; d != null; d = d.Next) {
-				int pool_index = d.DeltaVal;
-				int i = d.Index;
+            for (ISparseElement d = delta.Allocations; d != null; d = d.Next)
+            {
+                int pool_index = d.DeltaVal;
+                int i = d.Index;
 
-				if (pool_index == deleted) {
-                    
-                    ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), cur);
-					cur.DynamicArea.DisposeLocation(i);
-				} else if (pool_index != not_set) {
-					/// The removal of childs is done by the RestoreAllocation method
-					///
-					/// TODO: should be cleaned up, and moves here
-					RestoreAllocation(i, pool_index);
-					ParentWatcher.AddParentToAllChilds(new ObjectReference(i + 1), cur);
-				}
-			}
+                if (pool_index == deleted)
+                {
+                    cur.ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), cur);
+                    cur.DynamicArea.DisposeLocation(i);
+                }
+                else if (pool_index != not_set)
+                {
+                    /// The removal of childs is done by the RestoreAllocation method
+                    ///
+                    /// TODO: should be cleaned up, and moves here
+                    RestoreAllocation(i, pool_index);
+                    cur.ParentWatcher.AddParentToAllChilds(new ObjectReference(i + 1), cur);
+                }
+            }
 
 			for (ISparseElement d = delta.Classes; d != null; d = d.Next) {
 				int pool_index = d.DeltaVal;
@@ -129,28 +132,29 @@ namespace MMC.State {
 			}
 		}
 
-		DynamicAllocation RestoreObject(int alloc_id, WrappedIntArray co)
+        DynamicAllocation RestoreObject(int alloc_id, WrappedIntArray co)
         {
-			// If the old allocation is still here, re-use it.
-			var type = (ITypeDefOrRef)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
-			DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
+            // If the old allocation is still here, re-use it.
+            var type = (ITypeDefOrRef)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
+            DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
 
-			AllocatedObject obj;
+            AllocatedObject obj;
 
-			if (alloc == null) {
-				obj = new AllocatedObject(type, cur.Configuration);
-			} else {
-				obj = (AllocatedObject)alloc;
-				ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), obj.Fields);
-			}
+            if (alloc == null)
+            {
+                obj = new AllocatedObject(type, cur.Configuration);
+            }
+            else
+            {
+                obj = (AllocatedObject)alloc;
+                cur.ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), obj.Fields, cur);
+            }
 
-			DataElementList newFields = m_pool.GetDataElementList(co[ObjectPartsOffsets.Fields]);
+            // Overwrite the fields.			
+            obj.Fields = m_pool.GetDataElementList(co[ObjectPartsOffsets.Fields]);
 
-			// Overwrite the fields.			
-			obj.Fields = newFields;
-
-			return obj;
-		}
+            return obj;
+        }
 
 		DynamicAllocation RestoreArray(int alloc_id, WrappedIntArray ca)
         {
@@ -164,8 +168,8 @@ namespace MMC.State {
 			int array_length = newFields.Length;
 			AllocatedArray arr = (alloc == null) ? new AllocatedArray(type, array_length, cur.Configuration) : (AllocatedArray)alloc;
 
-			// Overwrite the elements.
-			ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), arr.Fields);
+            // Overwrite the elements.
+            cur.ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), arr.Fields, cur);
 			arr.Fields = newFields;
 			return arr;
 		}
@@ -176,14 +180,17 @@ namespace MMC.State {
 			MethodPointer meth_ptr = (MethodPointer)m_pool.GetElement(cd[DelegatePartsOffsets.MethodPointer]);
 			DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
 
-			if (alloc != null) {
-				AllocatedDelegate ad = (AllocatedDelegate)alloc;
-				ParentWatcher.RemoveParentFromChild(new ObjectReference(alloc_id + 1), ad.Object, cur.Configuration.MemoisedGC);
-				ad.Method = meth_ptr;
-				ad.Object = obj_ref;
-			} else {
-				alloc = new AllocatedDelegate(obj_ref, meth_ptr, cur.Configuration);
-			}
+            if (alloc != null)
+            {
+                AllocatedDelegate ad = (AllocatedDelegate)alloc;
+                cur.ParentWatcher.RemoveParentFromChild(new ObjectReference(alloc_id + 1), ad.Object, cur.Configuration.MemoisedGC);
+                ad.Method = meth_ptr;
+                ad.Object = obj_ref;
+            }
+            else
+            {
+                alloc = new AllocatedDelegate(obj_ref, meth_ptr, cur.Configuration);
+            }
 
 			return alloc;
 		}
@@ -249,9 +256,9 @@ namespace MMC.State {
                 for (int i = collapsed_frames.Length; i < stackptr; i++)
                 {
                     MethodState method = cur.ThreadPool.Threads[thread_id].CallStack[i];
-                    ThreadObjectWatcher.DecrementAll(thread_id, method.Locals, cur.Configuration);
-                    ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments, cur.Configuration);
-                    ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack, cur.Configuration);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Locals, cur);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments, cur);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack, cur);
                 }
             }
 
@@ -308,16 +315,16 @@ namespace MMC.State {
 				 * often */
                 if (args.Length == method.Arguments.Length && stillOnStack)
                 {
-                    ThreadObjectWatcher.UpdateDifference(thread_id, method.Arguments, args, cur.Configuration);
+                    ThreadObjectWatcher.UpdateDifference(thread_id, method.Arguments, args, cur);
                 }
                 else if (stillOnStack)
                 {
-                    ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments, cur.Configuration);
-                    ThreadObjectWatcher.IncrementAll(thread_id, args, cur.Configuration);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Arguments, cur);
+                    ThreadObjectWatcher.IncrementAll(thread_id, args, cur);
                 }
                 else
                 {
-                    ThreadObjectWatcher.IncrementAll(thread_id, args, cur.Configuration);
+                    ThreadObjectWatcher.IncrementAll(thread_id, args, cur);
                 }
 
 				method.Arguments = args;
@@ -334,16 +341,16 @@ namespace MMC.State {
 				 * often */
                 if (locals.Length == method.Locals.Length && stillOnStack)
                 {
-                    ThreadObjectWatcher.UpdateDifference(thread_id, method.Locals, locals, cur.Configuration);
+                    ThreadObjectWatcher.UpdateDifference(thread_id, method.Locals, locals, cur);
                 }
                 else if (stillOnStack)
                 {
-                    ThreadObjectWatcher.DecrementAll(thread_id, method.Locals, cur.Configuration);
-                    ThreadObjectWatcher.IncrementAll(thread_id, locals, cur.Configuration);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.Locals, cur);
+                    ThreadObjectWatcher.IncrementAll(thread_id, locals, cur);
                 }
                 else
                 {
-                    ThreadObjectWatcher.IncrementAll(thread_id, locals, cur.Configuration);
+                    ThreadObjectWatcher.IncrementAll(thread_id, locals, cur);
                 }
 
 				method.Locals = locals;
@@ -360,16 +367,16 @@ namespace MMC.State {
 				 * calle less often */
                 if (stack.Length == method.EvalStack.Length && stillOnStack)
                 {
-                    ThreadObjectWatcher.UpdateDifference(thread_id, method.EvalStack, stack, cur.Configuration);
+                    ThreadObjectWatcher.UpdateDifference(thread_id, method.EvalStack, stack, cur);
                 }
                 else if (stillOnStack)
                 {
-                    ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack, cur.Configuration);
-                    ThreadObjectWatcher.IncrementAll(thread_id, stack, cur.Configuration);
+                    ThreadObjectWatcher.DecrementAll(thread_id, method.EvalStack, cur);
+                    ThreadObjectWatcher.IncrementAll(thread_id, stack, cur);
                 }
                 else
                 {
-                    ThreadObjectWatcher.IncrementAll(thread_id, stack, cur.Configuration);
+                    ThreadObjectWatcher.IncrementAll(thread_id, stack, cur);
                 }
 
 				method.EvalStack = stack;

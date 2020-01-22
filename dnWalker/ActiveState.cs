@@ -101,6 +101,12 @@ namespace MMC.State
 
         public IGarbageCollector GarbageCollector => m_gc;
 
+        public IStorageFactory StorageFactory { get; }
+
+        internal ParentWatcher ParentWatcher { get; }
+
+        internal ThreadObjectWatcher ThreadObjectWatcher { get; }
+
         /// <summary>
         /// Evaluation stack of top of callstack of currently running thread.
         /// </summary>
@@ -193,8 +199,8 @@ namespace MMC.State
 
         public void Reset()
         {
-            m_dyn = new DynamicArea(Configuration);
-            m_stat = new StaticArea(Configuration);
+            m_dyn = new DynamicArea(this);
+            m_stat = new StaticArea(this);
             m_tp = new ThreadPool();
         }
 
@@ -213,6 +219,10 @@ namespace MMC.State
             m_gc = config.MemoisedGC ?
                 new IncrementalHeapVisitor(this) as IGarbageCollector :
                 new MarkAndSweepGC() as IGarbageCollector;
+
+            StorageFactory = new StorageFactory(this);
+            ParentWatcher = new ParentWatcher(config);
+            ThreadObjectWatcher = new ThreadObjectWatcher();
         }
     }
 }

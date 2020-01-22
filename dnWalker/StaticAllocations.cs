@@ -195,7 +195,6 @@ namespace MMC.State
 
         public void ClearFields()
         {
-
             m_staticFieldCount = 0;
             TypeDefinition typeDef = DefinitionProvider.dp.GetTypeDefinition(Type);
             for (int i = 0; i < m_fields.Length; ++i)
@@ -208,10 +207,10 @@ namespace MMC.State
             }
         }
 
-        public AllocatedClass(TypeDefinition typeDef, IConfig config)
-            : base(typeDef, config)
+        public AllocatedClass(TypeDefinition typeDef, ExplicitActiveState cur)
+            : base(typeDef, cur.Configuration.UseRefCounting, cur.Configuration.MemoisedGC)
         {
-            m_fields = StorageFactory.sf.CreateList(typeDef.Fields.Count);
+            m_fields = cur.StorageFactory.CreateList(typeDef.Fields.Count);
             m_initData = new InitDataContainer();
             m_isDirty = true;
             ClearFields();

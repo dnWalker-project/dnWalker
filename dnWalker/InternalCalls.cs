@@ -191,11 +191,14 @@ namespace MMC.ICall {
 			AllocatedArray sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
 			AllocatedArray destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
 
-			ParentWatcher.RemoveParentFromAllChilds(dest, cur);
+            cur.ParentWatcher.RemoveParentFromAllChilds(dest, cur);
 
-			for (int i = 0; i < length; i++, destIdx++, sourceIdx++) 
-				destArr.Fields[destIdx] = sourceArr.Fields[sourceIdx];
-			ParentWatcher.AddParentToAllChilds(dest, cur);
+            for (int i = 0; i < length; i++, destIdx++, sourceIdx++)
+            {
+                destArr.Fields[destIdx] = sourceArr.Fields[sourceIdx];
+            }
+
+            cur.ParentWatcher.AddParentToAllChilds(dest, cur);
 
 			cur.EvalStack.Push(new Int4(1));
 		}
@@ -351,8 +354,7 @@ namespace MMC.ICall {
         {
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false, cur),
-                methDef.DeclaringType,
-                cur.Configuration);
+                methDef.DeclaringType);
             AllocatedObject threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
@@ -364,10 +366,10 @@ namespace MMC.ICall {
 			// TODO: This does not deal with delegates that take additional
 			// parameters (such as a state). It can probably be popped off the
 			// stack, but not certain, so skipping for now.
-			DataElementList delPars = StorageFactory.sf.CreateList(0);
+			DataElementList delPars = cur.StorageFactory.CreateList(0);
 			if (del.Method.Value.HasThis)
             {
-				delPars = StorageFactory.sf.CreateList(1);
+				delPars = cur.StorageFactory.CreateList(1);
 				delPars[0] = del.Object;
 			}
 

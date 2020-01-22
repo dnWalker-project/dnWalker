@@ -221,8 +221,7 @@ namespace MMC.InstructionExec
 
             ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(cur),
-                exceptionType,
-                cur.Configuration);
+                exceptionType);
 
             cur.CurrentThread.ExceptionReference = exceptionRef;
             cur.CurrentMethod.IsExceptionSource = true;
@@ -244,7 +243,7 @@ namespace MMC.InstructionExec
             }
 
             // Call the constructor.
-            MethodState called = new MethodState(noArgsCtor, StorageFactory.sf.CreateSingleton(exceptionRef), cur);
+            MethodState called = new MethodState(noArgsCtor, cur.StorageFactory.CreateSingleton(exceptionRef), cur);
             cur.CallStack.Push(called);
         }
 

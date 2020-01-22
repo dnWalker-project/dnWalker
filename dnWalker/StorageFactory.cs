@@ -20,25 +20,27 @@ namespace MMC.Data {
 	using System.Collections.Generic;
 	using MMC.State;
 
-	interface IStorageFactory {
+    public interface IStorageFactory
+    {
+        DataElementList CreateList(int size);
 
-		DataElementList CreateList(int size);		
-		DataElementList CreateSingleton(IDataElement elem);		
+        DataElementList CreateSingleton(IDataElement elem);
 
-		DataElementStack CreateStack(int size);
+        DataElementStack CreateStack(int size);
 
-		CallStack CreateCallStack();
-		CallStack CreateCallStack(ICollection<MethodState> col);
-	}
+        CallStack CreateCallStack();
 
-	class StorageFactory : IStorageFactory {
+        CallStack CreateCallStack(ICollection<MethodState> col);
+    }
 
-		static IStorageFactory instance = new StorageFactory();
+	public class StorageFactory : IStorageFactory
+    {
+        private readonly ExplicitActiveState cur;
 
-		public static IStorageFactory sf {
-
-			get { return instance; }
-		}
+        public StorageFactory(ExplicitActiveState cur)
+        {
+            this.cur = cur;
+        }
 
 		/*
 		public static void UseRefCounting(bool useRC) {
@@ -61,9 +63,9 @@ namespace MMC.Data {
 			return retval;
 		}
 
-		public virtual DataElementStack CreateStack(int size) {
-
-			return new DataElementStack(size);
+		public virtual DataElementStack CreateStack(int size)
+        {
+			return new DataElementStack(size, cur);
 		}
 
 		public virtual CallStack CreateCallStack() {

@@ -81,8 +81,7 @@ namespace MMC
             ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
                 cur.DynamicArea.DeterminePlacement(false, cur),
                 DefinitionProvider.dp.GetTypeDefinition("System.String"),
-                cur.Configuration.RunTimeParameters.Length,
-                cur.Configuration);
+                cur.Configuration.RunTimeParameters.Length);
 
             if (config.RunTimeParameters.Length > 0)
             {
@@ -94,7 +93,7 @@ namespace MMC
             }
             MethodState mainState = new MethodState(
                 asmDef.EntryPoint,
-                StorageFactory.sf.CreateSingleton(runArgsRef),
+                cur.StorageFactory.CreateSingleton(runArgsRef),
                 cur);
 
             // Initialize main thread.
@@ -128,16 +127,14 @@ namespace MMC
             // 1
             MethodPointer mainMethodPtr = new MethodPointer(mainDefinition);
             ObjectReference mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
-                    cur.DynamicArea.DeterminePlacement(false, cur),
-                    ObjectReference.Null,
-                    mainMethodPtr,
-                    cur.Configuration);
+                cur.DynamicArea.DeterminePlacement(false, cur),
+                ObjectReference.Null,
+                mainMethodPtr);
 
             // 2
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(false, cur),
-                    DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"),
-                    cur.Configuration);
+                cur.DynamicArea.DeterminePlacement(false, cur),
+                DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"));
 
             AllocatedObject threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
@@ -153,12 +150,11 @@ namespace MMC
                 // Simply skip if not found.
                 ObjectReference newObjectRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(false, cur),
-                    DefinitionProvider.dp.GetTypeDefinition("System.Object"),
-                    cur.Configuration);
+                    DefinitionProvider.dp.GetTypeDefinition("System.Object"));
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
                 // TODO: HV for maintaining the parents references in the incremental heap visitor
                 //cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
-                ParentWatcher.AddParentToChild(threadObjectRef, newObjectRef, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(threadObjectRef, newObjectRef, cur.Configuration.MemoisedGC);
             }
             else
             {
@@ -173,7 +169,7 @@ namespace MMC
                 threadObject.Fields[(int)threadstartField.FieldOffset] = mainMethodDelegate;
                 // TODO: HV 
                 //cur.DynamicArea.Allocations[mainMethodDelegate].Parents.Add(threadObjectRef);
-                ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC);
             }
             else
                 Logger.l.Warning("No thread field found for storing Main delegate!");

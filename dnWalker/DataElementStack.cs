@@ -28,11 +28,14 @@ namespace MMC.Data {
 		protected int m_stackptr;
 		protected bool m_isDirty;
 		protected bool m_isReadonly;
+        private readonly ExplicitActiveState cur;
 
-		public int	StackPointer {
-			get { return m_stackptr; }
-			set { m_stackptr = value; } // do not use
-		}
+        public int StackPointer
+        {
+            get { return m_stackptr; }
+            set { m_stackptr = value; } // do not use
+        }
+
 		public int	Length { get { return StackPointer; } }
 		public int	Capacity { get { return m_elements.Length; } }
 		public bool	IsDirty() { return m_isDirty; }
@@ -69,7 +72,7 @@ namespace MMC.Data {
 			m_isDirty = true;
 			m_elements[m_stackptr++] = e;
 
-			ThreadObjectWatcher.Increment(-1, e);
+			ThreadObjectWatcher.Increment(-1, e, cur);
 		}
 
 		public virtual IDataElement Pop()
@@ -88,18 +91,17 @@ namespace MMC.Data {
 
 			IDataElement popped = m_elements[--m_stackptr];
 
-			ThreadObjectWatcher.Decrement(/*cur.ThreadPool.CurrentThreadId*/-1, popped);
+			ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, popped, cur);
 
 			//if (popped is ObjectReference && !popped.Equals(ObjectReference.Null)) 
 			//	Explorer.ActivateGC = true;
-			
 			return popped;
 		}
 
-		public IDataElement Peek() {
-
-			return m_elements[m_stackptr-1];
-		}
+        public IDataElement Peek()
+        {
+            return m_elements[m_stackptr - 1];
+        }
 
 		public override string ToString() {
 
@@ -110,46 +112,51 @@ namespace MMC.Data {
 			return ListToString.Format(m_elements, 0, m_stackptr);
 		}
 
-
-		public virtual IStorable StorageCopy() {
-
-			return new DataElementStack(this);
+		public virtual IStorable StorageCopy()
+        {
+			return new DataElementStack(this, cur);
 		}
 
-		public override int GetHashCode() {
-
+		public override int GetHashCode()
+        {
 			// Note that both the capacity and the stack pointer are taken into
 			// account here. This is done on purpose!		
 			return ArrayIntHasher.GetHashCodeDataElementContainer(this, m_stackptr);
 		}
 
-		public override bool Equals(object other) {
+        public override bool Equals(object other)
+        {
+            DataElementStack o = other as DataElementStack;
+            bool equal = o != null
+                && o.Capacity == Capacity
+                && o.StackPointer == StackPointer;
+            for (int i = 0; equal && i < m_stackptr; ++i)
+            {
+                equal = o[i].Equals(m_elements[i]);
+            }
+            return equal;
+        }
 
-			DataElementStack o = other as DataElementStack;
-			bool equal = o != null && 
-				o.Capacity == Capacity &&
-				o.StackPointer == StackPointer;
-			for (int i=0; equal && i < m_stackptr; ++i)
-				equal = o[i].Equals(m_elements[i]);
-			return equal;				
-		}
-
-		public DataElementStack(int maxStack) {
-
+		public DataElementStack(int maxStack, ExplicitActiveState cur)
+        {
+            this.cur = cur;
 			m_elements = new IDataElement[maxStack];
 			m_stackptr = 0;
 			m_isDirty = true;
 			m_isReadonly = false;
 		}
 
-		protected DataElementStack(DataElementStack copy) {
-
-			m_elements = new IDataElement[copy.Capacity];
+		protected DataElementStack(DataElementStack copy, ExplicitActiveState cur)
+        {
+            this.cur = cur;
+            m_elements = new IDataElement[copy.Capacity];
 			m_stackptr = copy.StackPointer;
 			m_isDirty = true;
 			m_isReadonly = false;
-			for (int i=0; i < m_stackptr; ++i)
-				m_elements[i] = copy[i];
+            for (int i = 0; i < m_stackptr; ++i)
+            {
+                m_elements[i] = copy[i];
+            }
 		}
 	}
 

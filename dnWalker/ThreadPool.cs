@@ -137,8 +137,8 @@ namespace MMC.State {
 
 			// these arguments were added by the parent thread, but they should be 
 			// marked from the child thread for heap analysis
-			ThreadObjectWatcher.DecrementAll(this, entry.Arguments, cur.Configuration);
-			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments, cur.Configuration);
+			ThreadObjectWatcher.DecrementAll(this, entry.Arguments, cur);
+			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments, cur);
 
             cur.RequestSharingAnalysis();
 

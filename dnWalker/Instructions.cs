@@ -856,7 +856,7 @@ namespace MMC.InstructionExec
                     cls.InitializingThread = me;
                     MethodState cctorState = new MethodState(
                         cctorDef,
-                        StorageFactory.sf.CreateList(0),
+                        cur.StorageFactory.CreateList(0),
                         cur);
                     cctorState.OnDispose = new MethodStateCallback(this.CctorDoneCallBack);
                     cur.CallStack.Push(cctorState);
@@ -1023,8 +1023,7 @@ namespace MMC.InstructionExec
                 cur.EvalStack.Push(cur.DynamicArea.AllocateArray(
                     cur.DynamicArea.DeterminePlacement(cur),
                     Operand as ITypeDefOrRef,
-                    length.Value,
-                    cur.Configuration));
+                    length.Value));
             }
             return nextRetval;
         }
@@ -1199,10 +1198,9 @@ namespace MMC.InstructionExec
             {
                 ObjectEscapePOR.UpdateReachability(theArray.ThreadShared, theArray.Fields[idx.Value], val, cur);
 
-                ParentWatcher.RemoveParentFromChild(arrayRef, theArray.Fields[idx.Value], cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.RemoveParentFromChild(arrayRef, theArray.Fields[idx.Value], cur.Configuration.MemoisedGC);
                 theArray.Fields[idx.Value] = val;
-                ParentWatcher.AddParentToChild(arrayRef, val, cur.Configuration.MemoisedGC);
-
+                cur.ParentWatcher.AddParentToChild(arrayRef, val, cur.Configuration.MemoisedGC);
             }
             else
             {
@@ -1443,13 +1441,13 @@ namespace MMC.InstructionExec
                     cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
                 int offset = GetFieldOffset(theObject.Type);
-                ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
 
                 /// Can be the case that an object reference was written, thereby changing the object graph
                 ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val, cur);
 
                 theObject.Fields[offset] = val;
-                ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC);
             }
             else if (toChange is LocalVariablePointer)
             {
@@ -1521,8 +1519,7 @@ namespace MMC.InstructionExec
             // Operand is a type definition of the wrapper type to use.
             ObjectReference wrappedRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(cur),
-                Operand as ITypeDefOrRef,
-                cur.Configuration);
+                Operand as ITypeDefOrRef);
             AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
             wrapped.Fields[wrapped.ValueFieldOffset] = cur.EvalStack.Pop();
             cur.EvalStack.Push(wrappedRef);
@@ -1663,13 +1660,13 @@ namespace MMC.InstructionExec
                 IDataElement val = cur.EvalStack.Pop();
 
                 AllocatedClass ac = cur.StaticArea.GetClass(declType);
-                ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, ac.Fields[(int)fld.FieldOffset]);
+                ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, ac.Fields[(int)fld.FieldOffset], cur);
 
                 ObjectEscapePOR.UpdateReachability(true, ac.Fields[(int)fld.FieldOffset], val, cur);
 
                 ac.Fields[(int)fld.FieldOffset] = val;
 
-                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, ac.Fields[(int)fld.FieldOffset]);
+                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, ac.Fields[(int)fld.FieldOffset], cur);
 
                 retval = nextRetval;
             }
@@ -2231,7 +2228,7 @@ namespace MMC.InstructionExec
                 Logger.l.Log(LogPriority.Call, "invoke: call is a synchronous delegate call");
                 // Create caller block, shifting parameters so delegate is dropped
                 // from argument list.
-                DataElementList calleePars = StorageFactory.sf.CreateList(args.Length - 1);
+                DataElementList calleePars = cur.StorageFactory.CreateList(args.Length - 1);
                 for (int i = 0; i < calleePars.Length; ++i)
                     calleePars[i] = args[i + 1];
                 MethodDefinition toCall =
@@ -2329,7 +2326,7 @@ namespace MMC.InstructionExec
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.ParamDefs.Count + (methDef.HasThis ? 1 : 0);
-            DataElementList retval = StorageFactory.sf.CreateList(size);
+            DataElementList retval = cur.StorageFactory.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
@@ -2342,7 +2339,7 @@ namespace MMC.InstructionExec
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.Parameters.Count + (methDef.HasThis ? 1 : 0);
-            DataElementList retval = StorageFactory.sf.CreateList(size);
+            DataElementList retval = cur.StorageFactory.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
@@ -2634,7 +2631,7 @@ namespace MMC.InstructionExec
 
             // Note that this loop condition is "i > 0", not "i >= 0". This is because
             // we need to fill in args[0] (i.e. the this pointer) ourselves.
-            DataElementList args = StorageFactory.sf.CreateList(methDef.ParamDefs.Count + 1);
+            DataElementList args = cur.StorageFactory.CreateList(methDef.ParamDefs.Count + 1);
             for (int i = args.Length - 1; i > 0; --i)
             {
                 args[i] = cur.EvalStack.Pop();
@@ -2661,9 +2658,9 @@ namespace MMC.InstructionExec
                 if ((args[1] is ObjectReference) && (args[2] is MethodPointer))
                 {
                     IDataElement newDel = cur.DynamicArea.AllocateDelegate(
-                            cur.DynamicArea.DeterminePlacement(cur),
-                            (ObjectReference)args[1], (MethodPointer)args[2], 
-                            cur.Configuration);
+                        cur.DynamicArea.DeterminePlacement(cur),
+                        (ObjectReference)args[1], 
+                        (MethodPointer)args[2]);
                     cur.EvalStack.Push(newDel);
                     Logger.l.Log(LogPriority.Call, "constructor call for delegate handled by ves");
                 }
@@ -2679,8 +2676,7 @@ namespace MMC.InstructionExec
                 // Normal constructor call, create this pointer.
                 args[0] = cur.DynamicArea.AllocateObject(
                         cur.DynamicArea.DeterminePlacement(cur),
-                        methDef.DeclaringType,
-                        cur.Configuration);
+                        methDef.DeclaringType);
                 // Constructor calls should leave object reference on the stack.
                 cur.EvalStack.Push(args[0]);
                 // Call the constructor.
@@ -2942,8 +2938,8 @@ namespace MMC.InstructionExec
             if (ide is ObjectReference)
             {
                 IDataElement oldIde = cur.CurrentMethod.Arguments[index];
-                ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde);
-                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, (ObjectReference)ide);
+                ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde, cur);
+                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, (ObjectReference)ide, cur);
 
                 //if (!oldIde.Equals(ObjectReference.Null))
                 //	Explorer.ActivateGC = true;
@@ -2982,8 +2978,8 @@ namespace MMC.InstructionExec
             if (ide is ObjectReference)
             {
                 IDataElement oldIde = cur.CurrentMethod.Locals[index];
-                ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde);
-                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, (ObjectReference)ide);
+                ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde, cur);
+                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, (ObjectReference)ide, cur);
 
                 //if (!oldIde.Equals(ObjectReference.Null))
                 //	Explorer.ActivateGC = true;

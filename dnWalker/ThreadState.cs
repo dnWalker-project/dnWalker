@@ -32,8 +32,7 @@ namespace MMC.State {
 		ObjectReference m_threadObj;
 		ObjectReference m_exceptionObj; // ref is stored here in case of exception
 		int m_state; // Short-hand for the 'state' field.
-		int m_waitFor;
-		bool m_isDirty;
+        bool m_isDirty;
 		int m_me; // an ID.
 
         private readonly ExplicitActiveState cur;
@@ -87,7 +86,7 @@ namespace MMC.State {
 					Debug.Assert(value != m_state, "Stopping already stopped thread.");
 					if (value == MMC.ThreadStatus.Running || value == MMC.ThreadStatus.WaitSleepJoin) {
 						cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
-						ThreadObjectWatcher.Increment(m_me, m_threadObj);
+						ThreadObjectWatcher.Increment(m_me, m_threadObj, cur);
 					}
 				}
 				if (value == MMC.ThreadStatus.Stopped)
@@ -119,39 +118,35 @@ namespace MMC.State {
 		public void WaitFor(int other) {
 
 			m_state = MMC.ThreadStatus.WaitSleepJoin;
-			m_isDirty |= m_waitFor != other;
+			m_isDirty |= WaitingFor != other;
 			//m_isDirty = true;
-			m_waitFor = other;
+			WaitingFor = other;
 		}
 
-		public void Awaken() {
+        public void Awaken()
+        {
+            m_state = MMC.ThreadStatus.Running;
+            //m_isDirty |= m_waitFor != LockManager.NoThread;
+            m_isDirty = true;
+            WaitingFor = LockManager.NoThread;
+            Logger.l.Debug("thread {0} woke up", m_me);
+        }
 
-			m_state = MMC.ThreadStatus.Running;
-			//m_isDirty |= m_waitFor != LockManager.NoThread;
-			m_isDirty = true;
-			m_waitFor = LockManager.NoThread;
-			Logger.l.Debug("thread {0} woke up", m_me);
-		}
+        public int WaitingFor { get; set; }
 
-		public int WaitingFor {
+        // ---------------- Cleanup and Cleanliness -------------- 
 
-			get { return m_waitFor; }
-			set { m_waitFor = value; } // solely for collapsing etc.
-		}
+        void ReleaseObject()
+        {
+            cur.DynamicArea.SetPinnedAllocation(m_threadObj, false);
+            ThreadObjectWatcher.Decrement(m_me, ThreadObject, cur);
+        }
 
-		// ---------------- Cleanup and Cleanliness -------------- 
-
-		void ReleaseObject() {
-
-			cur.DynamicArea.SetPinnedAllocation(m_threadObj, false);
-			ThreadObjectWatcher.Decrement(m_me, ThreadObject);
-		}
-
-		public void Dispose() {
-
-			ReleaseObject();
-			m_callStack.Dispose();
-		}
+        public void Dispose()
+        {
+            ReleaseObject();
+            m_callStack.Dispose();
+        }
 
 		public bool IsDirty() {
 
@@ -176,7 +171,7 @@ namespace MMC.State {
 
 		public override string ToString() {
 
-			int currentWaitFor = m_waitFor;
+			int currentWaitFor = WaitingFor;
 
 			for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++) {
 				DynamicAllocation ida = cur.DynamicArea.Allocations[i];
@@ -204,16 +199,16 @@ namespace MMC.State {
 
 		public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me)
         {
-			m_callStack = StorageFactory.sf.CreateCallStack();
+			m_callStack = cur.StorageFactory.CreateCallStack();
 			m_threadObj = threadObj;
 			m_state = MMC.ThreadStatus.Running;
-			m_waitFor = LockManager.NoThread;
+			WaitingFor = LockManager.NoThread;
 			m_isDirty = true;
 			m_me = me;
 			m_exceptionObj = ObjectReference.Null;
             this.cur = cur;
 			cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
-			ThreadObjectWatcher.Increment(me, threadObj);
+			ThreadObjectWatcher.Increment(me, threadObj, cur);
 		}
 	}
 }

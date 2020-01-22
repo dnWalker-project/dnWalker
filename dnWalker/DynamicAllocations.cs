@@ -81,7 +81,7 @@ namespace MMC.State {
 		}
 
         /// Initialize / null all (inherited) fields.
-        public virtual void ClearFields()
+        public virtual void ClearFields(ExplicitActiveState cur)
         {
             /* 
 			 * determine the field length of this object
@@ -104,7 +104,7 @@ namespace MMC.State {
             }
 
             if (m_fields == null)
-                m_fields = StorageFactory.sf.CreateList(fields.Count);
+                m_fields = cur.StorageFactory.CreateList(fields.Count);
 
             /*
 			 * Initialize the fields with default values
@@ -164,7 +164,7 @@ namespace MMC.State {
             return sb.ToString();
         }
 
-		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config) { }
+		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config.UseRefCounting, config.MemoisedGC) { }
 	}
 
     /// VY thinks that eventually an array should not be a first-class citizen,
@@ -175,11 +175,12 @@ namespace MMC.State {
 			get { return AllocationType.Array; }
 		}
 
-		public override void ClearFields() {
-			IDataElement nullVal = DefinitionProvider.dp.GetNullValue(Type);
-			for (int i = 0; i < Fields.Length; i++)
-				Fields[i] = nullVal;
-		}
+        public override void ClearFields(ExplicitActiveState cur)
+        {
+            IDataElement nullVal = DefinitionProvider.dp.GetNullValue(Type);
+            for (int i = 0; i < Fields.Length; i++)
+                Fields[i] = nullVal;
+        }
 
 		public override string ToString() {
 			return string.Format("array:{0}[{1}] = [{2}]",
@@ -257,7 +258,7 @@ namespace MMC.State {
 			return "delegate:" + m_obj.ToString() + "." + m_ptr.Value.Name;
 		}
 
-		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(_delegateTypeLazy.Value, config)
+		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(_delegateTypeLazy.Value, config.UseRefCounting, config.MemoisedGC)
         {
 			m_obj = obj;
 			m_ptr = ptr;

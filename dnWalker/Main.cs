@@ -81,10 +81,6 @@ namespace MMC
         public double MaxExploreInMinutes { get; set; } = double.PositiveInfinity;
         public double OptimizeStorageAtMegabyte { get; set; } = double.PositiveInfinity;
         public double MemoryLimit { get; set; } = double.PositiveInfinity;
-
-        private static Lazy<IConfig> _instance = new Lazy<IConfig>(() => new Config());
-
-        public static IConfig Instance => _instance.Value;
     }
 
     /// The main application class.
@@ -100,7 +96,7 @@ namespace MMC
         /// \param value Values for the message string.
         public static void Message(string msg, params object[] values)
         {
-            if (Config.Instance.Verbose)
+            //if (Config.Instance.Verbose)
             {
                 string to_write = (values.Length > 0 ? string.Format(msg, values) : msg);
                 System.Console.WriteLine(to_write);
@@ -112,7 +108,6 @@ namespace MMC
         /// \param msg Message to print before quitting.
         public static void Fatal(string msg)
         {
-
             Logger.l.CloseAll();
             DotWriter.End();
             System.Console.WriteLine("FATAL: " + msg);
@@ -125,7 +120,6 @@ namespace MMC
         /// \param filename Name of the file to output to.
         static TextWriter TryOpen(string filename)
         {
-
             StreamWriter retval = null;
             try
             {
@@ -156,42 +150,45 @@ namespace MMC
         /// This sets various fields in class Config.
         ///
         /// \param args Command-line options as passed to Main.
-        static void ParseCommandLineOptions(string[] args)
+        public static IConfig GetConfigFromCommandLine(string[] args)
         {
+            var config = new Config();
             for (int i = 0; i < args.Length; ++i)
             {
                 if (args[i][0] != '-' || args[i].Length <= 1)
+                {
                     Fatal("malformed argument: " + args[i]);
+                }
                 char[] flags = args[i].ToCharArray();
                 for (int f = 1; f < flags.Length; ++f)
                 {
                     switch (flags[f])
                     {
                         case 'A':
-                            Config.Instance.OneTraceAndStop = true;
+                            config.OneTraceAndStop = true;
                             break;
                         case 'C':
-                            Config.Instance.UseInstructionCache = false;
+                            config.UseInstructionCache = false;
                             break;
                         case 'F':
-                            Config.Instance.UseDPORCollapser = false;
+                            config.UseDPORCollapser = false;
                             break;
                         case 'G':
-                            Config.Instance.UseMarkAndSweep = false;
+                            config.UseMarkAndSweep = false;
                             break;
                         case 'O':
-                            Config.Instance.NonStaticSafe = true;
+                            config.NonStaticSafe = true;
                             break;
                         case 'R':
-                            Config.Instance.UseRefCounting = true;
+                            config.UseRefCounting = true;
                             break;
                         case 'S':
-                            Config.Instance.SymmetryReduction = false;
+                            config.SymmetryReduction = false;
                             break;
                         case 'T':
                             ++i;
                             if (i < args.Length)
-                                Config.Instance.MaxExploreInMinutes = System.Double.Parse(args[i]);
+                                config.MaxExploreInMinutes = System.Double.Parse(args[i]);
                             else
                                 Fatal("-T option requires an argument");
                             break;
@@ -201,7 +198,7 @@ namespace MMC
                             if (i < args.Length)
                             {
                                 if (File.Exists(args[i]))
-                                    Config.Instance.AssemblyToCheckFileName = args[i];
+                                    config.AssemblyToCheckFileName = args[i];
                                 else
                                     Fatal("assembly file not found: " + args[i]);
                             }
@@ -209,7 +206,7 @@ namespace MMC
                                 Fatal("-a option requires an argument");
                             break;
                         case 'c':
-                            Config.Instance.StopOnError = false;
+                            config.StopOnError = false;
                             break;
                         case 'd':
                             ++i;
@@ -233,31 +230,31 @@ namespace MMC
                             System.Environment.Exit(0);
                             break;
                         case 'i':
-                            Config.Instance.Interactive = true;
+                            config.Interactive = true;
                             break;
                         case 'I':
-                            Config.Instance.MemoisedGC = true;
+                            config.MemoisedGC = true;
                             break;
                         case 'm':
                             ++i;
                             if (i < args.Length)
-                                Config.Instance.MemoryLimit = System.Int32.Parse(args[i]);
+                                config.MemoryLimit = System.Int32.Parse(args[i]);
                             else
                                 Fatal("-m option requires an argument");
                             break;
                         case 'o':
                             ++i;
                             if (i < args.Length)
-                                Config.Instance.OptimizeStorageAtMegabyte = System.Int32.Parse(args[i]);
+                                config.OptimizeStorageAtMegabyte = System.Int32.Parse(args[i]);
                             else
                                 Fatal("-o option requires an argument");
                             break;
                         case 'p':
-                            Config.Instance.UseObjectEscapePOR = false;
+                            config.UseObjectEscapePOR = false;
                             break;
                         case 'P':
-                            Config.Instance.UseStatefulDynamicPOR = false;
-                            Config.Instance.UseDPORCollapser = false;
+                            config.UseStatefulDynamicPOR = false;
+                            config.UseDPORCollapser = false;
                             break;
                         case 'l':
                             ++i;
@@ -267,20 +264,20 @@ namespace MMC
                                 Fatal("-l option requies an argument");
                             break;
                         case 'r':
-                            Config.Instance.RunTimeParameters = FetchTillNextArgument(args, i + 1);
-                            i += Config.Instance.RunTimeParameters.Length;
+                            config.RunTimeParameters = FetchTillNextArgument(args, i + 1);
+                            i += config.RunTimeParameters.Length;
                             break;
                         case 's':
-                            Config.Instance.ShowStatistics = true;
+                            config.ShowStatistics = true;
                             break;
                         case 't':
-                            Config.Instance.TraceOnError = false;
+                            config.TraceOnError = false;
                             break;
                         case 'q':
-                            Config.Instance.Quiet = true;
+                            config.Quiet = true;
                             break;
                         case 'V':
-                            Config.Instance.Verbose = true;
+                            config.Verbose = true;
                             break;
                         default:
                             Fatal("unknown parameter: " + flags[f]);
@@ -290,21 +287,22 @@ namespace MMC
             }
 
             // Fatal combination (or lack of) parameters.
-            if (Config.Instance.Quiet && Config.Instance.Interactive)
+            if (config.Quiet && config.Interactive)
                 Fatal("you have asked me to be quiet and interactive. make up your mind.");
-            if (Config.Instance.AssemblyToCheckFileName == null)
+            if (config.AssemblyToCheckFileName == null)
                 Fatal("no assembly to check specified");
 
             // Defaults.
-            if (!Config.Instance.Quiet)
+            if (!config.Quiet)
                 Logger.l.AddOutput(new TextLoggerOutput(System.Console.Out));
-            if (Config.Instance.RunTimeParameters == null)
-                Config.Instance.RunTimeParameters = new string[] { };
+            if (config.RunTimeParameters == null)
+                config.RunTimeParameters = new string[] { };
+
+            return config;
         }
 
         static string[] FetchTillNextArgument(string[] args, int offset)
         {
-
             ArrayList toReturn = new ArrayList();
             for (int i = offset; i < args.Length; ++i)
             {
@@ -371,12 +369,12 @@ Disabling/enabling features:
             System.Console.WriteLine(help_text);
         }
 
-        public static void PrintConfig()
+        public static void PrintConfig(IConfig config)
         {
-            var configType = typeof(Config);
+            var configType = typeof(IConfig);
             foreach (FieldInfo fld in configType.GetFields())
             {
-                Logger.l.Notice(string.Format("Config.{0,-25} = {1,-25}", fld.Name, fld.GetValue(null)));
+                Logger.l.Notice(string.Format("Config.{0,-25} = {1,-25}", fld.Name, fld.GetValue(config)));
             }
 
 #if DEBUG
@@ -386,20 +384,21 @@ Disabling/enabling features:
 #endif
         }
 
+        /// <summary>
         /// MMC entry point
         ///
         /// First, parse command line arguments. Then create an initial state,
         /// create an explorer, and let it run.
         ///
         /// \param args Command-line options to MMC.
+        /// </summary>
         public static void Main(string[] args)
         {
             Console.WriteLine(copyright + "\n");
-            ParseCommandLineOptions(args);
 
-            PrintConfig();
+            var config = GetConfigFromCommandLine(args);
+            PrintConfig(config);
 
-            var config = Config.Instance;
             var instructionExecProvider = InstructionExec.InstructionExecProvider.Get(config);
 
             var stateSpaceSetup = new StateSpaceSetup();
@@ -414,7 +413,7 @@ Disabling/enabling features:
                 Statistics.s.Start();
                 bool noErrors = ex.Run();
 
-                if (!noErrors && config.StopOnError && Config.Instance.TraceOnError)
+                if (!noErrors && config.StopOnError && config.TraceOnError)
                 {
                     cur.Reset();
                     cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
@@ -432,14 +431,14 @@ Disabling/enabling features:
             {
                 Statistics.s.Stop();
                 // Done, show statistics
-                if (Config.Instance.ShowStatistics)
+                if (config.ShowStatistics)
                     Logger.l.Message("statistics: {0}", Statistics.s.ToString());
 
                 if (tw != null)
                 {
                     tw.Flush();
                     tw.Close();
-                    Logger.l.Message("Trace written to " + Config.Instance.AssemblyToCheckFileName + ".trace");
+                    Logger.l.Message("Trace written to " + config.AssemblyToCheckFileName + ".trace");
                 }
 
                 Logger.l.CloseAll();

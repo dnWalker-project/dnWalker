@@ -41,7 +41,7 @@ namespace MMC.State {
 		HashSet<ObjectReference> m_pinned;
 		/// First really free slot.
 		int m_freeSlot;
-        private readonly IConfig _config;
+        private readonly ExplicitActiveState _cur;
 
         public override string ToString() {
 
@@ -160,7 +160,7 @@ namespace MMC.State {
                     Logger.l.Debug("pinning allocation " + objRef + ".");
                     alloc.Pinned = true;
                     m_pinned.Add(objRef);
-                    ParentWatcher.AddParentToChild(ParentWatcher.RootObjectReference, objRef, _config.MemoisedGC);
+                    _cur.ParentWatcher.AddParentToChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC);
                 }
                 else
                 {
@@ -171,7 +171,7 @@ namespace MMC.State {
                     if (!alloc.Pinned)
                     {
                         m_pinned.Remove(objRef);
-                        ParentWatcher.RemoveParentFromChild(ParentWatcher.RootObjectReference, objRef, _config.MemoisedGC);
+                        _cur.ParentWatcher.RemoveParentFromChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC);
                     }
                 }
             }
@@ -179,15 +179,15 @@ namespace MMC.State {
 			// TODO, all increments are done at the places there SetPinnedAllocation is called.., it should be different)
 		}
 
-        public DynamicArea(IConfig config)
+        public DynamicArea(ExplicitActiveState cur)
         {
             m_lockManager = new LockManager();
             m_alloc = new AllocationList();
             m_pinned = new HashSet<ObjectReference>();
             m_freeSlot = 0;
-            _config = config;
+            _cur = cur;
 
-            if (config.SymmetryReduction)
+            if (cur.Configuration.SymmetryReduction)
             {
                 m_placementMapping = new PlacementMapping();
             }
@@ -201,10 +201,10 @@ namespace MMC.State {
 		/// \param typeDef The type of the object to create.
 		/// \return A reference to the newly created object.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef, IConfig config) {
-
-			AllocatedObject newObj = new AllocatedObject(typeDef, config);
-			newObj.ClearFields();
+		public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef)
+        {
+			AllocatedObject newObj = new AllocatedObject(typeDef, _cur.Configuration);
+			newObj.ClearFields(_cur);
 			m_alloc[loc] = newObj;
 			return new ObjectReference(loc + 1);
 		}
@@ -216,10 +216,10 @@ namespace MMC.State {
 		/// \param length The length of the array.
 		/// \return A reference to the newly created array.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length, IConfig config)
+		public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length)
         {
-			AllocatedArray newArr = new AllocatedArray(typeDef, length, config);
-			newArr.ClearFields();
+			AllocatedArray newArr = new AllocatedArray(typeDef, length, _cur.Configuration);
+			newArr.ClearFields(_cur);
 			m_alloc[loc] = newArr;
 			return new ObjectReference(loc + 1);
 		}
@@ -231,11 +231,11 @@ namespace MMC.State {
 		/// \param ptr A pointer to the method to invoke.
 		/// \return A reference to the newly created delegate.
 		/// \sa DeterminePlacement
-		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr, IConfig config)
+		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr)
         {
-			m_alloc[loc] = new AllocatedDelegate(obj, ptr, config);
+			m_alloc[loc] = new AllocatedDelegate(obj, ptr, _cur.Configuration);
 			ObjectReference newDelRef = new ObjectReference(loc + 1);
-			ParentWatcher.AddParentToChild(newDelRef, obj, config.MemoisedGC);
+			_cur.ParentWatcher.AddParentToChild(newDelRef, obj, _cur.Configuration.MemoisedGC);
 			return newDelRef;
 		}
 
@@ -245,7 +245,7 @@ namespace MMC.State {
         /// <param name="obj">A reference to the allocation.</param>
         public void IncRefCount(ObjectReference obj)
         {
-            if (obj.Location != 0 && _config.UseRefCounting)
+            if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
             {
                 DynamicAllocation alloc = Allocations[obj];
                 Debug.Assert(alloc != null, "allocation of to change ref.count is null");
@@ -260,7 +260,7 @@ namespace MMC.State {
         /// \param obj A reference to the allocation.
         public void DecRefCount(ObjectReference obj)
         {
-            if (obj.Location != 0 && _config.UseRefCounting)
+            if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
             {
                 DynamicAllocation alloc = Allocations[obj];
                 Debug.Assert(alloc != null, "allocation of to change ref.count is null");
@@ -367,7 +367,7 @@ namespace MMC.State {
 		public int DeterminePlacement(bool byCil, ExplicitActiveState cur)
         {
 			int retval;
-			if (!_config.SymmetryReduction || !byCil)
+			if (!_cur.Configuration.SymmetryReduction || !byCil)
 				retval = FreeSlot();
 			else
 				retval = m_placementMapping.GetLocation(cur);

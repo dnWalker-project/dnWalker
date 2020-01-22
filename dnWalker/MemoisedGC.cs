@@ -19,17 +19,15 @@ using System;
 
 using MMC.Util;
 using SGC = System.Collections.Generic;
-using System.Text;
 using MMC.Data;
-using MMC.Collections;
-using System.IO;
 using C5;
 
 namespace MMC.State
 {
-
+    /// <summary>
     /// Holds a bag of parent references, i.e., counting set
-    class ObjectReferenceBag
+    /// </summary>
+    internal class ObjectReferenceBag
     {
         SGC.LinkedList<ObjectReference> values = new SGC.LinkedList<ObjectReference>();
         int[] m_referenceCounters = new int[1024];
@@ -198,8 +196,8 @@ namespace MMC.State
                 if (alloc != null && alloc.Depth == int.MaxValue && !alloc.Pinned)
                 {
                     ObjectReference toDelete = new ObjectReference(i + 1);
-                    ParentWatcher.RemoveParentFromAllChilds(toDelete, cur);
-                    ParentWatcher.pw[i + 1].ClearDirty();
+                    cur.ParentWatcher.RemoveParentFromAllChilds(toDelete, cur);
+                    cur.ParentWatcher[i + 1].ClearDirty();
                     cur.DynamicArea.DisposeLocation(i);
                 }
             }
@@ -215,7 +213,7 @@ namespace MMC.State
 
                 if (alloc != null)
                 {
-                    ObjectReferenceBag parents = ParentWatcher.pw[i + 1];
+                    ObjectReferenceBag parents = cur.ParentWatcher[i + 1];
                     if (parents.IsDirty || parents.IsEmpty)
                     {
                         AddModified(i, cur);
@@ -306,9 +304,9 @@ namespace MMC.State
         {
             int retval = int.MaxValue - 1; // ensure no overflow
 
-            foreach (ObjectReference parent in ParentWatcher.pw[i])
+            foreach (ObjectReference parent in cur.ParentWatcher[i])
             {
-                retval = Math.Min(ParentWatcher.GetDynamicAllocation(parent, cur).Depth, retval);
+                retval = Math.Min(cur.ParentWatcher.GetDynamicAllocation(parent, cur).Depth, retval);
             }
 
             retval++;
@@ -326,27 +324,27 @@ namespace MMC.State
     /// All calls to this class are passed to ParentObjectWatcher
     class ThreadObjectWatcher
     {
-        public static void DecrementAll(int threadId, IDataElementContainer ids, IConfig config)
+        public static void DecrementAll(int threadId, IDataElementContainer ids, ExplicitActiveState cur)
         {
-            if (config.MemoisedGC)
+            if (cur.Configuration.MemoisedGC)
             {
                 for (int i = 0; i < ids.Length; i++)
-                    Decrement(threadId, ids[i]);
+                    Decrement(threadId, ids[i], cur);
             }
         }
 
-        public static void IncrementAll(int threadId, IDataElementContainer ids, IConfig config)
+        public static void IncrementAll(int threadId, IDataElementContainer ids, ExplicitActiveState cur)
         {
-            if (config.MemoisedGC)
+            if (cur.Configuration.MemoisedGC)
             {
                 for (int i = 0; i < ids.Length; i++)
-                    Increment(threadId, ids[i]);
+                    Increment(threadId, ids[i], cur);
             }
         }
 
-        public static void UpdateDifference(int threadId, IDataElementContainer oldList, IDataElementContainer newList, IConfig config)
+        public static void UpdateDifference(int threadId, IDataElementContainer oldList, IDataElementContainer newList, ExplicitActiveState cur)
         {
-            if (config.MemoisedGC)
+            if (cur.Configuration.MemoisedGC)
             {
                 /* precondition: oldList.Length is equal to newList.Length */
 
@@ -354,34 +352,34 @@ namespace MMC.State
                 {
                     IDataElement oldElem = oldList[i];
                     IDataElement newElem = newList[i];
-                    ParentWatcher.UpdateParentOfDifferentChild(ParentWatcher.RootObjectReference, oldElem, newElem, config.MemoisedGC);
+                    cur.ParentWatcher.UpdateParentOfDifferentChild(cur.ParentWatcher.RootObjectReference, oldElem, newElem, cur);
                 }
             }
         }
 
         public static void IncrementAll(IDataElementContainer ids, ExplicitActiveState cur)
         {
-            IncrementAll(cur.ThreadPool.CurrentThreadId, ids, cur.Configuration);
+            IncrementAll(cur.ThreadPool.CurrentThreadId, ids, cur);
         }
 
         public static void DecrementAll(IDataElementContainer ids, ExplicitActiveState cur)
         {
-            DecrementAll(cur.ThreadPool.CurrentThreadId, ids, cur.Configuration);
+            DecrementAll(cur.ThreadPool.CurrentThreadId, ids, cur);
         }
 
-        public static void DecrementAll(ThreadPool threadPool, IDataElementContainer ids, IConfig config)
+        public static void DecrementAll(ThreadPool threadPool, IDataElementContainer ids, ExplicitActiveState cur)
         {
-            DecrementAll(threadPool.CurrentThreadId, ids, config);
+            DecrementAll(threadPool.CurrentThreadId, ids, cur);
         }
 
-        public static void Increment(int threadId, IDataElement o)
+        public static void Increment(int threadId, IDataElement o, ExplicitActiveState cur)
         {
-            ParentWatcher.AddParentToChild(ParentWatcher.RootObjectReference, o);
+            cur.ParentWatcher.AddParentToChild(cur.ParentWatcher.RootObjectReference, o, cur);
         }
 
-        public static void Decrement(int threadId, IDataElement o)
+        public static void Decrement(int threadId, IDataElement o, ExplicitActiveState cur)
         {
-            ParentWatcher.RemoveParentFromChild(ParentWatcher.RootObjectReference, o);
+            cur.ParentWatcher.RemoveParentFromChild(cur.ParentWatcher.RootObjectReference, o, cur);
         }
 
         /*public static void Increment(IDataElement o)
@@ -396,23 +394,37 @@ namespace MMC.State
 
     }
 
-    /// This monitors changes to the heap, and maintains the list of parents for each
-	/// object 
-	class ParentWatcher : BaseStorageVisitor, IStorageVisitor
+    /// <summary>
+    /// This monitors changes to the heap, and maintains the list of parents for each object
+    /// </summary>
+	internal class ParentWatcher : BaseStorageVisitor, IStorageVisitor
     {
-
         public ObjectReferenceBag[] parents;
 
-        public ParentWatcher()
+        public ParentWatcher(IConfig config)
         {
             parents = new ObjectReferenceBag[1024];
             for (int i = 0; i < parents.Length; i++)
+            {
                 parents[i] = new ObjectReferenceBag();
+            }
+
+            RootAllocatedObject = new AllocatedObject(
+                DefinitionProvider.dp.GetTypeDefinition("System.Object"),
+                config)
+                {
+                    Depth = 0
+                };
+
+            adder = new UpdateSingle(AddParentToChild);
+            remover = new UpdateSingle(RemoveParentFromChild);
         }
 
+        /// <summary>
         /// Returns the parent list for a given location
         /// Automatically resizes the array when the location is
         /// larger than the current array
+        /// </summary>
         public ObjectReferenceBag this[int loc]
         {
             get
@@ -430,26 +442,29 @@ namespace MMC.State
             }
         }
 
-        public static ParentWatcher pw = new ParentWatcher();
+        public delegate void UpdateSingle(ObjectReference parent, IDataElement child, ExplicitActiveState cur);
 
-        public delegate void UpdateSingle(ObjectReference parent, IDataElement child);
-
-        public static UpdateSingle adder = new UpdateSingle(AddParentToChild);
-        public static UpdateSingle remover = new UpdateSingle(RemoveParentFromChild);
+        private /*static*/ UpdateSingle adder;// = new UpdateSingle(AddParentToChild);
+        private /*static*/ UpdateSingle remover;// = new UpdateSingle(RemoveParentFromChild);
 
         /// <summary>
         /// Fictive root
         /// </summary>
-        public static AllocatedObject RootAllocatedObject = new AllocatedObject(DefinitionProvider.dp.GetTypeDefinition("System.Object"), Config.Instance);
+        public /*static*/ AllocatedObject RootAllocatedObject { get; }/*= new AllocatedObject(
+            DefinitionProvider.dp.GetTypeDefinition("System.Object"),
+            Config.Instance)
+        {
+            Depth = 0
+        };*/
 
-        public static ObjectReference RootObjectReference = new ObjectReference(uint.MaxValue);
+        public /*static*/ ObjectReference RootObjectReference = new ObjectReference(uint.MaxValue);
 
-        static ParentWatcher()
+        /*static ParentWatcher()
         {
             RootAllocatedObject.Depth = 0;
-        }
+        }*/
 
-        public static DynamicAllocation GetDynamicAllocation(int loc)
+        public /*static*/ DynamicAllocation GetDynamicAllocation(int loc)
         {
             if (loc == -1)
             {
@@ -459,66 +474,67 @@ namespace MMC.State
             {
                 //return ActiveState.cur.DynamicArea.Allocations[loc];
                 throw new NotImplementedException();
-            }            
+            }
         }
 
-        public static DynamicAllocation GetDynamicAllocation(ObjectReference or, ExplicitActiveState cur)
+        public /*static*/ DynamicAllocation GetDynamicAllocation(ObjectReference or, ExplicitActiveState cur)
         {
             //if (RootObjectReference.Equals(or))
             if (or.Location == uint.MaxValue)
+            {
                 return RootAllocatedObject;
-            else
-                return cur.DynamicArea.Allocations[or];
+            }
+            return cur.DynamicArea.Allocations[or];
         }
 
-        public static void RemoveParentFromChild(ObjectReference parentRef, IDataElement childRef)
+        public /*static*/ void RemoveParentFromChild(ObjectReference parentRef, IDataElement childRef, ExplicitActiveState cur)
         {
-            var memoisedGC = Config.Instance.MemoisedGC;
+            var memoisedGC = cur.Configuration.MemoisedGC;
             if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
             {
                 ObjectReference reference = (ObjectReference)childRef;
-                pw[(int)reference.Location].Decrement(parentRef);
+                this[(int)reference.Location].Decrement(parentRef);
             }
         }
 
-        public static void RemoveParentFromChild(ObjectReference parentRef, IDataElement childRef, bool memoisedGC)
-        {
-            if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
-            {
-                ObjectReference reference = (ObjectReference)childRef;
-                pw[(int)reference.Location].Decrement(parentRef);
-            }
-        }
-
-        public static void AddParentToChild(ObjectReference parentRef, IDataElement childRef)
-        {
-            var memoisedGC = Config.Instance.MemoisedGC;
-            if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
-            {
-                ObjectReference reference = (ObjectReference)childRef;
-                pw[(int)reference.Location].Increment(parentRef);
-            }
-        }
-
-        public static void AddParentToChild(ObjectReference parentRef, IDataElement childRef, bool memoisedGC)
+        public /*static*/ void RemoveParentFromChild(ObjectReference parentRef, IDataElement childRef, bool memoisedGC)
         {
             if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
             {
                 ObjectReference reference = (ObjectReference)childRef;
-                pw[(int)reference.Location].Increment(parentRef);
+                this[(int)reference.Location].Decrement(parentRef);
             }
         }
 
-        public static void UpdateParentOfDifferentChild(ObjectReference parentRef, IDataElement oldChildRef, IDataElement newChildRef, bool memoisedGC)
+        public /*static*/ void AddParentToChild(ObjectReference parentRef, IDataElement childRef, ExplicitActiveState cur)
         {
-            if (memoisedGC && oldChildRef != newChildRef)
+            var memoisedGC = cur.Configuration.MemoisedGC;
+            if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
             {
-                RemoveParentFromChild(parentRef, oldChildRef);
-                AddParentToChild(parentRef, newChildRef);
+                ObjectReference reference = (ObjectReference)childRef;
+                this[(int)reference.Location].Increment(parentRef);
             }
         }
 
-        private static void UpdateParentFromAllChilds(ObjectReference parentRef, UpdateSingle updater, ExplicitActiveState cur)
+        public /*static*/ void AddParentToChild(ObjectReference parentRef, IDataElement childRef, bool memoisedGC)
+        {
+            if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
+            {
+                ObjectReference reference = (ObjectReference)childRef;
+                this[(int)reference.Location].Increment(parentRef);
+            }
+        }
+
+        public /*static*/ void UpdateParentOfDifferentChild(ObjectReference parentRef, IDataElement oldChildRef, IDataElement newChildRef, ExplicitActiveState cur)
+        {
+            if (cur.Configuration.MemoisedGC && oldChildRef != newChildRef)
+            {
+                RemoveParentFromChild(parentRef, oldChildRef, cur);
+                AddParentToChild(parentRef, newChildRef, cur);
+            }
+        }
+
+        private /*static*/ void UpdateParentFromAllChilds(ObjectReference parentRef, UpdateSingle updater, ExplicitActiveState cur)
         {
             if (cur.Configuration.MemoisedGC)
             {
@@ -535,42 +551,44 @@ namespace MMC.State
                         AllocatedObject parent = alloc as AllocatedObject;
                         DataElementList childs = parent.Fields;
                         for (int i = 0; i < childs.Length; i++)
-                            updater(parentRef, childs[i]);
+                            updater(parentRef, childs[i], cur);
                         break;
                     case AllocationType.Delegate:
                         AllocatedDelegate allocDelegate = alloc as AllocatedDelegate;
-                        updater(parentRef, allocDelegate.Object);
+                        updater(parentRef, allocDelegate.Object, cur);
                         break;
                 }
             }
         }
 
-        public static void UpdateParentFromAllChilds(ObjectReference parentRef, UpdateSingle updater, DataElementList list)
+        public /*static*/ void UpdateParentFromAllChilds(ObjectReference parentRef, UpdateSingle updater, DataElementList list, ExplicitActiveState cur)
         {
-            var memoisedGC = Config.Instance.MemoisedGC;
+            var memoisedGC = cur.Configuration.MemoisedGC;
             if (memoisedGC && list != null)
             {
                 for (int i = 0; i < list.Length; i++)
-                    updater(parentRef, list[i]);
+                {
+                    updater(parentRef, list[i], cur);
+                }
             }
         }
 
-        public static void RemoveParentFromAllChilds(ObjectReference parentRef, DataElementList list)
+        public /*static*/ void RemoveParentFromAllChilds(ObjectReference parentRef, DataElementList list, ExplicitActiveState cur)
         {
-            UpdateParentFromAllChilds(parentRef, remover, list);
+            UpdateParentFromAllChilds(parentRef, remover, list, cur);
         }
 
-        public static void AddParentToAllChilds(ObjectReference parentRef, DataElementList list)
+        public /*static*/ void AddParentToAllChilds(ObjectReference parentRef, DataElementList list, ExplicitActiveState cur)
         {
-            UpdateParentFromAllChilds(parentRef, adder, list);
+            UpdateParentFromAllChilds(parentRef, adder, list, cur);
         }
 
-        public static void RemoveParentFromAllChilds(ObjectReference parentRef, ExplicitActiveState cur)
+        public /*static*/ void RemoveParentFromAllChilds(ObjectReference parentRef, ExplicitActiveState cur)
         {
             UpdateParentFromAllChilds(parentRef, remover, cur);
         }
 
-        public static void AddParentToAllChilds(ObjectReference parentRef, ExplicitActiveState cur)
+        public /*static*/ void AddParentToAllChilds(ObjectReference parentRef, ExplicitActiveState cur)
         {
             UpdateParentFromAllChilds(parentRef, adder, cur);
         }

@@ -46,7 +46,9 @@ namespace MMC.State
 
         private Lock m_lock;
 
-        protected readonly IConfig _config;
+        protected readonly bool _useRefCounting;
+
+        protected readonly bool _memoisedGC;
 
         /// <summary>
         /// A self-describing property. Should be overridden.
@@ -102,17 +104,16 @@ namespace MMC.State
         public abstract void Dispose();
         public abstract void Accept(IStorageVisitor visitor, ExplicitActiveState cur);
 
-        protected Allocation(ITypeDefOrRef typeDef, IConfig config)
+        protected Allocation(ITypeDefOrRef typeDef, bool useRefCounting, bool memoisedGC) : this(useRefCounting, memoisedGC)
         {
             Type = typeDef ?? throw new ArgumentNullException(nameof(typeDef));
-            m_lock = null;
-            _config = config;
         }
 
-        protected Allocation(IConfig config)
+        protected Allocation(bool useRefCounting, bool memoisedGC)
         {
             m_lock = null;
-            _config = config;
+            _useRefCounting = useRefCounting;
+            _memoisedGC = memoisedGC;
         }
     }
 
@@ -158,19 +159,19 @@ namespace MMC.State
             {
                 // Hack: always return 1 if we're not keeping track of reference counts,
                 // so allocations are not always left out of the collapse procedure.
-                return _config.UseRefCounting ? m_refCount : 1;
+                return _useRefCounting ? m_refCount : 1;
             }
             set { m_refCount = value; }
         }
 
-        protected DynamicAllocation(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config)
+        protected DynamicAllocation(ITypeDefOrRef typeDef, bool useRefCounting, bool memoisedGC) : base(typeDef, useRefCounting, memoisedGC)
         {
             m_refCount = 0;
 
             /// This ensures that newly created allocations are seen
             /// as inconsistent and therefore become processed by the 
             /// the MGC algorithm
-            if (_config.MemoisedGC)
+            if (memoisedGC)
             {
                 Rhs = int.MaxValue;
                 Depth = int.MinValue;
@@ -179,14 +180,14 @@ namespace MMC.State
             HeapAttribute = UNMARKED;
         }
 
-        protected DynamicAllocation(IConfig config) : base(config)
+        protected DynamicAllocation(bool useRefCounting, bool memoisedGC) : base(useRefCounting, memoisedGC)
         {
             m_refCount = 0;
 
             /// This ensures that newly created allocations are seen
             /// as inconsistent and therefore become processed by the 
             /// the MGC algorithm
-            if (_config.MemoisedGC)
+            if (memoisedGC)
             {
                 Rhs = int.MaxValue;
                 Depth = int.MinValue;

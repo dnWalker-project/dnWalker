@@ -159,7 +159,7 @@ namespace MMC.State
                     // If marked, unmark (for next run), else delete.
                     if (ida.HeapAttribute == AllocatedObject.UNMARKED && !ida.Pinned)
                     {
-                        ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), cur);
+                        cur.ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), cur);
                         cur.DynamicArea.DisposeLocation(i);
                         ++retval;
                     }
