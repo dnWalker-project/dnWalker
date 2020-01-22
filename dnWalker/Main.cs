@@ -404,13 +404,18 @@ Disabling/enabling features:
             var stateSpaceSetup = new StateSpaceSetup();
             stateSpaceSetup.LoadAssemblies(config);
             var cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
+            var statistics = new SimpleStatistics();
 
-            Explorer ex = new Explorer(cur, config, instructionExecProvider);
+            Explorer ex = new Explorer(
+                cur,
+                statistics,
+                config,
+                instructionExecProvider);
+
             TextWriter tw = null;
-
             try
             {
-                Statistics.s.Start();
+                statistics.Start();
                 bool noErrors = ex.Run();
 
                 if (!noErrors && config.StopOnError && config.TraceOnError)
@@ -422,17 +427,19 @@ Disabling/enabling features:
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
-                    ex = new TracingExplorer(cur, ex.GetErrorTrace(), tw, config, instructionExecProvider);
+                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, config, instructionExecProvider);
                     ex.Run();
                     tw.WriteLine(cur.ToString());
                 }
             }
             finally
             {
-                Statistics.s.Stop();
+                statistics.Stop();
                 // Done, show statistics
                 if (config.ShowStatistics)
-                    Logger.l.Message("statistics: {0}", Statistics.s.ToString());
+                {
+                    Logger.l.Message("statistics: {0}", statistics.ToString());
+                }
 
                 if (tw != null)
                 {

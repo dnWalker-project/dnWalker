@@ -34,8 +34,8 @@ namespace MMC
         string prevMethod = "";
         private readonly TextWriter tw;
 
-        public TracingExplorer(ExplicitActiveState cur, Stack<int> tracingQueue, TextWriter tw, IConfig config, IInstructionExecProvider instructionExecProvider)
-            : base(cur, config, instructionExecProvider)
+        public TracingExplorer(ExplicitActiveState cur, IStatistics statistics, Stack<int> tracingQueue, TextWriter tw, IConfig config, IInstructionExecProvider instructionExecProvider)
+            : base(cur, statistics, config, instructionExecProvider)
         {
             m_tracingQueue = tracingQueue;
             // disable stats

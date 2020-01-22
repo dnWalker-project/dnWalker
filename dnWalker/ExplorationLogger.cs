@@ -23,9 +23,8 @@ namespace MMC
     using MMC.InstructionExec;
     using MMC.State;
 
-    class ExplorationLogger
+    public class ExplorationLogger
     {
-
         const int newstate_progress_delta = 25000; // states
         const int revisit_progress_delta = 25000; // times
         const int progressIndicatorDelta = 250;
@@ -34,38 +33,33 @@ namespace MMC
         int m_lastState = -1; // some illegal value.
         int m_lastRunThread = 0; // first thread (main) will have ID 0.
 
+        IStatistics Statistics { get; }
 
         Stack<SchedulingData> m_stack;
 
         // --------------------------------- Exploration --------------------------------
 
-
-
         public void LogNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
-
             Logger.l.Debug("found new state: {0}", sd.ID);
-            Statistics.s.NewState();
+            Statistics.NewState();
         }
 
         public void LogRevisitState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
-
             Logger.l.Debug("re-visit of state: {0}", sd.ID);
-            Statistics.s.RevisitState();
+            Statistics.RevisitState();
         }
 
         // --------------------------------- Scheduling ---------------------------------
 
         public void LogDeadlock(SchedulingData sd)
         {
-
             Logger.l.Log(LogPriority.Severe, "DEADLOCK!");
         }
 
         public void LogPickedThread(SchedulingData sd, int chosen)
         {
-
             Logger.l.Debug("to be run next: {0}", chosen);
             m_lastRunThread = chosen;
         }
@@ -78,16 +72,14 @@ namespace MMC
 
         public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd, ExplicitActiveState cur)
         {
-
             Logger.l.Debug("backtracked.");
-            Statistics.s.Backtrack();
+            Statistics.Backtrack();
         }
 
         // -------------------------------- Exploration Halt ----------------------------
 
         public void ExplorationHalted(IIEReturnValue ier)
         {
-
             Logger.l.Log(LogPriority.Severe, "exploraton halted: {0}", ier.ToString());
         }
 
@@ -112,16 +104,18 @@ namespace MMC
             m_lastState = stack.Peek().ID;
         }
 
-        private System.Timers.Timer timer;
+        private readonly System.Timers.Timer timer;
 
-        private Explorer m_explorer;
+        private readonly Explorer m_explorer;
 
-        public ExplorationLogger(Explorer ex)
+        public ExplorationLogger(IStatistics statistics, Explorer ex)
         {
+            Statistics = statistics;
+
             if (!ex.Config.Quiet)
             {
                 timer = new System.Timers.Timer();
-                timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
+                timer.Elapsed += OnTimedEvent;
                 timer.Interval = 5 * 1000;
                 timer.Enabled = true;
             }
@@ -131,7 +125,7 @@ namespace MMC
 
         private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
         {
-            Logger.l.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.s.StateCount, Statistics.s.RevisitCount, m_explorer.GetDFSStackSize());
+            Logger.l.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.StateCount, Statistics.RevisitCount, m_explorer.GetDFSStackSize());
         }
     }
 }

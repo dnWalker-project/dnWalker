@@ -91,14 +91,16 @@ namespace MMC {
 		ObjectEscapePOR m_spor;		
 		Timer m_explorationTimer;
 		Timer m_memoryTimer;
-
+        
         private readonly IConfig _config;
         private readonly IInstructionExecProvider _instructionExecProvider;
 
         LinkedList<CollapsedState> m_atomicStates;
 
-        public Explorer(ExplicitActiveState cur, IConfig config, IInstructionExecProvider instructionExecProvider)
+        public Explorer(ExplicitActiveState cur, IStatistics statistics, IConfig config, IInstructionExecProvider instructionExecProvider)
         {
+            Statistics = statistics;
+
             this.cur = cur;
 
             _config = config;
@@ -112,7 +114,7 @@ namespace MMC {
             // hashtable
             m_stateStorage = new FastHashtable<CollapsedState, int>(20);
 
-            ExplorationLogger el = new ExplorationLogger(this);
+            ExplorationLogger el = new ExplorationLogger(Statistics, this);
 
             /*
 			 * Logging
@@ -177,7 +179,9 @@ namespace MMC {
 
         public IConfig Config => _config;
 
-		private void OnTimedEvent(object source, ElapsedEventArgs e) {
+        IStatistics Statistics { get; }
+
+        private void OnTimedEvent(object source, ElapsedEventArgs e) {
 			Logger.l.Notice("Ran out of time");
 			m_continue = false;
 		}
@@ -203,7 +207,7 @@ namespace MMC {
 			bool dummyBool;
 			int threadId = 0;
 
-			//Statistics.s.Start();
+			//Statistics.Start();
 			m_continue = true;
 
 			Logger.l.Notice("Exploration starts now");
@@ -218,27 +222,32 @@ namespace MMC {
 				else
 					noErrors = ExecuteStep(threadId, out dummyBool);
 
-				/*
+                /*
 				 * Check for specification dissatifaction
 				 */
-				if (!noErrors) { // assertion violations?
-					Statistics.s.AssertionViolation();
-					if (!logAssert)
-						Logger.l.Message("Assertion violation detected");
-					logAssert = true;
+                if (!noErrors)
+                { 
+                    // assertion violations?
+                    Statistics.AssertionViolation();
+                    if (!logAssert)
+                        Logger.l.Message("Assertion violation detected");
+                    logAssert = true;
 
-					if (_config.StopOnError)
-						break;
-				} else if (CheckDeadlock()) { // deadlock found?
-					Statistics.s.Deadlock();
-					if (!logDeadlock)
-						Logger.l.Message("Deadlock detected");
-					logDeadlock = true;
-					noErrors = false;
+                    if (_config.StopOnError)
+                        break;
+                }
+                else if (CheckDeadlock())
+                { 
+                    // deadlock found?
+                    Statistics.Deadlock();
+                    if (!logDeadlock)
+                        Logger.l.Message("Deadlock detected");
+                    logDeadlock = true;
+                    noErrors = false;
 
-					if (_config.StopOnError)
-						break;
-				}
+                    if (_config.StopOnError)
+                        break;
+                }
 
 				/*
 				 * Run garbage collection
@@ -282,56 +291,62 @@ namespace MMC {
 					Logger.l.Message("End of story: explored the whole state space");
 				}
 
-				Statistics.s.MaxHashtableSize(m_stateStorage.Count);
-				Statistics.s.MaxHeapArray(cur.DynamicArea.Allocations.Length);
+				Statistics.MaxHashtableSize(m_stateStorage.Count);
+				Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
 
 				MemoryLimiting();
 
-				Statistics.s.BacktrackStackDepth(m_dfs.Count);
+				Statistics.BacktrackStackDepth(m_dfs.Count);
 
 			} while (m_dfs.Count > 0 && m_continue == true);
 
 			return noErrors;
 		}
 
-		/// Measures memory and performs actions on it 
-		private void MemoryLimiting() {
-			if (m_measureMemory) {
-				long memUsed = System.GC.GetTotalMemory(false);
-				Statistics.s.MeasureMemory(memUsed);
-				
-				/// If ex post facto transition merging is enabled...
-				if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > _config.OptimizeStorageAtMegabyte) {
-					int count = m_atomicStates.Count;
+        /// Measures memory and performs actions on it 
+        private void MemoryLimiting()
+        {
+            if (m_measureMemory)
+            {
+                long memUsed = System.GC.GetTotalMemory(false);
+                Statistics.MeasureMemory(memUsed);
 
-					foreach (CollapsedState cs in m_atomicStates)
-						m_stateStorage.Remove(cs);
-					m_atomicStates.Clear();
+                /// If ex post facto transition merging is enabled...
+                if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > _config.OptimizeStorageAtMegabyte)
+                {
+                    int count = m_atomicStates.Count;
 
-					long memAfter = System.GC.GetTotalMemory(true);
+                    foreach (CollapsedState cs in m_atomicStates)
+                        m_stateStorage.Remove(cs);
+                    m_atomicStates.Clear();
 
-					Logger.l.Notice("Optimized hashtable from " + memUsed / 1024 / 1024 + " Mb to " + memAfter / 1024 / 1024 + " Mb by removing " + count + " states");
-					memUsed = memAfter;
-				}
+                    long memAfter = System.GC.GetTotalMemory(true);
 
-				/// If memory limiting is enabled...
-				if (!Double.IsInfinity(_config.MemoryLimit) && (memUsed / 1024 / 1024) > _config.MemoryLimit) {
-					Logger.l.Notice("Ran out of memory");
-					this.m_continue = false;
-				}
-				m_measureMemory = false;
-			}
-		}
+                    Logger.l.Notice("Optimized hashtable from " + memUsed / 1024 / 1024 + " Mb to " + memAfter / 1024 / 1024 + " Mb by removing " + count + " states");
+                    memUsed = memAfter;
+                }
 
-		/// The error trace consists of thread id's on the current
-		/// DFS stack. Used by the TracingExplorer
-		public Stack<int> GetErrorTrace() {
-			Stack<int> retval = new Stack<int>();
-			foreach (SchedulingData sd in m_dfs)
-				retval.Push(sd.LastAccess.ThreadId);
+                /// If memory limiting is enabled...
+                if (!Double.IsInfinity(_config.MemoryLimit) && (memUsed / 1024 / 1024) > _config.MemoryLimit)
+                {
+                    Logger.l.Notice("Ran out of memory");
+                    this.m_continue = false;
+                }
+                m_measureMemory = false;
+            }
+        }
 
-			return retval;
-		}
+        /// <summary>
+        /// The error trace consists of thread id's on the current DFS stack. Used by the TracingExplorer
+        /// </summary>
+        public Stack<int> GetErrorTrace()
+        {
+            Stack<int> retval = new Stack<int>();
+            foreach (SchedulingData sd in m_dfs)
+                retval.Push(sd.LastAccess.ThreadId);
+
+            return retval;
+        }
 
 		protected virtual int SelectRunnableThread(SchedulingData sd) {
 			int retval = sd.Dequeue();
