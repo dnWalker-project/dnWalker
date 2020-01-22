@@ -40,13 +40,14 @@ namespace MMC {
 		string prevMethod = "";
 		TextWriter tw;
 
-		public TracingExplorer(Stack<int> tracingQueue, TextWriter tw, IConfig config)
-			: base(config) {
-			this.m_tracingQueue = tracingQueue;
-			// disable stats
-			config.ShowStatistics = false;
-			this.tw = tw;
-		}
+        public TracingExplorer(Stack<int> tracingQueue, TextWriter tw, IConfig config, IInstructionExecProvider instructionExecProvider)
+            : base(config, instructionExecProvider)
+        {
+            this.m_tracingQueue = tracingQueue;
+            // disable stats
+            config.ShowStatistics = false;
+            this.tw = tw;
+        }
 
 		protected override int SelectRunnableThread(SchedulingData sd) {
 			return m_tracingQueue.Pop();

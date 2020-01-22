@@ -23,6 +23,7 @@ namespace MMC
     using System.Reflection;
     using MMC.State;
     using System;
+    using MMC.InstructionExec;
 
     public interface IConfig
     {
@@ -404,7 +405,8 @@ Disabling/enabling features:
             StateSpaceSetup.LoadAssemblies(config);
             StateSpaceSetup.CreateInitialState(config);
 
-            Explorer ex = new Explorer(config);
+            var instructionExecProvider = InstructionExecProvider.Get(config);
+            Explorer ex = new Explorer(config, instructionExecProvider);
             TextWriter tw = null;
 
             try
@@ -421,7 +423,7 @@ Disabling/enabling features:
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
-                    ex = new TracingExplorer(ex.GetErrorTrace(), tw, config);
+                    ex = new TracingExplorer(ex.GetErrorTrace(), tw, config, instructionExecProvider);
                     ex.Run();
                     tw.WriteLine(ActiveState.cur.ToString());
                 }

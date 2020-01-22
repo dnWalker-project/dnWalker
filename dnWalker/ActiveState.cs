@@ -29,7 +29,7 @@ namespace MMC.State
         /// <summary>
         /// A simple public field suffices here, no need to define a property.
         /// </summary>
-        public static readonly ExplicitActiveState cur = new ExplicitActiveState(Config.Instance);
+        public static readonly ExplicitActiveState cur = new ExplicitActiveState(Config.Instance, new HashedIEC());
     }
 
     /// <summary>
@@ -37,7 +37,6 @@ namespace MMC.State
     /// </summary>
     class ExplicitActiveState : IStorageVisitable, ICleanable
     {
-        private IConfig _config;
         DynamicArea m_dyn;
         IStaticArea m_stat;
         ThreadPool m_tp;
@@ -106,7 +105,9 @@ namespace MMC.State
             get { return CurrentThread.CurrentMethod; }
         }
 
-        public IConfig Configuration => _config;
+        public IConfig Configuration { get; }
+
+        public IInstructionExecProvider InstructionExecProvider { get; }
 
         /// <summary>
         /// Evaluation stack of top of callstack of currently running thread.
@@ -166,7 +167,7 @@ namespace MMC.State
             var cur = ActiveState.cur;
             MethodState method = cur.ThreadPool.Threads[threadId].CurrentMethod;
             var instr = method.ProgramCounter;
-            InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
+            InstructionExecBase instrExec = InstructionExecProvider.GetExecFor(instr);
 
             return instrExec.Accessed(threadId, cur);
         }
@@ -199,9 +200,10 @@ namespace MMC.State
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExplicitActiveState(IConfig config)
+        public ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider)
         {
-            _config = config;
+            Configuration = config;
+            InstructionExecProvider = instructionExecProvider;
             Reset();
         }
     }

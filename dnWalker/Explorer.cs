@@ -78,13 +78,16 @@ namespace MMC {
 		IGarbageCollector m_gc;
 		Timer m_explorationTimer;
 		Timer m_memoryTimer;
+
         private readonly IConfig _config;
+        private readonly IInstructionExecProvider _instructionExecProvider;
 
-		LinkedList<CollapsedState> m_atomicStates;
+        LinkedList<CollapsedState> m_atomicStates;
 
-		public Explorer(IConfig config)
+		public Explorer(IConfig config, IInstructionExecProvider instructionExecProvider)
         {
             _config = config;
+            _instructionExecProvider = instructionExecProvider;
             // DFS stack
             m_dfs = new Stack<SchedulingData>();
 			m_stateConvertor = new Collapser();
@@ -372,63 +375,74 @@ namespace MMC {
 
 		public virtual void PrintTransition() {}
 
-		/*
+        /*
 		 * Execute one (unsafe) instruction, followed by 0 or more safe instructions,
 		 * where safe are intrathread instructions or where the is only one thread left 
 		 * for execution */
-		public bool ExecuteStep(int threadId, out bool threadTerm) {
-			ActiveState.cur.ThreadPool.CurrentThreadId = threadId;
+        public bool ExecuteStep(int threadId, out bool threadTerm)
+        {
+            ActiveState.cur.ThreadPool.CurrentThreadId = threadId;
 
-			MethodState currentMethod = ActiveState.cur.CurrentMethod;
-			InstructionExecBase currentInstrExec = InstructionExecProvider.iep.GetExecFor(ActiveState.cur.CurrentMethod.ProgramCounter);
-			bool continueExploration;
-			IIEReturnValue ier;
-			bool canForward = false;
+            MethodState currentMethod = ActiveState.cur.CurrentMethod;
+            InstructionExecBase currentInstrExec = _instructionExecProvider.GetExecFor(ActiveState.cur.CurrentMethod.ProgramCounter);
+            bool continueExploration;
+            IIEReturnValue ier;
+            bool canForward = false;
 
-			do {
+            do
+            {
                 var cur = ActiveState.cur;
 
                 PrintTransition();
                 //Console.Out.WriteLine(currentInstrExec.ToString());
-				ier = currentInstrExec.Execute(cur);
+                ier = currentInstrExec.Execute(cur);
 
-				currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
-				/* if a RET was performed, currentMethod.ProgramCounter is null
+                currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
+                /* if a RET was performed, currentMethod.ProgramCounter is null
 				 * and the PC should be set to programcounter of the current method, i.e.,
 				 * the method jumped to
 				 */
-				currentMethod = cur.CurrentMethod;
-				continueExploration = ier.ContinueExploration(currentMethod);
+                currentMethod = cur.CurrentMethod;
+                continueExploration = ier.ContinueExploration(currentMethod);
 
-				if (currentMethod != null && continueExploration)
-					currentInstrExec = InstructionExecProvider.iep.GetExecFor(currentMethod.ProgramCounter);
-				else
-					currentInstrExec = null;
+                if (currentMethod != null && continueExploration)
+                {
+                    currentInstrExec = _instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
+                }
+                else
+                {
+                    currentInstrExec = null;
+                }
 
-				canForward = currentInstrExec != null && cur.CurrentThread.IsRunnable 
+                canForward = currentInstrExec != null && cur.CurrentThread.IsRunnable
                     && (currentInstrExec.IsMultiThreadSafe(cur) || cur.ThreadPool.RunnableThreadCount == 1);
 
-				/*
+                /*
 				 * Optimization related to merging states that have only one outgoing transition,
 				 * need to ensure stateful DPOR correctness
 				 */
-				if (canForward
-						&& _config.UseStatefulDynamicPOR
-						&& !currentInstrExec.IsMultiThreadSafe(cur)
-						&& cur.ThreadPool.RunnableThreadCount == 1) {
-					MemoryLocation ml = cur.NextAccess(threadId);
-					m_dpor.ExpandSelectedSet(new MemoryAccess(ml, threadId));
-				}
-			} while (canForward);
+                if (canForward
+                        && _config.UseStatefulDynamicPOR
+                        && !currentInstrExec.IsMultiThreadSafe(cur)
+                        && cur.ThreadPool.RunnableThreadCount == 1)
+                {
+                    MemoryLocation ml = cur.NextAccess(threadId);
+                    m_dpor.ExpandSelectedSet(new MemoryAccess(ml, threadId));
+                }
+            } while (canForward);
 
-			if (ActiveState.cur.CallStack.IsEmpty()) {
-				ActiveState.cur.ThreadPool.TerminateThread(threadId);
-				threadTerm = true;
-			} else
-				threadTerm = false;
+            if (ActiveState.cur.CallStack.IsEmpty())
+            {
+                ActiveState.cur.ThreadPool.TerminateThread(threadId);
+                threadTerm = true;
+            }
+            else
+            {
+                threadTerm = false;
+            }
 
-			return continueExploration;
-		}
+            return continueExploration;
+        }
 
 		public bool ExecutePorStep(int threadId) {
 			bool noErrors;

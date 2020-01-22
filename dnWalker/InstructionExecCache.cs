@@ -15,38 +15,41 @@
  *
  */
 
-namespace MMC.InstructionExec {
-
-	using System.Collections;
+namespace MMC.InstructionExec
+{
     using dnlib.DotNet.Emit;
     using MMC.Collections;
 
-	/// \brief An interface to types that return an instruction executor for a
-	/// given instruction.	
-	interface IInstructionExecProvider {
-
+	/// <summary>
+	/// An interface to types that return an instruction executor for a given instruction.
+	/// </summary>
+	interface IInstructionExecProvider
+    {
+		/// <summary>
 		/// Get an instruction executor for the given instruction.
+		/// </summary>
 		InstructionExecBase GetExecFor(Instruction instr);
 	}
 
-	/// Singleton accessor for instruction executor provider.
-	static class InstructionExecProvider {
-
-		static IInstructionExecProvider instance = null;
-
-		/// The singleton instruction executor provider.
-		public static IInstructionExecProvider iep {
-
-			get {
-				if (instance == null) {
-					if (Config.Instance.UseInstructionCache)
-						instance = new HashedIEC();
-					else
-						instance = new NoStorageIEC();
-				}
-				return instance;
-			}
-		}
+    /// <summary>
+    /// Singleton accessor for instruction executor provider.
+    /// </summary>
+    internal static class InstructionExecProvider
+    {
+        /// <summary>
+        /// The singleton instruction executor provider.
+        /// </summary>
+        public static IInstructionExecProvider Get(IConfig config)
+        {
+            if (config.UseInstructionCache)
+            {
+                return new HashedIEC();
+            }
+            else
+            {
+                return new NoStorageIEC();
+            }
+        }
 	}
 
 	/// Provide a fresh instruction executor every time. No storage.

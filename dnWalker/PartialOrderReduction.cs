@@ -219,7 +219,7 @@ namespace MMC {
                     continue;
                 }
 
-				InstructionExecBase instrExec = InstructionExecProvider.iep.GetExecFor(instr);
+				InstructionExecBase instrExec = cur.InstructionExecProvider.GetExecFor(instr);
 
 				cur.ThreadPool.CurrentThreadId = threadId;
 
