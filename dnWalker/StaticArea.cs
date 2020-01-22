@@ -134,7 +134,7 @@ namespace MMC.State {
 			m_classes[location].Loaded = false;
 		}
 
-		public void Accept(IStorageVisitor visitor) {
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) {
 
 			visitor.VisitStaticArea(this);
 		}

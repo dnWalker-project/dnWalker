@@ -167,7 +167,7 @@ namespace MMC.State
             Arguments.Clean();
         }
 
-        public void Accept(IStorageVisitor visitor)
+        public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
         {
             visitor.VisitMethodState(this);
         }

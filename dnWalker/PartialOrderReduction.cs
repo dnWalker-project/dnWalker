@@ -89,24 +89,25 @@ namespace MMC {
 			mapper.Put(sd);
 		}
 
-		/// Merge the SII's 
-		public void Backtracked(Stack<SchedulingData> stack, SchedulingData fromSD) {
+        /// Merge the SII's 
+        public void Backtracked(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
+        {
+            if (fromSD.State.SII == null)
+            {
+                if (_config.UseDPORCollapser)
+                    fromSD.State.SII = new CollapsedSII(fromSD.SII as SimplifiedSII);
+                else
+                    fromSD.State.SII = fromSD.SII;
+            }
 
-			if (fromSD.State.SII == null) {
-				if (_config.UseDPORCollapser)
-					fromSD.State.SII = new CollapsedSII(fromSD.SII as SimplifiedSII);
-				else
-					fromSD.State.SII = fromSD.SII;
-			}
+            SchedulingData toSD = stack.Peek();
+            (toSD.SII as SimplifiedSII).Merge(fromSD.SII, toSD.LastAccess);
 
-			SchedulingData toSD = stack.Peek();
-			(toSD.SII as SimplifiedSII).Merge(fromSD.SII, toSD.LastAccess);
+            mapper.Remove(toSD);
 
-			mapper.Remove(toSD);
-
-			/* for C3 proviso */
-			fromSD.State.SchedulingData = null;
-		}
+            /* for C3 proviso */
+            fromSD.State.SchedulingData = null;
+        }
 
         public void OnNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
@@ -170,32 +171,38 @@ namespace MMC {
 		/// 1. An objectreference is written to object o
 		/// 2. o is threadshared, and the o' referenced by
 		/// the objectreference is not
-		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, IConfig config)
+		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, ExplicitActiveState cur)
         {
-			if (!config.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
-				return;
+            if (!cur.Configuration.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
+            {
+                return;
+            }
 
-            var cur = ActiveState.cur;
             // literally and shamelessly mimiced from JPF:
 
             if (parentIsShared) {
 				if (!((ObjectReference)newRef).Equals(ObjectReference.Null))
                 {
-					DynamicAllocation da = ActiveState.cur.DynamicArea.Allocations[(ObjectReference)newRef];
+					DynamicAllocation da = cur.DynamicArea.Allocations[(ObjectReference)newRef];
 
                     if (!da.ThreadShared)
                     {
-                        MarkAndSweepGC.msgc.MarkSharedRecursive(cur, (ObjectReference)newRef);
+                        // MarkAndSweepGC.msgc.MarkSharedRecursive(cur, (ObjectReference)newRef);
+                        var markAndSweep = cur.GarbageCollector as MarkAndSweepGC;
+                        if (markAndSweep != null)
+                        {
+                            markAndSweep.MarkSharedRecursive(cur, (ObjectReference)newRef);
+                        }                        
                     }
-				}
+                }
 			}
 
 			return;
 		}
 
-		public int GetPersistentThread()
+		public int GetPersistentThread(Explorer explorer)
         {
-            var cur = ActiveState.cur;
+            var cur = explorer.cur;
             /*
 			 * Return the thread id which executes an independent action
 			 * It either returns -1 (no set), or an integer > 0, because 
@@ -206,9 +213,14 @@ namespace MMC {
             /* 
 			 * Run a object escape analysis 
 			 */
-            if (Explorer.DoSharingAnalysis) {
-				MarkAndSweepGC.msgc.Mark(cur);
-				Explorer.DoSharingAnalysis = false;
+            if (explorer.DoSharingAnalysis)
+            {
+                var markAndSweep = cur.GarbageCollector as MarkAndSweepGC;
+                if (markAndSweep != null)
+                {
+                    markAndSweep.Mark(cur);
+                }
+				explorer.DoSharingAnalysis = false;
 			}
 
             int oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
@@ -232,12 +244,13 @@ namespace MMC {
 				}
 			}
 
-			ActiveState.cur.ThreadPool.CurrentThreadId = oldCurrentThreadId;
+			cur.ThreadPool.CurrentThreadId = oldCurrentThreadId;
 
 			return retval;
 		}
 
-		public void CheckStoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData fromSD) {
+		public void CheckStoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
+        {
 			m_dfscount = stack.Count;
 		}
 
@@ -260,12 +273,16 @@ namespace MMC {
             sd.AllocAtttributes = old;
         }
 
-		public void RestoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData sd) {
-			if (m_dfscount > stack.Count) {
-				AllocationList malloc = ActiveState.cur.DynamicArea.Allocations;
-				for (ISparseElement d = sd.AllocAtttributes; d != null; d = d.Next)
-					malloc[d.Index].HeapAttribute = AllocatedObject.SHARED;
-			}
-		}
+        public void RestoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)
+        {
+            if (m_dfscount > stack.Count)
+            {
+                AllocationList malloc = cur.DynamicArea.Allocations;
+                for (ISparseElement d = sd.AllocAtttributes; d != null; d = d.Next)
+                {
+                    malloc[d.Index].HeapAttribute = AllocatedObject.SHARED;
+                }
+            }
+        }
 	}
 }

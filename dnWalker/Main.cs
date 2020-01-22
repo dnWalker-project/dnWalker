@@ -406,8 +406,6 @@ Disabling/enabling features:
             stateSpaceSetup.LoadAssemblies(config);
             var cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
 
-            ActiveState.cur = cur;
-
             Explorer ex = new Explorer(cur, config, instructionExecProvider);
             TextWriter tw = null;
 
@@ -420,7 +418,6 @@ Disabling/enabling features:
                 {
                     cur.Reset();
                     cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
-                    ActiveState.cur = cur;
 
                     string traceFile = config.AssemblyToCheckFileName + ".trace";
                     File.Delete(traceFile);

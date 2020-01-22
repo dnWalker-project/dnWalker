@@ -22,17 +22,6 @@ namespace MMC.State
     using MMC.InstructionExec;
 
     /// <summary>
-    /// Singleton accessor class.
-    /// </summary>
-    static class ActiveState
-    {
-        /// <summary>
-        /// A simple public field suffices here, no need to define a property.
-        /// </summary>
-        public static ExplicitActiveState cur { get; set; }// = new ExplicitActiveState(Config.Instance, new HashedIEC());
-    }
-
-    /// <summary>
     /// An implementation of the active state of the virtual machine.
     /// </summary>
     public class ExplicitActiveState : IStorageVisitable, ICleanable
@@ -40,6 +29,7 @@ namespace MMC.State
         DynamicArea m_dyn;
         IStaticArea m_stat;
         ThreadPool m_tp;
+        IGarbageCollector m_gc;
 
         /// <summary>
         /// The allocation heap, i.e. the dynamic part of the state.
@@ -109,6 +99,8 @@ namespace MMC.State
 
         public IInstructionExecProvider InstructionExecProvider { get; }
 
+        public IGarbageCollector GarbageCollector => m_gc;
+
         /// <summary>
         /// Evaluation stack of top of callstack of currently running thread.
         /// </summary>
@@ -135,11 +127,20 @@ namespace MMC.State
                  DefinitionProvider.dp.AssemblyDefinition);
         }
 
+        public delegate void DoSharingAnalysisRequestHandle();
+
+        public event DoSharingAnalysisRequestHandle DoSharingAnalysisRequest;
+
+        public void RequestSharingAnalysis()
+        {
+            DoSharingAnalysisRequest?.Invoke();
+        }
+
         /// <summary>
         /// Callback method for visitors.
         /// </summary>
         /// <param name="visitor">A visitor visiting this state.</param>
-        public void Accept(IStorageVisitor visitor)
+        public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
         {
             visitor.VisitActiveState(this);
         }
@@ -164,7 +165,7 @@ namespace MMC.State
 
         public MemoryLocation NextAccess(int threadId)
         {
-            var cur = ActiveState.cur;
+            var cur = this;
             MethodState method = cur.ThreadPool.Threads[threadId].CurrentMethod;
             var instr = method.ProgramCounter;
             InstructionExecBase instrExec = InstructionExecProvider.GetExecFor(instr);
@@ -205,6 +206,13 @@ namespace MMC.State
             Configuration = config;
             InstructionExecProvider = instructionExecProvider;
             Reset();
+
+            /*
+			 * Pick out the garbage collector. Note that only memoised GC and
+			 * Mark & sweep are available. Reference counting is broken. */
+            m_gc = config.MemoisedGC ?
+                new IncrementalHeapVisitor(this) as IGarbageCollector :
+                new MarkAndSweepGC() as IGarbageCollector;
         }
     }
 }

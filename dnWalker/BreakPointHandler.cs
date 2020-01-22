@@ -41,8 +41,9 @@ namespace MMC {
 		}
 
 		BreakPoint MakeBreakPoint()
-        { 
-            var cur = ActiveState.cur;
+        {
+            throw new NotImplementedException();/*
+            ExplicitActiveState cur = null;// ActiveState.cur;
 
             BreakPoint bp = new BreakPoint();
 			bp.Thread = cur.ThreadPool.CurrentThreadId;
@@ -53,7 +54,7 @@ namespace MMC {
 				bp.Offset = -1;
 				bp.MethodDefinition = null;
 			}
-			return bp;
+			return bp;*/
 		}
 
 		BreakPoint MakeBreakPoint(string threadId, string methodFullName, string offset) {

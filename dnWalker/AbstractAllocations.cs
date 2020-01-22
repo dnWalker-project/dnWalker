@@ -100,7 +100,7 @@ namespace MMC.State
         public abstract bool IsDirty();
         public abstract void Clean();
         public abstract void Dispose();
-        public abstract void Accept(IStorageVisitor visitor);
+        public abstract void Accept(IStorageVisitor visitor, ExplicitActiveState cur);
 
         protected Allocation(ITypeDefOrRef typeDef, IConfig config)
         {

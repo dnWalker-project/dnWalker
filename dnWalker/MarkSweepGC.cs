@@ -23,8 +23,6 @@ namespace MMC.State
 
     class MarkAndSweepGC : BaseStorageVisitor, IStorageVisitor, IGarbageCollector
     {
-        public static readonly MarkAndSweepGC msgc = new MarkAndSweepGC();
-
         Queue<int> todo = new Queue<int>();
 
         public void Run(ExplicitActiveState cur)
@@ -115,7 +113,6 @@ namespace MMC.State
                 }
             }
         }
-
 
         void Mark(ExplicitActiveState cur, ObjectReference o, int tid)
         {

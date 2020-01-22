@@ -72,11 +72,11 @@ namespace MMC
 
         // -------------------------------- Backtracking --------------------------------
 
-        public void LogBacktrackDummy(Stack<SchedulingData> stack, SchedulingData fromSd)
+        public void LogBacktrackDummy(Stack<SchedulingData> stack, SchedulingData fromSd, ExplicitActiveState cur)
         {
         }
 
-        public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd)
+        public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd, ExplicitActiveState cur)
         {
 
             Logger.l.Debug("backtracked.");
@@ -106,7 +106,7 @@ namespace MMC
             m_lastState = sd.ID;
         }
 
-        public void GraphBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd)
+        public void GraphBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd, ExplicitActiveState cur)
         {
             DotWriter.NewEdge(m_lastState, stack.Peek().ID, DotGraph.BacktrackEdge);
             m_lastState = stack.Peek().ID;

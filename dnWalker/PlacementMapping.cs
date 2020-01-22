@@ -78,10 +78,12 @@ namespace MMC.State {
 		}
 	}
 
+	/// <summary>
 	/// Type to store the mapping used in the symmetry reduction.
-	interface IPlacementMapping {
-
-		int GetLocation();
+	/// </summary>
+	interface IPlacementMapping
+    {
+		int GetLocation(ExplicitActiveState cur);
 	}
 
 	/// An implementation of the IPlacementMapping type.
@@ -100,10 +102,9 @@ namespace MMC.State {
 		/// the current thread is incremented.
 		///
 		/// \sa PlacementMappingKey
-		public int GetLocation() {
+		public int GetLocation(ExplicitActiveState cur) {
 
 			int retval = -1;
-            var cur = ActiveState.cur;
 
 			PlacementMappingKey key = new PlacementMappingKey();
 			key.LineNumber = cur.CurrentLocation;

@@ -69,7 +69,7 @@ namespace MMC.Data {
 			m_isDirty = true;
 			m_elements[m_stackptr++] = e;
 
-			ThreadObjectWatcher.Increment(e);
+			ThreadObjectWatcher.Increment(-1, e);
 		}
 
 		public virtual IDataElement Pop()
@@ -88,7 +88,7 @@ namespace MMC.Data {
 
 			IDataElement popped = m_elements[--m_stackptr];
 
-			ThreadObjectWatcher.Decrement(popped);
+			ThreadObjectWatcher.Decrement(/*cur.ThreadPool.CurrentThreadId*/-1, popped);
 
 			//if (popped is ObjectReference && !popped.Equals(ObjectReference.Null)) 
 			//	Explorer.ActivateGC = true;

@@ -98,14 +98,17 @@ namespace MMC.State
 
     class ObjectReferenceDepthComparer : SGC.IComparer<ObjectReference>
     {
+        private readonly ExplicitActiveState cur;
 
-        public static readonly ObjectReferenceDepthComparer cmp = new ObjectReferenceDepthComparer();
+        public ObjectReferenceDepthComparer(ExplicitActiveState cur)
+        {
+            this.cur = cur;
+        }
 
         public int Compare(ObjectReference a, ObjectReference b)
         {
-
-            DynamicAllocation left = ActiveState.cur.DynamicArea.Allocations[a];
-            DynamicAllocation right = ActiveState.cur.DynamicArea.Allocations[b];
+            DynamicAllocation left = cur.DynamicArea.Allocations[a];
+            DynamicAllocation right = cur.DynamicArea.Allocations[b];
 
             return left.Key - right.Key;
         }
@@ -117,13 +120,12 @@ namespace MMC.State
         /// My own priority queue based on IntervalHeap from C5
         private class MyHeap
         {
-
             IPriorityQueue<ObjectReference> m_pqueue;
             IDictionary<ObjectReference, IPriorityQueueHandle<ObjectReference>> m_handleDict;
 
-            public MyHeap()
+            public MyHeap(ExplicitActiveState cur)
             {
-                m_pqueue = new IntervalHeap<ObjectReference>(ObjectReferenceDepthComparer.cmp);
+                m_pqueue = new IntervalHeap<ObjectReference>(new ObjectReferenceDepthComparer(cur));
                 m_handleDict = new HashDictionary<ObjectReference, IPriorityQueueHandle<ObjectReference>>();
             }
 
@@ -175,17 +177,17 @@ namespace MMC.State
             }
         }
 
-        public static IncrementalHeapVisitor ihv = new IncrementalHeapVisitor();
+        //public static IncrementalHeapVisitor ihv = new IncrementalHeapVisitor();
         MyHeap heap;
 
-        private IncrementalHeapVisitor()
+        public IncrementalHeapVisitor(ExplicitActiveState cur)
         {
-            heap = new MyHeap();
+            heap = new MyHeap(cur);
         }
 
         public void Run(ExplicitActiveState cur)
         {
-            IncrementalHeapVisitor.ihv.RunMark(cur);
+            RunMark(cur);
 
             AllocationList m_alloc = cur.DynamicArea.Allocations;
 
@@ -234,13 +236,13 @@ namespace MMC.State
                 {
                     // line 11
                     u.Depth = u.Rhs;
-                    u.Accept(this); // processing children
+                    u.Accept(this, cur); // processing children
                 }
                 else
                 {
                     u.Depth = int.MaxValue;
-                    ProcessChild(reference);
-                    u.Accept(this); // processing children
+                    ProcessChild(reference, cur);
+                    u.Accept(this, cur); // processing children
                 }
             }
         }
@@ -250,48 +252,49 @@ namespace MMC.State
         {
             DynamicAllocation ida = cur.DynamicArea.Allocations[i];
 
-            ida.Rhs = DetermineDepth(i + 1);    // line 3
+            ida.Rhs = DetermineDepth(i + 1, cur);    // line 3
             if (ida.Rhs != ida.Depth)           // line 4
             {
                 heap.Insert(new ObjectReference(i + 1));            // line 5
             }
         }
 
-        public override void VisitAllocatedArray(AllocatedArray aa)
+        public override void VisitAllocatedArray(AllocatedArray aa, ExplicitActiveState cur)
         {
             for (int i = 0; i < aa.Fields.Length; i++)
             {
                 IDataElement ide = aa.Fields[i];
                 if (ide is ObjectReference)
-                    ProcessChild((ObjectReference)ide);
+                    ProcessChild((ObjectReference)ide, cur);
             }
         }
 
-        public override void VisitAllocatedDelegate(AllocatedDelegate ad)
+        public override void VisitAllocatedDelegate(AllocatedDelegate ad, ExplicitActiveState cur)
         {
-            ProcessChild(ad.Object);
+            ProcessChild(ad.Object, cur);
         }
 
-        public override void VisitAllocatedObject(AllocatedObject ao)
+        public override void VisitAllocatedObject(AllocatedObject ao, ExplicitActiveState cur)
         {
             for (int i = 0; i < ao.Fields.Length; i++)
             {
                 IDataElement ide = ao.Fields[i];
                 if (ide is ObjectReference)
-                    ProcessChild((ObjectReference)ide);
+                    ProcessChild((ObjectReference)ide, cur);
             }
         }
 
-        private void ProcessChild(ObjectReference reference)
+        private void ProcessChild(ObjectReference reference, ExplicitActiveState cur)
         {
-
             if (ObjectReference.Null.Equals(reference))
+            {
                 return;
+            }
 
-            DynamicAllocation ida = ActiveState.cur.DynamicArea.Allocations[reference];
+            DynamicAllocation ida = cur.DynamicArea.Allocations[reference];
 
             // line 14-18 && 24-28
-            ida.Rhs = DetermineDepth((int)reference.Location);
+            ida.Rhs = DetermineDepth((int)reference.Location, cur);
             if (ida.Rhs != ida.Depth)
                 heap.Adjust(reference);
             else
@@ -299,18 +302,19 @@ namespace MMC.State
 
         }
 
-        private int DetermineDepth(int i)
+        private int DetermineDepth(int i, ExplicitActiveState cur)
         {
             int retval = int.MaxValue - 1; // ensure no overflow
 
             foreach (ObjectReference parent in ParentWatcher.pw[i])
-                retval = Math.Min(ParentWatcher.GetDynamicAllocation(parent).Depth, retval);
+            {
+                retval = Math.Min(ParentWatcher.GetDynamicAllocation(parent, cur).Depth, retval);
+            }
 
             retval++;
 
             return retval;
         }
-
     }
 
     /// We made a seperate watcher for monitoring object references on the callstack
@@ -380,7 +384,7 @@ namespace MMC.State
             ParentWatcher.RemoveParentFromChild(ParentWatcher.RootObjectReference, o);
         }
 
-        public static void Increment(IDataElement o)
+        /*public static void Increment(IDataElement o)
         {
             Increment(ActiveState.cur.ThreadPool.CurrentThreadId, o);
         }
@@ -388,7 +392,7 @@ namespace MMC.State
         public static void Decrement(IDataElement o)
         {
             Decrement(ActiveState.cur.ThreadPool.CurrentThreadId, o);
-        }
+        }*/
 
     }
 
@@ -433,8 +437,11 @@ namespace MMC.State
         public static UpdateSingle adder = new UpdateSingle(AddParentToChild);
         public static UpdateSingle remover = new UpdateSingle(RemoveParentFromChild);
 
+        /// <summary>
         /// Fictive root
+        /// </summary>
         public static AllocatedObject RootAllocatedObject = new AllocatedObject(DefinitionProvider.dp.GetTypeDefinition("System.Object"), Config.Instance);
+
         public static ObjectReference RootObjectReference = new ObjectReference(uint.MaxValue);
 
         static ParentWatcher()
@@ -445,18 +452,23 @@ namespace MMC.State
         public static DynamicAllocation GetDynamicAllocation(int loc)
         {
             if (loc == -1)
+            {
                 return RootAllocatedObject;
+            }
             else
-                return ActiveState.cur.DynamicArea.Allocations[loc];
+            {
+                //return ActiveState.cur.DynamicArea.Allocations[loc];
+                throw new NotImplementedException();
+            }            
         }
 
-        public static DynamicAllocation GetDynamicAllocation(ObjectReference or)
+        public static DynamicAllocation GetDynamicAllocation(ObjectReference or, ExplicitActiveState cur)
         {
             //if (RootObjectReference.Equals(or))
             if (or.Location == uint.MaxValue)
                 return RootAllocatedObject;
             else
-                return ActiveState.cur.DynamicArea.Allocations[or];
+                return cur.DynamicArea.Allocations[or];
         }
 
         public static void RemoveParentFromChild(ObjectReference parentRef, IDataElement childRef)

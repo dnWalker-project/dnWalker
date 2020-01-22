@@ -19,7 +19,7 @@ namespace MMC.State {
 
     public interface IStorageVisitable {
 
-		void Accept(IStorageVisitor visitor);
+		void Accept(IStorageVisitor visitor, ExplicitActiveState cur);
 	}
 
     public interface IStorageVisitor {
@@ -28,10 +28,10 @@ namespace MMC.State {
 
 		void VisitActiveState(ExplicitActiveState act);
 
-		void VisitDynamicArea(DynamicArea dyn);
-		void VisitAllocatedObject(AllocatedObject ao);
-		void VisitAllocatedArray(AllocatedArray arr);
-		void VisitAllocatedDelegate(AllocatedDelegate del);
+		void VisitDynamicArea(DynamicArea dyn, ExplicitActiveState cur);
+		void VisitAllocatedObject(AllocatedObject ao, ExplicitActiveState cur);
+		void VisitAllocatedArray(AllocatedArray arr, ExplicitActiveState cur);
+		void VisitAllocatedDelegate(AllocatedDelegate del, ExplicitActiveState cur);
 
 		void VisitStaticArea(IStaticArea stat);
 		void VisitAllocatedClass(AllocatedClass cls);
@@ -50,10 +50,10 @@ namespace MMC.State {
 
 		public virtual void VisitActiveState(ExplicitActiveState act) {}
 
-		public virtual void VisitDynamicArea(DynamicArea dyn) {}
-		public virtual void VisitAllocatedObject(AllocatedObject ao) {}
-		public virtual void VisitAllocatedArray(AllocatedArray arr) {}
-		public virtual void VisitAllocatedDelegate(AllocatedDelegate del) {}
+		public virtual void VisitDynamicArea(DynamicArea dyn, ExplicitActiveState cur) {}
+		public virtual void VisitAllocatedObject(AllocatedObject ao, ExplicitActiveState cur) {}
+		public virtual void VisitAllocatedArray(AllocatedArray arr, ExplicitActiveState cur) {}
+		public virtual void VisitAllocatedDelegate(AllocatedDelegate del, ExplicitActiveState cur) {}
 
 		public virtual void VisitStaticArea(IStaticArea stat) {}
 		public virtual void VisitAllocatedClass(AllocatedClass cls) {}

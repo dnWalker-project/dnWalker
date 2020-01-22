@@ -47,7 +47,7 @@ namespace MMC {
     /// <summary>
     /// Handler for backtracking events.
     /// </summary>
-    public delegate void BacktrackEventHandler(Stack<SchedulingData> stack, SchedulingData fromSD);
+    public delegate void BacktrackEventHandler(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur);
 
     /// <summary>
     /// Handler for scheduling events, at the moment only a chosen thread.
@@ -61,7 +61,7 @@ namespace MMC {
 
 	public class Explorer {
 
-		public static bool DoSharingAnalysis = false;
+		public bool DoSharingAnalysis { get; set; }
 
 		public bool m_continue = false;
 		public bool m_measureMemory = true;
@@ -88,8 +88,7 @@ namespace MMC {
 		FastHashtable<CollapsedState, int> m_stateStorage;
 		readonly Queue<int> m_emptyQueue = new Queue<int>(0);
 		StatefulDynamicPOR m_dpor;
-		ObjectEscapePOR m_spor;
-		IGarbageCollector m_gc;
+		ObjectEscapePOR m_spor;		
 		Timer m_explorationTimer;
 		Timer m_memoryTimer;
 
@@ -98,7 +97,7 @@ namespace MMC {
 
         LinkedList<CollapsedState> m_atomicStates;
 
-		public Explorer(ExplicitActiveState cur, IConfig config, IInstructionExecProvider instructionExecProvider)
+        public Explorer(ExplicitActiveState cur, IConfig config, IInstructionExecProvider instructionExecProvider)
         {
             this.cur = cur;
 
@@ -106,74 +105,74 @@ namespace MMC {
             _instructionExecProvider = instructionExecProvider;
             // DFS stack
             m_dfs = new Stack<SchedulingData>();
-			m_stateConvertor = new Collapser(cur);
+            m_stateConvertor = new Collapser(cur);
 
-			// hashtable
-			m_stateStorage = new FastHashtable<CollapsedState, int>(20);
+            cur.DoSharingAnalysisRequest += () => DoSharingAnalysis = true;
 
-			ExplorationLogger el = new ExplorationLogger(this);
+            // hashtable
+            m_stateStorage = new FastHashtable<CollapsedState, int>(20);
 
-			/*
+            ExplorationLogger el = new ExplorationLogger(this);
+
+            /*
 			 * Logging
 			 */
-			StateConstructed += new StateEventHandler(el.LogNewState);
-			StateRevisited += new StateEventHandler(el.LogRevisitState);
-			Backtracked += new BacktrackEventHandler(el.LogBacktrack);
-			BacktrackEventHandler dummy = new BacktrackEventHandler(el.LogBacktrackDummy);
-			BacktrackStart += dummy;
-			BacktrackStop += dummy;
-			Deadlocked += new DeadlockEventHandler(el.LogDeadlock);
-			ThreadPicked += new PickThreadEventHandle(el.LogPickedThread);
-			ExplorationHalted += new ExplorationHaltEventHandle(el.ExplorationHalted);
+            StateConstructed += new StateEventHandler(el.LogNewState);
+            StateRevisited += new StateEventHandler(el.LogRevisitState);
+            Backtracked += new BacktrackEventHandler(el.LogBacktrack);
+            BacktrackEventHandler dummy = new BacktrackEventHandler(el.LogBacktrackDummy);
+            BacktrackStart += dummy;
+            BacktrackStop += dummy;
+            Deadlocked += new DeadlockEventHandler(el.LogDeadlock);
+            ThreadPicked += new PickThreadEventHandle(el.LogPickedThread);
+            ExplorationHalted += new ExplorationHaltEventHandle(el.ExplorationHalted);
 
-			if (DotWriter.IsEnabled()) {
-				StateConstructed += new StateEventHandler(el.GraphNewState);
-				StateRevisited += new StateEventHandler(el.GraphRevisitState);
-				Backtracked += new BacktrackEventHandler(el.GraphBacktrack);
-			}
+            if (DotWriter.IsEnabled())
+            {
+                StateConstructed += new StateEventHandler(el.GraphNewState);
+                StateRevisited += new StateEventHandler(el.GraphRevisitState);
+                Backtracked += new BacktrackEventHandler(el.GraphBacktrack);
+            }
 
-			if (config.UseStatefulDynamicPOR) {
-				m_dpor = new StatefulDynamicPOR(m_dfs, config);
-				Backtracked += new BacktrackEventHandler(m_dpor.Backtracked);
-				StateConstructed += new StateEventHandler(m_dpor.OnNewState);
-				StateRevisited += new StateEventHandler(m_dpor.OnSeenState);
-				ThreadPicked += new PickThreadEventHandle(m_dpor.ThreadPicked);
-			}
+            if (config.UseStatefulDynamicPOR)
+            {
+                m_dpor = new StatefulDynamicPOR(m_dfs, config);
+                Backtracked += new BacktrackEventHandler(m_dpor.Backtracked);
+                StateConstructed += new StateEventHandler(m_dpor.OnNewState);
+                StateRevisited += new StateEventHandler(m_dpor.OnSeenState);
+                ThreadPicked += new PickThreadEventHandle(m_dpor.ThreadPicked);
+            }
 
-			if (config.UseObjectEscapePOR) {
-				m_spor = new ObjectEscapePOR();
-				BacktrackStart += new BacktrackEventHandler(m_spor.CheckStoreThreadSharingData);
-				StateConstructed += new StateEventHandler(m_spor.StoreThreadSharingData);
-				BacktrackStop += new BacktrackEventHandler(m_spor.RestoreThreadSharingData);
-			}
+            if (config.UseObjectEscapePOR)
+            {
+                m_spor = new ObjectEscapePOR();
+                BacktrackStart += new BacktrackEventHandler(m_spor.CheckStoreThreadSharingData);
+                StateConstructed += new StateEventHandler(m_spor.StoreThreadSharingData);
+                BacktrackStop += new BacktrackEventHandler(m_spor.RestoreThreadSharingData);
+            }
 
-			if (!double.IsInfinity(config.MaxExploreInMinutes)) {
-				m_explorationTimer = new Timer();
-				m_explorationTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-				m_explorationTimer.Interval = config.MaxExploreInMinutes * 60 * 1000;
-				m_explorationTimer.Enabled = true;
-			}
+            if (!double.IsInfinity(config.MaxExploreInMinutes))
+            {
+                m_explorationTimer = new Timer();
+                m_explorationTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+                m_explorationTimer.Interval = config.MaxExploreInMinutes * 60 * 1000;
+                m_explorationTimer.Enabled = true;
+            }
 
-			if (!double.IsInfinity(config.OptimizeStorageAtMegabyte)) {
-				m_atomicStates = new LinkedList<CollapsedState>();
-				StateConstructed += new StateEventHandler(this.CheckAtomicOnNewState);
-				Backtracked += new BacktrackEventHandler(this.CheckAtomicOnBacktrack);
-			}
+            if (!double.IsInfinity(config.OptimizeStorageAtMegabyte))
+            {
+                m_atomicStates = new LinkedList<CollapsedState>();
+                StateConstructed += new StateEventHandler(this.CheckAtomicOnNewState);
+                Backtracked += new BacktrackEventHandler(this.CheckAtomicOnBacktrack);
+            }
 
-			if (config.OneTraceAndStop)
-				Backtracked += new BacktrackEventHandler(this.OnBacktrackAndStop);
+            if (config.OneTraceAndStop)
+                Backtracked += new BacktrackEventHandler(this.OnBacktrackAndStop);
 
-			m_memoryTimer = new Timer();
-			m_memoryTimer.Elapsed += new ElapsedEventHandler(OnTimedMemoryEvent);
-			m_memoryTimer.Interval = 5 * 1000;
-			m_memoryTimer.Enabled = true;
-
-			/*
-			 * Pick out the garbage collector. Note that only memoised GC and
-			 * Mark & sweep are available. Reference counting is broken. */
-			m_gc = (config.MemoisedGC) ?
-								   IncrementalHeapVisitor.ihv as IGarbageCollector :
-								   MarkAndSweepGC.msgc as IGarbageCollector;            
+            m_memoryTimer = new Timer();
+            m_memoryTimer.Elapsed += new ElapsedEventHandler(OnTimedMemoryEvent);
+            m_memoryTimer.Interval = 5 * 1000;
+            m_memoryTimer.Enabled = true;            
         }
 
         public IConfig Config => _config;
@@ -187,9 +186,10 @@ namespace MMC {
 			m_measureMemory = true;
 		}
 
-		private void OnBacktrackAndStop(Stack<SchedulingData> stack, SchedulingData fromSD) {
-			m_continue = false;
-		}
+        private void OnBacktrackAndStop(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
+        {
+            m_continue = false;
+        }
 
 		public int GetDFSStackSize() {
 			return this.m_dfs.Count;
@@ -243,7 +243,7 @@ namespace MMC {
 				/*
 				 * Run garbage collection
 				 */
-				m_gc.Run(cur);
+				cur.GarbageCollector.Run(cur);
 
 				/*
 				 * Do a state matching, store if unmatched,
@@ -252,14 +252,15 @@ namespace MMC {
 				 */
 				SchedulingData sd = UpdateHashtable(cur);
 
-				BacktrackStart(m_dfs, sd);
-				while (sd.Working.Count == 0 && m_dfs.Count > 0) {
-					// apply the reverse delta
-					m_stateConvertor.DecollapseByDelta(sd.Delta);
-					Backtracked(m_dfs, sd);
-					sd = m_dfs.Pop();
-				}
-				BacktrackStop(m_dfs, sd);
+				BacktrackStart(m_dfs, sd, cur);
+                while (sd.Working.Count == 0 && m_dfs.Count > 0)
+                {
+                    // apply the reverse delta
+                    m_stateConvertor.DecollapseByDelta(sd.Delta);
+                    Backtracked(m_dfs, sd, cur);
+                    sd = m_dfs.Pop();
+                }
+				BacktrackStop(m_dfs, sd, cur);
 
 				m_stateConvertor.Reset(sd.State);
 				cur.Clean();
@@ -466,21 +467,24 @@ namespace MMC {
             return continueExploration;
         }
 
-		public bool ExecutePorStep(int threadId) {
-			bool noErrors;
-			bool threadTerm;
+        public bool ExecutePorStep(int threadId)
+        {
+            bool noErrors;
+            bool threadTerm;
 
-			if (_config.OneTraceAndStop)
-				PrintTransition(threadId);
+            if (_config.OneTraceAndStop)
+            {
+                PrintTransition(threadId);
+            }
 
-			do {
-				noErrors = ExecuteStep(threadId, out threadTerm);
-				threadId = m_spor.GetPersistentThread();
-			} while (noErrors && !threadTerm && threadId >= 0);
+            do
+            {
+                noErrors = ExecuteStep(threadId, out threadTerm);
+                threadId = m_spor.GetPersistentThread(this);
+            } while (noErrors && !threadTerm && threadId >= 0);
 
-
-			return noErrors;
-		}
+            return noErrors;
+        }
 
 		/*
 		 * This method is not really pretty, but it works...
@@ -508,22 +512,23 @@ namespace MMC {
 			System.Console.WriteLine(sb.ToString());
 		}
 
-        public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd, ExplicitActiveState _)
+        public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd, ExplicitActiveState state)
         {
-            if (!double.IsInfinity(_config.OptimizeStorageAtMegabyte) && cur.ThreadPool.RunnableThreadCount == 1)
+            if (!double.IsInfinity(_config.OptimizeStorageAtMegabyte) && state.ThreadPool.RunnableThreadCount == 1)
             {
                 m_atomicStates.AddLast(collapsedCurrent);
             }
         }
 
-		public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent) {
-			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte)) {
-				// check if singleton transition
-				if (parent.Working.Count == 0 && parent.Done.Count == 1)
-					m_atomicStates.AddLast(parent.State);
-			}
-		}
-
+        public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent, ExplicitActiveState cur)
+        {
+            if (!double.IsInfinity(_config.OptimizeStorageAtMegabyte))
+            {
+                // check if singleton transition
+                if (parent.Working.Count == 0 && parent.Done.Count == 1)
+                    m_atomicStates.AddLast(parent.State);
+            }
+        }
 
 		public bool CheckDeadlock() {
 

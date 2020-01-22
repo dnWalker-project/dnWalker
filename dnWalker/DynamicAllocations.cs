@@ -127,9 +127,9 @@ namespace MMC.State {
             //typeOffset += typeDef.Fields.Count; 			}
         }
 
-		public override void Accept(IStorageVisitor visitor)
+		public override void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
         {
-			visitor.VisitAllocatedObject(this);
+			visitor.VisitAllocatedObject(this, cur);
 		}
 
         public override string ToString()
@@ -247,9 +247,9 @@ namespace MMC.State {
 			Lock.Clean();
 		}
 
-		public override void Accept(IStorageVisitor visitor)
+		public override void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
         {
-			visitor.VisitAllocatedDelegate(this);
+			visitor.VisitAllocatedDelegate(this, cur);
 		}
 
 		public override string ToString()

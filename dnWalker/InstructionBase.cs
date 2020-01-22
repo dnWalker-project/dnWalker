@@ -220,7 +220,7 @@ namespace MMC.InstructionExec
             var exceptionType = DefinitionProvider.dp.GetTypeDefinition(type);
 
             ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
-                cur.DynamicArea.DeterminePlacement(),
+                cur.DynamicArea.DeterminePlacement(cur),
                 exceptionType,
                 cur.Configuration);
 

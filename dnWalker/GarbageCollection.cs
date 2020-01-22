@@ -18,7 +18,7 @@ using MMC.State;
 
 namespace MMC
 {
-    interface IGarbageCollector
+    public interface IGarbageCollector
     {
         void Run(ExplicitActiveState cur);
     }

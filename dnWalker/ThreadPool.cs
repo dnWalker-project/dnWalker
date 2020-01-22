@@ -127,7 +127,7 @@ namespace MMC.State {
 		// Create new threads.
 		////////////////////////////////////////////////////////////////////
 
-		public int NewThread(ExplicitActiveState cur, MethodState entry, ObjectReference threadObj, IConfig config)
+		public int NewThread(ExplicitActiveState cur, MethodState entry, ObjectReference threadObj)
         {
 			int thread_id = m_tl.Length;
 			ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
@@ -137,12 +137,12 @@ namespace MMC.State {
 
 			// these arguments were added by the parent thread, but they should be 
 			// marked from the child thread for heap analysis
-			ThreadObjectWatcher.DecrementAll(this, entry.Arguments, config);
-			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments, config);
+			ThreadObjectWatcher.DecrementAll(this, entry.Arguments, cur.Configuration);
+			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments, cur.Configuration);
 
-			Explorer.DoSharingAnalysis = true;
+            cur.RequestSharingAnalysis();
 
-			return thread_id;
+            return thread_id;
 		}
 
 		////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ namespace MMC.State {
 		// Constructor and other boring stuff.
 		////////////////////////////////////////////////////////////////////
 
-		public void Accept(IStorageVisitor visitor) {
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) {
 
 			visitor.VisitThreadPool(this);
 		}

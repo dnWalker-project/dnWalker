@@ -169,8 +169,8 @@ namespace MMC.State {
 
 		// ---------------- Miscellaneaous and Helpers -------------- 
 
-		public void Accept(IStorageVisitor visitor) {
-
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
+        {
 			visitor.VisitThreadState(this);
 		}
 

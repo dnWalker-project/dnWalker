@@ -116,53 +116,69 @@ namespace MMC
     public interface ISII {
 		IEnumerator<MemoryAccess> GetEnumerator();
 	}
-	
-	
-	/// Collapsed SII, see the chapter on Collapsing Interleaving Information
-	/// in VY's thesis
-	class CollapsedSII : ISII {
-		readonly internal ISparseElement[] m_list;
 
-		public CollapsedSII(SimplifiedSII sii) {
-			m_list = new ISparseElement[sii.m_accesses.Length];
-			
 
-			for (int k = 0; k < sii.m_accesses.Length; k++) {
-				ObjectSII[] currOther = sii.m_accesses[k];
-				ISparseElement curr = m_list[k];
-				for (int i = 0; i < currOther.Length; i++) {
-					ObjectSII otherOsii = currOther[i];
-					if (otherOsii != null)
-						curr = new SparseElement(i, Collapser.POOL_DATA.GetInt(otherOsii), curr);
-				}
+    /// <summary>
+    /// Collapsed SII, see the chapter on Collapsing Interleaving Information in VY's thesis
+    /// </summary>
+    class CollapsedSII : ISII
+    {
+        readonly internal ISparseElement[] m_list;
+        private readonly ExplicitActiveState cur;
 
-				m_list[k] = curr;
-			}
-		}
+        public CollapsedSII(SimplifiedSII sii)
+        {
+            cur = sii.Cur;
 
-		public IEnumerator<MemoryAccess> GetEnumerator() {
-			for (int i = 0; i < m_list.Length; i++) {
+            m_list = new ISparseElement[sii.m_accesses.Length];
 
-				for (ISparseElement curr = m_list[i]; curr != null; curr = curr.Next) {
-					ObjectSII osii = Collapser.POOL_DATA.GetObjectSII(curr.DeltaVal);
-					for (int k = 0; k < osii.Length; k++) {
-						int threadset = osii[k];
-						if (threadset != 0) {
-							for (int threadId = 0; threadId < 32; threadId++) {
-								int mask = (1 << threadId);
-								if ((threadset & mask) == mask) {
-									MemoryLocation hml = new MemoryLocation(i, curr.Index, k);
-									yield return new MemoryAccess(hml, threadId);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+            for (int k = 0; k < sii.m_accesses.Length; k++)
+            {
+                ObjectSII[] currOther = sii.m_accesses[k];
+                ISparseElement curr = m_list[k];
+                for (int i = 0; i < currOther.Length; i++)
+                {
+                    ObjectSII otherOsii = currOther[i];
+                    if (otherOsii != null)
+                        curr = new SparseElement(i, Collapser.POOL_DATA.GetInt(otherOsii), curr);
+                }
 
+                m_list[k] = curr;
+            }
+        }
+
+        public IEnumerator<MemoryAccess> GetEnumerator()
+        {
+            for (int i = 0; i < m_list.Length; i++)
+            {
+
+                for (ISparseElement curr = m_list[i]; curr != null; curr = curr.Next)
+                {
+                    ObjectSII osii = Collapser.POOL_DATA.GetObjectSII(curr.DeltaVal);
+                    for (int k = 0; k < osii.Length; k++)
+                    {
+                        int threadset = osii[k];
+                        if (threadset != 0)
+                        {
+                            for (int threadId = 0; threadId < 32; threadId++)
+                            {
+                                int mask = (1 << threadId);
+                                if ((threadset & mask) == mask)
+                                {
+                                    MemoryLocation hml = new MemoryLocation(i, curr.Index, k, cur);
+                                    yield return new MemoryAccess(hml, threadId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+	/// <summary>
 	/// A simplifiedSII is a summarised II for a given state
+	/// </summary>
 	class SimplifiedSII : ISII
     {
 		/*
@@ -180,7 +196,11 @@ namespace MMC
 			m_accesses[2] = new ObjectSII[cur.DynamicArea.Allocations.Length];
 		}
 
+        public ExplicitActiveState Cur => cur;
+
+		/// <summary>
 		/// Returns the size (in terms of fields) of a given memory location
+		/// </summary>
 		private int GetOffsetSize(int type, int loc) {
 			if (type == 0) {
 				DynamicAllocation da = cur.DynamicArea.Allocations[loc];
@@ -274,7 +294,7 @@ namespace MMC
 								for (int threadId = 0; threadId < 32; threadId++) {
 									int mask = (1 << threadId);
 									if ((threadset & mask) == mask) {
-										MemoryLocation hml = new MemoryLocation(i, j, k);
+										MemoryLocation hml = new MemoryLocation(i, j, k, cur);
 										yield return new MemoryAccess(hml, threadId);
 									}
 								}

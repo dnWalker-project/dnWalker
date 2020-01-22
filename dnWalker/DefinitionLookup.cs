@@ -340,9 +340,9 @@ namespace MMC
             return retval;
         }
 
-        public MethodDefinition SearchVirtualMethod(MethodReference methRef, ObjectReference objRef)
+        public MethodDefinition SearchVirtualMethod(MethodReference methRef, ObjectReference objRef, ExplicitActiveState cur)
         {
-            AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
             var superType = ao.Type;
             VirtualMethodDefinition vmdef = new VirtualMethodDefinition(methRef, objRef);
             MethodDefinition retval = m_virtualMethodDefinitions[vmdef] as MethodDefinition;

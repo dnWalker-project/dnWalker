@@ -79,7 +79,7 @@ namespace MMC
 
             // Wrap run arguments in ConstantString objects, and create the method state for Main().
             ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
-                cur.DynamicArea.DeterminePlacement(false),
+                cur.DynamicArea.DeterminePlacement(false, cur),
                 DefinitionProvider.dp.GetTypeDefinition("System.String"),
                 cur.Configuration.RunTimeParameters.Length,
                 cur.Configuration);
@@ -98,8 +98,7 @@ namespace MMC
                 cur);
 
             // Initialize main thread.
-            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur,
-                mainState, CreateMainThreadObject(cur, asmDef.EntryPoint), cur.Configuration);
+            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, CreateMainThreadObject(cur, asmDef.EntryPoint));
 
             cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
 
@@ -129,14 +128,14 @@ namespace MMC
             // 1
             MethodPointer mainMethodPtr = new MethodPointer(mainDefinition);
             ObjectReference mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
-                    cur.DynamicArea.DeterminePlacement(false),
+                    cur.DynamicArea.DeterminePlacement(false, cur),
                     ObjectReference.Null,
                     mainMethodPtr,
                     cur.Configuration);
 
             // 2
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(false),
+                    cur.DynamicArea.DeterminePlacement(false, cur),
                     DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"),
                     cur.Configuration);
 
@@ -153,7 +152,7 @@ namespace MMC
             {
                 // Simply skip if not found.
                 ObjectReference newObjectRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(false),
+                    cur.DynamicArea.DeterminePlacement(false, cur),
                     DefinitionProvider.dp.GetTypeDefinition("System.Object"),
                     cur.Configuration);
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;

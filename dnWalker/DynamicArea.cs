@@ -66,9 +66,9 @@ namespace MMC.State {
 			return sb.ToString();
 		}
 
-		public void Accept(IStorageVisitor visitor) {
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) {
 
-			visitor.VisitDynamicArea(this);
+			visitor.VisitDynamicArea(this, cur);
 		}
 
 		/// \brief Check if the heap is dirty.
@@ -346,9 +346,9 @@ namespace MMC.State {
 		/// This calls DeterminePlacement(true).
 		///
 		/// \return The place to put the allocation.
-		public int DeterminePlacement() {
+		public int DeterminePlacement(ExplicitActiveState cur) {
 
-			return DeterminePlacement(true);
+			return DeterminePlacement(true, cur);
 		}
 
 		/// \brief Determine the placement for an allocation.
@@ -364,13 +364,13 @@ namespace MMC.State {
 		/// \return The place to put the allocation.
 		/// \sa PlacementMapping
 		/// \sa FreeSlot
-		public int DeterminePlacement(bool byCil)
+		public int DeterminePlacement(bool byCil, ExplicitActiveState cur)
         {
 			int retval;
 			if (!_config.SymmetryReduction || !byCil)
 				retval = FreeSlot();
 			else
-				retval = m_placementMapping.GetLocation();
+				retval = m_placementMapping.GetLocation(cur);
 			Logger.l.Debug("new allocation will be placed at {0}", retval);
 			return retval;
 		}

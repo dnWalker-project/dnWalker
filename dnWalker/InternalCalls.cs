@@ -350,29 +350,30 @@ namespace MMC.ICall {
         public static void Thread_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(false),
-                    methDef.DeclaringType,
-                    cur.Configuration);
+                cur.DynamicArea.DeterminePlacement(false, cur),
+                methDef.DeclaringType,
+                cur.Configuration);
             AllocatedObject threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
             // First, create a new thread. The first argument is the this pointer
             // to the thread object. The second argument is a reference to the
             // threadstart delegate, but we don't need to call it.
-            AllocatedDelegate del = (AllocatedDelegate)
-				cur.DynamicArea.Allocations[(ObjectReference)args[1]];
+            AllocatedDelegate del = (AllocatedDelegate)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
 
 			// TODO: This does not deal with delegates that take additional
 			// parameters (such as a state). It can probably be popped off the
 			// stack, but not certain, so skipping for now.
 			DataElementList delPars = StorageFactory.sf.CreateList(0);
-			if (del.Method.Value.HasThis) {
+			if (del.Method.Value.HasThis)
+            {
 				delPars = StorageFactory.sf.CreateList(1);
 				delPars[0] = del.Object;
 			}
-			MethodState newThreadState = new MethodState(del.Method.Value, delPars, cur);
 
-            int newThreadId = cur.ThreadPool.NewThread(cur, newThreadState, threadObjectRef, cur.Configuration);// (ObjectReference)args[0]);
+            MethodState newThreadState = new MethodState(del.Method.Value, delPars, cur);
+
+            int newThreadId = cur.ThreadPool.NewThread(cur, newThreadState, threadObjectRef);// (ObjectReference)args[0]);
 
             // Push ID on stack as an IntPointer.
             cur.EvalStack.Push(threadObjectRef);// new IntPointer(newThreadId));
@@ -461,17 +462,17 @@ namespace MMC.ICall {
             ObjectReference obj = (ObjectReference)args[0];
 
             // This thread must own the lock on the object.
-            if (cur.me != lm.GetLock(obj).Owner)
+            if (cur.me != lm.GetLock(obj, cur).Owner)
             {
                 Logger.l.Warning("thread {0} attemts to exit monitor on {1} but isn't the owner", cur.me, obj.ToString());
             }
             else
             {
-                lm.Release(obj);
+                lm.Release(obj, cur);
                 // If the lock was acquired by a new thread, make sure that
                 // thread is runnable.
-                if (lm.IsLocked(obj))
-                    cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken();
+                if (lm.IsLocked(obj, cur))
+                    cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken();
             }
         }
 
@@ -487,12 +488,12 @@ namespace MMC.ICall {
 			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (cur.me != lm.GetLock(obj).Owner)
+			if (cur.me != lm.GetLock(obj, cur).Owner)
 				Logger.l.Warning(
 						"thread {0} attemts to pulse first waiting thread on {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else
-				lm.Pulse(obj, false);
+				lm.Pulse(obj, false, cur);
 		}
 
 		// private extern static void Monitor_pulse_all(object obj);
@@ -501,19 +502,19 @@ namespace MMC.ICall {
 			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (cur.me != lm.GetLock(obj).Owner)
+			if (cur.me != lm.GetLock(obj, cur).Owner)
 				Logger.l.Warning(
 						"thread {0} attemts to pulse all waiting threads on {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else
-				lm.Pulse(obj, true);
+				lm.Pulse(obj, true, cur);
 		}
 
 		// private extern static bool Monitor_test_synchronised(object obj);
 		public static void Monitor_test_synchronised(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
 			LockManager lm = cur.DynamicArea.LockManager;
-			bool locked = lm.IsLocked((ObjectReference)args[0]);
+			bool locked = lm.IsLocked((ObjectReference)args[0], cur);
 			cur.EvalStack.Push((locked ? new Int4(1) : new Int4(0)));
 		}
 
@@ -526,11 +527,11 @@ namespace MMC.ICall {
 			ObjectReference obj = (ObjectReference)args[0];
 			// IDataElement ms = args[1]; // todo: don't block forever if ms > 0 && ms < \infty
 
-			bool acquired = lm.Acquire(obj, cur.me);
+			bool acquired = lm.Acquire(obj, cur.me, cur);
 			if (!acquired) {
 				// Not acquired, but ms is non-zero, which we will interpret as infinity,
 				// so add this thread to the wait queue.
-				Lock lock_we_want = lm.GetLock(obj);
+				Lock lock_we_want = lm.GetLock(obj, cur);
 				lock_we_want.ReadyQueue.Enqueue(cur.me);
 				//				cur.CurrentThread.WaitFor(lock_we_want.Owner);
 				cur.CurrentThread.WaitFor(LockManager.NoThread);
@@ -548,11 +549,11 @@ namespace MMC.ICall {
             LockManager lm = cur.DynamicArea.LockManager;
             ObjectReference obj = (ObjectReference)args[0];
 
-            bool acquirable = lm.IsAcquireable(obj, threadId);
+            bool acquirable = lm.IsAcquireable(obj, threadId, cur);
 
             if (acquirable)
             {
-                return new MemoryLocation(obj);
+                return new MemoryLocation(obj, cur);
             }
             else
             {
@@ -569,19 +570,19 @@ namespace MMC.ICall {
 			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (cur.me != lm.GetLock(obj).Owner)
+			if (cur.me != lm.GetLock(obj, cur).Owner)
 				Logger.l.Warning(
 						"thread {0} attemts to wait on monitor for {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else {
-				lm.Release(obj);
-				lm.GetLock(obj).WaitQueue.Enqueue(cur.me);
+				lm.Release(obj, cur);
+				lm.GetLock(obj, cur).WaitQueue.Enqueue(cur.me);
 				// We're not specifically waiting for an other thread, just to
 				// re-acquire this lock.
 				cur.CurrentThread.WaitFor(LockManager.NoThread);
 
-				if (lm.IsLocked(obj))
-					cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken();
+				if (lm.IsLocked(obj, cur))
+					cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken();
 			}
 
 			// If this thread is rescheduled, it has apperently reacquired the lock,

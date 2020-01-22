@@ -1216,14 +1216,15 @@ namespace MMC.Data {
 
 	class ObjectFieldPointer : IManagedPointer {
 
-		ObjectReference m_objectRef;
-		int m_index;
+        private readonly ObjectReference m_objectRef;
+		private readonly int m_index;
         private readonly ExplicitActiveState cur;
 
         public ObjectFieldPointer(ExplicitActiveState cur, ObjectReference or, int i) {
 			m_index = i;
 			m_objectRef = or;
             this.cur = cur;
+            MemoryLocation = new MemoryLocation(m_index, m_objectRef, cur);
         }
 
 		public string WrapperName { get { return ""; } }
@@ -1232,13 +1233,7 @@ namespace MMC.Data {
 			return new Int4(m_index);
 		}
 
-		public MemoryLocation MemoryLocation
-        {
-            get
-            {
-                return new MemoryLocation(m_index, m_objectRef);
-            }
-        }
+        public MemoryLocation MemoryLocation { get; }
 
         public IDataElement Value
         {
@@ -1250,7 +1245,7 @@ namespace MMC.Data {
             set
             {
                 AllocatedObject ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
-                ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value, cur.Configuration);
+                ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value, cur);
                 ao.Fields[m_index] = value;
             }
         }
@@ -1344,13 +1339,15 @@ namespace MMC.Data {
 		int m_index;
         private readonly ExplicitActiveState cur;
 
-        public StaticFieldPointer(ExplicitActiveState cur, TypeDefinition or, int i) {
-			m_index = i;
-			m_type = or;
+        public StaticFieldPointer(ExplicitActiveState cur, TypeDefinition or, int i)
+        {
+            m_index = i;
+            m_type = or;
             this.cur = cur;
         }
 
-		public Int4 ToInt4() {
+		public Int4 ToInt4()
+        {
 			return new Int4(m_index);
 		}
 
@@ -1394,7 +1391,7 @@ namespace MMC.Data {
 
 		public MemoryLocation MemoryLocation
         {
-            get { return new MemoryLocation(m_index, m_type); }
+            get { return new MemoryLocation(m_index, m_type, cur); }
         }
 
 		public ISubElement Sub(INumericElement a, bool checkOverflow)
@@ -1412,7 +1409,7 @@ namespace MMC.Data {
             set
             {
                 AllocatedClass ac = cur.StaticArea.GetClass(m_type);
-                ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value, cur.Configuration);
+                ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value, cur);
                 ac.Fields[m_index] = value;
             }
         }

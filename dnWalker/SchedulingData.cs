@@ -61,44 +61,45 @@ namespace MMC.State
 
         int m_location;
         int m_offset;
+        private readonly ExplicitActiveState cur;
 
-        public static readonly MemoryLocation Null = new MemoryLocation(int.MaxValue, 0, 0);
+        public static readonly MemoryLocation Null = new MemoryLocation(int.MaxValue, 0, 0, null);
 
         /*
 		 * Memory location is a locking object
 		 */
-        public MemoryLocation(ObjectReference or)
-            : this(2, (int)or.Location - 1, 0)
+        public MemoryLocation(ObjectReference or, ExplicitActiveState cur)
+            : this(2, (int)or.Location - 1, 0, cur)
         {
         }
 
         /*
 		 * Memory location in the static area
 		 */
-        public MemoryLocation(int offset, TypeDefinition type)
-            : this(1, ActiveState.cur.StaticArea.GetClassLocation(type), offset)
+        public MemoryLocation(int offset, TypeDefinition type, ExplicitActiveState cur)
+            : this(1, cur.StaticArea.GetClassLocation(type), offset, cur)
         {
         }
 
         /*
 		 * Memory location on the heap
 		 */
-        public MemoryLocation(int offset, ObjectReference or)
-            : this(0, (int)or.Location - 1, offset)
+        public MemoryLocation(int offset, ObjectReference or, ExplicitActiveState cur)
+            : this(0, (int)or.Location - 1, offset, cur)
         {
         }
 
-        public MemoryLocation(int type, int loc, int offset)
+        public MemoryLocation(int type, int loc, int offset, ExplicitActiveState cur)
         {
             this.m_type = type;
             this.m_location = loc;
             this.m_offset = offset;
+            this.cur = cur;
         }
 
         public int Type { get { return m_type; } }
         public int Location { get { return m_location; } }
         public int Offset { get { return m_offset; } }
-
 
         public override bool Equals(object obj)
         {
@@ -108,14 +109,13 @@ namespace MMC.State
 
         public override string ToString()
         {
-
             if (m_type == 0)
             {
                 return "[Alloc(" + (m_location + 1) + ")." + m_offset + "]";
             }
             else if (m_type == 1)
             {
-                AllocatedClass iac = ActiveState.cur.StaticArea.Classes[(int)m_location];
+                AllocatedClass iac = cur.StaticArea.Classes[m_location];
                 var type = iac.Type;
                 return "[" + type.DeclaringType.Name + "." + m_offset + "]";
             }
