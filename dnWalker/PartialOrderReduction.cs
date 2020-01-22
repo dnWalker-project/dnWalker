@@ -108,27 +108,28 @@ namespace MMC {
 			fromSD.State.SchedulingData = null;
 		}
 
-		public void OnNewState(CollapsedState collapsed, SchedulingData sd) {
+        public void OnNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
+        {
+            /// Pick a transition as the current optimal persistent set
+            if (sd.Working.Count > 0)
+            {
+                sd.Working = new Queue<int>();
+                sd.Working.Enqueue(sd.Enabled.Peek());
+            }
 
-			/// Pick a transition as the current optimal persistent set
-			if (sd.Working.Count > 0) {
-				sd.Working = new Queue<int>();
-				sd.Working.Enqueue(sd.Enabled.Peek());
-			}
+            /// Check all enabled transitions for dependency with transitions on the DFS stack
+            foreach (int threadId in sd.Enabled)
+            {
+                MemoryLocation ml = cur.NextAccess(threadId);
+                ExpandSelectedSet(new MemoryAccess(ml, threadId));
+            }
 
-			/// Check all enabled transitions for dependency with 
-			/// transitions on the DFS stack
-			foreach (int threadId in sd.Enabled) {
-				MemoryLocation ml = ActiveState.cur.NextAccess(threadId);
-				ExpandSelectedSet(new MemoryAccess(ml, threadId));
-			}
+            sd.SII = new SimplifiedSII(cur);
+            collapsed.SII = sd.SII;
+            collapsed.SchedulingData = sd; // for C3 proviso
+        }
 
-			sd.SII = new SimplifiedSII();
-			collapsed.SII = sd.SII;
-			collapsed.SchedulingData = sd; // for C3 proviso
-		}
-
-		public void OnSeenState(CollapsedState collapsed, SchedulingData sd) {
+		public void OnSeenState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur) {
 
 			sd.SII = collapsed.SII;
 
@@ -240,22 +241,24 @@ namespace MMC {
 			m_dfscount = stack.Count;
 		}
 
-		public void StoreThreadSharingData(CollapsedState collapsed, SchedulingData sd) {
-			/* storing attributes, otherwise the GC messes up */
-			/* clean this up, because this is an ugly hack */
+        public void StoreThreadSharingData(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
+        {
+            /* storing attributes, otherwise the GC messes up */
+            /* clean this up, because this is an ugly hack */
 
-			ISparseElement old = null;
-			AllocationList alloc = ActiveState.cur.DynamicArea.Allocations;
+            ISparseElement old = null;
+            AllocationList alloc = cur.DynamicArea.Allocations;
 
-			for (int i = 0; i < alloc.Length; i++) {
-				DynamicAllocation da = ActiveState.cur.DynamicArea.Allocations[i];
+            for (int i = 0; i < alloc.Length; i++)
+            {
+                DynamicAllocation da = cur.DynamicArea.Allocations[i];
 
-				if (da != null && da.ThreadShared)
-					old = new SparseElement(i, 0, old);
-			}
+                if (da != null && da.ThreadShared)
+                    old = new SparseElement(i, 0, old);
+            }
 
-			sd.AllocAtttributes = old;
-		}
+            sd.AllocAtttributes = old;
+        }
 
 		public void RestoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData sd) {
 			if (m_dfscount > stack.Count) {

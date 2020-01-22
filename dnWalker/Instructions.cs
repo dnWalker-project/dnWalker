@@ -905,7 +905,7 @@ namespace MMC.InstructionExec
         {
             Logger.l.Debug("completed running cctor. class initialized");
             TypeDefinition type = GetTypeDefinition();
-            var cur = ActiveState.cur;
+            var cur = ms.Cur;
             /*
 			 * It is possible that during state decollapsion, that 
 			 * this callback is called when the initialising thread 
@@ -1084,7 +1084,6 @@ namespace MMC.InstructionExec
 
     class LDELEMA : ObjectModelInstructionExec
     {
-
         public LDELEMA(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -1095,7 +1094,7 @@ namespace MMC.InstructionExec
         {
             Int4 idx = (Int4)cur.EvalStack.Pop();
             ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
-            cur.EvalStack.Push(new ObjectFieldPointer(objRef, idx.Value));
+            cur.EvalStack.Push(new ObjectFieldPointer(cur, objRef, idx.Value));
             return nextRetval;
         }
 
@@ -1317,7 +1316,7 @@ namespace MMC.InstructionExec
             AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
             int offset = GetFieldOffset(ao.Type);
 
-            cur.EvalStack.Push(new ObjectFieldPointer(objRef, offset));
+            cur.EvalStack.Push(new ObjectFieldPointer(cur, objRef, offset));
             return nextRetval;
         }
 
@@ -1347,7 +1346,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement reference = cur.EvalStack.Pop();
 
             AllocatedObject theObject;
@@ -1622,7 +1620,7 @@ namespace MMC.InstructionExec
 
             if (LoadClass(declType, cur))
             {
-                cur.EvalStack.Push(new StaticFieldPointer(declType, (int)fld.FieldOffset));
+                cur.EvalStack.Push(new StaticFieldPointer(cur, declType, (int)fld.FieldOffset));
                 retval = nextRetval;
             }
 
@@ -2207,9 +2205,8 @@ namespace MMC.InstructionExec
         /// \paran args Arguments to the method to be called.
         /// \return True iff the method has been properly handled.
         /// \sa IntCallManager
-        protected bool HandleEmptyMethod(DataElementList args)
+        protected bool HandleEmptyMethod(ExplicitActiveState cur, DataElementList args)
         {
-            var cur = ActiveState.cur;
             bool handled = false;
             DynamicAllocation thisObject = null;
             if (args.Length > 0 && args[0] is ObjectReference)
@@ -2223,7 +2220,7 @@ namespace MMC.InstructionExec
 
             if (methDef.FullName == "System.Threading.Thread System.Threading.Thread::GetCurrentThreadNative()")
             {
-                ThreadHandlers.CurrentThread_internal(null, null);
+                ThreadHandlers.CurrentThread_internal(null, null, cur);
                 return true;
             }
 
@@ -2328,9 +2325,8 @@ namespace MMC.InstructionExec
         /// with elements popped off the eval stack (in right to left order).
         ///
         /// \return A list containing the arguments.
-        protected DataElementList CreateArgumentList()
+        protected DataElementList CreateArgumentList(ExplicitActiveState cur)
         {
-            var cur = ActiveState.cur;
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.ParamDefs.Count + (methDef.HasThis ? 1 : 0);
             DataElementList retval = StorageFactory.sf.CreateList(size);
@@ -2342,9 +2338,8 @@ namespace MMC.InstructionExec
             return retval;
         }
 
-        protected DataElementList CopyArgumentList(int threadId)
+        protected DataElementList CopyArgumentList(ExplicitActiveState cur, int threadId)
         {
-            var cur = ActiveState.cur;
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.Parameters.Count + (methDef.HasThis ? 1 : 0);
             DataElementList retval = StorageFactory.sf.CreateList(size);
@@ -2389,7 +2384,7 @@ namespace MMC.InstructionExec
             MethodDefinition methDef = Operand as MethodDefinition;
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
-                DataElementList args = CopyArgumentList(cur.ThreadPool.CurrentThreadId);
+                DataElementList args = CopyArgumentList(cur, cur.ThreadPool.CurrentThreadId);
                 return MMC.ICall.IntCallManager.icm.IsDependent(methDef, args);
             }
             else
@@ -2399,7 +2394,7 @@ namespace MMC.InstructionExec
         public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
-            DataElementList args = CopyArgumentList(threadId);
+            DataElementList args = CopyArgumentList(cur, threadId);
             return MMC.ICall.IntCallManager.icm.HandleICallAccessed(methDef, args, threadId);
         }
 
@@ -2451,7 +2446,7 @@ namespace MMC.InstructionExec
 
             // This pops the arguments of the stack. Even if we don't execute
             // the method. This is a good thing.
-            DataElementList args = CreateArgumentList();
+            DataElementList args = CreateArgumentList(cur);
             IIEReturnValue retval = nextRetval;
 
             // Skip certain calls.
@@ -2462,7 +2457,7 @@ namespace MMC.InstructionExec
                 if (IsEmptyMethod(methDef))
                 {
                     Logger.l.Log(LogPriority.Call, "{0}: instance call to method with no body.", methDef.FullName);
-                    if (!HandleEmptyMethod(args))
+                    if (!HandleEmptyMethod(cur, args))
                     {
                         Logger.l.Log(LogPriority.Call, "{0}: unhandled empty method call.", methDef.FullName);
                     }
@@ -2515,7 +2510,7 @@ namespace MMC.InstructionExec
             MethodPointer methPtr = (MethodPointer)cur.EvalStack.Pop();
             MethodDefinition methDef = methPtr.Value;
 
-            DataElementList args = CreateArgumentList();
+            DataElementList args = CreateArgumentList(cur);
 
             if (!FilterCall())
             {
@@ -2546,12 +2541,11 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // Virtual calls use the run-time type of an object to determine
             // the location of the method to be called. It always requires
             // a this pointer, but we use the CreateArgumentList.
             MethodDefinition methDef = Operand as MethodDefinition;
-            DataElementList args = CreateArgumentList();
+            DataElementList args = CreateArgumentList(cur);
 
             if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
             {
@@ -2648,7 +2642,7 @@ namespace MMC.InstructionExec
 
             if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
             {
-                ThreadHandlers.Thread_internal(Method, args);
+                ThreadHandlers.Thread_internal(Method, args, cur);
 
                 //MMC.ICall.IntCallManager.
                 /*ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
@@ -2731,8 +2725,8 @@ namespace MMC.InstructionExec
             if (cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
                 cur.EvalStack.Push(callee.EvalStack.Pop());
 
-            ThreadObjectWatcher.DecrementAll(callee.Arguments, cur.Configuration);
-            ThreadObjectWatcher.DecrementAll(callee.Locals, cur.Configuration);
+            ThreadObjectWatcher.DecrementAll(callee.Arguments, cur);
+            ThreadObjectWatcher.DecrementAll(callee.Locals, cur);
 
             /*
 			 * If the underlying method state threw an exception, and we are now returning to it,

@@ -41,14 +41,14 @@ namespace MMC
 
 
 
-        public void LogNewState(CollapsedState collapsed, SchedulingData sd)
+        public void LogNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
 
             Logger.l.Debug("found new state: {0}", sd.ID);
             Statistics.s.NewState();
         }
 
-        public void LogRevisitState(CollapsedState collapsed, SchedulingData sd)
+        public void LogRevisitState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
 
             Logger.l.Debug("re-visit of state: {0}", sd.ID);
@@ -93,14 +93,14 @@ namespace MMC
 
         // -------------------------------- Graph Writing -------------------------------
 
-        public void GraphNewState(CollapsedState collapsed, SchedulingData sd)
+        public void GraphNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
             DotWriter.NewNode(sd.ID, sd.Enabled.ToArray());
             DotWriter.NewEdge(m_lastState, sd.ID, m_lastRunThread);
             m_lastState = sd.ID;
         }
 
-        public void GraphRevisitState(CollapsedState collapsed, SchedulingData sd)
+        public void GraphRevisitState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
             DotWriter.NewEdge(m_lastState, sd.ID, m_lastRunThread);
             m_lastState = sd.ID;

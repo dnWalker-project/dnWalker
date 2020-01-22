@@ -103,10 +103,11 @@ namespace MMC.State {
 		public int GetLocation() {
 
 			int retval = -1;
+            var cur = ActiveState.cur;
 
 			PlacementMappingKey key = new PlacementMappingKey();
-			key.LineNumber = ActiveState.cur.CurrentLocation;
-			key.ThreadId = ActiveState.cur.ThreadPool.CurrentThreadId;
+			key.LineNumber = cur.CurrentLocation;
+			key.ThreadId = cur.ThreadPool.CurrentThreadId;
 			key.Occurence = 0;
 
 
@@ -115,7 +116,7 @@ namespace MMC.State {
 				object wrapped = m_map[key];
 				if (wrapped == null) {
 					// Empty mapping. Store and return.
-					retval = ActiveState.cur.DynamicArea.FreeSlot();
+					retval = cur.DynamicArea.FreeSlot();
 //					MonoModelChecker.Message("new mapping to {0}", retval);
 					m_map[key] = retval;
 				}
@@ -123,7 +124,7 @@ namespace MMC.State {
 					// Got existing mapping, see if it's free.
 					retval = (int)wrapped;
 //					MonoModelChecker.Message("existing mapping to {0}", retval);
-					if (ActiveState.cur.DynamicArea.Allocations[retval] != null) {
+					if (cur.DynamicArea.Allocations[retval] != null) {
 //						MonoModelChecker.Message("ocupado. trying next.");
 						retval = -1;
 						key.Occurence++;

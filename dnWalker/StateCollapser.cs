@@ -47,11 +47,13 @@ namespace MMC.State {
 
 		CollapsedState m_curstate;
 		PoolData m_pool;
+        ExplicitActiveState cur;
 
-		public StateCollapser(PoolData pool) {
-
-			m_pool = pool;
-		}
+        public StateCollapser(PoolData pool, ExplicitActiveState cur)
+        {
+            this.cur = cur;
+            m_pool = pool;
+        }
 
 		/// \brief Reset the collapser after an interruption in the chain of states.
 		///
@@ -69,7 +71,7 @@ namespace MMC.State {
 				throw new System.ArgumentException("s");*/
 		}
 
-        public CollapsedState GetStorableState(ExplicitActiveState cur)
+        public CollapsedState GetStorableState()
         {
             m_curstate = m_curstate == null ? new CollapsedState(cur) : m_curstate.Clone();
 
@@ -85,7 +87,7 @@ namespace MMC.State {
             }
 
             // MonoModelChecker.Message(m_pool.ToString());
-            // ActiveState.cur.Clean();
+            // cur.Clean();
             return m_curstate;
         }
 
@@ -115,7 +117,7 @@ namespace MMC.State {
 
 		int CollapseAllocation(int loc) {
 
-			DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[loc];
+			DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
 			WrappedIntArray collapsed_alloc = null;
 			// Bit dirty...
 			switch ((int)alloc.AllocationType) {

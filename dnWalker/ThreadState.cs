@@ -36,9 +36,11 @@ namespace MMC.State {
 		bool m_isDirty;
 		int m_me; // an ID.
 
-		// ---------------- Accessors and Short-hands -------------- 
+        private readonly ExplicitActiveState cur;
 
-		public CallStack CallStack {
+        // ---------------- Accessors and Short-hands -------------- 
+
+        public CallStack CallStack {
 
 			get { return m_callStack; }
 			set { m_callStack = value; } // for restoring the state
@@ -84,7 +86,7 @@ namespace MMC.State {
 				if (m_state == MMC.ThreadStatus.Stopped) {
 					Debug.Assert(value != m_state, "Stopping already stopped thread.");
 					if (value == MMC.ThreadStatus.Running || value == MMC.ThreadStatus.WaitSleepJoin) {
-						ActiveState.cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
+						cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
 						ThreadObjectWatcher.Increment(m_me, m_threadObj);
 					}
 				}
@@ -96,7 +98,7 @@ namespace MMC.State {
 
 				if (state_field_offset != LockManager.NoThread) {
 					AllocatedObject theThreadObject =
-						(AllocatedObject)ActiveState.cur.DynamicArea.Allocations[m_threadObj];
+						(AllocatedObject)cur.DynamicArea.Allocations[m_threadObj];
 					Debug.Assert(theThreadObject != null,
 							"Thread object should not be null when setting state (even to Stopped).");
 					theThreadObject.Fields[state_field_offset] = new Int4(m_state);
@@ -141,7 +143,7 @@ namespace MMC.State {
 
 		void ReleaseObject() {
 
-			ActiveState.cur.DynamicArea.SetPinnedAllocation(m_threadObj, false);
+			cur.DynamicArea.SetPinnedAllocation(m_threadObj, false);
 			ThreadObjectWatcher.Decrement(m_me, ThreadObject);
 		}
 
@@ -176,8 +178,8 @@ namespace MMC.State {
 
 			int currentWaitFor = m_waitFor;
 
-			for (int i = 0; i < ActiveState.cur.DynamicArea.Allocations.Length; i++) {
-				DynamicAllocation ida = ActiveState.cur.DynamicArea.Allocations[i];
+			for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++) {
+				DynamicAllocation ida = cur.DynamicArea.Allocations[i];
 				if (ida != null && ida.Locked) {
 					Lock l = ida.Lock;
 					if (l.ReadyQueue.Contains(m_me) || l.WaitQueue.Contains(m_me)) {
@@ -200,10 +202,8 @@ namespace MMC.State {
 			return sb.ToString();
 		}
 
-		// ---------------- Constructor -------------- 
-
-		public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me) {
-
+		public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me)
+        {
 			m_callStack = StorageFactory.sf.CreateCallStack();
 			m_threadObj = threadObj;
 			m_state = MMC.ThreadStatus.Running;
@@ -211,7 +211,7 @@ namespace MMC.State {
 			m_isDirty = true;
 			m_me = me;
 			m_exceptionObj = ObjectReference.Null;
-
+            this.cur = cur;
 			cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
 			ThreadObjectWatcher.Increment(me, threadObj);
 		}

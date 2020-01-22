@@ -19,24 +19,15 @@ namespace MMC.State
 {
 
     using System;
-    using System.Collections;
-    using System.Diagnostics;
     using System.Linq;
     using dnlib.DotNet;
     using dnlib.DotNet.Emit;
     using MMC.Data;
-    using MMC.Util;
 
     public delegate void MethodStateCallback(MethodState me);
 
     public class MethodState : IMustDispose, IStorageVisitable, IComparable, ICleanable
     {
-
-        MethodDef m_methodDefinition;
-        DataElementList m_locals;
-        DataElementList m_inArguments;
-        DataElementStack m_evalStack;
-        MethodStateCallback m_onDipose;
         bool m_isDirty;
         /*
 		 * If this method is the exception source, we know that when one returns/jumps
@@ -44,61 +35,36 @@ namespace MMC.State
 		 * find the suitable exception handler
 		 */
         bool m_isExceptionSource;
-
+        private readonly ExplicitActiveState cur;
         Instruction m_pc;
         //	Instruction m_finallyTarget;
+        public ExplicitActiveState Cur => cur;
 
-        public MethodState DeepCopy(ExplicitActiveState cur)
+        public MethodState DeepCopy()
         {
-            DataElementList copiedArgs = m_inArguments.StorageCopy() as DataElementList;
-            DataElementList copiedLocals = m_locals.StorageCopy() as DataElementList;
-            DataElementStack copiedStack = m_evalStack.StorageCopy() as DataElementStack;
+            DataElementList copiedArgs = Arguments.StorageCopy() as DataElementList;
+            DataElementList copiedLocals = Locals.StorageCopy() as DataElementList;
+            DataElementStack copiedStack = EvalStack.StorageCopy() as DataElementStack;
 
-            MethodState copy = new MethodState(m_methodDefinition, copiedArgs, copiedLocals, copiedStack, cur);
-            copy.m_onDipose = this.m_onDipose.Clone() as MethodStateCallback;
+            MethodState copy = new MethodState(Definition, copiedArgs, copiedLocals, copiedStack, cur);
+            copy.OnDispose = this.OnDispose.Clone() as MethodStateCallback;
             return copy;
         }
 
+        public MethodStateCallback OnDispose { get; set; }
 
-        public MethodStateCallback OnDispose
-        {
-
-            get { return m_onDipose; }
-            set { m_onDipose = value; }
-        }
-
-        public DataElementList Arguments
-        {
-
-            get { return m_inArguments; }
-            set { m_inArguments = value; }
-        }
+        public DataElementList Arguments { get; set; }
 
         internal Instruction GetNextInstruction()
         {
-            return m_methodDefinition.Body.Instructions.FirstOrDefault(i => i.Offset > m_pc.Offset);
+            return Definition.Body.Instructions.FirstOrDefault(i => i.Offset > m_pc.Offset);
         }
 
-        public DataElementList Locals
-        {
+        public DataElementList Locals { get; set; }
 
-            get { return m_locals; }
-            set { m_locals = value; }
-        }
+        public DataElementStack EvalStack { get; set; }
 
-        public DataElementStack EvalStack
-        {
-
-            get { return m_evalStack; }
-            set { m_evalStack = value; }
-        }
-
-        public MethodDef Definition
-        {
-
-            get { return m_methodDefinition; }
-            set { m_methodDefinition = value; }
-        }
+        public MethodDef Definition { get; set; }
 
         public Instruction ProgramCounter
         {
@@ -123,15 +89,13 @@ namespace MMC.State
 
         public int PCOffset
         {
-
-            get { return (m_pc != null ? (int)m_pc.Offset : -1); }
+            get { return m_pc != null ? (int)m_pc.Offset : -1; }
         }
 
         public ExceptionHandler NextFilterOrCatchHandler(Instruction instr, ITypeDefOrRef exceptionType)
         {
-
             ExceptionHandler retval = null;
-            foreach (ExceptionHandler eh in m_methodDefinition.Body.ExceptionHandlers)
+            foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
             {
                 if ((eh.HandlerType == ExceptionHandlerType.Filter ||
                         (eh.HandlerType == ExceptionHandlerType.Catch && DefinitionProvider.dp.IsSubtype(exceptionType, eh.CatchType)))
@@ -151,7 +115,7 @@ namespace MMC.State
         {
 
             ExceptionHandler retval = null;
-            foreach (ExceptionHandler eh in m_methodDefinition.Body.ExceptionHandlers)
+            foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
             {
                 if ((eh.HandlerType == ExceptionHandlerType.Finally || eh.HandlerType == ExceptionHandlerType.Fault)
                             && eh.TryStart.Offset <= instr.Offset && instr.Offset < eh.TryEnd.Offset)
@@ -170,7 +134,7 @@ namespace MMC.State
         {
 
             ExceptionHandler retval = null;
-            foreach (ExceptionHandler eh in m_methodDefinition.Body.ExceptionHandlers)
+            foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
             {
                 if (eh.HandlerType == ExceptionHandlerType.Finally
                         && eh.TryStart.Offset <= instr.Offset && instr.Offset < eh.TryEnd.Offset)
@@ -189,63 +153,62 @@ namespace MMC.State
         {
 
             return m_isDirty ||
-                m_evalStack.IsDirty() ||
-                m_locals.IsDirty() ||
-                m_inArguments.IsDirty();
+                EvalStack.IsDirty() ||
+                Locals.IsDirty() ||
+                Arguments.IsDirty();
         }
 
         public void Clean()
         {
 
             m_isDirty = false;
-            m_evalStack.Clean();
-            m_locals.Clean();
-            m_inArguments.Clean();
+            EvalStack.Clean();
+            Locals.Clean();
+            Arguments.Clean();
         }
 
         public void Accept(IStorageVisitor visitor)
         {
-
             visitor.VisitMethodState(this);
         }
 
         public void Dispose()
         {
 
-            m_evalStack.Dispose();
-            m_inArguments.Dispose();
-            m_locals.Dispose();
-            if (m_onDipose != null)
-                m_onDipose(this);
+            EvalStack.Dispose();
+            Arguments.Dispose();
+            Locals.Dispose();
+            if (OnDispose != null)
+                OnDispose(this);
         }
 
         public override string ToString()
         {
 
             return string.Format("{0}::{1}, pc={2:D4}, stack={3}, locals={4}, args={5}",
-                    m_methodDefinition.DeclaringType.Name,
-                    m_methodDefinition.Name,
+                    Definition.DeclaringType.Name,
+                    Definition.Name,
                     (m_pc != null ? (int)m_pc.Offset : -1),
-                    m_evalStack.ToString(),
-                    m_locals.ToString(),
-                    m_inArguments.ToString());
+                    EvalStack.ToString(),
+                    Locals.ToString(),
+                    Arguments.ToString());
         }
 
 
         public override int GetHashCode()
         {
 
-            int retval = m_methodDefinition.GetHashCode();
+            int retval = Definition.GetHashCode();
             retval ^= HashMasks.MASK2;
-            retval += m_locals.GetHashCode();
+            retval += Locals.GetHashCode();
             retval ^= HashMasks.MASK3;
-            retval += m_inArguments.GetHashCode();
+            retval += Arguments.GetHashCode();
             retval ^= HashMasks.MASK4;
-            retval += m_evalStack.GetHashCode();
+            retval += EvalStack.GetHashCode();
             retval ^= HashMasks.MASK5;
             retval += PCOffset;
             retval ^= HashMasks.MASK6;
-            retval += (m_onDipose == null ? -1 : 1);
+            retval += (OnDispose == null ? -1 : 1);
             retval ^= HashMasks.MASK7;
             retval += (m_isExceptionSource ? -1 : 1);
             return retval;
@@ -292,18 +255,18 @@ namespace MMC.State
 
         internal void InitStructures()
         {
-            if (m_evalStack == null)
-                m_evalStack = StorageFactory.sf.CreateStack(m_methodDefinition.Body.MaxStack);
+            if (EvalStack == null)
+                EvalStack = StorageFactory.sf.CreateStack(Definition.Body.MaxStack);
 
-            if (m_locals == null)
+            if (Locals == null)
             {
-                m_locals = StorageFactory.sf.CreateList(m_methodDefinition.Body.Variables.Count);
-                for (int i = 0; i < m_locals.Length; ++i)
-                    m_locals[i] = DefinitionProvider.dp.GetNullValue(
-                            m_methodDefinition.Body.Variables[i].Type);
+                Locals = StorageFactory.sf.CreateList(Definition.Body.Variables.Count);
+                for (int i = 0; i < Locals.Length; ++i)
+                    Locals[i] = DefinitionProvider.dp.GetNullValue(
+                            Definition.Body.Variables[i].Type);
             }
 
-            if (m_inArguments == null)
+            if (Arguments == null)
             {
                 throw new NotImplementedException("XX");/*
                 m_inArguments = StorageFactory.sf.CreateList(m_methodDefinition.Par amDefs.Count);
@@ -314,11 +277,13 @@ namespace MMC.State
 
         internal MethodState(MethodDef meth, DataElementList pars, DataElementList locals, DataElementStack evalstack, ExplicitActiveState cur)
         {
+            this.cur = cur;
+
             m_isDirty = true;
-            m_methodDefinition = meth;
-            m_locals = locals;
-            m_inArguments = pars;
-            m_evalStack = evalstack;
+            Definition = meth;
+            Locals = locals;
+            Arguments = pars;
+            EvalStack = evalstack;
 
             m_pc = meth.Body.Instructions[0]; // safe; body always contains 'ret'.
             m_isExceptionSource = false;

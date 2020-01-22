@@ -55,10 +55,10 @@ namespace MMC.ICall {
 			/* Below are Mono's VM internal call handlers */
 			// TODO, do some if then else and some virtual machine detection
 
-			m_ich.Add("FastCopy", new ICH(ArrayHandlers.FastCopy));
-			m_ichDependent.Add("FastCopy", new ICH_Dependent(ArrayHandlers.FastCopy_IsDependent));
+			//m_ich.Add("FastCopy", new ICH(ArrayHandlers.FastCopy));
+			//m_ichDependent.Add("FastCopy", new ICH_Dependent(ArrayHandlers.FastCopy_IsDependent));
 
-			m_ich.Add("Sin", new ICH(MathHandlers.Sin));
+			/*m_ich.Add("Sin", new ICH(MathHandlers.Sin));
 			m_ich.Add("Cos", new ICH(MathHandlers.Cos));
 			m_ich.Add("Tan", new ICH(MathHandlers.Tan));
 			m_ich.Add("Sinh", new ICH(MathHandlers.Sinh));
@@ -71,10 +71,10 @@ namespace MMC.ICall {
 			m_ich.Add("Log", new ICH(MathHandlers.Log));
 			m_ich.Add("Log10", new ICH(MathHandlers.Log10));
 			m_ich.Add("Pow", new ICH(MathHandlers.Pow));
-			m_ich.Add("Sqrt", new ICH(MathHandlers.Sqrt));
+			m_ich.Add("Sqrt", new ICH(MathHandlers.Sqrt));*/
 
 			// System.Environment
-			m_ich.Add("get_Platform", new ICH(EnvironmentHandlers.Get_Platform));
+			/*m_ich.Add("get_Platform", new ICH(EnvironmentHandlers.Get_Platform));
 
 			// System.Security.SecurityManager
 			m_ich.Add("get_SecurityEnabled", new ICH(SecurityManagerHandlers.Get_SecurityEnabled));
@@ -83,8 +83,8 @@ namespace MMC.ICall {
 			m_ich.Add("InternalCodePage", new ICH(EncodingHandlers.InternalCodePage));
 
 			// System.Threading.Thread
-			m_ich.Add("CurrentThread_internal", new ICH(ThreadHandlers.CurrentThread_internal));
-			m_ichDependent.Add("CurrentThread_internal", new ICH_Dependent(ThreadHandlers.CurrentThread_internal_IsDependent));
+			//m_ich.Add("CurrentThread_internal", new ICH(ThreadHandlers.CurrentThread_internal));
+			//m_ichDependent.Add("CurrentThread_internal", new ICH_Dependent(ThreadHandlers.CurrentThread_internal_IsDependent));
 
 			m_ich.Add("Sleep_internal", new ICH(ThreadHandlers.Sleep_internal));
 			m_threadUnsafe.Add("Sleep_internal"); // not really unsafe, but forces reschedule
@@ -93,7 +93,7 @@ namespace MMC.ICall {
 			m_ichDependent.Add("Thread_internal", new ICH_Dependent(ThreadHandlers.Thread_internal_IsDependent));
 			m_threadUnsafe.Add("Thread_internal");
 
-			m_ich.Add("Join_internal", new ICH(ThreadHandlers.Join_internal));
+			//m_ich.Add("Join_internal", new ICH(ThreadHandlers.Join_internal));
 
 			// System.Threading.Monitor
 			ICH_Dependent monitor_ICH_dependent = new ICH_Dependent(MonitorHandlers.Monitor_IsDependent);
@@ -121,7 +121,7 @@ namespace MMC.ICall {
 
 			m_ich.Add("Monitor_wait", new ICH(MonitorHandlers.Monitor_wait));
 			m_threadUnsafe.Add("Monitor_wait");
-			m_ichDependent.Add("Monitor_wait", monitor_ICH_dependent);
+			m_ichDependent.Add("Monitor_wait", monitor_ICH_dependent);*/
 
 
 			/*  Below are Microsoft's VM internal call handlers */
@@ -180,31 +180,32 @@ namespace MMC.ICall {
 	/// ICall handlers for System.Array.
 	class ArrayHandlers {
 
-		public static void FastCopy(MethodDefinition methDef, DataElementList args) {
-			ObjectReference source = (ObjectReference)args[0];
+		public static void FastCopy(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+            ObjectReference source = (ObjectReference)args[0];
 			int destIdx = ((INumericElement)args[1]).ToInt4(false).Value;
 			ObjectReference dest = (ObjectReference)args[2];
 			int sourceIdx = ((INumericElement)args[3]).ToInt4(false).Value;
 			int length = ((INumericElement)args[4]).ToInt4(false).Value;
 
-			AllocatedArray sourceArr = ActiveState.cur.DynamicArea.Allocations[source] as AllocatedArray;
-			AllocatedArray destArr = ActiveState.cur.DynamicArea.Allocations[dest] as AllocatedArray;
+			AllocatedArray sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
+			AllocatedArray destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
 
-			ParentWatcher.RemoveParentFromAllChilds(dest, ActiveState.cur);
+			ParentWatcher.RemoveParentFromAllChilds(dest, cur);
 
 			for (int i = 0; i < length; i++, destIdx++, sourceIdx++) 
 				destArr.Fields[destIdx] = sourceArr.Fields[sourceIdx];
-			ParentWatcher.AddParentToAllChilds(dest, ActiveState.cur);
+			ParentWatcher.AddParentToAllChilds(dest, cur);
 
-			ActiveState.cur.EvalStack.Push(new Int4(1));
+			cur.EvalStack.Push(new Int4(1));
 		}
 
-		public static bool FastCopy_IsDependent(MethodDefinition methDef, DataElementList args) {
-			ObjectReference source = (ObjectReference)args[0];
+		public static bool FastCopy_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur) {
+            ObjectReference source = (ObjectReference)args[0];
 			ObjectReference dest = (ObjectReference)args[2];
 
-			AllocatedArray sourceArr = ActiveState.cur.DynamicArea.Allocations[source] as AllocatedArray;
-			AllocatedArray destArr = ActiveState.cur.DynamicArea.Allocations[dest] as AllocatedArray;
+			AllocatedArray sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
+			AllocatedArray destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
 
 			return sourceArr.ThreadShared || destArr.ThreadShared;
 		}
@@ -213,110 +214,109 @@ namespace MMC.ICall {
 	/// ICall handlers for System.Environment.
 	class EnvironmentHandlers {
 
-		public static void Get_Platform(
-				MethodDefinition methDef, DataElementList args) {
-
-			ActiveState.cur.EvalStack.Push(new Int4((int)System.Environment.OSVersion.Platform));
+		public static void Get_Platform(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			cur.EvalStack.Push(new Int4((int)System.Environment.OSVersion.Platform));
 		}
 	}
 
 	/// ICall handlers for System.Security.SecurityManager.
 	class SecurityManagerHandlers {
 
-		public static void Get_SecurityEnabled(
-				MethodDefinition methDef, DataElementList args) {
-
-			ActiveState.cur.EvalStack.Push(MMC.VMDefaults.SecurityEnabled);
+		public static void Get_SecurityEnabled(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			cur.EvalStack.Push(MMC.VMDefaults.SecurityEnabled);
 		}
 	}
 
 	/// ICall handlers for System.Math
 	class MathHandlers {
 
-		public static void Sin(MethodDefinition methDef, DataElementList args) {
+		/*public static void Sin(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Sin(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Sin(x.Value)));
 		}
 
 
 		public static void Cos(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Cos(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Cos(x.Value)));
 		}
 
 		public static void Tan(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Tan(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Tan(x.Value)));
 		}
 
 		public static void Sinh(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Sinh(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Sinh(x.Value)));
 		}
 
 		public static void Cosh(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Cosh(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Cosh(x.Value)));
 		}
 
 		public static void Tanh(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Tanh(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Tanh(x.Value)));
 		}
 
 		public static void Acos(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Acos(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Acos(x.Value)));
 		}
 
 		public static void Asin(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Asin(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Asin(x.Value)));
 		}
 
 		public static void Atan(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Atan(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Atan(x.Value)));
 		}
 
 		public static void Exp(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Exp(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Exp(x.Value)));
 		}
 
 		public static void Log(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Log(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Log(x.Value)));
 		}
 
 		public static void Log10(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Log10(x.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Log10(x.Value)));
 		}
 
 		public static void Pow(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
 			Float8 y = (Float8)args[1];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Pow(x.Value, y.Value)));
+			cur.EvalStack.Push(new Float8(System.Math.Pow(x.Value, y.Value)));
 		}
 
 		public static void Sqrt(MethodDefinition methDef, DataElementList args) {
 			Float8 x = (Float8)args[0];
-			ActiveState.cur.EvalStack.Push(new Float8(System.Math.Sqrt(x.Value)));
-		}
+			cur.EvalStack.Push(new Float8(System.Math.Sqrt(x.Value)));
+		}*/
 	}
 
 
 	/// ICall handlers for System.Text.Encoding.
 	class EncodingHandlers {
 
-		/// ICH for System.Text.Encoding.InternalCodePage. "Forward" to Mono.
-		public static void InternalCodePage(
-				MethodDefinition methDef, DataElementList args) {
-
+		/// <summary>
+		/// ICH for System.Text.Encoding.InternalCodePage. "Forward" to .NET.
+		/// </summary>
+		public static void InternalCodePage(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
 			LocalVariablePointer code_page = (LocalVariablePointer)args[0];
 			code_page.Value = new Int4(System.Text.Encoding.Default.CodePage);
-			ActiveState.cur.EvalStack.Push(new ConstantString(System.Text.Encoding.Default.EncodingName));
+			cur.EvalStack.Push(new ConstantString(System.Text.Encoding.Default.EncodingName));
 		}
 	}
 
@@ -331,14 +331,14 @@ namespace MMC.ICall {
 		}
 
 		/// ICH for System.Threading.Thread.CurrentThread_internal.
-		public static void CurrentThread_internal(
-				MethodDefinition methDef, DataElementList args) {
-
-			ActiveState.cur.EvalStack.Push(ActiveState.cur.ThreadPool.CurrentThread.ThreadObject);
+		public static void CurrentThread_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			cur.EvalStack.Push(cur.ThreadPool.CurrentThread.ThreadObject);
 		}
 
-		public static bool CurrentThread_internal_IsDependent(MethodDefinition methDef, DataElementList args) {
-			return ActiveState.cur.DynamicArea.Allocations[ActiveState.cur.ThreadPool.CurrentThread.ThreadObject].ThreadShared;
+		public static bool CurrentThread_internal_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			return cur.DynamicArea.Allocations[cur.ThreadPool.CurrentThread.ThreadObject].ThreadShared;
 		}
 
         /// <summary>
@@ -347,9 +347,8 @@ namespace MMC.ICall {
         /// </summary>
         /// <param name="methDef"></param>
         /// <param name="args"></param>
-        public static void Thread_internal(MethodDefinition methDef, DataElementList args)
+        public static void Thread_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-            var cur = ActiveState.cur;
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(false),
                     methDef.DeclaringType,
@@ -379,41 +378,45 @@ namespace MMC.ICall {
             cur.EvalStack.Push(threadObjectRef);// new IntPointer(newThreadId));
 		}
 
-		public static bool Thread_internal_IsDependent(MethodDefinition methDef, DataElementList args) {
-			AllocatedDelegate del = (AllocatedDelegate)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[1]];
-			AllocatedObject ao = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[0]];
+		public static bool Thread_internal_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur) {
+			AllocatedDelegate del = (AllocatedDelegate)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
+			AllocatedObject ao = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[0]];
 
 			return del.ThreadShared || ao.ThreadShared;
 		}
 
-		/// ICH for System.Threading.Thread.Join_internal.
-		public static void Join_internal(
-				MethodDefinition methDef, DataElementList args) {
-			// private extern bool Join_internal(int ms, IntPtr handle);
+        /// <summary>
+        /// ICH for System.Threading.Thread.Join_internal.
+        /// </summary>
+        public static void Join_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+            // private extern bool Join_internal(int ms, IntPtr handle);
 
-			// Ignore the timeout (int ms), but issue warning if it's not equal to
-			// Timeout.Infinite.
-			if (((Int4)args[1]).Value != System.Threading.Timeout.Infinite) {
-				Logger.l.Warning("call to Thread::Join_internal(int ms, IntPtr IntPtr), with");
-				Logger.l.Warning("ms != Timeout.Infinite, but threated as such!");
-			}
+            // Ignore the timeout (int ms), but issue warning if it's not equal to
+            // Timeout.Infinite.
+            if (((Int4)args[1]).Value != System.Threading.Timeout.Infinite)
+            {
+                Logger.l.Warning("call to Thread::Join_internal(int ms, IntPtr IntPtr), with");
+                Logger.l.Warning("ms != Timeout.Infinite, but threated as such!");
+            }
 
-			// TODO: find out what the handle is for (see relevant Mono C code) and
-			// simulate that behaviour.
+            // TODO: find out what the handle is for (see relevant Mono C code) and
+            // simulate that behaviour.
 
-			// To allow for easy checking of deadlocks etc, let the threadpool handle this.
-			ActiveState.cur.ThreadPool.JoinThreads(
-					ActiveState.cur.ThreadPool.CurrentThreadId,
-					ActiveState.cur.ThreadPool.FindOwningThread(args[0]));
+            // To allow for easy checking of deadlocks etc, let the threadpool handle this.
+            cur.ThreadPool.JoinThreads(
+                cur.ThreadPool.CurrentThreadId,
+                cur.ThreadPool.FindOwningThread(args[0]));
 
-			// Return true if the thread has terminated, false otherwise. Since we do
-			// not deal with timing issues for now, we can always return true.
-			ActiveState.cur.EvalStack.Push(new Int4(1));
-		}
+            // Return true if the thread has terminated, false otherwise. Since we do
+            // not deal with timing issues for now, we can always return true.
+            cur.EvalStack.Push(new Int4(1));
+        }
 
-		public static bool Join_internal_IsDependent(MethodDefinition methDef, DataElementList args) {
-			ThreadState tstate = ActiveState.cur.ThreadPool.Threads[ActiveState.cur.ThreadPool.FindOwningThread(args[0])];
-			AllocatedObject ao = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[tstate.ThreadObject];
+		public static bool Join_internal_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			ThreadState tstate = cur.ThreadPool.Threads[cur.ThreadPool.FindOwningThread(args[0])];
+			AllocatedObject ao = (AllocatedObject)cur.DynamicArea.Allocations[tstate.ThreadObject];
 
 			return ao.ThreadShared;
 		}
@@ -426,7 +429,7 @@ namespace MMC.ICall {
 		public static void StartupSetApartmentStateInternal(
 				MethodDefinition methDef, IDataElementList args) {
 
-			ActiveState.cur.EvalStack.Push(new Int4(0));
+			cur.EvalStack.Push(new Int4(0));
 		}
 
 		// ICH for Microsoft's Thread::StartInternal
@@ -442,7 +445,7 @@ namespace MMC.ICall {
 			// to the thread object. The second argument is a reference to the
 			// threadstart delegate
 			ObjectReference threadStartDelegateRef = (ObjectReference)args[1];
-			AllocatedObject threadObject = (AllocatedObject)ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[0]];
+			AllocatedObject threadObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[0]];
 
 			FieldDefinition fd = DefinitionProvider.dp.GetFieldDefinition("System.Threading.Thread", "m_Delegate");
 			threadObject.Fields[(int)fd.Offset] = threadStartDelegateRef;			
@@ -451,139 +454,139 @@ namespace MMC.ICall {
 
 	class MonitorHandlers {
 
-		// private extern static void Monitor_exit(object obj)
-		public static void Monitor_exit(
-				MethodDefinition methDef, DataElementList args) {
+        // private extern static void Monitor_exit(object obj)
+        public static void Monitor_exit(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+            LockManager lm = cur.DynamicArea.LockManager;
+            ObjectReference obj = (ObjectReference)args[0];
 
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
+            // This thread must own the lock on the object.
+            if (cur.me != lm.GetLock(obj).Owner)
+            {
+                Logger.l.Warning("thread {0} attemts to exit monitor on {1} but isn't the owner", cur.me, obj.ToString());
+            }
+            else
+            {
+                lm.Release(obj);
+                // If the lock was acquired by a new thread, make sure that
+                // thread is runnable.
+                if (lm.IsLocked(obj))
+                    cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken();
+            }
+        }
+
+		public static bool Monitor_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
 			ObjectReference obj = (ObjectReference)args[0];
-
-			// This thread must own the lock on the object.
-			if (ActiveState.cur.me != lm.GetLock(obj).Owner)
-				Logger.l.Warning("thread {0} attemts to exit monitor on {1} but isn't the owner",
-						ActiveState.cur.me, obj.ToString());
-			else {
-				lm.Release(obj);
-				// If the lock was acquired by a new thread, make sure that
-				// thread is runnable.
-				if (lm.IsLocked(obj))
-					ActiveState.cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken();
-			}
+			return cur.DynamicArea.Allocations[obj].ThreadShared;
 		}
-
-		public static bool Monitor_IsDependent(MethodDefinition methDef, DataElementList args) {
-			ObjectReference obj = (ObjectReference)args[0];
-			return ActiveState.cur.DynamicArea.Allocations[obj].ThreadShared;
-		}
-		
 
 		// private extern static void Monitor_pulse(object obj);
-		public static void Monitor_pulse(
-				MethodDefinition methDef, DataElementList args) {
-
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
+		public static void Monitor_pulse(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (ActiveState.cur.me != lm.GetLock(obj).Owner)
+			if (cur.me != lm.GetLock(obj).Owner)
 				Logger.l.Warning(
 						"thread {0} attemts to pulse first waiting thread on {1} but isn't the owner",
-						ActiveState.cur.me, obj.ToString());
+						cur.me, obj.ToString());
 			else
 				lm.Pulse(obj, false);
 		}
 
 		// private extern static void Monitor_pulse_all(object obj);
-		public static void Monitor_pulse_all(
-				MethodDefinition methDef, DataElementList args) {
-
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
+		public static void Monitor_pulse_all(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (ActiveState.cur.me != lm.GetLock(obj).Owner)
+			if (cur.me != lm.GetLock(obj).Owner)
 				Logger.l.Warning(
 						"thread {0} attemts to pulse all waiting threads on {1} but isn't the owner",
-						ActiveState.cur.me, obj.ToString());
+						cur.me, obj.ToString());
 			else
 				lm.Pulse(obj, true);
 		}
 
 		// private extern static bool Monitor_test_synchronised(object obj);
-		public static void Monitor_test_synchronised(
-				MethodDefinition methDef, DataElementList args) {
-
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
+		public static void Monitor_test_synchronised(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			LockManager lm = cur.DynamicArea.LockManager;
 			bool locked = lm.IsLocked((ObjectReference)args[0]);
-			ActiveState.cur.EvalStack.Push((locked ? new Int4(1) : new Int4(0)));
+			cur.EvalStack.Push((locked ? new Int4(1) : new Int4(0)));
 		}
 
 		// private extern static bool Monitor_try_enter(object obj, int ms);
 		// obj = the object to lock on
 		// ms  = timeout
-		public static void Monitor_try_enter(
-				MethodDefinition methDef, DataElementList args) {
-
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
+		public static void Monitor_try_enter(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 			// IDataElement ms = args[1]; // todo: don't block forever if ms > 0 && ms < \infty
 
-			bool acquired = lm.Acquire(obj, ActiveState.cur.me);
+			bool acquired = lm.Acquire(obj, cur.me);
 			if (!acquired) {
 				// Not acquired, but ms is non-zero, which we will interpret as infinity,
 				// so add this thread to the wait queue.
 				Lock lock_we_want = lm.GetLock(obj);
-				lock_we_want.ReadyQueue.Enqueue(ActiveState.cur.me);
-				//				ActiveState.cur.CurrentThread.WaitFor(lock_we_want.Owner);
-				ActiveState.cur.CurrentThread.WaitFor(LockManager.NoThread);
+				lock_we_want.ReadyQueue.Enqueue(cur.me);
+				//				cur.CurrentThread.WaitFor(lock_we_want.Owner);
+				cur.CurrentThread.WaitFor(LockManager.NoThread);
 
-				ActiveState.cur.ThreadPool.CheckDeadlockFrom(ActiveState.cur.me);
+				cur.ThreadPool.CheckDeadlockFrom(cur.me);
 			}
 
 			// Return if we were able to get the lock immediately. This value is discarded
 			// if the call was made from Monitor.Enter(object).
-			ActiveState.cur.EvalStack.Push((acquired ? new Int4(1) : new Int4(0)));
+			cur.EvalStack.Push((acquired ? new Int4(1) : new Int4(0)));
 		}
 
-		public static MemoryLocation Monitor_try_enter_Accessed(MethodDefinition methDef, DataElementList args, int threadId) {
+        public static MemoryLocation Monitor_try_enter_Accessed(MethodDefinition methDef, DataElementList args, int threadId, ExplicitActiveState cur)
+        {
+            LockManager lm = cur.DynamicArea.LockManager;
+            ObjectReference obj = (ObjectReference)args[0];
 
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
-			ObjectReference obj = (ObjectReference)args[0];
+            bool acquirable = lm.IsAcquireable(obj, threadId);
 
-			bool acquirable = lm.IsAcquireable(obj, threadId);
-
-			if (acquirable) {
-				return new MemoryLocation(obj);
-			} else {
-				return MemoryLocation.Null;
-			}
-		}
+            if (acquirable)
+            {
+                return new MemoryLocation(obj);
+            }
+            else
+            {
+                return MemoryLocation.Null;
+            }
+        }
 
 		// private extern static bool Monitor_wait(object obj, int ms);
 		// For explaination of parameters, see Enter.
 		// Again, we ignore the timing aspects completely, even though an ms != infitity
 		// can mean the difference between a deadlock and a 'normal' timeout.
-		public static void Monitor_wait(MethodDefinition methDef, DataElementList args) {
+		public static void Monitor_wait(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur) {
 
-			LockManager lm = ActiveState.cur.DynamicArea.LockManager;
+			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (ActiveState.cur.me != lm.GetLock(obj).Owner)
+			if (cur.me != lm.GetLock(obj).Owner)
 				Logger.l.Warning(
 						"thread {0} attemts to wait on monitor for {1} but isn't the owner",
-						ActiveState.cur.me, obj.ToString());
+						cur.me, obj.ToString());
 			else {
 				lm.Release(obj);
-				lm.GetLock(obj).WaitQueue.Enqueue(ActiveState.cur.me);
+				lm.GetLock(obj).WaitQueue.Enqueue(cur.me);
 				// We're not specifically waiting for an other thread, just to
 				// re-acquire this lock.
-				ActiveState.cur.CurrentThread.WaitFor(LockManager.NoThread);
+				cur.CurrentThread.WaitFor(LockManager.NoThread);
 
 				if (lm.IsLocked(obj))
-					ActiveState.cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken();
+					cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken();
 			}
 
 			// If this thread is rescheduled, it has apperently reacquired the lock,
 			// so make it find a true on its eval stack.
-			ActiveState.cur.EvalStack.Push(new Int4(1));
+			cur.EvalStack.Push(new Int4(1));
 		}
 	}
 }

@@ -340,8 +340,6 @@ namespace MMC
             return retval;
         }
 
-
-
         public MethodDefinition SearchVirtualMethod(MethodReference methRef, ObjectReference objRef)
         {
             AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[objRef] as AllocatedObject;

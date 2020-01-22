@@ -355,14 +355,14 @@ namespace MMC.State
             }
         }
 
-        public static void IncrementAll(IDataElementContainer ids)
+        public static void IncrementAll(IDataElementContainer ids, ExplicitActiveState cur)
         {
-            IncrementAll(ActiveState.cur.ThreadPool.CurrentThreadId, ids, ActiveState.cur.Configuration);
+            IncrementAll(cur.ThreadPool.CurrentThreadId, ids, cur.Configuration);
         }
 
-        public static void DecrementAll(IDataElementContainer ids, IConfig config)
+        public static void DecrementAll(IDataElementContainer ids, ExplicitActiveState cur)
         {
-            DecrementAll(ActiveState.cur.ThreadPool.CurrentThreadId, ids, config);
+            DecrementAll(cur.ThreadPool.CurrentThreadId, ids, cur.Configuration);
         }
 
         public static void DecrementAll(ThreadPool threadPool, IDataElementContainer ids, IConfig config)

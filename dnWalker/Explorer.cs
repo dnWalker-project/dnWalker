@@ -34,15 +34,29 @@ namespace MMC {
 	using MMC.Collections;
     using dnlib.DotNet.Emit;
 
+    /// <summary>
     /// Handler for events that indicate the exploration of a state.
-    public delegate void StateEventHandler(CollapsedState collapsed, SchedulingData sd);
+    /// </summary>
+    public delegate void StateEventHandler(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur);
+
+    /// <summary>
     /// Handler for deadlock events.
+    /// </summary>
     public delegate void DeadlockEventHandler(SchedulingData sd);
+
+    /// <summary>
     /// Handler for backtracking events.
+    /// </summary>
     public delegate void BacktrackEventHandler(Stack<SchedulingData> stack, SchedulingData fromSD);
+
+    /// <summary>
     /// Handler for scheduling events, at the moment only a chosen thread.
+    /// </summary>
     public delegate void PickThreadEventHandle(SchedulingData sd, int chosen);
+
+    /// <summary>
     /// Handler for the event that the exploration stops.
+    /// </summary>
     public delegate void ExplorationHaltEventHandle(IIEReturnValue ier);
 
 	public class Explorer {
@@ -92,7 +106,7 @@ namespace MMC {
             _instructionExecProvider = instructionExecProvider;
             // DFS stack
             m_dfs = new Stack<SchedulingData>();
-			m_stateConvertor = new Collapser();
+			m_stateConvertor = new Collapser(cur);
 
 			// hashtable
 			m_stateStorage = new FastHashtable<CollapsedState, int>(20);
@@ -334,7 +348,7 @@ namespace MMC {
 
         public SchedulingData UpdateHashtable(ExplicitActiveState cur)
         {
-            var collapsedCurrent = m_stateConvertor.CollapseCurrentState(cur);
+            var collapsedCurrent = m_stateConvertor.CollapseCurrentState();
 
             var sd = new SchedulingData
             {
@@ -358,7 +372,7 @@ namespace MMC {
             {
                 // state is not new
                 sd.Working = m_emptyQueue;
-                StateRevisited(collapsedCurrent, sd);
+                StateRevisited(collapsedCurrent, sd, cur);
             }
             else
             {
@@ -377,7 +391,7 @@ namespace MMC {
                     sd.Done = m_emptyQueue;
                 }
 
-                StateConstructed(collapsedCurrent, sd);
+                StateConstructed(collapsedCurrent, sd, cur);
             }
 
             return sd;
@@ -494,10 +508,13 @@ namespace MMC {
 			System.Console.WriteLine(sb.ToString());
 		}
 
-		public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd) {
-			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && cur.ThreadPool.RunnableThreadCount == 1)
-				m_atomicStates.AddLast(collapsedCurrent);
-		}
+        public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd, ExplicitActiveState _)
+        {
+            if (!double.IsInfinity(_config.OptimizeStorageAtMegabyte) && cur.ThreadPool.RunnableThreadCount == 1)
+            {
+                m_atomicStates.AddLast(collapsedCurrent);
+            }
+        }
 
 		public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent) {
 			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte)) {

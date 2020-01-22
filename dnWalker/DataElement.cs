@@ -47,18 +47,16 @@ namespace MMC.Data {
 		ISubElement Sub(INumericElement other, bool checkOverflow);
 	}
 
-    public interface IManagedPointer : IDataElement {
-
-		IDataElement Value { get; set; }
+    public interface IManagedPointer : IDataElement
+    {
+        IDataElement Value { get; set; }
 		Int4 ToInt4();
 	}
 
-    public interface IRuntimeHandle : IDataElement {
+    public interface IRuntimeHandle : IDataElement {}
 
-	}
-
-    public interface INumericElement : IDataElement, IAddElement, ISubElement {
-
+    public interface INumericElement : IDataElement, IAddElement, ISubElement
+    {
 		INumericElement Mul(INumericElement other, bool checkOverflow);
 		INumericElement Div(INumericElement other);
 		INumericElement Rem(INumericElement other);
@@ -1110,54 +1108,59 @@ namespace MMC.Data {
 		public ObjectReference(int loc) : this((uint)loc) { }
 	}
 
-	abstract class MethodMemberPointer : IManagedPointer {
+    abstract class MethodMemberPointer : IManagedPointer
+    {
 
-		protected MethodState m_method;
-		protected int m_index;
+        protected MethodState m_method;
+        protected int m_index;
 
-		public string WrapperName { get { return ""; } }
+        public string WrapperName { get { return ""; } }
 
-		public int Index {
-			get { return m_index; }
-		}
+        public int Index
+        {
+            get { return m_index; }
+        }
 
-		public MethodState MethodState {
-			get { return m_method; }
-		}
+        public MethodState MethodState
+        {
+            get { return m_method; }
+        }
 
-		public bool ToBool() { return Value != null; }
+        public bool ToBool() { return Value != null; }
+
+        public int CompareTo(object a)
+        {
+            return m_index - ((MethodMemberPointer)a).Index;
+        }
+
+        public Int4 ToInt4()
+        {
+            return new Int4(m_index);
+        }
+
+        public abstract override int GetHashCode();
+        public abstract IDataElement Value { get; set; }
+        public abstract bool Equals(IDataElement obj);
+
+        public MethodMemberPointer(MethodState method, int index)
+        {
+            m_method = method;
+            m_index = index;
+        }
+    }
 
 
-		public int CompareTo(object a) {
-			return m_index - ((MethodMemberPointer)a).Index;
-		}
-
-		public Int4 ToInt4() {
-			return new Int4(m_index);
-		}
-
-		public abstract override int GetHashCode();
-		public abstract IDataElement Value { get; set; }
-		public abstract bool Equals(IDataElement obj);
-
-		public MethodMemberPointer(MethodState method, int index) {
-
-			m_method = method;
-			m_index = index;
-		}
-	}
-
-
-	class LocalVariablePointer : MethodMemberPointer {
-
-		public override IDataElement Value {
-			get { return m_method.Locals[m_index]; }
-			set { m_method.Locals[m_index] = value; }
-		}
+	class LocalVariablePointer : MethodMemberPointer
+    {
+        public override IDataElement Value
+        {
+            get { return m_method.Locals[m_index]; }
+            set { m_method.Locals[m_index] = value; }
+        }
 
 		public override string ToString() {
-			return "LV^" + (m_method.Locals[m_index] != null ?
-					Value.ToString() : "null");
+            var lv = m_method.Locals[m_index];
+            return "LV^" + lv != null ? lv.ToString() : "null";
 		}
 
 		public override int GetHashCode() {
@@ -1178,18 +1181,19 @@ namespace MMC.Data {
 		public LocalVariablePointer(MethodState method, int index) : base(method, index) { }
 	}
 
-	class ArgumentPointer : MethodMemberPointer {
-
-		public override IDataElement Value {
-
+	class ArgumentPointer : MethodMemberPointer
+    {
+        public override IDataElement Value
+        {
 			get { return m_method.Arguments[m_index]; }
 			set { m_method.Arguments[m_index] = value; }
 		}
 
-		public override string ToString() {
-			return "AP^" + (m_method.Arguments[m_index] != null ?
-					Value.ToString() : "null");
-		}
+        public override string ToString()
+        {
+            var ap = m_method.Arguments[m_index];
+            return "AP^" + ap != null ? ap.ToString() : "null";
+        }
 
 		public override bool Equals(IDataElement obj) {
 			bool retval = false;
@@ -1214,11 +1218,13 @@ namespace MMC.Data {
 
 		ObjectReference m_objectRef;
 		int m_index;
+        private readonly ExplicitActiveState cur;
 
-		public ObjectFieldPointer(ObjectReference or, int i) {
+        public ObjectFieldPointer(ExplicitActiveState cur, ObjectReference or, int i) {
 			m_index = i;
 			m_objectRef = or;
-		}
+            this.cur = cur;
+        }
 
 		public string WrapperName { get { return ""; } }
 
@@ -1226,23 +1232,25 @@ namespace MMC.Data {
 			return new Int4(m_index);
 		}
 
-		public MemoryLocation MemoryLocation {
-			get {
-				return new MemoryLocation(m_index, m_objectRef);
-			}
-		}
-
-		public IDataElement Value
+		public MemoryLocation MemoryLocation
         {
             get
             {
-                AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
+                return new MemoryLocation(m_index, m_objectRef);
+            }
+        }
+
+        public IDataElement Value
+        {
+            get
+            {
+                AllocatedObject ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
                 return ao.Fields[m_index];
             }
             set
             {
-                AllocatedObject ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
-                ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value, ActiveState.cur.Configuration);
+                AllocatedObject ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
+                ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value, cur.Configuration);
                 ao.Fields[m_index] = value;
             }
         }
@@ -1291,12 +1299,12 @@ namespace MMC.Data {
 
 		public IDataElement Value {
 			get {
-				AllocatedArray ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedArray;
+				AllocatedArray ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedArray;
 				return ao.Fields[m_index];
 			}
 
 			set {
-				AllocatedArray ao = ActiveState.cur.DynamicArea.Allocations[m_objectRef] as AllocatedArray;
+				AllocatedArray ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedArray;
 				ao.Fields[m_index] = value;
 			}
 		}
@@ -1334,18 +1342,20 @@ namespace MMC.Data {
 
         TypeDefinition m_type;
 		int m_index;
+        private readonly ExplicitActiveState cur;
 
-		public StaticFieldPointer(TypeDefinition or, int i) {
+        public StaticFieldPointer(ExplicitActiveState cur, TypeDefinition or, int i) {
 			m_index = i;
 			m_type = or;
-		}
+            this.cur = cur;
+        }
 
 		public Int4 ToInt4() {
 			return new Int4(m_index);
 		}
 
 		public IAddElement Add(INumericElement a, bool checkOverflow) {
-			AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type);
+			AllocatedClass ac = cur.StaticArea.GetClass(m_type);
 
 			/*
 			 * Note: the offset added to this pointer is in the amount of bytes.
@@ -1376,10 +1386,10 @@ namespace MMC.Data {
 				i++;
 
 				if (byteOffset == 0)
-					break;				
+					break;
 			}
 
-			return new StaticFieldPointer(m_type, i);
+			return new StaticFieldPointer(cur, m_type, i);
 		}
 
 		public MemoryLocation MemoryLocation
@@ -1396,13 +1406,13 @@ namespace MMC.Data {
         {
             get
             {
-                AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type);
+                AllocatedClass ac = cur.StaticArea.GetClass(m_type);
                 return ac.Fields[m_index];
             }
             set
             {
-                AllocatedClass ac = ActiveState.cur.StaticArea.GetClass(m_type);
-                ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value, ActiveState.cur.Configuration);
+                AllocatedClass ac = cur.StaticArea.GetClass(m_type);
+                ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value, cur.Configuration);
                 ac.Fields[m_index] = value;
             }
         }

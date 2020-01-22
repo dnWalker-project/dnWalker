@@ -24,9 +24,9 @@ namespace MMC.State
         private readonly StateCollapser m_storer;
         private readonly StateDecollapser m_restorer;
 
-        public CollapsedState CollapseCurrentState(ExplicitActiveState cur)
+        public CollapsedState CollapseCurrentState()
         {
-            return m_storer.GetStorableState(cur);
+            return m_storer.GetStorableState();
         }
 
         public void Reset(CollapsedState s)
@@ -39,10 +39,10 @@ namespace MMC.State
             m_restorer.RestoreState(s);
         }
 
-        public Collapser()
+        public Collapser(ExplicitActiveState cur)
         {
-            m_storer = new StateCollapser(POOL_DATA);
-            m_restorer = new StateDecollapser(POOL_DATA);
+            m_storer = new StateCollapser(POOL_DATA, cur);
+            m_restorer = new StateDecollapser(POOL_DATA, cur);
         }
     }
 }
