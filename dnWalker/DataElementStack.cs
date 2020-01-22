@@ -22,7 +22,7 @@ namespace MMC.Data {
 	using MMC.Util;
 	using MMC.Collections;
 
-	class DataElementStack : IDataElementContainer {
+    public class DataElementStack : IDataElementContainer {
 
 		protected IDataElement[] m_elements;
 		protected int m_stackptr;

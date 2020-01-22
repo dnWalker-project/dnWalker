@@ -29,7 +29,7 @@ namespace MMC.InstructionExec
     using dnlib.DotNet;
 
     [Flags]
-    enum InstructionExecAttributes : int
+    public enum InstructionExecAttributes : int
     { // using less than word size is useless
 
         None = 0x0000,
@@ -43,7 +43,7 @@ namespace MMC.InstructionExec
         Unsigned = 0x0008
     }
 
-    class InstructionExecBase
+    public class InstructionExecBase
     {
 
         // Static return types for next and no-increment. Those do not contain data,

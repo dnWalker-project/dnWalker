@@ -24,8 +24,8 @@ namespace MMC.State {
 	using MMC.Data;
 	using MMC.Util;
 
-	/// Data structure to store the object heap, using a (generated) list structure.
-	sealed class AllocationList : SparseReferenceList<DynamicAllocation>, IEnumerable, ICleanable {
+    /// Data structure to store the object heap, using a (generated) list structure.
+    public sealed class AllocationList : SparseReferenceList<DynamicAllocation>, IEnumerable, ICleanable {
 
 		const int INITIAL_SIZE = 64;
 		DirtyList m_dirtyLocs;

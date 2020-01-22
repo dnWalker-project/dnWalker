@@ -23,7 +23,7 @@ namespace MMC.InstructionExec
 	/// <summary>
 	/// An interface to types that return an instruction executor for a given instruction.
 	/// </summary>
-	interface IInstructionExecProvider
+	public interface IInstructionExecProvider
     {
 		/// <summary>
 		/// Get an instruction executor for the given instruction.

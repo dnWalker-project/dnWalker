@@ -20,7 +20,7 @@ namespace MMC.Util {
 	using System.Collections.Generic;
 	using MMC.Data;
 
-	class DirtyList : ICleanable { 
+    public class DirtyList : ICleanable { 
 
 		const int DEFAULT_INIT_SIZE = 128;
 

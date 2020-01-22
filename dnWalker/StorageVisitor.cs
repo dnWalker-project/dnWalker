@@ -17,12 +17,12 @@
 
 namespace MMC.State {
 
-	interface IStorageVisitable {
+    public interface IStorageVisitable {
 
 		void Accept(IStorageVisitor visitor);
 	}
 
-	interface IStorageVisitor {
+    public interface IStorageVisitor {
 
 		object Result { get; }
 
@@ -41,7 +41,7 @@ namespace MMC.State {
 		void VisitMethodState(MethodState meth);
 	}
 
-	abstract class BaseStorageVisitor {
+    public abstract class BaseStorageVisitor {
 
 		public virtual object Result {
 

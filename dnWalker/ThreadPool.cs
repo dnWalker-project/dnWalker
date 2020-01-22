@@ -26,7 +26,7 @@ namespace MMC.State {
 	using MMC.Util;
 	using MMC.Collections;
 
-	class ThreadPool : ICleanable, IStorageVisitable {
+    public class ThreadPool : ICleanable, IStorageVisitable {
 
 		SparseReferenceList<ThreadState>	m_tl;
 		int					m_curThread;
@@ -127,17 +127,17 @@ namespace MMC.State {
 		// Create new threads.
 		////////////////////////////////////////////////////////////////////
 
-		public int NewThread(MethodState entry, ObjectReference threadObj, IConfig config) {
-
+		public int NewThread(ExplicitActiveState cur, MethodState entry, ObjectReference threadObj, IConfig config)
+        {
 			int thread_id = m_tl.Length;
-			ThreadState newThread = new ThreadState(threadObj, thread_id);
-			m_tl.Add(newThread); 
+			ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
+			m_tl.Add(newThread);
 			newThread.CallStack.Push(entry);
 			Logger.l.Debug("spawned new thread with id {0}", thread_id);
 
 			// these arguments were added by the parent thread, but they should be 
 			// marked from the child thread for heap analysis
-			ThreadObjectWatcher.DecrementAll(entry.Arguments, config);
+			ThreadObjectWatcher.DecrementAll(this, entry.Arguments, config);
 			ThreadObjectWatcher.IncrementAll(thread_id, entry.Arguments, config);
 
 			Explorer.DoSharingAnalysis = true;

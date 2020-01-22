@@ -22,8 +22,8 @@ namespace MMC.State {
 	using MMC.Util;
 	using MMC.Collections;
 
-	/// A simple and minimal lock implementation.
-	class Lock : IStorable, ICleanable {
+    /// A simple and minimal lock implementation.
+    public class Lock : IStorable, ICleanable {
 
 		bool m_isReadonly;
 		bool m_isDirty;

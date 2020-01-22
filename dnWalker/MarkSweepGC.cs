@@ -17,32 +17,27 @@
 
 namespace MMC.State
 {
-
     using System.Diagnostics;
-    using System.Collections;
     using System.Collections.Generic;
-    //using C5;
     using MMC.Data;
-    using MMC.Util;
 
     class MarkAndSweepGC : BaseStorageVisitor, IStorageVisitor, IGarbageCollector
     {
-
         public static readonly MarkAndSweepGC msgc = new MarkAndSweepGC();
 
         Queue<int> todo = new Queue<int>();
 
-        public void Run()
+        public void Run(ExplicitActiveState cur)
         {
-            Mark();
-            Sweep();
+            Mark(cur);
+            Sweep(cur);
         }
 
-        public void Mark()
+        public void Mark(ExplicitActiveState cur)
         {
             todo.Clear();
             // reset the flags
-            AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
+            AllocationList m_alloc = cur.DynamicArea.Allocations;
             for (int i = 0; i < m_alloc.Length; ++i)
             {
                 DynamicAllocation ida = m_alloc[i];
@@ -50,53 +45,53 @@ namespace MMC.State
                     ida.HeapAttribute = AllocatedObject.UNMARKED;
             }
 
-
             // Mark all pinned down allocations.
-            foreach (ObjectReference pinnedObjRef in ActiveState.cur.DynamicArea.PinnedAllocations)
-                Mark(pinnedObjRef, 0);
+            foreach (ObjectReference pinnedObjRef in cur.DynamicArea.PinnedAllocations)
+            {
+                Mark(cur, pinnedObjRef, 0);
+            }
 
             // Mark all thread objects and referenced allocations in all method states.
             ThreadState t_cur;
             MethodState m_cur;
-            for (int t_id = 0; t_id < ActiveState.cur.ThreadPool.Threads.Length; ++t_id)
+            for (int t_id = 0; t_id < cur.ThreadPool.Threads.Length; ++t_id)
             {
-                t_cur = ActiveState.cur.ThreadPool.Threads[t_id];
+                t_cur = cur.ThreadPool.Threads[t_id];
                 // The thread object is no longer marked, since it's pinned down.
                 if (t_cur != null && t_cur.IsAlive)
                 {
                     for (int m_id = 0; m_id < t_cur.CallStack.StackPointer; ++m_id)
                     {
                         m_cur = t_cur.CallStack[m_id];
-                        MarkContainer(m_cur.Arguments, m_cur.Arguments.Length, t_id);
-                        MarkContainer(m_cur.Locals, m_cur.Locals.Length, t_id);
-                        MarkContainer(m_cur.EvalStack, m_cur.EvalStack.StackPointer, t_id);
+                        MarkContainer(cur, m_cur.Arguments, m_cur.Arguments.Length, t_id);
+                        MarkContainer(cur, m_cur.Locals, m_cur.Locals.Length, t_id);
+                        MarkContainer(cur, m_cur.EvalStack, m_cur.EvalStack.StackPointer, t_id);
                     }
                 }
             }
 
             // Mark referenced allocations in the static area.
-            foreach (int lcls in ActiveState.cur.StaticArea.LoadedClasses)
+            foreach (int lcls in cur.StaticArea.LoadedClasses)
             {
-                AllocatedClass ac = ActiveState.cur.StaticArea.Classes[lcls];
+                AllocatedClass ac = cur.StaticArea.Classes[lcls];
                 for (int f_id = 0; f_id < ac.Fields.Length; ++f_id)
                 {
                     if (ac.Fields[f_id] is ObjectReference)
-                        Mark((ObjectReference)ac.Fields[f_id], AllocatedObject.SHARED);
+                        Mark(cur, (ObjectReference)ac.Fields[f_id], AllocatedObject.SHARED);
                 }
             }
 
-            MarkRecursive();
+            MarkRecursive(cur);
         }
 
-        public void MarkSharedRecursive(ObjectReference objRef)
+        public void MarkSharedRecursive(ExplicitActiveState cur, ObjectReference objRef)
         {
-            Mark(objRef, AllocatedObject.SHARED);
-            MarkRecursive();
+            Mark(cur, objRef, AllocatedObject.SHARED);
+            MarkRecursive(cur);
         }
 
-        public void MarkRecursive()
+        public void MarkRecursive(ExplicitActiveState cur)
         {
-
             // Mark recursive
             DynamicAllocation to_visit;
             int loc;
@@ -104,31 +99,31 @@ namespace MMC.State
             while (todo.Count > 0)
             {
                 loc = todo.Dequeue();
-                to_visit = ActiveState.cur.DynamicArea.Allocations[loc];
+                to_visit = cur.DynamicArea.Allocations[loc];
                 Debug.Assert(to_visit != null, "Cannot visit a null allocation.");
 
 
                 if (to_visit is AllocatedDelegate)
                 {
                     AllocatedDelegate ad = to_visit as AllocatedDelegate;
-                    Mark(ad.Object, ad.HeapAttribute);
+                    Mark(cur, ad.Object, ad.HeapAttribute);
                 }
                 else if (to_visit is AllocatedObject)
                 {
                     AllocatedObject ao = to_visit as AllocatedObject;
-                    MarkContainer(ao.Fields, ao.Fields.Length, ao.HeapAttribute);
+                    MarkContainer(cur, ao.Fields, ao.Fields.Length, ao.HeapAttribute);
                 }
             }
         }
 
 
-        void Mark(ObjectReference o, int tid)
+        void Mark(ExplicitActiveState cur, ObjectReference o, int tid)
         {
             int loc = (int)o.Location - 1;
             // Watch out for null references, and references to unallocated space.
             if (loc >= 0)
             {
-                DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[loc];
+                DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
                 // If not yet seen, we need to examine this one further when marking
                 // allocations recursively. 
                 if (alloc != null)
@@ -147,18 +142,18 @@ namespace MMC.State
             }
         }
 
-        void MarkContainer(IDataElementContainer dec, int length, int tid)
+        void MarkContainer(ExplicitActiveState cur, IDataElementContainer dec, int length, int tid)
         {
             for (int i = 0; i < length; ++i)
                 if (dec[i] is ObjectReference)
-                    Mark((ObjectReference)dec[i], tid);
+                    Mark(cur, (ObjectReference)dec[i], tid);
         }
 
-        public int Sweep()
+        public int Sweep(ExplicitActiveState cur)
         {
             int retval = 0;
-            // var cur = ActiveState.cur;
-            AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
+            // var cur = cur;
+            AllocationList m_alloc = cur.DynamicArea.Allocations;
             for (int i = 0; i < m_alloc.Length; ++i)
             {
                 DynamicAllocation ida = m_alloc[i];
@@ -167,8 +162,8 @@ namespace MMC.State
                     // If marked, unmark (for next run), else delete.
                     if (ida.HeapAttribute == AllocatedObject.UNMARKED && !ida.Pinned)
                     {
-                        ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), ActiveState.cur);
-                        ActiveState.cur.DynamicArea.DisposeLocation(i);
+                        ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1), cur);
+                        cur.DynamicArea.DisposeLocation(i);
                         ++retval;
                     }
                 }
@@ -207,7 +202,7 @@ namespace MMC.State
 			m_count = 0;
 			
 			// reset the flags
-			AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
+			AllocationList m_alloc = cur.DynamicArea.Allocations;
 			for (int i = 0; i < m_alloc.Length; ++i) {
 				DynamicAllocation ida = m_alloc[i];
 				if (ida != null) {
@@ -225,14 +220,14 @@ namespace MMC.State
 
 		public int RunSweep() {
 			int retval = 0;
-			AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
+			AllocationList m_alloc = cur.DynamicArea.Allocations;
 			for (int i = 0; i < m_alloc.Length; ++i) {
 				DynamicAllocation ida = m_alloc[i];
 				if (ida != null) {
 					// If marked, unmark (for next run), else delete.
 					if (!ida.Marked && !ida.Pinned) {
 						ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(i + 1));
-						ActiveState.cur.DynamicArea.DisposeLocation(i);
+						cur.DynamicArea.DisposeLocation(i);
 						++retval;
 					}
 				}
@@ -243,14 +238,14 @@ namespace MMC.State
 		void MarkRoots() {
 
 			// Mark all pinned down allocations.
-			foreach (ObjectReference pinnedObjRef in ActiveState.cur.DynamicArea.PinnedAllocations)
+			foreach (ObjectReference pinnedObjRef in cur.DynamicArea.PinnedAllocations)
 				MarkReachable(pinnedObjRef);
 
 			// Mark all thread objects and referenced allocations in all method states.
 			ThreadState t_cur;
 			MethodState m_cur;
-			for (int t_id = 0; t_id < ActiveState.cur.ThreadPool.Threads.Length; ++t_id) {
-				t_cur = ActiveState.cur.ThreadPool.Threads[t_id];
+			for (int t_id = 0; t_id < cur.ThreadPool.Threads.Length; ++t_id) {
+				t_cur = cur.ThreadPool.Threads[t_id];
 				// The thread object is no longer marked, since it's pinned down.
 				if (t_cur != null && t_cur.IsAlive) {
 					for (int m_id = 0; m_id < t_cur.CallStack.StackPointer; ++m_id) {
@@ -263,8 +258,8 @@ namespace MMC.State
 			}
 
 			// Mark referenced allocations in the static area.
-			foreach (int lcls in ActiveState.cur.StaticArea.LoadedClasses) {
-				AllocatedClass ac = ActiveState.cur.StaticArea.Classes[lcls];
+			foreach (int lcls in cur.StaticArea.LoadedClasses) {
+				AllocatedClass ac = cur.StaticArea.Classes[lcls];
 				for (int f_id = 0; f_id < ac.Fields.Length; ++f_id) {
 //					if (ac.Type.Fields[f_id].IsStatic && ac.Fields[f_id] is ObjectReference)
 					if (ac.Fields[f_id] is ObjectReference)
@@ -305,7 +300,7 @@ namespace MMC.State
 			int loc = (int)o.Location - 1;
 			// Watch out for null references, and references to unallocated space.
 			if (loc >= 0) {
-				DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[loc];
+				DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
 				// If not yet seen, we need to examine this one further when marking
 				// allocations recursively. 
 				if (alloc != null && !alloc.Marked) {
@@ -320,7 +315,7 @@ namespace MMC.State
 			int loc = (int)o.Location - 1;
 			// Watch out for null references, and references to unallocated space.
 			if (loc >= 0) {
-				DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[loc];
+				DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
 				// If not yet seen, we need to examine this one further when marking
 				// allocations recursively. 
 				if (alloc != null && !alloc.Marked) {
@@ -341,7 +336,7 @@ namespace MMC.State
 			int loc = (int)o.Location - 1;
 			// Watch out for null references, and references to unallocated space.
 			if (loc >= 0) {
-				DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[loc];
+				DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
 				// If not yet seen, we need to examine this one further when marking
 				// allocations recursively. 
 				if (alloc != null && !alloc.ThreadShared) {
@@ -361,7 +356,7 @@ namespace MMC.State
 			// Perform BFS, pushing new references to visit on the m_todo stack.
 			while (m_todoThreadShared.Count > 0) {
 				loc = m_todoThreadShared.Pop();
-				to_visit = ActiveState.cur.DynamicArea.Allocations[loc];
+				to_visit = cur.DynamicArea.Allocations[loc];
 				Debug.Assert(to_visit != null, "Cannot visit a null allocation.");
 				// Use a partial visitor implementation to call the correct method for
 				// each allocation type.
@@ -386,7 +381,7 @@ namespace MMC.State
 			while (m_todoReachable.Count > 0) {
 				TEL++;
 				loc = m_todoReachable.Pop();
-				to_visit = ActiveState.cur.DynamicArea.Allocations[loc];
+				to_visit = cur.DynamicArea.Allocations[loc];
 				Debug.Assert(to_visit != null, "Cannot visit a null allocation.");
 				// Use a partial visitor implementation to call the correct method for
 				// each allocation type.

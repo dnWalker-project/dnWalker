@@ -27,14 +27,14 @@ namespace MMC.InstructionExec
     using MMC.State;
     using dnlib.DotNet.Emit;
 
-    interface IIEReturnValue
+    public interface IIEReturnValue
     {
 
         bool ContinueExploration(MethodState current);
         Instruction GetNextInstruction(MethodState current);
     }
 
-    class JumpReturnValue : IIEReturnValue
+    public class JumpReturnValue : IIEReturnValue
     {
 
         Instruction m_target;

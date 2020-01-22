@@ -20,8 +20,9 @@ namespace MMC
     using MMC.Data;
     using MMC.State;
     using dnlib.DotNet;
+    using MMC.InstructionExec;
 
-    class StateSpaceSetup
+    public class StateSpaceSetup
     {
         // Okay, this is just great. These are the fields of a Thread
         // allocation when running Mono with the --debug flag:
@@ -48,7 +49,7 @@ namespace MMC
         //
         // Nice.
 
-        public static ModuleDef LoadAssemblies(IConfig config)
+        public ModuleDef LoadAssemblies(IConfig config)
         {
             // Load assembly, and initialize the definition lookup and active state.
             try
@@ -65,10 +66,10 @@ namespace MMC
             return DefinitionProvider.dp.AssemblyDefinition;
         }
 
-        public static void CreateInitialState(IConfig config)
+        public ExplicitActiveState CreateInitialState(IConfig config, IInstructionExecProvider instructionExecProvider)
         {
             var asmDef = LoadAssemblies(config);
-            var cur = ActiveState.cur;
+            var cur = new ExplicitActiveState(config, instructionExecProvider);
 
             //StorageFactory.UseRefCounting(_config.UseRefCounting);
             if (config.UseRefCounting)
@@ -97,15 +98,16 @@ namespace MMC
                 cur);
 
             // Initialize main thread.
-            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(
-                mainState, CreateMainThreadObject(asmDef.EntryPoint), cur.Configuration);
+            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur,
+                mainState, CreateMainThreadObject(cur, asmDef.EntryPoint), cur.Configuration);
 
             cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
+
+            return cur;
         }
 
-        static ObjectReference CreateMainThreadObject(MethodDef mainDefinition)
+        private ObjectReference CreateMainThreadObject(ExplicitActiveState cur, MethodDef mainDefinition)
         {
-            var cur = ActiveState.cur;
             // A thread is created as follows:
             // 1. A threadstart delegate is created: newobj ThreadStart::.ctor(Object, IntPtr),
             //    the first argument being null, the second being a function pointer to the
@@ -163,7 +165,6 @@ namespace MMC
             {
                 Logger.l.Warning("No thread local synchronisation object field found!");
             }
-
 
             // 2c
             // In Microsoft's .NET, the delegate is stored in m_Delegate

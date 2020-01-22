@@ -17,27 +17,27 @@
 
 namespace MMC.Data {
 
-	interface IStorable {
+    public interface IStorable {
 
 		IStorable StorageCopy();
 		bool ReadOnly { get; set; }
 	}
 
-	interface ICleanable {
+    public interface ICleanable {
 
 		bool IsDirty();
 		void Clean();
 	}
 
-	// System.IDisposable is not used, since that's for objects that are
-	// used in a 'using' block (e.g. streams).
-	
-	interface IMustDispose {
+    // System.IDisposable is not used, since that's for objects that are
+    // used in a 'using' block (e.g. streams).
+
+    public interface IMustDispose {
 
 		void Dispose();
 	}
 
-	interface IDataElementContainer : IMustDispose, ICleanable, IStorable {
+    public interface IDataElementContainer : IMustDispose, ICleanable, IStorable {
 
 		IDataElement this[int index] { get; set; }
 		int Length { get; }

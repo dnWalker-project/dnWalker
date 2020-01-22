@@ -23,7 +23,7 @@ namespace MMC.State {
 	using MMC.Data;
 
 
-	class LockManager  {
+    public class LockManager  {
 
 		/// Constant for 'not owner'. Nullable types would be nice, but...
 		public const int NoThread = -1;

@@ -22,7 +22,7 @@ namespace MMC.Util {
 	using System.Runtime.InteropServices;
 	using MMC.Collections;
 
-	class ChangingIntVector {
+    public class ChangingIntVector {
 
 		public const int deleted = CollectionConstants.Deleted;
 		public const int not_set = CollectionConstants.NotSet;

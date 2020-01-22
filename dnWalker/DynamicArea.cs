@@ -29,7 +29,7 @@ namespace MMC.State {
     // it, do it.
 
     /// Class holding the heap of the VM.
-    class DynamicArea :  ICleanable, IStorageVisitable {
+    public class DynamicArea :  ICleanable, IStorageVisitable {
 
 		/// Dynamic allocations, i.e. the heap.
 		AllocationList m_alloc;

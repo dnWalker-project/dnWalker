@@ -400,12 +400,15 @@ Disabling/enabling features:
             PrintConfig();
 
             var config = Config.Instance;
-
-            StateSpaceSetup.LoadAssemblies(config);
-            StateSpaceSetup.CreateInitialState(config);
-
             var instructionExecProvider = InstructionExec.InstructionExecProvider.Get(config);
-            Explorer ex = new Explorer(config, instructionExecProvider);
+
+            var stateSpaceSetup = new StateSpaceSetup();
+            stateSpaceSetup.LoadAssemblies(config);
+            var cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
+
+            ActiveState.cur = cur;
+
+            Explorer ex = new Explorer(cur, config, instructionExecProvider);
             TextWriter tw = null;
 
             try
@@ -413,23 +416,23 @@ Disabling/enabling features:
                 Statistics.s.Start();
                 bool noErrors = ex.Run();
 
-                if (!noErrors && Config.Instance.StopOnError && Config.Instance.TraceOnError)
+                if (!noErrors && config.StopOnError && Config.Instance.TraceOnError)
                 {
-                    ActiveState.cur.Reset();
-                    StateSpaceSetup.CreateInitialState(config);
+                    cur.Reset();
+                    cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
+                    ActiveState.cur = cur;
 
-                    string traceFile = Config.Instance.AssemblyToCheckFileName + ".trace";
+                    string traceFile = config.AssemblyToCheckFileName + ".trace";
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
-                    ex = new TracingExplorer(ex.GetErrorTrace(), tw, config, instructionExecProvider);
+                    ex = new TracingExplorer(cur, ex.GetErrorTrace(), tw, config, instructionExecProvider);
                     ex.Run();
-                    tw.WriteLine(ActiveState.cur.ToString());
+                    tw.WriteLine(cur.ToString());
                 }
             }
             finally
             {
-
                 Statistics.s.Stop();
                 // Done, show statistics
                 if (Config.Instance.ShowStatistics)

@@ -22,7 +22,7 @@ namespace MMC.Data {
 	using MMC.Util;
 	using MMC.Collections;
 
-	class DataElementList : IDataElementContainer {
+    public class DataElementList : IDataElementContainer {
 
 		protected IDataElement[] m_elements;
 		protected bool m_isDirty;

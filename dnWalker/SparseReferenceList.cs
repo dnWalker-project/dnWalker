@@ -21,7 +21,7 @@ namespace MMC.Collections {
 	using System.Text;
 	using System.Collections.Generic;
 
-	class SparseReferenceList<T> where T : class {
+    public class SparseReferenceList<T> where T : class {
 
 		const int DEFAULT_SIZE = 16;
 		T[] m_data;

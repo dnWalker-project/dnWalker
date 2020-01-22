@@ -833,9 +833,8 @@ namespace MMC.InstructionExec
         /// \param type The type of class to load.
         /// \return True iff we can continue to execute the instruction (i.e.
         /// it's okay to access the static fields).
-        public bool LoadClass(TypeDefinition type)
+        public bool LoadClass(TypeDefinition type, ExplicitActiveState cur)
         {
-            var cur = ActiveState.cur;
             int me = cur.ThreadPool.CurrentThreadId;
 
             bool allow_access = true;
@@ -1572,7 +1571,7 @@ namespace MMC.InstructionExec
             FieldDefinition fld = GetFieldDefinition();
             var declType = GetTypeDefinition();
 
-            if (LoadClass(declType))
+            if (LoadClass(declType, cur))
             {
                 AllocatedClass ac = cur.StaticArea.GetClass(declType);
                 cur.EvalStack.Push(ac.Fields[(int)fld.FieldOffset]);
@@ -1621,7 +1620,7 @@ namespace MMC.InstructionExec
             FieldDefinition fld = GetFieldDefinition();
             TypeDefinition declType = GetTypeDefinition();
 
-            if (LoadClass(declType))
+            if (LoadClass(declType, cur))
             {
                 cur.EvalStack.Push(new StaticFieldPointer(declType, (int)fld.FieldOffset));
                 retval = nextRetval;
@@ -1661,7 +1660,7 @@ namespace MMC.InstructionExec
             FieldDefinition fld = GetFieldDefinition();
             TypeDefinition declType = GetTypeDefinition();
 
-            if (LoadClass(declType))
+            if (LoadClass(declType, cur))
             {
                 IDataElement val = cur.EvalStack.Pop();
 
@@ -1720,8 +1719,10 @@ namespace MMC.InstructionExec
             if (Operand is TypeDefinition)
             {
                 TypeDefinition typeDef = Operand as TypeDefinition;
-                if (LoadClass(typeDef))
+                if (LoadClass(typeDef, cur))
+                {
                     retval = nextRetval;
+                }
                 cur.EvalStack.Push(new TypePointer(typeDef));
             }
             // TODO: handle field and method definitions

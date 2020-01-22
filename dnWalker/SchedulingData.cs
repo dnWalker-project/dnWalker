@@ -22,8 +22,10 @@ namespace MMC.State
     using MMC.Data;
     using TypeDefinition = dnlib.DotNet.TypeDef;
 
+    /// <summary>
     /// A memory access is composed of a memory location and the thread that accesses it
-    struct MemoryAccess
+    /// </summary>
+    public struct MemoryAccess
     {
         public MemoryAccess(MemoryLocation ml, int thread)
         {
@@ -50,7 +52,7 @@ namespace MMC.State
 	 * It is important here that equals works here when we are talking about the same memory location
 	 */
 
-    struct MemoryLocation
+    public struct MemoryLocation
     {
         /// 2 is a locking object
         /// 1 is a static area object
@@ -135,7 +137,7 @@ namespace MMC.State
 
 
     // Should be a normal struct, but those are not nullable.
-    class SchedulingData
+    public class SchedulingData
     {
 
         int m_id;

@@ -120,7 +120,7 @@ namespace MMC {
 		}
 	}
 
-	interface ISII {
+    public interface ISII {
 		IEnumerator<MemoryAccess> GetEnumerator();
 	}
 	

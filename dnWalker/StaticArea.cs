@@ -27,7 +27,7 @@ namespace MMC.State {
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using FieldDefinition = dnlib.DotNet.FieldDef;
 
-    interface IStaticArea : ICleanable, IStorageVisitable {
+    public interface IStaticArea : ICleanable, IStorageVisitable {
 
 		/// List containing all classes.
 		SparseReferenceList<AllocatedClass> Classes { get; }

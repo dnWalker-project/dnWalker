@@ -29,13 +29,13 @@ namespace MMC.State
         /// <summary>
         /// A simple public field suffices here, no need to define a property.
         /// </summary>
-        public static readonly ExplicitActiveState cur = new ExplicitActiveState(Config.Instance, new HashedIEC());
+        public static ExplicitActiveState cur { get; set; }// = new ExplicitActiveState(Config.Instance, new HashedIEC());
     }
 
     /// <summary>
     /// An implementation of the active state of the virtual machine.
     /// </summary>
-    class ExplicitActiveState : IStorageVisitable, ICleanable
+    public class ExplicitActiveState : IStorageVisitable, ICleanable
     {
         DynamicArea m_dyn;
         IStaticArea m_stat;

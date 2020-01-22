@@ -25,7 +25,7 @@ namespace MMC.State {
 
 
 
-	class CallStack : SparseReferenceList<MethodState>, IMustDispose, ICleanable {
+    public class CallStack : SparseReferenceList<MethodState>, IMustDispose, ICleanable {
 
 		int m_stackptr = 0;
 		bool m_isDirty = true;

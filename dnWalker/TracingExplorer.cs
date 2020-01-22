@@ -15,100 +15,95 @@
  *
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MMC.Data;
-
-namespace MMC {
-
-	using System.Text;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.IO;
-	using MMC.State;
-	using MMC.Util;
-	using MMC.InstructionExec;
-	using MMC.Collections;
+namespace MMC
+{
+    using System.Text;
+    using System.Collections.Generic;
+    using System.IO;
+    using MMC.State;
+    using MMC.Util;
+    using MMC.InstructionExec;
     using dnlib.DotNet.Emit;
 
+    /// <summary>
     /// This is the error tracer
-    class TracingExplorer : Explorer {
+    /// </summary>
+    public class TracingExplorer : Explorer
+    {
+        readonly Stack<int> m_tracingQueue;
+        string prevMethod = "";
+        private readonly TextWriter tw;
 
-		Stack<int> m_tracingQueue;
-		string prevMethod = "";
-		TextWriter tw;
-
-        public TracingExplorer(Stack<int> tracingQueue, TextWriter tw, IConfig config, IInstructionExecProvider instructionExecProvider)
-            : base(config, instructionExecProvider)
+        public TracingExplorer(ExplicitActiveState cur, Stack<int> tracingQueue, TextWriter tw, IConfig config, IInstructionExecProvider instructionExecProvider)
+            : base(cur, config, instructionExecProvider)
         {
-            this.m_tracingQueue = tracingQueue;
+            m_tracingQueue = tracingQueue;
             // disable stats
             config.ShowStatistics = false;
             this.tw = tw;
         }
 
-		protected override int SelectRunnableThread(SchedulingData sd) {
-			return m_tracingQueue.Pop();
-		}
+        protected override int SelectRunnableThread(SchedulingData sd)
+        {
+            return m_tracingQueue.Pop();
+        }
 
-		/*
+        /*
 		 * This method is not really pretty, but it works...
 		 */
-		public override void PrintTransition() {
-			int currentThread = ActiveState.cur.ThreadPool.CurrentThreadId;
-			MethodState currentMethod = ActiveState.cur.CurrentMethod;
-			var instr = currentMethod.ProgramCounter;
-			bool isRet = instr.OpCode.Code == Code.Ret;
-			string operandString = (instr.Operand == null ?
-					"" :
-					CILElementPrinter.FormatCILElement(instr.Operand));
+        public override void PrintTransition()
+        {
+            int currentThread = cur.ThreadPool.CurrentThreadId;
+            MethodState currentMethod = cur.CurrentMethod;
+            var instr = currentMethod.ProgramCounter;
+            bool isRet = instr.OpCode.Code == Code.Ret;
+            string operandString = instr.Operand == null ?
+                "" :
+                CILElementPrinter.FormatCILElement(instr.Operand);
 
-			int callstackSize = ActiveState.cur.CallStack.StackPointer - 1;
+            int callstackSize = cur.CallStack.StackPointer - 1;
 
-			bool sameMethod = currentMethod.Definition.ToString().Equals(prevMethod);
-			prevMethod = currentMethod.Definition.ToString();
+            bool sameMethod = currentMethod.Definition.ToString().Equals(prevMethod);
+            prevMethod = currentMethod.Definition.ToString();
 
-			StringBuilder sb = new StringBuilder();
-			String preString;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("- thread: {0} ", currentThread);
+            sb.Append(' ', callstackSize * 4);
 
-			sb.AppendFormat("- thread: {0} ", currentThread);
-			sb.Append(' ', callstackSize * 4);
+            string preString = sb.ToString();
 
-			preString = sb.ToString();
+            if (!sameMethod && instr.Offset > 0)
+            {
+                sb.Append("|_ ");
+                sb.AppendFormat(prevMethod);
+                tw.WriteLine(sb.ToString());
+            }
 
-			if (!sameMethod && instr.Offset > 0) {
-				sb.Append("|_ ");
-				sb.AppendFormat(prevMethod);
-				tw.WriteLine(sb.ToString());
-			}
+            sb = new StringBuilder();
+            sb.Append(preString);
 
-			
-			sb = new StringBuilder();
-			sb.Append(preString);
+            if (instr.Offset == 0)
+                sb.Append("|_ ");
+            else
+                sb.Append("   ");
 
-			if (instr.Offset == 0)
-				sb.Append("|_ ");
-			else
-				sb.Append("   ");
+            sb.AppendFormat("{0:D4} {1} {2} on stack {3}",
+                            instr.Offset,
+                            instr.OpCode.Name,
+                            operandString,
+                            currentMethod.EvalStack.ToString()
+                );
 
-			sb.AppendFormat("{0:D4} {1} {2} on stack {3}",
-							instr.Offset,
-							instr.OpCode.Name,
-							operandString,
-							currentMethod.EvalStack.ToString()
-				);
+            tw.WriteLine(sb.ToString());
 
-			tw.WriteLine(sb.ToString());
-
-			if (isRet && callstackSize > 0) {
-				sb = new StringBuilder();
-				sb.AppendFormat("- thread: {0} ", currentThread);
-				sb.Append(' ', (callstackSize - 1) * 4);
-				sb.Append(" ____________|");
-				tw.WriteLine(sb.ToString());
-			}
-		}
-	}
+            if (isRet && callstackSize > 0)
+            {
+                sb = new StringBuilder();
+                sb.AppendFormat("- thread: {0} ", currentThread);
+                sb.Append(' ', (callstackSize - 1) * 4);
+                sb.Append(" ____________|");
+                tw.WriteLine(sb.ToString());
+            }
+        }
+    }
 }

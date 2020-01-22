@@ -183,12 +183,11 @@ namespace MMC.State
             heap = new MyHeap();
         }
 
-
-        public void Run()
+        public void Run(ExplicitActiveState cur)
         {
-            IncrementalHeapVisitor.ihv.RunMark();
+            IncrementalHeapVisitor.ihv.RunMark(cur);
 
-            AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
+            AllocationList m_alloc = cur.DynamicArea.Allocations;
 
             /// Sweep phase
             for (int i = 0; i < m_alloc.Length; i++)
@@ -197,19 +196,17 @@ namespace MMC.State
                 if (alloc != null && alloc.Depth == int.MaxValue && !alloc.Pinned)
                 {
                     ObjectReference toDelete = new ObjectReference(i + 1);
-                    ParentWatcher.RemoveParentFromAllChilds(toDelete, ActiveState.cur);
+                    ParentWatcher.RemoveParentFromAllChilds(toDelete, cur);
                     ParentWatcher.pw[i + 1].ClearDirty();
-                    ActiveState.cur.DynamicArea.DisposeLocation(i);
+                    cur.DynamicArea.DisposeLocation(i);
                 }
             }
         }
 
-
         /* line 1 */
-        public void RunMark()
+        public void RunMark(ExplicitActiveState cur)
         {
-
-            AllocationList m_alloc = ActiveState.cur.DynamicArea.Allocations;
+            AllocationList m_alloc = cur.DynamicArea.Allocations;
             for (int i = 0; i < m_alloc.Length; i++)
             {
                 DynamicAllocation alloc = m_alloc[i];
@@ -219,20 +216,18 @@ namespace MMC.State
                     ObjectReferenceBag parents = ParentWatcher.pw[i + 1];
                     if (parents.IsDirty || parents.IsEmpty)
                     {
-                        AddModified(i);
+                        AddModified(i, cur);
                         parents.ClearDirty();
                     }
                 }
             }
 
-
             /* lines 8 - 31 */
             while (!heap.IsEmpty())
             {
-
                 // line 9
                 ObjectReference reference = heap.FindAndDeleteMin();
-                DynamicAllocation u = ActiveState.cur.DynamicArea.Allocations[reference];
+                DynamicAllocation u = cur.DynamicArea.Allocations[reference];
 
                 // line 10
                 if (u.Rhs < u.Depth)
@@ -251,15 +246,16 @@ namespace MMC.State
         }
 
 
-        private void AddModified(int i)
+        private void AddModified(int i, ExplicitActiveState cur)
         {
-            DynamicAllocation ida = ActiveState.cur.DynamicArea.Allocations[i];
+            DynamicAllocation ida = cur.DynamicArea.Allocations[i];
 
             ida.Rhs = DetermineDepth(i + 1);    // line 3
             if (ida.Rhs != ida.Depth)           // line 4
+            {
                 heap.Insert(new ObjectReference(i + 1));            // line 5
+            }
         }
-
 
         public override void VisitAllocatedArray(AllocatedArray aa)
         {
@@ -317,7 +313,7 @@ namespace MMC.State
 
     }
 
-    /// We made a seperate watcher for monitoring objectreferences on the callstack
+    /// We made a seperate watcher for monitoring object references on the callstack
     /// because initially we wanted to created a generalised heap analysis framework
     ///
     /// However, later, we found out that only garbage collection could be done 
@@ -367,6 +363,11 @@ namespace MMC.State
         public static void DecrementAll(IDataElementContainer ids, IConfig config)
         {
             DecrementAll(ActiveState.cur.ThreadPool.CurrentThreadId, ids, config);
+        }
+
+        public static void DecrementAll(ThreadPool threadPool, IDataElementContainer ids, IConfig config)
+        {
+            DecrementAll(threadPool.CurrentThreadId, ids, config);
         }
 
         public static void Increment(int threadId, IDataElement o)

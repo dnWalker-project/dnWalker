@@ -14,14 +14,12 @@
  *   limitations under the License.
  *
  */
-
-
-using System;
+using MMC.State;
 
 namespace MMC
 {
-	
-	interface IGarbageCollector {
-		void Run();
-	}
+    interface IGarbageCollector
+    {
+        void Run(ExplicitActiveState cur);
+    }
 }

@@ -24,7 +24,7 @@ namespace MMC.State {
 	using MMC.Data;
 	using MMC.Util;
 
-	class ThreadState : IMustDispose, ICleanable, IStorageVisitable {
+    public class ThreadState : IMustDispose, ICleanable, IStorageVisitable {
 
 		public static int state_field_offset = LockManager.NoThread;
 
@@ -202,7 +202,7 @@ namespace MMC.State {
 
 		// ---------------- Constructor -------------- 
 
-		public ThreadState(ObjectReference threadObj, int me) {
+		public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me) {
 
 			m_callStack = StorageFactory.sf.CreateCallStack();
 			m_threadObj = threadObj;
@@ -212,7 +212,7 @@ namespace MMC.State {
 			m_me = me;
 			m_exceptionObj = ObjectReference.Null;
 
-			ActiveState.cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
+			cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
 			ThreadObjectWatcher.Increment(me, threadObj);
 		}
 	}

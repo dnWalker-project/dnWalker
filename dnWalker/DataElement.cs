@@ -26,38 +26,38 @@ namespace MMC.Data {
     using FieldDefinition = dnlib.DotNet.FieldDef;
     using ParameterDefinition = dnlib.DotNet.Parameter;
 
-    interface IDataElement : System.IComparable {
+    public interface IDataElement : System.IComparable {
 
 		bool Equals(IDataElement other);
 		bool ToBool();
 		string ToString();
 		string WrapperName { get; }
 	}
-	
-	/// The following two interfaces are used to abstract
-	/// addition and substraction arithmetics, which can be 
-	/// used on integers, floats, pointers etc.
-	/// The checkoverflow boolean is used by instructions
-	/// that check for overflow like add.ovf
-	interface IAddElement : IDataElement {
+
+    /// The following two interfaces are used to abstract
+    /// addition and substraction arithmetics, which can be 
+    /// used on integers, floats, pointers etc.
+    /// The checkoverflow boolean is used by instructions
+    /// that check for overflow like add.ovf
+    public interface IAddElement : IDataElement {
 		IAddElement Add(INumericElement other, bool checkOverflow);
 	}
 
-	interface ISubElement : IDataElement  {
+    public interface ISubElement : IDataElement  {
 		ISubElement Sub(INumericElement other, bool checkOverflow);
 	}
-	
-	interface IManagedPointer : IDataElement {
+
+    public interface IManagedPointer : IDataElement {
 
 		IDataElement Value { get; set; }
 		Int4 ToInt4();
 	}
 
-	interface IRuntimeHandle : IDataElement {
+    public interface IRuntimeHandle : IDataElement {
 
 	}
 
-	interface INumericElement : IDataElement, IAddElement, ISubElement {
+    public interface INumericElement : IDataElement, IAddElement, ISubElement {
 
 		INumericElement Mul(INumericElement other, bool checkOverflow);
 		INumericElement Div(INumericElement other);
@@ -71,19 +71,19 @@ namespace MMC.Data {
 		Float8 ToFloat8(bool checkOverflow);
 	}
 
-	interface IRealElement : INumericElement {
+    public interface IRealElement : INumericElement {
 		bool IsFinite();
 	}
 
-	interface ISignedNumericElement : INumericElement {
+    public interface ISignedNumericElement : INumericElement {
 		ISignedNumericElement Neg();		
 	}
 
-	interface ISignedIntegerElement : INumericElement {
+    public interface ISignedIntegerElement : INumericElement {
 		INumericElement ToUnsigned();
 	}
 
-	interface IIntegerElement : INumericElement {
+    public interface IIntegerElement : INumericElement {
 
 		IIntegerElement And(IIntegerElement other);
 		IIntegerElement Not();
@@ -93,18 +93,18 @@ namespace MMC.Data {
 		IIntegerElement Shr(int x);
 	}
 
-	interface IReferenceType : IDataElement {
+    public interface IReferenceType : IDataElement {
 
 		uint Location { get; }
 	}
 
-	/* --------------------------------------------------------------
+    /* --------------------------------------------------------------
 	 * The following structs define objects that can be loaded onto
 	 * the stack by load instructions, or be the result of the
 	 * execution of some other (e.g. arithmetic) operation.
 	 * -------------------------------------------------------------- */
 
-	struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement {
+    public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement {
 
 		int m_value;
 
@@ -276,7 +276,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct UnsignedInt4 : IIntegerElement {
+    public struct UnsignedInt4 : IIntegerElement {
 		public static UnsignedInt4 Zero = new UnsignedInt4(0);
 		uint m_value;
 
@@ -437,7 +437,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct Int8 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement {
+    public struct Int8 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement {
 		public static Int8 Zero = new Int8(0);
 		long m_value;
 
@@ -593,7 +593,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct UnsignedInt8 : IIntegerElement {
+    public struct UnsignedInt8 : IIntegerElement {
 		public static UnsignedInt8 Zero = new UnsignedInt8(0);
 		ulong m_value;
 
@@ -740,7 +740,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct Float4 : ISignedNumericElement, IRealElement {
+    public struct Float4 : ISignedNumericElement, IRealElement {
 		public static Float4 Zero = new Float4(0);
 
 		float m_value;
@@ -863,7 +863,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct Float8 : ISignedNumericElement, IRealElement {
+    public struct Float8 : ISignedNumericElement, IRealElement {
 		public static Float8 Zero = new Float8(0);
 		double m_value;
 
@@ -1065,7 +1065,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct ObjectReference : IReferenceType {
+    public struct ObjectReference : IReferenceType {
 
 		uint m_location;
 
@@ -1478,7 +1478,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct MethodPointer : IRuntimeHandle {
+    public struct MethodPointer : IRuntimeHandle {
 
 		MethodDefinition m_method;
 

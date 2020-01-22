@@ -25,7 +25,7 @@ namespace MMC.State
     /// Types of allocations.
     /// </summary>
     /// <remarks>VY: I believe that in the end, there should only be two kinds of allocations, namely objects and classes</remarks>
-    internal enum AllocationType
+    public enum AllocationType
     {
         Object,
         Array,
@@ -37,7 +37,7 @@ namespace MMC.State
     /// <summary>
     /// An abstract base class for all allocations.
     /// </summary>
-    internal abstract class Allocation : IStorageVisitable, ICleanable, IMustDispose
+    public abstract class Allocation : IStorageVisitable, ICleanable, IMustDispose
     {
         /// <summary>
         /// Print at most this many fields.
@@ -116,7 +116,7 @@ namespace MMC.State
         }
     }
 
-    internal abstract class DynamicAllocation : Allocation
+    public abstract class DynamicAllocation : Allocation
     {
         /// <summary>
         /// Name of the value field of value type wrappers.

@@ -169,44 +169,46 @@ namespace MMC {
 		/// 1. An objectreference is written to object o
 		/// 2. o is threadshared, and the o' referenced by
 		/// the objectreference is not
-		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, IConfig config) {
-
+		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, IConfig config)
+        {
 			if (!config.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
 				return;
 
-			// literally and shamelessly mimiced from JPF:
+            var cur = ActiveState.cur;
+            // literally and shamelessly mimiced from JPF:
 
-			if (parentIsShared) {
-				if (!((ObjectReference)newRef).Equals(ObjectReference.Null)) {
-
+            if (parentIsShared) {
+				if (!((ObjectReference)newRef).Equals(ObjectReference.Null))
+                {
 					DynamicAllocation da = ActiveState.cur.DynamicArea.Allocations[(ObjectReference)newRef];
 
-					if (!da.ThreadShared)
-						MarkAndSweepGC.msgc.MarkSharedRecursive((ObjectReference)newRef);
+                    if (!da.ThreadShared)
+                    {
+                        MarkAndSweepGC.msgc.MarkSharedRecursive(cur, (ObjectReference)newRef);
+                    }
 				}
 			}
 
 			return;
 		}
 
-		public int GetPersistentThread() {
-
-			/*
+		public int GetPersistentThread()
+        {
+            var cur = ActiveState.cur;
+            /*
 			 * Return the thread id which executes an independent action
 			 * It either returns -1 (no set), or an integer > 0, because 
 			 * we do it the quick and easy way: mutual dependent threads in a subset 
 			 * of the enabled set is not possible to computer with the coarse grained
 			 * object escape analysis */
 
-			/* 
+            /* 
 			 * Run a object escape analysis 
 			 */
-			if (Explorer.DoSharingAnalysis) {
-				MarkAndSweepGC.msgc.Mark();
+            if (Explorer.DoSharingAnalysis) {
+				MarkAndSweepGC.msgc.Mark(cur);
 				Explorer.DoSharingAnalysis = false;
 			}
-
-            var cur = ActiveState.cur;
 
             int oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
 			int retval = -1;

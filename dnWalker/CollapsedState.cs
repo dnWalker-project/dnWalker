@@ -21,7 +21,7 @@ namespace MMC.State {
 	using MMC.Util;
 	using MMC.Data;
 
-	struct CollapsedStateDelta {
+    public struct CollapsedStateDelta {
 
 		public CollapsedStateDelta(ISparseElement allocD, ISparseElement classD, ISparseElement thrdsD, int bound) {
 			m_allocDelta = allocD;
@@ -54,7 +54,7 @@ namespace MMC.State {
 		}
 	}
 
-	internal class CollapsedState
+    public class CollapsedState
     {
 		ChangingIntVector m_alloc;
 		ChangingIntVector m_class;

@@ -24,7 +24,7 @@ namespace MMC.Util
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using dnlib.DotNet;
 
-    struct CILLocation : System.IComparable
+    public struct CILLocation : System.IComparable
     {
 
         Instruction m_instr;

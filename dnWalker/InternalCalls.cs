@@ -349,18 +349,19 @@ namespace MMC.ICall {
         /// <param name="args"></param>
         public static void Thread_internal(MethodDefinition methDef, DataElementList args)
         {
-            ObjectReference threadObjectRef = ActiveState.cur.DynamicArea.AllocateObject(
-                    ActiveState.cur.DynamicArea.DeterminePlacement(false),
+            var cur = ActiveState.cur;
+            ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
+                    cur.DynamicArea.DeterminePlacement(false),
                     methDef.DeclaringType,
-                    ActiveState.cur.Configuration);
+                    cur.Configuration);
             AllocatedObject threadObject =
-                ActiveState.cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
+                cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
             // First, create a new thread. The first argument is the this pointer
             // to the thread object. The second argument is a reference to the
             // threadstart delegate, but we don't need to call it.
             AllocatedDelegate del = (AllocatedDelegate)
-				ActiveState.cur.DynamicArea.Allocations[(ObjectReference)args[1]];
+				cur.DynamicArea.Allocations[(ObjectReference)args[1]];
 
 			// TODO: This does not deal with delegates that take additional
 			// parameters (such as a state). It can probably be popped off the
@@ -370,12 +371,12 @@ namespace MMC.ICall {
 				delPars = StorageFactory.sf.CreateList(1);
 				delPars[0] = del.Object;
 			}
-			MethodState newThreadState = new MethodState(del.Method.Value, delPars, ActiveState.cur);
+			MethodState newThreadState = new MethodState(del.Method.Value, delPars, cur);
 
-            int newThreadId = ActiveState.cur.ThreadPool.NewThread(newThreadState, threadObjectRef, ActiveState.cur.Configuration);// (ObjectReference)args[0]);
+            int newThreadId = cur.ThreadPool.NewThread(cur, newThreadState, threadObjectRef, cur.Configuration);// (ObjectReference)args[0]);
 
             // Push ID on stack as an IntPointer.
-            ActiveState.cur.EvalStack.Push(threadObjectRef);// new IntPointer(newThreadId));
+            cur.EvalStack.Push(threadObjectRef);// new IntPointer(newThreadId));
 		}
 
 		public static bool Thread_internal_IsDependent(MethodDefinition methDef, DataElementList args) {

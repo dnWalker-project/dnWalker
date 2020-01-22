@@ -26,7 +26,7 @@ namespace MMC.State {
     using System;
 
     /// An object instances on the heap.
-    class AllocatedObject : DynamicAllocation {
+    public class AllocatedObject : DynamicAllocation {
 
 		DataElementList m_fields;
 
@@ -166,10 +166,10 @@ namespace MMC.State {
 
 		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config) { }
 	}
-	
-	/// VY thinks that eventually an array should not be a first-class citizen,
-	/// It should be the same as any object
-	class AllocatedArray : AllocatedObject {
+
+    /// VY thinks that eventually an array should not be a first-class citizen,
+    /// It should be the same as any object
+    public class AllocatedArray : AllocatedObject {
 
 		public override AllocationType AllocationType {
 			get { return AllocationType.Array; }
@@ -199,9 +199,9 @@ namespace MMC.State {
         }
 	}
 
-	/// VY thinks that delegates should not be first class citizens
-	/// They should be just an object of a particular delegate type
-	class AllocatedDelegate : DynamicAllocation {
+    /// VY thinks that delegates should not be first class citizens
+    /// They should be just an object of a particular delegate type
+    public class AllocatedDelegate : DynamicAllocation {
 
 		ObjectReference m_obj;
 		MethodPointer m_ptr;

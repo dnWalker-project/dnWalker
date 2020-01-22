@@ -22,7 +22,7 @@ namespace MMC {
     using dnlib.DotNet;
     using MMC.State;
 
-	interface IBreakPointHandler {
+	public interface IBreakPointHandler {
 
 		int BreakPointCount { get; }
 		bool SetBreakPoint();
@@ -31,7 +31,7 @@ namespace MMC {
 		bool IsBreakPoint();
 	}
 
-	class BreakPointHandler : IBreakPointHandler {
+	public class BreakPointHandler : IBreakPointHandler {
 
 		IList m_breakpoints;
 
@@ -40,13 +40,15 @@ namespace MMC {
 			get { return m_breakpoints.Count; }
 		}
 
-		BreakPoint MakeBreakPoint() {
+		BreakPoint MakeBreakPoint()
+        { 
+            var cur = ActiveState.cur;
 
-			BreakPoint bp = new BreakPoint();
-			bp.Thread = ActiveState.cur.ThreadPool.CurrentThreadId;
-			if (ActiveState.cur.CurrentMethod != null) {
-				bp.Offset = (int)ActiveState.cur.CurrentMethod.ProgramCounter.Offset;
-				bp.MethodDefinition = ActiveState.cur.CurrentMethod.Definition;
+            BreakPoint bp = new BreakPoint();
+			bp.Thread = cur.ThreadPool.CurrentThreadId;
+			if (cur.CurrentMethod != null) {
+				bp.Offset = (int)cur.CurrentMethod.ProgramCounter.Offset;
+				bp.MethodDefinition = cur.CurrentMethod.Definition;
 			} else {
 				bp.Offset = -1;
 				bp.MethodDefinition = null;

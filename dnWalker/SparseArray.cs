@@ -27,14 +27,14 @@ namespace MMC.Util {
 	using System.Runtime.InteropServices;
 	using MMC.Collections;
 
-	interface ISparseElement {
+    public interface ISparseElement {
 		int Index { get; }
 		int DeltaVal { get; }
 		ISparseElement Next { get; }
 	}
 
 
-	struct SparseElement : ISparseElement {
+    public struct SparseElement : ISparseElement {
 
 		public SparseElement(int i, int v, ISparseElement next) {
 			m_index = i;

@@ -27,10 +27,9 @@ namespace MMC.State
     using MMC.Data;
     using MMC.Util;
 
-    delegate void MethodStateCallback(MethodState me);
+    public delegate void MethodStateCallback(MethodState me);
 
-
-    class MethodState : IMustDispose, IStorageVisitable, IComparable, ICleanable
+    public class MethodState : IMustDispose, IStorageVisitable, IComparable, ICleanable
     {
 
         MethodDef m_methodDefinition;

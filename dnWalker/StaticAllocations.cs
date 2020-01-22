@@ -26,9 +26,9 @@ namespace MMC.State {
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using FieldDefinition = dnlib.DotNet.FieldDef;
 
-    interface IInitData { } // "tag"
+    public interface IInitData { } // "tag"
 
-	class AllocatedClass : Allocation {
+    public class AllocatedClass : Allocation {
 
 		DataElementList m_fields;
 		int m_staticFieldCount;

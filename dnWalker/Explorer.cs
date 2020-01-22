@@ -35,17 +35,17 @@ namespace MMC {
     using dnlib.DotNet.Emit;
 
     /// Handler for events that indicate the exploration of a state.
-    delegate void StateEventHandler(CollapsedState collapsed, SchedulingData sd);
-	/// Handler for deadlock events.
-	delegate void DeadlockEventHandler(SchedulingData sd);
-	/// Handler for backtracking events.
-	delegate void BacktrackEventHandler(Stack<SchedulingData> stack, SchedulingData fromSD);
-	/// Handler for scheduling events, at the moment only a chosen thread.
-	delegate void PickThreadEventHandle(SchedulingData sd, int chosen);
-	/// Handler for the event that the exploration stops.
-	delegate void ExplorationHaltEventHandle(IIEReturnValue ier);
+    public delegate void StateEventHandler(CollapsedState collapsed, SchedulingData sd);
+    /// Handler for deadlock events.
+    public delegate void DeadlockEventHandler(SchedulingData sd);
+    /// Handler for backtracking events.
+    public delegate void BacktrackEventHandler(Stack<SchedulingData> stack, SchedulingData fromSD);
+    /// Handler for scheduling events, at the moment only a chosen thread.
+    public delegate void PickThreadEventHandle(SchedulingData sd, int chosen);
+    /// Handler for the event that the exploration stops.
+    public delegate void ExplorationHaltEventHandle(IIEReturnValue ier);
 
-	class Explorer {
+	public class Explorer {
 
 		public static bool DoSharingAnalysis = false;
 
@@ -84,8 +84,10 @@ namespace MMC {
 
         LinkedList<CollapsedState> m_atomicStates;
 
-		public Explorer(IConfig config, IInstructionExecProvider instructionExecProvider)
+		public Explorer(ExplicitActiveState cur, IConfig config, IInstructionExecProvider instructionExecProvider)
         {
+            this.cur = cur;
+
             _config = config;
             _instructionExecProvider = instructionExecProvider;
             // DFS stack
@@ -157,8 +159,8 @@ namespace MMC {
 			 * Mark & sweep are available. Reference counting is broken. */
 			m_gc = (config.MemoisedGC) ?
 								   IncrementalHeapVisitor.ihv as IGarbageCollector :
-								   MarkAndSweepGC.msgc as IGarbageCollector;
-		}
+								   MarkAndSweepGC.msgc as IGarbageCollector;            
+        }
 
         public IConfig Config => _config;
 
@@ -179,7 +181,8 @@ namespace MMC {
 			return this.m_dfs.Count;
 		}
 
-		public bool Run() {
+		public bool Run()
+        {
 			bool logAssert = false;
 			bool logDeadlock = false;
 			bool noErrors;
@@ -191,8 +194,8 @@ namespace MMC {
 
 			Logger.l.Notice("Exploration starts now");
 
-			do {
-                var cur = ActiveState.cur;
+			do
+            {
                 /*
 				 * Execute instructions. 
 				 */
@@ -226,8 +229,7 @@ namespace MMC {
 				/*
 				 * Run garbage collection
 				 */
-				m_gc.Run();
-
+				m_gc.Run(cur);
 
 				/*
 				 * Do a state matching, store if unmatched,
@@ -389,18 +391,16 @@ namespace MMC {
 		 * for execution */
         public bool ExecuteStep(int threadId, out bool threadTerm)
         {
-            ActiveState.cur.ThreadPool.CurrentThreadId = threadId;
+            cur.ThreadPool.CurrentThreadId = threadId;
 
-            MethodState currentMethod = ActiveState.cur.CurrentMethod;
-            InstructionExecBase currentInstrExec = _instructionExecProvider.GetExecFor(ActiveState.cur.CurrentMethod.ProgramCounter);
+            MethodState currentMethod = cur.CurrentMethod;
+            InstructionExecBase currentInstrExec = _instructionExecProvider.GetExecFor(cur.CurrentMethod.ProgramCounter);
             bool continueExploration;
             IIEReturnValue ier;
             bool canForward = false;
 
             do
             {
-                var cur = ActiveState.cur;
-
                 PrintTransition();
                 //Console.Out.WriteLine(currentInstrExec.ToString());
                 ier = currentInstrExec.Execute(cur);
@@ -439,9 +439,9 @@ namespace MMC {
                 }
             } while (canForward);
 
-            if (ActiveState.cur.CallStack.IsEmpty())
+            if (cur.CallStack.IsEmpty())
             {
-                ActiveState.cur.ThreadPool.TerminateThread(threadId);
+                cur.ThreadPool.TerminateThread(threadId);
                 threadTerm = true;
             }
             else
@@ -472,7 +472,7 @@ namespace MMC {
 		 * This method is not really pretty, but it works...
 		 */
 		public void PrintTransition(int tid) {
-			MethodState currentMethod = ActiveState.cur.ThreadPool.Threads[tid].CurrentMethod;
+			MethodState currentMethod = cur.ThreadPool.Threads[tid].CurrentMethod;
 			Instruction instr = currentMethod.ProgramCounter;
 			bool isRet = instr.OpCode.Code == Code.Ret;
 			string operandString = (instr.Operand == null ?
@@ -488,14 +488,14 @@ namespace MMC {
 							instr.OpCode.Name,
 							operandString,
 							currentMethod.EvalStack.ToString(),
-							ActiveState.cur.ThreadPool.RunnableThreadCount
+							cur.ThreadPool.RunnableThreadCount
 				);
 
 			System.Console.WriteLine(sb.ToString());
 		}
 
 		public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd) {
-			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && ActiveState.cur.ThreadPool.RunnableThreadCount == 1)
+			if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && cur.ThreadPool.RunnableThreadCount == 1)
 				m_atomicStates.AddLast(collapsedCurrent);
 		}
 
@@ -511,9 +511,9 @@ namespace MMC {
 		public bool CheckDeadlock() {
 
 			bool allStopped = true;
-			if (ActiveState.cur.ThreadPool.RunnableThreadCount == 0)
-				for (int i = 0; allStopped && i < ActiveState.cur.ThreadPool.Threads.Length; ++i)
-					allStopped = ActiveState.cur.ThreadPool.Threads[i].State == (int)System.Threading.ThreadState.Stopped;
+			if (cur.ThreadPool.RunnableThreadCount == 0)
+				for (int i = 0; allStopped && i < cur.ThreadPool.Threads.Length; ++i)
+					allStopped = cur.ThreadPool.Threads[i].State == (int)System.Threading.ThreadState.Stopped;
 
 			return !allStopped;
 		}
@@ -523,8 +523,8 @@ namespace MMC {
 			get {
 				String result = "";
 
-				for (int i = 0; i < ActiveState.cur.DynamicArea.Allocations.Length; i++) {
-					DynamicAllocation ida = ActiveState.cur.DynamicArea.Allocations[i];
+				for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++) {
+					DynamicAllocation ida = cur.DynamicArea.Allocations[i];
 
 					if (ida != null) {
 						result += String.Format("{0} FirstThread={1} ThreadShared={2}\n", i + 1, ida.HeapAttribute, ida.ThreadShared).ToString();
@@ -546,8 +546,10 @@ namespace MMC {
 			}
 		}
 
-		/// String of working sets on the DFS stack
-		public String DebugWorkingSets() {
+        public ExplicitActiveState cur { get; }
+
+        /// String of working sets on the DFS stack
+        public String DebugWorkingSets() {
 			String result = "";
 			foreach (SchedulingData sd in m_dfs) {
 				result += ListToString.Format(new ArrayList(sd.Enabled.ToArray())) + "\n";
