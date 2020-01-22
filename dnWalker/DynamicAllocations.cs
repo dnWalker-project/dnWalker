@@ -47,40 +47,53 @@ namespace MMC.State {
 		}
 
 		/// The offset of the value field for wrapped types.
-		public int ValueFieldOffset {
-			get {
-				bool found = false;
-				int i = 0;
+		public int ValueFieldOffset
+        {
+            get
+            {
+                bool found = false;
+                int i = 0;
 
-				var typeDef = DefinitionProvider.dp.GetTypeDefinition(Type);
+                var typeDef = DefinitionProvider.GetTypeDefinition(Type);
 
-				for (; !found && i < typeDef.Fields.Count; ++i)
-					found = typeDef.Fields[i].Name == VALUE_FIELD_NAME;
+                for (; !found && i < typeDef.Fields.Count; ++i)
+                    found = typeDef.Fields[i].Name == VALUE_FIELD_NAME;
 
-				if (!found)
-					throw new FieldNotFoundException(this, VALUE_FIELD_NAME);
+                if (!found)
+                    throw new FieldNotFoundException(this, VALUE_FIELD_NAME);
 
-				return i - 1;
-			}
-		}
+                return i - 1;
+            }
+        }
 
-		/// True iff the lock or the fields are dirty.
-		public override bool IsDirty() {
-			return m_fields.IsDirty() || Lock.IsDirty();
-		}
+        /// <summary>
+        /// True iff the lock or the fields are dirty.
+        /// </summary>
+        public override bool IsDirty()
+        {
+            return m_fields.IsDirty() || Lock.IsDirty();
+        }
 
-		/// Clean the fields and the lock.
-		public override void Clean() {
-			m_fields.Clean();
-			Lock.Clean();
-		}
+        /// <summary>
+        /// Clean the fields and the lock.
+        /// </summary>
+        public override void Clean()
+        {
+            m_fields.Clean();
+            Lock.Clean();
+        }
 
+		/// <summary>
 		/// Dispose of the fields.
-		public override void Dispose() {
+		/// </summary>
+		public override void Dispose()
+        {
 			m_fields.Dispose();
 		}
 
+        /// <summary>
         /// Initialize / null all (inherited) fields.
+        /// </summary>
         public virtual void ClearFields(ExplicitActiveState cur)
         {
             /* 
@@ -88,7 +101,7 @@ namespace MMC.State {
 			 */
             var fields = new List<FieldDef>();
 
-            foreach (var typeDefOrRef in DefinitionProvider.dp.InheritanceEnumerator(Type))
+            foreach (var typeDefOrRef in DefinitionProvider.InheritanceEnumerator(Type))
             {
                 if (typeDefOrRef is TypeDef typeDef)
                 {
@@ -112,17 +125,17 @@ namespace MMC.State {
 
             //int typeOffset = 0;
 
-            //foreach (var typeDef in DefinitionProvider.dp.InheritanceEnumerator(m_typeDef)) {
+            //foreach (var typeDef in cur.DefinitionProvider.InheritanceEnumerator(m_typeDef)) {
             for (int i = 0; i < fields.Count; i++)
             {
                 //int fieldsOffset = typeOffset + i;
-                var type = DefinitionProvider.dp.GetTypeDefinition(fields[i].FieldType);
+                var type = cur.DefinitionProvider.GetTypeDefinition(fields[i].FieldType);
                 if (type == null && !fields[i].FieldType.IsPrimitive)
                 {
                     m_fields[i] = ObjectReference.Null;
                     continue;
                 }
-                m_fields[i] = DefinitionProvider.dp.GetNullValue(type);
+                m_fields[i] = DefinitionProvider.GetNullValue(type);
             }
             //typeOffset += typeDef.Fields.Count; 			}
         }
@@ -142,7 +155,7 @@ namespace MMC.State {
             }
 
             int typeOffset = 0;
-            foreach (var t in DefinitionProvider.dp.InheritanceEnumerator(Type))
+            foreach (var t in DefinitionProvider.InheritanceEnumerator(Type))
             {
                 var typeDef = t.ResolveTypeDef();
                 sb.AppendFormat("{0}:{{", typeDef.Name);
@@ -177,7 +190,7 @@ namespace MMC.State {
 
         public override void ClearFields(ExplicitActiveState cur)
         {
-            IDataElement nullVal = DefinitionProvider.dp.GetNullValue(Type);
+            IDataElement nullVal = DefinitionProvider.GetNullValue(Type);
             for (int i = 0; i < Fields.Length; i++)
                 Fields[i] = nullVal;
         }
@@ -200,42 +213,40 @@ namespace MMC.State {
         }
 	}
 
+    /// <summary>
     /// VY thinks that delegates should not be first class citizens
     /// They should be just an object of a particular delegate type
-    public class AllocatedDelegate : DynamicAllocation {
+    /// </summary>
+    public class AllocatedDelegate : DynamicAllocation
+    {
+        bool m_isDirty;
 
-		ObjectReference m_obj;
-		MethodPointer m_ptr;
-		bool m_isDirty;
+        public static ITypeDefOrRef DelegateTypeDef { get; set; }//= new Lazy<TypeDef>(() => DefinitionProvider.GetTypeDefinition("System.Delegate"));
 
-        private static Lazy<TypeDef> _delegateTypeLazy = new Lazy<TypeDef>(() => DefinitionProvider.dp.GetTypeDefinition("System.Delegate"));
-
-		public override AllocationType AllocationType {
-
-			get { return AllocationType.Delegate; }
-		}
-
-		public override int InnerSize {
-			get {
-				return 0;
-			}
-		}
-
-		/// A reference to the object the method is to be invoked upon.
-		public ObjectReference Object {
-
-			get { return m_obj; }
-			set { m_obj = value; }
-		}
-
-		/// The method referenced by the delegate.
-		public MethodPointer Method
+		public override AllocationType AllocationType
         {
-			get { return m_ptr; }
-			set { m_ptr = value; }
-		}
+            get { return AllocationType.Delegate; }
+        }
 
-		public override void Dispose() {}
+		public override int InnerSize
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// A reference to the object the method is to be invoked upon.
+        /// </summary>
+        public ObjectReference Object { get; set; }
+
+        /// <summary>
+        /// The method referenced by the delegate.
+        /// </summary>
+        public MethodPointer Method { get; set; }
+
+        public override void Dispose() {}
 
 		public override bool IsDirty()
         {
@@ -255,13 +266,13 @@ namespace MMC.State {
 
 		public override string ToString()
         {
-			return "delegate:" + m_obj.ToString() + "." + m_ptr.Value.Name;
+			return "delegate:" + Object.ToString() + "." + Method.Value.Name;
 		}
 
-		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(_delegateTypeLazy.Value, config.UseRefCounting, config.MemoisedGC)
+		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(DelegateTypeDef, config.UseRefCounting, config.MemoisedGC)
         {
-			m_obj = obj;
-			m_ptr = ptr;
+			Object = obj;
+			Method = ptr;
 			m_isDirty = true;
 		}
 	}

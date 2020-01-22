@@ -401,7 +401,7 @@ namespace MMC.State
     {
         public ObjectReferenceBag[] parents;
 
-        public ParentWatcher(IConfig config)
+        public ParentWatcher(IConfig config, ExplicitActiveState cur)
         {
             parents = new ObjectReferenceBag[1024];
             for (int i = 0; i < parents.Length; i++)
@@ -410,7 +410,7 @@ namespace MMC.State
             }
 
             RootAllocatedObject = new AllocatedObject(
-                DefinitionProvider.dp.GetTypeDefinition("System.Object"),
+                cur.DefinitionProvider.GetTypeDefinition("System.Object"),
                 config)
                 {
                     Depth = 0
@@ -451,7 +451,7 @@ namespace MMC.State
         /// Fictive root
         /// </summary>
         public /*static*/ AllocatedObject RootAllocatedObject { get; }/*= new AllocatedObject(
-            DefinitionProvider.dp.GetTypeDefinition("System.Object"),
+            cur.DefinitionProvider.GetTypeDefinition("System.Object"),
             Config.Instance)
         {
             Depth = 0

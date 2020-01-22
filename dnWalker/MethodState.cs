@@ -98,7 +98,7 @@ namespace MMC.State
             foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
             {
                 if ((eh.HandlerType == ExceptionHandlerType.Filter ||
-                        (eh.HandlerType == ExceptionHandlerType.Catch && DefinitionProvider.dp.IsSubtype(exceptionType, eh.CatchType)))
+                        (eh.HandlerType == ExceptionHandlerType.Catch && cur.DefinitionProvider.IsSubtype(exceptionType, eh.CatchType)))
                             && eh.TryStart.Offset <= instr.Offset && instr.Offset < eh.TryEnd.Offset)
                 {
                     // First to encounter, or this EH has a smaller scope than
@@ -256,14 +256,17 @@ namespace MMC.State
         internal void InitStructures()
         {
             if (EvalStack == null)
+            {
                 EvalStack = cur.StorageFactory.CreateStack(Definition.Body.MaxStack);
+            }
 
             if (Locals == null)
             {
                 Locals = cur.StorageFactory.CreateList(Definition.Body.Variables.Count);
                 for (int i = 0; i < Locals.Length; ++i)
-                    Locals[i] = DefinitionProvider.dp.GetNullValue(
-                            Definition.Body.Variables[i].Type);
+                {
+                    Locals[i] = DefinitionProvider.GetNullValue(Definition.Body.Variables[i].Type);
+                }
             }
 
             if (Arguments == null)
@@ -271,7 +274,7 @@ namespace MMC.State
                 throw new NotImplementedException("XX");/*
                 m_inArguments = cur.StorageFactory.CreateList(m_methodDefinition.Par amDefs.Count);
                 for (int i = 0; i < m_inArguments.Length; ++i)
-                    m_inArguments[i] = DefinitionProvider.dp.GetParameterNullOrDefaultValue(m_methodDefinition.Parame ters[i].ParamDef);*/
+                    m_inArguments[i] = cur.DefinitionProvider.GetParameterNullOrDefaultValue(m_methodDefinition.Parame ters[i].ParamDef);*/
             }
         }
 

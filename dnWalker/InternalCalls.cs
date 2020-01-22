@@ -450,7 +450,7 @@ namespace MMC.ICall {
 			ObjectReference threadStartDelegateRef = (ObjectReference)args[1];
 			AllocatedObject threadObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[0]];
 
-			FieldDefinition fd = DefinitionProvider.dp.GetFieldDefinition("System.Threading.Thread", "m_Delegate");
+			FieldDefinition fd = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "m_Delegate");
 			threadObject.Fields[(int)fd.Offset] = threadStartDelegateRef;			
 		}*/
 	}

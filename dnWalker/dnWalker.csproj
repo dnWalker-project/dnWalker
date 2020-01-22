@@ -51,6 +51,7 @@
     <Compile Include="AllocationList.cs" />
     <Compile Include="AllocationSignature.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="AssemblyLoader.cs" />
     <Compile Include="BreakPointHandler.cs" />
     <Compile Include="CallStack.cs" />
     <Compile Include="ChangingIntVector.cs" />

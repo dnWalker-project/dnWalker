@@ -129,7 +129,6 @@ namespace MMC.InstructionExec
         ///
         public static InstructionExecBase CreateInstructionExec(Instruction instr)
         {
-
             string[] tokens = instr.OpCode.Name.Split(new char[] { '.' });
 
             // Before doing anything else, check if we have an implementing
@@ -174,23 +173,30 @@ namespace MMC.InstructionExec
             // the instruction, and let the instruction executor figure
             // out what to do with it.
             if (operand == null)
+            {
                 operand = instr.Operand;
+            }
+
             // Lookup definitions.
-            if (operand is IMethod)
-            {// && !(operand is MethodDefinition)) {
-                operand = DefinitionProvider.dp.GetMethodDefinition(operand as IMethod);
+            if (operand is IMethod method)
+            {
+                // && !(operand is MethodDefinition)) {
+                operand = method.ResolveMethodDef();// DefinitionProvider.GetMethodDefinition(operand as IMethod);
                 if (operand == null)
-                    Logger.l.Warning("failed to lookup method reference");
+                {
+                    throw new NotImplementedException();
+                }
+                //    Logger.l.Warning("failed to lookup method reference");
             }
             else if (operand is IField field)
             {//&& !(operand is FieldDefinition)) {
-                operand = DefinitionProvider.dp.GetFieldDefinition(field);// foperand as FieldReference);
+                operand = DefinitionProvider.GetFieldDefinition(field);// foperand as FieldReference);
                 if (operand == null)
                     Logger.l.Warning("failed to lookup field reference");
             }
             else if (operand is ITypeDefOrRef typeDefOrRef)
             {//&& !(operand is TypeDefinition)) {
-                operand = DefinitionProvider.dp.GetTypeDefinition(typeDefOrRef);// operand as TypeReference);
+                operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef);// operand as TypeReference);
                 if (operand == null)
                     Logger.l.Warning("failed to lookup type reference");
             }
@@ -199,8 +205,7 @@ namespace MMC.InstructionExec
             if (instr.OpCode.OperandType == OperandType.ShortInlineBrTarget ||
                     instr.OpCode.OperandType == OperandType.ShortInlineI ||
                     instr.OpCode.OperandType == OperandType.ShortInlineR ||
-                    instr.OpCode.OperandType == OperandType.ShortInlineVar //||
-                    //instr.OpCode.OperandType == OperandTypeShortInlineParam
+                    instr.OpCode.OperandType == OperandType.ShortInlineVar //||instr.OpCode.OperandType == OperandTypeShortInlineParam
                     )
             {
                 attr |= InstructionExecAttributes.ShortForm;
@@ -217,7 +222,7 @@ namespace MMC.InstructionExec
 
         public void RaiseException(string type, ExplicitActiveState cur)
         {
-            var exceptionType = DefinitionProvider.dp.GetTypeDefinition(type);
+            var exceptionType = cur.DefinitionProvider.GetTypeDefinition(type);
 
             ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(cur),

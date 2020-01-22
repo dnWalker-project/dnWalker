@@ -622,7 +622,7 @@ namespace MMC.InstructionExec
             ObjectReference or = (ObjectReference)cur.EvalStack.Pop();
             MethodDefinition method = Operand as MethodDefinition;
 
-            MethodDefinition toCall = DefinitionProvider.dp.SearchVirtualMethod(method, or, cur);
+            MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
             cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
@@ -843,7 +843,7 @@ namespace MMC.InstructionExec
             if (!cls.Initialized)
             {
                 Logger.l.Debug("thread {0} wants access to uninitialized class {1}", me, type.Name);
-                MethodDefinition cctorDef = DefinitionProvider.dp.SearchMethod(".cctor", type);
+                MethodDefinition cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
                 if (cctorDef == null)
                 {
                     // Trivial case, no initializtion needed.
@@ -927,14 +927,18 @@ namespace MMC.InstructionExec
             FieldDefinition fld = Operand as FieldDefinition;
             // Lookup layout information if it's not available.
             if (!fld.HasLayoutInfo)
-                fld = DefinitionProvider.dp.GetFieldDefinition(fld);
+            {
+                //fld = cur.DefinitionProvider.GetFieldDefinition(fld);
+                //throw new NotImplementedException("GetFieldDefinition");
+            }
+
             return fld;
         }
 
         public TypeDefinition GetTypeDefinition()
         {
-            return DefinitionProvider.dp.GetTypeDefinition(
-                    GetFieldDefinition().DeclaringType);
+            //return cur.DefinitionProvider.GetTypeDefinition(GetFieldDefinition().DeclaringType);
+            return GetFieldDefinition().DeclaringType;
         }
 
         /*
@@ -955,7 +959,7 @@ namespace MMC.InstructionExec
             bool matched = false;
             int retval = 0;
 
-            foreach (TypeDefinition typeDef in DefinitionProvider.dp.InheritanceEnumerator(superType))
+            foreach (TypeDefinition typeDef in DefinitionProvider.InheritanceEnumerator(superType))
             {
                 /*
 				 * We start searching for the right field from the declaringtype,
@@ -1049,7 +1053,7 @@ namespace MMC.InstructionExec
 			 */
             AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
 
-            if (DefinitionProvider.dp.IsSubtype(ao.Type, toCastToType))
+            if (cur.DefinitionProvider.IsSubtype(ao.Type, toCastToType))
                 cur.EvalStack.Push(objRef);
             else
             {
@@ -1286,7 +1290,7 @@ namespace MMC.InstructionExec
 
             var typeDef = Operand as ITypeDefOrRef;
 
-            if (DefinitionProvider.dp.IsSubtype(obj.Type, typeDef))
+            if (cur.DefinitionProvider.IsSubtype(obj.Type, typeDef))
                 cur.EvalStack.Push(reference);
             else
                 cur.EvalStack.Push(ObjectReference.Null);
@@ -2577,7 +2581,7 @@ namespace MMC.InstructionExec
 				if (args[0].WrapperName != "")
 					// Element is a value type which should be wrapped.
 					// TODO: Deal with instances of System.Array.
-					type = DefinitionProvider.dp.GetTypeDefinition(args[0].WrapperName);
+					type = cur.DefinitionProvider.GetTypeDefinition(args[0].WrapperName);
 				else {
 					// Else get type from dynamic area.
 					Debug.Assert(args[0] != null, "No object to call on. How can this be static?");
@@ -2591,7 +2595,7 @@ namespace MMC.InstructionExec
 				}*/
                 // Search inheritence tree for most derived implementation.
 
-                MethodDefinition toCall = DefinitionProvider.dp.SearchVirtualMethod(methDef, (ObjectReference)args[0], cur);
+                MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, (ObjectReference)args[0], cur);
 
                 MethodState called = new MethodState(toCall, args, cur);
                 this.CheckTailCall();
@@ -2644,7 +2648,7 @@ namespace MMC.InstructionExec
                 //MMC.ICall.IntCallManager.
                 /*ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(false),
-                    DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"));*/
+                    cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));*/
 
                 //cur.ThreadPool.NewThread(null, threadObjectRef);
                 //return threadObjectRef;

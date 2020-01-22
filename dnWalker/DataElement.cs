@@ -1351,9 +1351,9 @@ namespace MMC.Data {
 			return new Int4(m_index);
 		}
 
-		public IAddElement Add(INumericElement a, bool checkOverflow) {
+		public IAddElement Add(INumericElement a, bool checkOverflow)
+        {
 			AllocatedClass ac = cur.StaticArea.GetClass(m_type);
-
 			/*
 			 * Note: the offset added to this pointer is in the amount of bytes.
 			 * The offset is dependent on the size of the datatype of the fields.
@@ -1375,16 +1375,19 @@ namespace MMC.Data {
 			int i = 0;
 			int byteOffset = a.ToInt4(false).Value;
 
-			var typeDef = DefinitionProvider.dp.GetTypeDefinition(ac.Type);
-			foreach (var fld in typeDef.Fields) {
-				if (i >= fld.FieldOffset)
-					byteOffset -= DefinitionProvider.dp.SizeOf(fld.FieldType.FullName);
+			var typeDef = DefinitionProvider.GetTypeDefinition(ac.Type);
+            foreach (var fld in typeDef.Fields)
+            {
+                if (i >= fld.FieldOffset)
+                {
+                    byteOffset -= cur.DefinitionProvider.SizeOf(fld.FieldType.FullName);
+                }
 
-				i++;
+                i++;
 
-				if (byteOffset == 0)
-					break;
-			}
+                if (byteOffset == 0)
+                    break;
+            }
 
 			return new StaticFieldPointer(cur, m_type, i);
 		}

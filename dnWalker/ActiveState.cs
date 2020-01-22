@@ -107,6 +107,8 @@ namespace MMC.State
 
         internal ThreadObjectWatcher ThreadObjectWatcher { get; }
 
+        public DefinitionProvider DefinitionProvider { get; }
+
         /// <summary>
         /// Evaluation stack of top of callstack of currently running thread.
         /// </summary>
@@ -130,7 +132,7 @@ namespace MMC.State
         {
             return CurrentMethod != null &&
                 (CurrentMethod.Definition.DeclaringType.Module == //.Assembly ==
-                 DefinitionProvider.dp.AssemblyDefinition);
+                 CurrentMethod.Cur.DefinitionProvider.AssemblyDefinition);
         }
 
         public delegate void DoSharingAnalysisRequestHandle();
@@ -207,8 +209,10 @@ namespace MMC.State
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider)
+        public ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, DefinitionProvider definitionProvider)
         {
+            DefinitionProvider = definitionProvider;
+
             Configuration = config;
             InstructionExecProvider = instructionExecProvider;
             Reset();
@@ -221,7 +225,7 @@ namespace MMC.State
                 new MarkAndSweepGC() as IGarbageCollector;
 
             StorageFactory = new StorageFactory(this);
-            ParentWatcher = new ParentWatcher(config);
+            ParentWatcher = new ParentWatcher(config, this);
             ThreadObjectWatcher = new ThreadObjectWatcher();
         }
     }

@@ -401,9 +401,15 @@ Disabling/enabling features:
 
             var instructionExecProvider = InstructionExec.InstructionExecProvider.Get(config);
 
+            var assemblyLoader = new dnWalker.AssemblyLoader();
+            assemblyLoader.LoadAssembly(File.ReadAllBytes(config.AssemblyToCheckFileName));
+
+            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
+
+            AllocatedDelegate.DelegateTypeDef = definitionProvider.GetTypeDefinition("System.Delegate");
+
             var stateSpaceSetup = new StateSpaceSetup();
-            stateSpaceSetup.LoadAssemblies(config);
-            var cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
+            var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, definitionProvider, config, instructionExecProvider);
             var statistics = new SimpleStatistics();
 
             Explorer ex = new Explorer(
@@ -421,7 +427,7 @@ Disabling/enabling features:
                 if (!noErrors && config.StopOnError && config.TraceOnError)
                 {
                     cur.Reset();
-                    cur = stateSpaceSetup.CreateInitialState(config, instructionExecProvider);
+                    cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, definitionProvider, config, instructionExecProvider);
 
                     string traceFile = config.AssemblyToCheckFileName + ".trace";
                     File.Delete(traceFile);

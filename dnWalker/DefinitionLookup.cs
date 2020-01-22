@@ -31,6 +31,7 @@ namespace MMC
     using FieldDefinition = dnlib.DotNet.FieldDef;
     using dnlib.DotNet;
     using System.Linq;
+    using dnWalker;
 
     /// This definition is used for quick storage of methodreferences.
     /// 
@@ -74,9 +75,8 @@ namespace MMC
     ///
     /// The methods in this class use the Logger singleton to output warnings,
     /// and debug messages under priority Lookup.
-    class DefinitionProvider
+    public class DefinitionProvider
     {
-
         ModuleDef m_asmDef;
         ModuleDef[] m_referencedAssemblies;
 
@@ -87,34 +87,24 @@ namespace MMC
         IDictionary<string, FieldDefinition> m_fieldDefinitions;
         IDictionary m_typeSizes;
 
-        static DefinitionProvider instance;
-
-        /// Get the global definition provider.
-        public static DefinitionProvider dp
-        {
-
-            get { return instance; }
-        }
-
-        /// Load an assembly, and set up a definition provider for it.
+        /*// Load an assembly, and set up a definition provider for it.
         ///
         /// This is the place where the actual definition provider is created,
         /// so subtitute your own type here if needed.
         ///
         /// \param asmDef The assembly definition to use as the main assembly.
-        public static void LoadAssembly(string location)
+        *public void LoadAssembly(string location)
         {
-
-            if (instance != null)
+            *if (instance != null)
                 Logger.l.Warning("unloading already loaded assembly " +
                         instance.AssemblyDefinition.Name);
-            instance = Create(location);
-        }
+            instance = *
+            Create(location);
+        }*/
 
         /// \brief The main assembly we're working on (ro).
         public ModuleDef AssemblyDefinition
         {
-
             get
             {
                 return m_asmDef;
@@ -128,13 +118,15 @@ namespace MMC
             return (int)m_typeSizes[type];
         }
 
+        /// <summary>
         /// Returns the inheritance chain of a type
-        public IEnumerable<ITypeDefOrRef> InheritanceEnumerator(ITypeDefOrRef m_typeDef)
+        /// </summary>
+        public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(ITypeDefOrRef m_typeDef)
         {
             ITypeDefOrRef currentType = m_typeDef;
             do
             {
-                var currentTypeDef = DefinitionProvider.dp.GetTypeDefinition(currentType);
+                var currentTypeDef = GetTypeDefinition(currentType);
                 yield return currentTypeDef;
                 currentType = currentTypeDef.BaseType;
             } while (currentType != null);
@@ -237,7 +229,7 @@ namespace MMC
         }
 
         // TODO TypeDefFinder
-        public TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
+        public static TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
         {
             return typeRef.ResolveTypeDefThrow();
         }
@@ -441,7 +433,7 @@ namespace MMC
 			return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
 		}*/
 
-        public FieldDefinition GetFieldDefinition(IField fieldRef)
+        public static FieldDefinition GetFieldDefinition(IField fieldRef)
         {
             //if (m_fieldDefinitions.TryGetValue()
             //return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
@@ -509,7 +501,7 @@ namespace MMC
         }
 
         // ----------------------------------------------------------------------------------------------
-        public IDataElement GetNullValue(TypeSig typeSig)
+        public static IDataElement GetNullValue(TypeSig typeSig)
         {
             return GetNullValue(typeSig.ToTypeDefOrRef());
         }
@@ -528,7 +520,7 @@ namespace MMC
         /// \brief default(typeRef) of a type typeRef
         /// i.e., the default type for representation in the state of a given type
 
-        public IDataElement GetNullValue(ITypeDefOrRef typeRef)
+        public static IDataElement GetNullValue(ITypeDefOrRef typeRef)
         {
             var typeSig = typeRef.ToTypeSig();
             if (!typeSig.IsPrimitive)
@@ -606,9 +598,9 @@ namespace MMC
 				return ObjectReference.Null;*/
         }
 
-        public static DefinitionProvider Create(string assemblyLocation)
+        public static DefinitionProvider Create(AssemblyLoader assemblyLoader)
         {
-            return new DefinitionProvider(assemblyLocation);
+            return new DefinitionProvider(assemblyLoader);
         }
 
         // ----------------------------------------------------------------------------------------------
@@ -623,8 +615,7 @@ namespace MMC
         /// for a file name. This is the reason MMC starts so slowly.
         ///
         /// \param asmDef Main assembly definition.
-        private ModuleContext _moduleContext;
-        private DefinitionProvider(string assemblyLocation)
+        private DefinitionProvider(AssemblyLoader assemblyLoader)
         {
             m_typeDefinitions = new Dictionary<string, TypeDef>();
             m_methodDefinitionsByReference = new Hashtable();
@@ -652,30 +643,19 @@ namespace MMC
             m_typeSizes["System.Decimal"] = 16;
 
             Logger.l.Notice("loading referenced assemblies...");
-
-            _moduleContext = ModuleDef.CreateModuleContext();
-            AssemblyResolver asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
-            asmResolver.EnableTypeDefCache = true;
-
-            ModuleDefMD module = ModuleDefMD.Load(assemblyLocation, _moduleContext);
-            module.Context = _moduleContext;
-
-            ((AssemblyResolver)module.Context.AssemblyResolver).AddToCache(module);
-
-            AssemblyDef asm = module.Assembly;
-
-            m_asmDef = module;
+            
+            m_asmDef = assemblyLoader.GetModule();
             //Assembly mainAsm = AssemblyFactory.CreateReflectionAssembly((AssemblyDefinition)m_asmDef); // run-time type is AD
             //AssemblyName[] refAsms = asmDef.re.GetReferencedAssemblies();
-            
+
             //m_referencedAssemblies = (from item in module.GetModuleRefs() select item.).ToArray();
-            
+
             //System.Console.Out.WriteLine(string.Join("; ", assembly.GetAssemblyRefs().Select(ar => ar.FullName)));
 
-            m_referencedAssemblies =  module.GetAssemblyRefs()
+            m_referencedAssemblies = assemblyLoader.GetReferencedAssemblies(m_asmDef); /*module.GetAssemblyRefs()
                 .Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module))
                 .SelectMany(a => a.Modules)
-                .ToArray();
+                .ToArray();*/
             //_moduleContext.AssemblyResolver.Resolve("mscorlib", module)
               //              asmDef.GetAssemblyRefs().Select(ar => ar.mod)))
             //m_referencedAssemblies = new ModuleDef[] { };

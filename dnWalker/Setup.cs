@@ -49,27 +49,15 @@ namespace MMC
         //
         // Nice.
 
-        public ModuleDef LoadAssemblies(IConfig config)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="instructionExecProvider"></param>
+        /// <returns></returns>
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, DefinitionProvider definitionProvider, IConfig config, IInstructionExecProvider instructionExecProvider)
         {
-            // Load assembly, and initialize the definition lookup and active state.
-            try
-            {
-                Logger.l.Notice("loading main assembly...");
-                DefinitionProvider.LoadAssembly(config.AssemblyToCheckFileName);
-                Logger.l.Notice("loaded {0}", config.AssemblyToCheckFileName);
-            }
-            catch (System.Exception e)
-            {
-                MonoModelChecker.Fatal("error loading assembly: " + config.AssemblyToCheckFileName + System.Environment.NewLine + e);
-            }
-
-            return DefinitionProvider.dp.AssemblyDefinition;
-        }
-
-        public ExplicitActiveState CreateInitialState(IConfig config, IInstructionExecProvider instructionExecProvider)
-        {
-            var asmDef = LoadAssemblies(config);
-            var cur = new ExplicitActiveState(config, instructionExecProvider);
+            var cur = new ExplicitActiveState(config, instructionExecProvider, definitionProvider);
 
             //StorageFactory.UseRefCounting(_config.UseRefCounting);
             if (config.UseRefCounting)
@@ -80,7 +68,7 @@ namespace MMC
             // Wrap run arguments in ConstantString objects, and create the method state for Main().
             ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
                 cur.DynamicArea.DeterminePlacement(false, cur),
-                DefinitionProvider.dp.GetTypeDefinition("System.String"),
+                cur.DefinitionProvider.GetTypeDefinition("System.String"),
                 cur.Configuration.RunTimeParameters.Length);
 
             if (config.RunTimeParameters.Length > 0)
@@ -92,12 +80,12 @@ namespace MMC
                 }
             }
             MethodState mainState = new MethodState(
-                asmDef.EntryPoint,
+                entryPoint,
                 cur.StorageFactory.CreateSingleton(runArgsRef),
                 cur);
 
             // Initialize main thread.
-            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, CreateMainThreadObject(cur, asmDef.EntryPoint));
+            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, CreateMainThreadObject(cur, entryPoint));
 
             cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
 
@@ -134,7 +122,7 @@ namespace MMC
             // 2
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false, cur),
-                DefinitionProvider.dp.GetTypeDefinition("System.Threading.Thread"));
+                cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));
 
             AllocatedObject threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
@@ -143,14 +131,14 @@ namespace MMC
             // Note from corlib Thread.cs sources:
             // /* Don't lock on synch_lock in managed code, since it can result in deadlocks */
             // What? Oh well, we'll just do what Mono does.
-            var synch_lockField = DefinitionProvider.dp.GetFieldDefinition("System.Threading.Thread", "synch_lock");
+            var synch_lockField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "synch_lock");
 
             if (synch_lockField != null)
             {
                 // Simply skip if not found.
                 ObjectReference newObjectRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(false, cur),
-                    DefinitionProvider.dp.GetTypeDefinition("System.Object"));
+                    cur.DefinitionProvider.GetTypeDefinition("System.Object"));
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
                 // TODO: HV for maintaining the parents references in the incremental heap visitor
                 //cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
@@ -163,7 +151,7 @@ namespace MMC
 
             // 2c
             // In Microsoft's .NET, the delegate is stored in m_Delegate
-            var threadstartField = DefinitionProvider.dp.GetFieldDefinition("System.Threading.Thread", "threadstart");
+            var threadstartField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "threadstart");
             if (threadstartField != null)
             {
                 threadObject.Fields[(int)threadstartField.FieldOffset] = mainMethodDelegate;
@@ -175,7 +163,7 @@ namespace MMC
                 Logger.l.Warning("No thread field found for storing Main delegate!");
 
             // 3
-            var stateField = DefinitionProvider.dp.GetFieldDefinition("System.Threading.Thread", "state");
+            var stateField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "state");
 
             if (stateField == null)
             {

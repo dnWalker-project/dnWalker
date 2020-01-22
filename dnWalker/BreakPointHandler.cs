@@ -57,26 +57,34 @@ namespace MMC {
 			return bp;*/
 		}
 
-		BreakPoint MakeBreakPoint(string threadId, string methodFullName, string offset) {
-
-			BreakPoint bp = new BreakPoint();
-			bp.MethodDefinition = null;
-			try {
-				bp.Thread = Int32.Parse(threadId);
-				bp.Offset = Int32.Parse(offset);
-				// Generate class and method names.
-				int breakAt = methodFullName.LastIndexOf('.');
-				string typeName = methodFullName.Substring(0, breakAt);
-				string methodName = methodFullName.Substring(breakAt + 1);
-				var declType = DefinitionProvider.dp.GetTypeDefinition(typeName);
-				if (declType != null)
-					bp.MethodDefinition = DefinitionProvider.dp.SearchMethod(
-						   methodName, declType);
-				else
-					Logger.l.Warning("type definition not found for {0}", typeName);
-			} catch (FormatException) { } catch (OverflowException) { } catch (ArgumentOutOfRangeException) { } // illegal format for methodname.
-			return bp;
-		}
+        BreakPoint MakeBreakPoint(string threadId, string methodFullName, string offset)
+        {
+            BreakPoint bp = new BreakPoint();            
+            bp.MethodDefinition = null;
+            try
+            {
+                ExplicitActiveState cur = null;
+                bp.Thread = Int32.Parse(threadId);
+                bp.Offset = Int32.Parse(offset);
+                // Generate class and method names.
+                int breakAt = methodFullName.LastIndexOf('.');
+                string typeName = methodFullName.Substring(0, breakAt);
+                string methodName = methodFullName.Substring(breakAt + 1);
+                var declType = cur.DefinitionProvider.GetTypeDefinition(typeName);
+                if (declType != null)
+                {
+                    bp.MethodDefinition = cur.DefinitionProvider.SearchMethod(methodName, declType);
+                }
+                else
+                {
+                    Logger.l.Warning("type definition not found for {0}", typeName);
+                }
+            }
+            catch (FormatException) { }
+            catch (OverflowException) { }
+            catch (ArgumentOutOfRangeException) { } // illegal format for methodname.
+            return bp;
+        }
 
 		internal bool SetBreakPoint(string threadId, string methodFullName, string offset) {
 
