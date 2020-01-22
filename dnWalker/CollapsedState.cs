@@ -54,38 +54,31 @@ namespace MMC.State {
 		}
 	}
 
-	class CollapsedState {
-
+	internal class CollapsedState
+    {
 		ChangingIntVector m_alloc;
 		ChangingIntVector m_class;
 		ChangingIntVector m_trds;
-		ISII m_sii;
-		SchedulingData m_sd;
 
-		public bool OnStack {
-			get { return m_sd != null; }
+        public bool OnStack
+        {
+			get { return SchedulingData != null; }
 		}
 
-		public SchedulingData SchedulingData {
-			get { return m_sd; }
-			set { m_sd = value; }
-		}
+        public SchedulingData SchedulingData { get; set; }
 
-		public ChangingIntVector Allocations { get { return m_alloc; } }
+        public ChangingIntVector Allocations { get { return m_alloc; } }
 		public ChangingIntVector Classes { get { return m_class; } }
 		public ChangingIntVector Threads { get { return m_trds; } }
 
-		public ISII SII {
-			get { return m_sii; }
-			set { m_sii = value; }
-		}
+        public ISII SII { get; set; }
 
-		public CollapsedState Clone() {
-
+        public CollapsedState Clone()
+        {
 			return new CollapsedState(
-					m_alloc.WriteBack(),
-					m_class.WriteBack(),
-					m_trds.WriteBack());
+				m_alloc.WriteBack(),
+				m_class.WriteBack(),
+				m_trds.WriteBack());
 		}
 
 		public void ClearDelta() {
@@ -94,50 +87,49 @@ namespace MMC.State {
 			m_trds.ClearDelta();
 		}
 
-		public CollapsedStateDelta GetDelta() {
-
+		public CollapsedStateDelta GetDelta()
+        {
 			return new CollapsedStateDelta(
-					m_alloc.GetReverseDelta(),
-					m_class.GetReverseDelta(),
-					m_trds.GetReverseDelta(), m_trds.Length);
-
+				m_alloc.GetReverseDelta(),
+				m_class.GetReverseDelta(),
+				m_trds.GetReverseDelta(), m_trds.Length);
 		}
 
-		public override string ToString() {
-
+		public override string ToString()
+        {
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.AppendFormat("allocations   : {0}\nclasses       : {1}\nthreads       : {2}\n",
-					m_alloc.ToString(), m_class.ToString(), m_trds.ToString());
+				m_alloc.ToString(), m_class.ToString(), m_trds.ToString());
 			return sb.ToString();
 		}
 
-		public override bool Equals(object other) {
-
+		public override bool Equals(object other)
+        {
 			CollapsedState o = other as CollapsedState;
 			return m_trds.Equals(o.Threads) &&
 				m_alloc.Equals(o.Allocations) &&
 				m_class.Equals(o.Classes);
 		}
 
-
-		public override int GetHashCode() {
-			return MMC.Collections.SingleIntHasher.Hash(m_alloc.GetHashCode() ^ m_class.GetHashCode() ^ m_trds.GetHashCode());
+		public override int GetHashCode()
+        {
+			return Collections.SingleIntHasher.Hash(m_alloc.GetHashCode() ^ m_class.GetHashCode() ^ m_trds.GetHashCode());
 		}
 
-		protected CollapsedState(ChangingIntVector alloc,
-				ChangingIntVector cls,
-				ChangingIntVector trds) {
+        protected CollapsedState(ChangingIntVector alloc,
+            ChangingIntVector cls,
+            ChangingIntVector trds)
+        {
+            m_alloc = alloc;
+            m_class = cls;
+            m_trds = trds;
+        }
 
-			m_alloc = alloc;
-			m_class = cls;
-			m_trds = trds;
-		}
-
-		public CollapsedState() {
-
-			m_alloc = new ChangingIntVector(ActiveState.cur.DynamicArea.Allocations.Length);
-			m_class = new ChangingIntVector(ActiveState.cur.StaticArea.Classes.Length);
-			m_trds = new ChangingIntVector(ActiveState.cur.ThreadPool.Threads.Length);
-		}
+        public CollapsedState(ExplicitActiveState cur)
+        {
+            m_alloc = new ChangingIntVector(cur.DynamicArea.Allocations.Length);
+            m_class = new ChangingIntVector(cur.StaticArea.Classes.Length);
+            m_trds = new ChangingIntVector(cur.ThreadPool.Threads.Length);
+        }
 	}
 }

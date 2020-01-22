@@ -192,10 +192,11 @@ namespace MMC {
 			Logger.l.Notice("Exploration starts now");
 
 			do {
-				/*
+                var cur = ActiveState.cur;
+                /*
 				 * Execute instructions. 
 				 */
-				if (_config.UseObjectEscapePOR)
+                if (_config.UseObjectEscapePOR)
 					noErrors = ExecutePorStep(threadId);
 				else
 					noErrors = ExecuteStep(threadId, out dummyBool);
@@ -233,7 +234,7 @@ namespace MMC {
 				 * if matched, a backtracking is initiated by
 				 * returning an empty working queue 
 				 */
-				SchedulingData sd = UpdateHashtable();
+				SchedulingData sd = UpdateHashtable(cur);
 
 				BacktrackStart(m_dfs, sd);
 				while (sd.Working.Count == 0 && m_dfs.Count > 0) {
@@ -245,7 +246,7 @@ namespace MMC {
 				BacktrackStop(m_dfs, sd);
 
 				m_stateConvertor.Reset(sd.State);
-				ActiveState.cur.Clean();
+				cur.Clean();
 
 				/*
 				 * either the recently explored sd can be pushed on the stack, 
@@ -256,7 +257,7 @@ namespace MMC {
 
 					// update last access information 
 					// (used by dynamic POR + tracing explorer) 
-					MemoryLocation ml = ActiveState.cur.NextAccess(threadId);
+					MemoryLocation ml = cur.NextAccess(threadId);
 					sd.LastAccess = new MemoryAccess(ml, threadId);
 
 					ThreadPicked(sd, threadId);
@@ -265,7 +266,7 @@ namespace MMC {
 				}
 
 				Statistics.s.MaxHashtableSize(m_stateStorage.Count);
-				Statistics.s.MaxHeapArray(ActiveState.cur.DynamicArea.Allocations.Length);
+				Statistics.s.MaxHeapArray(cur.DynamicArea.Allocations.Length);
 
 				MemoryLimiting();
 
@@ -329,49 +330,56 @@ namespace MMC {
 			return false;
 		}
 
-		public SchedulingData UpdateHashtable() {
+        public SchedulingData UpdateHashtable(ExplicitActiveState cur)
+        {
+            var collapsedCurrent = m_stateConvertor.CollapseCurrentState(cur);
 
-			CollapsedState collapsedCurrent = m_stateConvertor.CollapseCurrentState();
+            var sd = new SchedulingData
+            {
+                Delta = collapsedCurrent.GetDelta()
+            };
 
-			SchedulingData sd = new SchedulingData();
-			sd.Delta = collapsedCurrent.GetDelta();
+            int id = m_stateStorage.Count + 1;
+            bool seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
 
-			int id = m_stateStorage.Count + 1;
-			bool seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
-
-			/*
+            /*
 			 * Note: the collapsedCurrent stored in the hashtable can be
 			 * different from the current collapsedCurrent, although they
 			 * represent the same collapsedState. This is due to the 
 			 * changingintvector, which also contains information about
 			 * the reversed delta, which may be different for two 
 			 * representative collapsed states */
-			sd.ID = id;
-			sd.State = collapsedCurrent;
+            sd.ID = id;
+            sd.State = collapsedCurrent;
 
-			if (seenState) {
-				// state is not new
-				sd.Working = m_emptyQueue;
-				StateRevisited(collapsedCurrent, sd);
+            if (seenState)
+            {
+                // state is not new
+                sd.Working = m_emptyQueue;
+                StateRevisited(collapsedCurrent, sd);
+            }
+            else
+            {
+                // state is new
+                collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
+                sd.Enabled = cur.ThreadPool.RunnableThreads;
 
-			} else {
-				// state is new
-				collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
-				sd.Enabled = ActiveState.cur.ThreadPool.RunnableThreads;
+                if (sd.Enabled.Count > 0)
+                {
+                    sd.Working = sd.Enabled;
+                    sd.Done = new Queue<int>();
+                }
+                else
+                {
+                    sd.Working = m_emptyQueue;
+                    sd.Done = m_emptyQueue;
+                }
 
-				if (sd.Enabled.Count > 0) {
-					sd.Working = sd.Enabled;
-					sd.Done = new Queue<int>();
-				} else {
-					sd.Working = m_emptyQueue;
-					sd.Done = m_emptyQueue;
-				}
+                StateConstructed(collapsedCurrent, sd);
+            }
 
-				StateConstructed(collapsedCurrent, sd);
-			}
-
-			return sd;
-		}
+            return sd;
+        }
 
 		public virtual void PrintTransition() {}
 

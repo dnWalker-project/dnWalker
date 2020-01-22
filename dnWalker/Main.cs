@@ -23,8 +23,7 @@ namespace MMC
     using System.Reflection;
     using MMC.State;
     using System;
-    using MMC.InstructionExec;
-
+    
     public interface IConfig
     {
         string[] RunTimeParameters { get; set; }
@@ -405,7 +404,7 @@ Disabling/enabling features:
             StateSpaceSetup.LoadAssemblies(config);
             StateSpaceSetup.CreateInitialState(config);
 
-            var instructionExecProvider = InstructionExecProvider.Get(config);
+            var instructionExecProvider = InstructionExec.InstructionExecProvider.Get(config);
             Explorer ex = new Explorer(config, instructionExecProvider);
             TextWriter tw = null;
 

@@ -69,40 +69,49 @@ namespace MMC.State {
 				throw new System.ArgumentException("s");*/
 		}
 
-		public CollapsedState GetStorableState() {
+        public CollapsedState GetStorableState(ExplicitActiveState cur)
+        {
+            m_curstate = m_curstate == null ? new CollapsedState(cur) : m_curstate.Clone();
 
-			m_curstate = (m_curstate == null ? new CollapsedState() : m_curstate.Clone());
+            CollapseThreads(cur);
 
-			CollapseThreads();
-			if (ActiveState.cur.DynamicArea.IsDirty())
-				CollapseDynamicArea();
-			if (ActiveState.cur.StaticArea.IsDirty())
-				CollapseStaticArea();
+            if (cur.DynamicArea.IsDirty())
+            {
+                CollapseDynamicArea(cur);
+            }
+            if (cur.StaticArea.IsDirty())
+            {
+                CollapseStaticArea(cur);
+            }
 
-			//			MonoModelChecker.Message(m_pool.ToString());
+            // MonoModelChecker.Message(m_pool.ToString());
+            // ActiveState.cur.Clean();
+            return m_curstate;
+        }
 
-			//ActiveState.cur.Clean();
-			return m_curstate;
-		}
+        /////////////////////////////////////////////////////////////////////
+        // Heap
+        /////////////////////////////////////////////////////////////////////
 
-		/////////////////////////////////////////////////////////////////////
-		// Heap
-		/////////////////////////////////////////////////////////////////////
-
-		void CollapseDynamicArea() {
-
-			foreach (int da in ActiveState.cur.DynamicArea.DirtyAllocations) {
-				DynamicAllocation alloc = ActiveState.cur.DynamicArea.Allocations[da];
-				if (alloc != null)
-					m_curstate.Allocations[da] = CollapseAllocation(da);
-				else if (da < m_curstate.Allocations.Length && m_curstate.Allocations[da] != not_set)
-					/*
+        void CollapseDynamicArea(ExplicitActiveState cur)
+        {
+            foreach (int da in cur.DynamicArea.DirtyAllocations)
+            {
+                DynamicAllocation alloc = cur.DynamicArea.Allocations[da];
+                if (alloc != null)
+                {
+                    m_curstate.Allocations[da] = CollapseAllocation(da);
+                }
+                else if (da < m_curstate.Allocations.Length && m_curstate.Allocations[da] != not_set)
+                {
+                    /*
 					 * In rare cases, the length of the state vector is smaller than the index of da,
 					 * happens when the state space consists of only one state
 					 */
-					m_curstate.Allocations[da] = not_set;
-			}
-		}
+                    m_curstate.Allocations[da] = not_set;
+                }
+            }
+        }
 
 		int CollapseAllocation(int loc) {
 
@@ -151,12 +160,13 @@ namespace MMC.State {
 		// Classes
 		/////////////////////////////////////////////////////////////////////
 
-		void CollapseStaticArea() {
-
-			foreach (int dirty_class in ActiveState.cur.StaticArea.DirtyClasses) {
-				AllocatedClass ac = ActiveState.cur.StaticArea.Classes[dirty_class];
-				m_curstate.Classes[dirty_class] = CollapseClass(ac);
-			}
+		private void CollapseStaticArea(ExplicitActiveState cur)
+        {
+            foreach (int dirty_class in cur.StaticArea.DirtyClasses)
+            {
+                AllocatedClass ac = cur.StaticArea.Classes[dirty_class];
+                m_curstate.Classes[dirty_class] = CollapseClass(ac);
+            }
 		}
 
 		int CollapseClass(AllocatedClass ac) {
@@ -173,39 +183,43 @@ namespace MMC.State {
 			return m_pool.GetInt(row);
 		}
 
-		/////////////////////////////////////////////////////////////////////
-		// Threads
-		/////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        // Threads
+        /////////////////////////////////////////////////////////////////////
 
-		void CollapseThreads() {
+        void CollapseThreads(ExplicitActiveState cur)
+        {
+            foreach (int thread_id in cur.ThreadPool.DirtyThreads)
+            {
+                // MonoModelChecker.Message("thread {0} is dirty.", thread_id);
+                ThreadState trd = cur.ThreadPool.Threads[thread_id];
+                if (trd != null)
+                {
+                    WrappedIntArray collapsed_trd = (thread_id < m_curstate.Threads.Length ?
+                            m_pool.GetList(m_curstate.Threads[thread_id]) : null);
 
-			foreach (int thread_id in ActiveState.cur.ThreadPool.DirtyThreads) {
-				//				MonoModelChecker.Message("thread {0} is dirty.", thread_id);
-				ThreadState trd = ActiveState.cur.ThreadPool.Threads[thread_id];
-				if (trd != null) {
+                    collapsed_trd = (collapsed_trd == null) ?
+                            new WrappedIntArray(ThreadPartOffsets.Count) : collapsed_trd.Clone();
 
-					WrappedIntArray collapsed_trd = (thread_id < m_curstate.Threads.Length ?
-							m_pool.GetList(m_curstate.Threads[thread_id]) : null);
+                    collapsed_trd[ThreadPartOffsets.State] = trd.State;
+                    collapsed_trd[ThreadPartOffsets.WaitingFor] = trd.WaitingFor;
+                    collapsed_trd[ThreadPartOffsets.ExceptionReference] = (int)trd.ExceptionReference.Location;
 
-					collapsed_trd = (collapsed_trd == null) ?
-							new WrappedIntArray(ThreadPartOffsets.Count) : collapsed_trd.Clone();
+                    if (trd.CallStack.IsDirty())
+                    {
+                        collapsed_trd[ThreadPartOffsets.CallStack] =
+                            CollapseCallStack(trd.CallStack,
+                                    collapsed_trd[ThreadPartOffsets.CallStack]);
+                    }
 
-					collapsed_trd[ThreadPartOffsets.State] = trd.State;
-					collapsed_trd[ThreadPartOffsets.WaitingFor] = trd.WaitingFor;
-					collapsed_trd[ThreadPartOffsets.ExceptionReference] = (int)trd.ExceptionReference.Location;
-
-					if (trd.CallStack.IsDirty()) {
-						collapsed_trd[ThreadPartOffsets.CallStack] =
-							CollapseCallStack(trd.CallStack,
-									collapsed_trd[ThreadPartOffsets.CallStack]);
-					}
-
-					m_curstate.Threads[thread_id] = m_pool.GetInt(collapsed_trd);
-				} else {
-					m_curstate.Threads[thread_id] = not_set;
-				}
-			}
-		}
+                    m_curstate.Threads[thread_id] = m_pool.GetInt(collapsed_trd);
+                }
+                else
+                {
+                    m_curstate.Threads[thread_id] = not_set;
+                }
+            }
+        }
 
 		int CollapseCallStack(CallStack stack, int pool_index) {
 
@@ -270,14 +284,18 @@ namespace MMC.State {
 		// Utility
 		/////////////////////////////////////////////////////////////////////
 
-		WrappedIntArray GetOldList(int pool_index, int intended_length) {
-
+		WrappedIntArray GetOldList(int pool_index, int intended_length)
+        {
 			WrappedIntArray retval = m_pool.GetList(pool_index);
 
-			if (retval != null) {
-				retval = new WrappedIntArray(retval, intended_length);
-			} else
-				retval = new WrappedIntArray(intended_length);
+            if (retval != null)
+            {
+                retval = new WrappedIntArray(retval, intended_length);
+            }
+            else
+            {
+                retval = new WrappedIntArray(intended_length);
+            }
 
 			return retval;
 		}
