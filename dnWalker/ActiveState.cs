@@ -97,7 +97,7 @@ namespace MMC.State
 
         public IConfig Configuration { get; }
 
-        public IInstructionExecProvider InstructionExecProvider { get; }
+        internal IInstructionExecProvider InstructionExecProvider { get; }
 
         public IGarbageCollector GarbageCollector => m_gc;
 
@@ -209,7 +209,7 @@ namespace MMC.State
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, DefinitionProvider definitionProvider)
+        internal ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, DefinitionProvider definitionProvider)
         {
             DefinitionProvider = definitionProvider;
 

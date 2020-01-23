@@ -21,9 +21,13 @@ namespace MMC
     using MMC.State;
     using dnlib.DotNet;
     using MMC.InstructionExec;
+    using System;
 
     public class StateSpaceSetup
     {
+        private readonly DefinitionProvider _definitionProvider;
+        private readonly IConfig _config;
+
         // Okay, this is just great. These are the fields of a Thread
         // allocation when running Mono with the --debug flag:
         //
@@ -49,15 +53,25 @@ namespace MMC
         //
         // Nice.
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="instructionExecProvider"></param>
-        /// <returns></returns>
-        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, DefinitionProvider definitionProvider, IConfig config, IInstructionExecProvider instructionExecProvider)
+        public StateSpaceSetup(DefinitionProvider definitionProvider, IConfig config)
         {
-            var cur = new ExplicitActiveState(config, instructionExecProvider, definitionProvider);
+            _definitionProvider = definitionProvider;
+            _config = config;
+        }
+
+        /// <summary>
+        /// Creates initial state for exploration.
+        /// </summary>
+        /// <returns></returns>
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IDataElement[] args = null)
+        {
+            var config = _config;
+
+            args = args ?? new IDataElement[] { };
+
+            IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(config);
+
+            var cur = new ExplicitActiveState(config, instructionExecProvider, _definitionProvider);
 
             //StorageFactory.UseRefCounting(_config.UseRefCounting);
             if (config.UseRefCounting)
@@ -65,23 +79,38 @@ namespace MMC
                 Logger.l.Notice("using reference counting");
             }
 
-            // Wrap run arguments in ConstantString objects, and create the method state for Main().
-            ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
-                cur.DynamicArea.DeterminePlacement(false, cur),
-                cur.DefinitionProvider.GetTypeDefinition("System.String"),
-                cur.Configuration.RunTimeParameters.Length);
-
-            if (config.RunTimeParameters.Length > 0)
+            DataElementList dataElementList = null;
+            if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
             {
-                AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
-                for (int i = 0; i < config.RunTimeParameters.Length; ++i)
+                // Wrap run arguments in ConstantString objects, and create the method state for Main().
+                ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
+                    cur.DynamicArea.DeterminePlacement(false, cur),
+                    cur.DefinitionProvider.GetTypeDefinition("System.String"),
+                    args.Length);
+
+                if (config.RunTimeParameters.Length > 0)
                 {
-                    runArgs.Fields[i] = new ConstantString(config.RunTimeParameters[i]);
+                    AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
+                    for (int i = 0; i < config.RunTimeParameters.Length; ++i)
+                    {
+                        runArgs.Fields[i] = args[i];// new ConstantString(config.RunTimeParameters[i]);
+                    }
+                }
+
+                dataElementList = cur.StorageFactory.CreateSingleton(runArgsRef);
+            }
+            else
+            {
+                dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
+                if (args.Length != entryPoint.Parameters.Count)
+                {
+                    throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);
                 }
             }
+
             MethodState mainState = new MethodState(
                 entryPoint,
-                cur.StorageFactory.CreateSingleton(runArgsRef),
+                dataElementList,
                 cur);
 
             // Initialize main thread.

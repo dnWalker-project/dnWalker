@@ -56,12 +56,12 @@ namespace MMC.Data {
 			return new DataElementList(size);
 		}
 
-		public DataElementList CreateSingleton(IDataElement elem) {
-
-			DataElementList retval = CreateList(1);
-			retval[0] = elem;
-			return retval;
-		}
+        public DataElementList CreateSingleton(IDataElement elem)
+        {
+            DataElementList retval = CreateList(1);
+            retval[0] = elem;
+            return retval;
+        }
 
 		public virtual DataElementStack CreateStack(int size)
         {

@@ -16,17 +16,12 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using MMC.Data;
 
-
-namespace MMC {
-
+namespace MMC
+{
 	using System.Text;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Diagnostics;
 	using System.Timers;
 	using MMC.State;
 	using MMC.Util;
@@ -59,52 +54,72 @@ namespace MMC {
     /// </summary>
     public delegate void ExplorationHaltEventHandle(IIEReturnValue ier);
 
-	public class Explorer {
-
+	public class Explorer
+    {
 		public bool DoSharingAnalysis { get; set; }
 
 		public bool m_continue = false;
 		public bool m_measureMemory = true;
 
+		/// <summary>
 		/// A new state was found (or constructed) while exploring.
+		/// </summary>
 		protected event StateEventHandler StateConstructed;
+
+		/// <summary>
 		/// A state has been re-visited.
+		/// </summary>
 		protected event StateEventHandler StateRevisited;
+
+		/// <summary>
 		/// Exploration backtracked.
+		/// </summary>
 		protected event BacktrackEventHandler Backtracked;
+
+		/// <summary>
 		/// Exploration backtracked start
+		/// </summary>
 		protected event BacktrackEventHandler BacktrackStart;
+
+		/// <summary>
 		/// Exploration backtracked stop
+		/// </summary>
 		protected event BacktrackEventHandler BacktrackStop;
+
+		/// <summary>
 		/// A deadlock occured.
+		/// </summary>
 		protected event DeadlockEventHandler Deadlocked;
+
+		/// <summary>
 		/// A thread was scheduled.
+		/// </summary>
 		protected event PickThreadEventHandle ThreadPicked;
+
+		/// <summary>
 		/// Exploration was halted (e.g. because of an unhandled exception).
+		/// </summary>
 		protected event ExplorationHaltEventHandle ExplorationHalted;
 
-		Stack<SchedulingData> m_dfs;
-		Collapser m_stateConvertor;
-		FastHashtable<CollapsedState, int> m_stateStorage;
-		readonly Queue<int> m_emptyQueue = new Queue<int>(0);
-		StatefulDynamicPOR m_dpor;
-		ObjectEscapePOR m_spor;		
-		Timer m_explorationTimer;
-		Timer m_memoryTimer;
-        
-        private readonly IConfig _config;
+        private readonly Stack<SchedulingData> m_dfs;
+        private readonly Collapser m_stateConvertor;
+        private readonly FastHashtable<CollapsedState, int> m_stateStorage;
+        private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
+        private readonly StatefulDynamicPOR m_dpor;
+		private readonly ObjectEscapePOR m_spor;
+        private readonly Timer m_explorationTimer;
+        private readonly Timer m_memoryTimer;
         private readonly IInstructionExecProvider _instructionExecProvider;
+        private readonly LinkedList<CollapsedState> m_atomicStates;
 
-        LinkedList<CollapsedState> m_atomicStates;
-
-        public Explorer(ExplicitActiveState cur, IStatistics statistics, IConfig config, IInstructionExecProvider instructionExecProvider)
+        public Explorer(ExplicitActiveState cur, IStatistics statistics, IConfig config)
         {
             Statistics = statistics;
 
             this.cur = cur;
 
-            _config = config;
-            _instructionExecProvider = instructionExecProvider;
+            Config = config;
+            _instructionExecProvider = cur.InstructionExecProvider;
             // DFS stack
             m_dfs = new Stack<SchedulingData>();
             m_stateConvertor = new Collapser(cur);
@@ -156,7 +171,7 @@ namespace MMC {
             if (!double.IsInfinity(config.MaxExploreInMinutes))
             {
                 m_explorationTimer = new Timer();
-                m_explorationTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+                m_explorationTimer.Elapsed += OnTimedEvent;
                 m_explorationTimer.Interval = config.MaxExploreInMinutes * 60 * 1000;
                 m_explorationTimer.Enabled = true;
             }
@@ -164,29 +179,33 @@ namespace MMC {
             if (!double.IsInfinity(config.OptimizeStorageAtMegabyte))
             {
                 m_atomicStates = new LinkedList<CollapsedState>();
-                StateConstructed += new StateEventHandler(this.CheckAtomicOnNewState);
-                Backtracked += new BacktrackEventHandler(this.CheckAtomicOnBacktrack);
+                StateConstructed += new StateEventHandler(CheckAtomicOnNewState);
+                Backtracked += new BacktrackEventHandler(CheckAtomicOnBacktrack);
             }
 
             if (config.OneTraceAndStop)
-                Backtracked += new BacktrackEventHandler(this.OnBacktrackAndStop);
+            {
+                Backtracked += new BacktrackEventHandler(OnBacktrackAndStop);
+            }
 
             m_memoryTimer = new Timer();
-            m_memoryTimer.Elapsed += new ElapsedEventHandler(OnTimedMemoryEvent);
+            m_memoryTimer.Elapsed += OnTimedMemoryEvent;
             m_memoryTimer.Interval = 5 * 1000;
-            m_memoryTimer.Enabled = true;            
+            m_memoryTimer.Enabled = true;
         }
 
-        public IConfig Config => _config;
+        public IConfig Config { get; }
 
-        IStatistics Statistics { get; }
+        private IStatistics Statistics { get; }
 
-        private void OnTimedEvent(object source, ElapsedEventArgs e) {
-			Logger.l.Notice("Ran out of time");
-			m_continue = false;
-		}
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            Logger.l.Notice("Ran out of time");
+            m_continue = false;
+        }
 
-		private void OnTimedMemoryEvent(object source, ElapsedEventArgs e) {
+		private void OnTimedMemoryEvent(object source, ElapsedEventArgs e)
+        {
 			m_measureMemory = true;
 		}
 
@@ -195,73 +214,83 @@ namespace MMC {
             m_continue = false;
         }
 
-		public int GetDFSStackSize() {
-			return this.m_dfs.Count;
+		public int GetDFSStackSize()
+        {
+			return m_dfs.Count;
 		}
 
-		public bool Run()
+        public bool Run()
         {
-			bool logAssert = false;
-			bool logDeadlock = false;
-			bool noErrors;
-			bool dummyBool;
-			int threadId = 0;
+            bool logAssert = false;
+            bool logDeadlock = false;
+            bool noErrors;
+            int threadId = 0;
 
-			//Statistics.Start();
-			m_continue = true;
+            //Statistics.Start();
+            m_continue = true;
 
-			Logger.l.Notice("Exploration starts now");
+            Logger.l.Notice("Exploration starts now");
 
-			do
+            do
             {
                 /*
 				 * Execute instructions. 
 				 */
-                if (_config.UseObjectEscapePOR)
-					noErrors = ExecutePorStep(threadId);
-				else
-					noErrors = ExecuteStep(threadId, out dummyBool);
+                if (Config.UseObjectEscapePOR)
+                {
+                    noErrors = ExecutePorStep(threadId);
+                }
+                else
+                {
+                    noErrors = ExecuteStep(threadId, out bool dummyBool);
+                }
 
                 /*
 				 * Check for specification dissatifaction
 				 */
                 if (!noErrors)
-                { 
+                {
                     // assertion violations?
                     Statistics.AssertionViolation();
                     if (!logAssert)
                         Logger.l.Message("Assertion violation detected");
                     logAssert = true;
 
-                    if (_config.StopOnError)
+                    if (Config.StopOnError)
+                    {
                         break;
+                    }
                 }
                 else if (CheckDeadlock())
-                { 
+                {
                     // deadlock found?
                     Statistics.Deadlock();
                     if (!logDeadlock)
+                    {
                         Logger.l.Message("Deadlock detected");
+                    }
                     logDeadlock = true;
                     noErrors = false;
 
-                    if (_config.StopOnError)
+                    if (Config.StopOnError)
+                    {
                         break;
+                    }
                 }
 
-				/*
+                /*
 				 * Run garbage collection
 				 */
-				cur.GarbageCollector.Run(cur);
+                cur.GarbageCollector.Run(cur);
 
-				/*
+                /*
 				 * Do a state matching, store if unmatched,
 				 * if matched, a backtracking is initiated by
 				 * returning an empty working queue 
 				 */
-				SchedulingData sd = UpdateHashtable(cur);
+                SchedulingData sd = UpdateHashtable(cur);
 
-				BacktrackStart(m_dfs, sd, cur);
+                BacktrackStart(m_dfs, sd, cur);
                 while (sd.Working.Count == 0 && m_dfs.Count > 0)
                 {
                     // apply the reverse delta
@@ -269,41 +298,46 @@ namespace MMC {
                     Backtracked(m_dfs, sd, cur);
                     sd = m_dfs.Pop();
                 }
-				BacktrackStop(m_dfs, sd, cur);
+                BacktrackStop(m_dfs, sd, cur);
 
-				m_stateConvertor.Reset(sd.State);
-				cur.Clean();
+                m_stateConvertor.Reset(sd.State);
+                cur.Clean();
 
-				/*
+                /*
 				 * either the recently explored sd can be pushed on the stack, 
 				 * or the last popped sd from the stack is not fully explored */
-				if (sd.Working.Count > 0) {
-					m_dfs.Push(sd);
-					threadId = SelectRunnableThread(sd); // for the next round		
+                if (sd.Working.Count > 0)
+                {
+                    m_dfs.Push(sd);
+                    threadId = SelectRunnableThread(sd); // for the next round		
 
-					// update last access information 
-					// (used by dynamic POR + tracing explorer) 
-					MemoryLocation ml = cur.NextAccess(threadId);
-					sd.LastAccess = new MemoryAccess(ml, threadId);
+                    // update last access information 
+                    // (used by dynamic POR + tracing explorer) 
+                    MemoryLocation ml = cur.NextAccess(threadId);
+                    sd.LastAccess = new MemoryAccess(ml, threadId);
 
-					ThreadPicked(sd, threadId);
-				} else {
-					Logger.l.Message("End of story: explored the whole state space");
-				}
+                    ThreadPicked(sd, threadId);
+                }
+                else
+                {
+                    Logger.l.Message("End of story: explored the whole state space");
+                }
 
-				Statistics.MaxHashtableSize(m_stateStorage.Count);
-				Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
+                Statistics.MaxHashtableSize(m_stateStorage.Count);
+                Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
 
-				MemoryLimiting();
+                MemoryLimiting();
 
-				Statistics.BacktrackStackDepth(m_dfs.Count);
+                Statistics.BacktrackStackDepth(m_dfs.Count);
 
-			} while (m_dfs.Count > 0 && m_continue == true);
+            } while (m_dfs.Count > 0 && m_continue == true);
 
-			return noErrors;
-		}
+            return noErrors;
+        }
 
-        /// Measures memory and performs actions on it 
+        /// <summary>
+        /// Measures memory and performs actions on it
+        /// </summary>
         private void MemoryLimiting()
         {
             if (m_measureMemory)
@@ -312,7 +346,7 @@ namespace MMC {
                 Statistics.MeasureMemory(memUsed);
 
                 /// If ex post facto transition merging is enabled...
-                if (!Double.IsInfinity(_config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > _config.OptimizeStorageAtMegabyte)
+                if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > Config.OptimizeStorageAtMegabyte)
                 {
                     int count = m_atomicStates.Count;
 
@@ -327,7 +361,7 @@ namespace MMC {
                 }
 
                 /// If memory limiting is enabled...
-                if (!Double.IsInfinity(_config.MemoryLimit) && (memUsed / 1024 / 1024) > _config.MemoryLimit)
+                if (!double.IsInfinity(Config.MemoryLimit) && (memUsed / 1024 / 1024) > Config.MemoryLimit)
                 {
                     Logger.l.Notice("Ran out of memory");
                     this.m_continue = false;
@@ -343,14 +377,16 @@ namespace MMC {
         {
             Stack<int> retval = new Stack<int>();
             foreach (SchedulingData sd in m_dfs)
+            {
                 retval.Push(sd.LastAccess.ThreadId);
+            }
 
             return retval;
         }
 
-		protected virtual int SelectRunnableThread(SchedulingData sd) {
-			int retval = sd.Dequeue();
-			return retval;
+		protected virtual int SelectRunnableThread(SchedulingData sd)
+        {
+			return sd.Dequeue();
 		}
 
 		public bool OnStack(CollapsedState s) {
@@ -460,7 +496,7 @@ namespace MMC {
 				 * need to ensure stateful DPOR correctness
 				 */
                 if (canForward
-                        && _config.UseStatefulDynamicPOR
+                        && Config.UseStatefulDynamicPOR
                         && !currentInstrExec.IsMultiThreadSafe(cur)
                         && cur.ThreadPool.RunnableThreadCount == 1)
                 {
@@ -487,7 +523,7 @@ namespace MMC {
             bool noErrors;
             bool threadTerm;
 
-            if (_config.OneTraceAndStop)
+            if (Config.OneTraceAndStop)
             {
                 PrintTransition(threadId);
             }
@@ -529,7 +565,7 @@ namespace MMC {
 
         public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd, ExplicitActiveState state)
         {
-            if (!double.IsInfinity(_config.OptimizeStorageAtMegabyte) && state.ThreadPool.RunnableThreadCount == 1)
+            if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte) && state.ThreadPool.RunnableThreadCount == 1)
             {
                 m_atomicStates.AddLast(collapsedCurrent);
             }
@@ -537,7 +573,7 @@ namespace MMC {
 
         public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent, ExplicitActiveState cur)
         {
-            if (!double.IsInfinity(_config.OptimizeStorageAtMegabyte))
+            if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte))
             {
                 // check if singleton transition
                 if (parent.Working.Count == 0 && parent.Done.Count == 1)

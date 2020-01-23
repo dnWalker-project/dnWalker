@@ -22,7 +22,6 @@ namespace MMC
     using System.IO;
     using MMC.State;
     using MMC.Util;
-    using MMC.InstructionExec;
     using dnlib.DotNet.Emit;
 
     /// <summary>
@@ -34,8 +33,8 @@ namespace MMC
         string prevMethod = "";
         private readonly TextWriter tw;
 
-        public TracingExplorer(ExplicitActiveState cur, IStatistics statistics, Stack<int> tracingQueue, TextWriter tw, IConfig config, IInstructionExecProvider instructionExecProvider)
-            : base(cur, statistics, config, instructionExecProvider)
+        public TracingExplorer(ExplicitActiveState cur, IStatistics statistics, Stack<int> tracingQueue, TextWriter tw, IConfig config)
+            : base(cur, statistics, config)
         {
             m_tracingQueue = tracingQueue;
             // disable stats

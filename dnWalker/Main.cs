@@ -23,7 +23,9 @@ namespace MMC
     using System.Reflection;
     using MMC.State;
     using System;
-    
+    using System.Linq;
+    using MMC.Data;
+
     public interface IConfig
     {
         string[] RunTimeParameters { get; set; }
@@ -60,7 +62,7 @@ namespace MMC
     public class Config : IConfig
     {
         public string AssemblyToCheckFileName { get; set; }
-        public string[] RunTimeParameters { get; set; }
+        public string[] RunTimeParameters { get; set; } = new string[] { };
         public bool ShowStatistics { get; set; }
         public bool Quiet { get; set; }
         public bool Interactive { get; set; }
@@ -399,24 +401,22 @@ Disabling/enabling features:
             var config = GetConfigFromCommandLine(args);
             PrintConfig(config);
 
-            var instructionExecProvider = InstructionExec.InstructionExecProvider.Get(config);
-
             var assemblyLoader = new dnWalker.AssemblyLoader();
-            assemblyLoader.LoadAssembly(File.ReadAllBytes(config.AssemblyToCheckFileName));
+            assemblyLoader.GetModuleDef(File.ReadAllBytes(config.AssemblyToCheckFileName));
 
             var definitionProvider = DefinitionProvider.Create(assemblyLoader);
 
-            AllocatedDelegate.DelegateTypeDef = definitionProvider.GetTypeDefinition("System.Delegate");
+            var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config);
 
-            var stateSpaceSetup = new StateSpaceSetup();
-            var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, definitionProvider, config, instructionExecProvider);
+            var methodArgs = config.RunTimeParameters.Select(a => new ConstantString(a)).Cast<IDataElement>().ToArray();
+
+            var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
             var statistics = new SimpleStatistics();
 
             Explorer ex = new Explorer(
                 cur,
                 statistics,
-                config,
-                instructionExecProvider);
+                config);
 
             TextWriter tw = null;
             try
@@ -427,13 +427,13 @@ Disabling/enabling features:
                 if (!noErrors && config.StopOnError && config.TraceOnError)
                 {
                     cur.Reset();
-                    cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, definitionProvider, config, instructionExecProvider);
+                    cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
 
                     string traceFile = config.AssemblyToCheckFileName + ".trace";
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
-                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, config, instructionExecProvider);
+                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, config);
                     ex.Run();
                     tw.WriteLine(cur.ToString());
                 }

@@ -272,7 +272,9 @@ namespace MMC.Data {
 
 			m_value = val;
 		}
-	}
+
+        public static explicit operator Int4(int b) => new Int4(b);
+    }
 
     public struct UnsignedInt4 : IIntegerElement {
 		public static UnsignedInt4 Zero = new UnsignedInt4(0);

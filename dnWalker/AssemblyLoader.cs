@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace dnWalker
 {
@@ -14,7 +15,7 @@ namespace dnWalker
             _moduleContext = ModuleDef.CreateModuleContext();
         }
 
-        public ModuleDef LoadAssembly(byte[] data)
+        public ModuleDef GetModuleDef(byte[] data)
         {
             AssemblyResolver asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
             asmResolver.EnableTypeDefCache = true;
@@ -48,12 +49,22 @@ namespace dnWalker
 
         public ModuleDef GetModule() => _module ?? throw new Exception("Module was not loaded");
 
-        public ModuleDef[] GetReferencedAssemblies(ModuleDef module)
+        public ModuleDef[] GetReferencedModules(ModuleDef module)
         {
             return module.GetAssemblyRefs()
                 .Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module))
                 .SelectMany(a => a.Modules)
                 .ToArray();
         }
+
+        /*public AppDomain CreateAppDomain(ModuleDef module, string path)
+        {
+            AppDomain domain = AppDomain.CreateDomain(module.FullName);
+            domain.dir
+            domain.ass
+            var assembly = Assembly.LoadFile(path);
+
+            return domain;
+        }*/
     }
 }

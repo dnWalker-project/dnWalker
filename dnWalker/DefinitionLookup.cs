@@ -82,7 +82,7 @@ namespace MMC
 
         IDictionary<string, TypeDef> m_typeDefinitions;
         IDictionary m_virtualMethodDefinitions;
-        IDictionary m_methodDefinitionsByReference;
+        IDictionary<string, MethodDef> m_methodDefinitionsByReference;
         IDictionary m_methodDefinitionsByString;
         IDictionary<string, FieldDefinition> m_fieldDefinitions;
         IDictionary m_typeSizes;
@@ -151,7 +151,7 @@ namespace MMC
         /// \param name The full name of the type to look up.
         /// \param asm The assembly to look in (all modules are searched).
         /// \return A definition of the found type, or null is nothing was found.
-        public TypeDef SearchType(string name, ModuleDef asm)
+        internal TypeDef SearchType(string name, ModuleDef asm)
         {
             TypeDef retval = null;
 
@@ -165,7 +165,7 @@ namespace MMC
                 //return null;
             }
 
-            
+
             retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
 
             /*IEnumerator types = asm.Types.GetEnumerator();
@@ -196,18 +196,18 @@ namespace MMC
         /// \param Type reference to find the definition of.
         /// \return The definition, or null if none was found.
         /// \sa GetTypeDefinition(string)
-        public TypeDef GetTypeDefinition(TypeRef typeRef)
+        internal TypeDef GetTypeDefinition(TypeRef typeRef)
         {
             //return GetTypeDefinition(typeRef.FullName);
             return typeRef.ResolveTypeDef();
         }
 
-        public TypeDef GetTypeDefinition(TypeSig typeSig)
+        internal TypeDef GetTypeDefinition(TypeSig typeSig)
         {
             var typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
             if (typeDef.HasGenericParameters)
             {
-            //    return typeDef;
+                //    return typeDef;
             }
 
             //Logger.l.Lookup("looking up definition for type {0} => {1}", typeSig.FullName, typeDef);
@@ -229,12 +229,12 @@ namespace MMC
         }
 
         // TODO TypeDefFinder
-        public static TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
+        internal static TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
         {
             return typeRef.ResolveTypeDefThrow();
         }
 
-        public TypeDef GetTypeDefinition(TypeDef typeDef)
+        internal TypeDef GetTypeDefinition(TypeDef typeDef)
         {
             return typeDef;
         }
@@ -276,28 +276,44 @@ namespace MMC
 
         // ----------------------------------------------------------------------------------------------
 
-        public MethodDefinition GetMethodDefinition(IMethod methodRef)
+        internal MethodDefinition GetMethodDefinition(IMethod methodRef)
         {
-            //throw new NotSupportedException("GetMethodDefinition " + methodRef.FullName + " " + methodRef.GetType().FullName);
             return GetMethodDefinition(methodRef.ResolveMethodDef());
         }
 
-        /// \brief Look up a method definition by reference, in its defining
-        /// type.
-        ///
-        /// This simply calls GetMethodDefinition with its defining type, once
-        /// it has been looked up.
-        ///
-        /// \param methRef Reference to the method to look up.
-        /// \return A definition for the method to look for, or null if none
-        /// was found.
-        public MethodDefinition GetMethodDefinition(MethodReference methRef)
+        public MethodDefinition GetMethodDefinition(string methodName)
         {
+            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
+            {
+                return retval;
+            }
 
+            var lastDot = methodName.LastIndexOf(".");
+            var methodTypeName = methodName.Substring(0, lastDot);
+
+            TypeDef typeDef = GetTypeDefinition(methodTypeName);
+            retval = typeDef.FindMethod(new UTF8String(methodName.Substring(lastDot + 1)));
+
+            return retval;
+        }
+
+        /// <summary>
+        /// Look up a method definition by reference, in its defining type.
+        /// </summary>
+        /// <remarks>This simply calls GetMethodDefinition with its defining type, once it has been looked up.</remarks>
+        /// <param name="methRef">Reference to the method to look up.</param>
+        /// <returns>A definition for the method to look for, or null if none was found.</returns>
+        internal MethodDefinition GetMethodDefinition(MethodReference methRef)
+        {
             if (methRef is MethodDefinition)
-                return methRef as MethodDefinition;
+            {
+                return methRef;
+            }
 
-            MethodDefinition retval = m_methodDefinitionsByReference[methRef.ToString()] as MethodDefinition;
+            if (m_methodDefinitionsByReference.TryGetValue(methRef.ToString(), out var retval))
+            {
+                return retval;
+            }
 
             if (retval == null)
             {
@@ -618,7 +634,7 @@ namespace MMC
         private DefinitionProvider(AssemblyLoader assemblyLoader)
         {
             m_typeDefinitions = new Dictionary<string, TypeDef>();
-            m_methodDefinitionsByReference = new Hashtable();
+            m_methodDefinitionsByReference = new Dictionary<string, MethodDef>();
             m_methodDefinitionsByString = new Hashtable();
             m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
             m_virtualMethodDefinitions = new Hashtable();
@@ -643,7 +659,7 @@ namespace MMC
             m_typeSizes["System.Decimal"] = 16;
 
             Logger.l.Notice("loading referenced assemblies...");
-            
+
             m_asmDef = assemblyLoader.GetModule();
             //Assembly mainAsm = AssemblyFactory.CreateReflectionAssembly((AssemblyDefinition)m_asmDef); // run-time type is AD
             //AssemblyName[] refAsms = asmDef.re.GetReferencedAssemblies();
@@ -652,12 +668,15 @@ namespace MMC
 
             //System.Console.Out.WriteLine(string.Join("; ", assembly.GetAssemblyRefs().Select(ar => ar.FullName)));
 
-            m_referencedAssemblies = assemblyLoader.GetReferencedAssemblies(m_asmDef); /*module.GetAssemblyRefs()
+            m_referencedAssemblies = assemblyLoader.GetReferencedModules(m_asmDef);
+
+            AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
+            /*module.GetAssemblyRefs()
                 .Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module))
                 .SelectMany(a => a.Modules)
                 .ToArray();*/
             //_moduleContext.AssemblyResolver.Resolve("mscorlib", module)
-              //              asmDef.GetAssemblyRefs().Select(ar => ar.mod)))
+            //              asmDef.GetAssemblyRefs().Select(ar => ar.mod)))
             //m_referencedAssemblies = new ModuleDef[] { };
 
 
@@ -707,6 +726,39 @@ namespace MMC
                     MonoModelChecker.Fatal("error loading referenced assembly " + fileName + System.Environment.NewLine + e);
                 }
             }*/
+        }
+
+        public IDataElement CreateDataElement(object value)
+        {
+            if (value is null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            switch (Type.GetTypeCode(value.GetType()))
+            {
+                case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
+                //case TypeCode.Char: return new SymbolicInt32ILValue(_appDomain, (char)value);
+                //case TypeCode.SByte: return new SymbolicInt32ILValue(_appDomain, (sbyte)value);
+                //case TypeCode.Byte: return new SymbolicInt32ILValue(_appDomain, (byte)value);
+                //case TypeCode.Int16: return new SymbolicInt32ILValue(_appDomain, (short)value);
+                //case TypeCode.UInt16: return new SymbolicInt32ILValue(_appDomain, (ushort)value);
+                case TypeCode.Int32: return new Int8((int)value);
+                //case TypeCode.UInt32: return new SymbolicInt32ILValue(_appDomain, (int)(uint)value);
+                //case TypeCode.Int64: return new SymbolicInt64ILValue(_appDomain, (long)value);
+                //case TypeCode.UInt64: return new SymbolicInt64ILValue(_appDomain, (long)(ulong)value);
+                //case TypeCode.Single: return new ConstantFloatILValue(_appDomain, (float)value);
+                //case TypeCode.Double: return new ConstantFloatILValue(_appDomain, (double)value);
+                //case TypeCode.String:
+                //    throw new NotImplementedException("string");
+                ////return new Tests.Fake.ConstantStringILValue(_appDomain.System_String, (string)value);
+                default:
+                //    if (value is IntPtr ip)
+                //        return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(_appDomain, ip.ToInt32()) : ConstantNativeIntILValue.Create64(_appDomain, ip.ToInt64());
+                //    if (value is UIntPtr up)
+                //        return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(_appDomain, (int)up.ToUInt32()) : ConstantNativeIntILValue.Create64(_appDomain, (long)up.ToUInt64());
+                    throw new InvalidOperationException();
+            }
         }
     }
 }

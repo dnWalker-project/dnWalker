@@ -424,7 +424,7 @@ namespace MMC.ICall {
 			return ao.ThreadShared;
 		}
 
-		/*
+        /*
 		/// ICH for System.Threading.Thread::StartupSetApartmentStateInternal()
 		/// (From Microsoft's Thread class)
 		/// 
@@ -450,12 +450,12 @@ namespace MMC.ICall {
 			ObjectReference threadStartDelegateRef = (ObjectReference)args[1];
 			AllocatedObject threadObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[0]];
 
-			FieldDefinition fd = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "m_Delegate");
+			FieldDefinition fd = DefinitionProvider.dp.GetFieldDefinition("System.Threading.Thread", "m_Delegate");
 			threadObject.Fields[(int)fd.Offset] = threadStartDelegateRef;			
 		}*/
-	}
+    }
 
-	class MonitorHandlers {
+    class MonitorHandlers {
 
         // private extern static void Monitor_exit(object obj)
         public static void Monitor_exit(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
