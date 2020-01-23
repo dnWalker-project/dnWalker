@@ -103,7 +103,17 @@ namespace MMC.Data {
             return m_elements[m_stackptr - 1];
         }
 
-		public override string ToString() {
+        internal IDataElement Top()
+        {
+            if (m_stackptr < 1)
+            {
+                return null;
+            }
+
+            return m_elements[m_stackptr - 1];
+        }
+
+        public override string ToString() {
 
 //			return string.Format("{0} ({1}, c:{2})",
 //					ListToString.Format(m_elements, 0, m_stackptr),

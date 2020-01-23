@@ -133,6 +133,7 @@ namespace MMC.State {
         }
 
         public int WaitingFor { get; set; }
+        public IDataElement RetValue { get; internal set; }
 
         // ---------------- Cleanup and Cleanliness -------------- 
 

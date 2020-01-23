@@ -174,7 +174,6 @@ namespace MMC.State
 
         public void Dispose()
         {
-
             EvalStack.Dispose();
             Arguments.Dispose();
             Locals.Dispose();

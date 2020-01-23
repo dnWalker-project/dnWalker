@@ -1847,7 +1847,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             INumericElement b = (INumericElement)cur.EvalStack.Pop();
             INumericElement a = (INumericElement)cur.EvalStack.Pop();
 
@@ -2712,18 +2711,26 @@ namespace MMC.InstructionExec
         /// Execute the RET instruction.
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // If there's something on the evaluation stack of the callee, we
             // need to push this on the eval stack of the caller. This is how
             // return values are passed. The program counter should be set to
             // the previous method, just after the last (call) instruction
             // executed. Note the Main method is also terminated with a 'ret'.
             // NOTE: Popping has a side-effect! If reference counting is enabled,
-            // it calls the Dispose() method on the methodstate, which, in turn,
+            // it calls the Dispose() method on the method state, which, in turn,
             // calls Dispose() on all members (like locals and argument lists).
-            MethodState callee = cur.CallStack.Pop() as MethodState;
+            MethodState callee = cur.CallStack.Pop();            
             if (cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
+            {
                 cur.EvalStack.Push(callee.EvalStack.Pop());
+            }
+            else
+            {
+                if (callee.Definition.ReturnType.IsValueType)
+                {
+                    cur.CurrentThread.RetValue = callee.EvalStack.Top(); // TODO a little bit hacky
+                }
+            }
 
             ThreadObjectWatcher.DecrementAll(callee.Arguments, cur);
             ThreadObjectWatcher.DecrementAll(callee.Locals, cur);
