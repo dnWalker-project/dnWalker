@@ -1030,12 +1030,15 @@ namespace MMC.Data {
 		public string Value { get { return m_value; } }
 
 		// Should never be called.
-		public uint Location {
-			get {
-				Logger.l.Warning("query for location of constant string");
-				return 0;
-			}
-		}
+		public uint Location
+        {
+            get
+            {
+                throw new Exception("query for location of constant string");
+                //Logger.l.Warning("query for location of constant string");
+                return 0;
+            }
+        }
 
 		public bool ToBool() { return m_value != string.Empty; }
 

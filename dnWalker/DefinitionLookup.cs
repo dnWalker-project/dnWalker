@@ -79,7 +79,7 @@ namespace MMC
     {
         ModuleDef m_asmDef;
         ModuleDef[] m_referencedAssemblies;
-
+        private readonly Logger _logger;
         IDictionary<string, TypeDef> m_typeDefinitions;
         IDictionary m_virtualMethodDefinitions;
         IDictionary<string, MethodDef> m_methodDefinitionsByReference;
@@ -96,7 +96,7 @@ namespace MMC
         *public void LoadAssembly(string location)
         {
             *if (instance != null)
-                Logger.l.Warning("unloading already loaded assembly " +
+                _logger.Warning("unloading already loaded assembly " +
                         instance.AssemblyDefinition.Name);
             instance = *
             Create(location);
@@ -182,7 +182,7 @@ namespace MMC
                 m_typeDefinitions.Add(name, retval);
             }
 
-            Logger.l.Lookup("SearchType: type {0} {1}found in assembly {2}", name, retval == null ? "not " : "", asm.Name.String);
+            _logger.Lookup("SearchType: type {0} {1}found in assembly {2}", name, retval == null ? "not " : "", asm.Name.String);
 
             return retval;
         }
@@ -210,7 +210,7 @@ namespace MMC
                 //    return typeDef;
             }
 
-            //Logger.l.Lookup("looking up definition for type {0} => {1}", typeSig.FullName, typeDef);
+            //_logger.Lookup("looking up definition for type {0} => {1}", typeSig.FullName, typeDef);
             return typeDef;
 
             /*var typeDef = GetTypeDefinition(typeSig.FullName);
@@ -269,7 +269,7 @@ namespace MMC
                 throw new NullReferenceException($"Type {name} not found.");
             }
 
-            Logger.l.Lookup("looking up definition for type {0} => {1}", name, retval);
+            _logger.Lookup("looking up definition for type {0} => {1}", name, retval);
 
             return retval;
         }
@@ -337,12 +337,12 @@ namespace MMC
                 if (retval != null)
                     m_methodDefinitionsByReference[methRef.ToString()] = retval;
 
-                Logger.l.Lookup("SearchMethod(methref...): method {0} {1}found in type {2}",
+                _logger.Lookup("SearchMethod(methref...): method {0} {1}found in type {2}",
                         methRef.Name, (retval == null ? "not " : ""), typeDef.Name);
             }
             else
             {
-                Logger.l.Lookup("SearchMethod(methref...): method {0} found in cache", methRef.Name);
+                _logger.Lookup("SearchMethod(methref...): method {0} found in cache", methRef.Name);
             }
 
             return retval;
@@ -423,12 +423,12 @@ namespace MMC
                 if (retval != null)
                     m_methodDefinitionsByString[key] = retval;
 
-                Logger.l.Lookup("SearchMethod(string...): method {0} {1}found in type {2}",
+                _logger.Lookup("SearchMethod(string...): method {0} {1}found in type {2}",
                         name, (retval == null ? "not " : ""), typeDef.Name);
             }
             else
             {
-                Logger.l.Lookup("SearchMethod(string...): method {0} found in cache", name);
+                _logger.Lookup("SearchMethod(string...): method {0} found in cache", name);
             }
 
             return retval;
@@ -470,7 +470,7 @@ namespace MMC
             {
                 TypeDef declType = GetTypeDefinition(declTypeName);
                 if (declType == null)
-                    Logger.l.Warning("declaring type not found");
+                    _logger.Warning("declaring type not found");
                 else
                 {
                     bool equal = false;
@@ -614,9 +614,9 @@ namespace MMC
 				return ObjectReference.Null;*/
         }
 
-        public static DefinitionProvider Create(AssemblyLoader assemblyLoader)
+        public static DefinitionProvider Create(AssemblyLoader assemblyLoader, Logger logger)
         {
-            return new DefinitionProvider(assemblyLoader);
+            return new DefinitionProvider(assemblyLoader, logger);
         }
 
         // ----------------------------------------------------------------------------------------------
@@ -631,8 +631,10 @@ namespace MMC
         /// for a file name. This is the reason MMC starts so slowly.
         ///
         /// \param asmDef Main assembly definition.
-        private DefinitionProvider(AssemblyLoader assemblyLoader)
+        private DefinitionProvider(AssemblyLoader assemblyLoader, Logger logger)
         {
+            _logger = logger;
+
             m_typeDefinitions = new Dictionary<string, TypeDef>();
             m_methodDefinitionsByReference = new Dictionary<string, MethodDef>();
             m_methodDefinitionsByString = new Hashtable();
@@ -658,7 +660,7 @@ namespace MMC
             m_typeSizes["System.Double"] = 8;
             m_typeSizes["System.Decimal"] = 16;
 
-            Logger.l.Notice("loading referenced assemblies...");
+            _logger.Notice("loading referenced assemblies...");
 
             m_asmDef = assemblyLoader.GetModule();
             //Assembly mainAsm = AssemblyFactory.CreateReflectionAssembly((AssemblyDefinition)m_asmDef); // run-time type is AD
@@ -687,7 +689,7 @@ namespace MMC
             string monoHome = "";
             if (!inMono)
             {
-                Logger.l.Notice("detected a non-Mono runtime");
+                _logger.Notice("detected a non-Mono runtime");
                 monoHome = System.Environment.GetEnvironmentVariable("MONO_HOME");
                 if (monoHome == null)
                     MonoModelChecker.Fatal("the MONO_HOME variable was unset");
@@ -719,7 +721,7 @@ namespace MMC
                 try
                 {
                     m_referencedAssemblies[i] = ModuleDefMD.Load(fileName);
-                    Logger.l.Notice("loaded assembly " + fileName);
+                    _logger.Notice("loaded assembly " + fileName);
                 }
                 catch (System.Exception e)
                 {

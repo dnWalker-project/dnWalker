@@ -123,6 +123,8 @@ namespace MMC.State
             }
         }
 
+        public Logger Logger { get; internal set; }
+
         /// <summary>
         /// Determine if we are "running" in the assembly to be checked.
         /// </summary>
@@ -203,16 +205,20 @@ namespace MMC.State
         {
             m_dyn = new DynamicArea(this);
             m_stat = new StaticArea(this);
-            m_tp = new ThreadPool();
+            m_tp = new ThreadPool(Logger);
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        internal ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, DefinitionProvider definitionProvider)
+        internal ExplicitActiveState(
+            IConfig config,
+            IInstructionExecProvider instructionExecProvider,
+            DefinitionProvider definitionProvider,
+            Logger logger)
         {
             DefinitionProvider = definitionProvider;
-
+            Logger = logger;
             Configuration = config;
             InstructionExecProvider = instructionExecProvider;
             Reset();

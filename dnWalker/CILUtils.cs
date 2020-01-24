@@ -172,8 +172,9 @@ namespace MMC.Util
                 // useful for the user, but this is an indication the developer
                 // should use separate hash tables, or improve the hashing
                 // functions.
-                MonoModelChecker.Message("Comparing two elements of inequal types: {0} and {1}",
-                        a.GetType(), b.GetType());
+                throw new System.Exception(string.Format(/*))
+                MonoModelChecker.Message(*/"Comparing two elements of inequal types: {0} and {1}",
+                    a.GetType(), b.GetType()));
             }
             else if (a is TypeReference)
                 retval = CILTypeReferenceComparer.CompareTypeReferences(
@@ -194,8 +195,9 @@ namespace MMC.Util
             {
                 // We did not implement a comparison function for operands of
                 // this type. Issue a warning.
-                MonoModelChecker.Message(
-                        "Comparer for objects of type {0} not implemented.", a.GetType());
+                throw new System.Exception(string.Format(/*))
+                    MonoModelChecker.Message(*/
+                    "Comparer for objects of type {0} not implemented.", a.GetType()));
             }
 
             return retval;
@@ -231,8 +233,9 @@ namespace MMC.Util
             }
             else
             {
-                MMC.MonoModelChecker.Message(
-                        "Hash code calculation for objects of type {0} not implemented.", o.GetType());
+                throw new System.Exception(string.Format(/*))
+                    MonoModelChecker.Message(*/
+                        "Hash code calculation for objects of type {0} not implemented.", o.GetType()));
                 retval = o.GetHashCode();
             }
             return retval;
@@ -319,7 +322,7 @@ namespace MMC.Util
             }
             else
             {
-                MMC.MonoModelChecker.Message("Printer for objects of type {0} not implemented.", o.GetType());
+                // MMC.MonoModelChecker.Message("Printer for objects of type {0} not implemented.", o.GetType());
                 retval = o.ToString();
             }
             return retval;

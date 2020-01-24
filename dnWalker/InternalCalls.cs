@@ -327,10 +327,9 @@ namespace MMC.ICall {
 	class ThreadHandlers {
 
 		/// ICH for System.Threading.Thread.Sleep_internal.
-		public static void Sleep_internal(
-				MethodDefinition methDef, DataElementList args) {
-
-			Logger.l.Message("thread sleeping (but not really)");
+		public static void Sleep_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        {
+			cur.Logger.Message("thread sleeping (but not really)");
 		}
 
 		/// ICH for System.Threading.Thread.CurrentThread_internal.
@@ -353,7 +352,7 @@ namespace MMC.ICall {
         public static void Thread_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
-                cur.DynamicArea.DeterminePlacement(false, cur),
+                cur.DynamicArea.DeterminePlacement(false),
                 methDef.DeclaringType);
             AllocatedObject threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
@@ -399,8 +398,8 @@ namespace MMC.ICall {
             // Timeout.Infinite.
             if (((Int4)args[1]).Value != System.Threading.Timeout.Infinite)
             {
-                Logger.l.Warning("call to Thread::Join_internal(int ms, IntPtr IntPtr), with");
-                Logger.l.Warning("ms != Timeout.Infinite, but threated as such!");
+                cur.Logger.Warning("call to Thread::Join_internal(int ms, IntPtr IntPtr), with");
+                cur.Logger.Warning("ms != Timeout.Infinite, but threated as such!");
             }
 
             // TODO: find out what the handle is for (see relevant Mono C code) and
@@ -466,7 +465,7 @@ namespace MMC.ICall {
             // This thread must own the lock on the object.
             if (cur.me != lm.GetLock(obj, cur).Owner)
             {
-                Logger.l.Warning("thread {0} attemts to exit monitor on {1} but isn't the owner", cur.me, obj.ToString());
+                cur.Logger.Warning("thread {0} attemts to exit monitor on {1} but isn't the owner", cur.me, obj.ToString());
             }
             else
             {
@@ -474,7 +473,7 @@ namespace MMC.ICall {
                 // If the lock was acquired by a new thread, make sure that
                 // thread is runnable.
                 if (lm.IsLocked(obj, cur))
-                    cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken();
+                    cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken(cur.Logger);
             }
         }
 
@@ -491,7 +490,7 @@ namespace MMC.ICall {
 			ObjectReference obj = (ObjectReference)args[0];
 
 			if (cur.me != lm.GetLock(obj, cur).Owner)
-				Logger.l.Warning(
+                cur.Logger.Warning(
 						"thread {0} attemts to pulse first waiting thread on {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else
@@ -505,7 +504,7 @@ namespace MMC.ICall {
 			ObjectReference obj = (ObjectReference)args[0];
 
 			if (cur.me != lm.GetLock(obj, cur).Owner)
-				Logger.l.Warning(
+                cur.Logger.Warning(
 						"thread {0} attemts to pulse all waiting threads on {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else
@@ -573,7 +572,7 @@ namespace MMC.ICall {
 			ObjectReference obj = (ObjectReference)args[0];
 
 			if (cur.me != lm.GetLock(obj, cur).Owner)
-				Logger.l.Warning(
+                cur.Logger.Warning(
 						"thread {0} attemts to wait on monitor for {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else {
@@ -584,7 +583,7 @@ namespace MMC.ICall {
 				cur.CurrentThread.WaitFor(LockManager.NoThread);
 
 				if (lm.IsLocked(obj, cur))
-					cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken();
+					cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken(cur.Logger);
 			}
 
 			// If this thread is rescheduled, it has apperently reacquired the lock,

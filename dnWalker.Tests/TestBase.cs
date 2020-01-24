@@ -22,14 +22,17 @@ namespace dnWalker.Tests
             _config = new Config();
             var data = File.ReadAllBytes(assemblyFilename);
             var moduleDef = _assemblyLoader.GetModuleDef(data);
+            _logger = new Logger();
             //_appDomain = _assemblyLoader.CreateAppDomain(moduleDef, data);
             Assembly.LoadFrom(assemblyFilename);
-            _definitionProvider = DefinitionProvider.Create(_assemblyLoader);
+            _definitionProvider = DefinitionProvider.Create(_assemblyLoader, _logger);
         }
+
+        public Logger _logger { get; }
 
         protected virtual object Test(string methodName, params object[] args)
         {
-            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config);
+            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
             var entryPoint = _definitionProvider.GetMethodDefinition(methodName)
                 ?? throw new NullReferenceException("Method not found");
@@ -40,7 +43,7 @@ namespace dnWalker.Tests
 
             var statistics = new SimpleStatistics();
 
-            var explorer = new Explorer(state, statistics, _config);
+            var explorer = new Explorer(state, statistics, _logger, _config);
             explorer.Run();
 
             return state.CurrentThread.RetValue;

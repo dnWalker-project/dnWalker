@@ -174,7 +174,7 @@ namespace MMC.Data {
 					copy.ReadOnly = true;
 					key = copy;
 				} else if (m_clone && (o is System.ICloneable)) {
-					MonoModelChecker.Message("plain cloning of object {0}.", o.ToString());
+					//MonoModelChecker.Message("plain cloning of object {0}.", o.ToString());
 					key = ((System.ICloneable)o).Clone();
 				}
 

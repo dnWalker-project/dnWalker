@@ -83,26 +83,21 @@ namespace MMC.InstructionExec
 
         public bool HasImplicitOperand
         {
-
             get { return (m_flags & InstructionExecAttributes.ImplicitOperand) != 0; }
         }
 
         public bool CheckOverflow
         {
-
             get { return (m_flags & InstructionExecAttributes.CheckOverflow) != 0; }
         }
 
         public bool Unsigned
         {
-
             get { return (m_flags & InstructionExecAttributes.Unsigned) != 0; }
         }
 
-        public InstructionExecBase(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public InstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr)
         {
-
             m_instr = instr;
             m_operand = operand;
             m_flags = atr;
@@ -110,8 +105,7 @@ namespace MMC.InstructionExec
 
         public virtual IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            Logger.l.Warning("Execution for instruction not implemented.");
+            cur.Logger.Warning("Execution for instruction not implemented.");
             return null;
         }
 
@@ -191,14 +185,12 @@ namespace MMC.InstructionExec
             else if (operand is IField field)
             {//&& !(operand is FieldDefinition)) {
                 operand = DefinitionProvider.GetFieldDefinition(field);// foperand as FieldReference);
-                if (operand == null)
-                    Logger.l.Warning("failed to lookup field reference");
+                //if (operand == null) Logger.l.Warning("failed to lookup field reference");
             }
             else if (operand is ITypeDefOrRef typeDefOrRef)
             {//&& !(operand is TypeDefinition)) {
                 operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef);// operand as TypeReference);
-                if (operand == null)
-                    Logger.l.Warning("failed to lookup type reference");
+                // if (operand == null) Logger.l.Warning("failed to lookup type reference");
             }
 
             // Check for short form.
@@ -225,7 +217,7 @@ namespace MMC.InstructionExec
             var exceptionType = cur.DefinitionProvider.GetTypeDefinition(type);
 
             ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
-                cur.DynamicArea.DeterminePlacement(cur),
+                cur.DynamicArea.DeterminePlacement(),
                 exceptionType);
 
             cur.CurrentThread.ExceptionReference = exceptionRef;

@@ -109,33 +109,35 @@ namespace MMC.State {
 			return GetClass(GetClassLocation(typeDef));
 		}
 
-		/// \brief Get the class at a given location.
-		/// 
-		/// \param location The location in the class store.
-		/// \return The class.
-		public AllocatedClass GetClass(int location) {
+        /// <summary>
+        /// Get the class at a given location.
+        /// </summary>
+        /// <param name="location">The location in the class store.</param>
+        /// <returns>The class.</returns>
+        public AllocatedClass GetClass(int location)
+        {
+            AllocatedClass retval = m_classes[location];
+            if (!retval.Loaded)
+            {
+                _cur.Logger.Debug("loading class {0} at location {1}",
+                        retval.Type.Name, location);
+                retval.Loaded = true;
+            }
+            return retval;
+        } 
 
-			AllocatedClass retval = m_classes[location];
-			if (!retval.Loaded) {
-				Logger.l.Debug("loading class {0} at location {1}", 
-						retval.Type.Name, location);
-				retval.Loaded = true;
-			}
-			return retval;
-		}
-
-		/// \brief Delete the class at a given location.
-		///
-		/// Actually, this only unloads the class. The structure is not deleted.
-		///
-		/// \param location The location.
-		public void DeleteClassAtLocation(int location) {
-
+        /// \brief Delete the class at a given location.
+        ///
+        /// Actually, this only unloads the class. The structure is not deleted.
+        ///
+        /// \param location The location.
+        public void DeleteClassAtLocation(int location)
+        {
 			m_classes[location].Loaded = false;
 		}
 
-		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) {
-
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
+        {
 			visitor.VisitStaticArea(this);
 		}
 

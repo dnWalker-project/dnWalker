@@ -15,16 +15,18 @@
  *
  */
 
-namespace MMC.State {
-
+namespace MMC.State
+{
 	using System.Collections.Generic;
 	using MMC.Data;
 	using MMC.Util;
 	using MMC.Collections;
 
+    /// <summary>
     /// A simple and minimal lock implementation.
-    public class Lock : IStorable, ICleanable {
-
+    /// </summary>
+    public class Lock : IStorable, ICleanable
+    {
 		bool m_isReadonly;
 		bool m_isDirty;
 		int m_owner;
@@ -32,34 +34,45 @@ namespace MMC.State {
 		Queue<int> m_waitQueue;
 		Queue<int> m_readyQueue;
 
+		/// <summary>
 		/// The ID of the thread owning this lock.
-		public int Owner {
+		/// </summary>
+		public int Owner
+        {
 
-			get { return m_owner; }
-			set {
-				m_isDirty |= m_owner != value;
-				m_owner = value;
-			}
-		}
+            get { return m_owner; }
+            set
+            {
+                m_isDirty |= m_owner != value;
+                m_owner = value;
+            }
+        }
 
 		/// \brief The number of locks.
 		///
 		/// In other words, the number of Acquire() calls minus the number of
 		/// Release() calls.
-		public int Count {
-
-			get { return m_count; }
-			set {
-				if (value >= 0) {
-					m_isDirty |= m_count != value;
-					m_count = value;
-				} else {
-					// This should really never happen. If it does, it's probably a bug in this
-					// application. Otherwise, there's something wrong with (g)mcs.
-					Logger.l.Warning("trying to set a lock count to less than zero!");
-				}
-			}
-		}
+		public int Count
+        {
+            get { return m_count; }
+            set
+            {
+                if (value >= 0)
+                {
+                    m_isDirty |= m_count != value;
+                    m_count = value;
+                }
+                else
+                {
+                    // This should really never happen. If it does, it's probably a bug in this
+                    // application. Otherwise, there's something wrong with (g)mcs.
+                    throw new System.NotSupportedException("trying to set a lock count to less than zero! " +
+                        "This should really never happen. If it does, it's probably a bug in this application. " +
+                        "Otherwise, there's something wrong with (g)mcs.");
+                    //Logger.l.Warning("trying to set a lock count to less than zero!");
+                }
+            }
+        }
 
 		/// \brief Check if this lock has an associated wait queue. [const]
 		///

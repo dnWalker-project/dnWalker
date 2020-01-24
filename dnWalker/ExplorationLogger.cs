@@ -41,13 +41,13 @@ namespace MMC
 
         public void LogNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
-            Logger.l.Debug("found new state: {0}", sd.ID);
+            m_explorer.Logger.Debug("found new state: {0}", sd.ID);
             Statistics.NewState();
         }
 
         public void LogRevisitState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
-            Logger.l.Debug("re-visit of state: {0}", sd.ID);
+            m_explorer.Logger.Debug("re-visit of state: {0}", sd.ID);
             Statistics.RevisitState();
         }
 
@@ -55,12 +55,12 @@ namespace MMC
 
         public void LogDeadlock(SchedulingData sd)
         {
-            Logger.l.Log(LogPriority.Severe, "DEADLOCK!");
+            m_explorer.Logger.Log(LogPriority.Severe, "DEADLOCK!");
         }
 
         public void LogPickedThread(SchedulingData sd, int chosen)
         {
-            Logger.l.Debug("to be run next: {0}", chosen);
+            m_explorer.Logger.Debug("to be run next: {0}", chosen);
             m_lastRunThread = chosen;
         }
 
@@ -72,7 +72,7 @@ namespace MMC
 
         public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd, ExplicitActiveState cur)
         {
-            Logger.l.Debug("backtracked.");
+            m_explorer.Logger.Debug("backtracked.");
             Statistics.Backtrack();
         }
 
@@ -80,7 +80,7 @@ namespace MMC
 
         public void ExplorationHalted(IIEReturnValue ier)
         {
-            Logger.l.Log(LogPriority.Severe, "exploraton halted: {0}", ier.ToString());
+            m_explorer.Logger.Log(LogPriority.Severe, "exploraton halted: {0}", ier.ToString());
         }
 
         // -------------------------------- Graph Writing -------------------------------
@@ -125,7 +125,7 @@ namespace MMC
 
         private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
         {
-            Logger.l.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.StateCount, Statistics.RevisitCount, m_explorer.GetDFSStackSize());
+            m_explorer.Logger.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.StateCount, Statistics.RevisitCount, m_explorer.GetDFSStackSize());
         }
     }
 }

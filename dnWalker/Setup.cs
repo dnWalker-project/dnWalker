@@ -27,6 +27,7 @@ namespace MMC
     {
         private readonly DefinitionProvider _definitionProvider;
         private readonly IConfig _config;
+        private readonly Logger _logger;
 
         // Okay, this is just great. These are the fields of a Thread
         // allocation when running Mono with the --debug flag:
@@ -53,10 +54,11 @@ namespace MMC
         //
         // Nice.
 
-        public StateSpaceSetup(DefinitionProvider definitionProvider, IConfig config)
+        public StateSpaceSetup(DefinitionProvider definitionProvider, IConfig config, Logger logger)
         {
             _definitionProvider = definitionProvider;
             _config = config;
+            _logger = logger;
         }
 
         /// <summary>
@@ -71,12 +73,12 @@ namespace MMC
 
             IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(config);
 
-            var cur = new ExplicitActiveState(config, instructionExecProvider, _definitionProvider);
+            var cur = new ExplicitActiveState(config, instructionExecProvider, _definitionProvider, _logger);
 
             //StorageFactory.UseRefCounting(_config.UseRefCounting);
             if (config.UseRefCounting)
             {
-                Logger.l.Notice("using reference counting");
+                _logger.Notice("using reference counting");
             }
 
             DataElementList dataElementList = null;
@@ -84,7 +86,7 @@ namespace MMC
             {
                 // Wrap run arguments in ConstantString objects, and create the method state for Main().
                 ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
-                    cur.DynamicArea.DeterminePlacement(false, cur),
+                    cur.DynamicArea.DeterminePlacement(false),
                     cur.DefinitionProvider.GetTypeDefinition("System.String"),
                     args.Length);
 
@@ -144,13 +146,13 @@ namespace MMC
             // 1
             MethodPointer mainMethodPtr = new MethodPointer(mainDefinition);
             ObjectReference mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
-                cur.DynamicArea.DeterminePlacement(false, cur),
+                cur.DynamicArea.DeterminePlacement(false),
                 ObjectReference.Null,
                 mainMethodPtr);
 
             // 2
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
-                cur.DynamicArea.DeterminePlacement(false, cur),
+                cur.DynamicArea.DeterminePlacement(false),
                 cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));
 
             AllocatedObject threadObject =
@@ -166,7 +168,7 @@ namespace MMC
             {
                 // Simply skip if not found.
                 ObjectReference newObjectRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(false, cur),
+                    cur.DynamicArea.DeterminePlacement(false),
                     cur.DefinitionProvider.GetTypeDefinition("System.Object"));
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
                 // TODO: HV for maintaining the parents references in the incremental heap visitor
@@ -175,7 +177,7 @@ namespace MMC
             }
             else
             {
-                Logger.l.Warning("No thread local synchronisation object field found!");
+                _logger.Warning("No thread local synchronisation object field found!");
             }
 
             // 2c
@@ -189,21 +191,21 @@ namespace MMC
                 cur.ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC);
             }
             else
-                Logger.l.Warning("No thread field found for storing Main delegate!");
+                _logger.Warning("No thread field found for storing Main delegate!");
 
             // 3
             var stateField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "state");
 
             if (stateField == null)
             {
-                Logger.l.Warning("No field 'state' found in System.Threading.Thread object.");
-                Logger.l.Warning("This probably means your class corlib is other than the");
-                Logger.l.Warning("current SVN version for Linux we use. Try running the");
-                Logger.l.Warning("application using: mono --debug mmc.exe ...");
-                Logger.l.Warning("The state of thread will not be written back into the");
-                Logger.l.Warning("System.Threading.Thread object, but a field in MMC");
-                Logger.l.Warning("itself is used.");
-                Logger.l.Warning("Behaviour might differ from normal execution!");
+                _logger.Warning("No field 'state' found in System.Threading.Thread object.");
+                _logger.Warning("This probably means your class corlib is other than the");
+                _logger.Warning("current SVN version for Linux we use. Try running the");
+                _logger.Warning("application using: mono --debug mmc.exe ...");
+                _logger.Warning("The state of thread will not be written back into the");
+                _logger.Warning("System.Threading.Thread object, but a field in MMC");
+                _logger.Warning("itself is used.");
+                _logger.Warning("Behaviour might differ from normal execution!");
             }
             else
                 ThreadState.state_field_offset = (int)stateField.FieldOffset;

@@ -111,11 +111,11 @@ namespace MMC
         private readonly Timer m_memoryTimer;
         private readonly IInstructionExecProvider _instructionExecProvider;
         private readonly LinkedList<CollapsedState> m_atomicStates;
-
-        public Explorer(ExplicitActiveState cur, IStatistics statistics, IConfig config)
+        
+        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config)
         {
             Statistics = statistics;
-
+            this.Logger = Logger;
             this.cur = cur;
 
             Config = config;
@@ -196,11 +196,13 @@ namespace MMC
 
         public IConfig Config { get; }
 
+        public Logger Logger { get; }
+
         private IStatistics Statistics { get; }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            Logger.l.Notice("Ran out of time");
+            Logger.Notice("Ran out of time");
             m_continue = false;
         }
 
@@ -229,7 +231,7 @@ namespace MMC
             //Statistics.Start();
             m_continue = true;
 
-            Logger.l.Notice("Exploration starts now");
+            Logger.Notice("Exploration starts now");
 
             do
             {
@@ -253,7 +255,7 @@ namespace MMC
                     // assertion violations?
                     Statistics.AssertionViolation();
                     if (!logAssert)
-                        Logger.l.Message("Assertion violation detected");
+                        Logger.Message("Assertion violation detected");
                     logAssert = true;
 
                     if (Config.StopOnError)
@@ -267,7 +269,7 @@ namespace MMC
                     Statistics.Deadlock();
                     if (!logDeadlock)
                     {
-                        Logger.l.Message("Deadlock detected");
+                        Logger.Message("Deadlock detected");
                     }
                     logDeadlock = true;
                     noErrors = false;
@@ -320,7 +322,7 @@ namespace MMC
                 }
                 else
                 {
-                    Logger.l.Message("End of story: explored the whole state space");
+                    Logger.Message("End of story: explored the whole state space");
                 }
 
                 Statistics.MaxHashtableSize(m_stateStorage.Count);
@@ -356,14 +358,14 @@ namespace MMC
 
                     long memAfter = System.GC.GetTotalMemory(true);
 
-                    Logger.l.Notice("Optimized hashtable from " + memUsed / 1024 / 1024 + " Mb to " + memAfter / 1024 / 1024 + " Mb by removing " + count + " states");
+                    Logger.Notice("Optimized hashtable from " + memUsed / 1024 / 1024 + " Mb to " + memAfter / 1024 / 1024 + " Mb by removing " + count + " states");
                     memUsed = memAfter;
                 }
 
                 /// If memory limiting is enabled...
                 if (!double.IsInfinity(Config.MemoryLimit) && (memUsed / 1024 / 1024) > Config.MemoryLimit)
                 {
-                    Logger.l.Notice("Ran out of memory");
+                    Logger.Notice("Ran out of memory");
                     this.m_continue = false;
                 }
                 m_measureMemory = false;

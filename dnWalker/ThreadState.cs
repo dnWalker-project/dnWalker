@@ -123,13 +123,13 @@ namespace MMC.State {
 			WaitingFor = other;
 		}
 
-        public void Awaken()
+        public void Awaken(Logger logger)
         {
             m_state = MMC.ThreadStatus.Running;
             //m_isDirty |= m_waitFor != LockManager.NoThread;
             m_isDirty = true;
             WaitingFor = LockManager.NoThread;
-            Logger.l.Debug("thread {0} woke up", m_me);
+            logger.Debug("thread {0} woke up", m_me);
         }
 
         public int WaitingFor { get; set; }

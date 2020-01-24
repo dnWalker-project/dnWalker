@@ -66,8 +66,8 @@ namespace MMC.State {
 			return sb.ToString();
 		}
 
-		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) {
-
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
+        {
 			visitor.VisitDynamicArea(this, cur);
 		}
 
@@ -157,7 +157,7 @@ namespace MMC.State {
                 Debug.Assert(alloc != null, "(Un)pinning non-existent allocation " + objRef + ".");
                 if (pin)
                 {
-                    Logger.l.Debug("pinning allocation " + objRef + ".");
+                    _cur.Logger.Debug("pinning allocation " + objRef + ".");
                     alloc.Pinned = true;
                     m_pinned.Add(objRef);
                     _cur.ParentWatcher.AddParentToChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC);
@@ -166,7 +166,7 @@ namespace MMC.State {
                 {
                     Debug.Assert(m_pinned.Contains(objRef), "Unpinning unpinned " + objRef + ". (chk 1)");
                     Debug.Assert(alloc.Pinned, "Unpinning unpinned " + objRef + ". (chk 2)");
-                    Logger.l.Debug("unpinning allocation " + objRef + ".");
+                    _cur.Logger.Debug("unpinning allocation " + objRef + ".");
                     alloc.Pinned = false;
                     if (!alloc.Pinned)
                     {
@@ -346,9 +346,9 @@ namespace MMC.State {
 		/// This calls DeterminePlacement(true).
 		///
 		/// \return The place to put the allocation.
-		public int DeterminePlacement(ExplicitActiveState cur) {
+		public int DeterminePlacement() {
 
-			return DeterminePlacement(true, cur);
+			return DeterminePlacement(true);
 		}
 
 		/// \brief Determine the placement for an allocation.
@@ -364,14 +364,14 @@ namespace MMC.State {
 		/// \return The place to put the allocation.
 		/// \sa PlacementMapping
 		/// \sa FreeSlot
-		public int DeterminePlacement(bool byCil, ExplicitActiveState cur)
+		public int DeterminePlacement(bool byCil)
         {
 			int retval;
 			if (!_cur.Configuration.SymmetryReduction || !byCil)
 				retval = FreeSlot();
 			else
-				retval = m_placementMapping.GetLocation(cur);
-			Logger.l.Debug("new allocation will be placed at {0}", retval);
+				retval = m_placementMapping.GetLocation(_cur);
+			_cur.Logger.Debug("new allocation will be placed at {0}", retval);
 			return retval;
 		}
 	}

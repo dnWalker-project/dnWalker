@@ -842,7 +842,7 @@ namespace MMC.InstructionExec
             AllocatedClass cls = cur.StaticArea.GetClass(type);
             if (!cls.Initialized)
             {
-                Logger.l.Debug("thread {0} wants access to uninitialized class {1}", me, type.Name);
+                cur.Logger.Debug("thread {0} wants access to uninitialized class {1}", me, type.Name);
                 MethodDefinition cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
                 if (cctorDef == null)
                 {
@@ -851,16 +851,16 @@ namespace MMC.InstructionExec
                 }
                 else if (cls.InitializingThread == LockManager.NoThread)
                 {
-                    Logger.l.Debug("no thread is currently initializing the class");
+                    cur.Logger.Debug("no thread is currently initializing the class");
                     // We are the ones who have to do the initialization.
                     cls.InitializingThread = me;
                     MethodState cctorState = new MethodState(
                         cctorDef,
                         cur.StorageFactory.CreateList(0),
                         cur);
-                    cctorState.OnDispose = new MethodStateCallback(this.CctorDoneCallBack);
+                    cctorState.OnDispose = new MethodStateCallback(CctorDoneCallBack);
                     cur.CallStack.Push(cctorState);
-                    Logger.l.Debug("found class constructor. pushed on call stack.");
+                    cur.Logger.Debug("found class constructor. pushed on call stack.");
                     // Do not allow access now. We should first execute the cctor.
                     allow_access = false;
                 }
@@ -868,7 +868,7 @@ namespace MMC.InstructionExec
                 {
                     ThreadPool tp = cur.ThreadPool;
                     int wait_for = cls.InitializingThread;
-                    Logger.l.Debug("thread {0} is currently initializing the class", wait_for);
+                    cur.Logger.Debug("thread {0} is currently initializing the class", wait_for);
 
                     bool wait_safe = wait_for != me;
                     if (wait_safe)
@@ -883,17 +883,17 @@ namespace MMC.InstructionExec
                         }
                         // If we hit a cycle, report it, but this should never happen.
                         if (!wait_safe && wait_for != LockManager.NoThread)
-                            Logger.l.Log(LogPriority.Severe,
+                            cur.Logger.Log(LogPriority.Severe,
                                     "indication of deadlock while class loading");
                         // If it's safe to wait, do it. Else, we can touch the data.
                         if (wait_safe)
                         {
                             cls.AddWaitingThread(me, cur);
-                            Logger.l.Debug("now waiting for completion of cctor by other thread.");
+                            cur.Logger.Debug("now waiting for completion of cctor by other thread.");
                         }
                     }
                     if (!wait_safe)
-                        Logger.l.Debug("not safe to wait for cctor completion. continue.");
+                        cur.Logger.Debug("not safe to wait for cctor completion. continue.");
                     allow_access = !wait_safe;
                 }
             }
@@ -903,7 +903,7 @@ namespace MMC.InstructionExec
 
         public void CctorDoneCallBack(MethodState ms)
         {
-            Logger.l.Debug("completed running cctor. class initialized");
+            ms.Cur.Logger.Debug("completed running cctor. class initialized");
             TypeDefinition type = GetTypeDefinition();
             var cur = ms.Cur;
             /*
@@ -1025,7 +1025,7 @@ namespace MMC.InstructionExec
             else
             {
                 cur.EvalStack.Push(cur.DynamicArea.AllocateArray(
-                    cur.DynamicArea.DeterminePlacement(cur),
+                    cur.DynamicArea.DeterminePlacement(),
                     Operand as ITypeDefOrRef,
                     length.Value));
             }
@@ -1361,7 +1361,7 @@ namespace MMC.InstructionExec
             }
             else
             {
-                Logger.l.Warning("unknown reference type on stack: {0} ", reference.GetType());
+                cur.Logger.Warning("unknown reference type on stack: {0} ", reference.GetType());
                 return nextRetval;
             }
 
@@ -1460,7 +1460,7 @@ namespace MMC.InstructionExec
                 lvp.Value = val;
             }
             else
-                Logger.l.Warning("unknown type storage destination: {0}", toChange.GetType());
+                cur.Logger.Warning("unknown type storage destination: {0}", toChange.GetType());
 
             return nextRetval;
         }
@@ -1522,7 +1522,7 @@ namespace MMC.InstructionExec
         {
             // Operand is a type definition of the wrapper type to use.
             ObjectReference wrappedRef = cur.DynamicArea.AllocateObject(
-                cur.DynamicArea.DeterminePlacement(cur),
+                cur.DynamicArea.DeterminePlacement(),
                 Operand as ITypeDefOrRef);
             AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
             wrapped.Fields[wrapped.ValueFieldOffset] = cur.EvalStack.Pop();
@@ -2228,7 +2228,7 @@ namespace MMC.InstructionExec
             // TODO: Asynchronous delegate calls, i.e. BeginInvoke and EndInvoke.
             if (thisObject is AllocatedDelegate && methDef.Name == "Invoke")
             {
-                Logger.l.Log(LogPriority.Call, "invoke: call is a synchronous delegate call");
+                cur.Logger.Log(LogPriority.Call, "invoke: call is a synchronous delegate call");
                 // Create caller block, shifting parameters so delegate is dropped
                 // from argument list.
                 DataElementList calleePars = cur.StorageFactory.CreateList(args.Length - 1);
@@ -2245,11 +2245,11 @@ namespace MMC.InstructionExec
             // Internal call. This is like a software interrupt (a.k.a. trap) in normal operating systems.
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
-                Logger.l.Log(LogPriority.Call, "{0}: call is an internal call", methDef.Name);
+                cur.Logger.Log(LogPriority.Call, "{0}: call is an internal call", methDef.Name);
                 handled = MMC.ICall.IntCallManager.icm.HandleICall(methDef, args);
 
                 if (!handled)
-                    Logger.l.Message("Not (yet) implemented internal call: {0}", methDef.ToString());
+                    cur.Logger.Message("Not (yet) implemented internal call: {0}", methDef.ToString());
             }
             return handled;
         }
@@ -2267,13 +2267,12 @@ namespace MMC.InstructionExec
         ///
         /// \param args Arguments to the Assert call.
         /// \return True iff the call was handled by this method.
-        protected bool HandleAssertCall(DataElementList args, out bool violated)
+        protected bool HandleAssertCall(DataElementList args, ExplicitActiveState cur, out bool violated)
         {
-
             MethodDefinition methDef = Operand as MethodDefinition;
             string name = methDef.Name;
             string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
-            bool assert = (name == "Assert" && decl == "System.Diagnostics.Debug");
+            bool assert = name == "Assert" && decl == "System.Diagnostics.Debug";
             violated = false;
 
             if (assert)
@@ -2281,33 +2280,32 @@ namespace MMC.InstructionExec
                 violated = !args[0].ToBool();
                 if (violated)
                 {
-
                     if (args.Length > 1)
-                        Logger.l.Warning("short message: {0}", args[1].ToString());
-
+                    {
+                        cur.Logger.Warning("short message: {0}", args[1].ToString());
+                    }
                     if (args.Length > 2)
-                        Logger.l.Warning("long message: {0}", args[2].ToString());
-
+                    {
+                        cur.Logger.Warning("long message: {0}", args[2].ToString());
+                    }
                 }
                 else
                 {
-                    Logger.l.Debug("assertion passed.");
+                    cur.Logger.Debug("assertion passed.");
                 }
             }
             return assert;
         }
 
-        /// \brief Filter out specific calls.
-        ///
-        /// This code shouldn't be. It was introduced as a quick hack, and
-        /// survived several re-factorings.
-        ///
-        /// Like HandleAssertCall, this should be merged with the ICM.
-        ///
-        /// \return True iff the call to be made is to be filtered out.
-        protected bool FilterCall()
+        /// <summary>
+        /// Filter out specific calls.
+        /// </summary>
+        /// <remarks>This code shouldn't be. It was introduced as a quick hack, and survived several re-factorings.
+        /// Like HandleAssertCall, this should be merged with the ICM.</remarks>
+        /// <param name="cur"></param>
+        /// <returns>True iff the call to be made is to be filtered out.</returns>
+        protected bool FilterCall(ExplicitActiveState cur)
         {
-
             MethodDefinition methDef = Operand as MethodDefinition;
             string name = methDef.Name;
             string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
@@ -2315,7 +2313,9 @@ namespace MMC.InstructionExec
                 (name == "WriteLine" && decl == "System.Console")
                 || name == "StartupSetApartmentStateInternal";
             if (filtered)
-                Logger.l.Log(LogPriority.Call, "{0}: method is filtered out, not executed", name);
+            {
+                cur.Logger.Log(LogPriority.Call, "{0}: method is filtered out, not executed", name);
+            }
             return filtered;
         }
 
@@ -2451,15 +2451,15 @@ namespace MMC.InstructionExec
 
             // Skip certain calls.
             bool violated;
-            if (!HandleAssertCall(args, out violated) && !FilterCall())
+            if (!HandleAssertCall(args, cur, out violated) && !FilterCall(cur))
             {
                 // Check for empty body (stub).
                 if (IsEmptyMethod(methDef))
                 {
-                    Logger.l.Log(LogPriority.Call, "{0}: instance call to method with no body.", methDef.FullName);
+                    cur.Logger.Log(LogPriority.Call, "{0}: instance call to method with no body.", methDef.FullName);
                     if (!HandleEmptyMethod(cur, args))
                     {
-                        Logger.l.Log(LogPriority.Call, "{0}: unhandled empty method call.", methDef.FullName);
+                        cur.Logger.Log(LogPriority.Call, "{0}: unhandled empty method call.", methDef.FullName);
                     }
                 }
                 else
@@ -2501,10 +2501,11 @@ namespace MMC.InstructionExec
         {
         }
 
+        /// <summary>
         /// Execute the CALLI instruction.
+        /// </summary>
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // See MMC.InstructionExec.CALL.Execute(...) for comments.
 
             MethodPointer methPtr = (MethodPointer)cur.EvalStack.Pop();
@@ -2512,7 +2513,7 @@ namespace MMC.InstructionExec
 
             DataElementList args = CreateArgumentList(cur);
 
-            if (!FilterCall())
+            if (!FilterCall(cur))
             {
                 // Assumption: CALLI targets have a body.
                 MethodState called = new MethodState(methDef, args, cur);
@@ -2529,7 +2530,9 @@ namespace MMC.InstructionExec
         }
     }
 
+    /// <summary>
     /// A CALLVIRT instruction.
+    /// </summary>
     class CALLVIRT : CallInstructionExec
     {
 
@@ -2559,7 +2562,7 @@ namespace MMC.InstructionExec
             }
 
             // Skip certain calls.
-            if (!FilterCall())
+            if (!FilterCall(cur))
             {
                 // Check for empty body. This will catch the virtual calls to e.g.
                 // the Invoke method of delegate types.
@@ -2568,9 +2571,9 @@ namespace MMC.InstructionExec
 				 * what purpose this precisely serves...
 				 */
                 /*if (IsEmptyMethod(methDef)) {
-					Logger.l.Log(LogPriority.Warning, "{0}: virtual call to method with no body", methDef.Name);
+					cur.Logger.Log(LogPriority.Warning, "{0}: virtual call to method with no body", methDef.Name);
 					if (!HandleEmptyMethod(args))
-						Logger.l.Warning("{0}: unhandled virtual method call", methDef.Name);
+						cur.Logger.Warning("{0}: unhandled virtual method call", methDef.Name);
 				}*/
 
                 // Normal virtual call: get run-time, and start searching for method
@@ -2599,7 +2602,7 @@ namespace MMC.InstructionExec
                 MethodState called = new MethodState(toCall, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
-                //Logger.l.Log(LogPriority.Call, "{0}: found most derived definition in type {1}",
+                //cur.Logger.Log(LogPriority.Call, "{0}: found most derived definition in type {1}",
                 //		methDef.Name, type.Name);		
 
             }
@@ -2661,15 +2664,15 @@ namespace MMC.InstructionExec
                 if ((args[1] is ObjectReference) && (args[2] is MethodPointer))
                 {
                     IDataElement newDel = cur.DynamicArea.AllocateDelegate(
-                        cur.DynamicArea.DeterminePlacement(cur),
-                        (ObjectReference)args[1], 
+                        cur.DynamicArea.DeterminePlacement(),
+                        (ObjectReference)args[1],
                         (MethodPointer)args[2]);
                     cur.EvalStack.Push(newDel);
-                    Logger.l.Log(LogPriority.Call, "constructor call for delegate handled by ves");
+                    cur.Logger.Log(LogPriority.Call, "constructor call for delegate handled by ves");
                 }
                 else
                 {
-                    Logger.l.Warning("empty constructor, but does not look like delegate");
+                    cur.Logger.Warning("empty constructor, but does not look like delegate");
                 }
 
                 args.Dispose();
@@ -2678,7 +2681,7 @@ namespace MMC.InstructionExec
             {
                 // Normal constructor call, create this pointer.
                 args[0] = cur.DynamicArea.AllocateObject(
-                        cur.DynamicArea.DeterminePlacement(cur),
+                        cur.DynamicArea.DeterminePlacement(),
                         methDef.DeclaringType);
                 // Constructor calls should leave object reference on the stack.
                 cur.EvalStack.Push(args[0]);

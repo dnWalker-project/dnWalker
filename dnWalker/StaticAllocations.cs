@@ -107,8 +107,10 @@ namespace MMC.State
                 InitDataContainer initData = value as InitDataContainer;
                 if (initData == null)
                 {
-                    MonoModelChecker.Message("setting initialization data using some strange type {0}",
-                            value.GetType());
+                    throw new System.Exception(string.Format(/*))
+                    MonoModelChecker.Message(*/
+                    "setting initialization data using some strange type {0}",
+                            value.GetType()));
                 }
                 else
                 {
@@ -121,7 +123,7 @@ namespace MMC.State
         public void AwakenWaitingThreads(ExplicitActiveState cur)
         {
             foreach (int sleepy_thread in m_initData.WaitingThreads)
-                cur.ThreadPool.Threads[sleepy_thread].Awaken();
+                cur.ThreadPool.Threads[sleepy_thread].Awaken(cur.Logger);
 
             if (!m_initData.WaitingThreads.IsEmpty)
                 m_initData.Dirty = true;

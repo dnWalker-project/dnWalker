@@ -31,12 +31,13 @@ namespace MMC.State {
 		SparseReferenceList<ThreadState>	m_tl;
 		int					m_curThread;
 		DirtyList			m_dirty;
+        private readonly Logger _logger;
 
-		////////////////////////////////////////////////////////////////////
-		// Accessors
-		////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        // Accessors
+        ////////////////////////////////////////////////////////////////////
 
-		public int CurrentThreadId {
+        public int CurrentThreadId {
 
 			get { return m_curThread; }
 			set { m_curThread = value; }
@@ -133,7 +134,7 @@ namespace MMC.State {
 			ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
 			m_tl.Add(newThread);
 			newThread.CallStack.Push(entry);
-			Logger.l.Debug("spawned new thread with id {0}", thread_id);
+			_logger.Debug("spawned new thread with id {0}", thread_id);
 
 			// these arguments were added by the parent thread, but they should be 
 			// marked from the child thread for heap analysis
@@ -165,14 +166,14 @@ namespace MMC.State {
 			// Issue a notice, and be done with it. In the most likely case the thread
 			// is already stopped, and the waiting thread should simply continue.
 			if (!to_term.IsAlive)
-				Logger.l.Debug("thread {0} not waiting for {1}, since thread {1} is not alive.",
+				_logger.Debug("thread {0} not waiting for {1}, since thread {1} is not alive.",
 						blocking_thread, to_terminate);
 			else {
 				// Set the waiting-for and state fields of the blocking thread.
 				to_block.WaitingFor = to_terminate;
 				to_block.State = MMC.ThreadStatus.WaitSleepJoin;
 
-				Logger.l. Debug("thread {0} is now waiting for thread {1}.",
+				_logger.Debug("thread {0} is now waiting for thread {1}.",
 						blocking_thread, to_terminate);
 
 				CheckDeadlockFrom(blocking_thread);
@@ -192,31 +193,38 @@ namespace MMC.State {
 				current = m_tl[current].WaitingFor;
 			}
 			if (current != LockManager.NoThread)
-				Logger.l.Log(LogPriority.Severe,
+				_logger.Log(LogPriority.Severe,
 						"cycle in waiting-for graph. deadlock!");
 		}
 
-		////////////////////////////////////////////////////////////////////
-		// Terminate and delete threads.
-		////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        // Terminate and delete threads.
+        ////////////////////////////////////////////////////////////////////
 
-		public void TerminateThread(int thread_id) {
+        public void TerminateThread(int thread_id)
+        {
+            ThreadState theThread = m_tl[thread_id];
+            Debug.Assert(theThread != null, "Terminating a null thread.");
+            _logger.Debug("thread termination: {0}", thread_id);
+            if (!theThread.CallStack.IsEmpty())
+            {
+                _logger.Warning("terminating a thread with a non-empty call stack.");
+            }
 
-			ThreadState theThread = m_tl[thread_id];
-			Debug.Assert(theThread != null, "Terminating a null thread.");
-			Logger.l.Debug("thread termination: {0}", thread_id);
-			if (!theThread.CallStack.IsEmpty())
-				Logger.l.Warning("terminating a thread with a non-empty call stack.");
-			theThread.State = MMC.ThreadStatus.Stopped;
+            theThread.State = MMC.ThreadStatus.Stopped;
 
-			//Explorer.ActivateGC = true;
+            //Explorer.ActivateGC = true;
 
-			// Check for threads that called Join on the terminating thread, and wake them.
-			for (int i=0; i < m_tl.Length; ++i)
-				if (m_tl[i] != null && m_tl[i].State == MMC.ThreadStatus.WaitSleepJoin &&
-						m_tl[i].WaitingFor == thread_id)
-					m_tl[i].Awaken();
-		}
+            // Check for threads that called Join on the terminating thread, and wake them.
+            for (int i = 0; i < m_tl.Length; ++i)
+            {
+                if (m_tl[i] != null && m_tl[i].State == MMC.ThreadStatus.WaitSleepJoin 
+                    && m_tl[i].WaitingFor == thread_id)
+                {
+                    m_tl[i].Awaken(_logger);
+                }
+            }
+        }
 
 		public void DeleteThread(int thread_id) {
 
@@ -258,11 +266,12 @@ namespace MMC.State {
 			return sb.ToString();
 		}
 
-		public ThreadPool() {
-
-			m_tl = new SparseReferenceList<ThreadState>();
-			m_dirty = new DirtyList();
-		}
+        public ThreadPool(Logger logger)
+        {
+            m_tl = new SparseReferenceList<ThreadState>();
+            m_dirty = new DirtyList();
+            _logger = logger;
+        }
 
 		////////////////////////////////////////////////////////////////////
 		// Short-hands.

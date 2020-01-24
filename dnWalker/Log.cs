@@ -15,209 +15,210 @@
  *
  */
 
-namespace MMC {
+namespace MMC
+{
+    using System.IO;
+    using System.Collections;
 
-	using System.IO;
-	using System.Collections;
-	using MMC.Util;
+    [System.Flags]
+    public enum LogPriority
+    {
+        None = 0,
+        Debug = 1 << 1,
+        Notice = 1 << 2,
+        Message = 1 << 3,
+        Warning = 1 << 4,
+        Severe = 1 << 5,
+        Fatal = 1 << 6,
+        Trace = 1 << 7,
+        Lookup = 1 << 8,
+        Interactive = 1 << 9,
+        Call = 1 << 10,
+        TLocalOnly = 1 << 21,   // print trace iff pc is in asm to check.
+        TInstrOnly = 1 << 22        // only print instr in trace (no local state).
+    }
 
-	[System.Flags]
-	enum LogPriority {
+    public sealed class Logger
+    {
+        IList m_outputs;
 
-		None		= 0,
-		Debug 		= 1<<1,
-		Notice		= 1<<2,
-		Message		= 1<<3,
-		Warning		= 1<<4,
-		Severe		= 1<<5,
-		Fatal		= 1<<6,
-		Trace		= 1<<7,
-		Lookup		= 1<<8,
-		Interactive = 1<<9,
-		Call		= 1<<10,
-		TLocalOnly	= 1<<21,	// print trace iff pc is in asm to check.
-		TInstrOnly	= 1<<22		// only print instr in trace (no local state).
-	}
+        public const LogPriority Default = LogPriority.Notice |
+            LogPriority.Message | LogPriority.Warning |
+            LogPriority.Severe | LogPriority.Fatal;
 
-	class Logger {
+        public int OutputCount
+        {
+            get { return m_outputs.Count; }
+        }
 
-		static Logger instance = new Logger();
-		IList m_outputs;
-		LogPriority m_logFilter;
+        public static bool TryParseLLogFilter(string format, out LogPriority newLogFilter)
+        {
+            newLogFilter = LogPriority.None;
+            char[] fmtChars = format.ToCharArray();
 
-		public static Logger l {
+            int i = 0;
+            if (fmtChars[0] == '+')
+            {
+                newLogFilter = Default;
+                ++i;
+            }
+            else if (fmtChars[0] == '-')
+            {
+                newLogFilter = ~Default;
+                ++i;
+            }
+            else if (fmtChars[0] == '=')
+                ++i;
 
-			get { return instance; }
-		}
+            for (; i < fmtChars.Length; ++i)
+            {
+                switch (fmtChars[i])
+                {
+                    case 'd':
+                        newLogFilter |= LogPriority.Debug;
+                        newLogFilter |= LogPriority.Call;
+                        break;
+                    case 'f':
+                        newLogFilter |= LogPriority.Fatal;
+                        break;
+                    case 'i':
+                        newLogFilter |= LogPriority.TInstrOnly;
+                        break;
+                    case 'l':
+                        newLogFilter |= LogPriority.TLocalOnly;
+                        break;
+                    case 'o':
+                        newLogFilter |= LogPriority.Lookup;
+                        break;
+                    case 'm':
+                        newLogFilter |= LogPriority.Message;
+                        break;
+                    case 'n':
+                        newLogFilter |= LogPriority.Notice;
+                        break;
+                    case 's':
+                        newLogFilter |= LogPriority.Severe;
+                        break;
+                    case 't':
+                        newLogFilter |= LogPriority.Trace;
+                        break;
+                    case 'w':
+                        newLogFilter |= LogPriority.Warning;
+                        break;
+                    default:
+                        return false;
+                }
+            }
 
-		public int OutputCount {
+            if (fmtChars[0] == '-')
+                newLogFilter = ~newLogFilter;
+            else
+                newLogFilter = newLogFilter;
 
-			get { return m_outputs.Count; }
-		}
+            return true;
+        }
 
-		public bool ParseAndSetLogFilter(string format) {
+        public LogPriority Filter { get; private set; }
 
-			LogPriority newLogFilter = LogPriority.None;
-			char[] fmtChars = format.ToCharArray();
+        public int AddOutput(ILoggerOutput output)
+        {
+            return m_outputs.Add(output);
+        }
 
-			int i=0;
-			if (fmtChars[0] == '+') {
-				newLogFilter = m_logFilter;
-				++i;
-			} 
-			else if (fmtChars[0] == '-') {
-				newLogFilter = ~m_logFilter;
-				++i;
-			} 
-			else if (fmtChars[0] == '=')
-				++i;
+        public void Debug(string msg, params object[] values)
+        {
+            Log(LogPriority.Debug, msg, values);
+        }
 
-			for (; i < fmtChars.Length; ++i) {
-				switch (fmtChars[i]) {
-				case 'd':
-					newLogFilter |= LogPriority.Debug;
-					newLogFilter |= LogPriority.Call;
-					break;
-				case 'f':
-					newLogFilter |= LogPriority.Fatal;
-					break;
-				case 'i':
-					newLogFilter |= LogPriority.TInstrOnly;
-					break;
-				case 'l':
-					newLogFilter |= LogPriority.TLocalOnly;
-					break;
-				case 'o':
-					newLogFilter |= LogPriority.Lookup;
-					break;
-				case 'm':
-					newLogFilter |= LogPriority.Message;
-					break;
-				case 'n':
-					newLogFilter |= LogPriority.Notice;
-					break;
-				case 's':
-					newLogFilter |= LogPriority.Severe;
-					break;
-				case 't':
-					newLogFilter |= LogPriority.Trace;
-					break;
-				case 'w':
-					newLogFilter |= LogPriority.Warning;
-					break;
-				default:
-					return false;
-				}
-			}
-			if (fmtChars[0] == '-')
-				m_logFilter = ~newLogFilter;
-			else
-				m_logFilter = newLogFilter;
+        public void Notice(string msg, params object[] values)
+        {
+            Log(LogPriority.Notice, msg, values);
+        }
 
-			return true;
-		}
+        public void Message(string msg, params object[] values)
+        {
+            Log(LogPriority.Message, msg, values);
+        }
 
-		public LogPriority Filter {
+        public void Warning(string msg, params object[] values)
+        {
+            Log(LogPriority.Warning, msg, values);
+        }
 
-			get { return m_logFilter; }
-		}
+        public void Trace(string msg, params object[] values)
+        {
+            Log(LogPriority.Trace, msg, values);
+        }
 
-		public int AddOutput(ILoggerOutput output) {
+        public void Lookup(string msg, params object[] values)
+        {
+            Log(LogPriority.Lookup, msg, values);
+        }
 
-			return m_outputs.Add(output);
-		}
+        public void Log(LogPriority pr, string msg, params object[] values)
+        {
 
-		public void Debug(string msg, params object[] values) {
+            if ((pr & Filter) != 0)
+            {
+                if (values.Length > 0)
+                    msg = string.Format(msg, values);
+                foreach (ILoggerOutput output in m_outputs)
+                    output.Log(pr, msg);
+            }
+        }
 
-			Log(LogPriority.Debug, msg, values);
-		}
+        public void FlushOutputs()
+        {
+            foreach (ILoggerOutput output in m_outputs)
+                output.Flush();
+        }
 
-		public void Notice(string msg, params object[] values) {
+        public void CloseAll()
+        {
+            foreach (ILoggerOutput output in m_outputs)
+                output.Close();
+        }
 
-			Log(LogPriority.Notice, msg, values);
-		}
+        public Logger() : this(Default) { }
 
-		public void Message(string msg, params object[] values) {
+        public Logger(LogPriority priority)
+        {
+            m_outputs = new ArrayList();
+            Filter = priority;
+        }
+    }
 
-			Log(LogPriority.Message, msg, values);
-		}
+    public interface ILoggerOutput
+    {
+        void Log(LogPriority lp, string msg);
+        void Flush();
+        void Close();
+    }
 
-		public void Warning(string msg, params object[] values) {
+    public class TextLoggerOutput : ILoggerOutput
+    {
+        TextWriter m_sink;
 
-			Log(LogPriority.Warning, msg, values);
-		}
+        public TextLoggerOutput(TextWriter sink)
+        {
+            m_sink = sink;
+        }
+        
+        public void Log(LogPriority lp, string msg)
+        {
+            System.DateTime now = System.DateTime.Now;
+            m_sink.WriteLine("{0:D2}:{1:D2}:{4:D2} [{2,12}] {3}", now.Hour, now.Minute, lp, msg, now.Second);
+        }
 
-		public void Trace(string msg, params object[] values) {
+        public void Flush()
+        {
+            m_sink.Flush();
+        }
 
-			Log(LogPriority.Trace, msg, values);
-		}
-
-		public void Lookup(string msg, params object[] values) {
-
-			Log(LogPriority.Lookup, msg, values);
-		}
-
-		public void Log(LogPriority pr, string msg, params object[] values) {
-
-			if ((pr & m_logFilter) != 0) {
-				if (values.Length > 0)
-					msg = string.Format(msg, values);
-				foreach (ILoggerOutput output in m_outputs)
-					output.Log(pr, msg);
-			}
-		}
-
-		public void FlushOutputs() {
-			foreach (ILoggerOutput output in m_outputs)
-				output.Flush();
-		}
-
-		public void CloseAll() {
-
-			foreach (ILoggerOutput output in m_outputs)
-				output.Close();
-		}
-
-		private /* singleton */ Logger() {
-
-			m_outputs = new ArrayList();
-			m_logFilter = LogPriority.Notice |
-				LogPriority.Message | LogPriority.Warning | 
-				LogPriority.Severe | LogPriority.Fatal;
-		}
-	}
-
-	interface ILoggerOutput {
-
-		void Log(LogPriority lp, string msg);
-		void Flush();
-		void Close();
-	}
-
-	class TextLoggerOutput : ILoggerOutput {
-
-		TextWriter m_sink;
-
-		public TextLoggerOutput(TextWriter sink) {
-
-			m_sink = sink;
-		}
-
-		public void Log(LogPriority lp, string msg) {
-
-			System.DateTime now = System.DateTime.Now;
-			m_sink.WriteLine("{0:D2}:{1:D2}:{4:D2} [{2,12}] {3}", now.Hour, now.Minute, lp, msg, now.Second);
-		}
-
-		public void Flush() {
-
-			m_sink.Flush();
-		}
-
-		public void Close() {
-
-			m_sink.Close();
-		}
-	}
+        public void Close()
+        {
+            m_sink.Close();
+        }
+    }
 
 }

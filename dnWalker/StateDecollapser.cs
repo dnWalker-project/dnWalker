@@ -107,20 +107,20 @@ namespace MMC.State {
 			WrappedIntArray pool_entry = m_pool.GetList(pool_index);
 			int alloc_type = pool_entry[AllocationPartsOffsets.AllocationType];
 			DynamicAllocation alloc = null;
-			switch (alloc_type) {
-				case (int)AllocationType.Object:
-					alloc = RestoreObject(alloc_id, pool_entry);
-					break;
-				case (int)AllocationType.Array:
-					alloc = RestoreArray(alloc_id, pool_entry);
-					break;
-				case (int)AllocationType.Delegate:
-					alloc = RestoreDelegate(alloc_id, pool_entry);
-					break;
-				default:
-					Logger.l.Warning("unknown allocation type: {0}", alloc_type);
-					break;
-			}
+            switch (alloc_type)
+            {
+                case (int)AllocationType.Object:
+                    alloc = RestoreObject(alloc_id, pool_entry);
+                    break;
+                case (int)AllocationType.Array:
+                    alloc = RestoreArray(alloc_id, pool_entry);
+                    break;
+                case (int)AllocationType.Delegate:
+                    alloc = RestoreDelegate(alloc_id, pool_entry);
+                    break;
+                default:
+                    throw new System.Exception/* Logger.l.Warning*/("unknown allocation type: " + alloc_type);                  //break;
+            }
 			if (alloc != null) {
 				// Store back in the heap.
 				cur.DynamicArea.Allocations[alloc_id] = alloc;

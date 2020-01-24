@@ -49,6 +49,8 @@ namespace MMC
         bool TraceOnError { get; set; }
         bool Quiet { get; set; }
         double OptimizeStorageAtMegabyte { get; set; }
+        LogPriority LogFilter { get; }
+        string LogFileName { get; }
     }
 
     /// <summary>
@@ -66,6 +68,7 @@ namespace MMC
         public bool ShowStatistics { get; set; }
         public bool Quiet { get; set; }
         public bool Interactive { get; set; }
+        public LogPriority LogFilter { get; set; }
         public bool UseInstructionCache { get; set; } = true;
         public bool UseRefCounting { get; set; }
         public bool UseMarkAndSweep { get; set; } = true;
@@ -83,11 +86,13 @@ namespace MMC
         public double MaxExploreInMinutes { get; set; } = double.PositiveInfinity;
         public double OptimizeStorageAtMegabyte { get; set; } = double.PositiveInfinity;
         public double MemoryLimit { get; set; } = double.PositiveInfinity;
+        public string LogFileName { get; set; }
     }
 
     /// The main application class.
     class MonoModelChecker
     {
+        private Logger _logger;
 
         /// Print a verbose (debug) message.
         ///
@@ -96,7 +101,7 @@ namespace MMC
         ///
         /// \param msg Message (cf. string.Format).
         /// \param value Values for the message string.
-        public static void Message(string msg, params object[] values)
+        public void Message(string msg, params object[] values)
         {
             //if (Config.Instance.Verbose)
             {
@@ -108,9 +113,9 @@ namespace MMC
         /// Print a fatal message and die.
         ///
         /// \param msg Message to print before quitting.
-        public static void Fatal(string msg)
+        public void Fatal(string msg)
         {
-            Logger.l.CloseAll();
+            _logger.CloseAll();
             DotWriter.End();
             System.Console.WriteLine("FATAL: " + msg);
             System.Console.WriteLine("use option \"-h\" for help");
@@ -120,7 +125,7 @@ namespace MMC
         /// Open a file for writing.
         ///
         /// \param filename Name of the file to output to.
-        static TextWriter TryOpen(string filename)
+        TextWriter TryOpen(string filename)
         {
             StreamWriter retval = null;
             try
@@ -152,7 +157,7 @@ namespace MMC
         /// This sets various fields in class Config.
         ///
         /// \param args Command-line options as passed to Main.
-        public static IConfig GetConfigFromCommandLine(string[] args)
+        public IConfig GetConfigFromCommandLine(string[] args)
         {
             var config = new Config();
             for (int i = 0; i < args.Length; ++i)
@@ -221,8 +226,11 @@ namespace MMC
                             ++i;
                             if (i < args.Length)
                             {
-                                if (!Logger.l.ParseAndSetLogFilter(args[i]))
+                                if (!Logger.TryParseLLogFilter(args[i], out var logFilter))
+                                {
                                     Fatal("malformed log filter (use -h)");
+                                }
+                                config.LogFilter = logFilter;
                             }
                             else
                                 Fatal("-f option requires an argument");
@@ -261,7 +269,9 @@ namespace MMC
                         case 'l':
                             ++i;
                             if (i < args.Length)
-                                Logger.l.AddOutput(new TextLoggerOutput(TryOpen(args[i])));
+                            {
+                                //logger.AddOutput(new TextLoggerOutput(TryOpen(args[i])));
+                            }
                             else
                                 Fatal("-l option requies an argument");
                             break;
@@ -294,9 +304,6 @@ namespace MMC
             if (config.AssemblyToCheckFileName == null)
                 Fatal("no assembly to check specified");
 
-            // Defaults.
-            if (!config.Quiet)
-                Logger.l.AddOutput(new TextLoggerOutput(System.Console.Out));
             if (config.RunTimeParameters == null)
                 config.RunTimeParameters = new string[] { };
 
@@ -320,7 +327,7 @@ namespace MMC
 
         static string copyright = @"MoonWalker 1.0.1 (11 April 2008)
 (C) University of Twente, Formal Methods and Tools group";
-
+        
         static void PrintCommandLineUsage()
         {
 
@@ -371,18 +378,18 @@ Disabling/enabling features:
             System.Console.WriteLine(help_text);
         }
 
-        public static void PrintConfig(IConfig config)
+        public static void PrintConfig(IConfig config, Logger logger)
         {
             var configType = typeof(IConfig);
             foreach (FieldInfo fld in configType.GetFields())
             {
-                Logger.l.Notice(string.Format("Config.{0,-25} = {1,-25}", fld.Name, fld.GetValue(config)));
+                logger.Notice(string.Format("Config.{0,-25} = {1,-25}", fld.Name, fld.GetValue(config)));
             }
 
 #if DEBUG
-            Logger.l.Notice("DEBUG is enabled");
+            logger.Notice("DEBUG is enabled");
 #else
-			Logger.l.Notice("RELEASE is enabled");
+			logger.Notice("RELEASE is enabled");
 #endif
         }
 
@@ -396,17 +403,32 @@ Disabling/enabling features:
         /// </summary>
         public static void Main(string[] args)
         {
+            new MonoModelChecker().Go(args);
+        }
+
+        public void Go(string[] args)
+        {
             Console.WriteLine(copyright + "\n");
 
             var config = GetConfigFromCommandLine(args);
-            PrintConfig(config);
+
+            var logger = new Logger(config.LogFilter);
+            _logger = logger;
+
+            // Defaults.
+            if (!config.Quiet)
+            {
+                logger.AddOutput(new TextLoggerOutput(Console.Out));
+            }
+
+            PrintConfig(config, logger);
 
             var assemblyLoader = new dnWalker.AssemblyLoader();
             assemblyLoader.GetModuleDef(File.ReadAllBytes(config.AssemblyToCheckFileName));
 
-            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
+            var definitionProvider = DefinitionProvider.Create(assemblyLoader, logger);
 
-            var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config);
+            var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
 
             var methodArgs = config.RunTimeParameters.Select(a => new ConstantString(a)).Cast<IDataElement>().ToArray();
 
@@ -416,6 +438,7 @@ Disabling/enabling features:
             Explorer ex = new Explorer(
                 cur,
                 statistics,
+                logger,
                 config);
 
             TextWriter tw = null;
@@ -433,7 +456,7 @@ Disabling/enabling features:
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
-                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, config);
+                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, logger, config);
                     ex.Run();
                     tw.WriteLine(cur.ToString());
                 }
@@ -444,17 +467,17 @@ Disabling/enabling features:
                 // Done, show statistics
                 if (config.ShowStatistics)
                 {
-                    Logger.l.Message("statistics: {0}", statistics.ToString());
+                    logger.Message("statistics: {0}", statistics.ToString());
                 }
 
                 if (tw != null)
                 {
                     tw.Flush();
                     tw.Close();
-                    Logger.l.Message("Trace written to " + config.AssemblyToCheckFileName + ".trace");
+                    logger.Message("Trace written to " + config.AssemblyToCheckFileName + ".trace");
                 }
 
-                Logger.l.CloseAll();
+                logger.CloseAll();
                 DotWriter.End();
             }
 

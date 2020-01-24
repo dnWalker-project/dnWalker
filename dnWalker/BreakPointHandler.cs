@@ -59,7 +59,7 @@ namespace MMC {
 
         BreakPoint MakeBreakPoint(string threadId, string methodFullName, string offset)
         {
-            BreakPoint bp = new BreakPoint();            
+            BreakPoint bp = new BreakPoint();
             bp.MethodDefinition = null;
             try
             {
@@ -77,7 +77,8 @@ namespace MMC {
                 }
                 else
                 {
-                    Logger.l.Warning("type definition not found for {0}", typeName);
+                    //Logger.l.Warning("type definition not found for {0}", typeName);
+                    throw new NotImplementedException("Just a reminder");
                 }
             }
             catch (FormatException) { }
