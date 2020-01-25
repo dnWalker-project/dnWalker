@@ -51,7 +51,7 @@ namespace MMC
             get { return m_outputs.Count; }
         }
 
-        public static bool TryParseLLogFilter(string format, out LogPriority newLogFilter)
+        public static bool TryParseLogFilter(string format, out LogPriority newLogFilter)
         {
             newLogFilter = LogPriority.None;
             char[] fmtChars = format.ToCharArray();
@@ -157,26 +157,33 @@ namespace MMC
 
         public void Log(LogPriority pr, string msg, params object[] values)
         {
-
             if ((pr & Filter) != 0)
             {
                 if (values.Length > 0)
+                {
                     msg = string.Format(msg, values);
+                }
                 foreach (ILoggerOutput output in m_outputs)
+                {
                     output.Log(pr, msg);
+                }
             }
         }
 
         public void FlushOutputs()
         {
             foreach (ILoggerOutput output in m_outputs)
+            {
                 output.Flush();
+            }
         }
 
         public void CloseAll()
         {
             foreach (ILoggerOutput output in m_outputs)
+            {
                 output.Close();
+            }
         }
 
         public Logger() : this(Default) { }

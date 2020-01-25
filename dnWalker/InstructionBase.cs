@@ -54,30 +54,16 @@ namespace MMC.InstructionExec
         public static IIEReturnValue ehLookupRetval = new ExceptionHandlerLookupReturnValue();
         public static IIEReturnValue finallyLookupRetval = new ExceptionFinallyReturnValue();
 
-        // Operand (either implicit or explicit)
-        object m_operand;
         // Boolean attributes.
         InstructionExecAttributes m_flags;
-        // Reference to the instruction itself. 
-        Instruction m_instr;
 
         // Properties for access to private fields.
-        public Instruction Instruction
-        {
+        public Instruction Instruction { get; }
 
-            get { return m_instr; }
-        }
-
-        public object Operand
-        {
-
-            get { return m_operand; }
-            set { m_operand = value; }
-        }
+        public object Operand { get; set; }
 
         public bool UseShortForm
         {
-
             get { return (m_flags & InstructionExecAttributes.ShortForm) != 0; }
         }
 
@@ -98,8 +84,8 @@ namespace MMC.InstructionExec
 
         public InstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr)
         {
-            m_instr = instr;
-            m_operand = operand;
+            Instruction = instr;
+            Operand = operand;
             m_flags = atr;
         }
 
@@ -129,11 +115,9 @@ namespace MMC.InstructionExec
             // class for this type of instruction.
             string name = "MMC.InstructionExec." + tokens[0].ToUpper();
             Type t = Type.GetType(name);
-
             if (t == null)
             {
-                throw new System.Exception("No IE found for " + name);
-                //return null;
+                throw new Exception("No IE found for " + name);
             }
 
             InstructionExecAttributes attr = InstructionExecAttributes.None;
@@ -150,7 +134,9 @@ namespace MMC.InstructionExec
                         operand = new Int4((int)(c - '0'));
                 }
                 else if (lastToken.ToUpper().Equals("M1"))
+                {
                     operand = new Int4(-1);
+                }
                 attr |= InstructionExecAttributes.ImplicitOperand;
             }
 
@@ -232,7 +218,7 @@ namespace MMC.InstructionExec
             MethodDef noArgsCtor = null;
             foreach (var constructor in exceptionType.FindInstanceConstructors())
             {
-                if (constructor.Parameters.Count == 0)
+                if (constructor.ParamDefs.Count == 0)
                 {
                     noArgsCtor = constructor;
                     break;

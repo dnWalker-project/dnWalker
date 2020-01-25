@@ -103,7 +103,13 @@ namespace MMC
             }
             else
             {
-                dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
+                dataElementList = cur.StorageFactory.CreateList(args.Length);
+                for (int i = 0; i < args.Length; i++)
+                {
+                    dataElementList[i] = args[i];
+                }
+
+                //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
                 if (args.Length != entryPoint.Parameters.Count)
                 {
                     throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);

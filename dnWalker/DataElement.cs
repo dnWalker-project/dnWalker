@@ -16,23 +16,24 @@
  */
 
 namespace MMC.Data {
-	using System; // For ObsoleteAttribute :-)
-	
-	using dnlib.DotNet.Emit;
-	using MMC.State;
+    using System; // For ObsoleteAttribute :-)
+
+    using dnlib.DotNet.Emit;
+    using MMC.State;
     using dnlib.DotNet;
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using FieldDefinition = dnlib.DotNet.FieldDef;
     using ParameterDefinition = dnlib.DotNet.Parameter;
+    using dnWalker;
 
-    public interface IDataElement : System.IComparable {
-
+    public interface IDataElement : System.IComparable
+    {
 		bool Equals(IDataElement other);
 		bool ToBool();
 		string ToString();
 		string WrapperName { get; }
-	}
+    }
 
     /// The following two interfaces are used to abstract
     /// addition and substraction arithmetics, which can be 
@@ -61,7 +62,7 @@ namespace MMC.Data {
 		INumericElement Div(INumericElement other);
 		INumericElement Rem(INumericElement other);
 
-		Int4 ToInt4(bool checkOverflow);
+        Int4 ToInt4(bool checkOverflow);
 		UnsignedInt4 ToUnsignedInt4(bool checkOverflow);
 		Int8 ToInt8(bool checkOverflow);
 		UnsignedInt8 ToUnsignedInt8(bool checkOverflow);
@@ -81,15 +82,15 @@ namespace MMC.Data {
 		INumericElement ToUnsigned();
 	}
 
-    public interface IIntegerElement : INumericElement {
-
-		IIntegerElement And(IIntegerElement other);
-		IIntegerElement Not();
-		IIntegerElement Or(IIntegerElement other);
-		IIntegerElement Xor(IIntegerElement other);
-		IIntegerElement Shl(int x);
-		IIntegerElement Shr(int x);
-	}
+    public interface IIntegerElement : INumericElement
+    {
+        IIntegerElement And(IIntegerElement other);
+        IIntegerElement Not();
+        IIntegerElement Or(IIntegerElement other);
+        IIntegerElement Xor(IIntegerElement other);
+        IIntegerElement Shl(int x);
+        IIntegerElement Shr(int x);
+    }
 
     public interface IReferenceType : IDataElement {
 
@@ -102,13 +103,14 @@ namespace MMC.Data {
 	 * execution of some other (e.g. arithmetic) operation.
 	 * -------------------------------------------------------------- */
 
-    public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement {
-
+    public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement
+    {
 		int m_value;
 
 		public static readonly Int4 Zero = new Int4(0);
 		public string WrapperName { get { return "System.Int32"; } }
 		public int Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.Int32;
 
 		public IAddElement Add(INumericElement other, bool checkOverflow) {
 			int op = other.ToInt4(checkOverflow).Value;
@@ -282,8 +284,9 @@ namespace MMC.Data {
 
 		public uint Value { get { return m_value; } }
 		public string WrapperName { get { return "System.UInt32"; } }
+        // public DataElementKind Kind => DataElementKind.UInt32;
 
-		public IAddElement Add(INumericElement other, bool checkOverflow) {
+        public IAddElement Add(INumericElement other, bool checkOverflow) {
 
 			uint op = other.ToUnsignedInt4(checkOverflow).Value;
 
@@ -443,8 +446,9 @@ namespace MMC.Data {
 
 		public string WrapperName { get { return "System.Int64"; } }
 		public long Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.Int64;
 
-		public IAddElement Add(INumericElement other, bool checkOverflow) {
+        public IAddElement Add(INumericElement other, bool checkOverflow) {
 
 			long op = other.ToInt8(checkOverflow).Value;
 
@@ -563,24 +567,26 @@ namespace MMC.Data {
 
 		public bool ToBool() { return m_value != 0; }
 
-		public INumericElement ToUnsigned() {
+		public INumericElement ToUnsigned()
+        {
 			return ToUnsignedInt8(false);
 		}
 
-		public bool Equals(IDataElement other) {
+        public bool Equals(IDataElement other)
+        {
+            return (other is Int8) && ((Int8)other).Value == m_value;
+        }
 
-			return (other is Int8) && ((Int8)other).Value == m_value;
-		}
+        public int CompareTo(object obj)
+        {
+            var n = (obj as INumericElement).ToInt8(true);
+            return m_value.CompareTo(n.Value);
+        }
 
-		public int CompareTo(object obj) {
-			return m_value.CompareTo(((Int8)obj).Value);
-
-		}
-
-		public override string ToString() {
-
-			return Value.ToString() + "L";
-		}
+        public override string ToString()
+        {
+            return Value.ToString() + "L";
+        }
 
 		public override int GetHashCode() {
 
@@ -599,8 +605,9 @@ namespace MMC.Data {
 
 		public string WrapperName { get { return "System.UInt64"; } }
 		public ulong Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.UInt64;
 
-		public IAddElement Add(INumericElement other, bool checkOverflow) {
+        public IAddElement Add(INumericElement other, bool checkOverflow) {
 
 			ulong op = other.ToUnsignedInt8(checkOverflow).Value;
 
@@ -747,8 +754,9 @@ namespace MMC.Data {
 
 		public string WrapperName { get { return "System.Single"; } }
 		public float Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.Single;
 
-		public IAddElement Add(INumericElement other, bool checkOverflow) {
+        public IAddElement Add(INumericElement other, bool checkOverflow) {
 
 			float op = other.ToFloat4(checkOverflow).Value;
 
@@ -869,8 +877,9 @@ namespace MMC.Data {
 
 		public string WrapperName { get { return "System.Double"; } }
 		public double Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.Double;
 
-		public bool IsFinite() {
+        public bool IsFinite() {
 			return !(double.IsInfinity(m_value) | double.IsNaN(m_value));
 		}
 
@@ -988,8 +997,9 @@ namespace MMC.Data {
 
 		public string WrapperName { get { return "System.IntPtr"; } }
 		public System.IntPtr Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.NativeInt;
 
-		public bool ToBool() { return ((uint)m_value) == 0; }
+        public bool ToBool() { return ((uint)m_value) == 0; }
 
 		public override string ToString() {
 
@@ -1028,9 +1038,10 @@ namespace MMC.Data {
 
 		public string WrapperName { get { return "System.String"; } }
 		public string Value { get { return m_value; } }
+        // public DataElementKind Kind => DataElementKind.String;
 
-		// Should never be called.
-		public uint Location
+        // Should never be called.
+        public uint Location
         {
             get
             {
@@ -1074,7 +1085,9 @@ namespace MMC.Data {
 
 		public static readonly ObjectReference Null = new ObjectReference(0);
 
-		public string WrapperName { get { return ""; } }
+        // public DataElementKind Kind => DataElementKind.Type;
+
+        public string WrapperName { get { return ""; } }
 
 		public uint Location {
 
@@ -1115,7 +1128,6 @@ namespace MMC.Data {
 
     abstract class MethodMemberPointer : IManagedPointer
     {
-
         protected MethodState m_method;
         protected int m_index;
 

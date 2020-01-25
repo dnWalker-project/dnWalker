@@ -226,7 +226,7 @@ namespace MMC
                             ++i;
                             if (i < args.Length)
                             {
-                                if (!Logger.TryParseLLogFilter(args[i], out var logFilter))
+                                if (!Logger.TryParseLogFilter(args[i], out var logFilter))
                                 {
                                     Fatal("malformed log filter (use -h)");
                                 }

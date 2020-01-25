@@ -28,6 +28,7 @@ namespace MMC
 	using MMC.InstructionExec;
 	using MMC.Collections;
     using dnlib.DotNet.Emit;
+    using MMC.Data;
 
     /// <summary>
     /// Handler for events that indicate the exploration of a state.
@@ -220,6 +221,11 @@ namespace MMC
         {
 			return m_dfs.Count;
 		}
+
+        public System.Exception GetUnhandledException()
+        {
+            return cur.CurrentThread.UnhandledException;
+        }
 
         public bool Run()
         {
@@ -470,7 +476,8 @@ namespace MMC
             do
             {
                 PrintTransition();
-                //Console.Out.WriteLine(currentInstrExec.ToString());
+
+                Logger.Trace(currentInstrExec.ToString());
                 ier = currentInstrExec.Execute(cur);
 
                 currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);

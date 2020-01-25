@@ -29,9 +29,7 @@ namespace MMC.State {
 		public static int state_field_offset = LockManager.NoThread;
 
 		CallStack m_callStack;
-		ObjectReference m_threadObj;
-		ObjectReference m_exceptionObj; // ref is stored here in case of exception
-		int m_state; // Short-hand for the 'state' field.
+        int m_state; // Short-hand for the 'state' field.
         bool m_isDirty;
 		int m_me; // an ID.
 
@@ -64,29 +62,42 @@ namespace MMC.State {
 			}
 		}
 
-		public ObjectReference ThreadObject {
+        public ObjectReference ThreadObject { get; set; }
 
-			get { return m_threadObj; }
-			set { m_threadObj = value; }
-		}
+        public System.Exception UnhandledException { get; private set; }
 
-		public ObjectReference ExceptionReference {
+        private ObjectReference _exceptionReference;
 
-			get { return this.m_exceptionObj; }
-			set { this.m_exceptionObj = value; }
-		}
+        public ObjectReference ExceptionReference
+        {
+            get { return _exceptionReference; }
+            set
+            {
+                _exceptionReference = value;
+                if (ObjectReference.Null.Equals(_exceptionReference))
+                {
+                    UnhandledException = null;
+                    return;
+                }
 
-		// ---------------- State, Locking and Waiting -------------- 
+                AllocatedObject exceptionObj = cur.DynamicArea.Allocations[_exceptionReference] as AllocatedObject;
+                var messageField = cur.DefinitionProvider.GetFieldDefinition(typeof(System.Exception).FullName, "_message");
+                UnhandledException = new System.Exception($"An exception of type {exceptionObj.Type.FullName} has been thrown " +
+                    $"with message '{exceptionObj.Fields[(int)messageField.FieldOffset].ToString()}");
+            }
+        }
 
-		public int State {
+        // ---------------- State, Locking and Waiting -------------- 
+
+        public int State {
 
 			get { return m_state; }
 			set {
 				if (m_state == MMC.ThreadStatus.Stopped) {
 					Debug.Assert(value != m_state, "Stopping already stopped thread.");
 					if (value == MMC.ThreadStatus.Running || value == MMC.ThreadStatus.WaitSleepJoin) {
-						cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
-						ThreadObjectWatcher.Increment(m_me, m_threadObj, cur);
+						cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
+						ThreadObjectWatcher.Increment(m_me, ThreadObject, cur);
 					}
 				}
 				if (value == MMC.ThreadStatus.Stopped)
@@ -97,7 +108,7 @@ namespace MMC.State {
 
 				if (state_field_offset != LockManager.NoThread) {
 					AllocatedObject theThreadObject =
-						(AllocatedObject)cur.DynamicArea.Allocations[m_threadObj];
+						(AllocatedObject)cur.DynamicArea.Allocations[ThreadObject];
 					Debug.Assert(theThreadObject != null,
 							"Thread object should not be null when setting state (even to Stopped).");
 					theThreadObject.Fields[state_field_offset] = new Int4(m_state);
@@ -139,7 +150,7 @@ namespace MMC.State {
 
         void ReleaseObject()
         {
-            cur.DynamicArea.SetPinnedAllocation(m_threadObj, false);
+            cur.DynamicArea.SetPinnedAllocation(ThreadObject, false);
             ThreadObjectWatcher.Decrement(m_me, ThreadObject, cur);
         }
 
@@ -187,7 +198,7 @@ namespace MMC.State {
 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.AppendFormat("object: {0}, state: {1}{2}, {3}, call stacks:\n",
-					m_threadObj.ToString(),
+					ThreadObject.ToString(),
 					(System.Threading.ThreadState)m_state,
 					(currentWaitFor != LockManager.NoThread ? " waiting for " + currentWaitFor : ""),
 					(IsDirty() ? "dirty" : "clean"));
@@ -201,14 +212,14 @@ namespace MMC.State {
 		public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me)
         {
 			m_callStack = cur.StorageFactory.CreateCallStack();
-			m_threadObj = threadObj;
+			ThreadObject = threadObj;
 			m_state = MMC.ThreadStatus.Running;
 			WaitingFor = LockManager.NoThread;
 			m_isDirty = true;
 			m_me = me;
-			m_exceptionObj = ObjectReference.Null;
+			ExceptionReference = ObjectReference.Null;
             this.cur = cur;
-			cur.DynamicArea.SetPinnedAllocation(m_threadObj, true);
+			cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
 			ThreadObjectWatcher.Increment(me, threadObj, cur);
 		}
 	}

@@ -31,6 +31,7 @@ namespace MMC.InstructionExec
     using FieldDefinition = dnlib.DotNet.FieldDef;
     using ParameterDefinition = dnlib.DotNet.Parameter;
     using MMC.ICall;
+    using dnWalker;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -928,7 +929,7 @@ namespace MMC.InstructionExec
             // Lookup layout information if it's not available.
             if (!fld.HasLayoutInfo)
             {
-                //fld = cur.DefinitionProvider.GetFieldDefinition(fld);
+                fld = DefinitionProvider.GetFieldDefinition(fld);
                 //throw new NotImplementedException("GetFieldDefinition");
             }
 
@@ -970,8 +971,8 @@ namespace MMC.InstructionExec
 				 */
                 if (typeDef.FullName.Equals(fld.DeclaringType.FullName) || matched)
                 {
-                    if (fld.FieldOffset < typeDef.Fields.Count &&
-                            typeDef.Fields[(int)fld.FieldOffset].Name.Equals(fld.Name))
+                    if (fld.FieldOffset < typeDef.Fields.Count 
+                        && typeDef.Fields[(int)fld.FieldOffset].Name.Equals(fld.Name))
                     {
                         retval = (int)fld.FieldOffset;
                         break;
@@ -982,11 +983,14 @@ namespace MMC.InstructionExec
 
                 if (typeDef.BaseType != null && typeDef.BaseType.FullName != "System.Object") // if base type is System.Object, stop
                 {
-                    typeOffset += typeDef.Fields.Count - 1;
+                    typeOffset += Math.Max(0, typeDef.Fields.Count - 1);
                 }
             }
 
             m_offset = typeOffset + retval;
+
+            Debug.Assert(m_offset >= 0, $"Offset for type {superType.FullName} is negative.");
+
             return m_offset;
         }
 
@@ -1556,7 +1560,6 @@ namespace MMC.InstructionExec
 
     class LDSFLD : ObjectModelInstructionExec
     {
-
         public LDSFLD(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -1565,7 +1568,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IIEReturnValue retval = nincRetval;
             FieldDefinition fld = GetFieldDefinition();
             var declType = GetTypeDefinition();
@@ -1588,10 +1590,7 @@ namespace MMC.InstructionExec
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            if (GetFieldDefinition().IsInitOnly)
-                return false;
-            else
-                return true;
+            return !GetFieldDefinition().IsInitOnly;
         }
 
         public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
@@ -1605,7 +1604,6 @@ namespace MMC.InstructionExec
 
     class LDSFLDA : ObjectModelInstructionExec
     {
-
         public LDSFLDA(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -1614,7 +1612,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IIEReturnValue retval = nincRetval;
             FieldDefinition fld = GetFieldDefinition();
             TypeDefinition declType = GetTypeDefinition();
@@ -1821,6 +1818,11 @@ namespace MMC.InstructionExec
 
             try
             {
+                /*if (b.Equals(b.Zero))
+                {
+                // TODO optimize!
+                }*/
+
                 cur.EvalStack.Push(a.Div(b));
             }
             catch (DivideByZeroException e)
@@ -1973,26 +1975,22 @@ namespace MMC.InstructionExec
 
     class CEQ : CompareInstruction
     {
-
-        public CEQ(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CEQ(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            cur.EvalStack.Push((a.Equals(b) ? new Int4(1) : new Int4(0)));
+            cur.EvalStack.Push(a.CompareTo(b) == 0 ? new Int4(1) : new Int4(0));
             return nextRetval;
         }
     }
 
     class CGT : CompareInstruction
     {
-
         public CGT(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -2464,6 +2462,16 @@ namespace MMC.InstructionExec
                 }
                 else
                 {
+                    var bypass = MethodBypass.Get(methDef);
+                    if (bypass != null)
+                    {
+                        if (bypass.TryGetValue(args, cur, out var dataElement))
+                        {
+                            cur.EvalStack.Push(dataElement);
+                            return retval;
+                        }
+                    }
+
                     // Create new frame. Note we still return nextRetval, so
                     // the call instruction is not re-executed after returning.
                     //

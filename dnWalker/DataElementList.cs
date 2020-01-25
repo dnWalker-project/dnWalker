@@ -15,100 +15,101 @@
  *
  */
 
-namespace MMC.Data {
+namespace MMC.Data
+{
+    using System.Diagnostics;
+    using MMC.Util;
+    using MMC.Collections;
 
-	using System.Diagnostics;
-	using MMC.State;
-	using MMC.Util;
-	using MMC.Collections;
+    public class DataElementList : IDataElementContainer
+    {
+        protected IDataElement[] m_elements;
+        protected bool m_isDirty;
+        protected bool m_isReadonly;
 
-    public class DataElementList : IDataElementContainer {
+        public virtual IDataElement this[int index]
+        {
+            get { return m_elements[index]; }
+            set
+            {
+                Debug.Assert(!m_isReadonly, "Changing read-only data element list.");
+                m_isDirty |= m_elements[index] != value;
 
-		protected IDataElement[] m_elements;
-		protected bool m_isDirty;
-		protected bool m_isReadonly;
+                IDataElement oldVal = m_elements[index];
+                m_elements[index] = value;
+            }
+        }
 
-		public virtual IDataElement this[int index] {
+        public int Length
+        {
+            get { return m_elements.Length; }
+        }
 
-			get { return m_elements[index]; }
+        public bool ReadOnly
+        {
+            get { return m_isReadonly; }
+            set
+            {
+                Debug.Assert(!m_isReadonly, "Changing read-only data element list.");
+                m_isReadonly = value;
+            }
+        }
 
-			set {
-				Debug.Assert(!m_isReadonly, "Changing read-only data element list.");
-				m_isDirty |= m_elements[index] != value;
+        public bool IsDirty()
+        {
+            return m_isDirty;
+        }
 
-				IDataElement oldVal = m_elements[index];
-				m_elements[index] = value;
-			}
-		}
+        public virtual void Dispose()
+        {
+        }
 
-		public int Length {
+        public void Clean()
+        {
+            m_isDirty = false;
+        }
 
-			get { return m_elements.Length; }
-		}
+        public virtual IStorable StorageCopy()
+        {
+            IDataElement[] retval_elements = new IDataElement[m_elements.Length];
+            System.Array.Copy(m_elements, retval_elements, retval_elements.Length);
+            return new DataElementList(retval_elements);
+        }
 
-		public bool ReadOnly {
+        public override string ToString()
+        {
+            return new ListToString(m_elements);
+        }
 
-			get { return m_isReadonly; }
-			set {
-				Debug.Assert(!m_isReadonly, "Changing read-only data element list.");
-				m_isReadonly = value;
-			}
-		}
+        public override int GetHashCode()
+        {
+            return ArrayIntHasher.GetHashCodeDataElementContainer(this, this.Length);
+        }
 
-		public bool IsDirty() {
+        public override bool Equals(object other)
+        {
+            DataElementList o = other as DataElementList;
+            bool equal = o != null && Length == o.Length;
+            for (int i = 0; equal && i < m_elements.Length; ++i)
+            {
+                equal = o[i].Equals(m_elements[i]);
+            }
 
-			return m_isDirty;
-		}
+            return equal;
+        }
 
-		public virtual void Dispose() {
+        public DataElementList(int length)
+        {
+            m_elements = new IDataElement[length];
+            m_isDirty = true;
+            m_isReadonly = false;
+        }
 
-		}
-
-		public void Clean() {
-
-			m_isDirty = false;
-		}
-
-		public virtual IStorable StorageCopy() {
-
-			IDataElement[] retval_elements = new IDataElement[m_elements.Length];
-			System.Array.Copy(m_elements, retval_elements, retval_elements.Length);
-			return new DataElementList(retval_elements);
-		}
-
-
-		public override string ToString() {
-			return new ListToString(m_elements);
-		}
-
-
-		public override int GetHashCode() {
-			return ArrayIntHasher.GetHashCodeDataElementContainer(this, this.Length);
-		}
-
-		public override bool Equals(object other) {
-
-			DataElementList o = other as DataElementList;
-			bool equal = o != null && Length == o.Length;
-			for (int i = 0; equal && i < m_elements.Length; ++i)
-				equal = o[i].Equals(m_elements[i]);
-
-			return equal;
-		}
-
-		public DataElementList(int length) {
-
-			m_elements = new IDataElement[length];
-			m_isDirty = true;
-			m_isReadonly = false;
-		}
-
-		protected DataElementList(IDataElement[] elements) {
-
-			m_elements = elements;
-			m_isDirty = true;
-			m_isReadonly = false;
-		}
-	}
-
+        protected DataElementList(IDataElement[] elements)
+        {
+            m_elements = elements;
+            m_isDirty = true;
+            m_isReadonly = false;
+        }
+    }
 }

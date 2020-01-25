@@ -451,9 +451,27 @@ namespace MMC
 
         public static FieldDefinition GetFieldDefinition(IField fieldRef)
         {
+            if (fieldRef == null)
+            {
+                return null;
+            }
+
+            var fieldDefinition = fieldRef.ResolveFieldDef();
+            if (!fieldDefinition.FieldOffset.HasValue)
+            {
+                var fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
+                for (var i = 0; i < fields.Count; i++)
+                {
+                    if (fields[i] == fieldDefinition)
+                    {
+                        fieldDefinition.FieldOffset = (uint)i;
+                        break;
+                    }
+                }
+            }
             //if (m_fieldDefinitions.TryGetValue()
             //return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
-            return fieldRef.ResolveFieldDef();
+            return fieldDefinition;
         }
 
         /// \brief Look up a field definition by name, in a type given by name.
@@ -487,7 +505,7 @@ namespace MMC
                     m_fieldDefinitions[key] = retval;
             }
 
-            return retval;
+            return GetFieldDefinition(retval);
         }
 
         /// \brief Get the number of static fields in a type definition.
@@ -581,7 +599,12 @@ namespace MMC
                 return UnsignedInt8.Zero;
             }
 
-            throw new NotImplementedException("GetNullValue ITypeDefOrRef " + typeRef.FullName);
+            if (typeRef.Module.CorLibTypes.UIntPtr == typeSig)
+            {
+                return UnsignedInt8.Zero;
+            }
+
+            throw new NotImplementedException("GetNullValue for " + typeRef.FullName);
             /*switch (typeRef.FullName) {
 				case Constants.Boolean:
 				case Constants.Char:
