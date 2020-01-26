@@ -24,6 +24,7 @@
 
 using dnWalker;
 using dnWalker.Tests;
+using FluentAssertions;
 using MMC;
 using MMC.Data;
 using System;
@@ -166,43 +167,12 @@ return new Fake.TestRuntimeImpl(rt);
         {
         }
 
-        protected override object Test(string methodName, params object[] args)
+        private new void Test(string methodName, params object[] args)
         {
             methodName = "dnSpy.Debugger.DotNet.Interpreter.Tests.TestClass." + methodName;
-                    
-            object res1 = null, res2 = null;
-            Exception ex1 = null, ex2 = null;
-			try
-            {
-                res1 = base.Test(methodName, args);
-            }
-			catch (Exception ex)
-            {
-				ex1 = ex;
-				res1 = null;
-			}
-
-            try
-            {
-                res2 = Utils.GetMethodInfo(methodName).Invoke(null, args);
-            }
-            catch (TargetInvocationException tie)
-            {
-                ex2 = tie.InnerException;
-                res2 = null;
-            }
-            catch (Exception ex)
-            {
-                ex2 = ex;
-                res2 = null;
-            }
-            /*if (!(ex1 is null) || !(ex2 is null))
-				Verify(ex1?.GetType().FullName == ex2?.GetType().FullName);
-			else
-				Verify(m1.ReturnType, res1, res2);*/
-            return null;
+            TestAndCompare(methodName, args);
         }
-
+        
         [Fact] public void Test_RET__Void() { Test("Test_RET__Void"); } /* TestMethod("Test_RET__Void"); */
         [Fact] public void Test_LDC_I4_M1() { Test("Test_LDC_I4_M1"); } /* TestMethod("Test_LDC_I4_M1"); */
         [Fact] public void Test_LDC_I4_0() { Test("Test_LDC_I4_0"); } /* TestMethod("Test_LDC_I4_0"); */

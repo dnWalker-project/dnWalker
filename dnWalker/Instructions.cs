@@ -264,7 +264,6 @@ namespace MMC.InstructionExec
     // Switch
     class SWITCH : BranchInstructionExec
     {
-
         public SWITCH(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -273,11 +272,16 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            Int4 a = (Int4)cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
             Instruction[] targets = Operand as Instruction[];
-            return (a.Value < targets.Length ?
-                  new JumpReturnValue(targets[a.Value]) : nextRetval);
+            if (targets.Length == 0)
+            {
+                return nextRetval;
+            }
+
+            var index = (int)Convert.ChangeType(a, typeof(int));
+            return index >= 0 && index < targets.Length ?
+                new JumpReturnValue(targets[index]) : nextRetval;
         }
     }
 
@@ -414,8 +418,8 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            int shiftBy = ((Int4)cur.EvalStack.Pop()).Value;
+            var value = cur.EvalStack.Pop();
+            int shiftBy = (int)Convert.ChangeType(value, typeof(int));
             IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shl(shiftBy));
             return nextRetval;
@@ -425,7 +429,6 @@ namespace MMC.InstructionExec
     // Shift right
     class SHR : LogicalIntsructionExec
     {
-
         public SHR(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -434,8 +437,8 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            int shiftBy = ((Int4)cur.EvalStack.Pop()).Value;
+            var value = cur.EvalStack.Pop();
+            int shiftBy = (int)Convert.ChangeType(value, typeof(int));
             IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shr(shiftBy));
             return nextRetval;
@@ -2730,14 +2733,15 @@ namespace MMC.InstructionExec
             // NOTE: Popping has a side-effect! If reference counting is enabled,
             // it calls the Dispose() method on the method state, which, in turn,
             // calls Dispose() on all members (like locals and argument lists).
-            MethodState callee = cur.CallStack.Pop();            
+            MethodState callee = cur.CallStack.Pop();
             if (cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
             {
                 cur.EvalStack.Push(callee.EvalStack.Pop());
             }
             else
             {
-                if (callee.Definition.ReturnType.IsValueType)
+                if (callee.Definition.ReturnType.IsValueType 
+                    || callee.Definition.ReturnType == callee.Definition.ReturnType.Module.CorLibTypes.String)
                 {
                     cur.CurrentThread.RetValue = callee.EvalStack.Top(); // TODO a little bit hacky
                 }

@@ -551,9 +551,10 @@ namespace MMC
             return GetNullValue(parameter.Type.ToTypeDefOrRef());
         }
 
-        /// \brief default(typeRef) of a type typeRef
+        /// <summary>
+        /// Get default(typeRef) of a type typeRef
         /// i.e., the default type for representation in the state of a given type
-
+        /// </summary>
         public static IDataElement GetNullValue(ITypeDefOrRef typeRef)
         {
             var typeSig = typeRef.ToTypeSig();
@@ -763,26 +764,30 @@ namespace MMC
             switch (Type.GetTypeCode(value.GetType()))
             {
                 case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
-                //case TypeCode.Char: return new SymbolicInt32ILValue(_appDomain, (char)value);
+                case TypeCode.Char: return new Int4((char)value);
                 //case TypeCode.SByte: return new SymbolicInt32ILValue(_appDomain, (sbyte)value);
                 //case TypeCode.Byte: return new SymbolicInt32ILValue(_appDomain, (byte)value);
                 //case TypeCode.Int16: return new SymbolicInt32ILValue(_appDomain, (short)value);
                 //case TypeCode.UInt16: return new SymbolicInt32ILValue(_appDomain, (ushort)value);
                 case TypeCode.Int32: return new Int8((int)value);
                 //case TypeCode.UInt32: return new SymbolicInt32ILValue(_appDomain, (int)(uint)value);
-                //case TypeCode.Int64: return new SymbolicInt64ILValue(_appDomain, (long)value);
+                case TypeCode.Int64: return new Int8((long)value);
                 //case TypeCode.UInt64: return new SymbolicInt64ILValue(_appDomain, (long)(ulong)value);
-                //case TypeCode.Single: return new ConstantFloatILValue(_appDomain, (float)value);
-                //case TypeCode.Double: return new ConstantFloatILValue(_appDomain, (double)value);
-                //case TypeCode.String:
+                case TypeCode.Single: return new Float4((float)value);
+                case TypeCode.Double: return new Float8((double)value);
+                case TypeCode.String: return new ConstantString(value.ToString());
                 //    throw new NotImplementedException("string");
                 ////return new Tests.Fake.ConstantStringILValue(_appDomain.System_String, (string)value);
                 default:
-                //    if (value is IntPtr ip)
-                //        return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(_appDomain, ip.ToInt32()) : ConstantNativeIntILValue.Create64(_appDomain, ip.ToInt64());
-                //    if (value is UIntPtr up)
-                //        return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(_appDomain, (int)up.ToUInt32()) : ConstantNativeIntILValue.Create64(_appDomain, (long)up.ToUInt64());
-                    throw new InvalidOperationException();
+                    if (value is IntPtr ip)
+                    {
+                        return IntPtr.Size == 4 ? CreateDataElement(ip.ToInt32()) : CreateDataElement(ip.ToInt64());
+                    }
+                    if (value is UIntPtr up)
+                    {
+                        return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
+                    }
+                    throw new NotSupportedException("CreateDataElement for " + value.GetType());
             }
         }
     }

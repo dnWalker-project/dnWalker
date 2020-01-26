@@ -13,13 +13,10 @@ namespace dnWalker.Tests.ExampleTests
         }
 
         [Theory]
-        [InlineData(4, 1, false)]
-        public void CallMethodWithFinally(int x, int y, bool expectedResult)
+        [InlineData(4, 1)]
+        public void CallMethodWithFinally(int x, int y)
         {
-            var retValue = Test("Examples.ExceptionHandling.MethodWithFinally", x, y);
-            retValue.Should().BeOfType<Int4>();
-            var value = (Int4)retValue;
-            (value.Value != 0).Should().Be(expectedResult, value.Value.ToString());
+            TestAndCompare("Examples.ExceptionHandling.MethodWithFinally", x, y);
         }
 
         [Fact]
@@ -32,15 +29,12 @@ namespace dnWalker.Tests.ExampleTests
         }
 
         [Theory]
-        [InlineData(4, 0, false)]
-        [InlineData(12, 5, false)]
-        [InlineData(12, 4, true)]
-        public void CallMethodWithConcreteExceptionHandlerWithoutParameter(int x, int y, bool expectedResult)
+        [InlineData(4, 0)]
+        [InlineData(12, 5)]
+        [InlineData(12, 4)]
+        public void CallMethodWithConcreteExceptionHandlerWithoutParameter(int x, int y)
         {
-            var retValue = Test("Examples.ExceptionHandling.MethodWithConcreteExceptionHandlerWithoutParameter", x, y);
-            retValue.Should().BeOfType<Int4>();
-            var value = (Int4)retValue;
-            (value.Value != 0).Should().Be(expectedResult, value.Value.ToString());
+            TestAndCompare("Examples.ExceptionHandling.MethodWithConcreteExceptionHandlerWithoutParameter", x, y);
         }
     }
 }

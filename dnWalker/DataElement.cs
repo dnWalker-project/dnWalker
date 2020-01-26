@@ -103,7 +103,7 @@ namespace MMC.Data {
 	 * execution of some other (e.g. arithmetic) operation.
 	 * -------------------------------------------------------------- */
 
-    public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement
+    public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
     {
 		int m_value;
 
@@ -270,7 +270,92 @@ namespace MMC.Data {
 			return (int)m_value;
 		}
 
-		public Int4(int val) {
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+
+        public Int4(int val) {
 
 			m_value = val;
 		}
@@ -278,7 +363,7 @@ namespace MMC.Data {
         public static explicit operator Int4(int b) => new Int4(b);
     }
 
-    public struct UnsignedInt4 : IIntegerElement {
+    public struct UnsignedInt4 : IIntegerElement, IConvertible {
 		public static UnsignedInt4 Zero = new UnsignedInt4(0);
 		uint m_value;
 
@@ -434,13 +519,98 @@ namespace MMC.Data {
 			return (int)m_value;
 		}
 
-		public UnsignedInt4(uint val) {
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+
+        public UnsignedInt4(uint val) {
 
 			m_value = val;
 		}
 	}
 
-    public struct Int8 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement {
+    public struct Int8 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible {
 		public static Int8 Zero = new Int8(0);
 		long m_value;
 
@@ -593,7 +763,92 @@ namespace MMC.Data {
 			return (int)(m_value);
 		}
 
-		public Int8(long val) {
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+
+        public Int8(long val) {
 
 			m_value = val;
 		}
@@ -747,7 +1002,7 @@ namespace MMC.Data {
 		}
 	}
 
-    public struct Float4 : ISignedNumericElement, IRealElement {
+    public struct Float4 : ISignedNumericElement, IRealElement, IConvertible {
 		public static Float4 Zero = new Float4(0);
 
 		float m_value;
@@ -865,13 +1120,98 @@ namespace MMC.Data {
 			return (int)(m_value * 577);
 		}
 
-		public Float4(float val) {
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+
+        public Float4(float val) {
 
 			m_value = val;
 		}
 	}
 
-    public struct Float8 : ISignedNumericElement, IRealElement {
+    public struct Float8 : ISignedNumericElement, IRealElement, IConvertible {
 		public static Float8 Zero = new Float8(0);
 		double m_value;
 
@@ -989,7 +1329,92 @@ namespace MMC.Data {
 
 			return (int)(m_value * 191);
 		}
-	}
+
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+    }
 
 	struct IntPointer : IDataElement {
 
@@ -1032,7 +1457,7 @@ namespace MMC.Data {
 		}
 	}
 
-	struct ConstantString : IReferenceType {
+	struct ConstantString : IReferenceType,IConvertible {
 
 		string m_value;
 
@@ -1073,7 +1498,92 @@ namespace MMC.Data {
 			return m_value.GetHashCode();
 		}
 
-		public ConstantString(string val) {
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+
+        public ConstantString(string val) {
 
 			m_value = val;
 		}

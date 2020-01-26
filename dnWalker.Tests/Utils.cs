@@ -26,9 +26,14 @@ namespace dnWalker.Tests
                     .Distinct()
                     .Where(t => !t.FullName.StartsWith("System."))
                     .ToList();
-                _types = types
-                    .Distinct()
-                    .ToDictionary(t => t.FullName, t => t);
+                foreach (var t in types)
+                {
+                    if (_types.ContainsKey(t.FullName))
+                    {
+                        continue;
+                    }
+                    _types.Add(t.FullName, t);
+                }
             }
 
             if (!_types.TryGetValue(methodTypeName, out var type))
