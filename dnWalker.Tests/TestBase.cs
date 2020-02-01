@@ -11,7 +11,7 @@ namespace dnWalker.Tests
     public abstract class TestBase
     {
         private readonly AssemblyLoader _assemblyLoader;
-        private readonly Config _config;
+        protected readonly Config _config;
         private readonly DefinitionProvider _definitionProvider;
 
         protected TestBase(string assemblyFilename)
@@ -93,6 +93,36 @@ namespace dnWalker.Tests
             {
                 if (res1 == null && res2 == null)
                 {
+                    return;
+                }
+
+                if (res1.GetType() == res2.GetType() && res1.GetType() == typeof(System.IntPtr))
+                {
+                    res1 = ((IntPtr)res1).ToInt64();
+                    res2 = ((IntPtr)res2).ToInt64();
+                }
+
+                if (res1.GetType() == res2.GetType() && res1.GetType() == typeof(UIntPtr))
+                {
+                    res1 = ((UIntPtr)res1).ToUInt64();
+                    res2 = ((UIntPtr)res2).ToUInt64();
+                }
+
+                if (methodInfo.ReturnType == typeof(IntPtr))
+                {
+                    var rr1 = (IConvertible)res1;
+                    var rr2 = (IntPtr)res2;
+
+                    Convert.ChangeType(rr1, typeof(long)).Should().BeEquivalentTo(rr2.ToInt64());
+                    return;
+                }
+
+                if (methodInfo.ReturnType == typeof(UIntPtr))
+                {
+                    var rr1 = (IConvertible)res1;
+                    var rr2 = (UIntPtr)res2;
+
+                    Convert.ChangeType(rr1, typeof(ulong)).Should().BeEquivalentTo(rr2.ToUInt64());
                     return;
                 }
 

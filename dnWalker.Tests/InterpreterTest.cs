@@ -165,6 +165,7 @@ return new Fake.TestRuntimeImpl(rt);
             */
         public InterpreterTest() : base(AssemblyFilename)
         {
+            _config.StateStorageSize = 5;
         }
 
         private new void Test(string methodName, params object[] args)
@@ -172,3049 +173,4374 @@ return new Fake.TestRuntimeImpl(rt);
             methodName = "dnSpy.Debugger.DotNet.Interpreter.Tests.TestClass." + methodName;
             TestAndCompare(methodName, args);
         }
-        
-        [Fact] public void Test_RET__Void() { Test("Test_RET__Void"); } /* TestMethod("Test_RET__Void"); */
-        [Fact] public void Test_LDC_I4_M1() { Test("Test_LDC_I4_M1"); } /* TestMethod("Test_LDC_I4_M1"); */
-        [Fact] public void Test_LDC_I4_0() { Test("Test_LDC_I4_0"); } /* TestMethod("Test_LDC_I4_0"); */
-        [Fact] public void Test_LDC_I4_1() { Test("Test_LDC_I4_1"); } /* TestMethod("Test_LDC_I4_1"); */
-        [Fact] public void Test_LDC_I4_2() { Test("Test_LDC_I4_2"); } /* TestMethod("Test_LDC_I4_2"); */
-        [Fact] public void Test_LDC_I4_3() { Test("Test_LDC_I4_3"); } /* TestMethod("Test_LDC_I4_3"); */
-        [Fact] public void Test_LDC_I4_4() { Test("Test_LDC_I4_4"); } /* TestMethod("Test_LDC_I4_4"); */
-        [Fact] public void Test_LDC_I4_5() { Test("Test_LDC_I4_5"); } /* TestMethod("Test_LDC_I4_5"); */
-        [Fact] public void Test_LDC_I4_6() { Test("Test_LDC_I4_6"); } /* TestMethod("Test_LDC_I4_6"); */
-        [Fact] public void Test_LDC_I4_7() { Test("Test_LDC_I4_7"); } /* TestMethod("Test_LDC_I4_7"); */
-        [Fact] public void Test_LDC_I4_8() { Test("Test_LDC_I4_8"); } /* TestMethod("Test_LDC_I4_8"); */
-        [Fact] public void Test_LDC_I4_S__MinValue() { Test("Test_LDC_I4_S__MinValue"); } /* TestMethod("Test_LDC_I4_S__MinValue"); */
-        [Fact] public void Test_LDC_I4_S__MaxValue() { Test("Test_LDC_I4_S__MaxValue"); } /* TestMethod("Test_LDC_I4_S__MaxValue"); */
-        [Fact] public void Test_LDC_I4_S__M1() { Test("Test_LDC_I4_S__M1"); } /* TestMethod("Test_LDC_I4_S__M1"); */
-        [Fact] public void Test_LDC_I4_S__0() { Test("Test_LDC_I4_S__0"); } /* TestMethod("Test_LDC_I4_S__0"); */
-        [Fact] public void Test_LDC_I4_S__1() { Test("Test_LDC_I4_S__1"); } /* TestMethod("Test_LDC_I4_S__1"); */
-        [Fact] public void Test_LDC_I4__MinValue() { Test("Test_LDC_I4__MinValue"); } /* TestMethod("Test_LDC_I4__MinValue"); */
-        [Fact] public void Test_LDC_I4__MaxValue() { Test("Test_LDC_I4__MaxValue"); } /* TestMethod("Test_LDC_I4__MaxValue"); */
-        [Fact] public void Test_LDC_I4__M1() { Test("Test_LDC_I4__M1"); } /* TestMethod("Test_LDC_I4__M1"); */
-        [Fact] public void Test_LDC_I4__0() { Test("Test_LDC_I4__0"); } /* TestMethod("Test_LDC_I4__0"); */
-        [Fact] public void Test_LDC_I4__1() { Test("Test_LDC_I4__1"); } /* TestMethod("Test_LDC_I4__1"); */
-        [Fact] public void Test_LDC_I8__MinValue() { Test("Test_LDC_I8__MinValue"); } /* TestMethod("Test_LDC_I8__MinValue"); */
-        [Fact] public void Test_LDC_I8__MaxValue() { Test("Test_LDC_I8__MaxValue"); } /* TestMethod("Test_LDC_I8__MaxValue"); */
-        [Fact] public void Test_LDC_I8__M1() { Test("Test_LDC_I8__M1"); } /* TestMethod("Test_LDC_I8__M1"); */
-        [Fact] public void Test_LDC_I8__0() { Test("Test_LDC_I8__0"); } /* TestMethod("Test_LDC_I8__0"); */
-        [Fact] public void Test_LDC_I8__1() { Test("Test_LDC_I8__1"); } /* TestMethod("Test_LDC_I8__1"); */
-        [Fact] public void Test_LDC_R4__NaN() { Test("Test_LDC_R4__NaN"); } /* TestMethod("Test_LDC_R4__NaN"); */
-        [Fact] public void Test_LDC_R4__Epsilon() { Test("Test_LDC_R4__Epsilon"); } /* TestMethod("Test_LDC_R4__Epsilon"); */
-        [Fact] public void Test_LDC_R4__MinValue() { Test("Test_LDC_R4__MinValue"); } /* TestMethod("Test_LDC_R4__MinValue"); */
-        [Fact] public void Test_LDC_R4__MaxValue() { Test("Test_LDC_R4__MaxValue"); } /* TestMethod("Test_LDC_R4__MaxValue"); */
-        [Fact] public void Test_LDC_R4__NegativeInfinity() { Test("Test_LDC_R4__NegativeInfinity"); } /* TestMethod("Test_LDC_R4__NegativeInfinity"); */
-        [Fact] public void Test_LDC_R4__PositiveInfinity() { Test("Test_LDC_R4__PositiveInfinity"); } /* TestMethod("Test_LDC_R4__PositiveInfinity"); */
-        [Fact] public void Test_LDC_R4__PositiveZero() { Test("Test_LDC_R4__PositiveZero"); } /* TestMethod("Test_LDC_R4__PositiveZero"); */
-        [Fact] public void Test_LDC_R4__NegativeZero() { Test("Test_LDC_R4__NegativeZero"); } /* TestMethod("Test_LDC_R4__NegativeZero"); */
-        [Fact] public void Test_LDC_R4__M1() { Test("Test_LDC_R4__M1"); } /* TestMethod("Test_LDC_R4__M1"); */
-        [Fact] public void Test_LDC_R4__1() { Test("Test_LDC_R4__1"); } /* TestMethod("Test_LDC_R4__1"); */
-        [Fact] public void Test_LDC_R8__NaN() { Test("Test_LDC_R8__NaN"); } /* TestMethod("Test_LDC_R8__NaN"); */
-        [Fact] public void Test_LDC_R8__Epsilon() { Test("Test_LDC_R8__Epsilon"); } /* TestMethod("Test_LDC_R8__Epsilon"); */
-        [Fact] public void Test_LDC_R8__MinValue() { Test("Test_LDC_R8__MinValue"); } /* TestMethod("Test_LDC_R8__MinValue"); */
-        [Fact] public void Test_LDC_R8__MaxValue() { Test("Test_LDC_R8__MaxValue"); } /* TestMethod("Test_LDC_R8__MaxValue"); */
-        [Fact] public void Test_LDC_R8__NegativeInfinity() { Test("Test_LDC_R8__NegativeInfinity"); } /* TestMethod("Test_LDC_R8__NegativeInfinity"); */
-        [Fact] public void Test_LDC_R8__PositiveInfinity() { Test("Test_LDC_R8__PositiveInfinity"); } /* TestMethod("Test_LDC_R8__PositiveInfinity"); */
-        [Fact] public void Test_LDC_R8__PositiveZero() { Test("Test_LDC_R8__PositiveZero"); } /* TestMethod("Test_LDC_R8__PositiveZero"); */
-        [Fact] public void Test_LDC_R8__NegativeZero() { Test("Test_LDC_R8__NegativeZero"); } /* TestMethod("Test_LDC_R8__NegativeZero"); */
-        [Fact] public void Test_LDC_R8__M1() { Test("Test_LDC_R8__M1"); } /* TestMethod("Test_LDC_R8__M1"); */
-        [Fact] public void Test_LDC_R8__1() { Test("Test_LDC_R8__1"); } /* TestMethod("Test_LDC_R8__1"); */
-        [Fact] public void Test_LDSTR() { Test("Test_LDSTR"); } /* TestMethod("Test_LDSTR"); */
-        [Fact] public void Test_LDNULL() { Test("Test_LDNULL"); } /* TestMethod("Test_LDNULL"); */
-        [Fact] public void Test_LDARG_0() { Test("Test_LDARG_0", 123); } /* TestMethod("Test_LDARG_0", 123); */
-        [Fact] public void Test_LDARG_1() { Test("Test_LDARG_1", "", 123); } /* TestMethod("Test_LDARG_1", "", 123); */
-        [Fact] public void Test_LDARG_2() { Test("Test_LDARG_2", "", "", 123); } /* TestMethod("Test_LDARG_2", "", "", 123); */
-        [Fact] public void Test_LDARG_3() { Test("Test_LDARG_3", "", "", "", 123); } /* TestMethod("Test_LDARG_3", "", "", "", 123); */
-        [Fact] public void Test_LDARG_S__0() { Test("Test_LDARG_S__0", 123); } /* TestMethod("Test_LDARG_S__0", 123); */
-        [Fact] public void Test_LDARG_S__4() { Test("Test_LDARG_S__4", "", "", "", "", 123); } /* TestMethod("Test_LDARG_S__4", "", "", "", "", 123); */
-        [Fact] public void Test_LDARG_S__128() { Test("Test_LDARG_S__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); } /* TestMethod("Test_LDARG_S__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); */
-        [Fact] public void Test_LDARG__0() { Test("Test_LDARG__0", 123); } /* TestMethod("Test_LDARG__0", 123); */
-        [Fact] public void Test_LDARG__4() { Test("Test_LDARG__4", "", "", "", "", 123); } /* TestMethod("Test_LDARG__4", "", "", "", "", 123); */
-        [Fact] public void Test_LDARG__128() { Test("Test_LDARG__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); } /* TestMethod("Test_LDARG__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); */
-        [Fact] public void Test_LDLOC_0() { Test("Test_LDLOC_0"); } /* TestMethod("Test_LDLOC_0"); */
-        [Fact] public void Test_LDLOC_1() { Test("Test_LDLOC_1"); } /* TestMethod("Test_LDLOC_1"); */
-        [Fact] public void Test_LDLOC_2() { Test("Test_LDLOC_2"); } /* TestMethod("Test_LDLOC_2"); */
-        [Fact] public void Test_LDLOC_3() { Test("Test_LDLOC_3"); } /* TestMethod("Test_LDLOC_3"); */
-        [Fact] public void Test_LDLOC_S__0() { Test("Test_LDLOC_S__0"); } /* TestMethod("Test_LDLOC_S__0"); */
-        [Fact] public void Test_LDLOC_S__4() { Test("Test_LDLOC_S__4"); } /* TestMethod("Test_LDLOC_S__4"); */
-        [Fact] public void Test_LDLOC_S__128() { Test("Test_LDLOC_S__128"); } /* TestMethod("Test_LDLOC_S__128"); */
-        [Fact] public void Test_LDLOC__0() { Test("Test_LDLOC__0"); } /* TestMethod("Test_LDLOC__0"); */
-        [Fact] public void Test_LDLOC__4() { Test("Test_LDLOC__4"); } /* TestMethod("Test_LDLOC__4"); */
-        [Fact] public void Test_LDLOC__128() { Test("Test_LDLOC__128"); } /* TestMethod("Test_LDLOC__128"); */
-        [Fact] public void Test_STARG_S__0() { Test("Test_STARG_S__0", 123, 456); } /* TestMethod("Test_STARG_S__0", 123, 456); */
-        [Fact] public void Test_STARG_S__128() { Test("Test_STARG_S__128", 456, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); } /* TestMethod("Test_STARG_S__128", 456, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); */
-        [Fact] public void Test_STARG__0() { Test("Test_STARG__0", 123, 456); } /* TestMethod("Test_STARG__0", 123, 456); */
-        [Fact] public void Test_STARG__128() { Test("Test_STARG__128", 456, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); } /* TestMethod("Test_STARG__128", 456, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); */
-        [Fact] public void Test_STLOC_0() { Test("Test_STLOC_0", 123); } /* TestMethod("Test_STLOC_0", 123); */
-        [Fact] public void Test_STLOC_1() { Test("Test_STLOC_1", 123); } /* TestMethod("Test_STLOC_1", 123); */
-        [Fact] public void Test_STLOC_2() { Test("Test_STLOC_2", 123); } /* TestMethod("Test_STLOC_2", 123); */
-        [Fact] public void Test_STLOC_3() { Test("Test_STLOC_3", 123); } /* TestMethod("Test_STLOC_3", 123); */
-        [Fact] public void Test_STLOC_S__0() { Test("Test_STLOC_S__0", 123); } /* TestMethod("Test_STLOC_S__0", 123); */
-        [Fact] public void Test_STLOC_S__128() { Test("Test_STLOC_S__128", 123); } /* TestMethod("Test_STLOC_S__128", 123); */
-        [Fact] public void Test_STLOC__0() { Test("Test_STLOC__0", 123); } /* TestMethod("Test_STLOC__0", 123); */
-        [Fact] public void Test_STLOC__128() { Test("Test_STLOC__128", 123); } /* TestMethod("Test_STLOC__128", 123); */
-        [Fact] public void Test_NOP() { Test("Test_NOP"); } /* TestMethod("Test_NOP"); */
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_I__Boolean(bool value) { Test("Test_CONV_I__Boolean", value); }
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_ADD__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_I1__Boolean(bool value) { Test("Test_CONV_I1__Boolean", value); }
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_ADD__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD__IntPtr_Int32", new IntPtr(arg0), arg1); }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_I2__Boolean(bool value) { Test("Test_CONV_I2__Boolean", value); } 
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_ADD_OVF__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD_OVF__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_I4__Boolean(bool value) { Test("Test_CONV_I4__Boolean", value); }
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_ADD_OVF__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD_OVF__IntPtr_Int32", new IntPtr(arg0), arg1); }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_I8__Boolean(bool value) { Test("Test_CONV_I8__Boolean", value); }
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_ADD_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_U__Boolean(bool value) { Test("Test_CONV_U__Boolean", value); }
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_ADD_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Fact]
+        public void Test_AND__Int32() { Test("Test_AND__Int32", 0x5AA51234, 0x3FF37591); }
+
+        [Fact]
+        public void Test_AND__Int32_IntPtr() { Test("Test_AND__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); }
+
+        [Fact]
+        public void Test_AND__Int64() { Test("Test_AND__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); }
+
+        [Fact]
+        public void Test_AND__IntPtr() { Test("Test_AND__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); }
+
+        [Fact]
+        public void Test_AND__IntPtr_Int32() { Test("Test_AND__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); }
+
+        [Fact]
+        public void Test_BEQ() { Test("Test_BEQ"); }
+
+        [Fact]
+        public void Test_BEQ_S() { Test("Test_BEQ_S"); }
+
+        [Fact]
+        public void Test_BGE() { Test("Test_BGE"); }
+
+        [Fact]
+        public void Test_BGE_S() { Test("Test_BGE_S"); }
+
+        [Fact]
+        public void Test_BGE_UN() { Test("Test_BGE_UN"); }
+
+        [Fact]
+        public void Test_BGE_UN_S() { Test("Test_BGE_UN_S"); }
+
+        [Fact]
+        public void Test_BGT() { Test("Test_BGT"); }
+
+        [Fact]
+        public void Test_BGT_S() { Test("Test_BGT_S"); }
+
+        [Fact]
+        public void Test_BGT_UN() { Test("Test_BGT_UN"); }
+
+        [Fact]
+        public void Test_BGT_UN_S() { Test("Test_BGT_UN_S"); }
+
+        [Fact]
+        public void Test_BLE() { Test("Test_BLE"); }
+
+        [Fact]
+        public void Test_BLE_S() { Test("Test_BLE_S"); }
+
+        [Fact]
+        public void Test_BLE_UN() { Test("Test_BLE_UN"); }
+
+        [Fact]
+        public void Test_BLE_UN_S() { Test("Test_BLE_UN_S"); }
+
+        [Fact]
+        public void Test_BLT() { Test("Test_BLT"); }
+
+        [Fact]
+        public void Test_BLT_S() { Test("Test_BLT_S"); }
+
+        [Fact]
+        public void Test_BLT_UN() { Test("Test_BLT_UN"); }
+
+        [Fact]
+        public void Test_BLT_UN_S() { Test("Test_BLT_UN_S"); }
+
+        [Fact]
+        public void Test_BNE_UN() { Test("Test_BNE_UN"); }
+
+        [Fact]
+        public void Test_BNE_UN_S() { Test("Test_BNE_UN_S"); }
+
+        [Fact]
+        public void Test_BOX_UNBOX() { Test("Test_BOX_UNBOX"); }
+
+        [Fact]
+        public void Test_BR() { Test("Test_BR"); }
+
+        [Fact]
+        public void Test_BR_S() { Test("Test_BR_S"); }
+
+        [Fact]
+        public void Test_BRFALSE() { Test("Test_BRFALSE"); }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test_CONV_U1__Boolean(bool value) { Test("Test_CONV_U1__Boolean", value); }
-
-        //[Fact] public void Test_CONV_U2__Boolean(bool value) { Test("Test_CONV_U2__Boolean", value); } /* TestMethod("Test_CONV_U2__Boolean", false); */
-        ////[Fact] public void Test_CONV_U2__Boolean(bool value) { Test("Test_CONV_U2__Boolean", true); } /* TestMethod("Test_CONV_U2__Boolean", true); */
-        //[Fact] public void Test_CONV_U4__Boolean(bool value) { Test("Test_CONV_U4__Boolean", false); } /* TestMethod("Test_CONV_U4__Boolean", false); */
-        ////[Fact] public void Test_CONV_U4__Boolean(bool value) { Test("Test_CONV_U4__Boolean", true); } /* TestMethod("Test_CONV_U4__Boolean", true); */
-        //[Fact] public void Test_CONV_U8__Boolean(bool value) { Test("Test_CONV_U8__Boolean", false); } /* TestMethod("Test_CONV_U8__Boolean", false); */
-        ////[Fact] public void Test_CONV_U8__Boolean(bool value) { Test("Test_CONV_U8__Boolean", true); } /* TestMethod("Test_CONV_U8__Boolean", true); */
-        //[Fact] public void Test_CONV_R4__Boolean(bool value) { Test("Test_CONV_R4__Boolean", false); } /* TestMethod("Test_CONV_R4__Boolean", false); */
-        ////[Fact] public void Test_CONV_R4__Boolean(bool value) { Test("Test_CONV_R4__Boolean", true); } /* TestMethod("Test_CONV_R4__Boolean", true); */
-        //[Fact] public void Test_CONV_R8__Boolean(bool value) { Test("Test_CONV_R8__Boolean", false); } /* TestMethod("Test_CONV_R8__Boolean", false); */
-        ////[Fact] public void Test_CONV_R8__Boolean(bool value) { Test("Test_CONV_R8__Boolean", true); } /* TestMethod("Test_CONV_R8__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I__Boolean(bool value) { Test("Test_CONV_OVF_I__Boolean", false); } /* TestMethod("Test_CONV_OVF_I__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_I__Boolean(bool value) { Test("Test_CONV_OVF_I__Boolean", true); } /* TestMethod("Test_CONV_OVF_I__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I1__Boolean(bool value) { Test("Test_CONV_OVF_I1__Boolean", false); } /* TestMethod("Test_CONV_OVF_I1__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_I1__Boolean(bool value) { Test("Test_CONV_OVF_I1__Boolean", true); } /* TestMethod("Test_CONV_OVF_I1__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I2__Boolean(bool value) { Test("Test_CONV_OVF_I2__Boolean", false); } /* TestMethod("Test_CONV_OVF_I2__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_I2__Boolean(bool value) { Test("Test_CONV_OVF_I2__Boolean", true); } /* TestMethod("Test_CONV_OVF_I2__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I4__Boolean(bool value) { Test("Test_CONV_OVF_I4__Boolean", false); } /* TestMethod("Test_CONV_OVF_I4__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_I4__Boolean(bool value) { Test("Test_CONV_OVF_I4__Boolean", true); } /* TestMethod("Test_CONV_OVF_I4__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I8__Boolean(bool value) { Test("Test_CONV_OVF_I8__Boolean", false); } /* TestMethod("Test_CONV_OVF_I8__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_I8__Boolean(bool value) { Test("Test_CONV_OVF_I8__Boolean", true); } /* TestMethod("Test_CONV_OVF_I8__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U__Boolean(bool value) { Test("Test_CONV_OVF_U__Boolean", false); } /* TestMethod("Test_CONV_OVF_U__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_U__Boolean(bool value) { Test("Test_CONV_OVF_U__Boolean", true); } /* TestMethod("Test_CONV_OVF_U__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U1__Boolean(bool value) { Test("Test_CONV_OVF_U1__Boolean", false); } /* TestMethod("Test_CONV_OVF_U1__Boolean", false); */
-        ////[Fact] public void Test_CONV_OVF_U1__Boolean(bool value) { Test("Test_CONV_OVF_U1__Boolean", true); } /* TestMethod("Test_CONV_OVF_U1__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U2__Boolean(bool value) { Test("Test_CONV_OVF_U2__Boolean", false); } /* TestMethod("Test_CONV_OVF_U2__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U2__Boolean(bool value) { Test("Test_CONV_OVF_U2__Boolean", true); } /* TestMethod("Test_CONV_OVF_U2__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U4__Boolean(bool value) { Test("Test_CONV_OVF_U4__Boolean", false); } /* TestMethod("Test_CONV_OVF_U4__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U4__Boolean(bool value) { Test("Test_CONV_OVF_U4__Boolean", true); } /* TestMethod("Test_CONV_OVF_U4__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U8__Boolean(bool value) { Test("Test_CONV_OVF_U8__Boolean", false); } /* TestMethod("Test_CONV_OVF_U8__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U8__Boolean(bool value) { Test("Test_CONV_OVF_U8__Boolean", true); } /* TestMethod("Test_CONV_OVF_U8__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Boolean(bool value) { Test("Test_CONV_OVF_I_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_I_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Boolean(bool value) { Test("Test_CONV_OVF_I_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_I_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Boolean(bool value) { Test("Test_CONV_OVF_I1_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_I1_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Boolean(bool value) { Test("Test_CONV_OVF_I1_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_I1_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Boolean(bool value) { Test("Test_CONV_OVF_I2_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_I2_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Boolean(bool value) { Test("Test_CONV_OVF_I2_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_I2_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Boolean(bool value) { Test("Test_CONV_OVF_I4_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_I4_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Boolean(bool value) { Test("Test_CONV_OVF_I4_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_I4_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Boolean(bool value) { Test("Test_CONV_OVF_I8_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_I8_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Boolean(bool value) { Test("Test_CONV_OVF_I8_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_I8_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Boolean(bool value) { Test("Test_CONV_OVF_U_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_U_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Boolean(bool value) { Test("Test_CONV_OVF_U_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_U_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Boolean(bool value) { Test("Test_CONV_OVF_U1_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_U1_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Boolean(bool value) { Test("Test_CONV_OVF_U1_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_U1_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Boolean(bool value) { Test("Test_CONV_OVF_U2_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_U2_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Boolean(bool value) { Test("Test_CONV_OVF_U2_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_U2_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Boolean(bool value) { Test("Test_CONV_OVF_U4_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_U4_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Boolean(bool value) { Test("Test_CONV_OVF_U4_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_U4_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Boolean(bool value) { Test("Test_CONV_OVF_U8_UN__Boolean", false); } /* TestMethod("Test_CONV_OVF_U8_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Boolean(bool value) { Test("Test_CONV_OVF_U8_UN__Boolean", true); } /* TestMethod("Test_CONV_OVF_U8_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_R_UN__Boolean(bool value) { Test("Test_CONV_R_UN__Boolean", false); } /* TestMethod("Test_CONV_R_UN__Boolean", false); */
-        //[Fact] public void Test_CONV_R_UN__Boolean(bool value) { Test("Test_CONV_R_UN__Boolean", true); } /* TestMethod("Test_CONV_R_UN__Boolean", true); */
-        //[Fact] public void Test_CONV_I__Char() { Test("Test_CONV_I__Char", char.MinValue); } /* TestMethod("Test_CONV_I__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_I__Char() { Test("Test_CONV_I__Char", char.MaxValue); } /* TestMethod("Test_CONV_I__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_I__Char() { Test("Test_CONV_I__Char", (char)0x1234); } /* TestMethod("Test_CONV_I__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_I__Char() { Test("Test_CONV_I__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_I__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_I1__Char() { Test("Test_CONV_I1__Char", char.MinValue); } /* TestMethod("Test_CONV_I1__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_I1__Char() { Test("Test_CONV_I1__Char", char.MaxValue); } /* TestMethod("Test_CONV_I1__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Char() { Test("Test_CONV_I1__Char", (char)0x1234); } /* TestMethod("Test_CONV_I1__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_I1__Char() { Test("Test_CONV_I1__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_I1__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_I2__Char() { Test("Test_CONV_I2__Char", char.MinValue); } /* TestMethod("Test_CONV_I2__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_I2__Char() { Test("Test_CONV_I2__Char", char.MaxValue); } /* TestMethod("Test_CONV_I2__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Char() { Test("Test_CONV_I2__Char", (char)0x1234); } /* TestMethod("Test_CONV_I2__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_I2__Char() { Test("Test_CONV_I2__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_I2__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_I4__Char() { Test("Test_CONV_I4__Char", char.MinValue); } /* TestMethod("Test_CONV_I4__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_I4__Char() { Test("Test_CONV_I4__Char", char.MaxValue); } /* TestMethod("Test_CONV_I4__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Char() { Test("Test_CONV_I4__Char", (char)0x1234); } /* TestMethod("Test_CONV_I4__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_I4__Char() { Test("Test_CONV_I4__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_I4__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_I8__Char() { Test("Test_CONV_I8__Char", char.MinValue); } /* TestMethod("Test_CONV_I8__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_I8__Char() { Test("Test_CONV_I8__Char", char.MaxValue); } /* TestMethod("Test_CONV_I8__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Char() { Test("Test_CONV_I8__Char", (char)0x1234); } /* TestMethod("Test_CONV_I8__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_I8__Char() { Test("Test_CONV_I8__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_I8__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_U__Char() { Test("Test_CONV_U__Char", char.MinValue); } /* TestMethod("Test_CONV_U__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_U__Char() { Test("Test_CONV_U__Char", char.MaxValue); } /* TestMethod("Test_CONV_U__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_U__Char() { Test("Test_CONV_U__Char", (char)0x1234); } /* TestMethod("Test_CONV_U__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_U__Char() { Test("Test_CONV_U__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_U__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_U1__Char() { Test("Test_CONV_U1__Char", char.MinValue); } /* TestMethod("Test_CONV_U1__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_U1__Char() { Test("Test_CONV_U1__Char", char.MaxValue); } /* TestMethod("Test_CONV_U1__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Char() { Test("Test_CONV_U1__Char", (char)0x1234); } /* TestMethod("Test_CONV_U1__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_U1__Char() { Test("Test_CONV_U1__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_U1__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_U2__Char() { Test("Test_CONV_U2__Char", char.MinValue); } /* TestMethod("Test_CONV_U2__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_U2__Char() { Test("Test_CONV_U2__Char", char.MaxValue); } /* TestMethod("Test_CONV_U2__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Char() { Test("Test_CONV_U2__Char", (char)0x1234); } /* TestMethod("Test_CONV_U2__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_U2__Char() { Test("Test_CONV_U2__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_U2__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_U4__Char() { Test("Test_CONV_U4__Char", char.MinValue); } /* TestMethod("Test_CONV_U4__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_U4__Char() { Test("Test_CONV_U4__Char", char.MaxValue); } /* TestMethod("Test_CONV_U4__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Char() { Test("Test_CONV_U4__Char", (char)0x1234); } /* TestMethod("Test_CONV_U4__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_U4__Char() { Test("Test_CONV_U4__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_U4__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_U8__Char() { Test("Test_CONV_U8__Char", char.MinValue); } /* TestMethod("Test_CONV_U8__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_U8__Char() { Test("Test_CONV_U8__Char", char.MaxValue); } /* TestMethod("Test_CONV_U8__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Char() { Test("Test_CONV_U8__Char", (char)0x1234); } /* TestMethod("Test_CONV_U8__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_U8__Char() { Test("Test_CONV_U8__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_U8__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_R4__Char() { Test("Test_CONV_R4__Char", char.MinValue); } /* TestMethod("Test_CONV_R4__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_R4__Char() { Test("Test_CONV_R4__Char", char.MaxValue); } /* TestMethod("Test_CONV_R4__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Char() { Test("Test_CONV_R4__Char", (char)0x1234); } /* TestMethod("Test_CONV_R4__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_R4__Char() { Test("Test_CONV_R4__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_R4__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_R8__Char() { Test("Test_CONV_R8__Char", char.MinValue); } /* TestMethod("Test_CONV_R8__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_R8__Char() { Test("Test_CONV_R8__Char", char.MaxValue); } /* TestMethod("Test_CONV_R8__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Char() { Test("Test_CONV_R8__Char", (char)0x1234); } /* TestMethod("Test_CONV_R8__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_R8__Char() { Test("Test_CONV_R8__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_R8__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I__Char() { Test("Test_CONV_OVF_I__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Char() { Test("Test_CONV_OVF_I__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_I__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Char() { Test("Test_CONV_OVF_I__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_I__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I__Char() { Test("Test_CONV_OVF_I__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_I__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I1__Char() { Test("Test_CONV_OVF_I1__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I1__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Char() { Test("Test_CONV_OVF_I1__Char", char.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Char() { Test("Test_CONV_OVF_I1__Char", (char)0x1234); } /* TestMethodEX("Test_CONV_OVF_I1__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1__Char() { Test("Test_CONV_OVF_I1__Char", (char)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I1__Char", (char)0x9ABC); */
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        public void Test_BRFALSE__Double(object arg0) { Test("Test_BRFALSE__Double", arg0); }
 
         [Theory]
-        [InlineData((char)0x1234)]
-        [InlineData((char)0x9ABC)]
-        [InlineData(char.MinValue)]
-        [InlineData(char.MaxValue)]
-        public void Test_CONV_OVF_I2__Char(char value) { Test("Test_CONV_OVF_I2__Char", value); }
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_BRFALSE__Int32(object arg0) { Test("Test_BRFALSE__Int32", arg0); }
 
         [Theory]
-        [InlineData((char)0x1234)]
-        [InlineData((char)0x9ABC)]
-        [InlineData(char.MinValue)]
-        [InlineData(char.MaxValue)]
-        public void Test_CONV_OVF_I4__Char(char value) { Test("Test_CONV_OVF_I4__Char", value); } 
+        [InlineData(0L)]
+        [InlineData(1L)]
+        public void Test_BRFALSE__Int64(object arg0) { Test("Test_BRFALSE__Int64", arg0); }
 
-        //[Fact] public void Test_CONV_OVF_I8__Char() { Test("Test_CONV_OVF_I8__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I8__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Char() { Test("Test_CONV_OVF_I8__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Char() { Test("Test_CONV_OVF_I8__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_I8__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8__Char() { Test("Test_CONV_OVF_I8__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_I8__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U__Char() { Test("Test_CONV_OVF_U__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Char() { Test("Test_CONV_OVF_U__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Char() { Test("Test_CONV_OVF_U__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U__Char() { Test("Test_CONV_OVF_U__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U1__Char() { Test("Test_CONV_OVF_U1__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U1__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Char() { Test("Test_CONV_OVF_U1__Char", char.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Char() { Test("Test_CONV_OVF_U1__Char", (char)0x1234); } /* TestMethodEX("Test_CONV_OVF_U1__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1__Char() { Test("Test_CONV_OVF_U1__Char", (char)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_U1__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U2__Char() { Test("Test_CONV_OVF_U2__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U2__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Char() { Test("Test_CONV_OVF_U2__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U2__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Char() { Test("Test_CONV_OVF_U2__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U2__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2__Char() { Test("Test_CONV_OVF_U2__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U2__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U4__Char() { Test("Test_CONV_OVF_U4__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U4__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Char() { Test("Test_CONV_OVF_U4__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U4__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Char() { Test("Test_CONV_OVF_U4__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U4__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4__Char() { Test("Test_CONV_OVF_U4__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U4__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U8__Char() { Test("Test_CONV_OVF_U8__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U8__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Char() { Test("Test_CONV_OVF_U8__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Char() { Test("Test_CONV_OVF_U8__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U8__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8__Char() { Test("Test_CONV_OVF_U8__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U8__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Char() { Test("Test_CONV_OVF_I_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Char() { Test("Test_CONV_OVF_I_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_I_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Char() { Test("Test_CONV_OVF_I_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_I_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Char() { Test("Test_CONV_OVF_I_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_I_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Char() { Test("Test_CONV_OVF_I1_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I1_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Char() { Test("Test_CONV_OVF_I1_UN__Char", char.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Char() { Test("Test_CONV_OVF_I1_UN__Char", (char)0x1234); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Char() { Test("Test_CONV_OVF_I1_UN__Char", (char)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Char() { Test("Test_CONV_OVF_I2_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I2_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Char() { Test("Test_CONV_OVF_I2_UN__Char", char.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Char() { Test("Test_CONV_OVF_I2_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_I2_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Char() { Test("Test_CONV_OVF_I2_UN__Char", (char)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Char() { Test("Test_CONV_OVF_I4_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I4_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Char() { Test("Test_CONV_OVF_I4_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_I4_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Char() { Test("Test_CONV_OVF_I4_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_I4_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Char() { Test("Test_CONV_OVF_I4_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_I4_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Char() { Test("Test_CONV_OVF_I8_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Char() { Test("Test_CONV_OVF_I8_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Char() { Test("Test_CONV_OVF_I8_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_I8_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Char() { Test("Test_CONV_OVF_I8_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_I8_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Char() { Test("Test_CONV_OVF_U_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Char() { Test("Test_CONV_OVF_U_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Char() { Test("Test_CONV_OVF_U_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Char() { Test("Test_CONV_OVF_U_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Char() { Test("Test_CONV_OVF_U1_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U1_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Char() { Test("Test_CONV_OVF_U1_UN__Char", char.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Char() { Test("Test_CONV_OVF_U1_UN__Char", (char)0x1234); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Char() { Test("Test_CONV_OVF_U1_UN__Char", (char)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Char() { Test("Test_CONV_OVF_U2_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U2_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Char() { Test("Test_CONV_OVF_U2_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U2_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Char() { Test("Test_CONV_OVF_U2_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U2_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Char() { Test("Test_CONV_OVF_U2_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U2_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Char() { Test("Test_CONV_OVF_U4_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Char() { Test("Test_CONV_OVF_U4_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Char() { Test("Test_CONV_OVF_U4_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U4_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Char() { Test("Test_CONV_OVF_U4_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U4_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Char() { Test("Test_CONV_OVF_U8_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Char() { Test("Test_CONV_OVF_U8_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Char() { Test("Test_CONV_OVF_U8_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_OVF_U8_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Char() { Test("Test_CONV_OVF_U8_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_OVF_U8_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_R_UN__Char() { Test("Test_CONV_R_UN__Char", char.MinValue); } /* TestMethod("Test_CONV_R_UN__Char", char.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__Char() { Test("Test_CONV_R_UN__Char", char.MaxValue); } /* TestMethod("Test_CONV_R_UN__Char", char.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__Char() { Test("Test_CONV_R_UN__Char", (char)0x1234); } /* TestMethod("Test_CONV_R_UN__Char", (char)0x1234); */
-        //[Fact] public void Test_CONV_R_UN__Char() { Test("Test_CONV_R_UN__Char", (char)0x9ABC); } /* TestMethod("Test_CONV_R_UN__Char", (char)0x9ABC); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I__IntPtr() { Test("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I1__IntPtr() { Test("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I2__IntPtr() { Test("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I4__IntPtr() { Test("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I8__IntPtr() { Test("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U__IntPtr() { Test("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U1__IntPtr() { Test("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U2__IntPtr() { Test("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U4__IntPtr() { Test("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_U8__IntPtr() { Test("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_R4__IntPtr() { Test("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_R4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_R8__IntPtr() { Test("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_R8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I__IntPtr() { Test("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_I__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I1__IntPtr() { Test("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I2__IntPtr() { Test("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I4__IntPtr() { Test("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I8__IntPtr() { Test("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_I8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U__IntPtr() { Test("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U1__IntPtr() { Test("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U1__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U2__IntPtr() { Test("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U2__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U4__IntPtr() { Test("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U4__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U8__IntPtr() { Test("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U8__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__IntPtr() { Test("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__IntPtr() { Test("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__IntPtr() { Test("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__IntPtr() { Test("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__IntPtr() { Test("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__IntPtr() { Test("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_U_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__IntPtr() { Test("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__IntPtr() { Test("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__IntPtr() { Test("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__IntPtr() { Test("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_OVF_U8_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_R_UN__IntPtr() { Test("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); } /* TestMethod("Test_CONV_R_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L)); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_I__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_I__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", (sbyte)0); } /* TestMethod("Test_CONV_I__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_I__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", (sbyte)1); } /* TestMethod("Test_CONV_I__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_I__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_I__SByte() { Test("Test_CONV_I__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_I__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_I1__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_I1__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", (sbyte)0); } /* TestMethod("Test_CONV_I1__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_I1__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", (sbyte)1); } /* TestMethod("Test_CONV_I1__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_I1__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_I1__SByte() { Test("Test_CONV_I1__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_I1__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_I2__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_I2__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", (sbyte)0); } /* TestMethod("Test_CONV_I2__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_I2__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", (sbyte)1); } /* TestMethod("Test_CONV_I2__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_I2__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_I2__SByte() { Test("Test_CONV_I2__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_I2__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_I4__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_I4__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", (sbyte)0); } /* TestMethod("Test_CONV_I4__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_I4__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", (sbyte)1); } /* TestMethod("Test_CONV_I4__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_I4__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_I4__SByte() { Test("Test_CONV_I4__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_I4__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_I8__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_I8__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", (sbyte)0); } /* TestMethod("Test_CONV_I8__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_I8__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", (sbyte)1); } /* TestMethod("Test_CONV_I8__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_I8__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_I8__SByte() { Test("Test_CONV_I8__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_I8__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_U__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_U__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", (sbyte)0); } /* TestMethod("Test_CONV_U__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_U__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", (sbyte)1); } /* TestMethod("Test_CONV_U__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_U__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_U__SByte() { Test("Test_CONV_U__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_U__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_U1__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_U1__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", (sbyte)0); } /* TestMethod("Test_CONV_U1__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_U1__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", (sbyte)1); } /* TestMethod("Test_CONV_U1__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_U1__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_U1__SByte() { Test("Test_CONV_U1__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_U1__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_U2__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_U2__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", (sbyte)0); } /* TestMethod("Test_CONV_U2__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_U2__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", (sbyte)1); } /* TestMethod("Test_CONV_U2__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_U2__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_U2__SByte() { Test("Test_CONV_U2__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_U2__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_U4__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_U4__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", (sbyte)0); } /* TestMethod("Test_CONV_U4__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_U4__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", (sbyte)1); } /* TestMethod("Test_CONV_U4__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_U4__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_U4__SByte() { Test("Test_CONV_U4__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_U4__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_U8__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_U8__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", (sbyte)0); } /* TestMethod("Test_CONV_U8__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_U8__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", (sbyte)1); } /* TestMethod("Test_CONV_U8__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_U8__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_U8__SByte() { Test("Test_CONV_U8__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_U8__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_R4__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_R4__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", (sbyte)0); } /* TestMethod("Test_CONV_R4__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_R4__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", (sbyte)1); } /* TestMethod("Test_CONV_R4__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_R4__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_R4__SByte() { Test("Test_CONV_R4__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_R4__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_R8__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_R8__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", (sbyte)0); } /* TestMethod("Test_CONV_R8__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_R8__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", (sbyte)1); } /* TestMethod("Test_CONV_R8__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_R8__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_R8__SByte() { Test("Test_CONV_R8__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_R8__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_OVF_I__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_OVF_I__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I__SByte() { Test("Test_CONV_OVF_I__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_OVF_I__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_OVF_I1__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I1__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I1__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_OVF_I1__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I1__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I1__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I1__SByte() { Test("Test_CONV_OVF_I1__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_OVF_I1__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_OVF_I2__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I2__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I2__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_OVF_I2__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I2__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I2__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I2__SByte() { Test("Test_CONV_OVF_I2__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_OVF_I2__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_OVF_I4__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I4__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I4__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_OVF_I4__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I4__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I4__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I4__SByte() { Test("Test_CONV_OVF_I4__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_OVF_I4__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_OVF_I8__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I8__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_OVF_I8__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I8__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I8__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I8__SByte() { Test("Test_CONV_OVF_I8__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_OVF_I8__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U__SByte() { Test("Test_CONV_OVF_U__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U1__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U1__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U1__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U1__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U1__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U1__SByte() { Test("Test_CONV_OVF_U1__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U1__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U2__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U2__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U2__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U2__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U2__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U2__SByte() { Test("Test_CONV_OVF_U2__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U2__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U4__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U4__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U4__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U4__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U4__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U4__SByte() { Test("Test_CONV_OVF_U4__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U4__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U8__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U8__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U8__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U8__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U8__SByte() { Test("Test_CONV_OVF_U8__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U8__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_I_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I_UN__SByte() { Test("Test_CONV_OVF_I_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_I_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I1_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I1_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_I1_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I1_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I1_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__SByte() { Test("Test_CONV_OVF_I1_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_I1_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I2_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I2_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_I2_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I2_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I2_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__SByte() { Test("Test_CONV_OVF_I2_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_I2_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I4_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I4_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_I4_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I4_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I4_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__SByte() { Test("Test_CONV_OVF_I4_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_I4_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_I8_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_I8_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_I8_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_I8_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_I8_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__SByte() { Test("Test_CONV_OVF_I8_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_I8_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U_UN__SByte() { Test("Test_CONV_OVF_U_UN__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_OVF_U_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U1_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U1_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U1_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U1_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U1_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__SByte() { Test("Test_CONV_OVF_U1_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U1_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U2_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U2_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U2_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U2_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U2_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__SByte() { Test("Test_CONV_OVF_U2_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U2_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U4_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U4_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U4_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U4_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__SByte() { Test("Test_CONV_OVF_U4_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U4_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", sbyte.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_OVF_U8_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", (sbyte)-1); } /* TestMethodEX("Test_CONV_OVF_U8_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_OVF_U8_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_OVF_U8_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__SByte() { Test("Test_CONV_OVF_U8_UN__SByte", (sbyte)-0x12); } /* TestMethodEX("Test_CONV_OVF_U8_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", sbyte.MinValue); } /* TestMethod("Test_CONV_R_UN__SByte", sbyte.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", sbyte.MaxValue); } /* TestMethod("Test_CONV_R_UN__SByte", sbyte.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", (sbyte)0); } /* TestMethod("Test_CONV_R_UN__SByte", (sbyte)0); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", (sbyte)-1); } /* TestMethod("Test_CONV_R_UN__SByte", (sbyte)-1); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", (sbyte)1); } /* TestMethod("Test_CONV_R_UN__SByte", (sbyte)1); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", (sbyte)0x12); } /* TestMethod("Test_CONV_R_UN__SByte", (sbyte)0x12); */
-        //[Fact] public void Test_CONV_R_UN__SByte() { Test("Test_CONV_R_UN__SByte", (sbyte)-0x12); } /* TestMethod("Test_CONV_R_UN__SByte", (sbyte)-0x12); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", short.MinValue); } /* TestMethod("Test_CONV_I__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", short.MaxValue); } /* TestMethod("Test_CONV_I__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", (short)0); } /* TestMethod("Test_CONV_I__Int16", (short)0); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", (short)-1); } /* TestMethod("Test_CONV_I__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", (short)1); } /* TestMethod("Test_CONV_I__Int16", (short)1); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", (short)0x1234); } /* TestMethod("Test_CONV_I__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_I__Int16() { Test("Test_CONV_I__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_I__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", short.MinValue); } /* TestMethod("Test_CONV_I1__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", short.MaxValue); } /* TestMethod("Test_CONV_I1__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", (short)0); } /* TestMethod("Test_CONV_I1__Int16", (short)0); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", (short)-1); } /* TestMethod("Test_CONV_I1__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", (short)1); } /* TestMethod("Test_CONV_I1__Int16", (short)1); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", (short)0x1234); } /* TestMethod("Test_CONV_I1__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_I1__Int16() { Test("Test_CONV_I1__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_I1__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", short.MinValue); } /* TestMethod("Test_CONV_I2__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", short.MaxValue); } /* TestMethod("Test_CONV_I2__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", (short)0); } /* TestMethod("Test_CONV_I2__Int16", (short)0); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", (short)-1); } /* TestMethod("Test_CONV_I2__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", (short)1); } /* TestMethod("Test_CONV_I2__Int16", (short)1); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", (short)0x1234); } /* TestMethod("Test_CONV_I2__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_I2__Int16() { Test("Test_CONV_I2__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_I2__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", short.MinValue); } /* TestMethod("Test_CONV_I4__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", short.MaxValue); } /* TestMethod("Test_CONV_I4__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", (short)0); } /* TestMethod("Test_CONV_I4__Int16", (short)0); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", (short)-1); } /* TestMethod("Test_CONV_I4__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", (short)1); } /* TestMethod("Test_CONV_I4__Int16", (short)1); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", (short)0x1234); } /* TestMethod("Test_CONV_I4__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_I4__Int16() { Test("Test_CONV_I4__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_I4__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", short.MinValue); } /* TestMethod("Test_CONV_I8__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", short.MaxValue); } /* TestMethod("Test_CONV_I8__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", (short)0); } /* TestMethod("Test_CONV_I8__Int16", (short)0); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", (short)-1); } /* TestMethod("Test_CONV_I8__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", (short)1); } /* TestMethod("Test_CONV_I8__Int16", (short)1); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", (short)0x1234); } /* TestMethod("Test_CONV_I8__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_I8__Int16() { Test("Test_CONV_I8__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_I8__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", short.MinValue); } /* TestMethod("Test_CONV_U__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", short.MaxValue); } /* TestMethod("Test_CONV_U__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", (short)0); } /* TestMethod("Test_CONV_U__Int16", (short)0); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", (short)-1); } /* TestMethod("Test_CONV_U__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", (short)1); } /* TestMethod("Test_CONV_U__Int16", (short)1); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", (short)0x1234); } /* TestMethod("Test_CONV_U__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_U__Int16() { Test("Test_CONV_U__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_U__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", short.MinValue); } /* TestMethod("Test_CONV_U1__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", short.MaxValue); } /* TestMethod("Test_CONV_U1__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", (short)0); } /* TestMethod("Test_CONV_U1__Int16", (short)0); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", (short)-1); } /* TestMethod("Test_CONV_U1__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", (short)1); } /* TestMethod("Test_CONV_U1__Int16", (short)1); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", (short)0x1234); } /* TestMethod("Test_CONV_U1__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_U1__Int16() { Test("Test_CONV_U1__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_U1__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", short.MinValue); } /* TestMethod("Test_CONV_U2__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", short.MaxValue); } /* TestMethod("Test_CONV_U2__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", (short)0); } /* TestMethod("Test_CONV_U2__Int16", (short)0); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", (short)-1); } /* TestMethod("Test_CONV_U2__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", (short)1); } /* TestMethod("Test_CONV_U2__Int16", (short)1); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", (short)0x1234); } /* TestMethod("Test_CONV_U2__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_U2__Int16() { Test("Test_CONV_U2__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_U2__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", short.MinValue); } /* TestMethod("Test_CONV_U4__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", short.MaxValue); } /* TestMethod("Test_CONV_U4__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", (short)0); } /* TestMethod("Test_CONV_U4__Int16", (short)0); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", (short)-1); } /* TestMethod("Test_CONV_U4__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", (short)1); } /* TestMethod("Test_CONV_U4__Int16", (short)1); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", (short)0x1234); } /* TestMethod("Test_CONV_U4__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_U4__Int16() { Test("Test_CONV_U4__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_U4__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", short.MinValue); } /* TestMethod("Test_CONV_U8__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", short.MaxValue); } /* TestMethod("Test_CONV_U8__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", (short)0); } /* TestMethod("Test_CONV_U8__Int16", (short)0); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", (short)-1); } /* TestMethod("Test_CONV_U8__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", (short)1); } /* TestMethod("Test_CONV_U8__Int16", (short)1); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", (short)0x1234); } /* TestMethod("Test_CONV_U8__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_U8__Int16() { Test("Test_CONV_U8__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_U8__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", short.MinValue); } /* TestMethod("Test_CONV_R4__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", short.MaxValue); } /* TestMethod("Test_CONV_R4__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", (short)0); } /* TestMethod("Test_CONV_R4__Int16", (short)0); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", (short)-1); } /* TestMethod("Test_CONV_R4__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", (short)1); } /* TestMethod("Test_CONV_R4__Int16", (short)1); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", (short)0x1234); } /* TestMethod("Test_CONV_R4__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_R4__Int16() { Test("Test_CONV_R4__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_R4__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", short.MinValue); } /* TestMethod("Test_CONV_R8__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", short.MaxValue); } /* TestMethod("Test_CONV_R8__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", (short)0); } /* TestMethod("Test_CONV_R8__Int16", (short)0); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", (short)-1); } /* TestMethod("Test_CONV_R8__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", (short)1); } /* TestMethod("Test_CONV_R8__Int16", (short)1); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", (short)0x1234); } /* TestMethod("Test_CONV_R8__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_R8__Int16() { Test("Test_CONV_R8__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_R8__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_I__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_I__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I__Int16() { Test("Test_CONV_OVF_I__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_I__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", short.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I1__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_I1__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I1__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", (short)0x1234); } /* TestMethodEX("Test_CONV_OVF_I1__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1__Int16() { Test("Test_CONV_OVF_I1__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_I1__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_I2__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I2__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I2__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_I2__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I2__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I2__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2__Int16() { Test("Test_CONV_OVF_I2__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_I2__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_I4__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I4__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I4__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_I4__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I4__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I4__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4__Int16() { Test("Test_CONV_OVF_I4__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_I4__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_I8__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I8__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_I8__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I8__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I8__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8__Int16() { Test("Test_CONV_OVF_I8__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_I8__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U__Int16() { Test("Test_CONV_OVF_U__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", short.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U1__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U1__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U1__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", (short)0x1234); } /* TestMethodEX("Test_CONV_OVF_U1__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1__Int16() { Test("Test_CONV_OVF_U1__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U1__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U2__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U2__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U2__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U2__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U2__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2__Int16() { Test("Test_CONV_OVF_U2__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U2__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U4__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U4__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U4__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U4__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U4__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4__Int16() { Test("Test_CONV_OVF_U4__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U4__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U8__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U8__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U8__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U8__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8__Int16() { Test("Test_CONV_OVF_U8__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U8__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int16() { Test("Test_CONV_OVF_I_UN__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", short.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I1_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I1_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", (short)0x1234); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int16() { Test("Test_CONV_OVF_I1_UN__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I2_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I2_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I2_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I2_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int16() { Test("Test_CONV_OVF_I2_UN__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I4_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I4_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I4_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I4_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int16() { Test("Test_CONV_OVF_I4_UN__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int16() { Test("Test_CONV_OVF_I8_UN__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_I8_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int16() { Test("Test_CONV_OVF_U_UN__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_U_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", short.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U1_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U1_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", (short)0x1234); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int16() { Test("Test_CONV_OVF_U1_UN__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", short.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U2_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U2_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", (short)-1); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U2_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U2_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int16() { Test("Test_CONV_OVF_U2_UN__Int16", (short)-0x1234); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int16() { Test("Test_CONV_OVF_U4_UN__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_U4_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", short.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", (short)0); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", (short)-1); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", (short)1); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int16() { Test("Test_CONV_OVF_U8_UN__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_OVF_U8_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", short.MinValue); } /* TestMethod("Test_CONV_R_UN__Int16", short.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", short.MaxValue); } /* TestMethod("Test_CONV_R_UN__Int16", short.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", (short)0); } /* TestMethod("Test_CONV_R_UN__Int16", (short)0); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", (short)-1); } /* TestMethod("Test_CONV_R_UN__Int16", (short)-1); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", (short)1); } /* TestMethod("Test_CONV_R_UN__Int16", (short)1); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", (short)0x1234); } /* TestMethod("Test_CONV_R_UN__Int16", (short)0x1234); */
-        //[Fact] public void Test_CONV_R_UN__Int16() { Test("Test_CONV_R_UN__Int16", (short)-0x1234); } /* TestMethod("Test_CONV_R_UN__Int16", (short)-0x1234); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", int.MinValue); } /* TestMethod("Test_CONV_I__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", int.MaxValue); } /* TestMethod("Test_CONV_I__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", (int)0); } /* TestMethod("Test_CONV_I__Int32", (int)0); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", (int)-1); } /* TestMethod("Test_CONV_I__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", (int)1); } /* TestMethod("Test_CONV_I__Int32", (int)1); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_I__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_I__Int32() { Test("Test_CONV_I__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_I__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", int.MinValue); } /* TestMethod("Test_CONV_I1__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", int.MaxValue); } /* TestMethod("Test_CONV_I1__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", (int)0); } /* TestMethod("Test_CONV_I1__Int32", (int)0); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", (int)-1); } /* TestMethod("Test_CONV_I1__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", (int)1); } /* TestMethod("Test_CONV_I1__Int32", (int)1); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_I1__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_I1__Int32() { Test("Test_CONV_I1__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_I1__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", int.MinValue); } /* TestMethod("Test_CONV_I2__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", int.MaxValue); } /* TestMethod("Test_CONV_I2__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", (int)0); } /* TestMethod("Test_CONV_I2__Int32", (int)0); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", (int)-1); } /* TestMethod("Test_CONV_I2__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", (int)1); } /* TestMethod("Test_CONV_I2__Int32", (int)1); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_I2__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_I2__Int32() { Test("Test_CONV_I2__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_I2__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", int.MinValue); } /* TestMethod("Test_CONV_I4__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", int.MaxValue); } /* TestMethod("Test_CONV_I4__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", (int)0); } /* TestMethod("Test_CONV_I4__Int32", (int)0); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", (int)-1); } /* TestMethod("Test_CONV_I4__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", (int)1); } /* TestMethod("Test_CONV_I4__Int32", (int)1); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_I4__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_I4__Int32() { Test("Test_CONV_I4__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_I4__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", int.MinValue); } /* TestMethod("Test_CONV_I8__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", int.MaxValue); } /* TestMethod("Test_CONV_I8__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", (int)0); } /* TestMethod("Test_CONV_I8__Int32", (int)0); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", (int)-1); } /* TestMethod("Test_CONV_I8__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", (int)1); } /* TestMethod("Test_CONV_I8__Int32", (int)1); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_I8__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_I8__Int32() { Test("Test_CONV_I8__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_I8__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", int.MinValue); } /* TestMethod("Test_CONV_U__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", int.MaxValue); } /* TestMethod("Test_CONV_U__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", (int)0); } /* TestMethod("Test_CONV_U__Int32", (int)0); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", (int)-1); } /* TestMethod("Test_CONV_U__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", (int)1); } /* TestMethod("Test_CONV_U__Int32", (int)1); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_U__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_U__Int32() { Test("Test_CONV_U__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_U__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", int.MinValue); } /* TestMethod("Test_CONV_U1__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", int.MaxValue); } /* TestMethod("Test_CONV_U1__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", (int)0); } /* TestMethod("Test_CONV_U1__Int32", (int)0); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", (int)-1); } /* TestMethod("Test_CONV_U1__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", (int)1); } /* TestMethod("Test_CONV_U1__Int32", (int)1); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_U1__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_U1__Int32() { Test("Test_CONV_U1__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_U1__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", int.MinValue); } /* TestMethod("Test_CONV_U2__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", int.MaxValue); } /* TestMethod("Test_CONV_U2__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", (int)0); } /* TestMethod("Test_CONV_U2__Int32", (int)0); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", (int)-1); } /* TestMethod("Test_CONV_U2__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", (int)1); } /* TestMethod("Test_CONV_U2__Int32", (int)1); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_U2__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_U2__Int32() { Test("Test_CONV_U2__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_U2__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", int.MinValue); } /* TestMethod("Test_CONV_U4__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", int.MaxValue); } /* TestMethod("Test_CONV_U4__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", (int)0); } /* TestMethod("Test_CONV_U4__Int32", (int)0); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", (int)-1); } /* TestMethod("Test_CONV_U4__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", (int)1); } /* TestMethod("Test_CONV_U4__Int32", (int)1); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_U4__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_U4__Int32() { Test("Test_CONV_U4__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_U4__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", int.MinValue); } /* TestMethod("Test_CONV_U8__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", int.MaxValue); } /* TestMethod("Test_CONV_U8__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", (int)0); } /* TestMethod("Test_CONV_U8__Int32", (int)0); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", (int)-1); } /* TestMethod("Test_CONV_U8__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", (int)1); } /* TestMethod("Test_CONV_U8__Int32", (int)1); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_U8__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_U8__Int32() { Test("Test_CONV_U8__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_U8__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", int.MinValue); } /* TestMethod("Test_CONV_R4__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", int.MaxValue); } /* TestMethod("Test_CONV_R4__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", (int)0); } /* TestMethod("Test_CONV_R4__Int32", (int)0); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", (int)-1); } /* TestMethod("Test_CONV_R4__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", (int)1); } /* TestMethod("Test_CONV_R4__Int32", (int)1); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_R4__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_R4__Int32() { Test("Test_CONV_R4__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_R4__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", int.MinValue); } /* TestMethod("Test_CONV_R8__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", int.MaxValue); } /* TestMethod("Test_CONV_R8__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", (int)0); } /* TestMethod("Test_CONV_R8__Int32", (int)0); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", (int)-1); } /* TestMethod("Test_CONV_R8__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", (int)1); } /* TestMethod("Test_CONV_R8__Int32", (int)1); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_R8__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_R8__Int32() { Test("Test_CONV_R8__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_R8__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_I__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_I__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_I__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_I__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I__Int32() { Test("Test_CONV_OVF_I__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_I__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I1__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_I1__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I1__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I1__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I1__Int32() { Test("Test_CONV_OVF_I1__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_I1__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I2__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_I2__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I2__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I2__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I2__Int32() { Test("Test_CONV_OVF_I2__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_I2__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_I4__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_I4__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I4__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_I4__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I4__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_I4__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I4__Int32() { Test("Test_CONV_OVF_I4__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_I4__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_I8__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I8__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_I8__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I8__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_I8__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I8__Int32() { Test("Test_CONV_OVF_I8__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_I8__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_U__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_U__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U__Int32() { Test("Test_CONV_OVF_U__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U1__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U1__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U1__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U1__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U1__Int32() { Test("Test_CONV_OVF_U1__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U1__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U2__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U2__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U2__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U2__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U2__Int32() { Test("Test_CONV_OVF_U2__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U2__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_U4__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U4__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U4__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U4__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_U4__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U4__Int32() { Test("Test_CONV_OVF_U4__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U4__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U8__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U8__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U8__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_U8__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U8__Int32() { Test("Test_CONV_OVF_U8__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U8__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_I_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_I_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int32() { Test("Test_CONV_OVF_I_UN__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I1_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I1_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int32() { Test("Test_CONV_OVF_I1_UN__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I2_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I2_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int32() { Test("Test_CONV_OVF_I2_UN__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_I4_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I4_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I4_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_I4_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int32() { Test("Test_CONV_OVF_I4_UN__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int32() { Test("Test_CONV_OVF_I8_UN__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_I8_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int32() { Test("Test_CONV_OVF_U_UN__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_U_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U1_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U1_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int32() { Test("Test_CONV_OVF_U1_UN__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", int.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", int.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U2_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", (int)-1); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U2_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", (int)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int32() { Test("Test_CONV_OVF_U2_UN__Int32", (int)-0x12345678); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int32() { Test("Test_CONV_OVF_U4_UN__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_U4_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", int.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", (int)0); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", (int)-1); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", (int)1); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int32() { Test("Test_CONV_OVF_U8_UN__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_OVF_U8_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", int.MinValue); } /* TestMethod("Test_CONV_R_UN__Int32", int.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", int.MaxValue); } /* TestMethod("Test_CONV_R_UN__Int32", int.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", (int)0); } /* TestMethod("Test_CONV_R_UN__Int32", (int)0); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", (int)-1); } /* TestMethod("Test_CONV_R_UN__Int32", (int)-1); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", (int)1); } /* TestMethod("Test_CONV_R_UN__Int32", (int)1); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", (int)0x12345678); } /* TestMethod("Test_CONV_R_UN__Int32", (int)0x12345678); */
-        //[Fact] public void Test_CONV_R_UN__Int32() { Test("Test_CONV_R_UN__Int32", (int)-0x12345678); } /* TestMethod("Test_CONV_R_UN__Int32", (int)-0x12345678); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", long.MinValue); } /* TestMethod("Test_CONV_I__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", long.MaxValue); } /* TestMethod("Test_CONV_I__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", (long)0); } /* TestMethod("Test_CONV_I__Int64", (long)0); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", (long)-1); } /* TestMethod("Test_CONV_I__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", (long)1); } /* TestMethod("Test_CONV_I__Int64", (long)1); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I__Int64() { Test("Test_CONV_I__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", long.MinValue); } /* TestMethod("Test_CONV_I1__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", long.MaxValue); } /* TestMethod("Test_CONV_I1__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", (long)0); } /* TestMethod("Test_CONV_I1__Int64", (long)0); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", (long)-1); } /* TestMethod("Test_CONV_I1__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", (long)1); } /* TestMethod("Test_CONV_I1__Int64", (long)1); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I1__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I1__Int64() { Test("Test_CONV_I1__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I1__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", long.MinValue); } /* TestMethod("Test_CONV_I2__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", long.MaxValue); } /* TestMethod("Test_CONV_I2__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", (long)0); } /* TestMethod("Test_CONV_I2__Int64", (long)0); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", (long)-1); } /* TestMethod("Test_CONV_I2__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", (long)1); } /* TestMethod("Test_CONV_I2__Int64", (long)1); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I2__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I2__Int64() { Test("Test_CONV_I2__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I2__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", long.MinValue); } /* TestMethod("Test_CONV_I4__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", long.MaxValue); } /* TestMethod("Test_CONV_I4__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", (long)0); } /* TestMethod("Test_CONV_I4__Int64", (long)0); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", (long)-1); } /* TestMethod("Test_CONV_I4__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", (long)1); } /* TestMethod("Test_CONV_I4__Int64", (long)1); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I4__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I4__Int64() { Test("Test_CONV_I4__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I4__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", long.MinValue); } /* TestMethod("Test_CONV_I8__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", long.MaxValue); } /* TestMethod("Test_CONV_I8__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", (long)0); } /* TestMethod("Test_CONV_I8__Int64", (long)0); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", (long)-1); } /* TestMethod("Test_CONV_I8__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", (long)1); } /* TestMethod("Test_CONV_I8__Int64", (long)1); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I8__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I8__Int64() { Test("Test_CONV_I8__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I8__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", long.MinValue); } /* TestMethod("Test_CONV_U__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", long.MaxValue); } /* TestMethod("Test_CONV_U__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", (long)0); } /* TestMethod("Test_CONV_U__Int64", (long)0); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", (long)-1); } /* TestMethod("Test_CONV_U__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", (long)1); } /* TestMethod("Test_CONV_U__Int64", (long)1); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U__Int64() { Test("Test_CONV_U__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", long.MinValue); } /* TestMethod("Test_CONV_U1__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", long.MaxValue); } /* TestMethod("Test_CONV_U1__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", (long)0); } /* TestMethod("Test_CONV_U1__Int64", (long)0); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", (long)-1); } /* TestMethod("Test_CONV_U1__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", (long)1); } /* TestMethod("Test_CONV_U1__Int64", (long)1); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U1__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U1__Int64() { Test("Test_CONV_U1__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U1__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", long.MinValue); } /* TestMethod("Test_CONV_U2__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", long.MaxValue); } /* TestMethod("Test_CONV_U2__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", (long)0); } /* TestMethod("Test_CONV_U2__Int64", (long)0); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", (long)-1); } /* TestMethod("Test_CONV_U2__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", (long)1); } /* TestMethod("Test_CONV_U2__Int64", (long)1); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U2__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U2__Int64() { Test("Test_CONV_U2__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U2__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", long.MinValue); } /* TestMethod("Test_CONV_U4__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", long.MaxValue); } /* TestMethod("Test_CONV_U4__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", (long)0); } /* TestMethod("Test_CONV_U4__Int64", (long)0); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", (long)-1); } /* TestMethod("Test_CONV_U4__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", (long)1); } /* TestMethod("Test_CONV_U4__Int64", (long)1); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U4__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U4__Int64() { Test("Test_CONV_U4__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U4__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", long.MinValue); } /* TestMethod("Test_CONV_U8__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", long.MaxValue); } /* TestMethod("Test_CONV_U8__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", (long)0); } /* TestMethod("Test_CONV_U8__Int64", (long)0); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", (long)-1); } /* TestMethod("Test_CONV_U8__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", (long)1); } /* TestMethod("Test_CONV_U8__Int64", (long)1); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U8__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U8__Int64() { Test("Test_CONV_U8__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U8__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", long.MinValue); } /* TestMethod("Test_CONV_R4__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", long.MaxValue); } /* TestMethod("Test_CONV_R4__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", (long)0); } /* TestMethod("Test_CONV_R4__Int64", (long)0); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", (long)-1); } /* TestMethod("Test_CONV_R4__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", (long)1); } /* TestMethod("Test_CONV_R4__Int64", (long)1); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R4__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R4__Int64() { Test("Test_CONV_R4__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R4__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", long.MinValue); } /* TestMethod("Test_CONV_R8__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", long.MaxValue); } /* TestMethod("Test_CONV_R8__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", (long)0); } /* TestMethod("Test_CONV_R8__Int64", (long)0); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", (long)-1); } /* TestMethod("Test_CONV_R8__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", (long)1); } /* TestMethod("Test_CONV_R8__Int64", (long)1); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R8__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R8__Int64() { Test("Test_CONV_R8__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R8__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_I__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I__Int64() { Test("Test_CONV_OVF_I__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I1__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", (long)-1); } /* TestMethod("Test_CONV_OVF_I1__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I1__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1__Int64() { Test("Test_CONV_OVF_I1__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I2__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", (long)-1); } /* TestMethod("Test_CONV_OVF_I2__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I2__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2__Int64() { Test("Test_CONV_OVF_I2__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I4__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", (long)-1); } /* TestMethod("Test_CONV_OVF_I4__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I4__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4__Int64() { Test("Test_CONV_OVF_I4__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", long.MinValue); } /* TestMethod("Test_CONV_OVF_I8__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", long.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I8__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", (long)-1); } /* TestMethod("Test_CONV_OVF_I8__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I8__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_I8__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8__Int64() { Test("Test_CONV_OVF_I8__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_I8__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U__Int64() { Test("Test_CONV_OVF_U__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U1__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U1__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U1__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1__Int64() { Test("Test_CONV_OVF_U1__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U2__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U2__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U2__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2__Int64() { Test("Test_CONV_OVF_U2__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U4__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U4__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U4__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4__Int64() { Test("Test_CONV_OVF_U4__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", long.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U8__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U8__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U8__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_U8__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8__Int64() { Test("Test_CONV_OVF_U8__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U8__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Int64() { Test("Test_CONV_OVF_I_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I1_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I1_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Int64() { Test("Test_CONV_OVF_I1_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I2_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I2_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Int64() { Test("Test_CONV_OVF_I2_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I4_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I4_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Int64() { Test("Test_CONV_OVF_I4_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_I8_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I8_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_I8_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_I8_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_I8_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I8_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Int64() { Test("Test_CONV_OVF_I8_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I8_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Int64() { Test("Test_CONV_OVF_U_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U1_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U1_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Int64() { Test("Test_CONV_OVF_U1_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U2_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U2_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Int64() { Test("Test_CONV_OVF_U2_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", long.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", long.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U4_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", (long)-1); } /* TestMethodEX("Test_CONV_OVF_U4_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U4_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Int64() { Test("Test_CONV_OVF_U4_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", long.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", long.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", (long)0); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", (long)-1); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", (long)1); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Int64() { Test("Test_CONV_OVF_U8_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_U8_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", long.MinValue); } /* TestMethod("Test_CONV_R_UN__Int64", long.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", long.MaxValue); } /* TestMethod("Test_CONV_R_UN__Int64", long.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", (long)0); } /* TestMethod("Test_CONV_R_UN__Int64", (long)0); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", (long)-1); } /* TestMethod("Test_CONV_R_UN__Int64", (long)-1); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", (long)1); } /* TestMethod("Test_CONV_R_UN__Int64", (long)1); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", (long)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R_UN__Int64", (long)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R_UN__Int64() { Test("Test_CONV_R_UN__Int64", (long)-0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R_UN__Int64", (long)-0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I__UIntPtr() { Test("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_I__UIntPtr() { Test("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_I__UIntPtr() { Test("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_I__UIntPtr() { Test("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_I1__UIntPtr() { Test("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_I1__UIntPtr() { Test("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_I1__UIntPtr() { Test("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_I1__UIntPtr() { Test("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_I2__UIntPtr() { Test("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_I2__UIntPtr() { Test("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_I2__UIntPtr() { Test("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_I2__UIntPtr() { Test("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_I4__UIntPtr() { Test("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_I4__UIntPtr() { Test("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_I4__UIntPtr() { Test("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_I4__UIntPtr() { Test("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_I8__UIntPtr() { Test("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_I8__UIntPtr() { Test("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_I8__UIntPtr() { Test("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_I8__UIntPtr() { Test("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_U__UIntPtr() { Test("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_U__UIntPtr() { Test("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_U__UIntPtr() { Test("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_U__UIntPtr() { Test("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_U1__UIntPtr() { Test("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_U1__UIntPtr() { Test("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_U1__UIntPtr() { Test("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_U1__UIntPtr() { Test("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_U2__UIntPtr() { Test("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_U2__UIntPtr() { Test("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_U2__UIntPtr() { Test("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_U2__UIntPtr() { Test("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_U4__UIntPtr() { Test("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_U4__UIntPtr() { Test("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_U4__UIntPtr() { Test("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_U4__UIntPtr() { Test("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_U8__UIntPtr() { Test("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_U8__UIntPtr() { Test("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_U8__UIntPtr() { Test("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_U8__UIntPtr() { Test("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_R4__UIntPtr() { Test("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_R4__UIntPtr() { Test("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_R4__UIntPtr() { Test("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_R4__UIntPtr() { Test("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_R4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_R8__UIntPtr() { Test("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_R8__UIntPtr() { Test("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_R8__UIntPtr() { Test("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_R8__UIntPtr() { Test("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_R8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I__UIntPtr() { Test("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I__UIntPtr() { Test("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I__UIntPtr() { Test("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I__UIntPtr() { Test("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_OVF_I__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I1__UIntPtr() { Test("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I1__UIntPtr() { Test("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I1__UIntPtr() { Test("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I1__UIntPtr() { Test("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I2__UIntPtr() { Test("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I2__UIntPtr() { Test("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I2__UIntPtr() { Test("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I2__UIntPtr() { Test("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I4__UIntPtr() { Test("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I4__UIntPtr() { Test("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I4__UIntPtr() { Test("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I4__UIntPtr() { Test("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I8__UIntPtr() { Test("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I8__UIntPtr() { Test("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethod("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I8__UIntPtr() { Test("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I8__UIntPtr() { Test("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethod("Test_CONV_OVF_I8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U__UIntPtr() { Test("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U__UIntPtr() { Test("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U__UIntPtr() { Test("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U__UIntPtr() { Test("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U1__UIntPtr() { Test("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U1__UIntPtr() { Test("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U1__UIntPtr() { Test("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U1__UIntPtr() { Test("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U2__UIntPtr() { Test("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U2__UIntPtr() { Test("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U2__UIntPtr() { Test("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U2__UIntPtr() { Test("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U4__UIntPtr() { Test("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U4__UIntPtr() { Test("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U4__UIntPtr() { Test("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U4__UIntPtr() { Test("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U8__UIntPtr() { Test("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U8__UIntPtr() { Test("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U8__UIntPtr() { Test("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U8__UIntPtr() { Test("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U8__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UIntPtr() { Test("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UIntPtr() { Test("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UIntPtr() { Test("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethod("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UIntPtr() { Test("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UIntPtr() { Test("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UIntPtr() { Test("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UIntPtr() { Test("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UIntPtr() { Test("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UIntPtr() { Test("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethod("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UIntPtr() { Test("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UIntPtr() { Test("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UIntPtr() { Test("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UIntPtr() { Test("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UIntPtr() { Test("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UIntPtr() { Test("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UIntPtr() { Test("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UIntPtr() { Test("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UIntPtr() { Test("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UIntPtr() { Test("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UIntPtr() { Test("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_I8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UIntPtr() { Test("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UIntPtr() { Test("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UIntPtr() { Test("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UIntPtr() { Test("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UIntPtr() { Test("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UIntPtr() { Test("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UIntPtr() { Test("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UIntPtr() { Test("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UIntPtr() { Test("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UIntPtr() { Test("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UIntPtr() { Test("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UIntPtr() { Test("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UIntPtr() { Test("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UIntPtr() { Test("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UIntPtr() { Test("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UIntPtr() { Test("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UIntPtr() { Test("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UIntPtr() { Test("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UIntPtr() { Test("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UIntPtr() { Test("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_OVF_U8_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_R_UN__UIntPtr() { Test("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); } /* TestMethodEX("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); */
-        //[Fact] public void Test_CONV_R_UN__UIntPtr() { Test("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); } /* TestMethodEX("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue)); */
-        //[Fact] public void Test_CONV_R_UN__UIntPtr() { Test("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); } /* TestMethodEX("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL)); */
-        //[Fact] public void Test_CONV_R_UN__UIntPtr() { Test("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); } /* TestMethodEX("Test_CONV_R_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL)); */
-        //[Fact] public void Test_CONV_I__Byte() { Test("Test_CONV_I__Byte", byte.MinValue); } /* TestMethod("Test_CONV_I__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_I__Byte() { Test("Test_CONV_I__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_I__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_I__Byte() { Test("Test_CONV_I__Byte", (byte)0x12); } /* TestMethod("Test_CONV_I__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_I__Byte() { Test("Test_CONV_I__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_I__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_I1__Byte() { Test("Test_CONV_I1__Byte", byte.MinValue); } /* TestMethod("Test_CONV_I1__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_I1__Byte() { Test("Test_CONV_I1__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_I1__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Byte() { Test("Test_CONV_I1__Byte", (byte)0x12); } /* TestMethod("Test_CONV_I1__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_I1__Byte() { Test("Test_CONV_I1__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_I1__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_I2__Byte() { Test("Test_CONV_I2__Byte", byte.MinValue); } /* TestMethod("Test_CONV_I2__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_I2__Byte() { Test("Test_CONV_I2__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_I2__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Byte() { Test("Test_CONV_I2__Byte", (byte)0x12); } /* TestMethod("Test_CONV_I2__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_I2__Byte() { Test("Test_CONV_I2__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_I2__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_I4__Byte() { Test("Test_CONV_I4__Byte", byte.MinValue); } /* TestMethod("Test_CONV_I4__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_I4__Byte() { Test("Test_CONV_I4__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_I4__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Byte() { Test("Test_CONV_I4__Byte", (byte)0x12); } /* TestMethod("Test_CONV_I4__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_I4__Byte() { Test("Test_CONV_I4__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_I4__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_I8__Byte() { Test("Test_CONV_I8__Byte", byte.MinValue); } /* TestMethod("Test_CONV_I8__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_I8__Byte() { Test("Test_CONV_I8__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_I8__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Byte() { Test("Test_CONV_I8__Byte", (byte)0x12); } /* TestMethod("Test_CONV_I8__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_I8__Byte() { Test("Test_CONV_I8__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_I8__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_U__Byte() { Test("Test_CONV_U__Byte", byte.MinValue); } /* TestMethod("Test_CONV_U__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_U__Byte() { Test("Test_CONV_U__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_U__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_U__Byte() { Test("Test_CONV_U__Byte", (byte)0x12); } /* TestMethod("Test_CONV_U__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_U__Byte() { Test("Test_CONV_U__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_U__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_U1__Byte() { Test("Test_CONV_U1__Byte", byte.MinValue); } /* TestMethod("Test_CONV_U1__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_U1__Byte() { Test("Test_CONV_U1__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_U1__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Byte() { Test("Test_CONV_U1__Byte", (byte)0x12); } /* TestMethod("Test_CONV_U1__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_U1__Byte() { Test("Test_CONV_U1__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_U1__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_U2__Byte() { Test("Test_CONV_U2__Byte", byte.MinValue); } /* TestMethod("Test_CONV_U2__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_U2__Byte() { Test("Test_CONV_U2__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_U2__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Byte() { Test("Test_CONV_U2__Byte", (byte)0x12); } /* TestMethod("Test_CONV_U2__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_U2__Byte() { Test("Test_CONV_U2__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_U2__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_U4__Byte() { Test("Test_CONV_U4__Byte", byte.MinValue); } /* TestMethod("Test_CONV_U4__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_U4__Byte() { Test("Test_CONV_U4__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_U4__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Byte() { Test("Test_CONV_U4__Byte", (byte)0x12); } /* TestMethod("Test_CONV_U4__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_U4__Byte() { Test("Test_CONV_U4__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_U4__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_U8__Byte() { Test("Test_CONV_U8__Byte", byte.MinValue); } /* TestMethod("Test_CONV_U8__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_U8__Byte() { Test("Test_CONV_U8__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_U8__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Byte() { Test("Test_CONV_U8__Byte", (byte)0x12); } /* TestMethod("Test_CONV_U8__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_U8__Byte() { Test("Test_CONV_U8__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_U8__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_R4__Byte() { Test("Test_CONV_R4__Byte", byte.MinValue); } /* TestMethod("Test_CONV_R4__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_R4__Byte() { Test("Test_CONV_R4__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_R4__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Byte() { Test("Test_CONV_R4__Byte", (byte)0x12); } /* TestMethod("Test_CONV_R4__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_R4__Byte() { Test("Test_CONV_R4__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_R4__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_R8__Byte() { Test("Test_CONV_R8__Byte", byte.MinValue); } /* TestMethod("Test_CONV_R8__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_R8__Byte() { Test("Test_CONV_R8__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_R8__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Byte() { Test("Test_CONV_R8__Byte", (byte)0x12); } /* TestMethod("Test_CONV_R8__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_R8__Byte() { Test("Test_CONV_R8__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_R8__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I__Byte() { Test("Test_CONV_OVF_I__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Byte() { Test("Test_CONV_OVF_I__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Byte() { Test("Test_CONV_OVF_I__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I__Byte() { Test("Test_CONV_OVF_I__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I1__Byte() { Test("Test_CONV_OVF_I1__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I1__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Byte() { Test("Test_CONV_OVF_I1__Byte", byte.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Byte() { Test("Test_CONV_OVF_I1__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I1__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I1__Byte() { Test("Test_CONV_OVF_I1__Byte", (byte)0x9A); } /* TestMethodEX("Test_CONV_OVF_I1__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I2__Byte() { Test("Test_CONV_OVF_I2__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I2__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Byte() { Test("Test_CONV_OVF_I2__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I2__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Byte() { Test("Test_CONV_OVF_I2__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I2__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I2__Byte() { Test("Test_CONV_OVF_I2__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I2__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I4__Byte() { Test("Test_CONV_OVF_I4__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I4__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Byte() { Test("Test_CONV_OVF_I4__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I4__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Byte() { Test("Test_CONV_OVF_I4__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I4__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I4__Byte() { Test("Test_CONV_OVF_I4__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I4__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I8__Byte() { Test("Test_CONV_OVF_I8__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I8__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Byte() { Test("Test_CONV_OVF_I8__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Byte() { Test("Test_CONV_OVF_I8__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I8__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I8__Byte() { Test("Test_CONV_OVF_I8__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I8__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U__Byte() { Test("Test_CONV_OVF_U__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Byte() { Test("Test_CONV_OVF_U__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Byte() { Test("Test_CONV_OVF_U__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U__Byte() { Test("Test_CONV_OVF_U__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U1__Byte() { Test("Test_CONV_OVF_U1__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U1__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Byte() { Test("Test_CONV_OVF_U1__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U1__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Byte() { Test("Test_CONV_OVF_U1__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U1__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U1__Byte() { Test("Test_CONV_OVF_U1__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U1__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U2__Byte() { Test("Test_CONV_OVF_U2__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U2__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Byte() { Test("Test_CONV_OVF_U2__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U2__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Byte() { Test("Test_CONV_OVF_U2__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U2__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U2__Byte() { Test("Test_CONV_OVF_U2__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U2__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U4__Byte() { Test("Test_CONV_OVF_U4__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U4__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Byte() { Test("Test_CONV_OVF_U4__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U4__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Byte() { Test("Test_CONV_OVF_U4__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U4__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U4__Byte() { Test("Test_CONV_OVF_U4__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U4__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U8__Byte() { Test("Test_CONV_OVF_U8__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U8__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Byte() { Test("Test_CONV_OVF_U8__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Byte() { Test("Test_CONV_OVF_U8__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U8__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U8__Byte() { Test("Test_CONV_OVF_U8__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U8__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Byte() { Test("Test_CONV_OVF_I_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Byte() { Test("Test_CONV_OVF_I_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Byte() { Test("Test_CONV_OVF_I_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I_UN__Byte() { Test("Test_CONV_OVF_I_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Byte() { Test("Test_CONV_OVF_I1_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I1_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Byte() { Test("Test_CONV_OVF_I1_UN__Byte", byte.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Byte() { Test("Test_CONV_OVF_I1_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I1_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__Byte() { Test("Test_CONV_OVF_I1_UN__Byte", (byte)0x9A); } /* TestMethodEX("Test_CONV_OVF_I1_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Byte() { Test("Test_CONV_OVF_I2_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I2_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Byte() { Test("Test_CONV_OVF_I2_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I2_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Byte() { Test("Test_CONV_OVF_I2_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I2_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__Byte() { Test("Test_CONV_OVF_I2_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I2_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Byte() { Test("Test_CONV_OVF_I4_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I4_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Byte() { Test("Test_CONV_OVF_I4_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I4_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Byte() { Test("Test_CONV_OVF_I4_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I4_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__Byte() { Test("Test_CONV_OVF_I4_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I4_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Byte() { Test("Test_CONV_OVF_I8_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Byte() { Test("Test_CONV_OVF_I8_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Byte() { Test("Test_CONV_OVF_I8_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_I8_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__Byte() { Test("Test_CONV_OVF_I8_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_I8_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Byte() { Test("Test_CONV_OVF_U_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Byte() { Test("Test_CONV_OVF_U_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Byte() { Test("Test_CONV_OVF_U_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U_UN__Byte() { Test("Test_CONV_OVF_U_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Byte() { Test("Test_CONV_OVF_U1_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U1_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Byte() { Test("Test_CONV_OVF_U1_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U1_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Byte() { Test("Test_CONV_OVF_U1_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U1_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__Byte() { Test("Test_CONV_OVF_U1_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U1_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Byte() { Test("Test_CONV_OVF_U2_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U2_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Byte() { Test("Test_CONV_OVF_U2_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U2_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Byte() { Test("Test_CONV_OVF_U2_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U2_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__Byte() { Test("Test_CONV_OVF_U2_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U2_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Byte() { Test("Test_CONV_OVF_U4_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Byte() { Test("Test_CONV_OVF_U4_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Byte() { Test("Test_CONV_OVF_U4_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U4_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__Byte() { Test("Test_CONV_OVF_U4_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U4_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Byte() { Test("Test_CONV_OVF_U8_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Byte() { Test("Test_CONV_OVF_U8_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Byte() { Test("Test_CONV_OVF_U8_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_OVF_U8_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__Byte() { Test("Test_CONV_OVF_U8_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_OVF_U8_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_R_UN__Byte() { Test("Test_CONV_R_UN__Byte", byte.MinValue); } /* TestMethod("Test_CONV_R_UN__Byte", byte.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__Byte() { Test("Test_CONV_R_UN__Byte", byte.MaxValue); } /* TestMethod("Test_CONV_R_UN__Byte", byte.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__Byte() { Test("Test_CONV_R_UN__Byte", (byte)0x12); } /* TestMethod("Test_CONV_R_UN__Byte", (byte)0x12); */
-        //[Fact] public void Test_CONV_R_UN__Byte() { Test("Test_CONV_R_UN__Byte", (byte)0x9A); } /* TestMethod("Test_CONV_R_UN__Byte", (byte)0x9A); */
-        //[Fact] public void Test_CONV_I__UInt16() { Test("Test_CONV_I__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_I__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_I__UInt16() { Test("Test_CONV_I__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_I__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_I__UInt16() { Test("Test_CONV_I__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_I__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_I__UInt16() { Test("Test_CONV_I__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_I__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_I1__UInt16() { Test("Test_CONV_I1__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_I1__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_I1__UInt16() { Test("Test_CONV_I1__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_I1__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_I1__UInt16() { Test("Test_CONV_I1__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_I1__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_I1__UInt16() { Test("Test_CONV_I1__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_I1__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_I2__UInt16() { Test("Test_CONV_I2__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_I2__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_I2__UInt16() { Test("Test_CONV_I2__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_I2__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_I2__UInt16() { Test("Test_CONV_I2__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_I2__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_I2__UInt16() { Test("Test_CONV_I2__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_I2__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_I4__UInt16() { Test("Test_CONV_I4__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_I4__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_I4__UInt16() { Test("Test_CONV_I4__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_I4__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_I4__UInt16() { Test("Test_CONV_I4__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_I4__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_I4__UInt16() { Test("Test_CONV_I4__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_I4__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_I8__UInt16() { Test("Test_CONV_I8__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_I8__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_I8__UInt16() { Test("Test_CONV_I8__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_I8__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_I8__UInt16() { Test("Test_CONV_I8__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_I8__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_I8__UInt16() { Test("Test_CONV_I8__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_I8__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_U__UInt16() { Test("Test_CONV_U__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_U__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_U__UInt16() { Test("Test_CONV_U__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_U__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_U__UInt16() { Test("Test_CONV_U__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_U__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_U__UInt16() { Test("Test_CONV_U__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_U__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_U1__UInt16() { Test("Test_CONV_U1__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_U1__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_U1__UInt16() { Test("Test_CONV_U1__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_U1__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_U1__UInt16() { Test("Test_CONV_U1__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_U1__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_U1__UInt16() { Test("Test_CONV_U1__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_U1__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_U2__UInt16() { Test("Test_CONV_U2__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_U2__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_U2__UInt16() { Test("Test_CONV_U2__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_U2__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_U2__UInt16() { Test("Test_CONV_U2__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_U2__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_U2__UInt16() { Test("Test_CONV_U2__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_U2__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_U4__UInt16() { Test("Test_CONV_U4__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_U4__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_U4__UInt16() { Test("Test_CONV_U4__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_U4__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_U4__UInt16() { Test("Test_CONV_U4__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_U4__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_U4__UInt16() { Test("Test_CONV_U4__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_U4__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_U8__UInt16() { Test("Test_CONV_U8__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_U8__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_U8__UInt16() { Test("Test_CONV_U8__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_U8__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_U8__UInt16() { Test("Test_CONV_U8__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_U8__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_U8__UInt16() { Test("Test_CONV_U8__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_U8__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_R4__UInt16() { Test("Test_CONV_R4__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_R4__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_R4__UInt16() { Test("Test_CONV_R4__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_R4__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_R4__UInt16() { Test("Test_CONV_R4__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_R4__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_R4__UInt16() { Test("Test_CONV_R4__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_R4__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_R8__UInt16() { Test("Test_CONV_R8__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_R8__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_R8__UInt16() { Test("Test_CONV_R8__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_R8__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_R8__UInt16() { Test("Test_CONV_R8__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_R8__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_R8__UInt16() { Test("Test_CONV_R8__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_R8__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I__UInt16() { Test("Test_CONV_OVF_I__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__UInt16() { Test("Test_CONV_OVF_I__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_I__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__UInt16() { Test("Test_CONV_OVF_I__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I__UInt16() { Test("Test_CONV_OVF_I__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_I__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt16() { Test("Test_CONV_OVF_I1__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I1__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt16() { Test("Test_CONV_OVF_I1__UInt16", ushort.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt16() { Test("Test_CONV_OVF_I1__UInt16", (ushort)0x1234); } /* TestMethodEX("Test_CONV_OVF_I1__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt16() { Test("Test_CONV_OVF_I1__UInt16", (ushort)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I1__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt16() { Test("Test_CONV_OVF_I2__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I2__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt16() { Test("Test_CONV_OVF_I2__UInt16", ushort.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt16() { Test("Test_CONV_OVF_I2__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I2__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt16() { Test("Test_CONV_OVF_I2__UInt16", (ushort)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I2__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt16() { Test("Test_CONV_OVF_I4__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I4__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt16() { Test("Test_CONV_OVF_I4__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_I4__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt16() { Test("Test_CONV_OVF_I4__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I4__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt16() { Test("Test_CONV_OVF_I4__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_I4__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt16() { Test("Test_CONV_OVF_I8__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I8__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt16() { Test("Test_CONV_OVF_I8__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt16() { Test("Test_CONV_OVF_I8__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I8__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt16() { Test("Test_CONV_OVF_I8__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_I8__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U__UInt16() { Test("Test_CONV_OVF_U__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__UInt16() { Test("Test_CONV_OVF_U__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__UInt16() { Test("Test_CONV_OVF_U__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U__UInt16() { Test("Test_CONV_OVF_U__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt16() { Test("Test_CONV_OVF_U1__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U1__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt16() { Test("Test_CONV_OVF_U1__UInt16", ushort.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt16() { Test("Test_CONV_OVF_U1__UInt16", (ushort)0x1234); } /* TestMethodEX("Test_CONV_OVF_U1__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt16() { Test("Test_CONV_OVF_U1__UInt16", (ushort)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_U1__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt16() { Test("Test_CONV_OVF_U2__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U2__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt16() { Test("Test_CONV_OVF_U2__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U2__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt16() { Test("Test_CONV_OVF_U2__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U2__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt16() { Test("Test_CONV_OVF_U2__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U2__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt16() { Test("Test_CONV_OVF_U4__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U4__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt16() { Test("Test_CONV_OVF_U4__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U4__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt16() { Test("Test_CONV_OVF_U4__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U4__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt16() { Test("Test_CONV_OVF_U4__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U4__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt16() { Test("Test_CONV_OVF_U8__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U8__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt16() { Test("Test_CONV_OVF_U8__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U8__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt16() { Test("Test_CONV_OVF_U8__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U8__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt16() { Test("Test_CONV_OVF_U8__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U8__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt16() { Test("Test_CONV_OVF_I_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt16() { Test("Test_CONV_OVF_I_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_I_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt16() { Test("Test_CONV_OVF_I_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt16() { Test("Test_CONV_OVF_I_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_I_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt16() { Test("Test_CONV_OVF_I1_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I1_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt16() { Test("Test_CONV_OVF_I1_UN__UInt16", ushort.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt16() { Test("Test_CONV_OVF_I1_UN__UInt16", (ushort)0x1234); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt16() { Test("Test_CONV_OVF_I1_UN__UInt16", (ushort)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt16() { Test("Test_CONV_OVF_I2_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I2_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt16() { Test("Test_CONV_OVF_I2_UN__UInt16", ushort.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt16() { Test("Test_CONV_OVF_I2_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I2_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt16() { Test("Test_CONV_OVF_I2_UN__UInt16", (ushort)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt16() { Test("Test_CONV_OVF_I4_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt16() { Test("Test_CONV_OVF_I4_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt16() { Test("Test_CONV_OVF_I4_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt16() { Test("Test_CONV_OVF_I4_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt16() { Test("Test_CONV_OVF_I8_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt16() { Test("Test_CONV_OVF_I8_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt16() { Test("Test_CONV_OVF_I8_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt16() { Test("Test_CONV_OVF_I8_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt16() { Test("Test_CONV_OVF_U_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt16() { Test("Test_CONV_OVF_U_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt16() { Test("Test_CONV_OVF_U_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt16() { Test("Test_CONV_OVF_U_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt16() { Test("Test_CONV_OVF_U1_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U1_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt16() { Test("Test_CONV_OVF_U1_UN__UInt16", ushort.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt16() { Test("Test_CONV_OVF_U1_UN__UInt16", (ushort)0x1234); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt16() { Test("Test_CONV_OVF_U1_UN__UInt16", (ushort)0x9ABC); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt16() { Test("Test_CONV_OVF_U2_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U2_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt16() { Test("Test_CONV_OVF_U2_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U2_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt16() { Test("Test_CONV_OVF_U2_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U2_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt16() { Test("Test_CONV_OVF_U2_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U2_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt16() { Test("Test_CONV_OVF_U4_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt16() { Test("Test_CONV_OVF_U4_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt16() { Test("Test_CONV_OVF_U4_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt16() { Test("Test_CONV_OVF_U4_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt16() { Test("Test_CONV_OVF_U8_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt16() { Test("Test_CONV_OVF_U8_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt16() { Test("Test_CONV_OVF_U8_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt16() { Test("Test_CONV_OVF_U8_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_R_UN__UInt16() { Test("Test_CONV_R_UN__UInt16", ushort.MinValue); } /* TestMethod("Test_CONV_R_UN__UInt16", ushort.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__UInt16() { Test("Test_CONV_R_UN__UInt16", ushort.MaxValue); } /* TestMethod("Test_CONV_R_UN__UInt16", ushort.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__UInt16() { Test("Test_CONV_R_UN__UInt16", (ushort)0x1234); } /* TestMethod("Test_CONV_R_UN__UInt16", (ushort)0x1234); */
-        //[Fact] public void Test_CONV_R_UN__UInt16() { Test("Test_CONV_R_UN__UInt16", (ushort)0x9ABC); } /* TestMethod("Test_CONV_R_UN__UInt16", (ushort)0x9ABC); */
-        //[Fact] public void Test_CONV_I__UInt32() { Test("Test_CONV_I__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_I__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_I__UInt32() { Test("Test_CONV_I__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_I__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_I__UInt32() { Test("Test_CONV_I__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_I__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_I__UInt32() { Test("Test_CONV_I__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_I__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_I1__UInt32() { Test("Test_CONV_I1__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_I1__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_I1__UInt32() { Test("Test_CONV_I1__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_I1__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_I1__UInt32() { Test("Test_CONV_I1__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_I1__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_I1__UInt32() { Test("Test_CONV_I1__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_I1__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_I2__UInt32() { Test("Test_CONV_I2__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_I2__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_I2__UInt32() { Test("Test_CONV_I2__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_I2__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_I2__UInt32() { Test("Test_CONV_I2__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_I2__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_I2__UInt32() { Test("Test_CONV_I2__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_I2__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_I4__UInt32() { Test("Test_CONV_I4__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_I4__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_I4__UInt32() { Test("Test_CONV_I4__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_I4__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_I4__UInt32() { Test("Test_CONV_I4__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_I4__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_I4__UInt32() { Test("Test_CONV_I4__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_I4__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_I8__UInt32() { Test("Test_CONV_I8__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_I8__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_I8__UInt32() { Test("Test_CONV_I8__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_I8__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_I8__UInt32() { Test("Test_CONV_I8__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_I8__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_I8__UInt32() { Test("Test_CONV_I8__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_I8__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_U__UInt32() { Test("Test_CONV_U__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_U__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_U__UInt32() { Test("Test_CONV_U__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_U__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_U__UInt32() { Test("Test_CONV_U__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_U__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_U__UInt32() { Test("Test_CONV_U__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_U__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_U1__UInt32() { Test("Test_CONV_U1__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_U1__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_U1__UInt32() { Test("Test_CONV_U1__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_U1__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_U1__UInt32() { Test("Test_CONV_U1__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_U1__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_U1__UInt32() { Test("Test_CONV_U1__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_U1__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_U2__UInt32() { Test("Test_CONV_U2__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_U2__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_U2__UInt32() { Test("Test_CONV_U2__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_U2__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_U2__UInt32() { Test("Test_CONV_U2__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_U2__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_U2__UInt32() { Test("Test_CONV_U2__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_U2__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_U4__UInt32() { Test("Test_CONV_U4__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_U4__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_U4__UInt32() { Test("Test_CONV_U4__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_U4__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_U4__UInt32() { Test("Test_CONV_U4__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_U4__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_U4__UInt32() { Test("Test_CONV_U4__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_U4__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_U8__UInt32() { Test("Test_CONV_U8__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_U8__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_U8__UInt32() { Test("Test_CONV_U8__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_U8__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_U8__UInt32() { Test("Test_CONV_U8__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_U8__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_U8__UInt32() { Test("Test_CONV_U8__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_U8__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_R4__UInt32() { Test("Test_CONV_R4__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_R4__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_R4__UInt32() { Test("Test_CONV_R4__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_R4__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_R4__UInt32() { Test("Test_CONV_R4__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_R4__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_R4__UInt32() { Test("Test_CONV_R4__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_R4__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_R8__UInt32() { Test("Test_CONV_R8__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_R8__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_R8__UInt32() { Test("Test_CONV_R8__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_R8__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_R8__UInt32() { Test("Test_CONV_R8__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_R8__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_R8__UInt32() { Test("Test_CONV_R8__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_R8__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I__UInt32() { Test("Test_CONV_OVF_I__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__UInt32() { Test("Test_CONV_OVF_I__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_OVF_I__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__UInt32() { Test("Test_CONV_OVF_I__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_I__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I__UInt32() { Test("Test_CONV_OVF_I__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_OVF_I__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt32() { Test("Test_CONV_OVF_I1__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I1__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt32() { Test("Test_CONV_OVF_I1__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt32() { Test("Test_CONV_OVF_I1__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I1__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt32() { Test("Test_CONV_OVF_I1__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt32() { Test("Test_CONV_OVF_I2__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I2__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt32() { Test("Test_CONV_OVF_I2__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt32() { Test("Test_CONV_OVF_I2__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I2__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt32() { Test("Test_CONV_OVF_I2__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt32() { Test("Test_CONV_OVF_I4__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I4__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt32() { Test("Test_CONV_OVF_I4__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt32() { Test("Test_CONV_OVF_I4__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_I4__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt32() { Test("Test_CONV_OVF_I4__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt32() { Test("Test_CONV_OVF_I8__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I8__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt32() { Test("Test_CONV_OVF_I8__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_OVF_I8__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt32() { Test("Test_CONV_OVF_I8__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_I8__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt32() { Test("Test_CONV_OVF_I8__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_OVF_I8__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U__UInt32() { Test("Test_CONV_OVF_U__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__UInt32() { Test("Test_CONV_OVF_U__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__UInt32() { Test("Test_CONV_OVF_U__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_U__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U__UInt32() { Test("Test_CONV_OVF_U__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt32() { Test("Test_CONV_OVF_U1__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U1__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt32() { Test("Test_CONV_OVF_U1__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt32() { Test("Test_CONV_OVF_U1__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U1__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt32() { Test("Test_CONV_OVF_U1__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt32() { Test("Test_CONV_OVF_U2__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U2__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt32() { Test("Test_CONV_OVF_U2__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt32() { Test("Test_CONV_OVF_U2__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U2__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt32() { Test("Test_CONV_OVF_U2__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt32() { Test("Test_CONV_OVF_U4__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U4__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt32() { Test("Test_CONV_OVF_U4__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt32() { Test("Test_CONV_OVF_U4__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_U4__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt32() { Test("Test_CONV_OVF_U4__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt32() { Test("Test_CONV_OVF_U8__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U8__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt32() { Test("Test_CONV_OVF_U8__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U8__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt32() { Test("Test_CONV_OVF_U8__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_U8__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt32() { Test("Test_CONV_OVF_U8__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U8__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt32() { Test("Test_CONV_OVF_I_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt32() { Test("Test_CONV_OVF_I_UN__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt32() { Test("Test_CONV_OVF_I_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_I_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt32() { Test("Test_CONV_OVF_I_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt32() { Test("Test_CONV_OVF_I1_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I1_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt32() { Test("Test_CONV_OVF_I1_UN__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt32() { Test("Test_CONV_OVF_I1_UN__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt32() { Test("Test_CONV_OVF_I1_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt32() { Test("Test_CONV_OVF_I2_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I2_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt32() { Test("Test_CONV_OVF_I2_UN__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt32() { Test("Test_CONV_OVF_I2_UN__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt32() { Test("Test_CONV_OVF_I2_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt32() { Test("Test_CONV_OVF_I4_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt32() { Test("Test_CONV_OVF_I4_UN__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt32() { Test("Test_CONV_OVF_I4_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt32() { Test("Test_CONV_OVF_I4_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt32() { Test("Test_CONV_OVF_I8_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt32() { Test("Test_CONV_OVF_I8_UN__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt32() { Test("Test_CONV_OVF_I8_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt32() { Test("Test_CONV_OVF_I8_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt32() { Test("Test_CONV_OVF_U_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt32() { Test("Test_CONV_OVF_U_UN__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_OVF_U_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt32() { Test("Test_CONV_OVF_U_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_U_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt32() { Test("Test_CONV_OVF_U_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_OVF_U_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt32() { Test("Test_CONV_OVF_U1_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U1_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt32() { Test("Test_CONV_OVF_U1_UN__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt32() { Test("Test_CONV_OVF_U1_UN__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt32() { Test("Test_CONV_OVF_U1_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt32() { Test("Test_CONV_OVF_U2_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U2_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt32() { Test("Test_CONV_OVF_U2_UN__UInt32", uint.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt32() { Test("Test_CONV_OVF_U2_UN__UInt32", (uint)0x12345678); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt32() { Test("Test_CONV_OVF_U2_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt32() { Test("Test_CONV_OVF_U4_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt32() { Test("Test_CONV_OVF_U4_UN__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt32() { Test("Test_CONV_OVF_U4_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt32() { Test("Test_CONV_OVF_U4_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt32() { Test("Test_CONV_OVF_U8_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt32() { Test("Test_CONV_OVF_U8_UN__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt32() { Test("Test_CONV_OVF_U8_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt32() { Test("Test_CONV_OVF_U8_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_R_UN__UInt32() { Test("Test_CONV_R_UN__UInt32", uint.MinValue); } /* TestMethod("Test_CONV_R_UN__UInt32", uint.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__UInt32() { Test("Test_CONV_R_UN__UInt32", uint.MaxValue); } /* TestMethod("Test_CONV_R_UN__UInt32", uint.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__UInt32() { Test("Test_CONV_R_UN__UInt32", (uint)0x12345678); } /* TestMethod("Test_CONV_R_UN__UInt32", (uint)0x12345678); */
-        //[Fact] public void Test_CONV_R_UN__UInt32() { Test("Test_CONV_R_UN__UInt32", (uint)0x9ABCDEF0); } /* TestMethod("Test_CONV_R_UN__UInt32", (uint)0x9ABCDEF0); */
-        //[Fact] public void Test_CONV_I__UInt64() { Test("Test_CONV_I__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_I__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_I__UInt64() { Test("Test_CONV_I__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_I__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_I__UInt64() { Test("Test_CONV_I__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I__UInt64() { Test("Test_CONV_I__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_I__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_I1__UInt64() { Test("Test_CONV_I1__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_I1__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_I1__UInt64() { Test("Test_CONV_I1__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_I1__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_I1__UInt64() { Test("Test_CONV_I1__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I1__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I1__UInt64() { Test("Test_CONV_I1__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_I1__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_I2__UInt64() { Test("Test_CONV_I2__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_I2__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_I2__UInt64() { Test("Test_CONV_I2__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_I2__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_I2__UInt64() { Test("Test_CONV_I2__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I2__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I2__UInt64() { Test("Test_CONV_I2__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_I2__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_I4__UInt64() { Test("Test_CONV_I4__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_I4__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_I4__UInt64() { Test("Test_CONV_I4__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_I4__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_I4__UInt64() { Test("Test_CONV_I4__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I4__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I4__UInt64() { Test("Test_CONV_I4__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_I4__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_I8__UInt64() { Test("Test_CONV_I8__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_I8__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_I8__UInt64() { Test("Test_CONV_I8__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_I8__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_I8__UInt64() { Test("Test_CONV_I8__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_I8__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_I8__UInt64() { Test("Test_CONV_I8__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_I8__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_U__UInt64() { Test("Test_CONV_U__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_U__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_U__UInt64() { Test("Test_CONV_U__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_U__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_U__UInt64() { Test("Test_CONV_U__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U__UInt64() { Test("Test_CONV_U__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_U__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_U1__UInt64() { Test("Test_CONV_U1__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_U1__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_U1__UInt64() { Test("Test_CONV_U1__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_U1__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_U1__UInt64() { Test("Test_CONV_U1__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U1__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U1__UInt64() { Test("Test_CONV_U1__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_U1__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_U2__UInt64() { Test("Test_CONV_U2__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_U2__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_U2__UInt64() { Test("Test_CONV_U2__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_U2__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_U2__UInt64() { Test("Test_CONV_U2__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U2__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U2__UInt64() { Test("Test_CONV_U2__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_U2__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_U4__UInt64() { Test("Test_CONV_U4__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_U4__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_U4__UInt64() { Test("Test_CONV_U4__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_U4__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_U4__UInt64() { Test("Test_CONV_U4__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U4__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U4__UInt64() { Test("Test_CONV_U4__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_U4__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_U8__UInt64() { Test("Test_CONV_U8__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_U8__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_U8__UInt64() { Test("Test_CONV_U8__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_U8__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_U8__UInt64() { Test("Test_CONV_U8__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_U8__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_U8__UInt64() { Test("Test_CONV_U8__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_U8__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_R4__UInt64() { Test("Test_CONV_R4__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_R4__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_R4__UInt64() { Test("Test_CONV_R4__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_R4__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_R4__UInt64() { Test("Test_CONV_R4__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R4__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R4__UInt64() { Test("Test_CONV_R4__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_R4__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_R8__UInt64() { Test("Test_CONV_R8__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_R8__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_R8__UInt64() { Test("Test_CONV_R8__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_R8__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_R8__UInt64() { Test("Test_CONV_R8__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R8__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R8__UInt64() { Test("Test_CONV_R8__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_R8__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I__UInt64() { Test("Test_CONV_OVF_I__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__UInt64() { Test("Test_CONV_OVF_I__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_OVF_I__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__UInt64() { Test("Test_CONV_OVF_I__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I__UInt64() { Test("Test_CONV_OVF_I__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt64() { Test("Test_CONV_OVF_I1__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I1__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt64() { Test("Test_CONV_OVF_I1__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt64() { Test("Test_CONV_OVF_I1__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1__UInt64() { Test("Test_CONV_OVF_I1__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I1__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt64() { Test("Test_CONV_OVF_I2__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I2__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt64() { Test("Test_CONV_OVF_I2__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt64() { Test("Test_CONV_OVF_I2__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2__UInt64() { Test("Test_CONV_OVF_I2__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I2__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt64() { Test("Test_CONV_OVF_I4__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I4__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt64() { Test("Test_CONV_OVF_I4__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt64() { Test("Test_CONV_OVF_I4__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4__UInt64() { Test("Test_CONV_OVF_I4__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I4__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt64() { Test("Test_CONV_OVF_I8__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I8__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt64() { Test("Test_CONV_OVF_I8__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I8__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt64() { Test("Test_CONV_OVF_I8__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_I8__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8__UInt64() { Test("Test_CONV_OVF_I8__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I8__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U__UInt64() { Test("Test_CONV_OVF_U__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__UInt64() { Test("Test_CONV_OVF_U__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__UInt64() { Test("Test_CONV_OVF_U__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U__UInt64() { Test("Test_CONV_OVF_U__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt64() { Test("Test_CONV_OVF_U1__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U1__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt64() { Test("Test_CONV_OVF_U1__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt64() { Test("Test_CONV_OVF_U1__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1__UInt64() { Test("Test_CONV_OVF_U1__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U1__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt64() { Test("Test_CONV_OVF_U2__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U2__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt64() { Test("Test_CONV_OVF_U2__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt64() { Test("Test_CONV_OVF_U2__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2__UInt64() { Test("Test_CONV_OVF_U2__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U2__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt64() { Test("Test_CONV_OVF_U4__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U4__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt64() { Test("Test_CONV_OVF_U4__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt64() { Test("Test_CONV_OVF_U4__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4__UInt64() { Test("Test_CONV_OVF_U4__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U4__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt64() { Test("Test_CONV_OVF_U8__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U8__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt64() { Test("Test_CONV_OVF_U8__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U8__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt64() { Test("Test_CONV_OVF_U8__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_U8__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8__UInt64() { Test("Test_CONV_OVF_U8__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U8__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt64() { Test("Test_CONV_OVF_I_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt64() { Test("Test_CONV_OVF_I_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt64() { Test("Test_CONV_OVF_I_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I_UN__UInt64() { Test("Test_CONV_OVF_I_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt64() { Test("Test_CONV_OVF_I1_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I1_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt64() { Test("Test_CONV_OVF_I1_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt64() { Test("Test_CONV_OVF_I1_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I1_UN__UInt64() { Test("Test_CONV_OVF_I1_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I1_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt64() { Test("Test_CONV_OVF_I2_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I2_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt64() { Test("Test_CONV_OVF_I2_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt64() { Test("Test_CONV_OVF_I2_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I2_UN__UInt64() { Test("Test_CONV_OVF_I2_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I2_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt64() { Test("Test_CONV_OVF_I4_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I4_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt64() { Test("Test_CONV_OVF_I4_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt64() { Test("Test_CONV_OVF_I4_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I4_UN__UInt64() { Test("Test_CONV_OVF_I4_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I4_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt64() { Test("Test_CONV_OVF_I8_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt64() { Test("Test_CONV_OVF_I8_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I8_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt64() { Test("Test_CONV_OVF_I8_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_I8_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_I8_UN__UInt64() { Test("Test_CONV_OVF_I8_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_I8_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt64() { Test("Test_CONV_OVF_U_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt64() { Test("Test_CONV_OVF_U_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt64() { Test("Test_CONV_OVF_U_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U_UN__UInt64() { Test("Test_CONV_OVF_U_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt64() { Test("Test_CONV_OVF_U1_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U1_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt64() { Test("Test_CONV_OVF_U1_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt64() { Test("Test_CONV_OVF_U1_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U1_UN__UInt64() { Test("Test_CONV_OVF_U1_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U1_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt64() { Test("Test_CONV_OVF_U2_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U2_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt64() { Test("Test_CONV_OVF_U2_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt64() { Test("Test_CONV_OVF_U2_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U2_UN__UInt64() { Test("Test_CONV_OVF_U2_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U2_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt64() { Test("Test_CONV_OVF_U4_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U4_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt64() { Test("Test_CONV_OVF_U4_UN__UInt64", ulong.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt64() { Test("Test_CONV_OVF_U4_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U4_UN__UInt64() { Test("Test_CONV_OVF_U4_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethodEX("Test_CONV_OVF_U4_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt64() { Test("Test_CONV_OVF_U8_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt64() { Test("Test_CONV_OVF_U8_UN__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt64() { Test("Test_CONV_OVF_U8_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_OVF_U8_UN__UInt64() { Test("Test_CONV_OVF_U8_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_OVF_U8_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_R_UN__UInt64() { Test("Test_CONV_R_UN__UInt64", ulong.MinValue); } /* TestMethod("Test_CONV_R_UN__UInt64", ulong.MinValue); */
-        //[Fact] public void Test_CONV_R_UN__UInt64() { Test("Test_CONV_R_UN__UInt64", ulong.MaxValue); } /* TestMethod("Test_CONV_R_UN__UInt64", ulong.MaxValue); */
-        //[Fact] public void Test_CONV_R_UN__UInt64() { Test("Test_CONV_R_UN__UInt64", (ulong)0x123456789ABCDEF0); } /* TestMethod("Test_CONV_R_UN__UInt64", (ulong)0x123456789ABCDEF0); */
-        //[Fact] public void Test_CONV_R_UN__UInt64() { Test("Test_CONV_R_UN__UInt64", (ulong)0x9ABCDEF012345678); } /* TestMethod("Test_CONV_R_UN__UInt64", (ulong)0x9ABCDEF012345678); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", 0.0f); } /* TestMethod("Test_CONV_I__Single", 0.0f); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", -0.0f); } /* TestMethod("Test_CONV_I__Single", -0.0f); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", -1.0f); } /* TestMethod("Test_CONV_I__Single", -1.0f); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", float.MinValue); } /* TestMethod("Test_CONV_I__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", 1.0f); } /* TestMethod("Test_CONV_I__Single", 1.0f); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", float.MaxValue); } /* TestMethod("Test_CONV_I__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", float.NaN); } /* TestMethod("Test_CONV_I__Single", float.NaN); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_I__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_I__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", float.Epsilon); } /* TestMethod("Test_CONV_I__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_I__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_I__Single() { Test("Test_CONV_I__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_I__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", 0.0f); } /* TestMethod("Test_CONV_I1__Single", 0.0f); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", -0.0f); } /* TestMethod("Test_CONV_I1__Single", -0.0f); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", -1.0f); } /* TestMethod("Test_CONV_I1__Single", -1.0f); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", float.MinValue); } /* TestMethod("Test_CONV_I1__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", 1.0f); } /* TestMethod("Test_CONV_I1__Single", 1.0f); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", float.MaxValue); } /* TestMethod("Test_CONV_I1__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", float.NaN); } /* TestMethod("Test_CONV_I1__Single", float.NaN); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_I1__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_I1__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", float.Epsilon); } /* TestMethod("Test_CONV_I1__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_I1__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_I1__Single() { Test("Test_CONV_I1__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_I1__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", 0.0f); } /* TestMethod("Test_CONV_I2__Single", 0.0f); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", -0.0f); } /* TestMethod("Test_CONV_I2__Single", -0.0f); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", -1.0f); } /* TestMethod("Test_CONV_I2__Single", -1.0f); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", float.MinValue); } /* TestMethod("Test_CONV_I2__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", 1.0f); } /* TestMethod("Test_CONV_I2__Single", 1.0f); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", float.MaxValue); } /* TestMethod("Test_CONV_I2__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", float.NaN); } /* TestMethod("Test_CONV_I2__Single", float.NaN); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_I2__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_I2__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", float.Epsilon); } /* TestMethod("Test_CONV_I2__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_I2__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_I2__Single() { Test("Test_CONV_I2__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_I2__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", 0.0f); } /* TestMethod("Test_CONV_I4__Single", 0.0f); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", -0.0f); } /* TestMethod("Test_CONV_I4__Single", -0.0f); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", -1.0f); } /* TestMethod("Test_CONV_I4__Single", -1.0f); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", float.MinValue); } /* TestMethod("Test_CONV_I4__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", 1.0f); } /* TestMethod("Test_CONV_I4__Single", 1.0f); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", float.MaxValue); } /* TestMethod("Test_CONV_I4__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", float.NaN); } /* TestMethod("Test_CONV_I4__Single", float.NaN); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_I4__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_I4__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", float.Epsilon); } /* TestMethod("Test_CONV_I4__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_I4__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_I4__Single() { Test("Test_CONV_I4__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_I4__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", 0.0f); } /* TestMethod("Test_CONV_I8__Single", 0.0f); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", -0.0f); } /* TestMethod("Test_CONV_I8__Single", -0.0f); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", -1.0f); } /* TestMethod("Test_CONV_I8__Single", -1.0f); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", float.MinValue); } /* TestMethod("Test_CONV_I8__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", 1.0f); } /* TestMethod("Test_CONV_I8__Single", 1.0f); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", float.MaxValue); } /* TestMethod("Test_CONV_I8__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", float.NaN); } /* TestMethod("Test_CONV_I8__Single", float.NaN); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_I8__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_I8__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", float.Epsilon); } /* TestMethod("Test_CONV_I8__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_I8__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_I8__Single() { Test("Test_CONV_I8__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_I8__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", 0.0f); } /* TestMethod("Test_CONV_U__Single", 0.0f); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", -0.0f); } /* TestMethod("Test_CONV_U__Single", -0.0f); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", -1.0f); } /* TestMethod("Test_CONV_U__Single", -1.0f); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", float.MinValue); } /* TestMethod("Test_CONV_U__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", 1.0f); } /* TestMethod("Test_CONV_U__Single", 1.0f); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", float.MaxValue); } /* TestMethod("Test_CONV_U__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", float.NaN); } /* TestMethod("Test_CONV_U__Single", float.NaN); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_U__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_U__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", float.Epsilon); } /* TestMethod("Test_CONV_U__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_U__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_U__Single() { Test("Test_CONV_U__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_U__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", 0.0f); } /* TestMethod("Test_CONV_U1__Single", 0.0f); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", -0.0f); } /* TestMethod("Test_CONV_U1__Single", -0.0f); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", -1.0f); } /* TestMethod("Test_CONV_U1__Single", -1.0f); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", float.MinValue); } /* TestMethod("Test_CONV_U1__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", 1.0f); } /* TestMethod("Test_CONV_U1__Single", 1.0f); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", float.MaxValue); } /* TestMethod("Test_CONV_U1__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", float.NaN); } /* TestMethod("Test_CONV_U1__Single", float.NaN); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_U1__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_U1__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", float.Epsilon); } /* TestMethod("Test_CONV_U1__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_U1__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_U1__Single() { Test("Test_CONV_U1__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_U1__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", 0.0f); } /* TestMethod("Test_CONV_U2__Single", 0.0f); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", -0.0f); } /* TestMethod("Test_CONV_U2__Single", -0.0f); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", -1.0f); } /* TestMethod("Test_CONV_U2__Single", -1.0f); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", float.MinValue); } /* TestMethod("Test_CONV_U2__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", 1.0f); } /* TestMethod("Test_CONV_U2__Single", 1.0f); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", float.MaxValue); } /* TestMethod("Test_CONV_U2__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", float.NaN); } /* TestMethod("Test_CONV_U2__Single", float.NaN); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_U2__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_U2__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", float.Epsilon); } /* TestMethod("Test_CONV_U2__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_U2__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_U2__Single() { Test("Test_CONV_U2__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_U2__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", 0.0f); } /* TestMethod("Test_CONV_U4__Single", 0.0f); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", -0.0f); } /* TestMethod("Test_CONV_U4__Single", -0.0f); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", -1.0f); } /* TestMethod("Test_CONV_U4__Single", -1.0f); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", float.MinValue); } /* TestMethod("Test_CONV_U4__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", 1.0f); } /* TestMethod("Test_CONV_U4__Single", 1.0f); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", float.MaxValue); } /* TestMethod("Test_CONV_U4__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", float.NaN); } /* TestMethod("Test_CONV_U4__Single", float.NaN); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_U4__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_U4__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", float.Epsilon); } /* TestMethod("Test_CONV_U4__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_U4__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_U4__Single() { Test("Test_CONV_U4__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_U4__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", 0.0f); } /* TestMethod("Test_CONV_U8__Single", 0.0f); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", -0.0f); } /* TestMethod("Test_CONV_U8__Single", -0.0f); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", -1.0f); } /* TestMethod("Test_CONV_U8__Single", -1.0f); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", float.MinValue); } /* TestMethod("Test_CONV_U8__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", 1.0f); } /* TestMethod("Test_CONV_U8__Single", 1.0f); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", float.MaxValue); } /* TestMethod("Test_CONV_U8__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", float.NaN); } /* TestMethod("Test_CONV_U8__Single", float.NaN); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_U8__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_U8__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", float.Epsilon); } /* TestMethod("Test_CONV_U8__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_U8__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_U8__Single() { Test("Test_CONV_U8__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_U8__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", 0.0f); } /* TestMethod("Test_CONV_R4__Single", 0.0f); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", -0.0f); } /* TestMethod("Test_CONV_R4__Single", -0.0f); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", -1.0f); } /* TestMethod("Test_CONV_R4__Single", -1.0f); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", float.MinValue); } /* TestMethod("Test_CONV_R4__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", 1.0f); } /* TestMethod("Test_CONV_R4__Single", 1.0f); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", float.MaxValue); } /* TestMethod("Test_CONV_R4__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", float.NaN); } /* TestMethod("Test_CONV_R4__Single", float.NaN); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_R4__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_R4__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", float.Epsilon); } /* TestMethod("Test_CONV_R4__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_R4__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_R4__Single() { Test("Test_CONV_R4__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_R4__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", 0.0f); } /* TestMethod("Test_CONV_R8__Single", 0.0f); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", -0.0f); } /* TestMethod("Test_CONV_R8__Single", -0.0f); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", -1.0f); } /* TestMethod("Test_CONV_R8__Single", -1.0f); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", float.MinValue); } /* TestMethod("Test_CONV_R8__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", 1.0f); } /* TestMethod("Test_CONV_R8__Single", 1.0f); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", float.MaxValue); } /* TestMethod("Test_CONV_R8__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", float.NaN); } /* TestMethod("Test_CONV_R8__Single", float.NaN); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", float.NegativeInfinity); } /* TestMethod("Test_CONV_R8__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", float.PositiveInfinity); } /* TestMethod("Test_CONV_R8__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", float.Epsilon); } /* TestMethod("Test_CONV_R8__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_R8__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_R8__Single() { Test("Test_CONV_R8__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_R8__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_I__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_I__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", -1.0f); } /* TestMethod("Test_CONV_OVF_I__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_I__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_I__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_I__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_I__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I__Single() { Test("Test_CONV_OVF_I__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_I1__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_I1__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", -1.0f); } /* TestMethod("Test_CONV_OVF_I1__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_I1__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_I1__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I1__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I1__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_I1__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I1__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I1__Single() { Test("Test_CONV_OVF_I1__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I1__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_I2__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_I2__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", -1.0f); } /* TestMethod("Test_CONV_OVF_I2__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_I2__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_I2__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I2__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I2__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_I2__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I2__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I2__Single() { Test("Test_CONV_OVF_I2__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I2__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_I4__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_I4__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", -1.0f); } /* TestMethod("Test_CONV_OVF_I4__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_I4__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_I4__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I4__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I4__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_I4__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I4__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I4__Single() { Test("Test_CONV_OVF_I4__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_I4__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_I8__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_I8__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", -1.0f); } /* TestMethod("Test_CONV_OVF_I8__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_I8__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_I8__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I8__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_I8__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I8__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I8__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_I8__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", 1234567891011.12f); } /* TestMethod("Test_CONV_OVF_I8__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_I8__Single() { Test("Test_CONV_OVF_I8__Single", -1234567891011.12f); } /* TestMethod("Test_CONV_OVF_I8__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_U__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_U__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", -1.0f); } /* TestMethodEX("Test_CONV_OVF_U__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_U__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_U__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_U__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_U__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U__Single() { Test("Test_CONV_OVF_U__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_U1__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_U1__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", -1.0f); } /* TestMethodEX("Test_CONV_OVF_U1__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_U1__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_U1__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U1__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U1__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_U1__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U1__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U1__Single() { Test("Test_CONV_OVF_U1__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U1__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_U2__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_U2__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", -1.0f); } /* TestMethodEX("Test_CONV_OVF_U2__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_U2__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_U2__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U2__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U2__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_U2__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U2__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U2__Single() { Test("Test_CONV_OVF_U2__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U2__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_U4__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_U4__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", -1.0f); } /* TestMethodEX("Test_CONV_OVF_U4__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_U4__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_U4__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U4__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U4__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_U4__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U4__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U4__Single() { Test("Test_CONV_OVF_U4__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U4__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", 0.0f); } /* TestMethod("Test_CONV_OVF_U8__Single", 0.0f); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", -0.0f); } /* TestMethod("Test_CONV_OVF_U8__Single", -0.0f); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", -1.0f); } /* TestMethodEX("Test_CONV_OVF_U8__Single", -1.0f); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", float.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8__Single", float.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", 1.0f); } /* TestMethod("Test_CONV_OVF_U8__Single", 1.0f); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", float.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U8__Single", float.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", float.NaN); } /* TestMethodEX("Test_CONV_OVF_U8__Single", float.NaN); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U8__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U8__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", float.Epsilon); } /* TestMethod("Test_CONV_OVF_U8__Single", float.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", 1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U8__Single", 1234567891011.12f); */
-        //[Fact] public void Test_CONV_OVF_U8__Single() { Test("Test_CONV_OVF_U8__Single", -1234567891011.12f); } /* TestMethodEX("Test_CONV_OVF_U8__Single", -1234567891011.12f); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", 0.0d); } /* TestMethod("Test_CONV_I__Double", 0.0d); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", -0.0d); } /* TestMethod("Test_CONV_I__Double", -0.0d); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", -1.0d); } /* TestMethod("Test_CONV_I__Double", -1.0d); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", double.MinValue); } /* TestMethod("Test_CONV_I__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", 1.0d); } /* TestMethod("Test_CONV_I__Double", 1.0d); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", double.MaxValue); } /* TestMethod("Test_CONV_I__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", double.NaN); } /* TestMethod("Test_CONV_I__Double", double.NaN); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_I__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_I__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", double.Epsilon); } /* TestMethod("Test_CONV_I__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_I__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I__Double() { Test("Test_CONV_I__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_I__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", 0.0d); } /* TestMethod("Test_CONV_I1__Double", 0.0d); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", -0.0d); } /* TestMethod("Test_CONV_I1__Double", -0.0d); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", -1.0d); } /* TestMethod("Test_CONV_I1__Double", -1.0d); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", double.MinValue); } /* TestMethod("Test_CONV_I1__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", 1.0d); } /* TestMethod("Test_CONV_I1__Double", 1.0d); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", double.MaxValue); } /* TestMethod("Test_CONV_I1__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", double.NaN); } /* TestMethod("Test_CONV_I1__Double", double.NaN); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_I1__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_I1__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", double.Epsilon); } /* TestMethod("Test_CONV_I1__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_I1__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I1__Double() { Test("Test_CONV_I1__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_I1__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", 0.0d); } /* TestMethod("Test_CONV_I2__Double", 0.0d); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", -0.0d); } /* TestMethod("Test_CONV_I2__Double", -0.0d); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", -1.0d); } /* TestMethod("Test_CONV_I2__Double", -1.0d); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", double.MinValue); } /* TestMethod("Test_CONV_I2__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", 1.0d); } /* TestMethod("Test_CONV_I2__Double", 1.0d); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", double.MaxValue); } /* TestMethod("Test_CONV_I2__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", double.NaN); } /* TestMethod("Test_CONV_I2__Double", double.NaN); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_I2__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_I2__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", double.Epsilon); } /* TestMethod("Test_CONV_I2__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_I2__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I2__Double() { Test("Test_CONV_I2__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_I2__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", 0.0d); } /* TestMethod("Test_CONV_I4__Double", 0.0d); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", -0.0d); } /* TestMethod("Test_CONV_I4__Double", -0.0d); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", -1.0d); } /* TestMethod("Test_CONV_I4__Double", -1.0d); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", double.MinValue); } /* TestMethod("Test_CONV_I4__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", 1.0d); } /* TestMethod("Test_CONV_I4__Double", 1.0d); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", double.MaxValue); } /* TestMethod("Test_CONV_I4__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", double.NaN); } /* TestMethod("Test_CONV_I4__Double", double.NaN); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_I4__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_I4__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", double.Epsilon); } /* TestMethod("Test_CONV_I4__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_I4__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I4__Double() { Test("Test_CONV_I4__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_I4__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", 0.0d); } /* TestMethod("Test_CONV_I8__Double", 0.0d); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", -0.0d); } /* TestMethod("Test_CONV_I8__Double", -0.0d); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", -1.0d); } /* TestMethod("Test_CONV_I8__Double", -1.0d); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", double.MinValue); } /* TestMethod("Test_CONV_I8__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", 1.0d); } /* TestMethod("Test_CONV_I8__Double", 1.0d); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", double.MaxValue); } /* TestMethod("Test_CONV_I8__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", double.NaN); } /* TestMethod("Test_CONV_I8__Double", double.NaN); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_I8__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_I8__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", double.Epsilon); } /* TestMethod("Test_CONV_I8__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_I8__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_I8__Double() { Test("Test_CONV_I8__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_I8__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", 0.0d); } /* TestMethod("Test_CONV_U__Double", 0.0d); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", -0.0d); } /* TestMethod("Test_CONV_U__Double", -0.0d); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", -1.0d); } /* TestMethod("Test_CONV_U__Double", -1.0d); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", double.MinValue); } /* TestMethod("Test_CONV_U__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", 1.0d); } /* TestMethod("Test_CONV_U__Double", 1.0d); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", double.MaxValue); } /* TestMethod("Test_CONV_U__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", double.NaN); } /* TestMethod("Test_CONV_U__Double", double.NaN); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_U__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_U__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", double.Epsilon); } /* TestMethod("Test_CONV_U__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_U__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U__Double() { Test("Test_CONV_U__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_U__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", 0.0d); } /* TestMethod("Test_CONV_U1__Double", 0.0d); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", -0.0d); } /* TestMethod("Test_CONV_U1__Double", -0.0d); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", -1.0d); } /* TestMethod("Test_CONV_U1__Double", -1.0d); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", double.MinValue); } /* TestMethod("Test_CONV_U1__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", 1.0d); } /* TestMethod("Test_CONV_U1__Double", 1.0d); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", double.MaxValue); } /* TestMethod("Test_CONV_U1__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", double.NaN); } /* TestMethod("Test_CONV_U1__Double", double.NaN); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_U1__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_U1__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", double.Epsilon); } /* TestMethod("Test_CONV_U1__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_U1__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U1__Double() { Test("Test_CONV_U1__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_U1__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", 0.0d); } /* TestMethod("Test_CONV_U2__Double", 0.0d); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", -0.0d); } /* TestMethod("Test_CONV_U2__Double", -0.0d); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", -1.0d); } /* TestMethod("Test_CONV_U2__Double", -1.0d); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", double.MinValue); } /* TestMethod("Test_CONV_U2__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", 1.0d); } /* TestMethod("Test_CONV_U2__Double", 1.0d); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", double.MaxValue); } /* TestMethod("Test_CONV_U2__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", double.NaN); } /* TestMethod("Test_CONV_U2__Double", double.NaN); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_U2__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_U2__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", double.Epsilon); } /* TestMethod("Test_CONV_U2__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_U2__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U2__Double() { Test("Test_CONV_U2__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_U2__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", 0.0d); } /* TestMethod("Test_CONV_U4__Double", 0.0d); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", -0.0d); } /* TestMethod("Test_CONV_U4__Double", -0.0d); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", -1.0d); } /* TestMethod("Test_CONV_U4__Double", -1.0d); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", double.MinValue); } /* TestMethod("Test_CONV_U4__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", 1.0d); } /* TestMethod("Test_CONV_U4__Double", 1.0d); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", double.MaxValue); } /* TestMethod("Test_CONV_U4__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", double.NaN); } /* TestMethod("Test_CONV_U4__Double", double.NaN); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_U4__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_U4__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", double.Epsilon); } /* TestMethod("Test_CONV_U4__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_U4__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U4__Double() { Test("Test_CONV_U4__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_U4__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", 0.0d); } /* TestMethod("Test_CONV_U8__Double", 0.0d); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", -0.0d); } /* TestMethod("Test_CONV_U8__Double", -0.0d); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", -1.0d); } /* TestMethod("Test_CONV_U8__Double", -1.0d); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", double.MinValue); } /* TestMethod("Test_CONV_U8__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", 1.0d); } /* TestMethod("Test_CONV_U8__Double", 1.0d); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", double.MaxValue); } /* TestMethod("Test_CONV_U8__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", double.NaN); } /* TestMethod("Test_CONV_U8__Double", double.NaN); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_U8__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_U8__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", double.Epsilon); } /* TestMethod("Test_CONV_U8__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_U8__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_U8__Double() { Test("Test_CONV_U8__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_U8__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", 0.0d); } /* TestMethod("Test_CONV_R4__Double", 0.0d); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", -0.0d); } /* TestMethod("Test_CONV_R4__Double", -0.0d); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", -1.0d); } /* TestMethod("Test_CONV_R4__Double", -1.0d); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", double.MinValue); } /* TestMethod("Test_CONV_R4__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", 1.0d); } /* TestMethod("Test_CONV_R4__Double", 1.0d); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", double.MaxValue); } /* TestMethod("Test_CONV_R4__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", double.NaN); } /* TestMethod("Test_CONV_R4__Double", double.NaN); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_R4__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_R4__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", double.Epsilon); } /* TestMethod("Test_CONV_R4__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_R4__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_R4__Double() { Test("Test_CONV_R4__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_R4__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", 0.0d); } /* TestMethod("Test_CONV_R8__Double", 0.0d); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", -0.0d); } /* TestMethod("Test_CONV_R8__Double", -0.0d); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", -1.0d); } /* TestMethod("Test_CONV_R8__Double", -1.0d); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", double.MinValue); } /* TestMethod("Test_CONV_R8__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", 1.0d); } /* TestMethod("Test_CONV_R8__Double", 1.0d); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", double.MaxValue); } /* TestMethod("Test_CONV_R8__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", double.NaN); } /* TestMethod("Test_CONV_R8__Double", double.NaN); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", double.NegativeInfinity); } /* TestMethod("Test_CONV_R8__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", double.PositiveInfinity); } /* TestMethod("Test_CONV_R8__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", double.Epsilon); } /* TestMethod("Test_CONV_R8__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_R8__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_R8__Double() { Test("Test_CONV_R8__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_R8__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_I__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_I__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", -1.0d); } /* TestMethod("Test_CONV_OVF_I__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_I__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_I__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_I__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_I__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I__Double() { Test("Test_CONV_OVF_I__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_I1__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_I1__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", -1.0d); } /* TestMethod("Test_CONV_OVF_I1__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_I1__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_I1__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I1__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_I1__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I1__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I1__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_I1__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I1__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I1__Double() { Test("Test_CONV_OVF_I1__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I1__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_I2__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_I2__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", -1.0d); } /* TestMethod("Test_CONV_OVF_I2__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_I2__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_I2__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I2__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_I2__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I2__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I2__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_I2__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I2__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I2__Double() { Test("Test_CONV_OVF_I2__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I2__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_I4__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_I4__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", -1.0d); } /* TestMethod("Test_CONV_OVF_I4__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_I4__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_I4__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I4__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_I4__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I4__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I4__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_I4__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I4__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I4__Double() { Test("Test_CONV_OVF_I4__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_I4__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_I8__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_I8__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", -1.0d); } /* TestMethod("Test_CONV_OVF_I8__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_I8__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_I8__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_I8__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_I8__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_I8__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_I8__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_I8__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_OVF_I8__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_I8__Double() { Test("Test_CONV_OVF_I8__Double", -12345678910111213.1415d); } /* TestMethod("Test_CONV_OVF_I8__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_U__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_U__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", -1.0d); } /* TestMethodEX("Test_CONV_OVF_U__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_U__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_U__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_U__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_U__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U__Double() { Test("Test_CONV_OVF_U__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_U1__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_U1__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", -1.0d); } /* TestMethodEX("Test_CONV_OVF_U1__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_U1__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_U1__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U1__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_U1__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U1__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U1__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_U1__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U1__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U1__Double() { Test("Test_CONV_OVF_U1__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U1__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_U2__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_U2__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", -1.0d); } /* TestMethodEX("Test_CONV_OVF_U2__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_U2__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_U2__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U2__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_U2__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U2__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U2__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_U2__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U2__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U2__Double() { Test("Test_CONV_OVF_U2__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U2__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_U4__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_U4__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", -1.0d); } /* TestMethodEX("Test_CONV_OVF_U4__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_U4__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_U4__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U4__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_U4__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U4__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U4__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_U4__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", 12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U4__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U4__Double() { Test("Test_CONV_OVF_U4__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U4__Double", -12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", 0.0d); } /* TestMethod("Test_CONV_OVF_U8__Double", 0.0d); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", -0.0d); } /* TestMethod("Test_CONV_OVF_U8__Double", -0.0d); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", -1.0d); } /* TestMethodEX("Test_CONV_OVF_U8__Double", -1.0d); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", double.MinValue); } /* TestMethodEX("Test_CONV_OVF_U8__Double", double.MinValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", 1.0d); } /* TestMethod("Test_CONV_OVF_U8__Double", 1.0d); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", double.MaxValue); } /* TestMethodEX("Test_CONV_OVF_U8__Double", double.MaxValue); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", double.NaN); } /* TestMethodEX("Test_CONV_OVF_U8__Double", double.NaN); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CONV_OVF_U8__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CONV_OVF_U8__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", double.Epsilon); } /* TestMethod("Test_CONV_OVF_U8__Double", double.Epsilon); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", 12345678910111213.1415d); } /* TestMethod("Test_CONV_OVF_U8__Double", 12345678910111213.1415d); */
-        //[Fact] public void Test_CONV_OVF_U8__Double() { Test("Test_CONV_OVF_U8__Double", -12345678910111213.1415d); } /* TestMethodEX("Test_CONV_OVF_U8__Double", -12345678910111213.1415d); */
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_BRFALSE__IntPtr(int arg0) { Test("Test_BRFALSE__IntPtr", new IntPtr(arg0)); }
 
-        //[Fact] public void Test_CEQ__Int32() { Test("Test_CEQ__Int32", 1, 1); } /* TestMethod("Test_CEQ__Int32", 1, 1); */
-        //[Fact] public void Test_CEQ__Int32() { Test("Test_CEQ__Int32", 0, 1); } /* TestMethod("Test_CEQ__Int32", 0, 1); */
-        //[Fact] public void Test_CEQ__Int32() { Test("Test_CEQ__Int32", 1, -1); } /* TestMethod("Test_CEQ__Int32", 1, -1); */
-        //[Fact] public void Test_CEQ__UInt32() { Test("Test_CEQ__UInt32", 1U, 1U); } /* TestMethod("Test_CEQ__UInt32", 1U, 1U); */
-        //[Fact] public void Test_CEQ__UInt32() { Test("Test_CEQ__UInt32", 0U, 1U); } /* TestMethod("Test_CEQ__UInt32", 0U, 1U); */
-        //[Fact] public void Test_CEQ__UInt32() { Test("Test_CEQ__UInt32", 1U, 0U); } /* TestMethod("Test_CEQ__UInt32", 1U, 0U); */
-        //[Fact] public void Test_CEQ__Int64() { Test("Test_CEQ__Int64", 1L, 1L); } /* TestMethod("Test_CEQ__Int64", 1L, 1L); */
-        //[Fact] public void Test_CEQ__Int64() { Test("Test_CEQ__Int64", 0L, 1L); } /* TestMethod("Test_CEQ__Int64", 0L, 1L); */
-        //[Fact] public void Test_CEQ__Int64() { Test("Test_CEQ__Int64", 1L, -1L); } /* TestMethod("Test_CEQ__Int64", 1L, -1L); */
-        //[Fact] public void Test_CEQ__UInt64() { Test("Test_CEQ__UInt64", 1UL, 1UL); } /* TestMethod("Test_CEQ__UInt64", 1UL, 1UL); */
-        //[Fact] public void Test_CEQ__UInt64() { Test("Test_CEQ__UInt64", 0UL, 1UL); } /* TestMethod("Test_CEQ__UInt64", 0UL, 1UL); */
-        //[Fact] public void Test_CEQ__UInt64() { Test("Test_CEQ__UInt64", 1UL, 0UL); } /* TestMethod("Test_CEQ__UInt64", 1UL, 0UL); */
-        //[Fact] public void Test_CEQ__IntPtr() { Test("Test_CEQ__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CEQ__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CEQ__IntPtr() { Test("Test_CEQ__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CEQ__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CEQ__IntPtr() { Test("Test_CEQ__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CEQ__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CEQ__UIntPtr() { Test("Test_CEQ__UIntPtr", new UIntPtr(1), new UIntPtr(1)); } /* TestMethod("Test_CEQ__UIntPtr", new UIntPtr(1), new UIntPtr(1)); */
-        //[Fact] public void Test_CEQ__UIntPtr() { Test("Test_CEQ__UIntPtr", new UIntPtr(0), new UIntPtr(1)); } /* TestMethod("Test_CEQ__UIntPtr", new UIntPtr(0), new UIntPtr(1)); */
-        //[Fact] public void Test_CEQ__UIntPtr() { Test("Test_CEQ__UIntPtr", new UIntPtr(1), new UIntPtr(0)); } /* TestMethod("Test_CEQ__UIntPtr", new UIntPtr(1), new UIntPtr(0)); */
-        //[Fact] public void Test_CEQ__IntPtr_Int32() { Test("Test_CEQ__IntPtr_Int32", new IntPtr(1), 1); } /* TestMethod("Test_CEQ__IntPtr_Int32", new IntPtr(1), 1); */
-        //[Fact] public void Test_CEQ__IntPtr_Int32() { Test("Test_CEQ__IntPtr_Int32", new IntPtr(0), 1); } /* TestMethod("Test_CEQ__IntPtr_Int32", new IntPtr(0), 1); */
-        //[Fact] public void Test_CEQ__IntPtr_Int32() { Test("Test_CEQ__IntPtr_Int32", new IntPtr(1), 0); } /* TestMethod("Test_CEQ__IntPtr_Int32", new IntPtr(1), 0); */
-        //[Fact] public void Test_CEQ__Int32_IntPtr() { Test("Test_CEQ__Int32_IntPtr", 1, new IntPtr(1)); } /* TestMethod("Test_CEQ__Int32_IntPtr", 1, new IntPtr(1)); */
-        //[Fact] public void Test_CEQ__Int32_IntPtr() { Test("Test_CEQ__Int32_IntPtr", 0, new IntPtr(1)); } /* TestMethod("Test_CEQ__Int32_IntPtr", 0, new IntPtr(1)); */
-        //[Fact] public void Test_CEQ__Int32_IntPtr() { Test("Test_CEQ__Int32_IntPtr", 1, new IntPtr(0)); } /* TestMethod("Test_CEQ__Int32_IntPtr", 1, new IntPtr(0)); */
-        //[Fact] public void Test_CEQ__Single() { Test("Test_CEQ__Single", 1.0f, 1.0f); } /* TestMethod("Test_CEQ__Single", 1.0f, 1.0f); */
-        //[Fact] public void Test_CEQ__Single() { Test("Test_CEQ__Single", 0.0f, 1.0f); } /* TestMethod("Test_CEQ__Single", 0.0f, 1.0f); */
-        //[Fact] public void Test_CEQ__Single() { Test("Test_CEQ__Single", 1.0f, 0.0f); } /* TestMethod("Test_CEQ__Single", 1.0f, 0.0f); */
-        //[Fact] public void Test_CEQ__Double() { Test("Test_CEQ__Double", 1.0d, 1.0d); } /* TestMethod("Test_CEQ__Double", 1.0d, 1.0d); */
-        //[Fact] public void Test_CEQ__Double() { Test("Test_CEQ__Double", 0.0d, 1.0d); } /* TestMethod("Test_CEQ__Double", 0.0d, 1.0d); */
-        //[Fact] public void Test_CEQ__Double() { Test("Test_CEQ__Double", 1.0d, 0.0d); } /* TestMethod("Test_CEQ__Double", 1.0d, 0.0d); */
-        //[Fact] public void Test_CEQ__Object() { Test("Test_CEQ__Object", null, null); } /* TestMethod("Test_CEQ__Object", null, null); */
-        //[Fact] public void Test_CEQ__Object() { Test("Test_CEQ__Object", "1", "0"); } /* TestMethod("Test_CEQ__Object", "1", "0"); */
-
-        //[Fact] public void Test_CGT__Int32() { Test("Test_CGT__Int32", 1, 1); } /* TestMethod("Test_CGT__Int32", 1, 1); */
-        //[Fact] public void Test_CGT__Int32() { Test("Test_CGT__Int32", 0, 1); } /* TestMethod("Test_CGT__Int32", 0, 1); */
-        //[Fact] public void Test_CGT__Int32() { Test("Test_CGT__Int32", 1, -1); } /* TestMethod("Test_CGT__Int32", 1, -1); */
-        //[Fact] public void Test_CGT__UInt32() { Test("Test_CGT__UInt32", 1U, 1U); } /* TestMethod("Test_CGT__UInt32", 1U, 1U); */
-        //[Fact] public void Test_CGT__UInt32() { Test("Test_CGT__UInt32", 0U, 1U); } /* TestMethod("Test_CGT__UInt32", 0U, 1U); */
-        //[Fact] public void Test_CGT__UInt32() { Test("Test_CGT__UInt32", 1U, 0U); } /* TestMethod("Test_CGT__UInt32", 1U, 0U); */
-        //[Fact] public void Test_CGT__Int64() { Test("Test_CGT__Int64", 1L, 1L); } /* TestMethod("Test_CGT__Int64", 1L, 1L); */
-        //[Fact] public void Test_CGT__Int64() { Test("Test_CGT__Int64", 0L, 1L); } /* TestMethod("Test_CGT__Int64", 0L, 1L); */
-        //[Fact] public void Test_CGT__Int64() { Test("Test_CGT__Int64", 1L, -1L); } /* TestMethod("Test_CGT__Int64", 1L, -1L); */
-        //[Fact] public void Test_CGT__UInt64() { Test("Test_CGT__UInt64", 1UL, 1UL); } /* TestMethod("Test_CGT__UInt64", 1UL, 1UL); */
-        //[Fact] public void Test_CGT__UInt64() { Test("Test_CGT__UInt64", 0UL, 1UL); } /* TestMethod("Test_CGT__UInt64", 0UL, 1UL); */
-        //[Fact] public void Test_CGT__UInt64() { Test("Test_CGT__UInt64", 1UL, 0UL); } /* TestMethod("Test_CGT__UInt64", 1UL, 0UL); */
-        //[Fact] public void Test_CGT__IntPtr() { Test("Test_CGT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CGT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CGT__IntPtr() { Test("Test_CGT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CGT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CGT__IntPtr() { Test("Test_CGT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CGT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CGT__UIntPtr() { Test("Test_CGT__UIntPtr", new UIntPtr(1), new UIntPtr(1)); } /* TestMethod("Test_CGT__UIntPtr", new UIntPtr(1), new UIntPtr(1)); */
-        //[Fact] public void Test_CGT__UIntPtr() { Test("Test_CGT__UIntPtr", new UIntPtr(0), new UIntPtr(1)); } /* TestMethod("Test_CGT__UIntPtr", new UIntPtr(0), new UIntPtr(1)); */
-        //[Fact] public void Test_CGT__UIntPtr() { Test("Test_CGT__UIntPtr", new UIntPtr(1), new UIntPtr(0)); } /* TestMethod("Test_CGT__UIntPtr", new UIntPtr(1), new UIntPtr(0)); */
-        //[Fact] public void Test_CGT__IntPtr_Int32() { Test("Test_CGT__IntPtr_Int32", new IntPtr(1), 1); } /* TestMethod("Test_CGT__IntPtr_Int32", new IntPtr(1), 1); */
-        //[Fact] public void Test_CGT__IntPtr_Int32() { Test("Test_CGT__IntPtr_Int32", new IntPtr(0), 1); } /* TestMethod("Test_CGT__IntPtr_Int32", new IntPtr(0), 1); */
-        //[Fact] public void Test_CGT__IntPtr_Int32() { Test("Test_CGT__IntPtr_Int32", new IntPtr(1), 0); } /* TestMethod("Test_CGT__IntPtr_Int32", new IntPtr(1), 0); */
-        //[Fact] public void Test_CGT__Int32_IntPtr() { Test("Test_CGT__Int32_IntPtr", 1, new IntPtr(1)); } /* TestMethod("Test_CGT__Int32_IntPtr", 1, new IntPtr(1)); */
-        //[Fact] public void Test_CGT__Int32_IntPtr() { Test("Test_CGT__Int32_IntPtr", 0, new IntPtr(1)); } /* TestMethod("Test_CGT__Int32_IntPtr", 0, new IntPtr(1)); */
-        //[Fact] public void Test_CGT__Int32_IntPtr() { Test("Test_CGT__Int32_IntPtr", 1, new IntPtr(0)); } /* TestMethod("Test_CGT__Int32_IntPtr", 1, new IntPtr(0)); */
-        //[Fact] public void Test_CGT__Single() { Test("Test_CGT__Single", 1.0f, 1.0f); } /* TestMethod("Test_CGT__Single", 1.0f, 1.0f); */
-        //[Fact] public void Test_CGT__Single() { Test("Test_CGT__Single", 0.0f, 1.0f); } /* TestMethod("Test_CGT__Single", 0.0f, 1.0f); */
-        //[Fact] public void Test_CGT__Single() { Test("Test_CGT__Single", 1.0f, 0.0f); } /* TestMethod("Test_CGT__Single", 1.0f, 0.0f); */
-        //[Fact] public void Test_CGT__Double() { Test("Test_CGT__Double", 1.0d, 1.0d); } /* TestMethod("Test_CGT__Double", 1.0d, 1.0d); */
-        //[Fact] public void Test_CGT__Double() { Test("Test_CGT__Double", 0.0d, 1.0d); } /* TestMethod("Test_CGT__Double", 0.0d, 1.0d); */
-        //[Fact] public void Test_CGT__Double() { Test("Test_CGT__Double", 1.0d, 0.0d); } /* TestMethod("Test_CGT__Double", 1.0d, 0.0d); */
-
-        //[Fact] public void Test_CLT__Int32() { Test("Test_CLT__Int32", 1, 1); } /* TestMethod("Test_CLT__Int32", 1, 1); */
-        //[Fact] public void Test_CLT__Int32() { Test("Test_CLT__Int32", 0, 1); } /* TestMethod("Test_CLT__Int32", 0, 1); */
-        //[Fact] public void Test_CLT__Int32() { Test("Test_CLT__Int32", 1, -1); } /* TestMethod("Test_CLT__Int32", 1, -1); */
-        //[Fact] public void Test_CLT__UInt32() { Test("Test_CLT__UInt32", 1U, 1U); } /* TestMethod("Test_CLT__UInt32", 1U, 1U); */
-        //[Fact] public void Test_CLT__UInt32() { Test("Test_CLT__UInt32", 0U, 1U); } /* TestMethod("Test_CLT__UInt32", 0U, 1U); */
-        //[Fact] public void Test_CLT__UInt32() { Test("Test_CLT__UInt32", 1U, 0U); } /* TestMethod("Test_CLT__UInt32", 1U, 0U); */
-        //[Fact] public void Test_CLT__Int64() { Test("Test_CLT__Int64", 1L, 1L); } /* TestMethod("Test_CLT__Int64", 1L, 1L); */
-        //[Fact] public void Test_CLT__Int64() { Test("Test_CLT__Int64", 0L, 1L); } /* TestMethod("Test_CLT__Int64", 0L, 1L); */
-        //[Fact] public void Test_CLT__Int64() { Test("Test_CLT__Int64", 1L, -1L); } /* TestMethod("Test_CLT__Int64", 1L, -1L); */
-        //[Fact] public void Test_CLT__UInt64() { Test("Test_CLT__UInt64", 1UL, 1UL); } /* TestMethod("Test_CLT__UInt64", 1UL, 1UL); */
-        //[Fact] public void Test_CLT__UInt64() { Test("Test_CLT__UInt64", 0UL, 1UL); } /* TestMethod("Test_CLT__UInt64", 0UL, 1UL); */
-        //[Fact] public void Test_CLT__UInt64() { Test("Test_CLT__UInt64", 1UL, 0UL); } /* TestMethod("Test_CLT__UInt64", 1UL, 0UL); */
-        //[Fact] public void Test_CLT__IntPtr() { Test("Test_CLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CLT__IntPtr() { Test("Test_CLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CLT__IntPtr() { Test("Test_CLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CLT__UIntPtr() { Test("Test_CLT__UIntPtr", new UIntPtr(1), new UIntPtr(1)); } /* TestMethod("Test_CLT__UIntPtr", new UIntPtr(1), new UIntPtr(1)); */
-        //[Fact] public void Test_CLT__UIntPtr() { Test("Test_CLT__UIntPtr", new UIntPtr(0), new UIntPtr(1)); } /* TestMethod("Test_CLT__UIntPtr", new UIntPtr(0), new UIntPtr(1)); */
-        //[Fact] public void Test_CLT__UIntPtr() { Test("Test_CLT__UIntPtr", new UIntPtr(1), new UIntPtr(0)); } /* TestMethod("Test_CLT__UIntPtr", new UIntPtr(1), new UIntPtr(0)); */
-        //[Fact] public void Test_CLT__IntPtr_Int32() { Test("Test_CLT__IntPtr_Int32", new IntPtr(1), 1); } /* TestMethod("Test_CLT__IntPtr_Int32", new IntPtr(1), 1); */
-        //[Fact] public void Test_CLT__IntPtr_Int32() { Test("Test_CLT__IntPtr_Int32", new IntPtr(0), 1); } /* TestMethod("Test_CLT__IntPtr_Int32", new IntPtr(0), 1); */
-        //[Fact] public void Test_CLT__IntPtr_Int32() { Test("Test_CLT__IntPtr_Int32", new IntPtr(1), 0); } /* TestMethod("Test_CLT__IntPtr_Int32", new IntPtr(1), 0); */
-        //[Fact] public void Test_CLT__Int32_IntPtr() { Test("Test_CLT__Int32_IntPtr", 1, new IntPtr(1)); } /* TestMethod("Test_CLT__Int32_IntPtr", 1, new IntPtr(1)); */
-        //[Fact] public void Test_CLT__Int32_IntPtr() { Test("Test_CLT__Int32_IntPtr", 0, new IntPtr(1)); } /* TestMethod("Test_CLT__Int32_IntPtr", 0, new IntPtr(1)); */
-        //[Fact] public void Test_CLT__Int32_IntPtr() { Test("Test_CLT__Int32_IntPtr", 1, new IntPtr(0)); } /* TestMethod("Test_CLT__Int32_IntPtr", 1, new IntPtr(0)); */
-        //[Fact] public void Test_CLT__Single() { Test("Test_CLT__Single", 1.0f, 1.0f); } /* TestMethod("Test_CLT__Single", 1.0f, 1.0f); */
-        //[Fact] public void Test_CLT__Single() { Test("Test_CLT__Single", 0.0f, 1.0f); } /* TestMethod("Test_CLT__Single", 0.0f, 1.0f); */
-        //[Fact] public void Test_CLT__Single() { Test("Test_CLT__Single", 1.0f, 0.0f); } /* TestMethod("Test_CLT__Single", 1.0f, 0.0f); */
-        //[Fact] public void Test_CLT__Double() { Test("Test_CLT__Double", 1.0d, 1.0d); } /* TestMethod("Test_CLT__Double", 1.0d, 1.0d); */
-        //[Fact] public void Test_CLT__Double() { Test("Test_CLT__Double", 0.0d, 1.0d); } /* TestMethod("Test_CLT__Double", 0.0d, 1.0d); */
-        //[Fact] public void Test_CLT__Double() { Test("Test_CLT__Double", 1.0d, 0.0d); } /* TestMethod("Test_CLT__Double", 1.0d, 0.0d); */
-
-        //[Fact] public void Test_CGT_UN__Int32() { Test("Test_CGT_UN__Int32", 1, 1); } /* TestMethod("Test_CGT_UN__Int32", 1, 1); */
-        //[Fact] public void Test_CGT_UN__Int32() { Test("Test_CGT_UN__Int32", 0, 1); } /* TestMethod("Test_CGT_UN__Int32", 0, 1); */
-        //[Fact] public void Test_CGT_UN__Int32() { Test("Test_CGT_UN__Int32", 1, -1); } /* TestMethod("Test_CGT_UN__Int32", 1, -1); */
-        //[Fact] public void Test_CGT_UN__UInt32() { Test("Test_CGT_UN__UInt32", 1U, 1U); } /* TestMethod("Test_CGT_UN__UInt32", 1U, 1U); */
-        //[Fact] public void Test_CGT_UN__UInt32() { Test("Test_CGT_UN__UInt32", 0U, 1U); } /* TestMethod("Test_CGT_UN__UInt32", 0U, 1U); */
-        //[Fact] public void Test_CGT_UN__UInt32() { Test("Test_CGT_UN__UInt32", 1U, 0U); } /* TestMethod("Test_CGT_UN__UInt32", 1U, 0U); */
-        //[Fact] public void Test_CGT_UN__Int64() { Test("Test_CGT_UN__Int64", 1L, 1L); } /* TestMethod("Test_CGT_UN__Int64", 1L, 1L); */
-        //[Fact] public void Test_CGT_UN__Int64() { Test("Test_CGT_UN__Int64", 0L, 1L); } /* TestMethod("Test_CGT_UN__Int64", 0L, 1L); */
-        //[Fact] public void Test_CGT_UN__Int64() { Test("Test_CGT_UN__Int64", 1L, -1L); } /* TestMethod("Test_CGT_UN__Int64", 1L, -1L); */
-        //[Fact] public void Test_CGT_UN__UInt64() { Test("Test_CGT_UN__UInt64", 1UL, 1UL); } /* TestMethod("Test_CGT_UN__UInt64", 1UL, 1UL); */
-        //[Fact] public void Test_CGT_UN__UInt64() { Test("Test_CGT_UN__UInt64", 0UL, 1UL); } /* TestMethod("Test_CGT_UN__UInt64", 0UL, 1UL); */
-        //[Fact] public void Test_CGT_UN__UInt64() { Test("Test_CGT_UN__UInt64", 1UL, 0UL); } /* TestMethod("Test_CGT_UN__UInt64", 1UL, 0UL); */
-        //[Fact] public void Test_CGT_UN__IntPtr() { Test("Test_CGT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CGT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CGT_UN__IntPtr() { Test("Test_CGT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CGT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CGT_UN__IntPtr() { Test("Test_CGT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CGT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CGT_UN__UIntPtr() { Test("Test_CGT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(1)); } /* TestMethod("Test_CGT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(1)); */
-        //[Fact] public void Test_CGT_UN__UIntPtr() { Test("Test_CGT_UN__UIntPtr", new UIntPtr(0), new UIntPtr(1)); } /* TestMethod("Test_CGT_UN__UIntPtr", new UIntPtr(0), new UIntPtr(1)); */
-        //[Fact] public void Test_CGT_UN__UIntPtr() { Test("Test_CGT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(0)); } /* TestMethod("Test_CGT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(0)); */
-        //[Fact] public void Test_CGT_UN__IntPtr_Int32() { Test("Test_CGT_UN__IntPtr_Int32", new IntPtr(1), 1); } /* TestMethod("Test_CGT_UN__IntPtr_Int32", new IntPtr(1), 1); */
-        //[Fact] public void Test_CGT_UN__IntPtr_Int32() { Test("Test_CGT_UN__IntPtr_Int32", new IntPtr(0), 1); } /* TestMethod("Test_CGT_UN__IntPtr_Int32", new IntPtr(0), 1); */
-        //[Fact] public void Test_CGT_UN__IntPtr_Int32() { Test("Test_CGT_UN__IntPtr_Int32", new IntPtr(1), 0); } /* TestMethod("Test_CGT_UN__IntPtr_Int32", new IntPtr(1), 0); */
-        //[Fact] public void Test_CGT_UN__Int32_IntPtr() { Test("Test_CGT_UN__Int32_IntPtr", 1, new IntPtr(1)); } /* TestMethod("Test_CGT_UN__Int32_IntPtr", 1, new IntPtr(1)); */
-        //[Fact] public void Test_CGT_UN__Int32_IntPtr() { Test("Test_CGT_UN__Int32_IntPtr", 0, new IntPtr(1)); } /* TestMethod("Test_CGT_UN__Int32_IntPtr", 0, new IntPtr(1)); */
-        //[Fact] public void Test_CGT_UN__Int32_IntPtr() { Test("Test_CGT_UN__Int32_IntPtr", 1, new IntPtr(0)); } /* TestMethod("Test_CGT_UN__Int32_IntPtr", 1, new IntPtr(0)); */
-
-        //[Fact] public void Test_CLT_UN__Int32() { Test("Test_CLT_UN__Int32", 1, 1); } /* TestMethod("Test_CLT_UN__Int32", 1, 1); */
-        //[Fact] public void Test_CLT_UN__Int32() { Test("Test_CLT_UN__Int32", 0, 1); } /* TestMethod("Test_CLT_UN__Int32", 0, 1); */
-        //[Fact] public void Test_CLT_UN__Int32() { Test("Test_CLT_UN__Int32", 1, -1); } /* TestMethod("Test_CLT_UN__Int32", 1, -1); */
-        //[Fact] public void Test_CLT_UN__UInt32() { Test("Test_CLT_UN__UInt32", 1U, 1U); } /* TestMethod("Test_CLT_UN__UInt32", 1U, 1U); */
-        //[Fact] public void Test_CLT_UN__UInt32() { Test("Test_CLT_UN__UInt32", 0U, 1U); } /* TestMethod("Test_CLT_UN__UInt32", 0U, 1U); */
-        //[Fact] public void Test_CLT_UN__UInt32() { Test("Test_CLT_UN__UInt32", 1U, 0U); } /* TestMethod("Test_CLT_UN__UInt32", 1U, 0U); */
-        //[Fact] public void Test_CLT_UN__Int64() { Test("Test_CLT_UN__Int64", 1L, 1L); } /* TestMethod("Test_CLT_UN__Int64", 1L, 1L); */
-        //[Fact] public void Test_CLT_UN__Int64() { Test("Test_CLT_UN__Int64", 0L, 1L); } /* TestMethod("Test_CLT_UN__Int64", 0L, 1L); */
-        //[Fact] public void Test_CLT_UN__Int64() { Test("Test_CLT_UN__Int64", 1L, -1L); } /* TestMethod("Test_CLT_UN__Int64", 1L, -1L); */
-        //[Fact] public void Test_CLT_UN__UInt64() { Test("Test_CLT_UN__UInt64", 1UL, 1UL); } /* TestMethod("Test_CLT_UN__UInt64", 1UL, 1UL); */
-        //[Fact] public void Test_CLT_UN__UInt64() { Test("Test_CLT_UN__UInt64", 0UL, 1UL); } /* TestMethod("Test_CLT_UN__UInt64", 0UL, 1UL); */
-        //[Fact] public void Test_CLT_UN__UInt64() { Test("Test_CLT_UN__UInt64", 1UL, 0UL); } /* TestMethod("Test_CLT_UN__UInt64", 1UL, 0UL); */
-        //[Fact] public void Test_CLT_UN__IntPtr() { Test("Test_CLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CLT_UN__IntPtr() { Test("Test_CLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_CLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_CLT_UN__IntPtr() { Test("Test_CLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_CLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_CLT_UN__UIntPtr() { Test("Test_CLT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(1)); } /* TestMethod("Test_CLT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(1)); */
-        //[Fact] public void Test_CLT_UN__UIntPtr() { Test("Test_CLT_UN__UIntPtr", new UIntPtr(0), new UIntPtr(1)); } /* TestMethod("Test_CLT_UN__UIntPtr", new UIntPtr(0), new UIntPtr(1)); */
-        //[Fact] public void Test_CLT_UN__UIntPtr() { Test("Test_CLT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(0)); } /* TestMethod("Test_CLT_UN__UIntPtr", new UIntPtr(1), new UIntPtr(0)); */
-        //[Fact] public void Test_CLT_UN__IntPtr_Int32() { Test("Test_CLT_UN__IntPtr_Int32", new IntPtr(1), 1); } /* TestMethod("Test_CLT_UN__IntPtr_Int32", new IntPtr(1), 1); */
-        //[Fact] public void Test_CLT_UN__IntPtr_Int32() { Test("Test_CLT_UN__IntPtr_Int32", new IntPtr(0), 1); } /* TestMethod("Test_CLT_UN__IntPtr_Int32", new IntPtr(0), 1); */
-        //[Fact] public void Test_CLT_UN__IntPtr_Int32() { Test("Test_CLT_UN__IntPtr_Int32", new IntPtr(1), 0); } /* TestMethod("Test_CLT_UN__IntPtr_Int32", new IntPtr(1), 0); */
-        //[Fact] public void Test_CLT_UN__Int32_IntPtr() { Test("Test_CLT_UN__Int32_IntPtr", 1, new IntPtr(1)); } /* TestMethod("Test_CLT_UN__Int32_IntPtr", 1, new IntPtr(1)); */
-        //[Fact] public void Test_CLT_UN__Int32_IntPtr() { Test("Test_CLT_UN__Int32_IntPtr", 0, new IntPtr(1)); } /* TestMethod("Test_CLT_UN__Int32_IntPtr", 0, new IntPtr(1)); */
-        //[Fact] public void Test_CLT_UN__Int32_IntPtr() { Test("Test_CLT_UN__Int32_IntPtr", 1, new IntPtr(0)); } /* TestMethod("Test_CLT_UN__Int32_IntPtr", 1, new IntPtr(0)); */
-
-        [Fact] public void Test_BR() { Test("Test_BR"); } /* TestMethod("Test_BR"); */
-        [Fact] public void Test_BR_S() { Test("Test_BR_S"); } /* TestMethod("Test_BR_S"); */
-        [Fact] public void Test_BRFALSE() { Test("Test_BRFALSE"); } /* TestMethod("Test_BRFALSE"); */
-        [Fact] public void Test_BRFALSE_S() { Test("Test_BRFALSE_S"); } /* TestMethod("Test_BRFALSE_S"); */
-        [Fact] public void Test_BRTRUE() { Test("Test_BRTRUE"); } /* TestMethod("Test_BRTRUE"); */
-        [Fact] public void Test_BRTRUE_S() { Test("Test_BRTRUE_S"); } /* TestMethod("Test_BRTRUE_S"); */
-        [Fact] public void Test_BEQ() { Test("Test_BEQ"); } /* TestMethod("Test_BEQ"); */
-        [Fact] public void Test_BEQ_S() { Test("Test_BEQ_S"); } /* TestMethod("Test_BEQ_S"); */
-        [Fact] public void Test_BNE_UN() { Test("Test_BNE_UN"); } /* TestMethod("Test_BNE_UN"); */
-        [Fact] public void Test_BNE_UN_S() { Test("Test_BNE_UN_S"); } /* TestMethod("Test_BNE_UN_S"); */
-        [Fact] public void Test_BGE() { Test("Test_BGE"); } /* TestMethod("Test_BGE"); */
-        [Fact] public void Test_BGE_S() { Test("Test_BGE_S"); } /* TestMethod("Test_BGE_S"); */
-        [Fact] public void Test_BGE_UN() { Test("Test_BGE_UN"); } /* TestMethod("Test_BGE_UN"); */
-        [Fact] public void Test_BGE_UN_S() { Test("Test_BGE_UN_S"); } /* TestMethod("Test_BGE_UN_S"); */
-        [Fact] public void Test_BGT() { Test("Test_BGT"); } /* TestMethod("Test_BGT"); */
-        [Fact] public void Test_BGT_S() { Test("Test_BGT_S"); } /* TestMethod("Test_BGT_S"); */
-        [Fact] public void Test_BGT_UN() { Test("Test_BGT_UN"); } /* TestMethod("Test_BGT_UN"); */
-        [Fact] public void Test_BGT_UN_S() { Test("Test_BGT_UN_S"); } /* TestMethod("Test_BGT_UN_S"); */
-        [Fact] public void Test_BLE() { Test("Test_BLE"); } /* TestMethod("Test_BLE"); */
-        [Fact] public void Test_BLE_S() { Test("Test_BLE_S"); } /* TestMethod("Test_BLE_S"); */
-        [Fact] public void Test_BLE_UN() { Test("Test_BLE_UN"); } /* TestMethod("Test_BLE_UN"); */
-        [Fact] public void Test_BLE_UN_S() { Test("Test_BLE_UN_S"); } /* TestMethod("Test_BLE_UN_S"); */
-        [Fact] public void Test_BLT() { Test("Test_BLT"); } /* TestMethod("Test_BLT"); */
-        [Fact] public void Test_BLT_S() { Test("Test_BLT_S"); } /* TestMethod("Test_BLT_S"); */
-        [Fact] public void Test_BLT_UN() { Test("Test_BLT_UN"); } /* TestMethod("Test_BLT_UN"); */
-        [Fact] public void Test_BLT_UN_S() { Test("Test_BLT_UN_S"); } /* TestMethod("Test_BLT_UN_S"); */
-        //[Fact] public void Test_BRFALSE__Int32() { Test("Test_BRFALSE__Int32", 0); } /* TestMethod("Test_BRFALSE__Int32", 0); */
-        //[Fact] public void Test_BRFALSE__Int32() { Test("Test_BRFALSE__Int32", 1); } /* TestMethod("Test_BRFALSE__Int32", 1); */
-        //[Fact] public void Test_BRFALSE_S__Int32() { Test("Test_BRFALSE_S__Int32", 0); } /* TestMethod("Test_BRFALSE_S__Int32", 0); */
-        //[Fact] public void Test_BRFALSE_S__Int32() { Test("Test_BRFALSE_S__Int32", 1); } /* TestMethod("Test_BRFALSE_S__Int32", 1); */
-        //[Fact] public void Test_BRFALSE__Int64() { Test("Test_BRFALSE__Int64", 0L); } /* TestMethod("Test_BRFALSE__Int64", 0L); */
-        //[Fact] public void Test_BRFALSE__Int64() { Test("Test_BRFALSE__Int64", 1L); } /* TestMethod("Test_BRFALSE__Int64", 1L); */
-        //[Fact] public void Test_BRFALSE_S__Int64() { Test("Test_BRFALSE_S__Int64", 0L); } /* TestMethod("Test_BRFALSE_S__Int64", 0L); */
-        //[Fact] public void Test_BRFALSE_S__Int64() { Test("Test_BRFALSE_S__Int64", 1L); } /* TestMethod("Test_BRFALSE_S__Int64", 1L); */
-        //[Fact] public void Test_BRFALSE__Single() { Test("Test_BRFALSE__Single", 0.0f); } /* TestMethod("Test_BRFALSE__Single", 0.0f); */
-        //[Fact] public void Test_BRFALSE__Single() { Test("Test_BRFALSE__Single", -0.0f); } /* TestMethod("Test_BRFALSE__Single", -0.0f); */
-        //[Fact] public void Test_BRFALSE__Single() { Test("Test_BRFALSE__Single", 1.0f); } /* TestMethod("Test_BRFALSE__Single", 1.0f); */
-        //[Fact] public void Test_BRFALSE_S__Single() { Test("Test_BRFALSE_S__Single", 0.0f); } /* TestMethod("Test_BRFALSE_S__Single", 0.0f); */
-        //[Fact] public void Test_BRFALSE_S__Single() { Test("Test_BRFALSE_S__Single", -0.0f); } /* TestMethod("Test_BRFALSE_S__Single", -0.0f); */
-        //[Fact] public void Test_BRFALSE_S__Single() { Test("Test_BRFALSE_S__Single", 1.0f); } /* TestMethod("Test_BRFALSE_S__Single", 1.0f); */
-        //[Fact] public void Test_BRFALSE__Double() { Test("Test_BRFALSE__Double", 0.0d); } /* TestMethod("Test_BRFALSE__Double", 0.0d); */
-        //[Fact] public void Test_BRFALSE__Double() { Test("Test_BRFALSE__Double", -0.0d); } /* TestMethod("Test_BRFALSE__Double", -0.0d); */
-        //[Fact] public void Test_BRFALSE__Double() { Test("Test_BRFALSE__Double", 1.0d); } /* TestMethod("Test_BRFALSE__Double", 1.0d); */
-        //[Fact] public void Test_BRFALSE_S__Double() { Test("Test_BRFALSE_S__Double", 0.0d); } /* TestMethod("Test_BRFALSE_S__Double", 0.0d); */
-        //[Fact] public void Test_BRFALSE_S__Double() { Test("Test_BRFALSE_S__Double", -0.0d); } /* TestMethod("Test_BRFALSE_S__Double", -0.0d); */
-        //[Fact] public void Test_BRFALSE_S__Double() { Test("Test_BRFALSE_S__Double", 1.0d); } /* TestMethod("Test_BRFALSE_S__Double", 1.0d); */
-        //[Fact] public void Test_BRFALSE__IntPtr() { Test("Test_BRFALSE__IntPtr", new IntPtr(0)); } /* TestMethod("Test_BRFALSE__IntPtr", new IntPtr(0)); */
-        //[Fact] public void Test_BRFALSE__IntPtr() { Test("Test_BRFALSE__IntPtr", new IntPtr(1)); } /* TestMethod("Test_BRFALSE__IntPtr", new IntPtr(1)); */
-        //[Fact] public void Test_BRFALSE_S__IntPtr() { Test("Test_BRFALSE_S__IntPtr", new IntPtr(0)); } /* TestMethod("Test_BRFALSE_S__IntPtr", new IntPtr(0)); */
-        //[Fact] public void Test_BRFALSE_S__IntPtr() { Test("Test_BRFALSE_S__IntPtr", new IntPtr(1)); } /* TestMethod("Test_BRFALSE_S__IntPtr", new IntPtr(1)); */
-        //[Fact] public void Test_BRFALSE__Object() { Test("Test_BRFALSE__Object", new object[] { null }); } /* TestMethod("Test_BRFALSE__Object", new object[] { null }); */
-        //[Fact] public void Test_BRFALSE__Object() { Test("Test_BRFALSE__Object", "hello"); } /* TestMethod("Test_BRFALSE__Object", "hello"); */
-        //[Fact] public void Test_BRFALSE_S__Object() { Test("Test_BRFALSE_S__Object", new object[] { null }); } /* TestMethod("Test_BRFALSE_S__Object", new object[] { null }); */
-        //[Fact] public void Test_BRFALSE_S__Object() { Test("Test_BRFALSE_S__Object", "hello"); } /* TestMethod("Test_BRFALSE_S__Object", "hello"); */
-        //[Fact] public void Test_BRTRUE__Int32() { Test("Test_BRTRUE__Int32", 0); } /* TestMethod("Test_BRTRUE__Int32", 0); */
-        //[Fact] public void Test_BRTRUE__Int32() { Test("Test_BRTRUE__Int32", 1); } /* TestMethod("Test_BRTRUE__Int32", 1); */
-        //[Fact] public void Test_BRTRUE_S__Int32() { Test("Test_BRTRUE_S__Int32", 0); } /* TestMethod("Test_BRTRUE_S__Int32", 0); */
-        //[Fact] public void Test_BRTRUE_S__Int32() { Test("Test_BRTRUE_S__Int32", 1); } /* TestMethod("Test_BRTRUE_S__Int32", 1); */
-        //[Fact] public void Test_BRTRUE__Int64() { Test("Test_BRTRUE__Int64", 0L); } /* TestMethod("Test_BRTRUE__Int64", 0L); */
-        //[Fact] public void Test_BRTRUE__Int64() { Test("Test_BRTRUE__Int64", 1L); } /* TestMethod("Test_BRTRUE__Int64", 1L); */
-        //[Fact] public void Test_BRTRUE_S__Int64() { Test("Test_BRTRUE_S__Int64", 0L); } /* TestMethod("Test_BRTRUE_S__Int64", 0L); */
-        //[Fact] public void Test_BRTRUE_S__Int64() { Test("Test_BRTRUE_S__Int64", 1L); } /* TestMethod("Test_BRTRUE_S__Int64", 1L); */
-        //[Fact] public void Test_BRTRUE__Single() { Test("Test_BRTRUE__Single", 0.0f); } /* TestMethod("Test_BRTRUE__Single", 0.0f); */
-        //[Fact] public void Test_BRTRUE__Single() { Test("Test_BRTRUE__Single", -0.0f); } /* TestMethod("Test_BRTRUE__Single", -0.0f); */
-        //[Fact] public void Test_BRTRUE__Single() { Test("Test_BRTRUE__Single", 1.0f); } /* TestMethod("Test_BRTRUE__Single", 1.0f); */
+        [Theory]
+        [InlineData(new object[] { null })]
+        [InlineData("hello")]
+        public void Test_BRFALSE__Object(object arg0) { Test("Test_BRFALSE__Object", arg0); }
 
         [Theory]
         [InlineData(0.0f)]
         [InlineData(-0.0f)]
         [InlineData(1.0f)]
-        public void Test_BRTRUE_S__Single(float value) { Test("Test_BRTRUE_S__Single", value); }
+        public void Test_BRFALSE__Single(object arg0) { Test("Test_BRFALSE__Single", arg0); }
+
+        [Fact]
+        public void Test_BRFALSE_S() { Test("Test_BRFALSE_S"); }
 
         [Theory]
         [InlineData(0.0d)]
         [InlineData(-0.0d)]
         [InlineData(1.0d)]
-        public void Test_BRTRUE__Double(double value) { Test("Test_BRTRUE__Double", value); }
+        public void Test_BRFALSE_S__Double(object arg0) { Test("Test_BRFALSE_S__Double", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_BRFALSE_S__Int32(object arg0) { Test("Test_BRFALSE_S__Int32", arg0); }
+
+        [Theory]
+        [InlineData(0L)]
+        [InlineData(1L)]
+        public void Test_BRFALSE_S__Int64(object arg0) { Test("Test_BRFALSE_S__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_BRFALSE_S__IntPtr(int arg0) { Test("Test_BRFALSE_S__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(new object[] { null })]
+        [InlineData("hello")]
+        public void Test_BRFALSE_S__Object(object arg0) { Test("Test_BRFALSE_S__Object", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        public void Test_BRFALSE_S__Single(object arg0) { Test("Test_BRFALSE_S__Single", arg0); }
+
+        [Fact]
+        public void Test_BRTRUE() { Test("Test_BRTRUE"); }
 
         [Theory]
         [InlineData(0.0d)]
         [InlineData(-0.0d)]
         [InlineData(1.0d)]
-        public void Test_BRTRUE_S__Double(double value) { Test("Test_BRTRUE_S__Double", value); }
+        public void Test_BRTRUE__Double(object arg0) { Test("Test_BRTRUE__Double", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
-        public void Test_BRTRUE__IntPtr(int value) { Test("Test_BRTRUE__IntPtr", new IntPtr(value)); }
+        public void Test_BRTRUE__Int32(object arg0) { Test("Test_BRTRUE__Int32", arg0); }
+
+        [Theory]
+        [InlineData(0L)]
+        [InlineData(1L)]
+        public void Test_BRTRUE__Int64(object arg0) { Test("Test_BRTRUE__Int64", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
-        public void Test_BRTRUE_S__IntPtr(int value) { Test("Test_BRTRUE_S__IntPtr", new IntPtr(value)); }
-        /*
-        [Fact] public void Test_BRTRUE__Object() { Test("Test_BRTRUE__Object", new object[] { null }); } * TestMethod("Test_BRTRUE__Object", new object[] { null }); *
-        [Fact] public void Test_BRTRUE__Object() { Test("Test_BRTRUE__Object", "hello"); } /* TestMethod("Test_BRTRUE__Object", "hello"); *
-        [Fact] public void Test_BRTRUE_S__Object() { Test("Test_BRTRUE_S__Object", new object[] { null }); } /* TestMethod("Test_BRTRUE_S__Object", new object[] { null }); *
-        [Fact] public void Test_BRTRUE_S__Object() { Test("Test_BRTRUE_S__Object", "hello"); } /* TestMethod("Test_BRTRUE_S__Object", "hello"); *
+        public void Test_BRTRUE__IntPtr(int arg0) { Test("Test_BRTRUE__IntPtr", new IntPtr(arg0)); }
 
-        TestMethod_BR("Test_BEQ__Int32", "Test_BNE_UN__Int32", 1, 1);
-        TestMethod_BR("Test_BEQ__Int32", "Test_BNE_UN__Int32", 0, 1);
-        TestMethod_BR("Test_BEQ__Int32", "Test_BNE_UN__Int32", 1, -1);
-        TestMethod_BR("Test_BEQ__Int64", "Test_BNE_UN__Int64", 1L, 1L);
-        TestMethod_BR("Test_BEQ__Int64", "Test_BNE_UN__Int64", 0L, 1L);
-        TestMethod_BR("Test_BEQ__Int64", "Test_BNE_UN__Int64", 1L, -1L);
-        TestMethod_BR("Test_BEQ__IntPtr", "Test_BNE_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BEQ__IntPtr", "Test_BNE_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BEQ__IntPtr", "Test_BNE_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
+        [Theory]
+        [InlineData(new object[] { null })]
+        [InlineData("hello")]
+        public void Test_BRTRUE__Object(object arg0) { Test("Test_BRTRUE__Object", arg0); }
 
-			TestMethod_BR("Test_BEQ_S__Int32", "Test_BNE_UN_S__Int32", 1, 1);
-        TestMethod_BR("Test_BEQ_S__Int32", "Test_BNE_UN_S__Int32", 0, 1);
-        TestMethod_BR("Test_BEQ_S__Int32", "Test_BNE_UN_S__Int32", 1, -1);
-        TestMethod_BR("Test_BEQ_S__Int64", "Test_BNE_UN_S__Int64", 1L, 1L);
-        TestMethod_BR("Test_BEQ_S__Int64", "Test_BNE_UN_S__Int64", 0L, 1L);
-        TestMethod_BR("Test_BEQ_S__Int64", "Test_BNE_UN_S__Int64", 1L, -1L);
-        TestMethod_BR("Test_BEQ_S__IntPtr", "Test_BNE_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BEQ_S__IntPtr", "Test_BNE_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BEQ_S__IntPtr", "Test_BNE_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BEQ_S__Single", "Test_BNE_UN_S__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BEQ_S__Single", "Test_BNE_UN_S__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BEQ_S__Single", "Test_BNE_UN_S__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BEQ_S__Double", "Test_BNE_UN_S__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BEQ_S__Double", "Test_BNE_UN_S__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BEQ_S__Double", "Test_BNE_UN_S__Double", 1.0d, 0.0d);
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        public void Test_BRTRUE__Single(object arg0) { Test("Test_BRTRUE__Single", arg0); }
 
-        TestMethod_BR("Test_BGE__Int32", "Test_BLT__Int32", 1, 1);
-        TestMethod_BR("Test_BGE__Int32", "Test_BLT__Int32", 0, 1);
-        TestMethod_BR("Test_BGE__Int32", "Test_BLT__Int32", 1, -1);
-        TestMethod_BR("Test_BGE__Int64", "Test_BLT__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGE__Int64", "Test_BLT__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGE__Int64", "Test_BLT__Int64", 1L, -1L);
-        TestMethod_BR("Test_BGE__IntPtr", "Test_BLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE__IntPtr", "Test_BLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE__IntPtr", "Test_BLT__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BGE__Single", "Test_BLT__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BGE__Single", "Test_BLT__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BGE__Single", "Test_BLT__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BGE__Double", "Test_BLT__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BGE__Double", "Test_BLT__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BGE__Double", "Test_BLT__Double", 1.0d, 0.0d);
+        [Fact]
+        public void Test_BRTRUE_S() { Test("Test_BRTRUE_S"); }
 
-        TestMethod_BR("Test_BGE_S__Int32", "Test_BLT_S__Int32", 1, 1);
-        TestMethod_BR("Test_BGE_S__Int32", "Test_BLT_S__Int32", 0, 1);
-        TestMethod_BR("Test_BGE_S__Int32", "Test_BLT_S__Int32", 1, -1);
-        TestMethod_BR("Test_BGE_S__Int64", "Test_BLT_S__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGE_S__Int64", "Test_BLT_S__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGE_S__Int64", "Test_BLT_S__Int64", 1L, -1L);
-        TestMethod_BR("Test_BGE_S__IntPtr", "Test_BLT_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE_S__IntPtr", "Test_BLT_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE_S__IntPtr", "Test_BLT_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BGE_S__Single", "Test_BLT_S__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BGE_S__Single", "Test_BLT_S__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BGE_S__Single", "Test_BLT_S__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BGE_S__Double", "Test_BLT_S__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BGE_S__Double", "Test_BLT_S__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BGE_S__Double", "Test_BLT_S__Double", 1.0d, 0.0d);
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        public void Test_BRTRUE_S__Double(object arg0) { Test("Test_BRTRUE_S__Double", arg0); }
 
-        TestMethod_BR("Test_BGT__Int32", "Test_BLE__Int32", 1, 1);
-        TestMethod_BR("Test_BGT__Int32", "Test_BLE__Int32", 0, 1);
-        TestMethod_BR("Test_BGT__Int32", "Test_BLE__Int32", 1, -1);
-        TestMethod_BR("Test_BGT__Int64", "Test_BLE__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGT__Int64", "Test_BLE__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGT__Int64", "Test_BLE__Int64", 1L, -1L);
-        TestMethod_BR("Test_BGT__IntPtr", "Test_BLE__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT__IntPtr", "Test_BLE__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT__IntPtr", "Test_BLE__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BGT__Single", "Test_BLE__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BGT__Single", "Test_BLE__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BGT__Single", "Test_BLE__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BGT__Double", "Test_BLE__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BGT__Double", "Test_BLE__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BGT__Double", "Test_BLE__Double", 1.0d, 0.0d);
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_BRTRUE_S__Int32(object arg0) { Test("Test_BRTRUE_S__Int32", arg0); }
 
-        TestMethod_BR("Test_BGT_S__Int32", "Test_BLE_S__Int32", 1, 1);
-        TestMethod_BR("Test_BGT_S__Int32", "Test_BLE_S__Int32", 0, 1);
-        TestMethod_BR("Test_BGT_S__Int32", "Test_BLE_S__Int32", 1, -1);
-        TestMethod_BR("Test_BGT_S__Int64", "Test_BLE_S__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGT_S__Int64", "Test_BLE_S__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGT_S__Int64", "Test_BLE_S__Int64", 1L, -1L);
-        TestMethod_BR("Test_BGT_S__IntPtr", "Test_BLE_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT_S__IntPtr", "Test_BLE_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT_S__IntPtr", "Test_BLE_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BGT_S__Single", "Test_BLE_S__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BGT_S__Single", "Test_BLE_S__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BGT_S__Single", "Test_BLE_S__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BGT_S__Double", "Test_BLE_S__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BGT_S__Double", "Test_BLE_S__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BGT_S__Double", "Test_BLE_S__Double", 1.0d, 0.0d);
+        [Theory]
+        [InlineData(0L)]
+        [InlineData(1L)]
+        public void Test_BRTRUE_S__Int64(object arg0) { Test("Test_BRTRUE_S__Int64", arg0); }
 
-        TestMethod_BR("Test_BGE_UN__Int32", "Test_BLT_UN__Int32", 1, 1);
-        TestMethod_BR("Test_BGE_UN__Int32", "Test_BLT_UN__Int32", 0, 1);
-        TestMethod_BR("Test_BGE_UN__Int32", "Test_BLT_UN__Int32", 1, 0);
-        TestMethod_BR("Test_BGE_UN__Int64", "Test_BLT_UN__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGE_UN__Int64", "Test_BLT_UN__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGE_UN__Int64", "Test_BLT_UN__Int64", 1L, 0L);
-        TestMethod_BR("Test_BGE_UN__IntPtr", "Test_BLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE_UN__IntPtr", "Test_BLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE_UN__IntPtr", "Test_BLT_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_BRTRUE_S__IntPtr(int arg0) { Test("Test_BRTRUE_S__IntPtr", new IntPtr(arg0)); }
 
-			TestMethod_BR("Test_BGE_UN_S__Int32", "Test_BLT_UN_S__Int32", 1, 1);
-        TestMethod_BR("Test_BGE_UN_S__Int32", "Test_BLT_UN_S__Int32", 0, 1);
-        TestMethod_BR("Test_BGE_UN_S__Int32", "Test_BLT_UN_S__Int32", 1, 0);
-        TestMethod_BR("Test_BGE_UN_S__Int64", "Test_BLT_UN_S__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGE_UN_S__Int64", "Test_BLT_UN_S__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGE_UN_S__Int64", "Test_BLT_UN_S__Int64", 1L, 0L);
-        TestMethod_BR("Test_BGE_UN_S__IntPtr", "Test_BLT_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE_UN_S__IntPtr", "Test_BLT_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGE_UN_S__IntPtr", "Test_BLT_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BGE_UN_S__Single", "Test_BLT_UN_S__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BGE_UN_S__Single", "Test_BLT_UN_S__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BGE_UN_S__Single", "Test_BLT_UN_S__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BGE_UN_S__Double", "Test_BLT_UN_S__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BGE_UN_S__Double", "Test_BLT_UN_S__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BGE_UN_S__Double", "Test_BLT_UN_S__Double", 1.0d, 0.0d);
+        [Theory]
+        [InlineData(new object[] { null })]
+        [InlineData("hello")]
+        public void Test_BRTRUE_S__Object(object arg0) { Test("Test_BRTRUE_S__Object", arg0); }
 
-        TestMethod_BR("Test_BGT_UN__Int32", "Test_BLE_UN__Int32", 1, 1);
-        TestMethod_BR("Test_BGT_UN__Int32", "Test_BLE_UN__Int32", 0, 1);
-        TestMethod_BR("Test_BGT_UN__Int32", "Test_BLE_UN__Int32", 1, 0);
-        TestMethod_BR("Test_BGT_UN__Int64", "Test_BLE_UN__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGT_UN__Int64", "Test_BLE_UN__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGT_UN__Int64", "Test_BLE_UN__Int64", 1L, 0L);
-        TestMethod_BR("Test_BGT_UN__IntPtr", "Test_BLE_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT_UN__IntPtr", "Test_BLE_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT_UN__IntPtr", "Test_BLE_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        public void Test_BRTRUE_S__Single(object arg0) { Test("Test_BRTRUE_S__Single", arg0); }
 
-			TestMethod_BR("Test_BGT_UN_S__Int32", "Test_BLE_UN_S__Int32", 1, 1);
-        TestMethod_BR("Test_BGT_UN_S__Int32", "Test_BLE_UN_S__Int32", 0, 1);
-        TestMethod_BR("Test_BGT_UN_S__Int32", "Test_BLE_UN_S__Int32", 1, 0);
-        TestMethod_BR("Test_BGT_UN_S__Int64", "Test_BLE_UN_S__Int64", 1L, 1L);
-        TestMethod_BR("Test_BGT_UN_S__Int64", "Test_BLE_UN_S__Int64", 0L, 1L);
-        TestMethod_BR("Test_BGT_UN_S__Int64", "Test_BLE_UN_S__Int64", 1L, 0L);
-        TestMethod_BR("Test_BGT_UN_S__IntPtr", "Test_BLE_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT_UN_S__IntPtr", "Test_BLE_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-			TestMethod_BR("Test_BGT_UN_S__IntPtr", "Test_BLE_UN_S__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L));
-			TestMethod_BR("Test_BGT_UN_S__Single", "Test_BLE_UN_S__Single", 1.0f, 1.0f);
-        TestMethod_BR("Test_BGT_UN_S__Single", "Test_BLE_UN_S__Single", 0.0f, 1.0f);
-        TestMethod_BR("Test_BGT_UN_S__Single", "Test_BLE_UN_S__Single", 1.0f, 0.0f);
-        TestMethod_BR("Test_BGT_UN_S__Double", "Test_BLE_UN_S__Double", 1.0d, 1.0d);
-        TestMethod_BR("Test_BGT_UN_S__Double", "Test_BLE_UN_S__Double", 0.0d, 1.0d);
-        TestMethod_BR("Test_BGT_UN_S__Double", "Test_BLE_UN_S__Double", 1.0d, 0.0d);*/
+        [Fact]
+        public void Test_CALL__Instance_Class() { Test("Test_CALL__Instance_Class"); }
 
-        [Fact] public void Test_LEAVE() { Test("Test_LEAVE"); } /* TestMethod("Test_LEAVE"); */
-        [Fact] public void Test_LEAVE_S() { Test("Test_LEAVE_S"); } /* TestMethod("Test_LEAVE_S"); */
-        [Fact] public void Test_LEAVE__0() { Test("Test_LEAVE__0"); } /* TestMethod("Test_LEAVE__0"); */
-        [Fact] public void Test_LEAVE_S__0() { Test("Test_LEAVE_S__0"); } /* TestMethod("Test_LEAVE_S__0"); */
+        [Fact]
+        public void Test_CALL__Instance_Struct() { Test("Test_CALL__Instance_Struct"); }
+
+        [Fact]
+        public void Test_CALL__Static_Class() { Test("Test_CALL__Static_Class"); }
+
+        [Fact]
+        public void Test_CALL__Static_Struct() { Test("Test_CALL__Static_Struct"); }
+
+        [Fact]
+        public void Test_CASTCLASS() { Test("Test_CASTCLASS"); }
+
+        [Theory]
+        [InlineData(1.0d, 1.0d)]
+        [InlineData(0.0d, 1.0d)]
+        [InlineData(1.0d, 0.0d)]
+        public void Test_CEQ__Double(object arg0, object arg1) { Test("Test_CEQ__Double", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, -1)]
+        public void Test_CEQ__Int32(object arg0, object arg1) { Test("Test_CEQ__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CEQ__Int32_IntPtr(object arg0, int arg1) { Test("Test_CEQ__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1L, 1L)]
+        [InlineData(0L, 1L)]
+        [InlineData(1L, -1L)]
+        public void Test_CEQ__Int64(object arg0, object arg1) { Test("Test_CEQ__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CEQ__IntPtr(int arg0, int arg1) { Test("Test_CEQ__IntPtr", new IntPtr(arg0), new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CEQ__IntPtr_Int32(int arg0, object arg1) { Test("Test_CEQ__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("1", "0")]
+        public void Test_CEQ__Object(object arg0, object arg1) { Test("Test_CEQ__Object", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1.0f, 1.0f)]
+        [InlineData(0.0f, 1.0f)]
+        [InlineData(1.0f, 0.0f)]
+        public void Test_CEQ__Single(object arg0, object arg1) { Test("Test_CEQ__Single", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1U, 1U)]
+        [InlineData(0U, 1U)]
+        [InlineData(1U, 0U)]
+        public void Test_CEQ__UInt32(object arg0, object arg1) { Test("Test_CEQ__UInt32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1UL, 1UL)]
+        [InlineData(0UL, 1UL)]
+        [InlineData(1UL, 0UL)]
+        public void Test_CEQ__UInt64(object arg0, object arg1) { Test("Test_CEQ__UInt64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CEQ__UIntPtr(uint arg0, uint arg1) { Test("Test_CEQ__UIntPtr", new UIntPtr(arg0), new UIntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1.0d, 1.0d)]
+        [InlineData(0.0d, 1.0d)]
+        [InlineData(1.0d, 0.0d)]
+        public void Test_CGT__Double(object arg0, object arg1) { Test("Test_CGT__Double", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, -1)]
+        public void Test_CGT__Int32(object arg0, object arg1) { Test("Test_CGT__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT__Int32_IntPtr(object arg0, int arg1) { Test("Test_CGT__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1L, 1L)]
+        [InlineData(0L, 1L)]
+        [InlineData(1L, -1L)]
+        public void Test_CGT__Int64(object arg0, object arg1) { Test("Test_CGT__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT__IntPtr(int arg0, int arg1) { Test("Test_CGT__IntPtr", new IntPtr(arg0), new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT__IntPtr_Int32(int arg0, object arg1) { Test("Test_CGT__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(1.0f, 1.0f)]
+        [InlineData(0.0f, 1.0f)]
+        [InlineData(1.0f, 0.0f)]
+        public void Test_CGT__Single(object arg0, object arg1) { Test("Test_CGT__Single", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1U, 1U)]
+        [InlineData(0U, 1U)]
+        [InlineData(1U, 0U)]
+        public void Test_CGT__UInt32(object arg0, object arg1) { Test("Test_CGT__UInt32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1UL, 1UL)]
+        [InlineData(0UL, 1UL)]
+        [InlineData(1UL, 0UL)]
+        public void Test_CGT__UInt64(object arg0, object arg1) { Test("Test_CGT__UInt64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT__UIntPtr(uint arg0, uint arg1) { Test("Test_CGT__UIntPtr", new UIntPtr(arg0), new UIntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, -1)]
+        public void Test_CGT_UN__Int32(object arg0, object arg1) { Test("Test_CGT_UN__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_CGT_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1L, 1L)]
+        [InlineData(0L, 1L)]
+        [InlineData(1L, -1L)]
+        public void Test_CGT_UN__Int64(object arg0, object arg1) { Test("Test_CGT_UN__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT_UN__IntPtr(int arg0, int arg1) { Test("Test_CGT_UN__IntPtr", new IntPtr(arg0), new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_CGT_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(1U, 1U)]
+        [InlineData(0U, 1U)]
+        [InlineData(1U, 0U)]
+        public void Test_CGT_UN__UInt32(object arg0, object arg1) { Test("Test_CGT_UN__UInt32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1UL, 1UL)]
+        [InlineData(0UL, 1UL)]
+        [InlineData(1UL, 0UL)]
+        public void Test_CGT_UN__UInt64(object arg0, object arg1) { Test("Test_CGT_UN__UInt64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CGT_UN__UIntPtr(uint arg0, uint arg1) { Test("Test_CGT_UN__UIntPtr", new UIntPtr(arg0), new UIntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.Epsilon)]
+        public void Test_CKFINITE__Double(object arg0) { Test("Test_CKFINITE__Double", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.Epsilon)]
+        public void Test_CKFINITE__Single(object arg0) { Test("Test_CKFINITE__Single", arg0); }
+
+        [Theory]
+        [InlineData(1.0d, 1.0d)]
+        [InlineData(0.0d, 1.0d)]
+        [InlineData(1.0d, 0.0d)]
+        public void Test_CLT__Double(object arg0, object arg1) { Test("Test_CLT__Double", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, -1)]
+        public void Test_CLT__Int32(object arg0, object arg1) { Test("Test_CLT__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT__Int32_IntPtr(object arg0, int arg1) { Test("Test_CLT__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1L, 1L)]
+        [InlineData(0L, 1L)]
+        [InlineData(1L, -1L)]
+        public void Test_CLT__Int64(object arg0, object arg1) { Test("Test_CLT__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT__IntPtr(int arg0, int arg1) { Test("Test_CLT__IntPtr", new IntPtr(arg0), new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT__IntPtr_Int32(int arg0, object arg1) { Test("Test_CLT__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(1.0f, 1.0f)]
+        [InlineData(0.0f, 1.0f)]
+        [InlineData(1.0f, 0.0f)]
+        public void Test_CLT__Single(object arg0, object arg1) { Test("Test_CLT__Single", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1U, 1U)]
+        [InlineData(0U, 1U)]
+        [InlineData(1U, 0U)]
+        public void Test_CLT__UInt32(object arg0, object arg1) { Test("Test_CLT__UInt32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1UL, 1UL)]
+        [InlineData(0UL, 1UL)]
+        [InlineData(1UL, 0UL)]
+        public void Test_CLT__UInt64(object arg0, object arg1) { Test("Test_CLT__UInt64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT__UIntPtr(uint arg0, uint arg1) { Test("Test_CLT__UIntPtr", new UIntPtr(arg0), new UIntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, -1)]
+        public void Test_CLT_UN__Int32(object arg0, object arg1) { Test("Test_CLT_UN__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_CLT_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1L, 1L)]
+        [InlineData(0L, 1L)]
+        [InlineData(1L, -1L)]
+        public void Test_CLT_UN__Int64(object arg0, object arg1) { Test("Test_CLT_UN__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT_UN__IntPtr(int arg0, int arg1) { Test("Test_CLT_UN__IntPtr", new IntPtr(arg0), new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_CLT_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(1U, 1U)]
+        [InlineData(0U, 1U)]
+        [InlineData(1U, 0U)]
+        public void Test_CLT_UN__UInt32(object arg0, object arg1) { Test("Test_CLT_UN__UInt32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1UL, 1UL)]
+        [InlineData(0UL, 1UL)]
+        [InlineData(1UL, 0UL)]
+        public void Test_CLT_UN__UInt64(object arg0, object arg1) { Test("Test_CLT_UN__UInt64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void Test_CLT_UN__UIntPtr(uint arg0, uint arg1) { Test("Test_CLT_UN__UIntPtr", new UIntPtr(arg0), new UIntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_I__Boolean(object arg0) { Test("Test_CONV_I__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_I__Byte(object arg0) { Test("Test_CONV_I__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_I__Double(object arg0) { Test("Test_CONV_I__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_I__Char(object arg0) { Test("Test_CONV_I__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_I__Int16(object arg0) { Test("Test_CONV_I__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_I__Int32(object arg0) { Test("Test_CONV_I__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_I__Int64(object arg0) { Test("Test_CONV_I__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_I__IntPtr(int arg0) { Test("Test_CONV_I__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_I__SByte(object arg0) { Test("Test_CONV_I__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_I__Single(object arg0) { Test("Test_CONV_I__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_I__UInt16(object arg0) { Test("Test_CONV_I__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_I__UInt32(object arg0) { Test("Test_CONV_I__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_I__UInt64(object arg0) { Test("Test_CONV_I__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I__UIntPtr(int arg0) { Test("Test_CONV_I__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_I1__Boolean(object arg0) { Test("Test_CONV_I1__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_I1__Byte(object arg0) { Test("Test_CONV_I1__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_I1__Double(object arg0) { Test("Test_CONV_I1__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_I1__Char(object arg0) { Test("Test_CONV_I1__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_I1__Int16(object arg0) { Test("Test_CONV_I1__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_I1__Int32(object arg0) { Test("Test_CONV_I1__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_I1__Int64(object arg0) { Test("Test_CONV_I1__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_I1__IntPtr(int arg0) { Test("Test_CONV_I1__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_I1__SByte(object arg0) { Test("Test_CONV_I1__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_I1__Single(object arg0) { Test("Test_CONV_I1__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_I1__UInt16(object arg0) { Test("Test_CONV_I1__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_I1__UInt32(object arg0) { Test("Test_CONV_I1__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_I1__UInt64(object arg0) { Test("Test_CONV_I1__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I1__UIntPtr(int arg0) { Test("Test_CONV_I1__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_I2__Boolean(object arg0) { Test("Test_CONV_I2__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_I2__Byte(object arg0) { Test("Test_CONV_I2__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_I2__Double(object arg0) { Test("Test_CONV_I2__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_I2__Char(object arg0) { Test("Test_CONV_I2__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_I2__Int16(object arg0) { Test("Test_CONV_I2__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_I2__Int32(object arg0) { Test("Test_CONV_I2__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_I2__Int64(object arg0) { Test("Test_CONV_I2__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_I2__IntPtr(int arg0) { Test("Test_CONV_I2__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_I2__SByte(object arg0) { Test("Test_CONV_I2__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_I2__Single(object arg0) { Test("Test_CONV_I2__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_I2__UInt16(object arg0) { Test("Test_CONV_I2__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_I2__UInt32(object arg0) { Test("Test_CONV_I2__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_I2__UInt64(object arg0) { Test("Test_CONV_I2__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I2__UIntPtr(int arg0) { Test("Test_CONV_I2__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_I4__Boolean(object arg0) { Test("Test_CONV_I4__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_I4__Byte(object arg0) { Test("Test_CONV_I4__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_I4__Double(object arg0) { Test("Test_CONV_I4__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_I4__Char(object arg0) { Test("Test_CONV_I4__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_I4__Int16(object arg0) { Test("Test_CONV_I4__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_I4__Int32(object arg0) { Test("Test_CONV_I4__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_I4__Int64(object arg0) { Test("Test_CONV_I4__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_I4__IntPtr(int arg0) { Test("Test_CONV_I4__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_I4__SByte(object arg0) { Test("Test_CONV_I4__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_I4__Single(object arg0) { Test("Test_CONV_I4__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_I4__UInt16(object arg0) { Test("Test_CONV_I4__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_I4__UInt32(object arg0) { Test("Test_CONV_I4__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_I4__UInt64(object arg0) { Test("Test_CONV_I4__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I4__UIntPtr(int arg0) { Test("Test_CONV_I4__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_I8__Boolean(object arg0) { Test("Test_CONV_I8__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_I8__Byte(object arg0) { Test("Test_CONV_I8__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_I8__Double(object arg0) { Test("Test_CONV_I8__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_I8__Char(object arg0) { Test("Test_CONV_I8__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_I8__Int16(object arg0) { Test("Test_CONV_I8__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_I8__Int32(object arg0) { Test("Test_CONV_I8__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_I8__Int64(object arg0) { Test("Test_CONV_I8__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_I8__IntPtr(int arg0) { Test("Test_CONV_I8__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_I8__SByte(object arg0) { Test("Test_CONV_I8__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_I8__Single(object arg0) { Test("Test_CONV_I8__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_I8__UInt16(object arg0) { Test("Test_CONV_I8__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_I8__UInt32(object arg0) { Test("Test_CONV_I8__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_I8__UInt64(object arg0) { Test("Test_CONV_I8__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I8__UIntPtr(int arg0) { Test("Test_CONV_I8__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I__Boolean(object arg0) { Test("Test_CONV_OVF_I__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I__Byte(object arg0) { Test("Test_CONV_OVF_I__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_I__Double(object arg0) { Test("Test_CONV_OVF_I__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_I__Char(object arg0) { Test("Test_CONV_OVF_I__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_I__Int16(object arg0) { Test("Test_CONV_OVF_I__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_I__Int32(object arg0) { Test("Test_CONV_OVF_I__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I__Int64(object arg0) { Test("Test_CONV_OVF_I__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_I__IntPtr(int arg0) { Test("Test_CONV_OVF_I__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_OVF_I__SByte(object arg0) { Test("Test_CONV_OVF_I__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_I__Single(object arg0) { Test("Test_CONV_OVF_I__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_I__UInt16(object arg0) { Test("Test_CONV_OVF_I__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_OVF_I__UInt32(object arg0) { Test("Test_CONV_OVF_I__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        public void Test_CONV_OVF_I__UInt64(object arg0) { Test("Test_CONV_OVF_I__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_OVF_I__UIntPtr(int arg0) { Test("Test_CONV_OVF_I__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I_UN__Boolean(object arg0) { Test("Test_CONV_OVF_I_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I_UN__Byte(object arg0) { Test("Test_CONV_OVF_I_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_I_UN__Char(object arg0) { Test("Test_CONV_OVF_I_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_I_UN__Int16(object arg0) { Test("Test_CONV_OVF_I_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        public void Test_CONV_OVF_I_UN__Int32(object arg0) { Test("Test_CONV_OVF_I_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I_UN__Int64(object arg0) { Test("Test_CONV_OVF_I_UN__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_I_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_I_UN__SByte(object arg0) { Test("Test_CONV_OVF_I_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_I_UN__UInt16(object arg0) { Test("Test_CONV_OVF_I_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData((uint)0x12345678)]
+        public void Test_CONV_OVF_I_UN__UInt32(object arg0) { Test("Test_CONV_OVF_I_UN__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I_UN__UInt64() { Test("Test_CONV_OVF_I_UN__UInt64", ulong.MinValue); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        public void Test_CONV_OVF_I_UN__UIntPtr(int arg0) { Test("Test_CONV_OVF_I_UN__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I1__Boolean(object arg0) { Test("Test_CONV_OVF_I1__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData((byte)0x12)]
+        public void Test_CONV_OVF_I1__Byte(object arg0) { Test("Test_CONV_OVF_I1__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_I1__Double(object arg0) { Test("Test_CONV_OVF_I1__Double", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1__Char() { Test("Test_CONV_OVF_I1__Char", char.MinValue); }
+
+        [Theory]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        public void Test_CONV_OVF_I1__Int16(object arg0) { Test("Test_CONV_OVF_I1__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_I1__Int32(object arg0) { Test("Test_CONV_OVF_I1__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I1__Int64(object arg0) { Test("Test_CONV_OVF_I1__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_I1__IntPtr(int arg0) { Test("Test_CONV_OVF_I1__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_OVF_I1__SByte(object arg0) { Test("Test_CONV_OVF_I1__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_I1__Single(object arg0) { Test("Test_CONV_OVF_I1__Single", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1__UInt16() { Test("Test_CONV_OVF_I1__UInt16", ushort.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1__UInt32() { Test("Test_CONV_OVF_I1__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1__UInt64() { Test("Test_CONV_OVF_I1__UInt64", ulong.MinValue); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        public void Test_CONV_OVF_I1__UIntPtr(int arg0) { Test("Test_CONV_OVF_I1__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I1_UN__Boolean(object arg0) { Test("Test_CONV_OVF_I1_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData((byte)0x12)]
+        public void Test_CONV_OVF_I1_UN__Byte(object arg0) { Test("Test_CONV_OVF_I1_UN__Byte", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1_UN__Char() { Test("Test_CONV_OVF_I1_UN__Char", char.MinValue); }
+
+        [Theory]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        public void Test_CONV_OVF_I1_UN__Int16(object arg0) { Test("Test_CONV_OVF_I1_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_I1_UN__Int32(object arg0) { Test("Test_CONV_OVF_I1_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I1_UN__Int64(object arg0) { Test("Test_CONV_OVF_I1_UN__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_I1_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I1_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_I1_UN__SByte(object arg0) { Test("Test_CONV_OVF_I1_UN__SByte", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1_UN__UInt16() { Test("Test_CONV_OVF_I1_UN__UInt16", ushort.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1_UN__UInt32() { Test("Test_CONV_OVF_I1_UN__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1_UN__UInt64() { Test("Test_CONV_OVF_I1_UN__UInt64", ulong.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I1_UN__UIntPtr() { Test("Test_CONV_OVF_I1_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I2__Boolean(object arg0) { Test("Test_CONV_OVF_I2__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I2__Byte(object arg0) { Test("Test_CONV_OVF_I2__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_I2__Double(object arg0) { Test("Test_CONV_OVF_I2__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData((char)0x1234)]
+        public void Test_CONV_OVF_I2__Char(object arg0) { Test("Test_CONV_OVF_I2__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_I2__Int16(object arg0) { Test("Test_CONV_OVF_I2__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_I2__Int32(object arg0) { Test("Test_CONV_OVF_I2__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I2__Int64(object arg0) { Test("Test_CONV_OVF_I2__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_I2__IntPtr(int arg0) { Test("Test_CONV_OVF_I2__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_OVF_I2__SByte(object arg0) { Test("Test_CONV_OVF_I2__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_I2__Single(object arg0) { Test("Test_CONV_OVF_I2__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData((ushort)0x1234)]
+        public void Test_CONV_OVF_I2__UInt16(object arg0) { Test("Test_CONV_OVF_I2__UInt16", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I2__UInt32() { Test("Test_CONV_OVF_I2__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I2__UInt64() { Test("Test_CONV_OVF_I2__UInt64", ulong.MinValue); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I2_UN__Boolean(object arg0) { Test("Test_CONV_OVF_I2_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I2_UN__Byte(object arg0) { Test("Test_CONV_OVF_I2_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData((char)0x1234)]
+        public void Test_CONV_OVF_I2_UN__Char(object arg0) { Test("Test_CONV_OVF_I2_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_I2_UN__Int16(object arg0) { Test("Test_CONV_OVF_I2_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_I2_UN__Int32(object arg0) { Test("Test_CONV_OVF_I2_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I2_UN__Int64(object arg0) { Test("Test_CONV_OVF_I2_UN__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_I2_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I2_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_I2_UN__SByte(object arg0) { Test("Test_CONV_OVF_I2_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData((ushort)0x1234)]
+        public void Test_CONV_OVF_I2_UN__UInt16(object arg0) { Test("Test_CONV_OVF_I2_UN__UInt16", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I2_UN__UInt32() { Test("Test_CONV_OVF_I2_UN__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I2_UN__UInt64() { Test("Test_CONV_OVF_I2_UN__UInt64", ulong.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_I2_UN__UIntPtr() { Test("Test_CONV_OVF_I2_UN__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I4__Boolean(object arg0) { Test("Test_CONV_OVF_I4__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I4__Byte(object arg0) { Test("Test_CONV_OVF_I4__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_I4__Double(object arg0) { Test("Test_CONV_OVF_I4__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_I4__Char(object arg0) { Test("Test_CONV_OVF_I4__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_I4__Int16(object arg0) { Test("Test_CONV_OVF_I4__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_I4__Int32(object arg0) { Test("Test_CONV_OVF_I4__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I4__Int64(object arg0) { Test("Test_CONV_OVF_I4__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_I4__IntPtr(int arg0) { Test("Test_CONV_OVF_I4__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_OVF_I4__SByte(object arg0) { Test("Test_CONV_OVF_I4__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_I4__Single(object arg0) { Test("Test_CONV_OVF_I4__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_I4__UInt16(object arg0) { Test("Test_CONV_OVF_I4__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData((uint)0x12345678)]
+        public void Test_CONV_OVF_I4__UInt32(object arg0) { Test("Test_CONV_OVF_I4__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I4__UInt64() { Test("Test_CONV_OVF_I4__UInt64", ulong.MinValue); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        public void Test_CONV_OVF_I4__UIntPtr(int arg0) { Test("Test_CONV_OVF_I4__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I4_UN__Boolean(object arg0) { Test("Test_CONV_OVF_I4_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I4_UN__Byte(object arg0) { Test("Test_CONV_OVF_I4_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_I4_UN__Char(object arg0) { Test("Test_CONV_OVF_I4_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_I4_UN__Int16(object arg0) { Test("Test_CONV_OVF_I4_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        public void Test_CONV_OVF_I4_UN__Int32(object arg0) { Test("Test_CONV_OVF_I4_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I4_UN__Int64(object arg0) { Test("Test_CONV_OVF_I4_UN__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_I4_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I4_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_I4_UN__SByte(object arg0) { Test("Test_CONV_OVF_I4_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_I4_UN__UInt16(object arg0) { Test("Test_CONV_OVF_I4_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData((uint)0x12345678)]
+        public void Test_CONV_OVF_I4_UN__UInt32(object arg0) { Test("Test_CONV_OVF_I4_UN__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_I4_UN__UInt64() { Test("Test_CONV_OVF_I4_UN__UInt64", ulong.MinValue); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I8__Boolean(object arg0) { Test("Test_CONV_OVF_I8__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I8__Byte(object arg0) { Test("Test_CONV_OVF_I8__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_OVF_I8__Double(object arg0) { Test("Test_CONV_OVF_I8__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_I8__Char(object arg0) { Test("Test_CONV_OVF_I8__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_I8__Int16(object arg0) { Test("Test_CONV_OVF_I8__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_I8__Int32(object arg0) { Test("Test_CONV_OVF_I8__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_OVF_I8__Int64(object arg0) { Test("Test_CONV_OVF_I8__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_I8__IntPtr(int arg0) { Test("Test_CONV_OVF_I8__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_OVF_I8__SByte(object arg0) { Test("Test_CONV_OVF_I8__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_OVF_I8__Single(object arg0) { Test("Test_CONV_OVF_I8__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_I8__UInt16(object arg0) { Test("Test_CONV_OVF_I8__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_OVF_I8__UInt32(object arg0) { Test("Test_CONV_OVF_I8__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        public void Test_CONV_OVF_I8__UInt64(object arg0) { Test("Test_CONV_OVF_I8__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_OVF_I8__UIntPtr(int arg0) { Test("Test_CONV_OVF_I8__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_I8_UN__Boolean(object arg0) { Test("Test_CONV_OVF_I8_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_I8_UN__Byte(object arg0) { Test("Test_CONV_OVF_I8_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_I8_UN__Char(object arg0) { Test("Test_CONV_OVF_I8_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_I8_UN__Int16(object arg0) { Test("Test_CONV_OVF_I8_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_I8_UN__Int32(object arg0) { Test("Test_CONV_OVF_I8_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_I8_UN__Int64(object arg0) { Test("Test_CONV_OVF_I8_UN__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_I8_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I8_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_I8_UN__SByte(object arg0) { Test("Test_CONV_OVF_I8_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_I8_UN__UInt16(object arg0) { Test("Test_CONV_OVF_I8_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_OVF_I8_UN__UInt32(object arg0) { Test("Test_CONV_OVF_I8_UN__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        public void Test_CONV_OVF_I8_UN__UInt64(object arg0) { Test("Test_CONV_OVF_I8_UN__UInt64", arg0); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U__Boolean(object arg0) { Test("Test_CONV_OVF_U__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U__Byte(object arg0) { Test("Test_CONV_OVF_U__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_U__Double(object arg0) { Test("Test_CONV_OVF_U__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U__Char(object arg0) { Test("Test_CONV_OVF_U__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_U__Int16(object arg0) { Test("Test_CONV_OVF_U__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        public void Test_CONV_OVF_U__Int32(object arg0) { Test("Test_CONV_OVF_U__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U__Int64(object arg0) { Test("Test_CONV_OVF_U__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_U__IntPtr(int arg0) { Test("Test_CONV_OVF_U__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U__SByte(object arg0) { Test("Test_CONV_OVF_U__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_U__Single(object arg0) { Test("Test_CONV_OVF_U__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U__UInt16(object arg0) { Test("Test_CONV_OVF_U__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData((uint)0x12345678)]
+        public void Test_CONV_OVF_U__UInt32(object arg0) { Test("Test_CONV_OVF_U__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U__UInt64() { Test("Test_CONV_OVF_U__UInt64", ulong.MinValue); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        public void Test_CONV_OVF_U__UIntPtr(int arg0) { Test("Test_CONV_OVF_U__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U_UN__Boolean(object arg0) { Test("Test_CONV_OVF_U_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U_UN__Byte(object arg0) { Test("Test_CONV_OVF_U_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U_UN__Char(object arg0) { Test("Test_CONV_OVF_U_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_U_UN__Int16(object arg0) { Test("Test_CONV_OVF_U_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_U_UN__Int32(object arg0) { Test("Test_CONV_OVF_U_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U_UN__Int64(object arg0) { Test("Test_CONV_OVF_U_UN__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_U_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_OVF_U_UN__SByte(object arg0) { Test("Test_CONV_OVF_U_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U_UN__UInt16(object arg0) { Test("Test_CONV_OVF_U_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_OVF_U_UN__UInt32(object arg0) { Test("Test_CONV_OVF_U_UN__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U_UN__UInt64() { Test("Test_CONV_OVF_U_UN__UInt64", ulong.MinValue); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U1__Boolean(object arg0) { Test("Test_CONV_OVF_U1__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U1__Byte(object arg0) { Test("Test_CONV_OVF_U1__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_U1__Double(object arg0) { Test("Test_CONV_OVF_U1__Double", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1__Char() { Test("Test_CONV_OVF_U1__Char", char.MinValue); }
+
+        [Theory]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        public void Test_CONV_OVF_U1__Int16(object arg0) { Test("Test_CONV_OVF_U1__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_U1__Int32(object arg0) { Test("Test_CONV_OVF_U1__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U1__Int64(object arg0) { Test("Test_CONV_OVF_U1__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_U1__IntPtr(int arg0) { Test("Test_CONV_OVF_U1__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U1__SByte(object arg0) { Test("Test_CONV_OVF_U1__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_U1__Single(object arg0) { Test("Test_CONV_OVF_U1__Single", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1__UInt16() { Test("Test_CONV_OVF_U1__UInt16", ushort.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1__UInt32() { Test("Test_CONV_OVF_U1__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1__UInt64() { Test("Test_CONV_OVF_U1__UInt64", ulong.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1__UIntPtr() { Test("Test_CONV_OVF_U1__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U1_UN__Boolean(object arg0) { Test("Test_CONV_OVF_U1_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U1_UN__Byte(object arg0) { Test("Test_CONV_OVF_U1_UN__Byte", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1_UN__Char() { Test("Test_CONV_OVF_U1_UN__Char", char.MinValue); }
+
+        [Theory]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        public void Test_CONV_OVF_U1_UN__Int16(object arg0) { Test("Test_CONV_OVF_U1_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_U1_UN__Int32(object arg0) { Test("Test_CONV_OVF_U1_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U1_UN__Int64(object arg0) { Test("Test_CONV_OVF_U1_UN__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_U1_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U1_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U1_UN__SByte(object arg0) { Test("Test_CONV_OVF_U1_UN__SByte", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1_UN__UInt16() { Test("Test_CONV_OVF_U1_UN__UInt16", ushort.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1_UN__UInt32() { Test("Test_CONV_OVF_U1_UN__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U1_UN__UInt64() { Test("Test_CONV_OVF_U1_UN__UInt64", ulong.MinValue); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U2__Boolean(object arg0) { Test("Test_CONV_OVF_U2__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U2__Byte(object arg0) { Test("Test_CONV_OVF_U2__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_U2__Double(object arg0) { Test("Test_CONV_OVF_U2__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U2__Char(object arg0) { Test("Test_CONV_OVF_U2__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_U2__Int16(object arg0) { Test("Test_CONV_OVF_U2__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_U2__Int32(object arg0) { Test("Test_CONV_OVF_U2__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U2__Int64(object arg0) { Test("Test_CONV_OVF_U2__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_U2__IntPtr(int arg0) { Test("Test_CONV_OVF_U2__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U2__SByte(object arg0) { Test("Test_CONV_OVF_U2__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_U2__Single(object arg0) { Test("Test_CONV_OVF_U2__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U2__UInt16(object arg0) { Test("Test_CONV_OVF_U2__UInt16", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U2__UInt32() { Test("Test_CONV_OVF_U2__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U2__UInt64() { Test("Test_CONV_OVF_U2__UInt64", ulong.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U2__UIntPtr() { Test("Test_CONV_OVF_U2__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U2_UN__Boolean(object arg0) { Test("Test_CONV_OVF_U2_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U2_UN__Byte(object arg0) { Test("Test_CONV_OVF_U2_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U2_UN__Char(object arg0) { Test("Test_CONV_OVF_U2_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_U2_UN__Int16(object arg0) { Test("Test_CONV_OVF_U2_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        public void Test_CONV_OVF_U2_UN__Int32(object arg0) { Test("Test_CONV_OVF_U2_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U2_UN__Int64(object arg0) { Test("Test_CONV_OVF_U2_UN__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_U2_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U2_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U2_UN__SByte(object arg0) { Test("Test_CONV_OVF_U2_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U2_UN__UInt16(object arg0) { Test("Test_CONV_OVF_U2_UN__UInt16", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U2_UN__UInt32() { Test("Test_CONV_OVF_U2_UN__UInt32", uint.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U2_UN__UInt64() { Test("Test_CONV_OVF_U2_UN__UInt64", ulong.MinValue); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U4__Boolean(object arg0) { Test("Test_CONV_OVF_U4__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U4__Byte(object arg0) { Test("Test_CONV_OVF_U4__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        public void Test_CONV_OVF_U4__Double(object arg0) { Test("Test_CONV_OVF_U4__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U4__Char(object arg0) { Test("Test_CONV_OVF_U4__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_U4__Int16(object arg0) { Test("Test_CONV_OVF_U4__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        public void Test_CONV_OVF_U4__Int32(object arg0) { Test("Test_CONV_OVF_U4__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U4__Int64(object arg0) { Test("Test_CONV_OVF_U4__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_U4__IntPtr(int arg0) { Test("Test_CONV_OVF_U4__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U4__SByte(object arg0) { Test("Test_CONV_OVF_U4__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_U4__Single(object arg0) { Test("Test_CONV_OVF_U4__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U4__UInt16(object arg0) { Test("Test_CONV_OVF_U4__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData((uint)0x12345678)]
+        public void Test_CONV_OVF_U4__UInt32(object arg0) { Test("Test_CONV_OVF_U4__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U4__UInt64() { Test("Test_CONV_OVF_U4__UInt64", ulong.MinValue); }
+
+        [Fact]
+        public void Test_CONV_OVF_U4__UIntPtr() { Test("Test_CONV_OVF_U4__UIntPtr", UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U4_UN__Boolean(object arg0) { Test("Test_CONV_OVF_U4_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U4_UN__Byte(object arg0) { Test("Test_CONV_OVF_U4_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U4_UN__Char(object arg0) { Test("Test_CONV_OVF_U4_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_U4_UN__Int16(object arg0) { Test("Test_CONV_OVF_U4_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_U4_UN__Int32(object arg0) { Test("Test_CONV_OVF_U4_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        public void Test_CONV_OVF_U4_UN__Int64(object arg0) { Test("Test_CONV_OVF_U4_UN__Int64", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void Test_CONV_OVF_U4_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U4_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U4_UN__SByte(object arg0) { Test("Test_CONV_OVF_U4_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U4_UN__UInt16(object arg0) { Test("Test_CONV_OVF_U4_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_OVF_U4_UN__UInt32(object arg0) { Test("Test_CONV_OVF_U4_UN__UInt32", arg0); }
+
+        [Fact]
+        public void Test_CONV_OVF_U4_UN__UInt64() { Test("Test_CONV_OVF_U4_UN__UInt64", ulong.MinValue); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U8__Boolean(object arg0) { Test("Test_CONV_OVF_U8__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U8__Byte(object arg0) { Test("Test_CONV_OVF_U8__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        public void Test_CONV_OVF_U8__Double(object arg0) { Test("Test_CONV_OVF_U8__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U8__Char(object arg0) { Test("Test_CONV_OVF_U8__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        public void Test_CONV_OVF_U8__Int16(object arg0) { Test("Test_CONV_OVF_U8__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        public void Test_CONV_OVF_U8__Int32(object arg0) { Test("Test_CONV_OVF_U8__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        public void Test_CONV_OVF_U8__Int64(object arg0) { Test("Test_CONV_OVF_U8__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_U8__IntPtr(int arg0) { Test("Test_CONV_OVF_U8__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U8__SByte(object arg0) { Test("Test_CONV_OVF_U8__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.Epsilon)]
+        public void Test_CONV_OVF_U8__Single(object arg0) { Test("Test_CONV_OVF_U8__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U8__UInt16(object arg0) { Test("Test_CONV_OVF_U8__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData((uint)0x12345678)]
+        public void Test_CONV_OVF_U8__UInt32(object arg0) { Test("Test_CONV_OVF_U8__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        public void Test_CONV_OVF_U8__UInt64(object arg0) { Test("Test_CONV_OVF_U8__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        public void Test_CONV_OVF_U8__UIntPtr(int arg0) { Test("Test_CONV_OVF_U8__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_OVF_U8_UN__Boolean(object arg0) { Test("Test_CONV_OVF_U8_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_OVF_U8_UN__Byte(object arg0) { Test("Test_CONV_OVF_U8_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_OVF_U8_UN__Char(object arg0) { Test("Test_CONV_OVF_U8_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_OVF_U8_UN__Int16(object arg0) { Test("Test_CONV_OVF_U8_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_OVF_U8_UN__Int32(object arg0) { Test("Test_CONV_OVF_U8_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_OVF_U8_UN__Int64(object arg0) { Test("Test_CONV_OVF_U8_UN__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_OVF_U8_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U8_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        public void Test_CONV_OVF_U8_UN__SByte(object arg0) { Test("Test_CONV_OVF_U8_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_OVF_U8_UN__UInt16(object arg0) { Test("Test_CONV_OVF_U8_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_OVF_U8_UN__UInt32(object arg0) { Test("Test_CONV_OVF_U8_UN__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_OVF_U8_UN__UInt64(object arg0) { Test("Test_CONV_OVF_U8_UN__UInt64", arg0); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_R_UN__Boolean(object arg0) { Test("Test_CONV_R_UN__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_R_UN__Byte(object arg0) { Test("Test_CONV_R_UN__Byte", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_R_UN__Char(object arg0) { Test("Test_CONV_R_UN__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_R_UN__Int16(object arg0) { Test("Test_CONV_R_UN__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_R_UN__Int32(object arg0) { Test("Test_CONV_R_UN__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_R_UN__Int64(object arg0) { Test("Test_CONV_R_UN__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_R_UN__IntPtr(int arg0) { Test("Test_CONV_R_UN__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_R_UN__SByte(object arg0) { Test("Test_CONV_R_UN__SByte", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_R_UN__UInt16(object arg0) { Test("Test_CONV_R_UN__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_R_UN__UInt32(object arg0) { Test("Test_CONV_R_UN__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_R_UN__UInt64(object arg0) { Test("Test_CONV_R_UN__UInt64", arg0); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_R4__Boolean(object arg0) { Test("Test_CONV_R4__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_R4__Byte(object arg0) { Test("Test_CONV_R4__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_R4__Double(object arg0) { Test("Test_CONV_R4__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_R4__Char(object arg0) { Test("Test_CONV_R4__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_R4__Int16(object arg0) { Test("Test_CONV_R4__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_R4__Int32(object arg0) { Test("Test_CONV_R4__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_R4__Int64(object arg0) { Test("Test_CONV_R4__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_R4__IntPtr(int arg0) { Test("Test_CONV_R4__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_R4__SByte(object arg0) { Test("Test_CONV_R4__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_R4__Single(object arg0) { Test("Test_CONV_R4__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_R4__UInt16(object arg0) { Test("Test_CONV_R4__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_R4__UInt32(object arg0) { Test("Test_CONV_R4__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_R4__UInt64(object arg0) { Test("Test_CONV_R4__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_R4__UIntPtr(int arg0) { Test("Test_CONV_R4__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_R8__Boolean(object arg0) { Test("Test_CONV_R8__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_R8__Byte(object arg0) { Test("Test_CONV_R8__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_R8__Double(object arg0) { Test("Test_CONV_R8__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_R8__Char(object arg0) { Test("Test_CONV_R8__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_R8__Int16(object arg0) { Test("Test_CONV_R8__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_R8__Int32(object arg0) { Test("Test_CONV_R8__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_R8__Int64(object arg0) { Test("Test_CONV_R8__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_R8__IntPtr(int arg0) { Test("Test_CONV_R8__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_R8__SByte(object arg0) { Test("Test_CONV_R8__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_R8__Single(object arg0) { Test("Test_CONV_R8__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_R8__UInt16(object arg0) { Test("Test_CONV_R8__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_R8__UInt32(object arg0) { Test("Test_CONV_R8__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_R8__UInt64(object arg0) { Test("Test_CONV_R8__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_R8__UIntPtr(int arg0) { Test("Test_CONV_R8__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_U__Boolean(object arg0) { Test("Test_CONV_U__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_U__Byte(object arg0) { Test("Test_CONV_U__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_U__Double(object arg0) { Test("Test_CONV_U__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_U__Char(object arg0) { Test("Test_CONV_U__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_U__Int16(object arg0) { Test("Test_CONV_U__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_U__Int32(object arg0) { Test("Test_CONV_U__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_U__Int64(object arg0) { Test("Test_CONV_U__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_U__IntPtr(int arg0) { Test("Test_CONV_U__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_U__SByte(object arg0) { Test("Test_CONV_U__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_U__Single(object arg0) { Test("Test_CONV_U__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_U__UInt16(object arg0) { Test("Test_CONV_U__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_U__UInt32(object arg0) { Test("Test_CONV_U__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_U__UInt64(object arg0) { Test("Test_CONV_U__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U__UIntPtr(int arg0) { Test("Test_CONV_U__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_U1__Boolean(object arg0) { Test("Test_CONV_U1__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_U1__Byte(object arg0) { Test("Test_CONV_U1__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_U1__Double(object arg0) { Test("Test_CONV_U1__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_U1__Char(object arg0) { Test("Test_CONV_U1__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_U1__Int16(object arg0) { Test("Test_CONV_U1__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_U1__Int32(object arg0) { Test("Test_CONV_U1__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_U1__Int64(object arg0) { Test("Test_CONV_U1__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_U1__IntPtr(int arg0) { Test("Test_CONV_U1__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_U1__SByte(object arg0) { Test("Test_CONV_U1__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_U1__Single(object arg0) { Test("Test_CONV_U1__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_U1__UInt16(object arg0) { Test("Test_CONV_U1__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_U1__UInt32(object arg0) { Test("Test_CONV_U1__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_U1__UInt64(object arg0) { Test("Test_CONV_U1__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U1__UIntPtr(int arg0) { Test("Test_CONV_U1__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_U2__Boolean(object arg0) { Test("Test_CONV_U2__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_U2__Byte(object arg0) { Test("Test_CONV_U2__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_U2__Double(object arg0) { Test("Test_CONV_U2__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_U2__Char(object arg0) { Test("Test_CONV_U2__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_U2__Int16(object arg0) { Test("Test_CONV_U2__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_U2__Int32(object arg0) { Test("Test_CONV_U2__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_U2__Int64(object arg0) { Test("Test_CONV_U2__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_U2__IntPtr(int arg0) { Test("Test_CONV_U2__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_U2__SByte(object arg0) { Test("Test_CONV_U2__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_U2__Single(object arg0) { Test("Test_CONV_U2__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_U2__UInt16(object arg0) { Test("Test_CONV_U2__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_U2__UInt32(object arg0) { Test("Test_CONV_U2__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_U2__UInt64(object arg0) { Test("Test_CONV_U2__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U2__UIntPtr(int arg0) { Test("Test_CONV_U2__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_U4__Boolean(object arg0) { Test("Test_CONV_U4__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_U4__Byte(object arg0) { Test("Test_CONV_U4__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_U4__Double(object arg0) { Test("Test_CONV_U4__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_U4__Char(object arg0) { Test("Test_CONV_U4__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_U4__Int16(object arg0) { Test("Test_CONV_U4__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_U4__Int32(object arg0) { Test("Test_CONV_U4__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_U4__Int64(object arg0) { Test("Test_CONV_U4__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_U4__IntPtr(int arg0) { Test("Test_CONV_U4__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_U4__SByte(object arg0) { Test("Test_CONV_U4__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_U4__Single(object arg0) { Test("Test_CONV_U4__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_U4__UInt16(object arg0) { Test("Test_CONV_U4__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_U4__UInt32(object arg0) { Test("Test_CONV_U4__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_U4__UInt64(object arg0) { Test("Test_CONV_U4__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U4__UIntPtr(int arg0) { Test("Test_CONV_U4__UIntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Test_CONV_U8__Boolean(object arg0) { Test("Test_CONV_U8__Boolean", arg0); }
+
+        [Theory]
+        [InlineData(byte.MinValue)]
+        [InlineData(byte.MaxValue)]
+        [InlineData((byte)0x12)]
+        [InlineData((byte)0x9A)]
+        public void Test_CONV_U8__Byte(object arg0) { Test("Test_CONV_U8__Byte", arg0); }
+
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(1.0d)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(12345678910111213.1415d)]
+        [InlineData(-12345678910111213.1415d)]
+        public void Test_CONV_U8__Double(object arg0) { Test("Test_CONV_U8__Double", arg0); }
+
+        [Theory]
+        [InlineData(char.MinValue)]
+        [InlineData(char.MaxValue)]
+        [InlineData((char)0x1234)]
+        [InlineData((char)0x9ABC)]
+        public void Test_CONV_U8__Char(object arg0) { Test("Test_CONV_U8__Char", arg0); }
+
+        [Theory]
+        [InlineData(short.MinValue)]
+        [InlineData(short.MaxValue)]
+        [InlineData((short)0)]
+        [InlineData((short)-1)]
+        [InlineData((short)1)]
+        [InlineData((short)0x1234)]
+        [InlineData((short)-0x1234)]
+        public void Test_CONV_U8__Int16(object arg0) { Test("Test_CONV_U8__Int16", arg0); }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        [InlineData((int)0)]
+        [InlineData((int)-1)]
+        [InlineData((int)1)]
+        [InlineData((int)0x12345678)]
+        [InlineData((int)-0x12345678)]
+        public void Test_CONV_U8__Int32(object arg0) { Test("Test_CONV_U8__Int32", arg0); }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)0)]
+        [InlineData((long)-1)]
+        [InlineData((long)1)]
+        [InlineData((long)0x123456789ABCDEF0)]
+        [InlineData((long)-0x123456789ABCDEF0)]
+        public void Test_CONV_U8__Int64(object arg0) { Test("Test_CONV_U8__Int64", arg0); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        public void Test_CONV_U8__IntPtr(int arg0) { Test("Test_CONV_U8__IntPtr", new IntPtr(arg0)); }
+
+        [Theory]
+        [InlineData(sbyte.MinValue)]
+        [InlineData(sbyte.MaxValue)]
+        [InlineData((sbyte)0)]
+        [InlineData((sbyte)-1)]
+        [InlineData((sbyte)1)]
+        [InlineData((sbyte)0x12)]
+        [InlineData((sbyte)-0x12)]
+        public void Test_CONV_U8__SByte(object arg0) { Test("Test_CONV_U8__SByte", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(1.0f)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(1234567891011.12f)]
+        [InlineData(-1234567891011.12f)]
+        public void Test_CONV_U8__Single(object arg0) { Test("Test_CONV_U8__Single", arg0); }
+
+        [Theory]
+        [InlineData(ushort.MinValue)]
+        [InlineData(ushort.MaxValue)]
+        [InlineData((ushort)0x1234)]
+        [InlineData((ushort)0x9ABC)]
+        public void Test_CONV_U8__UInt16(object arg0) { Test("Test_CONV_U8__UInt16", arg0); }
+
+        [Theory]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        [InlineData((uint)0x12345678)]
+        [InlineData((uint)0x9ABCDEF0)]
+        public void Test_CONV_U8__UInt32(object arg0) { Test("Test_CONV_U8__UInt32", arg0); }
+
+        [Theory]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        [InlineData((ulong)0x123456789ABCDEF0)]
+        [InlineData((ulong)0x9ABCDEF012345678)]
+        public void Test_CONV_U8__UInt64(object arg0) { Test("Test_CONV_U8__UInt64", arg0); }
+
+        // TODO [Theory]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U8__UIntPtr(int arg0) { Test("Test_CONV_U8__UIntPtr", new IntPtr(arg0)); }
+
+        [Fact]
+        public void Test_CPOBJ() { Test("Test_CPOBJ"); }
+
+        [Theory]
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-1234, 4)]
+        // TODO [InlineData(4, IntPtr.Size == 4 ? -1234 : -1234)]
+        [InlineData(1, 0)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_DIV__Int32_IntPtr(object arg0, int arg1) { Test("Test_DIV__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? -1234 : -1234, 4)]
+        [InlineData(4, -1234)]
+        [InlineData(4, 0)]
+        [InlineData(0, int.MinValue)]
+        public void Test_DIV__IntPtr_Int32(int arg0, object arg1) { Test("Test_DIV__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-1234, 4)]
+        // TODO [InlineData(4, IntPtr.Size == 4 ? -1234 : -1234)]
+        [InlineData(1, 0)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_DIV_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_DIV_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? -1234 : -1234, 4)]
+        [InlineData(4, -1234)]
+        [InlineData(1, 0)]
+        [InlineData(0, int.MinValue)]
+        public void Test_DIV_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_DIV_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Fact]
+        public void Test_DUP() { Test("Test_DUP", "hello", "bye"); }
+
+        [Fact]
+        public void Test_INITBLK() { Test("Test_INITBLK"); }
+
+        [Fact]
+        public void Test_INITOBJ() { Test("Test_INITOBJ"); }
+
+        [Fact]
+        public void Test_ISINST() { Test("Test_ISINST"); }
+
+        [Fact]
+        public void Test_LDARG__0() { Test("Test_LDARG__0", 123); }
+
+        [Fact]
+        public void Test_LDARG__128() { Test("Test_LDARG__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); }
+
+        [Fact]
+        public void Test_LDARG__4() { Test("Test_LDARG__4", "", "", "", "", 123); }
+
+        [Fact]
+        public void Test_LDARG_0() { Test("Test_LDARG_0", 123); }
+
+        [Fact]
+        public void Test_LDARG_1() { Test("Test_LDARG_1", "", 123); }
+
+        [Fact]
+        public void Test_LDARG_2() { Test("Test_LDARG_2", "", "", 123); }
+
+        [Fact]
+        public void Test_LDARG_3() { Test("Test_LDARG_3", "", "", "", 123); }
+
+        [Fact]
+        public void Test_LDARG_S__0() { Test("Test_LDARG_S__0", 123); }
+
+        [Fact]
+        public void Test_LDARG_S__128() { Test("Test_LDARG_S__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); }
+
+        [Fact]
+        public void Test_LDARG_S__4() { Test("Test_LDARG_S__4", "", "", "", "", 123); }
+
+        [Fact]
+        public void Test_LDARGA() { Test("Test_LDARGA", 123, "hello"); }
+
+        [Fact]
+        public void Test_LDARGA_S() { Test("Test_LDARGA_S", 123, "hello"); }
+
+        [Fact]
+        public void Test_LDC_I4__0() { Test("Test_LDC_I4__0"); }
+
+        [Fact]
+        public void Test_LDC_I4__1() { Test("Test_LDC_I4__1"); }
+
+        [Fact]
+        public void Test_LDC_I4__M1() { Test("Test_LDC_I4__M1"); }
+
+        [Fact]
+        public void Test_LDC_I4__MaxValue() { Test("Test_LDC_I4__MaxValue"); }
+
+        [Fact]
+        public void Test_LDC_I4__MinValue() { Test("Test_LDC_I4__MinValue"); }
+
+        [Fact]
+        public void Test_LDC_I4_0() { Test("Test_LDC_I4_0"); }
+
+        [Fact]
+        public void Test_LDC_I4_1() { Test("Test_LDC_I4_1"); }
+
+        [Fact]
+        public void Test_LDC_I4_2() { Test("Test_LDC_I4_2"); }
+
+        [Fact]
+        public void Test_LDC_I4_3() { Test("Test_LDC_I4_3"); }
+
+        [Fact]
+        public void Test_LDC_I4_4() { Test("Test_LDC_I4_4"); }
+
+        [Fact]
+        public void Test_LDC_I4_5() { Test("Test_LDC_I4_5"); }
+
+        [Fact]
+        public void Test_LDC_I4_6() { Test("Test_LDC_I4_6"); }
+
+        [Fact]
+        public void Test_LDC_I4_7() { Test("Test_LDC_I4_7"); }
+
+        [Fact]
+        public void Test_LDC_I4_8() { Test("Test_LDC_I4_8"); }
+
+        [Fact]
+        public void Test_LDC_I4_M1() { Test("Test_LDC_I4_M1"); }
+
+        [Fact]
+        public void Test_LDC_I4_S__0() { Test("Test_LDC_I4_S__0"); }
+
+        [Fact]
+        public void Test_LDC_I4_S__1() { Test("Test_LDC_I4_S__1"); }
+
+        [Fact]
+        public void Test_LDC_I4_S__M1() { Test("Test_LDC_I4_S__M1"); }
+
+        [Fact]
+        public void Test_LDC_I4_S__MaxValue() { Test("Test_LDC_I4_S__MaxValue"); }
+
+        [Fact]
+        public void Test_LDC_I4_S__MinValue() { Test("Test_LDC_I4_S__MinValue"); }
+
+        [Fact]
+        public void Test_LDC_I8__0() { Test("Test_LDC_I8__0"); }
+
+        [Fact]
+        public void Test_LDC_I8__1() { Test("Test_LDC_I8__1"); }
+
+        [Fact]
+        public void Test_LDC_I8__M1() { Test("Test_LDC_I8__M1"); }
+
+        [Fact]
+        public void Test_LDC_I8__MaxValue() { Test("Test_LDC_I8__MaxValue"); }
+
+        [Fact]
+        public void Test_LDC_I8__MinValue() { Test("Test_LDC_I8__MinValue"); }
+
+        [Fact]
+        public void Test_LDC_R4__1() { Test("Test_LDC_R4__1"); }
+
+        [Fact]
+        public void Test_LDC_R4__Epsilon() { Test("Test_LDC_R4__Epsilon"); }
+
+        [Fact]
+        public void Test_LDC_R4__M1() { Test("Test_LDC_R4__M1"); }
+
+        [Fact]
+        public void Test_LDC_R4__MaxValue() { Test("Test_LDC_R4__MaxValue"); }
+
+        [Fact]
+        public void Test_LDC_R4__MinValue() { Test("Test_LDC_R4__MinValue"); }
+
+        [Fact]
+        public void Test_LDC_R4__NaN() { Test("Test_LDC_R4__NaN"); }
+
+        [Fact]
+        public void Test_LDC_R4__NegativeInfinity() { Test("Test_LDC_R4__NegativeInfinity"); }
+
+        [Fact]
+        public void Test_LDC_R4__NegativeZero() { Test("Test_LDC_R4__NegativeZero"); }
+
+        [Fact]
+        public void Test_LDC_R4__PositiveInfinity() { Test("Test_LDC_R4__PositiveInfinity"); }
+
+        [Fact]
+        public void Test_LDC_R4__PositiveZero() { Test("Test_LDC_R4__PositiveZero"); }
+
+        [Fact]
+        public void Test_LDC_R8__1() { Test("Test_LDC_R8__1"); }
+
+        [Fact]
+        public void Test_LDC_R8__Epsilon() { Test("Test_LDC_R8__Epsilon"); }
+
+        [Fact]
+        public void Test_LDC_R8__M1() { Test("Test_LDC_R8__M1"); }
+
+        [Fact]
+        public void Test_LDC_R8__MaxValue() { Test("Test_LDC_R8__MaxValue"); }
+
+        [Fact]
+        public void Test_LDC_R8__MinValue() { Test("Test_LDC_R8__MinValue"); }
+
+        [Fact]
+        public void Test_LDC_R8__NaN() { Test("Test_LDC_R8__NaN"); }
+
+        [Fact]
+        public void Test_LDC_R8__NegativeInfinity() { Test("Test_LDC_R8__NegativeInfinity"); }
+
+        [Fact]
+        public void Test_LDC_R8__NegativeZero() { Test("Test_LDC_R8__NegativeZero"); }
+
+        [Fact]
+        public void Test_LDC_R8__PositiveInfinity() { Test("Test_LDC_R8__PositiveInfinity"); }
+
+        [Fact]
+        public void Test_LDC_R8__PositiveZero() { Test("Test_LDC_R8__PositiveZero"); }
+
+        [Fact]
+        public void Test_LDELEM__STELEM() { Test("Test_LDELEM__STELEM"); }
+
+        [Fact]
+        public void Test_LDELEM_I__STELEM_I() { Test("Test_LDELEM_I__STELEM_I"); }
+
+        [Fact]
+        public void Test_LDELEM_I1__STELEM_I1() { Test("Test_LDELEM_I1__STELEM_I1"); }
+
+        [Fact]
+        public void Test_LDELEM_I2__STELEM_I2() { Test("Test_LDELEM_I2__STELEM_I2"); }
+
+        [Fact]
+        public void Test_LDELEM_I4__STELEM_I4() { Test("Test_LDELEM_I4__STELEM_I4"); }
+
+        [Fact]
+        public void Test_LDELEM_I8__STELEM_I8() { Test("Test_LDELEM_I8__STELEM_I8"); }
+
+        [Fact]
+        public void Test_LDELEM_R4__STELEM_R4() { Test("Test_LDELEM_R4__STELEM_R4"); }
+
+        [Fact]
+        public void Test_LDELEM_R8__STELEM_R8() { Test("Test_LDELEM_R8__STELEM_R8"); }
+
+        [Fact]
+        public void Test_LDELEM_REF__STELEM_REF() { Test("Test_LDELEM_REF__STELEM_REF"); }
+
+        [Fact]
+        public void Test_LDELEM_U1__STELEM_I1() { Test("Test_LDELEM_U1__STELEM_I1"); }
+
+        [Fact]
+        public void Test_LDELEM_U2__STELEM_I2() { Test("Test_LDELEM_U2__STELEM_I2"); }
+
+        [Fact]
+        public void Test_LDELEM_U4__STELEM_I4() { Test("Test_LDELEM_U4__STELEM_I4"); }
+
+        [Fact]
+        public void Test_LDELEMA() { Test("Test_LDELEMA"); }
+
+        [Fact]
+        public void Test_LDFLD_STFLD_LDFLDA() { Test("Test_LDFLD_STFLD_LDFLDA"); }
+
+        [Fact]
+        public void Test_LDIND_STIND() { Test("Test_LDIND_STIND"); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(123)]
+        public void Test_LDLEN__Int32(object arg0) { Test("Test_LDLEN__Int32", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        // TODO [InlineData(IntPtr.Size == 4 ? 123 : 123)]
+        public void Test_LDLEN__IntPtr(int arg0) { Test("Test_LDLEN__IntPtr", new IntPtr(arg0)); }
+
+        [Fact]
+        public void Test_LDLOC__0() { Test("Test_LDLOC__0"); }
+
+        [Fact]
+        public void Test_LDLOC__128() { Test("Test_LDLOC__128"); }
+
+        [Fact]
+        public void Test_LDLOC__4() { Test("Test_LDLOC__4"); }
+
+        [Fact]
+        public void Test_LDLOC_0() { Test("Test_LDLOC_0"); }
+
+        [Fact]
+        public void Test_LDLOC_1() { Test("Test_LDLOC_1"); }
+
+        [Fact]
+        public void Test_LDLOC_2() { Test("Test_LDLOC_2"); }
+
+        [Fact]
+        public void Test_LDLOC_3() { Test("Test_LDLOC_3"); }
+
+        [Fact]
+        public void Test_LDLOC_S__0() { Test("Test_LDLOC_S__0"); }
+
+        [Fact]
+        public void Test_LDLOC_S__128() { Test("Test_LDLOC_S__128"); }
+
+        [Fact]
+        public void Test_LDLOC_S__4() { Test("Test_LDLOC_S__4"); }
+
+        [Fact]
+        public void Test_LDLOCA() { Test("Test_LDLOCA"); }
+
+        [Fact]
+        public void Test_LDLOCA_S() { Test("Test_LDLOCA_S"); }
+
+        [Fact]
+        public void Test_LDNULL() { Test("Test_LDNULL"); }
+
+        [Fact]
+        public void Test_LDOBJ_STOBJ() { Test("Test_LDOBJ_STOBJ"); }
+
+        [Fact]
+        public void Test_LDSFLD_STSFLD_LDSFLDA() { Test("Test_LDSFLD_STSFLD_LDSFLDA"); }
+
+        [Fact]
+        public void Test_LDSTR() { Test("Test_LDSTR"); }
+
+        [Fact]
+        public void Test_LDTOKEN__Field() { Test("Test_LDTOKEN__Field"); }
+
+        [Fact]
+        public void Test_LDTOKEN__Method() { Test("Test_LDTOKEN__Method"); }
+
+        [Fact]
+        public void Test_LDTOKEN__Type() { Test("Test_LDTOKEN__Type"); }
+
+        [Fact]
+        public void Test_LEAVE() { Test("Test_LEAVE"); }
+
+        [Fact]
+        public void Test_LEAVE__0() { Test("Test_LEAVE__0"); }
+
+        [Fact]
+        public void Test_LEAVE_S() { Test("Test_LEAVE_S"); }
+
+        [Fact]
+        public void Test_LEAVE_S__0() { Test("Test_LEAVE_S__0"); }
+
+        [Fact]
+        public void Test_LOCALLOC() { Test("Test_LOCALLOC"); }
+
+        [Theory]
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_MUL__Int32_IntPtr(object arg0, int arg1) { Test("Test_MUL__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_MUL__IntPtr_Int32(int arg0, object arg1) { Test("Test_MUL__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_MUL_OVF__Int32_IntPtr(object arg0, int arg1) { Test("Test_MUL_OVF__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_MUL_OVF__IntPtr_Int32(int arg0, object arg1) { Test("Test_MUL_OVF__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(5, 4)]
+        [InlineData(4, 5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_MUL_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_MUL_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(5, 4)]
+        [InlineData(4, 5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_MUL_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_MUL_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(12345678910111213.14151617d)]
+        [InlineData(double.MinValue)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        public void Test_NEG__Double(object arg0) { Test("Test_NEG__Double", arg0); }
+
+        [Fact]
+        public void Test_NEG__Int32() { Test("Test_NEG__Int32", 0x12345678); }
+
+        [Fact]
+        public void Test_NEG__Int64() { Test("Test_NEG__Int64", 0x123456789ABCDEF0L); }
+
+        [Fact]
+        public void Test_NEG__IntPtr() { Test("Test_NEG__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); }
+
+        [Theory]
+        [InlineData(123456.789f)]
+        [InlineData(float.MinValue)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        public void Test_NEG__Single(object arg0) { Test("Test_NEG__Single", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(123)]
+        public void Test_NEWARR__Int32(object arg0) { Test("Test_NEWARR__Int32", arg0); }
+
+        [Theory]
+        [InlineData(0)]
+        // TODO [InlineData(IntPtr.Size == 4 ? 123 : 123)]
+        public void Test_NEWARR__IntPtr(int arg0) { Test("Test_NEWARR__IntPtr", new IntPtr(arg0)); }
+
+        [Fact]
+        public void Test_NEWOBJ__Class() { Test("Test_NEWOBJ__Class"); }
+
+        [Fact]
+        public void Test_NEWOBJ__Struct() { Test("Test_NEWOBJ__Struct"); }
+
+        [Fact]
+        public void Test_NOP() { Test("Test_NOP"); }
+
+        [Fact]
+        public void Test_NOT__Int32() { Test("Test_NOT__Int32", 0x12345678); }
+
+        [Fact]
+        public void Test_NOT__Int64() { Test("Test_NOT__Int64", 0x123456789ABCDEF0L); }
+
+        [Fact]
+        public void Test_NOT__IntPtr() { Test("Test_NOT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); }
+
+        [Fact]
+        public void Test_OR__Int32() { Test("Test_OR__Int32", 0x5AA51234, 0x3FF37591); }
+
+        [Fact]
+        public void Test_OR__Int32_IntPtr() { Test("Test_OR__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); }
+
+        [Fact]
+        public void Test_OR__Int64() { Test("Test_OR__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); }
+
+        [Fact]
+        public void Test_OR__IntPtr() { Test("Test_OR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); }
+
+        [Fact]
+        public void Test_OR__IntPtr_Int32() { Test("Test_OR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); }
+
+        [Fact]
+        public void Test_POP() { Test("Test_POP"); }
+
+        [Fact]
+        public void Test_READONLY() { Test("Test_READONLY"); }
+
+        [Theory]
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-1234, 4)]
+        // TODO [InlineData(4, IntPtr.Size == 4 ? -1234 : -1234)]
+        [InlineData(4, 0)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_REM__Int32_IntPtr(object arg0, int arg1) { Test("Test_REM__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? -1234 : -1234, 4)]
+        [InlineData(4, -1234)]
+        [InlineData(4, 0)]
+        [InlineData(0, int.MinValue)]
+        public void Test_REM__IntPtr_Int32(int arg0, object arg1) { Test("Test_REM__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-1234, 4)]
+        // TODO [InlineData(4, IntPtr.Size == 4 ? -1234 : -1234)]
+        [InlineData(1, 0)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_REM_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_REM_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? -1234 : -1234, 4)]
+        [InlineData(4, -1234)]
+        [InlineData(1, 0)]
+        [InlineData(0, int.MinValue)]
+        public void Test_REM_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_REM_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Fact]
+        public void Test_RET__Void() { Test("Test_RET__Void"); }
+
+        [Fact]
+        public void Test_SHL__Int32() { Test("Test_SHL__Int32", -0x5AA51234, 5); }
+
+        [Fact]
+        public void Test_SHL__Int64() { Test("Test_SHL__Int64", -0x5AA5123467306AB8L, 5); }
+
+        [Fact]
+        public void Test_SHL__IntPtr() { Test("Test_SHL__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); }
+
+        [Fact]
+        public void Test_SHR__Int32() { Test("Test_SHR__Int32", -0x5AA51234, 5); }
+
+        [Fact]
+        public void Test_SHR__Int64() { Test("Test_SHR__Int64", -0x5AA5123467306AB8L, 5); }
+
+        [Fact]
+        public void Test_SHR__IntPtr() { Test("Test_SHR__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); }
+
+        [Fact]
+        public void Test_SHR_UN__Int32() { Test("Test_SHR_UN__Int32", -0x5AA51234, 5); }
+
+        [Fact]
+        public void Test_SHR_UN__Int64() { Test("Test_SHR_UN__Int64", -0x5AA5123467306AB8L, 5); }
+
+        [Fact]
+        public void Test_SHR_UN__IntPtr() { Test("Test_SHR_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); }
+
+        [Fact]
+        public void Test_SIZEOF() { Test("Test_SIZEOF", IntPtr.Size); }
+
+        [Fact]
+        public void Test_STARG__0() { Test("Test_STARG__0", 123, 456); }
+
+        [Fact]
+        public void Test_STARG__128() { Test("Test_STARG__128", 456, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); }
+
+        [Fact]
+        public void Test_STARG_S__0() { Test("Test_STARG_S__0", 123, 456); }
+
+        [Fact]
+        public void Test_STARG_S__128() { Test("Test_STARG_S__128", 456, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); }
+
+        [Fact]
+        public void Test_STLOC__0() { Test("Test_STLOC__0", 123); }
+
+        [Fact]
+        public void Test_STLOC__128() { Test("Test_STLOC__128", 123); }
+
+        [Fact]
+        public void Test_STLOC_0() { Test("Test_STLOC_0", 123); }
+
+        [Fact]
+        public void Test_STLOC_1() { Test("Test_STLOC_1", 123); }
+
+        [Fact]
+        public void Test_STLOC_2() { Test("Test_STLOC_2", 123); }
+
+        [Fact]
+        public void Test_STLOC_3() { Test("Test_STLOC_3", 123); }
+
+        [Fact]
+        public void Test_STLOC_S__0() { Test("Test_STLOC_S__0", 123); }
+
+        [Fact]
+        public void Test_STLOC_S__128() { Test("Test_STLOC_S__128", 123); }
+
+        [Theory]
+        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_SUB__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_SUB__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_SUB_OVF__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB_OVF__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_SUB_OVF__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB_OVF__IntPtr_Int32", new IntPtr(arg0), arg1); }
+
+        [Theory]
+        [InlineData(-5, 4)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_SUB_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+
+        [Theory]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(-5, 4)]
+        [InlineData(0, int.MinValue)]
+        public void Test_SUB_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
 
         [Theory]
         [InlineData(0)]
@@ -3222,7 +4548,7 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(1)]
         [InlineData(int.MinValue)]
         [InlineData(int.MaxValue)]
-        public void Test_SWITCH__0(int value) { Test("Test_SWITCH__0", value); }
+        public void Test_SWITCH__0(object arg0) { Test("Test_SWITCH__0", arg0); }
 
         [Theory]
         [InlineData(0)]
@@ -3230,606 +4556,149 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(1)]
         [InlineData(int.MinValue)]
         [InlineData(int.MaxValue)]
-        public void Test_SWITCH__1(int value) { Test("Test_SWITCH__1", value); }
+        public void Test_SWITCH__1(object arg0) { Test("Test_SWITCH__1", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
         [InlineData(2)]
-        [InlineData(int.MinValue)]
-        [InlineData(int.MaxValue)]
-        public void Test_SWITCH__2(int value) { Test("Test_SWITCH__2", value); }
+        public void Test_SWITCH__2(object arg0) { Test("Test_SWITCH__2", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
         [InlineData(2)]
         [InlineData(3)]
-        [InlineData(int.MinValue)]
-        [InlineData(int.MaxValue)]
-        public void Test_SWITCH__3(int value) { Test("Test_SWITCH__3", value); }
+        public void Test_SWITCH__3(object arg0) { Test("Test_SWITCH__3", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(4)]
-        [InlineData(int.MinValue)]
-        [InlineData(int.MaxValue)]
-        public void Test_SWITCH__4(int value) { Test("Test_SWITCH__4", value); }
+        public void Test_SWITCH__4(object arg0) { Test("Test_SWITCH__4", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(4)]
         [InlineData(5)]
-        [InlineData(int.MinValue)]
-        [InlineData(int.MaxValue)]
-        public void Test_SWITCH__5(int value) { Test("Test_SWITCH__5", value); }
+        public void Test_SWITCH__5(object arg0) { Test("Test_SWITCH__5", arg0); }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(4)]
         [InlineData(5)]
         [InlineData(6)]
-        [InlineData(int.MinValue)]
-        [InlineData(int.MaxValue)]
-        public void Test_SWITCH__6(int value) { Test("Test_SWITCH__6", value); }
+        public void Test_SWITCH__6(object arg0) { Test("Test_SWITCH__6", arg0); }
 
-        /*[Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(3) : new IntPtr(3L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(3) : new IntPtr(3L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L)); *
-        [Fact] public void Test_SWITCH__6_IntPtr() { Test("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(6) : new IntPtr(6L)); } /* TestMethod("Test_SWITCH__6_IntPtr", IntPtr.Size == 4 ? new IntPtr(6) : new IntPtr(6L)); *
+        [Theory]
+        [InlineData(0.0d)]
+        [InlineData(-1.0d)]
+        [InlineData(1.0d)]
+        [InlineData(double.MinValue)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        [InlineData(double.Epsilon)]
+        [InlineData(2.0d)]
+        [InlineData(3.0d)]
+        [InlineData(4.0d)]
+        [InlineData(5.0d)]
+        [InlineData(6.0d)]
+        public void Test_SWITCH__6_Double(object arg0) { Test("Test_SWITCH__6_Double", arg0); }
 
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 0L); } /* TestMethod("Test_SWITCH__6_Int64", 0L); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", -1L); } /* TestMethod("Test_SWITCH__6_Int64", -1L); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 1L); } /* TestMethod("Test_SWITCH__6_Int64", 1L); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", long.MinValue); } /* TestMethod("Test_SWITCH__6_Int64", long.MinValue); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", long.MaxValue); } /* TestMethod("Test_SWITCH__6_Int64", long.MaxValue); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 2L); } /* TestMethod("Test_SWITCH__6_Int64", 2L); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 3L); } /* TestMethod("Test_SWITCH__6_Int64", 3L); 
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 4L); } /* TestMethod("Test_SWITCH__6_Int64", 4L); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 5L); } /* TestMethod("Test_SWITCH__6_Int64", 5L); *
-        [Fact] public void Test_SWITCH__6_Int64() { Test("Test_SWITCH__6_Int64", 6L); } /* TestMethod("Test_SWITCH__6_Int64", 6L); *
+        [Theory]
+        [InlineData(0L)]
+        [InlineData(-1L)]
+        [InlineData(1L)]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        [InlineData(2L)]
+        [InlineData(3L)]
+        [InlineData(4L)]
+        [InlineData(5L)]
+        [InlineData(6L)]
+        public void Test_SWITCH__6_Int64(object arg0) { Test("Test_SWITCH__6_Int64", arg0); }
 
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 0.0f); } /* TestMethod("Test_SWITCH__6_Single", 0.0f); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", -1.0f); } /* TestMethod("Test_SWITCH__6_Single", -1.0f); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 1.0f); } /* TestMethod("Test_SWITCH__6_Single", 1.0f); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", float.MinValue); } /* TestMethod("Test_SWITCH__6_Single", float.MinValue); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", float.MaxValue); } /* TestMethod("Test_SWITCH__6_Single", float.MaxValue); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", float.NaN); } /* TestMethod("Test_SWITCH__6_Single", float.NaN); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", float.NegativeInfinity); } /* TestMethod("Test_SWITCH__6_Single", float.NegativeInfinity); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", float.PositiveInfinity); } /* TestMethod("Test_SWITCH__6_Single", float.PositiveInfinity); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", float.Epsilon); } /* TestMethod("Test_SWITCH__6_Single", float.Epsilon); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 2.0f); } /* TestMethod("Test_SWITCH__6_Single", 2.0f); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 3.0f); } /* TestMethod("Test_SWITCH__6_Single", 3.0f); 
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 4.0f); } /* TestMethod("Test_SWITCH__6_Single", 4.0f); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 5.0f); } /* TestMethod("Test_SWITCH__6_Single", 5.0f); *
-        [Fact] public void Test_SWITCH__6_Single() { Test("Test_SWITCH__6_Single", 6.0f); } /* TestMethod("Test_SWITCH__6_Single", 6.0f); *
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(1)]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(2)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        [InlineData(6)]
+        public void Test_SWITCH__6_IntPtr(int arg0) { Test("Test_SWITCH__6_IntPtr", new IntPtr(arg0)); }
 
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 0.0d); } /* TestMethod("Test_SWITCH__6_Double", 0.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", -1.0d); } /* TestMethod("Test_SWITCH__6_Double", -1.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 1.0d); } /* TestMethod("Test_SWITCH__6_Double", 1.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", double.MinValue); } /* TestMethod("Test_SWITCH__6_Double", double.MinValue); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", double.MaxValue); } /* TestMethod("Test_SWITCH__6_Double", double.MaxValue); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", double.NaN); } /* TestMethod("Test_SWITCH__6_Double", double.NaN); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", double.NegativeInfinity); } /* TestMethod("Test_SWITCH__6_Double", double.NegativeInfinity); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", double.PositiveInfinity); } /* TestMethod("Test_SWITCH__6_Double", double.PositiveInfinity); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", double.Epsilon); } /* TestMethod("Test_SWITCH__6_Double", double.Epsilon); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 2.0d); } /* TestMethod("Test_SWITCH__6_Double", 2.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 3.0d); } /* TestMethod("Test_SWITCH__6_Double", 3.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 4.0d); } /* TestMethod("Test_SWITCH__6_Double", 4.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 5.0d); } /* TestMethod("Test_SWITCH__6_Double", 5.0d); *
-        [Fact] public void Test_SWITCH__6_Double() { Test("Test_SWITCH__6_Double", 6.0d); } /* TestMethod("Test_SWITCH__6_Double", 6.0d); *
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(2.0f)]
+        [InlineData(3.0f)]
+        [InlineData(4.0f)]
+        [InlineData(5.0f)]
+        [InlineData(6.0f)]
+        public void Test_SWITCH__6_Single(object arg0) { Test("Test_SWITCH__6_Single", arg0); }
 
-        [Fact] public void Test_POP() { Test("Test_POP"); } /* TestMethod("Test_POP"); */
-        [Fact] public void Test_DUP() { Test("Test_DUP", "hello", "bye"); } /* TestMethod("Test_DUP", "hello", "bye"); */
+        [Fact]
+        public void Test_UNALIGNED() { Test("Test_UNALIGNED"); }
 
-        [Fact] public void Test_AND__Int32() { Test("Test_AND__Int32", 0x5AA51234, 0x3FF37591); } /* TestMethod("Test_AND__Int32", 0x5AA51234, 0x3FF37591); */
-        [Fact] public void Test_AND__Int64() { Test("Test_AND__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); } /* TestMethod("Test_AND__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); */
-        [Fact] public void Test_AND__IntPtr() { Test("Test_AND__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); } /* TestMethod("Test_AND__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); */
+        [Fact]
+        public void Test_UNALIGNED_VOLATILE() { Test("Test_UNALIGNED_VOLATILE"); }
 
-        [Fact] public void Test_OR__Int32() { Test("Test_OR__Int32", 0x5AA51234, 0x3FF37591); } /* TestMethod("Test_OR__Int32", 0x5AA51234, 0x3FF37591); */
-        [Fact] public void Test_OR__Int64() { Test("Test_OR__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); } /* TestMethod("Test_OR__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); */
-        [Fact] public void Test_OR__IntPtr() { Test("Test_OR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); } /* TestMethod("Test_OR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); */
+        [Fact]
+        public void Test_VOLATILE() { Test("Test_VOLATILE"); }
 
-        [Fact] public void Test_XOR__Int32() { Test("Test_XOR__Int32", 0x5AA51234, 0x3FF37591); } /* TestMethod("Test_XOR__Int32", 0x5AA51234, 0x3FF37591); */
-        [Fact] public void Test_XOR__Int64() { Test("Test_XOR__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); } /* TestMethod("Test_XOR__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); */
-        [Fact] public void Test_XOR__IntPtr() { Test("Test_XOR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); } /* TestMethod("Test_XOR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); */
+        [Fact]
+        public void Test_XOR__Int32() { Test("Test_XOR__Int32", 0x5AA51234, 0x3FF37591); }
 
-        [Fact] public void Test_SHL__Int32() { Test("Test_SHL__Int32", -0x5AA51234, 5); } /* TestMethod("Test_SHL__Int32", -0x5AA51234, 5); */
-        [Fact] public void Test_SHL__Int64() { Test("Test_SHL__Int64", -0x5AA5123467306AB8L, 5); } /* TestMethod("Test_SHL__Int64", -0x5AA5123467306AB8L, 5); */
-        [Fact] public void Test_SHL__IntPtr() { Test("Test_SHL__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); } /* TestMethod("Test_SHL__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); */
+        [Fact]
+        public void Test_XOR__Int32_IntPtr() { Test("Test_XOR__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); }
 
-        [Fact] public void Test_SHR__Int32() { Test("Test_SHR__Int32", -0x5AA51234, 5); } /* TestMethod("Test_SHR__Int32", -0x5AA51234, 5); */
-        [Fact] public void Test_SHR__Int64() { Test("Test_SHR__Int64", -0x5AA5123467306AB8L, 5); } /* TestMethod("Test_SHR__Int64", -0x5AA5123467306AB8L, 5); */
-        [Fact] public void Test_SHR__IntPtr() { Test("Test_SHR__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); } /* TestMethod("Test_SHR__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); */
+        [Fact]
+        public void Test_XOR__Int64() { Test("Test_XOR__Int64", 0x5AA5123467306AB8L, 0x3FF375919AE00BB6L); }
 
-        [Fact] public void Test_SHR_UN__Int32() { Test("Test_SHR_UN__Int32", -0x5AA51234, 5); } /* TestMethod("Test_SHR_UN__Int32", -0x5AA51234, 5); */
-        [Fact] public void Test_SHR_UN__Int64() { Test("Test_SHR_UN__Int64", -0x5AA5123467306AB8L, 5); } /* TestMethod("Test_SHR_UN__Int64", -0x5AA5123467306AB8L, 5); */
-        [Fact] public void Test_SHR_UN__IntPtr() { Test("Test_SHR_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); } /* TestMethod("Test_SHR_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-0x5AA51234) : new IntPtr(-0x5AA5123467306AB8L), 5); */
+        [Fact]
+        public void Test_XOR__IntPtr() { Test("Test_XOR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x5AA51234) : new IntPtr(0x5AA5123467306AB8L), IntPtr.Size == 4 ? new IntPtr(0x3FF37591) : new IntPtr(0x3FF375919AE00BB6L)); }
 
-        [Fact] public void Test_NOT__Int32() { Test("Test_NOT__Int32", 0x12345678); } /* TestMethod("Test_NOT__Int32", 0x12345678); */
-        [Fact] public void Test_NOT__Int64() { Test("Test_NOT__Int64", 0x123456789ABCDEF0L); } /* TestMethod("Test_NOT__Int64", 0x123456789ABCDEF0L); */
-        [Fact] public void Test_NOT__IntPtr() { Test("Test_NOT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_NOT__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
+        [Fact]
+        public void Test_XOR__IntPtr_Int32() { Test("Test_XOR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); }
 
-        [Fact] public void Test_NEG__Int32() { Test("Test_NEG__Int32", 0x12345678); } /* TestMethod("Test_NEG__Int32", 0x12345678); */
-        [Fact] public void Test_NEG__Int64() { Test("Test_NEG__Int64", 0x123456789ABCDEF0L); } /* TestMethod("Test_NEG__Int64", 0x123456789ABCDEF0L); */
-        [Fact] public void Test_NEG__IntPtr() { Test("Test_NEG__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); } /* TestMethod("Test_NEG__IntPtr", IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L)); */
 
-        public void Dispose()
-        {
-            //AppDomain.Unload(_appDomain);
-        }
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", 123456.789f); } // TestMethod("Test_NEG__Single", 123456.789f); *
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", float.MinValue); } /* TestMethod("Test_NEG__Single", float.MinValue); */
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", float.MaxValue); } /* TestMethod("Test_NEG__Single", float.MaxValue); */
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", float.NaN); } /* TestMethod("Test_NEG__Single", float.NaN); */
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", float.NegativeInfinity); } /* TestMethod("Test_NEG__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", float.PositiveInfinity); } /* TestMethod("Test_NEG__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_NEG__Single() { Test("Test_NEG__Single", float.Epsilon); } /* TestMethod("Test_NEG__Single", float.Epsilon); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", 12345678910111213.14151617d); } /* TestMethod("Test_NEG__Double", 12345678910111213.14151617d); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", double.MinValue); } /* TestMethod("Test_NEG__Double", double.MinValue); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", double.MaxValue); } /* TestMethod("Test_NEG__Double", double.MaxValue); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", double.NaN); } /* TestMethod("Test_NEG__Double", double.NaN); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", double.NegativeInfinity); } /* TestMethod("Test_NEG__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", double.PositiveInfinity); } /* TestMethod("Test_NEG__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_NEG__Double() { Test("Test_NEG__Double", double.Epsilon); } /* TestMethod("Test_NEG__Double", double.Epsilon); */
 
-        //[Fact] public void Test_ADD__Int32() { Test("Test_ADD__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_ADD__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_ADD__Int32() { Test("Test_ADD__Int32", -5, 4); } /* TestMethod2("Test_ADD__Int32", -5, 4); */
-        //[Fact] public void Test_ADD__Int64() { Test("Test_ADD__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_ADD__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_ADD__Int64() { Test("Test_ADD__Int64", -5L, 4L); } /* TestMethod2("Test_ADD__Int64", -5L, 4L); */
-        //[Fact] public void Test_ADD__IntPtr() { Test("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_ADD__IntPtr() { Test("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_ADD__Single() { Test("Test_ADD__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_ADD__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_ADD__Single() { Test("Test_ADD__Single", -5.0f, 4.0f); } /* TestMethod2("Test_ADD__Single", -5.0f, 4.0f); */
-        //[Fact] public void Test_ADD__Double() { Test("Test_ADD__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_ADD__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_ADD__Double() { Test("Test_ADD__Double", -5.0d, 4.0d); } /* TestMethod2("Test_ADD__Double", -5.0d, 4.0d); */
-        //[Fact] public void Test_ADD__Int32_IntPtr() { Test("Test_ADD__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_ADD__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_ADD__Int32_IntPtr() { Test("Test_ADD__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_ADD__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_ADD__Int32_IntPtr() { Test("Test_ADD__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_ADD__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_ADD__Int32_IntPtr() { Test("Test_ADD__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_ADD__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_ADD__IntPtr_Int32() { Test("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_ADD__IntPtr_Int32() { Test("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_ADD__IntPtr_Int32() { Test("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_ADD__IntPtr_Int32() { Test("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //[Fact] public void Test_ADD__Int32() { Test("Test_ADD__Int32", int.MinValue, -1); } /* TestMethod2("Test_ADD__Int32", int.MinValue, -1); */
-        //[Fact] public void Test_ADD__Int32() { Test("Test_ADD__Int32", int.MaxValue, 1); } /* TestMethod2("Test_ADD__Int32", int.MaxValue, 1); */
-        //[Fact] public void Test_ADD__Int64() { Test("Test_ADD__Int64", long.MinValue, -1L); } /* TestMethod2("Test_ADD__Int64", long.MinValue, -1L); */
-        //[Fact] public void Test_ADD__Int64() { Test("Test_ADD__Int64", long.MaxValue, 1L); } /* TestMethod2("Test_ADD__Int64", long.MaxValue, 1L); */
-        //[Fact] public void Test_ADD__IntPtr() { Test("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod2("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-        //[Fact] public void Test_ADD__IntPtr() { Test("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod2("Test_ADD__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-
-        //[Fact] public void Test_ADD_OVF__Int32() { Test("Test_ADD_OVF__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_ADD_OVF__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_ADD_OVF__Int32() { Test("Test_ADD_OVF__Int32", -5, 4); } /* TestMethod2("Test_ADD_OVF__Int32", -5, 4); */
-        //[Fact] public void Test_ADD_OVF__Int64() { Test("Test_ADD_OVF__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_ADD_OVF__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_ADD_OVF__Int64() { Test("Test_ADD_OVF__Int64", -5L, 4L); } /* TestMethod2("Test_ADD_OVF__Int64", -5L, 4L); */
-        //[Fact] public void Test_ADD_OVF__IntPtr() { Test("Test_ADD_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_ADD_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_ADD_OVF__IntPtr() { Test("Test_ADD_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_ADD_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_ADD_OVF__Single() { Test("Test_ADD_OVF__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_ADD_OVF__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_ADD_OVF__Single() { Test("Test_ADD_OVF__Single", -5.0f, 4.0f); } /* TestMethod2("Test_ADD_OVF__Single", -5.0f, 4.0f); */
-        //[Fact] public void Test_ADD_OVF__Double() { Test("Test_ADD_OVF__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_ADD_OVF__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_ADD_OVF__Double() { Test("Test_ADD_OVF__Double", -5.0d, 4.0d); } /* TestMethod2("Test_ADD_OVF__Double", -5.0d, 4.0d); */
-        //[Fact] public void Test_ADD_OVF__Int32_IntPtr() { Test("Test_ADD_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_ADD_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_ADD_OVF__Int32_IntPtr() { Test("Test_ADD_OVF__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_ADD_OVF__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_ADD_OVF__Int32_IntPtr() { Test("Test_ADD_OVF__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_ADD_OVF__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_ADD_OVF__Int32_IntPtr() { Test("Test_ADD_OVF__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_ADD_OVF__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_ADD_OVF__IntPtr_Int32() { Test("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_ADD_OVF__IntPtr_Int32() { Test("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_ADD_OVF__IntPtr_Int32() { Test("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_ADD_OVF__IntPtr_Int32() { Test("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //                                                                                                                                                     // TestMethodEX2("Test_ADD_OVF__Int32", int.MinValue, -1);
-        //                                                                                                                                                     // TestMethodEX2("Test_ADD_OVF__Int32", int.MaxValue, 1);
-        //                                                                                                                                                     // TestMethodEX2("Test_ADD_OVF__Int64", long.MinValue, -1L);
-        //                                                                                                                                                     // TestMethodEX2("Test_ADD_OVF__Int64", long.MaxValue, 1L);
-        //                                                                                                                                                     // TestMethodEX2("Test_ADD_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L));
-        //                                                                                                                                                     // TestMethodEX2("Test_ADD_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-
-        //[Fact] public void Test_ADD_OVF_UN__Int32() { Test("Test_ADD_OVF_UN__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_ADD_OVF_UN__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_ADD_OVF_UN__Int32() { Test("Test_ADD_OVF_UN__Int32", -5, 4); } /* TestMethod2("Test_ADD_OVF_UN__Int32", -5, 4); */
-        //[Fact] public void Test_ADD_OVF_UN__Int64() { Test("Test_ADD_OVF_UN__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_ADD_OVF_UN__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_ADD_OVF_UN__Int64() { Test("Test_ADD_OVF_UN__Int64", -5L, 4L); } /* TestMethod2("Test_ADD_OVF_UN__Int64", -5L, 4L); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr() { Test("Test_ADD_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_ADD_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr() { Test("Test_ADD_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_ADD_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_ADD_OVF_UN__Int32_IntPtr() { Test("Test_ADD_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_ADD_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_ADD_OVF_UN__Int32_IntPtr() { Test("Test_ADD_OVF_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_ADD_OVF_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_ADD_OVF_UN__Int32_IntPtr() { Test("Test_ADD_OVF_UN__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_ADD_OVF_UN__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_ADD_OVF_UN__Int32_IntPtr() { Test("Test_ADD_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_ADD_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr_Int32() { Test("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr_Int32() { Test("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr_Int32() { Test("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr_Int32() { Test("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //                                                                                                                                                           // TestMethodEX2("Test_ADD_OVF_UN__Int32", 1, -1);
-        //                                                                                                                                                           // TestMethodEX2("Test_ADD_OVF_UN__Int64", 1L, -1L);
-        //                                                                                                                                                           // TestMethodEX2("Test_ADD_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L));
-
-        //[Fact] public void Test_SUB__Int32() { Test("Test_SUB__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_SUB__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_SUB__Int32() { Test("Test_SUB__Int32", -5, 4); } /* TestMethod2("Test_SUB__Int32", -5, 4); */
-        //[Fact] public void Test_SUB__Int64() { Test("Test_SUB__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_SUB__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_SUB__Int64() { Test("Test_SUB__Int64", -5L, 4L); } /* TestMethod2("Test_SUB__Int64", -5L, 4L); */
-        //[Fact] public void Test_SUB__IntPtr() { Test("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_SUB__IntPtr() { Test("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_SUB__Single() { Test("Test_SUB__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_SUB__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_SUB__Single() { Test("Test_SUB__Single", -5.0f, 4.0f); } /* TestMethod2("Test_SUB__Single", -5.0f, 4.0f); */
-        //[Fact] public void Test_SUB__Double() { Test("Test_SUB__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_SUB__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_SUB__Double() { Test("Test_SUB__Double", -5.0d, 4.0d); } /* TestMethod2("Test_SUB__Double", -5.0d, 4.0d); */
-        //[Fact] public void Test_SUB__Int32_IntPtr() { Test("Test_SUB__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_SUB__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_SUB__Int32_IntPtr() { Test("Test_SUB__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_SUB__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_SUB__Int32_IntPtr() { Test("Test_SUB__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_SUB__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_SUB__Int32_IntPtr() { Test("Test_SUB__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_SUB__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_SUB__IntPtr_Int32() { Test("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_SUB__IntPtr_Int32() { Test("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_SUB__IntPtr_Int32() { Test("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_SUB__IntPtr_Int32() { Test("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //[Fact] public void Test_SUB__Int32() { Test("Test_SUB__Int32", int.MinValue, 1); } /* TestMethod2("Test_SUB__Int32", int.MinValue, 1); */
-        //[Fact] public void Test_SUB__Int32() { Test("Test_SUB__Int32", int.MaxValue, -1); } /* TestMethod2("Test_SUB__Int32", int.MaxValue, -1); */
-        //[Fact] public void Test_SUB__Int64() { Test("Test_SUB__Int64", long.MinValue, 1L); } /* TestMethod2("Test_SUB__Int64", long.MinValue, 1L); */
-        //[Fact] public void Test_SUB__Int64() { Test("Test_SUB__Int64", long.MaxValue, -1L); } /* TestMethod2("Test_SUB__Int64", long.MaxValue, -1L); */
-        //[Fact] public void Test_SUB__IntPtr() { Test("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); } /* TestMethod2("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L)); */
-        //[Fact] public void Test_SUB__IntPtr() { Test("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); } /* TestMethod2("Test_SUB__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L)); */
-
-        //// TestMethodEX2("Test_SUB_OVF__Int32", int.MinValue, int.MaxValue);
-        //[Fact] public void Test_SUB_OVF__Int32() { Test("Test_SUB_OVF__Int32", -5, 4); } /* TestMethod2("Test_SUB_OVF__Int32", -5, 4); */
-        //                                                                                       // TestMethodEX2("Test_SUB_OVF__Int64", long.MinValue, long.MaxValue);
-        //[Fact] public void Test_SUB_OVF__Int64() { Test("Test_SUB_OVF__Int64", -5L, 4L); } /* TestMethod2("Test_SUB_OVF__Int64", -5L, 4L); */
-        //                                                                                         // TestMethodEX2("Test_SUB_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue));
-        //[Fact] public void Test_SUB_OVF__IntPtr() { Test("Test_SUB_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_SUB_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_SUB_OVF__Single() { Test("Test_SUB_OVF__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_SUB_OVF__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_SUB_OVF__Single() { Test("Test_SUB_OVF__Single", -5.0f, 4.0f); } /* TestMethod2("Test_SUB_OVF__Single", -5.0f, 4.0f); */
-        //[Fact] public void Test_SUB_OVF__Double() { Test("Test_SUB_OVF__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_SUB_OVF__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_SUB_OVF__Double() { Test("Test_SUB_OVF__Double", -5.0d, 4.0d); } /* TestMethod2("Test_SUB_OVF__Double", -5.0d, 4.0d); */
-        //[Fact] public void Test_SUB_OVF__Int32_IntPtr() { Test("Test_SUB_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_SUB_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_SUB_OVF__Int32_IntPtr() { Test("Test_SUB_OVF__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_SUB_OVF__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_SUB_OVF__Int32_IntPtr() { Test("Test_SUB_OVF__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_SUB_OVF__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_SUB_OVF__Int32_IntPtr() { Test("Test_SUB_OVF__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_SUB_OVF__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_SUB_OVF__IntPtr_Int32() { Test("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethodEX("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_SUB_OVF__IntPtr_Int32() { Test("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethodEX("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_SUB_OVF__IntPtr_Int32() { Test("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_SUB_OVF__IntPtr_Int32() { Test("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //                                                                                                                                                     // TestMethodEX2("Test_SUB_OVF__Int32", int.MinValue, 1);
-        //                                                                                                                                                     // TestMethodEX2("Test_SUB_OVF__Int32", int.MaxValue, -1);
-        //                                                                                                                                                     // TestMethodEX2("Test_SUB_OVF__Int64", long.MinValue, 1L);
-        //                                                                                                                                                     // TestMethodEX2("Test_SUB_OVF__Int64", long.MaxValue, -1L);
-        //                                                                                                                                                     // TestMethodEX2("Test_SUB_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-        //                                                                                                                                                     // TestMethodEX2("Test_SUB_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L));
-
-        //// TestMethodEX2("Test_SUB_OVF_UN__Int32", int.MinValue, int.MaxValue);
-        //// TestMethodEX2("Test_SUB_OVF_UN__Int32", -5, 4);
-        //// TestMethodEX2("Test_SUB_OVF_UN__Int64", long.MinValue, long.MaxValue);
-        //// TestMethodEX2("Test_SUB_OVF_UN__Int64", -5L, 4L);
-        //// TestMethodEX2("Test_SUB_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue));
-        //// TestMethodEX2("Test_SUB_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L));
-        //[Fact] public void Test_SUB_OVF_UN__Int32_IntPtr() { Test("Test_SUB_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_SUB_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_SUB_OVF_UN__Int32_IntPtr() { Test("Test_SUB_OVF_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_SUB_OVF_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_SUB_OVF_UN__Int32_IntPtr() { Test("Test_SUB_OVF_UN__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_SUB_OVF_UN__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_SUB_OVF_UN__Int32_IntPtr() { Test("Test_SUB_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethodEX("Test_SUB_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_SUB_OVF_UN__IntPtr_Int32() { Test("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_SUB_OVF_UN__IntPtr_Int32() { Test("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethodEX("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_SUB_OVF_UN__IntPtr_Int32() { Test("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_SUB_OVF_UN__IntPtr_Int32() { Test("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethodEX("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //                                                                                                                                                           // TestMethodEX2("Test_SUB_OVF_UN__Int32", 0, 1);
-        //                                                                                                                                                           // TestMethodEX2("Test_SUB_OVF_UN__Int64", 0L, 1L);
-        //                                                                                                                                                           // TestMethodEX2("Test_SUB_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L));
-
-        //[Fact] public void Test_MUL__Int32() { Test("Test_MUL__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_MUL__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_MUL__Int32() { Test("Test_MUL__Int32", -5, 4); } /* TestMethod2("Test_MUL__Int32", -5, 4); */
-        //[Fact] public void Test_MUL__Int64() { Test("Test_MUL__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_MUL__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_MUL__Int64() { Test("Test_MUL__Int64", -5L, 4L); } /* TestMethod2("Test_MUL__Int64", -5L, 4L); */
-        //[Fact] public void Test_MUL__IntPtr() { Test("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_MUL__IntPtr() { Test("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_MUL__Single() { Test("Test_MUL__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_MUL__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_MUL__Single() { Test("Test_MUL__Single", -5.0f, 4.0f); } /* TestMethod2("Test_MUL__Single", -5.0f, 4.0f); */
-        //[Fact] public void Test_MUL__Double() { Test("Test_MUL__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_MUL__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_MUL__Double() { Test("Test_MUL__Double", -5.0d, 4.0d); } /* TestMethod2("Test_MUL__Double", -5.0d, 4.0d); */
-        //[Fact] public void Test_MUL__Int32_IntPtr() { Test("Test_MUL__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_MUL__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_MUL__Int32_IntPtr() { Test("Test_MUL__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_MUL__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_MUL__Int32_IntPtr() { Test("Test_MUL__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_MUL__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_MUL__Int32_IntPtr() { Test("Test_MUL__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_MUL__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_MUL__IntPtr_Int32() { Test("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_MUL__IntPtr_Int32() { Test("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_MUL__IntPtr_Int32() { Test("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_MUL__IntPtr_Int32() { Test("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //[Fact] public void Test_MUL__Int32() { Test("Test_MUL__Int32", int.MinValue, 2); } /* TestMethod2("Test_MUL__Int32", int.MinValue, 2); */
-        //[Fact] public void Test_MUL__Int32() { Test("Test_MUL__Int32", int.MaxValue, 2); } /* TestMethod2("Test_MUL__Int32", int.MaxValue, 2); */
-        //[Fact] public void Test_MUL__Int64() { Test("Test_MUL__Int64", long.MinValue, 2L); } /* TestMethod2("Test_MUL__Int64", long.MinValue, 2L); */
-        //[Fact] public void Test_MUL__Int64() { Test("Test_MUL__Int64", long.MaxValue, 2L); } /* TestMethod2("Test_MUL__Int64", long.MaxValue, 2L); */
-        //[Fact] public void Test_MUL__IntPtr() { Test("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-        //[Fact] public void Test_MUL__IntPtr() { Test("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_MUL__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-
-        //// TestMethodEX2("Test_MUL_OVF__Int32", int.MinValue, int.MaxValue);
-        //[Fact] public void Test_MUL_OVF__Int32() { Test("Test_MUL_OVF__Int32", -5, 4); } /* TestMethod2("Test_MUL_OVF__Int32", -5, 4); */
-        //                                                                                       // TestMethodEX2("Test_MUL_OVF__Int64", long.MinValue, long.MaxValue);
-        //[Fact] public void Test_MUL_OVF__Int64() { Test("Test_MUL_OVF__Int64", -5L, 4L); } /* TestMethod2("Test_MUL_OVF__Int64", -5L, 4L); */
-        //                                                                                         // TestMethodEX2("Test_MUL_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue));
-        //[Fact] public void Test_MUL_OVF__IntPtr() { Test("Test_MUL_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_MUL_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //                                                                                                                                                                                          // TestMethodEX2("Test_MUL_OVF__Single", float.MinValue, float.MaxValue);
-        //[Fact] public void Test_MUL_OVF__Single() { Test("Test_MUL_OVF__Single", -5.0f, 4.0f); } /* TestMethod2("Test_MUL_OVF__Single", -5.0f, 4.0f); */
-        //                                                                                               // TestMethodEX2("Test_MUL_OVF__Double", double.MinValue, double.MaxValue);
-        //[Fact] public void Test_MUL_OVF__Double() { Test("Test_MUL_OVF__Double", -5.0d, 4.0d); } /* TestMethod2("Test_MUL_OVF__Double", -5.0d, 4.0d); */
-        //[Fact] public void Test_MUL_OVF__Int32_IntPtr() { Test("Test_MUL_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_MUL_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_MUL_OVF__Int32_IntPtr() { Test("Test_MUL_OVF__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_MUL_OVF__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_MUL_OVF__Int32_IntPtr() { Test("Test_MUL_OVF__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_MUL_OVF__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_MUL_OVF__Int32_IntPtr() { Test("Test_MUL_OVF__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethod("Test_MUL_OVF__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_MUL_OVF__IntPtr_Int32() { Test("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethodEX("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_MUL_OVF__IntPtr_Int32() { Test("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethodEX("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_MUL_OVF__IntPtr_Int32() { Test("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethod("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_MUL_OVF__IntPtr_Int32() { Test("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethod("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //                                                                                                                                                     // TestMethodEX2("Test_MUL_OVF__Int32", int.MinValue, 2);
-        //                                                                                                                                                     // TestMethodEX2("Test_MUL_OVF__Int32", int.MaxValue, 2);
-        //                                                                                                                                                     // TestMethodEX2("Test_MUL_OVF__Int64", long.MinValue, 2L);
-        //                                                                                                                                                     // TestMethodEX2("Test_MUL_OVF__Int64", long.MaxValue, 2L);
-        //                                                                                                                                                     // TestMethodEX2("Test_MUL_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L));
-        //                                                                                                                                                     // TestMethodEX2("Test_MUL_OVF__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L));
-
-        //// TestMethodEX2("Test_MUL_OVF_UN__Int32", int.MinValue, int.MaxValue);
-        //// TestMethodEX2("Test_MUL_OVF_UN__Int32", -5, 4);
-        //[Fact] public void Test_MUL_OVF_UN__Int32() { Test("Test_MUL_OVF_UN__Int32", 5, 4); } /* TestMethod2("Test_MUL_OVF_UN__Int32", 5, 4); */
-        //                                                                                            // TestMethodEX2("Test_MUL_OVF_UN__Int64", long.MinValue, long.MaxValue);
-        //                                                                                            // TestMethodEX2("Test_MUL_OVF_UN__Int64", -5L, 4L);
-        //[Fact] public void Test_MUL_OVF_UN__Int64() { Test("Test_MUL_OVF_UN__Int64", 5L, 4L); } /* TestMethod2("Test_MUL_OVF_UN__Int64", 5L, 4L); */
-        //                                                                                              // TestMethodEX2("Test_MUL_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue));
-        //                                                                                              // TestMethodEX2("Test_MUL_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L));
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr() { Test("Test_MUL_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_MUL_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethodEX("Test_MUL_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethodEX("Test_MUL_OVF_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethodEX("Test_MUL_OVF_UN__Int32_IntPtr", -5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", 5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_MUL_OVF_UN__Int32_IntPtr", 5, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); } /* TestMethodEX("Test_MUL_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L)); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L)); } /* TestMethod("Test_MUL_OVF_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L)); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethodEX("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethodEX("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); } /* TestMethodEX("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-5) : new IntPtr(-5L), 4); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L), 4); } /* TestMethod("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(5) : new IntPtr(5L), 4); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); } /* TestMethodEX("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -5); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), 5); } /* TestMethod("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), 5); */
-        //                                                                                                                                                          // TestMethodEX2("Test_MUL_OVF_UN__Int32", -1, 2);
-        //                                                                                                                                                          // TestMethodEX2("Test_MUL_OVF_UN__Int64", -1L, 2L);
-        //                                                                                                                                                          // TestMethodEX2("Test_MUL_OVF_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1) : new IntPtr(-1L), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L));
-
-        //[Fact] public void Test_DIV__Int32() { Test("Test_DIV__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_DIV__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_DIV__Int32() { Test("Test_DIV__Int32", -1234, 4); } /* TestMethod2("Test_DIV__Int32", -1234, 4); */
-        //[Fact] public void Test_DIV__Int32() { Test("Test_DIV__Int32", 1, 0); } /* TestMethod2("Test_DIV__Int32", 1, 0); */
-        //[Fact] public void Test_DIV__Int64() { Test("Test_DIV__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_DIV__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_DIV__Int64() { Test("Test_DIV__Int64", -1234L, 4L); } /* TestMethod2("Test_DIV__Int64", -1234L, 4L); */
-        //[Fact] public void Test_DIV__Int64() { Test("Test_DIV__Int64", 1L, 0L); } /* TestMethod2("Test_DIV__Int64", 1L, 0L); */
-        //[Fact] public void Test_DIV__IntPtr() { Test("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_DIV__IntPtr() { Test("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_DIV__IntPtr() { Test("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod2("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_DIV__Single() { Test("Test_DIV__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_DIV__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_DIV__Single() { Test("Test_DIV__Single", -1234.0f, 4.0f); } /* TestMethod2("Test_DIV__Single", -1234.0f, 4.0f); */
-        //[Fact] public void Test_DIV__Single() { Test("Test_DIV__Single", 1.0f, 0.0f); } /* TestMethod2("Test_DIV__Single", 1.0f, 0.0f); */
-        //[Fact] public void Test_DIV__Double() { Test("Test_DIV__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_DIV__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_DIV__Double() { Test("Test_DIV__Double", -1234.0d, 4.0d); } /* TestMethod2("Test_DIV__Double", -1234.0d, 4.0d); */
-        //[Fact] public void Test_DIV__Double() { Test("Test_DIV__Double", 1.0d, 0.0d); } /* TestMethod2("Test_DIV__Double", 1.0d, 0.0d); */
-        //[Fact] public void Test_DIV__Int32_IntPtr() { Test("Test_DIV__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_DIV__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_DIV__Int32_IntPtr() { Test("Test_DIV__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_DIV__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_DIV__Int32_IntPtr() { Test("Test_DIV__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_DIV__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_DIV__Int32_IntPtr() { Test("Test_DIV__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); } /* TestMethod("Test_DIV__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); */
-        //[Fact] public void Test_DIV__Int32_IntPtr() { Test("Test_DIV__Int32_IntPtr", 1, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_DIV__Int32_IntPtr", 1, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_DIV__IntPtr_Int32() { Test("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_DIV__IntPtr_Int32() { Test("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_DIV__IntPtr_Int32() { Test("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); } /* TestMethod("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); */
-        //[Fact] public void Test_DIV__IntPtr_Int32() { Test("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); } /* TestMethod("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); */
-        //[Fact] public void Test_DIV__IntPtr_Int32() { Test("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), 0); } /* TestMethod("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), 0); */
-        //[Fact] public void Test_DIV__Int32() { Test("Test_DIV__Int32", int.MinValue, 2); } /* TestMethod2("Test_DIV__Int32", int.MinValue, 2); */
-        //[Fact] public void Test_DIV__Int32() { Test("Test_DIV__Int32", int.MaxValue, 2); } /* TestMethod2("Test_DIV__Int32", int.MaxValue, 2); */
-        //[Fact] public void Test_DIV__Int64() { Test("Test_DIV__Int64", long.MinValue, 2L); } /* TestMethod2("Test_DIV__Int64", long.MinValue, 2L); */
-        //[Fact] public void Test_DIV__Int64() { Test("Test_DIV__Int64", long.MaxValue, 2L); } /* TestMethod2("Test_DIV__Int64", long.MaxValue, 2L); */
-        //[Fact] public void Test_DIV__IntPtr() { Test("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-        //[Fact] public void Test_DIV__IntPtr() { Test("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_DIV__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-
-        //[Fact] public void Test_REM__Int32() { Test("Test_REM__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_REM__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_REM__Int32() { Test("Test_REM__Int32", -1234, 4); } /* TestMethod2("Test_REM__Int32", -1234, 4); */
-        //[Fact] public void Test_REM__Int32() { Test("Test_REM__Int32", 1, 0); } /* TestMethod2("Test_REM__Int32", 1, 0); */
-        //[Fact] public void Test_REM__Int64() { Test("Test_REM__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_REM__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_REM__Int64() { Test("Test_REM__Int64", -1234L, 4L); } /* TestMethod2("Test_REM__Int64", -1234L, 4L); */
-        //[Fact] public void Test_REM__Int64() { Test("Test_REM__Int64", 1L, 0L); } /* TestMethod2("Test_REM__Int64", 1L, 0L); */
-        //[Fact] public void Test_REM__IntPtr() { Test("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_REM__IntPtr() { Test("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_REM__IntPtr() { Test("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod2("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_REM__Single() { Test("Test_REM__Single", float.MinValue, float.MaxValue); } /* TestMethod2("Test_REM__Single", float.MinValue, float.MaxValue); */
-        //[Fact] public void Test_REM__Single() { Test("Test_REM__Single", -1234.0f, 4.0f); } /* TestMethod2("Test_REM__Single", -1234.0f, 4.0f); */
-        //[Fact] public void Test_REM__Single() { Test("Test_REM__Single", 1.0f, 0.0f); } /* TestMethod2("Test_REM__Single", 1.0f, 0.0f); */
-        //[Fact] public void Test_REM__Double() { Test("Test_REM__Double", double.MinValue, double.MaxValue); } /* TestMethod2("Test_REM__Double", double.MinValue, double.MaxValue); */
-        //[Fact] public void Test_REM__Double() { Test("Test_REM__Double", -1234.0d, 4.0d); } /* TestMethod2("Test_REM__Double", -1234.0d, 4.0d); */
-        //[Fact] public void Test_REM__Double() { Test("Test_REM__Double", 1.0d, 0.0d); } /* TestMethod2("Test_REM__Double", 1.0d, 0.0d); */
-        //[Fact] public void Test_REM__Int32_IntPtr() { Test("Test_REM__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_REM__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_REM__Int32_IntPtr() { Test("Test_REM__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_REM__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_REM__Int32_IntPtr() { Test("Test_REM__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_REM__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_REM__Int32_IntPtr() { Test("Test_REM__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); } /* TestMethod("Test_REM__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); */
-        //[Fact] public void Test_REM__Int32_IntPtr() { Test("Test_REM__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_REM__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_REM__IntPtr_Int32() { Test("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_REM__IntPtr_Int32() { Test("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_REM__IntPtr_Int32() { Test("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); } /* TestMethod("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); */
-        //[Fact] public void Test_REM__IntPtr_Int32() { Test("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); } /* TestMethod("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); */
-        //[Fact] public void Test_REM__IntPtr_Int32() { Test("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), 0); } /* TestMethod("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), 0); */
-        //[Fact] public void Test_REM__Int32() { Test("Test_REM__Int32", int.MinValue, 2); } /* TestMethod2("Test_REM__Int32", int.MinValue, 2); */
-        //[Fact] public void Test_REM__Int32() { Test("Test_REM__Int32", int.MaxValue, 2); } /* TestMethod2("Test_REM__Int32", int.MaxValue, 2); */
-        //[Fact] public void Test_REM__Int64() { Test("Test_REM__Int64", long.MinValue, 2L); } /* TestMethod2("Test_REM__Int64", long.MinValue, 2L); */
-        //[Fact] public void Test_REM__Int64() { Test("Test_REM__Int64", long.MaxValue, 2L); } /* TestMethod2("Test_REM__Int64", long.MaxValue, 2L); */
-        //[Fact] public void Test_REM__IntPtr() { Test("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-        //[Fact] public void Test_REM__IntPtr() { Test("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_REM__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-
-        //[Fact] public void Test_DIV_UN__Int32() { Test("Test_DIV_UN__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_DIV_UN__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_DIV_UN__Int32() { Test("Test_DIV_UN__Int32", -1234, 4); } /* TestMethod2("Test_DIV_UN__Int32", -1234, 4); */
-        //[Fact] public void Test_DIV_UN__Int32() { Test("Test_DIV_UN__Int32", 1, 0); } /* TestMethod2("Test_DIV_UN__Int32", 1, 0); */
-        //[Fact] public void Test_DIV_UN__Int64() { Test("Test_DIV_UN__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_DIV_UN__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_DIV_UN__Int64() { Test("Test_DIV_UN__Int64", -1234L, 4L); } /* TestMethod2("Test_DIV_UN__Int64", -1234L, 4L); */
-        //[Fact] public void Test_DIV_UN__Int64() { Test("Test_DIV_UN__Int64", 1L, 0L); } /* TestMethod2("Test_DIV_UN__Int64", 1L, 0L); */
-        //[Fact] public void Test_DIV_UN__IntPtr() { Test("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_DIV_UN__IntPtr() { Test("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_DIV_UN__IntPtr() { Test("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod2("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_DIV_UN__Int32_IntPtr() { Test("Test_DIV_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_DIV_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_DIV_UN__Int32_IntPtr() { Test("Test_DIV_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_DIV_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_DIV_UN__Int32_IntPtr() { Test("Test_DIV_UN__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_DIV_UN__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_DIV_UN__Int32_IntPtr() { Test("Test_DIV_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); } /* TestMethod("Test_DIV_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); */
-        //[Fact] public void Test_DIV_UN__Int32_IntPtr() { Test("Test_DIV_UN__Int32_IntPtr", 1, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_DIV_UN__Int32_IntPtr", 1, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_DIV_UN__IntPtr_Int32() { Test("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_DIV_UN__IntPtr_Int32() { Test("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_DIV_UN__IntPtr_Int32() { Test("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); } /* TestMethod("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); */
-        //[Fact] public void Test_DIV_UN__IntPtr_Int32() { Test("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); } /* TestMethod("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); */
-        //[Fact] public void Test_DIV_UN__IntPtr_Int32() { Test("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), 0); } /* TestMethod("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), 0); */
-        //[Fact] public void Test_DIV_UN__Int32() { Test("Test_DIV_UN__Int32", int.MinValue, 2); } /* TestMethod2("Test_DIV_UN__Int32", int.MinValue, 2); */
-        //[Fact] public void Test_DIV_UN__Int32() { Test("Test_DIV_UN__Int32", int.MaxValue, 2); } /* TestMethod2("Test_DIV_UN__Int32", int.MaxValue, 2); */
-        //[Fact] public void Test_DIV_UN__Int64() { Test("Test_DIV_UN__Int64", long.MinValue, 2L); } /* TestMethod2("Test_DIV_UN__Int64", long.MinValue, 2L); */
-        //[Fact] public void Test_DIV_UN__Int64() { Test("Test_DIV_UN__Int64", long.MaxValue, 2L); } /* TestMethod2("Test_DIV_UN__Int64", long.MaxValue, 2L); */
-        //[Fact] public void Test_DIV_UN__IntPtr() { Test("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-        //[Fact] public void Test_DIV_UN__IntPtr() { Test("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_DIV_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-
-        //[Fact] public void Test_REM_UN__Int32() { Test("Test_REM_UN__Int32", int.MinValue, int.MaxValue); } /* TestMethod2("Test_REM_UN__Int32", int.MinValue, int.MaxValue); */
-        //[Fact] public void Test_REM_UN__Int32() { Test("Test_REM_UN__Int32", -1234, 4); } /* TestMethod2("Test_REM_UN__Int32", -1234, 4); */
-        //[Fact] public void Test_REM_UN__Int32() { Test("Test_REM_UN__Int32", 1, 0); } /* TestMethod2("Test_REM_UN__Int32", 1, 0); */
-        //[Fact] public void Test_REM_UN__Int64() { Test("Test_REM_UN__Int64", long.MinValue, long.MaxValue); } /* TestMethod2("Test_REM_UN__Int64", long.MinValue, long.MaxValue); */
-        //[Fact] public void Test_REM_UN__Int64() { Test("Test_REM_UN__Int64", -1234L, 4L); } /* TestMethod2("Test_REM_UN__Int64", -1234L, 4L); */
-        //[Fact] public void Test_REM_UN__Int64() { Test("Test_REM_UN__Int64", 1L, 0L); } /* TestMethod2("Test_REM_UN__Int64", 1L, 0L); */
-        //[Fact] public void Test_REM_UN__IntPtr() { Test("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod2("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_REM_UN__IntPtr() { Test("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod2("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_REM_UN__IntPtr() { Test("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod2("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_REM_UN__Int32_IntPtr() { Test("Test_REM_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); } /* TestMethod("Test_REM_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue)); */
-        //[Fact] public void Test_REM_UN__Int32_IntPtr() { Test("Test_REM_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); } /* TestMethod("Test_REM_UN__Int32_IntPtr", int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue)); */
-        //[Fact] public void Test_REM_UN__Int32_IntPtr() { Test("Test_REM_UN__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); } /* TestMethod("Test_REM_UN__Int32_IntPtr", -1234, IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L)); */
-        //[Fact] public void Test_REM_UN__Int32_IntPtr() { Test("Test_REM_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); } /* TestMethod("Test_REM_UN__Int32_IntPtr", 4, IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L)); */
-        //[Fact] public void Test_REM_UN__Int32_IntPtr() { Test("Test_REM_UN__Int32_IntPtr", 1, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_REM_UN__Int32_IntPtr", 1, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_REM_UN__IntPtr_Int32() { Test("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); } /* TestMethod("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue); */
-        //[Fact] public void Test_REM_UN__IntPtr_Int32() { Test("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); } /* TestMethod("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue); */
-        //[Fact] public void Test_REM_UN__IntPtr_Int32() { Test("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); } /* TestMethod("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(-1234) : new IntPtr(-1234L), 4); */
-        //[Fact] public void Test_REM_UN__IntPtr_Int32() { Test("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); } /* TestMethod("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(4) : new IntPtr(4L), -1234); */
-        //[Fact] public void Test_REM_UN__IntPtr_Int32() { Test("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), 0); } /* TestMethod("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(1) : new IntPtr(1L), 0); */
-        //[Fact] public void Test_REM_UN__Int32() { Test("Test_REM_UN__Int32", int.MinValue, 2); } /* TestMethod2("Test_REM_UN__Int32", int.MinValue, 2); */
-        //[Fact] public void Test_REM_UN__Int32() { Test("Test_REM_UN__Int32", int.MaxValue, 2); } /* TestMethod2("Test_REM_UN__Int32", int.MaxValue, 2); */
-        //[Fact] public void Test_REM_UN__Int64() { Test("Test_REM_UN__Int64", long.MinValue, 2L); } /* TestMethod2("Test_REM_UN__Int64", long.MinValue, 2L); */
-        //[Fact] public void Test_REM_UN__Int64() { Test("Test_REM_UN__Int64", long.MaxValue, 2L); } /* TestMethod2("Test_REM_UN__Int64", long.MaxValue, 2L); */
-        //[Fact] public void Test_REM_UN__IntPtr() { Test("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-        //[Fact] public void Test_REM_UN__IntPtr() { Test("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); } /* TestMethod2("Test_REM_UN__IntPtr", IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), IntPtr.Size == 4 ? new IntPtr(2) : new IntPtr(2L)); */
-
-        //[Fact] public void Test_BOX_UNBOX() { Test("Test_BOX_UNBOX"); } /* TestMethod("Test_BOX_UNBOX"); */
-        //[Fact] public void Test_CASTCLASS() { Test("Test_CASTCLASS"); } /* TestMethod("Test_CASTCLASS"); */
-        //[Fact] public void Test_ISINST() { Test("Test_ISINST"); } /* TestMethod("Test_ISINST"); */
-        //[Fact] public void Test_SIZEOF() { Test("Test_SIZEOF", IntPtr.Size); } /* TestMethod("Test_SIZEOF", IntPtr.Size); */
-
-        //[Fact] public void Test_NEWARR__Int32() { Test("Test_NEWARR__Int32", 0); } /* TestMethod("Test_NEWARR__Int32", 0); */
-        //[Fact] public void Test_NEWARR__Int32() { Test("Test_NEWARR__Int32", 123); } /* TestMethod("Test_NEWARR__Int32", 123); */
-        //[Fact] public void Test_NEWARR__IntPtr() { Test("Test_NEWARR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_NEWARR__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_NEWARR__IntPtr() { Test("Test_NEWARR__IntPtr", IntPtr.Size == 4 ? new IntPtr(123) : new IntPtr(123L)); } /* TestMethod("Test_NEWARR__IntPtr", IntPtr.Size == 4 ? new IntPtr(123) : new IntPtr(123L)); */
-
-        //[Fact] public void Test_LDLEN__Int32() { Test("Test_LDLEN__Int32", 0); } /* TestMethod("Test_LDLEN__Int32", 0); */
-        //[Fact] public void Test_LDLEN__Int32() { Test("Test_LDLEN__Int32", 123); } /* TestMethod("Test_LDLEN__Int32", 123); */
-        //[Fact] public void Test_LDLEN__IntPtr() { Test("Test_LDLEN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_LDLEN__IntPtr", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_LDLEN__IntPtr() { Test("Test_LDLEN__IntPtr", IntPtr.Size == 4 ? new IntPtr(123) : new IntPtr(123L)); } /* TestMethod("Test_LDLEN__IntPtr", IntPtr.Size == 4 ? new IntPtr(123) : new IntPtr(123L)); */
-
-        //[Fact] public void Test_LDELEM_I__STELEM_I() { Test("Test_LDELEM_I__STELEM_I"); } /* TestMethod("Test_LDELEM_I__STELEM_I"); */
-        //[Fact] public void Test_LDELEM_I1__STELEM_I1() { Test("Test_LDELEM_I1__STELEM_I1"); } /* TestMethod("Test_LDELEM_I1__STELEM_I1"); */
-        //[Fact] public void Test_LDELEM_I2__STELEM_I2() { Test("Test_LDELEM_I2__STELEM_I2"); } /* TestMethod("Test_LDELEM_I2__STELEM_I2"); */
-        //[Fact] public void Test_LDELEM_I4__STELEM_I4() { Test("Test_LDELEM_I4__STELEM_I4"); } /* TestMethod("Test_LDELEM_I4__STELEM_I4"); */
-        //[Fact] public void Test_LDELEM_I8__STELEM_I8() { Test("Test_LDELEM_I8__STELEM_I8"); } /* TestMethod("Test_LDELEM_I8__STELEM_I8"); */
-        //[Fact] public void Test_LDELEM_U1__STELEM_I1() { Test("Test_LDELEM_U1__STELEM_I1"); } /* TestMethod("Test_LDELEM_U1__STELEM_I1"); */
-        //[Fact] public void Test_LDELEM_U2__STELEM_I2() { Test("Test_LDELEM_U2__STELEM_I2"); } /* TestMethod("Test_LDELEM_U2__STELEM_I2"); */
-        //[Fact] public void Test_LDELEM_U4__STELEM_I4() { Test("Test_LDELEM_U4__STELEM_I4"); } /* TestMethod("Test_LDELEM_U4__STELEM_I4"); */
-        //[Fact] public void Test_LDELEM_R4__STELEM_R4() { Test("Test_LDELEM_R4__STELEM_R4"); } /* TestMethod("Test_LDELEM_R4__STELEM_R4"); */
-        //[Fact] public void Test_LDELEM_R8__STELEM_R8() { Test("Test_LDELEM_R8__STELEM_R8"); } /* TestMethod("Test_LDELEM_R8__STELEM_R8"); */
-        //[Fact] public void Test_LDELEM_REF__STELEM_REF() { Test("Test_LDELEM_REF__STELEM_REF"); } /* TestMethod("Test_LDELEM_REF__STELEM_REF"); */
-        //[Fact] public void Test_LDELEM__STELEM() { Test("Test_LDELEM__STELEM"); } /* TestMethod("Test_LDELEM__STELEM"); */
-
-        //[Fact] public void Test_LDARGA() { Test("Test_LDARGA", 123, "hello"); } /* TestMethod("Test_LDARGA", 123, "hello"); */
-        //[Fact] public void Test_LDARGA_S() { Test("Test_LDARGA_S", 123, "hello"); } /* TestMethod("Test_LDARGA_S", 123, "hello"); */
-        //[Fact] public void Test_LDLOCA() { Test("Test_LDLOCA"); } /* TestMethod("Test_LDLOCA"); */
-        //[Fact] public void Test_LDLOCA_S() { Test("Test_LDLOCA_S"); } /* TestMethod("Test_LDLOCA_S"); */
-        //[Fact] public void Test_LDELEMA() { Test("Test_LDELEMA"); } /* TestMethod("Test_LDELEMA"); */
-        //[Fact] public void Test_LDIND_STIND() { Test("Test_LDIND_STIND"); } /* TestMethod("Test_LDIND_STIND"); */
-
-        //[Fact] public void Test_READONLY() { Test("Test_READONLY"); } /* TestMethod("Test_READONLY"); */
-        //[Fact] public void Test_UNALIGNED() { Test("Test_UNALIGNED"); } /* TestMethod("Test_UNALIGNED"); */
-        //[Fact] public void Test_VOLATILE() { Test("Test_VOLATILE"); } /* TestMethod("Test_VOLATILE"); */
-        //[Fact] public void Test_UNALIGNED_VOLATILE() { Test("Test_UNALIGNED_VOLATILE"); } /* TestMethod("Test_UNALIGNED_VOLATILE"); */
-
-        //[Fact] public void Test_INITOBJ() { Test("Test_INITOBJ"); } /* TestMethod("Test_INITOBJ"); */
-        //[Fact] public void Test_LDFLD_STFLD_LDFLDA() { Test("Test_LDFLD_STFLD_LDFLDA"); } /* TestMethod("Test_LDFLD_STFLD_LDFLDA"); */
-        //[Fact] public void Test_LDSFLD_STSFLD_LDSFLDA() { Test("Test_LDSFLD_STSFLD_LDSFLDA"); } /* TestMethod("Test_LDSFLD_STSFLD_LDSFLDA"); */
-        //[Fact] public void Test_LDOBJ_STOBJ() { Test("Test_LDOBJ_STOBJ"); } /* TestMethod("Test_LDOBJ_STOBJ"); */
-        //[Fact] public void Test_CPOBJ() { Test("Test_CPOBJ"); } /* TestMethod("Test_CPOBJ"); */
-
-        //[Fact] public void Test_NEWOBJ__Struct() { Test("Test_NEWOBJ__Struct"); } /* TestMethod("Test_NEWOBJ__Struct"); */
-        //[Fact] public void Test_NEWOBJ__Class() { Test("Test_NEWOBJ__Class"); } /* TestMethod("Test_NEWOBJ__Class"); */
-
-        //[Fact] public void Test_CALL__Static_Struct() { Test("Test_CALL__Static_Struct"); } /* TestMethod("Test_CALL__Static_Struct"); */
-        //[Fact] public void Test_CALL__Static_Class() { Test("Test_CALL__Static_Class"); } /* TestMethod("Test_CALL__Static_Class"); */
-        //[Fact] public void Test_CALL__Instance_Struct() { Test("Test_CALL__Instance_Struct"); } /* TestMethod("Test_CALL__Instance_Struct"); */
-        //[Fact] public void Test_CALL__Instance_Class() { Test("Test_CALL__Instance_Class"); } /* TestMethod("Test_CALL__Instance_Class"); */
-
-        //[Fact] public void Test_LDTOKEN__Field() { Test("Test_LDTOKEN__Field"); } /* TestMethod("Test_LDTOKEN__Field"); */
-        //[Fact] public void Test_LDTOKEN__Method() { Test("Test_LDTOKEN__Method"); } /* TestMethod("Test_LDTOKEN__Method"); */
-        //[Fact] public void Test_LDTOKEN__Type() { Test("Test_LDTOKEN__Type"); } /* TestMethod("Test_LDTOKEN__Type"); */
-
-        //[Fact] public void Test_LOCALLOC() { Test("Test_LOCALLOC"); } /* TestMethod("Test_LOCALLOC"); */
-
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", 0.0f); } /* TestMethod("Test_CKFINITE__Single", 0.0f); */
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", -0.0f); } /* TestMethod("Test_CKFINITE__Single", -0.0f); */
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", float.MaxValue); } /* TestMethod("Test_CKFINITE__Single", float.MaxValue); */
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", float.NaN); } /* TestMethodEX("Test_CKFINITE__Single", float.NaN); */
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", float.NegativeInfinity); } /* TestMethodEX("Test_CKFINITE__Single", float.NegativeInfinity); */
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", float.PositiveInfinity); } /* TestMethodEX("Test_CKFINITE__Single", float.PositiveInfinity); */
-        //[Fact] public void Test_CKFINITE__Single() { Test("Test_CKFINITE__Single", float.Epsilon); } /* TestMethod("Test_CKFINITE__Single", float.Epsilon); */
-
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", 0.0d); } /* TestMethod("Test_CKFINITE__Double", 0.0d); */
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", -0.0d); } /* TestMethod("Test_CKFINITE__Double", -0.0d); */
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", double.MaxValue); } /* TestMethod("Test_CKFINITE__Double", double.MaxValue); */
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", double.NaN); } /* TestMethodEX("Test_CKFINITE__Double", double.NaN); */
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", double.NegativeInfinity); } /* TestMethodEX("Test_CKFINITE__Double", double.NegativeInfinity); */
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", double.PositiveInfinity); } /* TestMethodEX("Test_CKFINITE__Double", double.PositiveInfinity); */
-        //[Fact] public void Test_CKFINITE__Double() { Test("Test_CKFINITE__Double", double.Epsilon); } /* TestMethod("Test_CKFINITE__Double", double.Epsilon); */
-
-        //[Fact] public void Test_INITBLK() { Test("Test_INITBLK"); } /* TestMethod("Test_INITBLK"); */
-
-        //[Fact] public void Test_AND__IntPtr_Int32() { Test("Test_AND__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_AND__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_AND__Int32_IntPtr() { Test("Test_AND__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_AND__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_OR__IntPtr_Int32() { Test("Test_OR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_OR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_OR__Int32_IntPtr() { Test("Test_OR__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_OR__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_XOR__IntPtr_Int32() { Test("Test_XOR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_XOR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_XOR__Int32_IntPtr() { Test("Test_XOR__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_XOR__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_ADD__IntPtr_Int32() { Test("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_ADD__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_ADD__Int32_IntPtr() { Test("Test_ADD__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_ADD__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_ADD_OVF__IntPtr_Int32() { Test("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_ADD_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_ADD_OVF__Int32_IntPtr() { Test("Test_ADD_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_ADD_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_ADD_OVF_UN__IntPtr_Int32() { Test("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_ADD_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_ADD_OVF_UN__Int32_IntPtr() { Test("Test_ADD_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_ADD_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_SUB__IntPtr_Int32() { Test("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_SUB__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_SUB__Int32_IntPtr() { Test("Test_SUB__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_SUB__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_SUB_OVF__IntPtr_Int32() { Test("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_SUB_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_SUB_OVF__Int32_IntPtr() { Test("Test_SUB_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_SUB_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_SUB_OVF_UN__IntPtr_Int32() { Test("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_SUB_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_SUB_OVF_UN__Int32_IntPtr() { Test("Test_SUB_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_SUB_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_MUL__IntPtr_Int32() { Test("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_MUL__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_MUL__Int32_IntPtr() { Test("Test_MUL__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_MUL__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_MUL_OVF__IntPtr_Int32() { Test("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_MUL_OVF__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_MUL_OVF__Int32_IntPtr() { Test("Test_MUL_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_MUL_OVF__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_MUL_OVF_UN__IntPtr_Int32() { Test("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_MUL_OVF_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_MUL_OVF_UN__Int32_IntPtr() { Test("Test_MUL_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_MUL_OVF_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_DIV__IntPtr_Int32() { Test("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_DIV__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_DIV__Int32_IntPtr() { Test("Test_DIV__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_DIV__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_DIV_UN__IntPtr_Int32() { Test("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_DIV_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_DIV_UN__Int32_IntPtr() { Test("Test_DIV_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_DIV_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_REM__IntPtr_Int32() { Test("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_REM__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_REM__Int32_IntPtr() { Test("Test_REM__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_REM__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
-        //[Fact] public void Test_REM_UN__IntPtr_Int32() { Test("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); } /* TestMethod("Test_REM_UN__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); */
-        //[Fact] public void Test_REM_UN__Int32_IntPtr() { Test("Test_REM_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); } /* TestMethod("Test_REM_UN__Int32_IntPtr", int.MinValue, IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L)); */
         /*
 
         void Verify(DmdType type, ILValue v1, object v2)

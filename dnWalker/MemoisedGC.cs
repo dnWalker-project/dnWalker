@@ -63,7 +63,6 @@ namespace MMC.State
             if (index >= m_referenceCounters.Length)
                 m_referenceCounters = IntArray.GrowArray(m_referenceCounters, index * 2);
 
-
             int val = m_referenceCounters[index];
 
             if (val == 0)
@@ -433,9 +432,11 @@ namespace MMC.State
                 if (loc >= oldLength)
                 {
                     ObjectReferenceBag[] newParents = new ObjectReferenceBag[oldLength * 2];
-                    System.Array.Copy(parents, newParents, oldLength);
+                    Array.Copy(parents, newParents, oldLength);
                     for (int i = oldLength; i < oldLength * 2; i++)
+                    {
                         newParents[i] = new ObjectReferenceBag();
+                    }
                     parents = newParents;
                 }
                 return parents[loc];
@@ -509,19 +510,17 @@ namespace MMC.State
         public /*static*/ void AddParentToChild(ObjectReference parentRef, IDataElement childRef, ExplicitActiveState cur)
         {
             var memoisedGC = cur.Configuration.MemoisedGC;
-            if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
+            if (memoisedGC && childRef is ObjectReference objRef && !objRef.Equals(ObjectReference.Null))
             {
-                ObjectReference reference = (ObjectReference)childRef;
-                this[(int)reference.Location].Increment(parentRef);
+                this[(int)objRef.Location].Increment(parentRef);
             }
         }
 
         public /*static*/ void AddParentToChild(ObjectReference parentRef, IDataElement childRef, bool memoisedGC)
         {
-            if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
+            if (memoisedGC && childRef is ObjectReference objRef && !objRef.Equals(ObjectReference.Null))
             {
-                ObjectReference reference = (ObjectReference)childRef;
-                this[(int)reference.Location].Increment(parentRef);
+                this[(int)objRef.Location].Increment(parentRef);
             }
         }
 

@@ -160,12 +160,6 @@ namespace MMC
                 return retval;
             }
 
-            if (!asm.TypeExists(name, false))
-            {
-                //return null;
-            }
-
-
             retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
 
             /*IEnumerator types = asm.Types.GetEnumerator();
@@ -765,19 +759,17 @@ namespace MMC
             {
                 case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
                 case TypeCode.Char: return new Int4((char)value);
-                //case TypeCode.SByte: return new SymbolicInt32ILValue(_appDomain, (sbyte)value);
-                //case TypeCode.Byte: return new SymbolicInt32ILValue(_appDomain, (byte)value);
-                //case TypeCode.Int16: return new SymbolicInt32ILValue(_appDomain, (short)value);
-                //case TypeCode.UInt16: return new SymbolicInt32ILValue(_appDomain, (ushort)value);
-                case TypeCode.Int32: return new Int8((int)value);
-                //case TypeCode.UInt32: return new SymbolicInt32ILValue(_appDomain, (int)(uint)value);
+                case TypeCode.SByte: return new Int4((sbyte)value);
+                case TypeCode.Byte: return new Int4((byte)value);
+                case TypeCode.Int16: return new Int4((short)value);
+                case TypeCode.UInt16: return new UnsignedInt4((ushort)value);
+                case TypeCode.Int32: return new Int4((int)value);
+                case TypeCode.UInt32: return new UnsignedInt4((uint)value);
                 case TypeCode.Int64: return new Int8((long)value);
-                //case TypeCode.UInt64: return new SymbolicInt64ILValue(_appDomain, (long)(ulong)value);
+                case TypeCode.UInt64: return new UnsignedInt8((ulong)value);
                 case TypeCode.Single: return new Float4((float)value);
                 case TypeCode.Double: return new Float8((double)value);
                 case TypeCode.String: return new ConstantString(value.ToString());
-                //    throw new NotImplementedException("string");
-                ////return new Tests.Fake.ConstantStringILValue(_appDomain.System_String, (string)value);
                 default:
                     if (value is IntPtr ip)
                     {

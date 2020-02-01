@@ -854,7 +854,7 @@ namespace MMC.Data {
 		}
 	}
 
-    public struct UnsignedInt8 : IIntegerElement {
+    public struct UnsignedInt8 : IIntegerElement, IConvertible {
 		public static UnsignedInt8 Zero = new UnsignedInt8(0);
 		ulong m_value;
 
@@ -996,7 +996,92 @@ namespace MMC.Data {
 			return (int)(m_value * 101);
 		}
 
-		public UnsignedInt8(ulong val) {
+        public TypeCode GetTypeCode()
+        {
+            return m_value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return m_value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)m_value).ToType(conversionType, provider);
+        }
+
+        public UnsignedInt8(ulong val) {
 
 			m_value = val;
 		}

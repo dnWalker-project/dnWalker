@@ -21,12 +21,14 @@ namespace MMC.Collections {
 	using System.Text;
 	using System.Collections.Generic;
 
-
+	/// <summary>
 	/// Hashtable with a power of two size, allows the modulo
 	/// to be performed by masking bits
-	class FastHashtable<K, V> {
-
-		private class Bucket {
+	/// </summary>
+	class FastHashtable<K, V>
+    {
+		private class Bucket
+        {
 			public K key;
 			public V val;
 			public Bucket next;
@@ -39,19 +41,22 @@ namespace MMC.Collections {
 
 		int m_count;
 
-		public FastHashtable()
-			: this(20) {
-		}
+        /*public FastHashtable()
+            : this(20)
+        {
+        }*/
 
-		public int Count {
-			get { return m_count; }
-		}
+		public int Count
+        {
+            get { return m_count; }
+        }
 
-		public FastHashtable(int power) {
-			m_buckets = new Bucket[1 << power];
-			m_power = power;
-			m_mask = (1 << power) - 1;
-		}
+        public FastHashtable(int power)
+        {
+            m_buckets = new Bucket[1 << power];
+            m_power = power;
+            m_mask = (1 << power) - 1;
+        }
 
 		/*
 		public V this[K o] {

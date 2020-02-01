@@ -2887,16 +2887,19 @@ namespace MMC.InstructionExec
                             }
                         break;
                     case 'r':
-                        switch (tokens[1][1])
+                        if (tokens[1].Length > 1)
                         {
-                            case '4': // r4, float
-                                toPush = a.ToFloat4(CheckOverflow);
-                                break;
-                            case '8': // r8, double
-                                toPush = a.ToFloat8(CheckOverflow);
-                                break;
-                            default: // error
-                                break;
+                            switch (tokens[1][1])
+                            {
+                                case '4': // r4, float
+                                    toPush = a.ToFloat4(CheckOverflow);
+                                    break;
+                                case '8': // r8, double
+                                    toPush = a.ToFloat8(CheckOverflow);
+                                    break;
+                                default: // error
+                                    break;
+                            }
                         }
 
                         if (tokens.Length == 3)

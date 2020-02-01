@@ -51,6 +51,8 @@ namespace MMC
         double OptimizeStorageAtMegabyte { get; set; }
         LogPriority LogFilter { get; }
         string LogFileName { get; }
+
+        int StateStorageSize { get; }
     }
 
     /// <summary>
@@ -87,6 +89,7 @@ namespace MMC
         public double OptimizeStorageAtMegabyte { get; set; } = double.PositiveInfinity;
         public double MemoryLimit { get; set; } = double.PositiveInfinity;
         public string LogFileName { get; set; }
+        public int StateStorageSize { get; set; } = 20;
     }
 
     /// The main application class.

@@ -127,8 +127,11 @@ namespace MMC
 
             cur.DoSharingAnalysisRequest += () => DoSharingAnalysis = true;
 
+            var size = Math.Max(20, config.StateStorageSize);
+            size = Math.Min(5, size);
+
             // hashtable
-            m_stateStorage = new FastHashtable<CollapsedState, int>(20);
+            m_stateStorage = new FastHashtable<CollapsedState, int>(size);
 
             ExplorationLogger el = new ExplorationLogger(Statistics, this);
 
