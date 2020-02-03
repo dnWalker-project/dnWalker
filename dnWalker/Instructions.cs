@@ -58,7 +58,6 @@ namespace MMC.InstructionExec
 
     class BranchInstructionExec : InstructionExecBase
     {
-
         public BranchInstructionExec(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -87,140 +86,144 @@ namespace MMC.InstructionExec
             return false;
             //return cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) == 1;
         }
+
+        protected int CompareOperands(IDataElement a, IDataElement b)
+        {
+            if (Unsigned && a is INumericElement na && b is INumericElement nb)
+            {
+                if (na.Equals(nb))
+                {
+                    return 0;
+                }
+
+                return na.ToUnsignedInt8(CheckOverflow).CompareTo(nb.ToUnsignedInt8(CheckOverflow));
+
+                //return ValueComparer.CompareUnsigned((INumericElement)a, (INumericElement)b);
+            }
+
+            return a.CompareTo(b);
+        }
     }
 
     // Branch on equal.
     class BEQ : BranchInstructionExec
     {
-
-        public BEQ(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BEQ(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return (a.Equals(b) ? new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return CompareOperands(a, b) == 0 ? 
+                new JumpReturnValue((Instruction)Operand) :
+                nextRetval;
         }
     }
 
     // Branch on equal.
     class BGE : BranchInstructionExec
     {
-
-        public BGE(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BGE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return (a.CompareTo(b) >= 0 ?
-                    new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return CompareOperands(a, b) >= 0 ?
+                new JumpReturnValue((Instruction)Operand) :
+                nextRetval;
         }
     }
 
     // Branch on greater than.
     class BGT : BranchInstructionExec
     {
-
-        public BGT(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BGT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return (a.CompareTo(b) > 0 ?
-                    new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return CompareOperands(a, b) > 0 ?
+                new JumpReturnValue((Instruction)Operand) :
+                nextRetval;
         }
     }
 
     // Branch on less or equal.
     class BLE : BranchInstructionExec
     {
-
-        public BLE(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BLE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return (a.CompareTo(b) <= 0 ?
-                    new JumpReturnValue((Instruction)Operand) : nextRetval);
+
+            return CompareOperands(a, b) <= 0 ?
+                new JumpReturnValue((Instruction)Operand) :
+                nextRetval;
         }
     }
 
     // Branch on less than.
     class BLT : BranchInstructionExec
     {
-
-        public BLT(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BLT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return (a.CompareTo(b) < 0 ?
-                    new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return CompareOperands(a, b) < 0 ?
+                new JumpReturnValue((Instruction)Operand) :
+                nextRetval;
         }
     }
 
     // Branch on not equal.
     class BNE : BranchInstructionExec
     {
-
-        public BNE(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BNE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return (!a.Equals(b) ?
-                    new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return CompareOperands(a, b) != 0 ?
+                new JumpReturnValue((Instruction)Operand) :
+                nextRetval;
         }
     }
 
     // Unconditional branch.
     class BR : BranchInstructionExec
     {
-
-        public BR(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BR(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             return new JumpReturnValue((Instruction)Operand);
         }
     }
@@ -228,44 +231,37 @@ namespace MMC.InstructionExec
     // Branch on non-false or non-null.
     class BRTRUE : BranchInstructionExec
     {
-
-        public BRTRUE(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BRTRUE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement a = cur.EvalStack.Pop();
-            return (a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval;
         }
     }
 
     // Branch on false, null or zero.
     class BRFALSE : BranchInstructionExec
     {
-
-        public BRFALSE(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BRFALSE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement a = cur.EvalStack.Pop();
-            return (!a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval);
+            return !a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval;
         }
     }
 
     // Switch
     class SWITCH : BranchInstructionExec
     {
-        public SWITCH(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public SWITCH(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -487,7 +483,7 @@ namespace MMC.InstructionExec
                 argIndex = ((Int4)Operand).Value;
             else
             {
-                argIndex = ((ParameterDefinition)Operand).MethodSigIndex;
+                argIndex = ((ParameterDefinition)Operand).ParamDef.Sequence;
 
                 if (!cur.CurrentMethod.Definition.HasThis)
                     argIndex--;
@@ -1359,12 +1355,14 @@ namespace MMC.InstructionExec
 
             AllocatedObject theObject;
 
-            if (reference is ObjectReference)
-                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)reference];
-            else if (reference is MethodMemberPointer)
+            if (reference is ObjectReference objectReference)
+            {
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[objectReference];
+            }
+            else if (reference is MethodMemberPointer methodMemberPointer)
             {
                 // Points to a ObjectReference
-                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)((MethodMemberPointer)reference).Value];
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)(methodMemberPointer).Value];
             }
             else
             {
@@ -1399,14 +1397,23 @@ namespace MMC.InstructionExec
 
             var fieldDef = GetFieldDefinition();
             if (fieldDef.IsInitOnly)
+            {
                 return false;
+            }
 
-            if (reference is ObjectReference)
-                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)reference];
-            else if (reference is MethodMemberPointer)
+            if (reference is ObjectReference objectReference)
+            {
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[objectReference];
+            }
+            else if (reference is MethodMemberPointer methodMemberPointer)
             {
                 // Points to a ObjectReference
-                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)((MethodMemberPointer)reference).Value];
+                theObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)(methodMemberPointer).Value];
+            }
+
+            if (theObject == null)
+            {
+                throw new NullReferenceException("Allocated object not found for " + reference);
             }
 
             return theObject.ThreadShared;
@@ -1686,7 +1693,6 @@ namespace MMC.InstructionExec
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-
             if (GetFieldDefinition().IsInitOnly)
                 return false;
             else
@@ -1704,16 +1710,13 @@ namespace MMC.InstructionExec
 
     class LDTOKEN : ObjectModelInstructionExec
     {
-
-        public LDTOKEN(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDTOKEN(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IIEReturnValue retval = nincRetval;
             if (Operand is TypeDefinition)
             {
@@ -1724,6 +1727,11 @@ namespace MMC.InstructionExec
                 }
                 cur.EvalStack.Push(new TypePointer(typeDef));
             }
+            else
+            {
+                throw new NotSupportedException("LDTOKEN is currently unsupported");
+            }
+
             // TODO: handle field and method definitions
             return retval;
         }

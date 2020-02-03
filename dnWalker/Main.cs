@@ -118,7 +118,7 @@ namespace MMC
         /// \param msg Message to print before quitting.
         public void Fatal(string msg)
         {
-            _logger.CloseAll();
+            _logger?.CloseAll();
             DotWriter.End();
             System.Console.WriteLine("FATAL: " + msg);
             System.Console.WriteLine("use option \"-h\" for help");
@@ -429,7 +429,7 @@ Disabling/enabling features:
             var assemblyLoader = new dnWalker.AssemblyLoader();
             assemblyLoader.GetModuleDef(File.ReadAllBytes(config.AssemblyToCheckFileName));
 
-            var definitionProvider = DefinitionProvider.Create(assemblyLoader, logger);
+            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
 
             var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
 

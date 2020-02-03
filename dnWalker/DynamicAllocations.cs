@@ -46,7 +46,9 @@ namespace MMC.State {
 			set { m_fields = value; }
 		}
 
+		/// <summary>
 		/// The offset of the value field for wrapped types.
+		/// </summary>
 		public int ValueFieldOffset
         {
             get

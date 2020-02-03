@@ -1668,58 +1668,53 @@ namespace MMC.Data {
             return ((IConvertible)m_value).ToType(conversionType, provider);
         }
 
-        public ConstantString(string val) {
-
+        public ConstantString(string val)
+        {
 			m_value = val;
 		}
 	}
 
-    public struct ObjectReference : IReferenceType {
-
-		uint m_location;
-
-		public static readonly ObjectReference Null = new ObjectReference(0);
-
-        // public DataElementKind Kind => DataElementKind.Type;
+    public struct ObjectReference : IReferenceType
+    {
+        public static readonly ObjectReference Null = new ObjectReference(0);
 
         public string WrapperName { get { return ""; } }
 
-		public uint Location {
+        public uint Location { get; }
 
-			get { return m_location; }
-		}
+        public bool ToBool() { return Location != 0; }
 
-		public bool ToBool() { return m_location != 0; }
+        public int CompareTo(object obj)
+        {
+            return (int)(Location - ((ObjectReference)obj).Location);
+        }
 
-		public int CompareTo(object obj) {
+        public bool Equals(IDataElement other)
+        {
+            return other is ObjectReference objectReference && (objectReference).Location == Location;
+        }
 
-			return (int)(m_location - ((ObjectReference)obj).Location);
-		}
+        public override string ToString()
+        {
+            if (Equals(Null))
+            {
+                return "null";
+            }
+            return "Alloc(" + Location + ")";
+        }
 
-		public bool Equals(IDataElement other) {
+        public override int GetHashCode()
+        {
+            return (int)Location;
+        }
 
-			return (other is ObjectReference) &&
-				((ObjectReference)other).Location == m_location;
-		}
+        public ObjectReference(uint loc)
+        {
+            Location = loc;
+        }
 
-		public override string ToString() {
-			if (this.Equals(ObjectReference.Null))
-				return "null";
-			else
-				return "Alloc(" + Location + ")";
-		}
-
-		public override int GetHashCode() {
-
-			return (int)(m_location);
-		}
-
-		public ObjectReference(uint loc) {
-
-			m_location = loc;
-		}
-		public ObjectReference(int loc) : this((uint)loc) { }
-	}
+        public ObjectReference(int loc) : this((uint)loc) { }
+    }
 
     abstract class MethodMemberPointer : IManagedPointer
     {

@@ -30,7 +30,7 @@ namespace MMC.State
     internal class ObjectReferenceBag
     {
         SGC.LinkedList<ObjectReference> values = new SGC.LinkedList<ObjectReference>();
-        int[] m_referenceCounters = new int[1024];
+        int[] m_referenceCounters = new int[256];
         int flipped = 0;
 
         public bool IsEmpty
@@ -398,22 +398,18 @@ namespace MMC.State
     /// </summary>
 	internal class ParentWatcher : BaseStorageVisitor, IStorageVisitor
     {
-        public ObjectReferenceBag[] parents;
+        private readonly SGC.IDictionary<int, ObjectReferenceBag> parents;
 
-        public ParentWatcher(IConfig config, ExplicitActiveState cur)
+        public ParentWatcher(IConfig config, DefinitionProvider definitionProvider)
         {
-            parents = new ObjectReferenceBag[1024];
-            for (int i = 0; i < parents.Length; i++)
-            {
-                parents[i] = new ObjectReferenceBag();
-            }
+            parents = new SGC.Dictionary<int, ObjectReferenceBag>();
 
             RootAllocatedObject = new AllocatedObject(
-                cur.DefinitionProvider.GetTypeDefinition("System.Object"),
+                definitionProvider.GetTypeDefinition("System.Object"),
                 config)
-                {
-                    Depth = 0
-                };
+            {
+                Depth = 0
+            };
 
             adder = new UpdateSingle(AddParentToChild);
             remover = new UpdateSingle(RemoveParentFromChild);
@@ -428,18 +424,14 @@ namespace MMC.State
         {
             get
             {
-                int oldLength = parents.Length;
-                if (loc >= oldLength)
+                if (parents.TryGetValue(loc, out var objectReferenceBag))
                 {
-                    ObjectReferenceBag[] newParents = new ObjectReferenceBag[oldLength * 2];
-                    Array.Copy(parents, newParents, oldLength);
-                    for (int i = oldLength; i < oldLength * 2; i++)
-                    {
-                        newParents[i] = new ObjectReferenceBag();
-                    }
-                    parents = newParents;
+                    return objectReferenceBag;
                 }
-                return parents[loc];
+
+                objectReferenceBag = new ObjectReferenceBag();
+                parents.Add(loc, objectReferenceBag);
+                return objectReferenceBag;
             }
         }
 

@@ -65,9 +65,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExampleTests\ExamplesTestBase.cs" />
     <Compile Include="ExampleTests\ExceptionHandlingTests.cs" />
     <Compile Include="ExampleTests\IncDecTests.cs" />
     <Compile Include="InterpreterTest.cs" />
+    <Compile Include="Interpreter\IntepreterTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestLoggerOutput.cs" />
     <Compile Include="UnitTest1.cs" />

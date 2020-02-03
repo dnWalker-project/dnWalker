@@ -231,7 +231,7 @@ namespace MMC.State
                 new MarkAndSweepGC() as IGarbageCollector;
 
             StorageFactory = new StorageFactory(this);
-            ParentWatcher = new ParentWatcher(config, this);
+            ParentWatcher = new ParentWatcher(config, DefinitionProvider);
             ThreadObjectWatcher = new ThreadObjectWatcher();
         }
     }

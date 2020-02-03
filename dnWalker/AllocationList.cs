@@ -24,9 +24,11 @@ namespace MMC.State {
 	using MMC.Data;
 	using MMC.Util;
 
+    /// <summary>
     /// Data structure to store the object heap, using a (generated) list structure.
-    public sealed class AllocationList : SparseReferenceList<DynamicAllocation>, IEnumerable, ICleanable {
-
+    /// </summary>
+    public sealed class AllocationList : SparseReferenceList<DynamicAllocation>, IEnumerable, ICleanable
+    {
 		const int INITIAL_SIZE = 64;
 		DirtyList m_dirtyLocs;
 
@@ -34,20 +36,25 @@ namespace MMC.State {
 		///
 		/// \param index Offset in the linear heap.
 		/// \return	The Allocation at the specified offset.
-		public override DynamicAllocation this[int index] {
+		public override DynamicAllocation this[int index]
+        {
+            get { return base[index]; }
+            set
+            {
+                if (base[index] != value)
+                {
+                    m_dirtyLocs.SetDirty(index);
+                }
 
-			get { return base[index]; }
-			set {
-				if (base[index] != value)
-					m_dirtyLocs.SetDirty(index);
+                base[index] = value;
+            }
+        }
 
-				base[index] = value;
-			}
-		}
-
+		/// <summary>
 		/// Syntactic sugar for the offset-based indexer.
-		public DynamicAllocation this[ObjectReference obj] {
-
+		/// </summary>
+		public DynamicAllocation this[ObjectReference obj]
+        {
 			get { return base[(int)obj.Location - 1]; }
 			set { this[(int)obj.Location - 1] = value; }
 		}
@@ -55,14 +62,16 @@ namespace MMC.State {
 		///	\brief Location that have changed.
 		///	Either by pointing to a diffent allocation (changed reference), or
 		///	the allocation pointed to is changed (changed value).
-		public DirtyList DirtyLocations {
-
-			get { return m_dirtyLocs; }
+		public DirtyList DirtyLocations
+        {
+            get { return m_dirtyLocs; }
 		}
 
+		/// <summary>
 		/// Enumerator for all allocations.
-		public IEnumerator GetEnumerator() {
-
+		/// </summary>
+		public IEnumerator GetEnumerator()
+        {
 			return new AllocationListEnumerator(this);
 		}
 
@@ -75,9 +84,11 @@ namespace MMC.State {
 			return m_dirtyLocs.Count > 0;
 		}
 
+		/// <summary>
 		/// Set all allocations to clean.
-		public void Clean() {
-
+		/// </summary>
+		public void Clean()
+        {
 			//m_dirtyLocs = new DirtyList(Length);
 			m_dirtyLocs.Clean();
 		}

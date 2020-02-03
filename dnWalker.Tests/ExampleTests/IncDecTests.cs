@@ -5,17 +5,16 @@ using Xunit;
 namespace dnWalker.Tests.ExampleTests
 {
     [Trait("Category", "Examples")]
-    public class IncDecTests : TestBase
+    public class IncDecTests : ExamplesTestBase
     {
-        public IncDecTests() : base(@"..\..\..\Examples\bin\debug\Examples.exe")
+        public IncDecTests() : base(Lazy.Value)
         {
         }
 
         [Fact]
         public void CallMethodThreeWithArgument()
         {
-            var retValue = (Int8)Test("IncDec.Three", 4);
-            retValue.Value.Should().Be(4 * 12);
+            TestAndCompare("IncDec.Three", 4);
         }
     }
 }

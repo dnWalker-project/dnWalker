@@ -238,7 +238,8 @@ namespace MMC {
 
 				cur.ThreadPool.CurrentThreadId = threadId;
 
-				if (!instrExec.IsDependent(cur) || instrExec.IsMultiThreadSafe(cur)) {
+				if (!instrExec.IsDependent(cur) || instrExec.IsMultiThreadSafe(cur))
+                {
 					retval = threadId;
 					break;
 				}

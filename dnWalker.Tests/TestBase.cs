@@ -10,21 +10,28 @@ namespace dnWalker.Tests
 {
     public abstract class TestBase
     {
-        private readonly AssemblyLoader _assemblyLoader;
         protected readonly Config _config;
         private readonly DefinitionProvider _definitionProvider;
 
-        protected TestBase(string assemblyFilename)
+        protected TestBase(DefinitionProvider definitionProvider)
         {
-            _assemblyLoader = new AssemblyLoader();
             _config = new Config();
-            var data = File.ReadAllBytes(assemblyFilename);
-            var moduleDef = _assemblyLoader.GetModuleDef(data);
             _logger = new Logger(Logger.Default | LogPriority.Trace);
             _logger.AddOutput(new TestLoggerOutput());
-            //_appDomain = _assemblyLoader.CreateAppDomain(moduleDef, data);
+            _definitionProvider = definitionProvider;
+        }
+
+        protected static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
+        {
+            var assemblyLoader = new AssemblyLoader();
+
+            var data = File.ReadAllBytes(assemblyFilename);
+
+            var moduleDef = assemblyLoader.GetModuleDef(data);
+
             Assembly.LoadFrom(assemblyFilename);
-            _definitionProvider = DefinitionProvider.Create(_assemblyLoader, _logger);
+
+            return assemblyLoader;
         }
 
         public Logger _logger { get; }
@@ -56,16 +63,16 @@ namespace dnWalker.Tests
 
         protected virtual void TestAndCompare(string methodName, params object[] args)
         {
-            object res1 = null, res2 = null;
-            Exception ex1 = null, ex2 = null;
+            object modelCheckerResult = null, res2 = null;
+            Exception modelCheckerException = null, ex2 = null;
             try
             {
-                res1 = Test(methodName, args);
+                modelCheckerResult = Test(methodName, args);
             }
             catch (Exception ex)
             {
-                ex1 = ex;
-                res1 = null;
+                modelCheckerException = ex;
+                modelCheckerResult = null;
             }
 
             var methodInfo = Utils.GetMethodInfo(methodName);
@@ -84,33 +91,38 @@ namespace dnWalker.Tests
                 res2 = null;
             }
 
-            if (ex1 != null && ex2 == null)
+            if (modelCheckerException != null && ex2 == null)
             {
-                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex1).Throw();
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(modelCheckerException).Throw();
             }
 
             if (methodInfo.ReturnType != typeof(void))
             {
-                if (res1 == null && res2 == null)
+                if (modelCheckerResult != null && modelCheckerResult.Equals(ObjectReference.Null))
+                {
+                    modelCheckerResult = null;
+                }
+
+                if (modelCheckerResult == null && res2 == null)
                 {
                     return;
                 }
 
-                if (res1.GetType() == res2.GetType() && res1.GetType() == typeof(System.IntPtr))
+                if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult.GetType() == typeof(IntPtr))
                 {
-                    res1 = ((IntPtr)res1).ToInt64();
+                    modelCheckerResult = ((IntPtr)modelCheckerResult).ToInt64();
                     res2 = ((IntPtr)res2).ToInt64();
                 }
 
-                if (res1.GetType() == res2.GetType() && res1.GetType() == typeof(UIntPtr))
+                if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult.GetType() == typeof(UIntPtr))
                 {
-                    res1 = ((UIntPtr)res1).ToUInt64();
+                    modelCheckerResult = ((UIntPtr)modelCheckerResult).ToUInt64();
                     res2 = ((UIntPtr)res2).ToUInt64();
                 }
 
                 if (methodInfo.ReturnType == typeof(IntPtr))
                 {
-                    var rr1 = (IConvertible)res1;
+                    var rr1 = (IConvertible)modelCheckerResult;
                     var rr2 = (IntPtr)res2;
 
                     Convert.ChangeType(rr1, typeof(long)).Should().BeEquivalentTo(rr2.ToInt64());
@@ -119,28 +131,24 @@ namespace dnWalker.Tests
 
                 if (methodInfo.ReturnType == typeof(UIntPtr))
                 {
-                    var rr1 = (IConvertible)res1;
+                    var rr1 = (IConvertible)modelCheckerResult;
                     var rr2 = (UIntPtr)res2;
 
                     Convert.ChangeType(rr1, typeof(ulong)).Should().BeEquivalentTo(rr2.ToUInt64());
                     return;
                 }
 
-                res1.Should().NotBeNull("value returned from model checker shoud not be null, but " + res2.ToString());
+                modelCheckerResult.Should().NotBeNull("value returned from model checker shoud not be null, but " + res2.ToString());
                 res2.Should().NotBeNull();
 
-                res1.Should().BeAssignableTo<IConvertible>();
+                modelCheckerResult.Should().BeAssignableTo<IConvertible>();
                 res2.Should().BeAssignableTo<IConvertible>();
 
-                var r1 = Convert.ChangeType(res1, methodInfo.ReturnType);
+                var modelCheckerReturnValue = Convert.ChangeType(modelCheckerResult, methodInfo.ReturnType);
                 var r2 = Convert.ChangeType(res2, methodInfo.ReturnType);
 
-                r1.Should().BeEquivalentTo(r2);
+                modelCheckerReturnValue.Should().BeEquivalentTo(r2);
             }
-            /*if (!(ex1 is null) || !(ex2 is null))
-				Verify(ex1?.GetType().FullName == ex2?.GetType().FullName);
-			else
-				Verify(m1.ReturnType, res1, res2);*/
         }
     }
 }

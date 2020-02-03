@@ -79,7 +79,6 @@ namespace MMC
     {
         ModuleDef m_asmDef;
         ModuleDef[] m_referencedAssemblies;
-        private readonly Logger _logger;
         IDictionary<string, TypeDef> m_typeDefinitions;
         IDictionary m_virtualMethodDefinitions;
         IDictionary<string, MethodDef> m_methodDefinitionsByReference;
@@ -87,22 +86,9 @@ namespace MMC
         IDictionary<string, FieldDefinition> m_fieldDefinitions;
         IDictionary m_typeSizes;
 
-        /*// Load an assembly, and set up a definition provider for it.
-        ///
-        /// This is the place where the actual definition provider is created,
-        /// so subtitute your own type here if needed.
-        ///
-        /// \param asmDef The assembly definition to use as the main assembly.
-        *public void LoadAssembly(string location)
-        {
-            *if (instance != null)
-                _logger.Warning("unloading already loaded assembly " +
-                        instance.AssemblyDefinition.Name);
-            instance = *
-            Create(location);
-        }*/
-
-        /// \brief The main assembly we're working on (ro).
+        /// <summary>
+        /// The main assembly we're working on (ro).
+        /// </summary>
         public ModuleDef AssemblyDefinition
         {
             get
@@ -175,8 +161,6 @@ namespace MMC
             {
                 m_typeDefinitions.Add(name, retval);
             }
-
-            _logger.Lookup("SearchType: type {0} {1}found in assembly {2}", name, retval == null ? "not " : "", asm.Name.String);
 
             return retval;
         }
@@ -263,8 +247,6 @@ namespace MMC
                 throw new NullReferenceException($"Type {name} not found.");
             }
 
-            _logger.Lookup("looking up definition for type {0} => {1}", name, retval);
-
             return retval;
         }
 
@@ -329,14 +311,9 @@ namespace MMC
 
                 // Store in cache.
                 if (retval != null)
+                {
                     m_methodDefinitionsByReference[methRef.ToString()] = retval;
-
-                _logger.Lookup("SearchMethod(methref...): method {0} {1}found in type {2}",
-                        methRef.Name, (retval == null ? "not " : ""), typeDef.Name);
-            }
-            else
-            {
-                _logger.Lookup("SearchMethod(methref...): method {0} found in cache", methRef.Name);
+                }
             }
 
             return retval;
@@ -393,7 +370,6 @@ namespace MMC
         /// was found.
         public MethodDefinition SearchMethod(string name, TypeDef typeDef)
         {
-
             string key = typeDef + "::" + name;
             MethodDefinition retval = m_methodDefinitionsByString[key] as MethodDefinition;
             if (retval == null)
@@ -401,47 +377,37 @@ namespace MMC
                 // Look in either the constructor or method definition collection.
                 IEnumerator definitions = null;
                 if (name == ".ctor")
+                {
                     definitions = typeDef.FindConstructors().GetEnumerator();
+                }
                 else if (name == ".cctor")
+                {
                     definitions = typeDef.FindConstructors().GetEnumerator();
+                }
                 else
+                {
                     definitions = typeDef.Methods.GetEnumerator();
+                }
                 // Search in all method definitions.
                 while (retval == null && definitions.MoveNext())
                 {
                     MethodDefinition curr = definitions.Current as MethodDefinition;
                     if (curr.Name == name)
+                    {
                         retval = curr;
+                    }
                 }
                 // Store in cache.
                 if (retval != null)
+                {
                     m_methodDefinitionsByString[key] = retval;
-
-                _logger.Lookup("SearchMethod(string...): method {0} {1}found in type {2}",
-                        name, (retval == null ? "not " : ""), typeDef.Name);
-            }
-            else
-            {
-                _logger.Lookup("SearchMethod(string...): method {0} found in cache", name);
+                }
             }
 
             return retval;
         }
 
         // ----------------------------------------------------------------------------------------------
-
-        /// \brief Look up a field definition by reference.
-        ///
-        /// This simply calls GetFieldDefinition with the full name of the
-        /// declaring type, and the name of the field. Both searches (by
-        /// string) are safe. Multiple fields with the same name are illegal.
-        ///
-        /// \param fieldRef A reference to the field to look up.
-        /// \return Definition of the field to look for, or null if none was found.
-        /*public FieldDefinition GetFieldDefinition(FieldReference fieldRef) {
-
-			return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
-		}*/
 
         public static FieldDefinition GetFieldDefinition(IField fieldRef)
         {
@@ -482,7 +448,10 @@ namespace MMC
             {
                 TypeDef declType = GetTypeDefinition(declTypeName);
                 if (declType == null)
-                    _logger.Warning("declaring type not found");
+                {
+                    //_logger.Warning("declaring type not found");
+                    throw new System.Exception($"declaring type {declTypeName} not found");
+                }
                 else
                 {
                     bool equal = false;
@@ -509,7 +478,6 @@ namespace MMC
         /// \return The number of static fields.
         public int GetStaticFieldCount(TypeDef typeDef)
         {
-
             return typeDef.Fields.Count - GetNonStaticFieldCount(typeDef);
         }
 
@@ -520,7 +488,6 @@ namespace MMC
         /// \return The number of non-static fields.
         public int GetNonStaticFieldCount(TypeDef typeDef)
         {
-
             int count = 0;
             foreach (FieldDefinition fld in typeDef.Fields)
                 if (!fld.IsStatic)
@@ -600,41 +567,11 @@ namespace MMC
             }
 
             throw new NotImplementedException("GetNullValue for " + typeRef.FullName);
-            /*switch (typeRef.FullName) {
-				case Constants.Boolean:
-				case Constants.Char:
-				case Constants.Int16:
-				case Constants.Int32:
-				case Constants.SByte:
-				case Constants.Byte:
-					return Int4.Zero;
-
-				case Constants.Single:
-					return Float4.Zero;
-
-				case Constants.Double:
-					return Float8.Zero;
-
-				case Constants.UInt16:
-				case Constants.UInt32:
-					return UnsignedInt4.Zero;
-
-				case Constants.Int64:
-					return Int8.Zero;
-
-				case Constants.UInt64:
-					return UnsignedInt8.Zero;
-            }
-
-			if (typeRef.IsValueType && !(typeRef is ArrayType))
-				return Int4.Zero;
-			else
-				return ObjectReference.Null;*/
         }
 
-        public static DefinitionProvider Create(AssemblyLoader assemblyLoader, Logger logger)
+        public static DefinitionProvider Create(AssemblyLoader assemblyLoader)
         {
-            return new DefinitionProvider(assemblyLoader, logger);
+            return new DefinitionProvider(assemblyLoader);
         }
 
         // ----------------------------------------------------------------------------------------------
@@ -649,10 +586,8 @@ namespace MMC
         /// for a file name. This is the reason MMC starts so slowly.
         ///
         /// \param asmDef Main assembly definition.
-        private DefinitionProvider(AssemblyLoader assemblyLoader, Logger logger)
+        private DefinitionProvider(AssemblyLoader assemblyLoader)
         {
-            _logger = logger;
-
             m_typeDefinitions = new Dictionary<string, TypeDef>();
             m_methodDefinitionsByReference = new Dictionary<string, MethodDef>();
             m_methodDefinitionsByString = new Hashtable();
@@ -677,8 +612,6 @@ namespace MMC
             m_typeSizes["System.Char"] = 1;
             m_typeSizes["System.Double"] = 8;
             m_typeSizes["System.Decimal"] = 16;
-
-            _logger.Notice("loading referenced assemblies...");
 
             m_asmDef = assemblyLoader.GetModule();
             //Assembly mainAsm = AssemblyFactory.CreateReflectionAssembly((AssemblyDefinition)m_asmDef); // run-time type is AD
@@ -752,7 +685,7 @@ namespace MMC
         {
             if (value is null)
             {
-                throw new InvalidOperationException();
+                return ObjectReference.Null;
             }
 
             switch (Type.GetTypeCode(value.GetType()))

@@ -6,9 +6,9 @@ using Xunit;
 namespace dnWalker.Tests.ExampleTests
 {
     [Trait("Category", "Examples")]
-    public class ExceptionHandlingTests : TestBase
+    public class ExceptionHandlingTests : ExamplesTestBase
     {
-        public ExceptionHandlingTests() : base(@"..\..\..\Examples\bin\debug\Examples.exe")
+        public ExceptionHandlingTests() : base(Lazy.Value)
         {
         }
 

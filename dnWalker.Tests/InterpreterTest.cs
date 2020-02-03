@@ -112,6 +112,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
     {
         private const string AssemblyFilename = @"..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
 
+        protected static Lazy<DefinitionProvider> Lazy =
+            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
+
         /*
 
 sealed class DmdEvaluatorImpl : DmdEvaluator
@@ -163,7 +166,7 @@ return new Fake.TestRuntimeImpl(rt);
             testType2 = testAsm2.GetType(testType1.FullName) ?? throw new InvalidOperationException();
             ilvm = ILVMFactory.Create();
             */
-        public InterpreterTest() : base(AssemblyFilename)
+        public InterpreterTest() : base(Lazy.Value)
         {
             _config.StateStorageSize = 5;
         }
@@ -3986,7 +3989,7 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_LDARG__0() { Test("Test_LDARG__0", 123); }
 
         [Fact]
-        public void Test_LDARG__128() { Test("Test_LDARG__128", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 123); }
+        public void Test_LDARG__128() { Test("Test_LDARG__128", "P1", "P2", "P3", "P4", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "P126", "P127", 123); }
 
         [Fact]
         public void Test_LDARG__4() { Test("Test_LDARG__4", "", "", "", "", 123); }
@@ -4613,7 +4616,7 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(6)]
         public void Test_SWITCH__6(object arg0) { Test("Test_SWITCH__6", arg0); }
 
-        [Theory]
+        /*Theory]
         [InlineData(0.0d)]
         [InlineData(-1.0d)]
         [InlineData(1.0d)]
@@ -4628,7 +4631,7 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(4.0d)]
         [InlineData(5.0d)]
         [InlineData(6.0d)]
-        public void Test_SWITCH__6_Double(object arg0) { Test("Test_SWITCH__6_Double", arg0); }
+        public void Test_SWITCH__6_Double(object arg0) { Test("Test_SWITCH__6_Double", arg0); }*/
 
         [Theory]
         [InlineData(0L)]
