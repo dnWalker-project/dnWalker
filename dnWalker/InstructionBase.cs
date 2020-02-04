@@ -97,24 +97,30 @@ namespace MMC.InstructionExec
 
         // ------------------------ Static members --------------------------------
 
-        /// \brief Factory for instruction executors.
-        /// 
+        /// <summary>
+        /// Factory for instruction executors.
+        /// </summary>
+        /// <remarks>
         /// This method parses the name and operand of the given instruction
         /// and returns an object that can be used to execute the instruction
         /// on a given machine state. The parsing method used here is quite
         /// crude, and could use some refinement.
-        /// 
-        /// \param instr The instruction to build the executor for.
-        /// \return The executor.
-        ///
+        /// </remarks>
+        /// <param name="instr">The instruction to build the executor for.</param>
+        /// <returns>The executor.</returns>
         public static InstructionExecBase CreateInstructionExec(Instruction instr)
         {
             string[] tokens = instr.OpCode.Name.Split(new char[] { '.' });
 
-            // Before doing anything else, check if we have an implementing
-            // class for this type of instruction.
-            string name = "MMC.InstructionExec." + tokens[0].ToUpper();
+            // Before doing anything else, check if we have an implementing class for this type of instruction.
+            string name = "MMC.InstructionExec." + (string.Join("_", tokens)).ToUpper();
             Type t = Type.GetType(name);
+            if (t == null)
+            {
+                name = "MMC.InstructionExec." + tokens[0].ToUpper();
+                t = Type.GetType(name);
+            }
+
             if (t == null)
             {
                 throw new Exception("No IE found for " + name);

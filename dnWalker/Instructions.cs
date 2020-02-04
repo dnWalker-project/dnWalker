@@ -35,7 +35,7 @@ namespace MMC.InstructionExec
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
-    class BREAK : InstructionExecBase
+    public class BREAK : InstructionExecBase
     {
 
         public BREAK(Instruction instr, object operand,
@@ -56,7 +56,7 @@ namespace MMC.InstructionExec
     }
 
 
-    class BranchInstructionExec : InstructionExecBase
+    public class BranchInstructionExec : InstructionExecBase
     {
         public BranchInstructionExec(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -106,7 +106,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on equal.
-    class BEQ : BranchInstructionExec
+    public class BEQ : BranchInstructionExec
     {
         public BEQ(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -124,7 +124,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on equal.
-    class BGE : BranchInstructionExec
+    public class BGE : BranchInstructionExec
     {
         public BGE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -142,7 +142,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on greater than.
-    class BGT : BranchInstructionExec
+    public class BGT : BranchInstructionExec
     {
         public BGT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -160,7 +160,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on less or equal.
-    class BLE : BranchInstructionExec
+    public class BLE : BranchInstructionExec
     {
         public BLE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -179,7 +179,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on less than.
-    class BLT : BranchInstructionExec
+    public class BLT : BranchInstructionExec
     {
         public BLT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -197,7 +197,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on not equal.
-    class BNE : BranchInstructionExec
+    public class BNE : BranchInstructionExec
     {
         public BNE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -215,7 +215,7 @@ namespace MMC.InstructionExec
     }
 
     // Unconditional branch.
-    class BR : BranchInstructionExec
+    public class BR : BranchInstructionExec
     {
         public BR(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -229,7 +229,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on non-false or non-null.
-    class BRTRUE : BranchInstructionExec
+    public class BRTRUE : BranchInstructionExec
     {
         public BRTRUE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -244,7 +244,7 @@ namespace MMC.InstructionExec
     }
 
     // Branch on false, null or zero.
-    class BRFALSE : BranchInstructionExec
+    public class BRFALSE : BranchInstructionExec
     {
         public BRFALSE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -259,7 +259,7 @@ namespace MMC.InstructionExec
     }
 
     // Switch
-    class SWITCH : BranchInstructionExec
+    public class SWITCH : BranchInstructionExec
     {
         public SWITCH(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -281,7 +281,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class NOP : InstructionExecBase
+    public class NOP : InstructionExecBase
     {
         public NOP(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -298,7 +298,7 @@ namespace MMC.InstructionExec
     /*
 	 * In MMC, everything is executed as volatile anyway 
 	 */
-    class VOLATILE : InstructionExecBase
+    public class VOLATILE : InstructionExecBase
     {
         public VOLATILE(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -313,7 +313,7 @@ namespace MMC.InstructionExec
     }
 
 
-    class LogicalIntsructionExec : InstructionExecBase
+    public class LogicalIntsructionExec : InstructionExecBase
     {
 
         public LogicalIntsructionExec(Instruction instr, object operand,
@@ -324,18 +324,15 @@ namespace MMC.InstructionExec
     }
 
     // Bitwise AND
-    class AND : LogicalIntsructionExec
+    public class AND : LogicalIntsructionExec
     {
-
-        public AND(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public AND(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
             IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.And(b));
@@ -344,7 +341,7 @@ namespace MMC.InstructionExec
     }
 
     // Bitwise NOT
-    class NOT : LogicalIntsructionExec
+    public class NOT : LogicalIntsructionExec
     {
 
         public NOT(Instruction instr, object operand,
@@ -363,7 +360,7 @@ namespace MMC.InstructionExec
     }
 
     // Bitwise OR
-    class OR : LogicalIntsructionExec
+    public class OR : LogicalIntsructionExec
     {
 
         public OR(Instruction instr, object operand,
@@ -383,7 +380,7 @@ namespace MMC.InstructionExec
     }
 
     // Bitwise XOR
-    class XOR : LogicalIntsructionExec
+    public class XOR : LogicalIntsructionExec
     {
 
         public XOR(Instruction instr, object operand,
@@ -403,7 +400,7 @@ namespace MMC.InstructionExec
     }
 
     // Shift left
-    class SHL : LogicalIntsructionExec
+    public class SHL : LogicalIntsructionExec
     {
 
         public SHL(Instruction instr, object operand,
@@ -423,7 +420,7 @@ namespace MMC.InstructionExec
     }
 
     // Shift right
-    class SHR : LogicalIntsructionExec
+    public class SHR : LogicalIntsructionExec
     {
         public SHR(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -441,7 +438,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LoadInstructionExec : InstructionExecBase
+    public class LoadInstructionExec : InstructionExecBase
     {
 
         public LoadInstructionExec(Instruction instr, object operand,
@@ -451,7 +448,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class DUP : LoadInstructionExec
+    public class DUP : LoadInstructionExec
     {
 
         public DUP(Instruction instr, object operand,
@@ -468,7 +465,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDARG : LoadInstructionExec
+    public class LDARG : LoadInstructionExec
     {
         public LDARG(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -495,22 +492,20 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDARGA : LoadInstructionExec
+    public class LDARGA : LoadInstructionExec
     {
-
-        public LDARGA(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDARGA(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            int argIndex = (Operand as ParameterDefinition).MethodSigIndex;
-
+            int argIndex = (Operand as ParameterDefinition).ParamDef.Sequence;
             if (cur.CurrentMethod.Definition.IsStatic)
+            {
                 argIndex--;
+            }
 
             cur.EvalStack.Push(new ArgumentPointer(cur.CurrentMethod, argIndex));
 
@@ -522,19 +517,15 @@ namespace MMC.InstructionExec
 	 * By VY: updated this so that it can load all by ECMA specified types of
 	 * values
 	 */
-    class LDC : LoadInstructionExec
+    public class LDC : LoadInstructionExec
     {
-
-        public LDC(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDC(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-
             // Determine the desired type. The PushBehaviour enum is no
             // good here (it doesn't deal with the shorter forms).
             // See format in ECMA spec
@@ -591,11 +582,9 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDFTN : LoadInstructionExec
+    public class LDFTN : LoadInstructionExec
     {
-
-        public LDFTN(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDFTN(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -608,11 +597,9 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDVIRTFTN : LoadInstructionExec
+    public class LDVIRTFTN : LoadInstructionExec
     {
-
-        public LDVIRTFTN(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDVIRTFTN(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -629,20 +616,23 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDIND : LoadInstructionExec
+    public class LDIND : LoadInstructionExec
     {
-
-        public LDIND(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDIND(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IManagedPointer mmp = cur.EvalStack.Pop() as IManagedPointer;
-            cur.EvalStack.Push(mmp.Value);
-            return nextRetval;
+            var pop = cur.EvalStack.Pop();
+            if (pop is IManagedPointer mmp)
+            {
+                cur.EvalStack.Push(mmp.Value);
+                return nextRetval;
+            }
+
+            throw new NotSupportedException($"IManagedPointer expected, {pop?.GetType().FullName ?? "null"} found.");
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
@@ -691,7 +681,7 @@ namespace MMC.InstructionExec
     }
 
 
-    class LDOBJ : LDIND
+    public class LDOBJ : LDIND
     {
 
         public LDOBJ(Instruction instr, object operand,
@@ -741,7 +731,7 @@ namespace MMC.InstructionExec
 		}*/
     }
 
-    class LDLOC : LoadInstructionExec
+    public class LDLOC : LoadInstructionExec
     {
         public LDLOC(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -761,10 +751,9 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDLOCA : LoadInstructionExec
+    public class LDLOCA : LoadInstructionExec
     {
-        public LDLOCA(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDLOCA(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -777,60 +766,53 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDNULL : LoadInstructionExec
+    public class LDNULL : LoadInstructionExec
     {
-
-        public LDNULL(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDNULL(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             cur.EvalStack.Push(ObjectReference.Null);
             return nextRetval;
         }
     }
 
-    class LDSTR : LoadInstructionExec
+    public class LDSTR : LoadInstructionExec
     {
-
-        public LDSTR(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDSTR(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             cur.EvalStack.Push(new ConstantString(Operand as string));
             return nextRetval;
         }
     }
 
-    class ObjectModelInstructionExec : InstructionExecBase
+    public class ObjectModelInstructionExec : InstructionExecBase
     {
-
-        /// \brief Loads a class into the static area.
+        /// \brief Loads a public class into the static area.
         ///
         /// We return true if the calling thread is okay to continue
-        /// operating on the class. This is NOT the case if any of the
+        /// operating on the public class. This is NOT the case if any of the
         /// following conditions hold:
         /// <nl>
-        ///   <li> The class was not loaded, AND the calling thread should
-        ///        initialize the class. If the class needs no initializtion
+        ///   <li> The public class was not loaded, AND the calling thread should
+        ///        initialize the public class. If the public class needs no initializtion
         ///        (i.e. no cctor exists), we can continue. </li>
-        ///   <li> The class was not fully initialized, the current thread is
-        ///        not currently initializing the class (this can only be the
+        ///   <li> The public class was not fully initialized, the current thread is
+        ///        not currently initializing the public class (this can only be the
         ///        case in a forward-reference in the cctor itself), or someone
         ///        waiting for us. In this case we're put on wait, and should
         ///        not execute the instruction. </li>
         /// </nl>
         ///
-        /// \param type The type of class to load.
+        /// \param type The type of public class to load.
         /// \return True iff we can continue to execute the instruction (i.e.
         /// it's okay to access the static fields).
         public bool LoadClass(TypeDefinition type, ExplicitActiveState cur)
@@ -842,7 +824,7 @@ namespace MMC.InstructionExec
             AllocatedClass cls = cur.StaticArea.GetClass(type);
             if (!cls.Initialized)
             {
-                cur.Logger.Debug("thread {0} wants access to uninitialized class {1}", me, type.Name);
+                cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
                 MethodDefinition cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
                 if (cctorDef == null)
                 {
@@ -851,7 +833,7 @@ namespace MMC.InstructionExec
                 }
                 else if (cls.InitializingThread == LockManager.NoThread)
                 {
-                    cur.Logger.Debug("no thread is currently initializing the class");
+                    cur.Logger.Debug("no thread is currently initializing the public class");
                     // We are the ones who have to do the initialization.
                     cls.InitializingThread = me;
                     MethodState cctorState = new MethodState(
@@ -860,7 +842,7 @@ namespace MMC.InstructionExec
                         cur);
                     cctorState.OnDispose = new MethodStateCallback(CctorDoneCallBack);
                     cur.CallStack.Push(cctorState);
-                    cur.Logger.Debug("found class constructor. pushed on call stack.");
+                    cur.Logger.Debug("found public class constructor. pushed on call stack.");
                     // Do not allow access now. We should first execute the cctor.
                     allow_access = false;
                 }
@@ -868,7 +850,7 @@ namespace MMC.InstructionExec
                 {
                     ThreadPool tp = cur.ThreadPool;
                     int wait_for = cls.InitializingThread;
-                    cur.Logger.Debug("thread {0} is currently initializing the class", wait_for);
+                    cur.Logger.Debug("thread {0} is currently initializing the public class", wait_for);
 
                     bool wait_safe = wait_for != me;
                     if (wait_safe)
@@ -884,7 +866,7 @@ namespace MMC.InstructionExec
                         // If we hit a cycle, report it, but this should never happen.
                         if (!wait_safe && wait_for != LockManager.NoThread)
                             cur.Logger.Log(LogPriority.Severe,
-                                    "indication of deadlock while class loading");
+                                    "indication of deadlock while public class loading");
                         // If it's safe to wait, do it. Else, we can touch the data.
                         if (wait_safe)
                         {
@@ -903,7 +885,7 @@ namespace MMC.InstructionExec
 
         public void CctorDoneCallBack(MethodState ms)
         {
-            ms.Cur.Logger.Debug("completed running cctor. class initialized");
+            ms.Cur.Logger.Debug("completed running cctor. public class initialized");
             TypeDefinition type = GetTypeDefinition();
             var cur = ms.Cur;
             /*
@@ -1008,7 +990,7 @@ namespace MMC.InstructionExec
     // ------------------------------ Arrays ------------------------------ 
     // Creating, load element, store element, get length.
 
-    class NEWARR : ObjectModelInstructionExec
+    public class NEWARR : ObjectModelInstructionExec
     {
 
         public NEWARR(Instruction instr, object operand,
@@ -1037,7 +1019,7 @@ namespace MMC.InstructionExec
     }
 
 
-    class CASTCLASS : ObjectModelInstructionExec
+    public class CASTCLASS : ObjectModelInstructionExec
     {
 
         public CASTCLASS(Instruction instr, object operand,
@@ -1068,7 +1050,7 @@ namespace MMC.InstructionExec
     }
 
     /*
-	class INITOBJ : ObjectModelInstructionExec {
+	public class INITOBJ : ObjectModelInstructionExec {
 
 		public INITOBJ(Instruction instr, object operand,
 				InstructionExecAttributes atr)
@@ -1088,7 +1070,7 @@ namespace MMC.InstructionExec
 		}
 	}*/
 
-    class LDELEMA : ObjectModelInstructionExec
+    public class LDELEMA : ObjectModelInstructionExec
     {
         public LDELEMA(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1120,7 +1102,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDELEM : ObjectModelInstructionExec
+    public class LDELEM : ObjectModelInstructionExec
     {
 
         public LDELEM(Instruction instr, object operand,
@@ -1178,7 +1160,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class STELEM : ObjectModelInstructionExec
+    public class STELEM : ObjectModelInstructionExec
     {
 
         public STELEM(Instruction instr, object operand,
@@ -1244,7 +1226,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDLEN : ObjectModelInstructionExec
+    public class LDLEN : ObjectModelInstructionExec
     {
 
         public LDLEN(Instruction instr, object operand,
@@ -1272,12 +1254,12 @@ namespace MMC.InstructionExec
     }
 
     // ------------------------------ Objects ------------------------------ 
-    // Note that NEWOBJ is a sub-class of CallInstructionExec, since it
+    // Note that NEWOBJ is a sub-public class of CallInstructionExec, since it
     // actually calls something (a ctor), so it needs the functionality there.
     // We're putting these classes where they belong functionally, not where
     // they would be put "in the real world".
 
-    class ISINST : ObjectModelInstructionExec
+    public class ISINST : ObjectModelInstructionExec
     {
 
         public ISINST(Instruction instr, object operand,
@@ -1307,7 +1289,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDFLDA : ObjectModelInstructionExec
+    public class LDFLDA : ObjectModelInstructionExec
     {
         public LDFLDA(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1341,7 +1323,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDFLD : ObjectModelInstructionExec
+    public class LDFLD : ObjectModelInstructionExec
     {
         public LDFLD(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1436,7 +1418,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class STFLD : ObjectModelInstructionExec
+    public class STFLD : ObjectModelInstructionExec
     {
 
         public STFLD(Instruction instr, object operand,
@@ -1524,7 +1506,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class BOX : ObjectModelInstructionExec
+    public class BOX : ObjectModelInstructionExec
     {
         public BOX(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1545,7 +1527,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class UNBOX : ObjectModelInstructionExec
+    public class UNBOX : ObjectModelInstructionExec
     {
         public UNBOX(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1568,7 +1550,7 @@ namespace MMC.InstructionExec
 
     // ------------------------------ Classes ------------------------------ 
 
-    class LDSFLD : ObjectModelInstructionExec
+    public class LDSFLD : ObjectModelInstructionExec
     {
         public LDSFLD(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1612,7 +1594,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDSFLDA : ObjectModelInstructionExec
+    public class LDSFLDA : ObjectModelInstructionExec
     {
         public LDSFLDA(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -1651,7 +1633,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class STSFLD : ObjectModelInstructionExec
+    public class STSFLD : ObjectModelInstructionExec
     {
 
         public STSFLD(Instruction instr, object operand,
@@ -1708,7 +1690,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LDTOKEN : ObjectModelInstructionExec
+    public class LDTOKEN : ObjectModelInstructionExec
     {
         public LDTOKEN(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -1737,7 +1719,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class NumericInstructionExec : InstructionExecBase
+    public class NumericInstructionExec : InstructionExecBase
     {
 
         public NumericInstructionExec(Instruction instr, object operand,
@@ -1748,7 +1730,7 @@ namespace MMC.InstructionExec
 
     }
 
-    class ADD : NumericInstructionExec
+    public class ADD : NumericInstructionExec
     {
 
         public ADD(Instruction instr, object operand,
@@ -1806,7 +1788,7 @@ namespace MMC.InstructionExec
 	 * instuction is an integer instruction. No need to worry, the tables of
 	 * the resulting types are the same when it comes to verifiable CIL code.
 	 */
-    class DIV : NumericInstructionExec
+    public class DIV : NumericInstructionExec
     {
 
         public DIV(Instruction instr, object operand,
@@ -1849,7 +1831,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class MUL : NumericInstructionExec
+    public class MUL : NumericInstructionExec
     {
 
         public MUL(Instruction instr, object operand,
@@ -1882,7 +1864,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class REM : NumericInstructionExec
+    public class REM : NumericInstructionExec
     {
 
         public REM(Instruction instr, object operand,
@@ -1920,7 +1902,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class SUB : NumericInstructionExec
+    public class SUB : NumericInstructionExec
     {
 
         public SUB(Instruction instr, object operand,
@@ -1956,7 +1938,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class NEG : NumericInstructionExec
+    public class NEG : NumericInstructionExec
     {
 
         public NEG(Instruction instr, object operand,
@@ -1974,17 +1956,30 @@ namespace MMC.InstructionExec
         }
     }
 
-    class CompareInstruction : InstructionExecBase
+    public class CompareInstruction : InstructionExecBase
     {
-
-        public CompareInstruction(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CompareInstruction(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
+
+        protected int CompareOperands(IDataElement a, IDataElement b)
+        {
+            if (Unsigned && a is INumericElement na && b is INumericElement nb)
+            {
+                if (na.Equals(nb))
+                {
+                    return 0;
+                }
+
+                return na.ToUnsignedInt8(CheckOverflow).CompareTo(nb.ToUnsignedInt8(CheckOverflow));
+            }
+
+            return a.CompareTo(b);
+        }
     }
 
-    class CEQ : CompareInstruction
+    public class CEQ : CompareInstruction
     {
         public CEQ(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -1995,51 +1990,45 @@ namespace MMC.InstructionExec
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            cur.EvalStack.Push(a.CompareTo(b) == 0 ? new Int4(1) : new Int4(0));
+            cur.EvalStack.Push(CompareOperands(a, b) == 0 ? new Int4(1) : new Int4(0));
             return nextRetval;
         }
     }
 
-    class CGT : CompareInstruction
+    public class CGT : CompareInstruction
     {
-        public CGT(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CGT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            cur.EvalStack.Push((a.CompareTo(b) > 0 ? new Int4(1) : new Int4(0)));
+            cur.EvalStack.Push(CompareOperands(a, b) > 0 ? new Int4(1) : new Int4(0));
             return nextRetval;
         }
     }
 
-    class CLT : CompareInstruction
+    public class CLT : CompareInstruction
     {
-
-        public CLT(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CLT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
-            IDataElement value2 = cur.EvalStack.Pop();
-            IDataElement value1 = cur.EvalStack.Pop();
-            cur.EvalStack.Push((value1.CompareTo(value2) < 0 ? new Int4(1) : new Int4(0)));
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
+            cur.EvalStack.Push(CompareOperands(a, b) < 0 ? new Int4(1) : new Int4(0));
             return nextRetval;
         }
     }
 
-    class ExceptionHandlingInstructionExec : InstructionExecBase
+    public class ExceptionHandlingInstructionExec : InstructionExecBase
     {
-
         public ExceptionHandlingInstructionExec(Instruction instr, object operand,
                 InstructionExecAttributes atr)
             : base(instr, operand, atr)
@@ -2047,7 +2036,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class THROW : ExceptionHandlingInstructionExec
+    public class THROW : ExceptionHandlingInstructionExec
     {
 
         public THROW(Instruction instr, object operand,
@@ -2073,7 +2062,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class RETHROW : ExceptionHandlingInstructionExec
+    public class RETHROW : ExceptionHandlingInstructionExec
     {
 
         public RETHROW(Instruction instr, object operand,
@@ -2090,7 +2079,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class ENDFILTER : ExceptionHandlingInstructionExec
+    public class ENDFILTER : ExceptionHandlingInstructionExec
     {
 
         public ENDFILTER(Instruction instr, object operand,
@@ -2116,7 +2105,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class LEAVE : ExceptionHandlingInstructionExec
+    public class LEAVE : ExceptionHandlingInstructionExec
     {
 
         public LEAVE(Instruction instr, object operand,
@@ -2153,7 +2142,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class ENDFINALLY : ExceptionHandlingInstructionExec
+    public class ENDFINALLY : ExceptionHandlingInstructionExec
     {
 
         public ENDFINALLY(Instruction instr, object operand,
@@ -2181,8 +2170,8 @@ namespace MMC.InstructionExec
         }
     }
 
-    /// Common base class for all instructions that call a method.
-    class CallInstructionExec : InstructionExecBase
+    /// Common base public class for all instructions that call a method.
+    public class CallInstructionExec : InstructionExecBase
     {
 
         public CallInstructionExec(Instruction instr, object operand,
@@ -2414,7 +2403,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class JMP : InstructionExecBase
+    public class JMP : InstructionExecBase
     {
 
         public JMP(Instruction instr, object operand,
@@ -2439,7 +2428,7 @@ namespace MMC.InstructionExec
     /// <summary>
     /// A CALL instruction.
     /// </summary>
-    class CALL : CallInstructionExec
+    public class CALL : CallInstructionExec
     {
         public CALL(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
@@ -2511,7 +2500,7 @@ namespace MMC.InstructionExec
     }
 
     /// A CALLI instruction.
-    class CALLI : CallInstructionExec
+    public class CALLI : CallInstructionExec
     {
 
         public CALLI(Instruction instr, object operand,
@@ -2552,7 +2541,7 @@ namespace MMC.InstructionExec
     /// <summary>
     /// A CALLVIRT instruction.
     /// </summary>
-    class CALLVIRT : CallInstructionExec
+    public class CALLVIRT : CallInstructionExec
     {
 
         public CALLVIRT(Instruction instr, object operand,
@@ -2637,7 +2626,7 @@ namespace MMC.InstructionExec
     }
 
     /// A NEWOBJ instruction.
-    class NEWOBJ : CallInstructionExec
+    public class NEWOBJ : CallInstructionExec
     {
 
         public NEWOBJ(Instruction instr, object operand,
@@ -2721,7 +2710,7 @@ namespace MMC.InstructionExec
     }
 
     /// A RET instruction.
-    class RET : InstructionExecBase
+    public class RET : InstructionExecBase
     {
 
         public RET(Instruction instr, object operand,
@@ -2777,7 +2766,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class ConvertInstructionExec : InstructionExecBase
+    public class ConvertInstructionExec : InstructionExecBase
     {
 
         public ConvertInstructionExec(Instruction instr, object operand,
@@ -2787,7 +2776,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class CKFINITE : ConvertInstructionExec
+    public class CKFINITE : ConvertInstructionExec
     {
 
         public CKFINITE(Instruction instr, object operand,
@@ -2819,31 +2808,30 @@ namespace MMC.InstructionExec
         }
     }
 
-    class CONV : ConvertInstructionExec
+    public class CONV : ConvertInstructionExec
     {
-
-        public CONV(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CONV(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // Determine the desired type. The PushBehaviour enum is no
             // good here (it doesn't deal with the shorter forms).
             // Format of conv.* instructions are as follows:
             // conv.[iru][1248], where not all combinations are legal.
             string[] tokens = Instruction.OpCode.Name.Split(new char[] { '.' });
-            INumericElement toPush = null;
+            IDataElement toPush = null;
             IDataElement popped = cur.EvalStack.Pop();
 
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             // put aside the ovf part in the instruction
             if (CheckOverflow)
+            {
                 tokens[1] = tokens[2];
+            }
 
             try
             {
@@ -2852,8 +2840,11 @@ namespace MMC.InstructionExec
                 {
                     case 'i':
                         if (tokens[1].Length == 1) // conv.i (native int = i4)
+                        {
                             toPush = a.ToInt4(CheckOverflow);
+                        }
                         else
+                        {
                             switch (tokens[1][1])
                             {
                                 case '1': // i1, byte
@@ -2866,20 +2857,36 @@ namespace MMC.InstructionExec
                                     toPush = a.ToInt4(CheckOverflow);
                                     break;
                                 case '8': // i8, long
-                                    toPush = a.ToInt8(CheckOverflow);
+                                    toPush = Unsigned ? (IDataElement)a.ToUnsignedInt8(CheckOverflow) : a.ToInt8(CheckOverflow);
                                     break;
                                 default: // error
                                     break;
                             }
+                        }
                         break;
                     case 'u':
                         if (tokens[1].Length == 1) // conv.u (native unsigned int = u4)
+                        {
                             toPush = a.ToUnsignedInt4(CheckOverflow);
+                        }
                         else
+                        {
                             switch (tokens[1][1])
                             {
                                 case '1': // u1, ubyte
-                                    toPush = a.ToUnsignedInt4(false).ToByte(CheckOverflow);
+                                    switch (a)
+                                    {
+                                        case Float4 f4:
+                                            toPush = f4.ToByte(CheckOverflow);
+                                            break;
+                                        case Float8 f8:
+                                            toPush = f8.ToByte(CheckOverflow);
+                                            break;
+                                        default:
+                                            toPush = a.ToUnsignedInt4(false).ToByte(CheckOverflow);
+                                            break;
+                                    }
+                                    // Float only - new Int4((byte)Convert.ChangeType(a, typeof(byte)));//
                                     break;
                                 case '2': // u2, ushort
                                     toPush = a.ToUnsignedInt4(false).ToShort(CheckOverflow);
@@ -2893,6 +2900,7 @@ namespace MMC.InstructionExec
                                 default: // error
                                     break;
                             }
+                        }
                         break;
                     case 'r':
                         if (tokens[1].Length > 1)
@@ -2938,19 +2946,149 @@ namespace MMC.InstructionExec
         }
     }
 
-    class StoreInstructionExec : InstructionExecBase
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to signed int64, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I8_UN : ConvertInstructionExec
     {
+        public CONV_OVF_I8_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
 
-        public StoreInstructionExec(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                switch (a)
+                {
+                    case Int4 i4:
+                        {
+                            var unsigned = i4.ToUnsignedInt8(CheckOverflow);
+                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
+                            return nextRetval;
+                        }
+                    case UnsignedInt4 ui4:
+                        {
+                            var unsigned = ui4.ToUnsignedInt8(CheckOverflow);
+                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
+                            return nextRetval;
+                        }
+                    case Int8 i8:
+                        {
+                            var unsigned = i8.ToUnsignedInt8(CheckOverflow);
+                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
+                            return nextRetval;
+                        }
+                    case UnsignedInt8 ui8:
+                        {
+                            var unsigned = ui8.ToUnsignedInt8(CheckOverflow);
+                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
+                            return nextRetval;
+                        }
+                    default:
+                        throw new NotImplementedException(popped.GetType().FullName);
+                }
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to unsigned int64, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U8_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_U8_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                switch (a)
+                {
+                    case Int4 i4:
+                        {
+                            var unsigned = i4.ToUnsignedInt4(false).Value; // TODO ???
+                            cur.EvalStack.Push(new Int8((long)checked((ulong)unsigned)));
+                            return nextRetval;
+                        }
+                    case UnsignedInt4 ui4:
+                        {
+                            var unsigned = ui4.ToUnsignedInt8(CheckOverflow).Value;
+                            cur.EvalStack.Push(new Int8((long)checked(unsigned)));
+                            return nextRetval;
+                        }
+                    case Int8 i8:
+                        {
+                            var unsigned = i8.ToUnsignedInt8(CheckOverflow).Value;
+                            cur.EvalStack.Push(new Int8((long)checked(unsigned)));
+                            return nextRetval;
+                        }
+                    case UnsignedInt8 ui8:
+                        {
+                            var unsigned = ui8.ToUnsignedInt8(CheckOverflow).Value;
+                            cur.EvalStack.Push(new Int8((long)checked(unsigned)));
+                            return nextRetval;
+                        }
+                    default:
+                        throw new NotImplementedException(popped.GetType().FullName);
+                }
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    public class CONV_U : ConvertInstructionExec
+    {
+        public CONV_U(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            //IDataElement popped = cur.EvalStack.Pop();
+
+            return nextRetval;//  base.Execute(cur);
+        }
+    }
+
+    public class StoreInstructionExec : InstructionExecBase
+    {
+        public StoreInstructionExec(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
     }
 
-    class STARG : StoreInstructionExec
+    public class STARG : StoreInstructionExec
     {
-
         public STARG(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
@@ -2958,7 +3096,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // Operand is a VariableDefinition. In all but the rarest of cases
             // starg.s is used, which has a more efficient encoding for the first
             // 256 arguments (programmers defining method with that many arguments
@@ -2966,7 +3103,6 @@ namespace MMC.InstructionExec
             int index = ((ParameterDefinition)Operand).Index;
             if (!cur.CurrentMethod.Definition.HasThis)
                 index--;
-
 
             IDataElement ide = cur.EvalStack.Pop();
 
@@ -2988,7 +3124,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class STLOC : StoreInstructionExec
+    public class STLOC : StoreInstructionExec
     {
 
         public STLOC(Instruction instr, object operand,
@@ -3029,7 +3165,7 @@ namespace MMC.InstructionExec
     }
 
     // Not really 'storage'... :-)
-    class POP : StoreInstructionExec
+    public class POP : StoreInstructionExec
     {
 
         public POP(Instruction instr, object operand,
@@ -3046,7 +3182,7 @@ namespace MMC.InstructionExec
         }
     }
 
-    class STOBJ : STIND
+    public class STOBJ : STIND
     {
 
         public STOBJ(Instruction instr, object operand,
@@ -3096,7 +3232,7 @@ namespace MMC.InstructionExec
 		}*/
     }
 
-    class STIND : StoreInstructionExec
+    public class STIND : StoreInstructionExec
     {
 
         public STIND(Instruction instr, object operand,

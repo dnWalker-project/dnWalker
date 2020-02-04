@@ -74,11 +74,13 @@ namespace MMC.Data {
 		bool IsFinite();
 	}
 
-    public interface ISignedNumericElement : INumericElement {
-		ISignedNumericElement Neg();		
+    public interface ISignedNumericElement : INumericElement
+    {
+		ISignedNumericElement Neg();
 	}
 
-    public interface ISignedIntegerElement : INumericElement {
+    public interface ISignedIntegerElement : INumericElement
+    {
 		INumericElement ToUnsigned();
 	}
 
@@ -102,7 +104,6 @@ namespace MMC.Data {
 	 * the stack by load instructions, or be the result of the
 	 * execution of some other (e.g. arithmetic) operation.
 	 * -------------------------------------------------------------- */
-
     public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
     {
 		int m_value;
@@ -122,7 +123,8 @@ namespace MMC.Data {
 
 		}
 
-		public INumericElement ToUnsigned() {
+		public INumericElement ToUnsigned()
+        {
 			return ToUnsignedInt4(false);
 		}
 
@@ -362,6 +364,275 @@ namespace MMC.Data {
 
         public static explicit operator Int4(int b) => new Int4(b);
     }
+
+    /*public struct Int4G<T> : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
+        where T : IConvertible, IComparable
+    {
+        public string WrapperName { get { return Value.GetType().FullName; } }
+
+        public T Value { get; }
+        // public DataElementKind Kind => DataElementKind.Int32;
+
+        public IAddElement Add(INumericElement other, bool checkOverflow)
+        {
+            int op = other.ToInt4(checkOverflow).Value;
+
+            if (checkOverflow)
+                return new Int4(checked(Value + op));
+            else
+                return new Int4(Value + op);
+        }
+
+        public INumericElement ToUnsigned()
+        {
+            return ToUnsignedInt4(false);
+        }
+
+        public INumericElement Div(INumericElement other)
+        {
+            int op = other.ToInt4(false).Value;
+            return new Int4(Value / op);
+        }
+
+        public INumericElement Mul(INumericElement other, bool checkOverflow)
+        {
+
+            int op = other.ToInt4(checkOverflow).Value;
+
+            if (checkOverflow)
+                return new Int4(checked(Value * op));
+            else
+                return new Int4(Value * op);
+
+        }
+
+        public INumericElement Rem(INumericElement other)
+        {
+
+            int op = other.ToInt4(false).Value;
+            return new Int4(Value % op);
+        }
+
+        public ISignedNumericElement Neg()
+        {
+            return new Int4(-Value);
+        }
+
+        public ISubElement Sub(INumericElement other, bool checkOverflow)
+        {
+            int op = other.ToInt4(checkOverflow).Value;
+
+            if (checkOverflow)
+                return new Int4(checked(Value - op));
+            else
+                return new Int4(Value - op);
+        }
+
+        public IIntegerElement And(IIntegerElement other)
+        {
+            int op = other.ToInt4(false).Value;
+            return new Int4(Value & op);
+        }
+
+        public IIntegerElement Not()
+        {
+            return new Int4(~Value);
+        }
+
+        public IIntegerElement Or(IIntegerElement other)
+        {
+            int op = other.ToInt4(false).Value;
+            return new Int4(Value | op);
+        }
+
+        public IIntegerElement Xor(IIntegerElement other)
+        {
+            int op = other.ToInt4(false).Value;
+            return new Int4(Value ^ op);
+        }
+
+        public IIntegerElement Shl(int x)
+        {
+            return new Int4(Value << x);
+        }
+
+        public IIntegerElement Shr(int x)
+        {
+            return new Int4(Value >> x);
+        }
+
+        public Int4 ToInt4(bool checkOverflow) { return this; }
+
+        public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new UnsignedInt4(checked((uint)Value));
+            else
+                return new UnsignedInt4((uint)Value);
+        }
+
+        public Int8 ToInt8(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Int8(checked((long)Value));
+            else
+                return new Int8((long)Value);
+        }
+
+        public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new UnsignedInt8(checked((ulong)Value));
+            else
+                return new UnsignedInt8((ulong)Value);
+        }
+
+        public Float4 ToFloat4(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Float4(checked((float)Value));
+            else
+                return new Float4((float)Value);
+        }
+
+        public Float8 ToFloat8(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Float8(checked((double)Value));
+            else
+                return new Float8((double)Value);
+        }
+
+        public Int4 ToByte(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Int4(checked((sbyte)Value));
+            else
+                return new Int4((sbyte)Value);
+        }
+
+        public Int4 ToShort(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Int4(checked((short)Value));
+            else
+                return new Int4((short)Value);
+        }
+
+        public bool ToBool() { return !Value.Equals(default(T)); }
+
+        public bool Equals(IDataElement other)
+        {
+            return (other is Int4G<T>) && (((Int4G<T>)other).Value.Equals(Value));
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Value.CompareTo(((Int4)obj).Value);
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        *public override int GetHashCode()
+        {
+            return Value;
+        }*
+
+        public TypeCode GetTypeCode()
+        {
+            return Value.GetTypeCode();
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToBoolean(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToChar(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToSByte(provider);
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToByte(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToInt16(provider);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToUInt16(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToInt32(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToUInt32(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToInt64(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToUInt64(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToSingle(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToDouble(provider);
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToDecimal(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToDateTime(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return Value.ToString(provider);
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return ((IConvertible)Value).ToType(conversionType, provider);
+        }
+
+        public Int4G(T val)
+        {
+            Value = val;
+        }
+
+        public static explicit operator Int4G<T>(T b) => new Int4G<T>(b);
+    }*/
 
     public struct UnsignedInt4 : IIntegerElement, IConvertible {
 		public static UnsignedInt4 Zero = new UnsignedInt4(0);
@@ -1230,6 +1501,14 @@ namespace MMC.Data {
             return ((IConvertible)m_value).ToByte(provider);
         }
 
+        internal Int4 ToByte(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Int4(checked((byte)m_value));
+            else
+                return new Int4((byte)m_value);
+        }
+
         public short ToInt16(IFormatProvider provider)
         {
             return ((IConvertible)m_value).ToInt16(provider);
@@ -1296,208 +1575,223 @@ namespace MMC.Data {
 		}
 	}
 
-    public struct Float8 : ISignedNumericElement, IRealElement, IConvertible {
+    public struct Float8 : ISignedNumericElement, IRealElement, IConvertible
+    {
 		public static Float8 Zero = new Float8(0);
-		double m_value;
 
-		public string WrapperName { get { return "System.Double"; } }
-		public double Value { get { return m_value; } }
-        // public DataElementKind Kind => DataElementKind.Double;
+        public string WrapperName { get { return "System.Double"; } }
 
-        public bool IsFinite() {
-			return !(double.IsInfinity(m_value) | double.IsNaN(m_value));
+        public double Value { get; }
+
+        public bool IsFinite()
+        {
+			return !(double.IsInfinity(Value) || double.IsNaN(Value));
 		}
 
-		public IAddElement Add(INumericElement other, bool checkOverflow) {
-
+		public IAddElement Add(INumericElement other, bool checkOverflow)
+        {
 			double op = other.ToFloat8(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new Float8(checked(m_value + op));
+				return new Float8(checked(Value + op));
 			else
-				return new Float8(m_value + op);
+				return new Float8(Value + op);
 		}
 
-		public INumericElement Div(INumericElement other) {
-
+		public INumericElement Div(INumericElement other)
+        {
 			double op = other.ToFloat8(false).Value;
-			return new Float8(m_value / op);
+			return new Float8(Value / op);
 		}
 
-		public INumericElement Mul(INumericElement other, bool checkOverflow) {
-
+		public INumericElement Mul(INumericElement other, bool checkOverflow)
+        {
 			double op = other.ToFloat8(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new Float8(checked(m_value * op));
+				return new Float8(checked(Value * op));
 			else
-				return new Float8(m_value * op);
+				return new Float8(Value * op);
 		}
 
-		public INumericElement Rem(INumericElement other) {
-
+		public INumericElement Rem(INumericElement other)
+        {
 			double op = other.ToFloat8(false).Value;
-			return new Float8(m_value % op);
+			return new Float8(Value % op);
 		}
 
-		public ISubElement Sub(INumericElement other, bool checkOverflow) {
-
+		public ISubElement Sub(INumericElement other, bool checkOverflow)
+        {
 			double op = other.ToFloat8(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new Float8(checked(m_value - op));
+				return new Float8(checked(Value - op));
 			else
-				return new Float8(m_value - op);
+				return new Float8(Value - op);
 		}
 
-		public ISignedNumericElement Neg() {
-
-			return new Float8(-m_value);
+		public ISignedNumericElement Neg()
+        {
+			return new Float8(-Value);
 		}
 
-		public Int4 ToInt4(bool checkOverflow) {
+		public Int4 ToInt4(bool checkOverflow)
+        {
 			if (checkOverflow)
-				return new Int4(checked((int)m_value));
+				return new Int4(checked((int)Value));
 			else
-				return new Int4((int)m_value);
+				return new Int4((int)Value);
 		}
 
-		public UnsignedInt4 ToUnsignedInt4(bool checkOverflow) {
+		public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
+        {
 			if (checkOverflow)
-				return new UnsignedInt4(checked((uint)m_value));
+				return new UnsignedInt4(checked((uint)Value));
 			else
-				return new UnsignedInt4((uint)m_value);
+				return new UnsignedInt4((uint)Value);
 		}
 
-		public Int8 ToInt8(bool checkOverflow) {
+		public Int8 ToInt8(bool checkOverflow)
+        {
 			if (checkOverflow)
-				return new Int8(checked((long)m_value));
+				return new Int8(checked((long)Value));
 			else
-				return new Int8((long)m_value);
+				return new Int8((long)Value);
 		}
 
-		public UnsignedInt8 ToUnsignedInt8(bool checkOverflow) {
+		public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
+        {
 			if (checkOverflow)
-				return new UnsignedInt8(checked((ulong)m_value));
+				return new UnsignedInt8(checked((ulong)Value));
 			else
-				return new UnsignedInt8((ulong)m_value);
+				return new UnsignedInt8((ulong)Value);
 		}
 
-		public Float4 ToFloat4(bool checkOverflow) {
+		public Float4 ToFloat4(bool checkOverflow)
+        {
 			if (checkOverflow)
-				return new Float4(checked((float)m_value));
+				return new Float4(checked((float)Value));
 			else
-				return new Float4((float)m_value);
+				return new Float4((float)Value);
 		}
 
 		public Float8 ToFloat8(bool checkOverflow) { return this; }
 
-		public Float8(double val) { m_value = val; }
-		public bool ToBool() { return m_value != 0; }
+		public Float8(double val) { Value = val; }
+		public bool ToBool() { return Value != 0; }
 
-		public bool Equals(IDataElement other) {
-
-			return (other is Float8) && ((Float8)other).Value == m_value;
+		public bool Equals(IDataElement other)
+        {
+			return other is Float8 float8 && float8.Value == Value;
 		}
 
-		public int CompareTo(object obj) {
-			return m_value.CompareTo(((Float8)obj).Value);
+		public int CompareTo(object obj)
+        {
+			return Value.CompareTo(((Float8)obj).Value);
 			//return (int)(m_value - ((Float8)obj).Value);
 		}
 
-		public override string ToString() {
-
+		public override string ToString()
+        {
 			return Value.ToString() + "D";
 		}
 
-		public override int GetHashCode() {
-
-			return (int)(m_value * 191);
+		public override int GetHashCode()
+        {
+			return (int)(Value * 191);
 		}
 
         public TypeCode GetTypeCode()
         {
-            return m_value.GetTypeCode();
+            return Value.GetTypeCode();
         }
 
         public bool ToBoolean(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToBoolean(provider);
+            return ((IConvertible)Value).ToBoolean(provider);
         }
 
         public char ToChar(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToChar(provider);
+            return ((IConvertible)Value).ToChar(provider);
         }
 
         public sbyte ToSByte(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToSByte(provider);
+            return ((IConvertible)Value).ToSByte(provider);
         }
 
         public byte ToByte(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToByte(provider);
+            return ((IConvertible)Value).ToByte(provider);
+        }
+
+        internal Int4 ToByte(bool checkOverflow)
+        {
+            if (checkOverflow)
+                return new Int4(checked((byte)Value));
+            else
+                return new Int4((byte)Value);
         }
 
         public short ToInt16(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToInt16(provider);
+            return ((IConvertible)Value).ToInt16(provider);
         }
 
         public ushort ToUInt16(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToUInt16(provider);
+            return ((IConvertible)Value).ToUInt16(provider);
         }
 
         public int ToInt32(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToInt32(provider);
+            return ((IConvertible)Value).ToInt32(provider);
         }
 
         public uint ToUInt32(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToUInt32(provider);
+            return ((IConvertible)Value).ToUInt32(provider);
         }
 
         public long ToInt64(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToInt64(provider);
+            return ((IConvertible)Value).ToInt64(provider);
         }
 
         public ulong ToUInt64(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToUInt64(provider);
+            return ((IConvertible)Value).ToUInt64(provider);
         }
 
         public float ToSingle(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToSingle(provider);
+            return ((IConvertible)Value).ToSingle(provider);
         }
 
         public double ToDouble(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToDouble(provider);
+            return ((IConvertible)Value).ToDouble(provider);
         }
 
         public decimal ToDecimal(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToDecimal(provider);
+            return ((IConvertible)Value).ToDecimal(provider);
         }
 
         public DateTime ToDateTime(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToDateTime(provider);
+            return ((IConvertible)Value).ToDateTime(provider);
         }
 
         public string ToString(IFormatProvider provider)
         {
-            return m_value.ToString(provider);
+            return Value.ToString(provider);
         }
 
         public object ToType(Type conversionType, IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToType(conversionType, provider);
+            return ((IConvertible)Value).ToType(conversionType, provider);
         }
     }
 
