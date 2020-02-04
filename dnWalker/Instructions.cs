@@ -343,9 +343,7 @@ namespace MMC.InstructionExec
     // Bitwise NOT
     public class NOT : LogicalIntsructionExec
     {
-
-        public NOT(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public NOT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -2462,7 +2460,7 @@ namespace MMC.InstructionExec
                 }
                 else
                 {
-                    var bypass = MethodBypass.Get(methDef);
+                    var bypass = NativePeer.Get(methDef);
                     if (bypass != null)
                     {
                         if (bypass.TryGetValue(args, cur, out var dataElement))
@@ -3061,21 +3059,6 @@ namespace MMC.InstructionExec
             cur.EvalStack.Push(toPush);
 
             return nextRetval;
-        }
-    }
-
-    public class CONV_U : ConvertInstructionExec
-    {
-        public CONV_U(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
-        {
-        }
-
-        public override IIEReturnValue Execute(ExplicitActiveState cur)
-        {
-            //IDataElement popped = cur.EvalStack.Pop();
-
-            return nextRetval;//  base.Execute(cur);
         }
     }
 

@@ -15,10 +15,10 @@ namespace dnWalker.Tests.Interpreter
         {
         }
 
-        protected override object Test(string methodName, params object[] args)
+        protected override void TestAndCompare(string methodName, params object[] args)
         {
             methodName = "Examples.Interpreter.IntepreterTests." + methodName;
-            return base.Test(methodName, args);
+            base.TestAndCompare(methodName, args);
         }
 
         [Theory]
@@ -36,6 +36,6 @@ namespace dnWalker.Tests.Interpreter
         [InlineData(4.0d)]
         [InlineData(5.0d)]
         [InlineData(6.0d)]
-        public void Test_SWITCH__6_Double(object arg0) { Test("Test_SWITCH__6_Double", arg0); }
+        public void Test_SWITCH__6_Double(object arg0) { TestAndCompare("Test_SWITCH__6_Double", arg0); }
     }
 }
