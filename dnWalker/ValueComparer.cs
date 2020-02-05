@@ -23,6 +23,16 @@ namespace dnWalker
 
     public class ValueComparer
     {
+        public static int CompareUnsigned(INumericElement v1, object obj)
+        {
+            if (obj is INumericElement v2)
+            {
+                return CompareUnsigned(v1, v2);
+            }
+
+            throw new NotImplementedException();
+        }
+
         public static int CompareUnsigned(INumericElement v1, INumericElement v2)
         {
             if (v1.Equals(v2))
@@ -30,7 +40,23 @@ namespace dnWalker
                 return 0;
             }
 
-            return v1.ToUnsignedInt8(false).CompareTo(v2.ToUnsignedInt8(false));
+            switch (v1)
+            {
+                case UnsignedInt4 ui4:
+                    switch (v2)
+                    {
+                        case Int4 i4:
+                            return ui4.Value.CompareTo((uint)i4.Value);
+                        case UnsignedInt4 ui4_:
+                            return ui4.Value.CompareTo(ui4_.Value);
+                        default:
+                            break;
+                    }
+                    break;
+            }
+
+            throw new NotImplementedException("Comparing " + v1.GetType().Name + " & " + v2.GetType().Name);
+            //return v1.ToUnsignedInt8(false).CompareTo(v2.ToUnsignedInt8(false));
 
             /*var res = debuggerRuntime.CompareUnsigned(v1, v2);
             if (!(res is null))

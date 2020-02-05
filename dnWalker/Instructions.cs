@@ -2962,35 +2962,88 @@ namespace MMC.InstructionExec
 
             try
             {
-                switch (a)
+                var unsigned = a.ToUnsignedInt4(false).Value;
+                cur.EvalStack.Push(new Int8(checked(unsigned)));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to unsigned native int, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_U_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is Int4 i4)
                 {
-                    case Int4 i4:
-                        {
-                            var unsigned = i4.ToUnsignedInt8(CheckOverflow);
-                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
-                            return nextRetval;
-                        }
-                    case UnsignedInt4 ui4:
-                        {
-                            var unsigned = ui4.ToUnsignedInt8(CheckOverflow);
-                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
-                            return nextRetval;
-                        }
-                    case Int8 i8:
-                        {
-                            var unsigned = i8.ToUnsignedInt8(CheckOverflow);
-                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
-                            return nextRetval;
-                        }
-                    case UnsignedInt8 ui8:
-                        {
-                            var unsigned = ui8.ToUnsignedInt8(CheckOverflow);
-                            cur.EvalStack.Push(new Int8(checked((long)unsigned.Value)));
-                            return nextRetval;
-                        }
-                    default:
-                        throw new NotImplementedException(popped.GetType().FullName);
+                    var uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
+                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
                 }
+                /*else if (a is Int8 i8)
+                {
+                    var uintptr = (UIntPtr)a.ToUnsignedInt8(false).Value;
+                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
+                }*/
+                else
+                {
+                    var unsigned = a.ToUnsignedInt8(false).Value;
+                    cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
+                }
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to unsigned int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U4_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_U4_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                var unsigned = a.ToUnsignedInt4(false).Value;
+                cur.EvalStack.Push(new UnsignedInt4(checked(unsigned)));
+                return nextRetval;
             }
             catch (OverflowException e)
             {
@@ -3021,35 +3074,216 @@ namespace MMC.InstructionExec
 
             try
             {
-                switch (a)
+                if (a is Int4 i4)
                 {
-                    case Int4 i4:
-                        {
-                            var unsigned = i4.ToUnsignedInt4(false).Value; // TODO ???
-                            cur.EvalStack.Push(new Int8((long)checked((ulong)unsigned)));
-                            return nextRetval;
-                        }
-                    case UnsignedInt4 ui4:
-                        {
-                            var unsigned = ui4.ToUnsignedInt8(CheckOverflow).Value;
-                            cur.EvalStack.Push(new Int8((long)checked(unsigned)));
-                            return nextRetval;
-                        }
-                    case Int8 i8:
-                        {
-                            var unsigned = i8.ToUnsignedInt8(CheckOverflow).Value;
-                            cur.EvalStack.Push(new Int8((long)checked(unsigned)));
-                            return nextRetval;
-                        }
-                    case UnsignedInt8 ui8:
-                        {
-                            var unsigned = ui8.ToUnsignedInt8(CheckOverflow).Value;
-                            cur.EvalStack.Push(new Int8((long)checked(unsigned)));
-                            return nextRetval;
-                        }
-                    default:
-                        throw new NotImplementedException(popped.GetType().FullName);
+                    var value = a.ToUnsignedInt4(false).ToUnsignedInt8(false);
+                    cur.EvalStack.Push(value);
                 }
+                else
+                {
+                    var unsigned = a.ToUnsignedInt8(false).Value;
+                    cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
+                }
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to float32.
+    /// </summary>
+    public class CONV_R4 : ConvertInstructionExec
+    {
+        public CONV_R4(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is Int8 || a is UnsignedInt8)
+                {
+                    cur.EvalStack.Push(a.ToInt8(false).ToFloat4(false));
+                }
+                else if (a is Float8 || a is Float4)
+                {
+                    cur.EvalStack.Push(a.ToFloat4(false));
+                }
+                else
+                {
+                    cur.EvalStack.Push(a.ToInt4(false).ToFloat4(false));
+                }
+
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to float64.
+    /// </summary>
+    public class CONV_R8 : ConvertInstructionExec
+    {
+        public CONV_R8(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is Int8 || a is UnsignedInt8)
+                {
+                    cur.EvalStack.Push(a.ToInt8(false).ToFloat8(false));
+                }
+                else if (a is Float8 || a is Float4)
+                {
+                    cur.EvalStack.Push(a.ToFloat8(false));
+                }
+                else
+                {
+                    cur.EvalStack.Push(a.ToInt4(false).ToFloat8(false));
+                }
+
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned integer value on top of the evaluation stack to float32.
+    /// </summary>
+    public class CONV_R_UN : ConvertInstructionExec
+    {
+        public CONV_R_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is Int8 || a is UnsignedInt8)
+                {
+                    cur.EvalStack.Push(a.ToUnsignedInt8(false).ToFloat4(false));
+                    return nextRetval;
+                }
+
+                cur.EvalStack.Push(a.ToUnsignedInt4(false).ToFloat4(false));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    public class CONV_I8 : ConvertInstructionExec
+    {
+        public CONV_I8(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is UnsignedInt4 ui4)
+                {
+                    cur.EvalStack.Push(ui4.ToInt4(false).ToInt8(false));
+                    return nextRetval;
+                }
+
+                cur.EvalStack.Push(a.ToInt8(false));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to unsigned int64, and extends it to int64.
+    /// </summary>
+    public class CONV_U8 : ConvertInstructionExec
+    {
+        public CONV_U8(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is Int4 i4)
+                {
+                    cur.EvalStack.Push(a.ToUnsignedInt4(false).ToUnsignedInt8(false));
+                    return nextRetval;
+                }
+
+                cur.EvalStack.Push(a.ToUnsignedInt8(false));
+                return nextRetval;
             }
             catch (OverflowException e)
             {

@@ -776,8 +776,9 @@ namespace MMC.Data {
 			return (other is UnsignedInt4) && ((UnsignedInt4)other).Value == m_value;
 		}
 
-		public int CompareTo(object obj) {
-			return m_value.CompareTo(((UnsignedInt4)obj).Value);
+		public int CompareTo(object obj)
+        {
+            return ValueComparer.CompareUnsigned(this, obj);
 		}
 
 		public override string ToString() {
@@ -1575,6 +1576,9 @@ namespace MMC.Data {
 		}
 	}
 
+    /// <summary>
+    /// Represents System.Double 
+    /// </summary>
     public struct Float8 : ISignedNumericElement, IRealElement, IConvertible
     {
 		public static Float8 Zero = new Float8(0);

@@ -68,34 +68,25 @@ namespace MMC
         }
     }
 
-
-    /// \brief This is a straith-forward implementation of IDefinitionProvider.
-    ///
+    /// <summary>
+    /// This is a straitforward implementation of IDefinitionProvider.
+    /// </summary>
+    /// <remarks>
     /// Hashing is used to speed up the lookup process.
-    ///
-    /// The methods in this class use the Logger singleton to output warnings,
-    /// and debug messages under priority Lookup.
+    /// </remarks>
     public class DefinitionProvider
     {
-        ModuleDef m_asmDef;
-        ModuleDef[] m_referencedAssemblies;
-        IDictionary<string, TypeDef> m_typeDefinitions;
-        IDictionary m_virtualMethodDefinitions;
-        IDictionary<string, MethodDef> m_methodDefinitionsByReference;
-        IDictionary m_methodDefinitionsByString;
-        IDictionary<string, FieldDefinition> m_fieldDefinitions;
-        IDictionary m_typeSizes;
+        private readonly ModuleDef[] m_referencedAssemblies;
+        private readonly IDictionary<string, TypeDef> m_typeDefinitions;
+        private readonly Dictionary<VirtualMethodDefinition, MethodDefinition> m_virtualMethodDefinitions;
+        private readonly IDictionary<string, MethodDefinition> m_methodDefinitionsByReference;
+        private readonly IDictionary<string, FieldDefinition> m_fieldDefinitions;
+        private readonly IDictionary<string, int> m_typeSizes;
 
         /// <summary>
         /// The main assembly we're working on (ro).
         /// </summary>
-        public ModuleDef AssemblyDefinition
-        {
-            get
-            {
-                return m_asmDef;
-            }
-        }
+        public ModuleDef AssemblyDefinition { get; }
 
         // ----------------------------------------------------------------------------------------------
 
@@ -176,7 +167,6 @@ namespace MMC
         /// \sa GetTypeDefinition(string)
         internal TypeDef GetTypeDefinition(TypeRef typeRef)
         {
-            //return GetTypeDefinition(typeRef.FullName);
             return typeRef.ResolveTypeDef();
         }
 
@@ -188,22 +178,7 @@ namespace MMC
                 //    return typeDef;
             }
 
-            //_logger.Lookup("looking up definition for type {0} => {1}", typeSig.FullName, typeDef);
             return typeDef;
-
-            /*var typeDef = GetTypeDefinition(typeSig.FullName);
-            if (typeDef != null)
-            {
-                return typeDef;
-            }
-
-            var typeDefOrRef = typeSig.ToTypeDefOrRef();
-            if (typeDefOrRef.NumberOfGenericParameters > 0)
-            {
-                typeDef = GetTypeDefinition(typeSig);
-            }
-
-            return typeDefOrRef.ResolveTypeDef();*/
         }
 
         // TODO TypeDefFinder
@@ -228,7 +203,7 @@ namespace MMC
         /// \sa GetTypeDefinition(string, AssemblyDefinition)
         public TypeDef GetTypeDefinition(string name)
         {
-            var retval = SearchType(name, m_asmDef);
+            var retval = SearchType(name, AssemblyDefinition);
             foreach (var refA in m_referencedAssemblies)
             {
                 retval = SearchType(name, refA);
@@ -240,21 +215,10 @@ namespace MMC
 
             if (retval == null)
             {
-                //var a = m_referencedAssemblies.FirstOrDefault(m => m.Name == "System.dll");
-                //a
-                //var sa = a.Types.Where(t => t.FullName.StartsWith("System.Threa")).Select(t => t.FullName).OrderBy(s => s).ToArray();
-
                 throw new NullReferenceException($"Type {name} not found.");
             }
 
             return retval;
-        }
-
-        // ----------------------------------------------------------------------------------------------
-
-        internal MethodDefinition GetMethodDefinition(IMethod methodRef)
-        {
-            return GetMethodDefinition(methodRef.ResolveMethodDef());
         }
 
         public MethodDefinition GetMethodDefinition(string methodName)
@@ -273,61 +237,16 @@ namespace MMC
             return retval;
         }
 
-        /// <summary>
-        /// Look up a method definition by reference, in its defining type.
-        /// </summary>
-        /// <remarks>This simply calls GetMethodDefinition with its defining type, once it has been looked up.</remarks>
-        /// <param name="methRef">Reference to the method to look up.</param>
-        /// <returns>A definition for the method to look for, or null if none was found.</returns>
-        internal MethodDefinition GetMethodDefinition(MethodReference methRef)
-        {
-            if (methRef is MethodDefinition)
-            {
-                return methRef;
-            }
-
-            if (m_methodDefinitionsByReference.TryGetValue(methRef.ToString(), out var retval))
-            {
-                return retval;
-            }
-
-            if (retval == null)
-            {
-                TypeDef typeDef = GetTypeDefinition(methRef.DeclaringType);
-                // Look in either the constructor or method definition collection.
-                IEnumerator definitions = null;
-                if (methRef.IsConstructor)
-                    //|| methRef.Name == MethodDefinition.Cctor)
-                    definitions = typeDef.FindInstanceConstructors().GetEnumerator();
-                else
-                    definitions = typeDef.Methods.GetEnumerator();
-                // Search in all method definitions.
-                while (retval == null && definitions.MoveNext())
-                {
-                    MethodDefinition curr = definitions.Current as MethodDefinition;
-                    if (curr.ToString().Equals(methRef.ToString()))
-                        retval = curr;
-                }
-
-                // Store in cache.
-                if (retval != null)
-                {
-                    m_methodDefinitionsByReference[methRef.ToString()] = retval;
-                }
-            }
-
-            return retval;
-        }
-
         public MethodDefinition SearchVirtualMethod(MethodReference methRef, ObjectReference objRef, ExplicitActiveState cur)
         {
             AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
             var superType = ao.Type;
             VirtualMethodDefinition vmdef = new VirtualMethodDefinition(methRef, objRef);
-            MethodDefinition retval = m_virtualMethodDefinitions[vmdef] as MethodDefinition;
 
-            if (retval != null)
+            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out var retval))
+            {
                 return retval;
+            }
 
             foreach (var typeRef in InheritanceEnumerator(superType))
             {
@@ -351,27 +270,40 @@ namespace MMC
                     break;
             }
 
-            m_virtualMethodDefinitions[vmdef] = retval;
+            m_virtualMethodDefinitions.Add(vmdef, retval);
 
             return retval;
         }
 
-        /// \brief Search for a method definition by name in a referenced type.
-        ///
+        /// <summary>
+        /// Search for a method definition by name in a referenced type.
+        /// </summary>
+        /// <remarks>
         /// As explained in the IDefinitionProvider interface, this search is
         /// always <b>approximate</b>, since we cannot compare the formal
         /// parameter list. This means things may go wrong if someone defines
         /// two method with the same name, which is very common in OO
         /// programming. You have been warned.
-        ///
-        /// \param name The name of the method to look up.
-        /// \param typeDef Definition of the type to search in.
-        /// \return A definition for the method to look for, or null if none
-        /// was found.
+        /// </remarks>
+        /// <param name="name">The name of the method to look up.</param>
+        /// <param name="typeDef">Definition of the type to search in.</param>
+        /// <returns>A definition for the method to look for, or null if none was found.</returns>
         public MethodDefinition SearchMethod(string name, TypeDef typeDef)
         {
-            string key = typeDef + "::" + name;
-            MethodDefinition retval = m_methodDefinitionsByString[key] as MethodDefinition;
+            string methodName = typeDef + "::" + name;
+
+            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
+            {
+                return retval;
+            }
+
+            if (name == ".cctor" && typeDef.FindStaticConstructor() == null)
+            {
+                return null;
+            }
+
+            throw new NotImplementedException("SearchMethod " + methodName);
+            /*
             if (retval == null)
             {
                 // Look in either the constructor or method definition collection.
@@ -400,9 +332,9 @@ namespace MMC
                 // Store in cache.
                 if (retval != null)
                 {
-                    m_methodDefinitionsByString[key] = retval;
+                    m_methodDefinitionsByReference.Add(methodName, retval);
                 }
-            }
+            }*/
 
             return retval;
         }
@@ -449,8 +381,7 @@ namespace MMC
                 TypeDef declType = GetTypeDefinition(declTypeName);
                 if (declType == null)
                 {
-                    //_logger.Warning("declaring type not found");
-                    throw new System.Exception($"declaring type {declTypeName} not found");
+                    throw new System.Exception($"Declaring type {declTypeName} not found");
                 }
                 else
                 {
@@ -490,8 +421,12 @@ namespace MMC
         {
             int count = 0;
             foreach (FieldDefinition fld in typeDef.Fields)
+            {
                 if (!fld.IsStatic)
+                {
                     ++count;
+                }
+            }
             return count;
         }
 
@@ -589,96 +524,35 @@ namespace MMC
         private DefinitionProvider(AssemblyLoader assemblyLoader)
         {
             m_typeDefinitions = new Dictionary<string, TypeDef>();
-            m_methodDefinitionsByReference = new Dictionary<string, MethodDef>();
-            m_methodDefinitionsByString = new Hashtable();
+            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
             m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
-            m_virtualMethodDefinitions = new Hashtable();
+            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
 
             /*
 			 * We need to know the sizes in order to perform
 			 * managed pointer arithmetica
 			 */
-            m_typeSizes = new Hashtable();
+            m_typeSizes = new Dictionary<string, int>
+            {
+                ["System.UInt16"] = 2,
+                ["System.UInt32"] = 4,
+                ["System.UInt64"] = 8,
+                ["System.Int16"] = 2,
+                ["System.Int32"] = 4,
+                ["System.Int64"] = 8,
+                ["System.SByte"] = 1,
+                ["System.Byte"] = 1,
+                ["System.Boolean"] = 1,
+                ["System.Char"] = 1,
+                ["System.Double"] = 8,
+                ["System.Decimal"] = 16
+            };
 
-            m_typeSizes["System.UInt16"] = 2;
-            m_typeSizes["System.UInt32"] = 4;
-            m_typeSizes["System.UInt64"] = 8;
-            m_typeSizes["System.Int16"] = 2;
-            m_typeSizes["System.Int32"] = 4;
-            m_typeSizes["System.Int64"] = 8;
-            m_typeSizes["System.SByte"] = 1;
-            m_typeSizes["System.Byte"] = 1;
-            m_typeSizes["System.Boolean"] = 1;
-            m_typeSizes["System.Char"] = 1;
-            m_typeSizes["System.Double"] = 8;
-            m_typeSizes["System.Decimal"] = 16;
+            AssemblyDefinition = assemblyLoader.GetModule();
 
-            m_asmDef = assemblyLoader.GetModule();
-            //Assembly mainAsm = AssemblyFactory.CreateReflectionAssembly((AssemblyDefinition)m_asmDef); // run-time type is AD
-            //AssemblyName[] refAsms = asmDef.re.GetReferencedAssemblies();
-
-            //m_referencedAssemblies = (from item in module.GetModuleRefs() select item.).ToArray();
-
-            //System.Console.Out.WriteLine(string.Join("; ", assembly.GetAssemblyRefs().Select(ar => ar.FullName)));
-
-            m_referencedAssemblies = assemblyLoader.GetReferencedModules(m_asmDef);
+            m_referencedAssemblies = assemblyLoader.GetReferencedModules(AssemblyDefinition);
 
             AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
-            /*module.GetAssemblyRefs()
-                .Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module))
-                .SelectMany(a => a.Modules)
-                .ToArray();*/
-            //_moduleContext.AssemblyResolver.Resolve("mscorlib", module)
-            //              asmDef.GetAssemblyRefs().Select(ar => ar.mod)))
-            //m_referencedAssemblies = new ModuleDef[] { };
-
-
-            // check whether we are in a Mono runtime 
-            /*bool inMono = Type.GetType("Mono.Runtime", false) != null;
-
-            // if we are not running in a Mono runtime, we have to retrieve the MONO_HOME environment var
-            string monoHome = "";
-            if (!inMono)
-            {
-                _logger.Notice("detected a non-Mono runtime");
-                monoHome = System.Environment.GetEnvironmentVariable("MONO_HOME");
-                if (monoHome == null)
-                    MonoModelChecker.Fatal("the MONO_HOME variable was unset");
-            }
-            monoHome += @"\lib\mono\2.0\";*/
-
-            /*
-			 * There are two scenario's, either we are in a Mono runtime or in another.
-			 * If we are in another, we have to use our custom assembly loader to ensure 
-			 * that Mono's mscorlib is loaded, otherwise the internal calls do not match 
-			 */
-            /*for (int i = 0; i < refAsms.Length; ++i)
-            {
-                string fileName = "";
-
-                if (!inMono && File.Exists(monoHome + refAsms[i].Name + ".dll"))
-                {
-                    fileName = monoHome + refAsms[i].Name + ".dll"; // <-- this is our custom assembly loader
-                }
-                else if (File.Exists(refAsms[i].Name + ".dll"))
-                {
-                    fileName = refAsms[i].Name + ".dll";
-                }
-                else
-                {
-                    fileName = Assembly.Load(refAsms[i]).Location;
-                }
-
-                try
-                {
-                    m_referencedAssemblies[i] = ModuleDefMD.Load(fileName);
-                    _logger.Notice("loaded assembly " + fileName);
-                }
-                catch (System.Exception e)
-                {
-                    MonoModelChecker.Fatal("error loading referenced assembly " + fileName + System.Environment.NewLine + e);
-                }
-            }*/
         }
 
         public IDataElement CreateDataElement(object value)
