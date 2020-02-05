@@ -237,8 +237,17 @@ namespace MMC
             return retval;
         }
 
-        public MethodDefinition SearchVirtualMethod(MethodReference methRef, ObjectReference objRef, ExplicitActiveState cur)
+        public MethodDefinition SearchVirtualMethod(MethodReference methRef, IDataElement dataElement, ExplicitActiveState cur)
         {
+            dataElement = dataElement is IManagedPointer ptr ?
+                ptr.Value :
+                dataElement;
+
+            if (!(dataElement is ObjectReference objRef))
+            {
+                throw new NotSupportedException($"ObjectReference expected, {dataElement?.GetType().FullName} found.");
+            }
+
             AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
             var superType = ao.Type;
             VirtualMethodDefinition vmdef = new VirtualMethodDefinition(methRef, objRef);

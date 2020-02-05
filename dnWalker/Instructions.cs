@@ -117,7 +117,7 @@ namespace MMC.InstructionExec
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) == 0 ? 
+            return CompareOperands(a, b) == 0 ?
                 new JumpReturnValue((Instruction)Operand) :
                 nextRetval;
         }
@@ -604,7 +604,7 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference or = (ObjectReference)cur.EvalStack.Pop();
+            var or = cur.EvalStack.Pop();
             MethodDefinition method = Operand as MethodDefinition;
 
             MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
@@ -950,7 +950,7 @@ namespace MMC.InstructionExec
 				 */
                 if (typeDef.FullName.Equals(fld.DeclaringType.FullName) || matched)
                 {
-                    if (fld.FieldOffset < typeDef.Fields.Count 
+                    if (fld.FieldOffset < typeDef.Fields.Count
                         && typeDef.Fields[(int)fld.FieldOffset].Name.Equals(fld.Name))
                     {
                         retval = (int)fld.FieldOffset;
@@ -2214,6 +2214,12 @@ namespace MMC.InstructionExec
             {
             }
 
+            if (methDef.FullName == "System.Int32 System.Runtime.CompilerServices.RuntimeHelpers::GetHashCode(System.Object)")
+            {
+                cur.EvalStack.Push(new Int4(args[0].GetHashCode()));
+                return true;
+            }
+
             if (methDef.FullName == "System.Threading.Thread System.Threading.Thread::GetCurrentThreadNative()")
             {
                 ThreadHandlers.CurrentThread_internal(null, null, cur);
@@ -2541,9 +2547,7 @@ namespace MMC.InstructionExec
     /// </summary>
     public class CALLVIRT : CallInstructionExec
     {
-
-        public CALLVIRT(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CALLVIRT(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -2602,8 +2606,21 @@ namespace MMC.InstructionExec
 					type = theObject.Type;
 				}*/
                 // Search inheritence tree for most derived implementation.
+                MethodDefinition toCall = null;
+                var constrained = cur.CurrentMethod.Constrained;
+                if (cur.CurrentMethod.IsPrefixed
+                    && constrained?.IsValueType == true
+                    && methDef.DeclaringType == constrained)
+                {
+                    toCall = methDef;
+                }
+                else
+                {
+                    toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, args[0], cur);
+                }
 
-                MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, (ObjectReference)args[0], cur);
+                cur.CurrentMethod.IsPrefixed = false;
+                cur.CurrentMethod.Constrained = null;
 
                 MethodState called = new MethodState(toCall, args, cur);
                 this.CheckTailCall();
@@ -2623,19 +2640,18 @@ namespace MMC.InstructionExec
         }
     }
 
-    /// A NEWOBJ instruction.
+    /// <summary>
+    /// Creates a new object or a new instance of a value type, pushing an object reference (type O) onto the evaluation stack.
+    /// </summary>
     public class NEWOBJ : CallInstructionExec
     {
-
-        public NEWOBJ(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public NEWOBJ(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // Basically the same as a normal call, except first we need
             // to create a new object, and pass it as argument 0 (the
             // rest of the arguments are on the stack, last on top)
@@ -2735,7 +2751,7 @@ namespace MMC.InstructionExec
             }
             else
             {
-                if (callee.Definition.ReturnType.IsValueType 
+                if (callee.Definition.ReturnType.IsValueType
                     || callee.Definition.ReturnType == callee.Definition.ReturnType.Module.CorLibTypes.String)
                 {
                     cur.CurrentThread.RetValue = callee.EvalStack.Top(); // TODO a little bit hacky
@@ -3398,7 +3414,7 @@ namespace MMC.InstructionExec
                 index = ((Int4)Operand).Value;
             else
                 index = ((Local)Operand).Index;
-            
+
             IDataElement ide = cur.EvalStack.Pop();
 
             /*
@@ -3489,9 +3505,7 @@ namespace MMC.InstructionExec
 
     public class STIND : StoreInstructionExec
     {
-
-        public STIND(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public STIND(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -3516,7 +3530,6 @@ namespace MMC.InstructionExec
             int length = cur.EvalStack.Length;
             IDataElement reference = cur.EvalStack[length - 2];
 
-
             if (reference is ObjectFieldPointer)
             {
                 ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
@@ -3529,7 +3542,9 @@ namespace MMC.InstructionExec
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
 
         public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
@@ -3552,4 +3567,53 @@ namespace MMC.InstructionExec
         }
     }
 
+    /// <summary>
+    /// Initializes each field of the value type at a specified address to a null reference 
+    /// or a 0 of the appropriate primitive type.
+    /// </summary>
+    public class INITOBJ : InstructionExecBase
+    {
+        public INITOBJ(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement reference = cur.EvalStack.Pop();
+            if (reference is LocalVariablePointer localVariablePointer)
+            {
+                var typeTok = (ITypeDefOrRef)Operand;
+                localVariablePointer.Value = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(), typeTok);
+                return nextRetval;
+            }
+
+            throw new NotSupportedException($"IManagedPointer expected, {reference?.GetType().FullName ?? "null"} found.");
+        }
+
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
+        {
+            return true; // similar as NEWOBJ
+        }
+    }
+
+    public class CONSTRAINED : InstructionExecBase
+    {
+        public CONSTRAINED(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            cur.CurrentMethod.IsPrefixed = true;
+            cur.CurrentMethod.Constrained = Operand as ITypeDefOrRef;
+            return nextRetval;
+        }
+
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
+        {
+            return true;
+        }
+    }
 }

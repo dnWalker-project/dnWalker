@@ -92,6 +92,10 @@ namespace MMC.State
             get { return m_pc != null ? (int)m_pc.Offset : -1; }
         }
 
+        public bool IsPrefixed { get; set; }
+
+        public ITypeDefOrRef Constrained { get; set; }
+
         public ExceptionHandler NextFilterOrCatchHandler(Instruction instr, ITypeDefOrRef exceptionType)
         {
             ExceptionHandler retval = null;
