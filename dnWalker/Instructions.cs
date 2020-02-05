@@ -2945,6 +2945,44 @@ namespace MMC.InstructionExec
     }
 
     /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed int64, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I8 : ConvertInstructionExec
+    {
+        public CONV_OVF_I8(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is UnsignedInt4 ui4)
+                {
+                    cur.EvalStack.Push(a.ToInt4(false).ToInt8(CheckOverflow));
+                    return nextRetval;
+                }
+
+                cur.EvalStack.Push(a.ToInt8(CheckOverflow));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
     /// Converts the unsigned value on top of the evaluation stack to signed int64, throwing OverflowException on overflow.
     /// </summary>
     public class CONV_OVF_I8_UN : ConvertInstructionExec
