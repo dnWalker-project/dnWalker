@@ -26,7 +26,12 @@ namespace dnWalker
 
             if (meth.DeclaringType.FullName == typeof(double).FullName)
             {
-                return NativePeers.SystemDouble.GetMethodBypass(meth);
+                return new NativePeers.SystemDouble(meth);
+            }
+
+            if (meth.DeclaringType.FullName == typeof(float).FullName)
+            {
+                return new NativePeers.SystemSingle(meth);
             }
 
             return null;

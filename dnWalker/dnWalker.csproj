@@ -92,6 +92,7 @@
     <Compile Include="NativePeer.cs" />
     <Compile Include="MethodState.cs" />
     <Compile Include="MMCExceptions.cs" />
+    <Compile Include="NativePeers\SystemFloat.cs" />
     <Compile Include="NativePeers\SystemDouble.cs" />
     <Compile Include="PartialOrderReduction.cs" />
     <Compile Include="PlacementMapping.cs" />

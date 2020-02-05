@@ -37,5 +37,22 @@ namespace dnWalker.Tests.Interpreter
         [InlineData(5.0d)]
         [InlineData(6.0d)]
         public void Test_SWITCH__6_Double(object arg0) { TestAndCompare("Test_SWITCH__6_Double", arg0); }
+
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        [InlineData(float.Epsilon)]
+        [InlineData(2.0f)]
+        [InlineData(3.0f)]
+        [InlineData(4.0f)]
+        [InlineData(5.0f)]
+        [InlineData(6.0f)]
+        public void Test_SWITCH__6_Single(object arg0) { TestAndCompare("Test_SWITCH__6_Single", arg0); }
     }
 }

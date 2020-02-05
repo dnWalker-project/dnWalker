@@ -4,21 +4,21 @@ using MMC.State;
 
 namespace dnWalker.NativePeers
 {
-    public class SystemDouble : NativePeer
+    public class SystemSingle : NativePeer
     {
-        public SystemDouble(MethodDef method) : base(method)
+        public SystemSingle(MethodDef method) : base(method)
         {
         }
 
         public override bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement)
         {
-            if (_method.FullName == "System.Boolean System.Double::IsNaN(System.Double)")
+            if (_method.FullName == "System.Boolean System.Single::IsNaN(System.Single)")
             {
-                dataElement = new Int4(double.IsNaN(((Float8)args[0]).Value) ? 1 : 0);
+                dataElement = new Int4(double.IsNaN(((Float4)args[0]).Value) ? 1 : 0);
                 return true;
             }
 
-            if (_method.FullName == "System.Boolean System.Double::Equals(System.Double)")
+            if (_method.FullName == "System.Boolean System.Single::Equals(System.Single)")
             {
                 var left = args[0];
                 if (left is IManagedPointer lp)

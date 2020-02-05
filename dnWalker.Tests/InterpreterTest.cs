@@ -4659,7 +4659,7 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(6)]
         public void Test_SWITCH__6_IntPtr(int arg0) { Test("Test_SWITCH__6_IntPtr", new IntPtr(arg0)); }
 
-        [Theory]
+        /*[Theory]
         [InlineData(0.0f)]
         [InlineData(-1.0f)]
         [InlineData(1.0f)]
@@ -4674,7 +4674,7 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(4.0f)]
         [InlineData(5.0f)]
         [InlineData(6.0f)]
-        public void Test_SWITCH__6_Single(object arg0) { Test("Test_SWITCH__6_Single", arg0); }
+        public void Test_SWITCH__6_Single(object arg0) { Test("Test_SWITCH__6_Single", arg0); }*/
 
         [Fact]
         public void Test_UNALIGNED() { Test("Test_UNALIGNED"); }
