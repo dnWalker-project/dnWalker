@@ -1725,21 +1725,17 @@ namespace MMC.InstructionExec
             : base(instr, operand, atr)
         {
         }
-
     }
 
     public class ADD : NumericInstructionExec
     {
-
-        public ADD(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public ADD(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
@@ -1764,6 +1760,79 @@ namespace MMC.InstructionExec
             }
 
             if (Unsigned)
+            {
+                left = ((ISignedIntegerElement)left).ToUnsigned();
+                right = ((ISignedIntegerElement)right).ToUnsigned();
+            }
+
+            try
+            {
+                cur.EvalStack.Push(left.Add(right, CheckOverflow));
+            }
+            catch (OverflowException)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Adds two unsigned integer values, performs an overflow check, and pushes the result onto the evaluation stack.
+    /// </summary>
+    public class ADD_OVF_UN : NumericInstructionExec
+    {
+        public ADD_OVF_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
+
+            IAddElement left;
+            INumericElement right;
+
+            /*
+			 * Arithmetica on managed pointers is a little bit different.
+			 * The offset is represented in bytes. Each (object|static|array) field 
+			 * is seperated by 4 offset bytes, thus one integer
+			 */
+
+            if (a is IManagedPointer)
+            {
+                left = (IAddElement)a;
+                right = (INumericElement)b;
+            }
+            else
+            {
+                left = (INumericElement)b;
+                right = (INumericElement)a;
+            }
+
+            if (right is IRealElement && !(left is IRealElement))
+            {
+                IDataElement tmp = left;
+                left = right;
+                right = (INumericElement)tmp;
+            }
+
+            switch (left)
+            {
+                case Int4 i4:
+                    var res4 = (UnsignedInt4)i4.ToUnsignedInt4(false).Add(right.ToUnsignedInt4(false), CheckOverflow);
+                    cur.EvalStack.Push(res4.ToInt4(false));
+                    return nextRetval;
+                case Int8 i8:
+                    var res8 = (UnsignedInt8)i8.ToUnsignedInt8(false).Add(right.ToUnsignedInt8(false), CheckOverflow);
+                    cur.EvalStack.Push(res8.ToInt8(false));
+                    return nextRetval;
+            }
+
+            if (Unsigned && left is ISignedIntegerElement && right is ISignedIntegerElement)
             {
                 left = ((ISignedIntegerElement)left).ToUnsigned();
                 right = ((ISignedIntegerElement)right).ToUnsigned();

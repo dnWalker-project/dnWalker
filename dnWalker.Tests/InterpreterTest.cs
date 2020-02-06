@@ -96,6 +96,38 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         [InlineData(0, int.MinValue)]
         public void Test_ADD_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
 
+        [Theory]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_ADD_OVF_UN__Int32(object arg0, object arg1) { Test("Test_ADD_OVF_UN__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(long.MinValue, long.MaxValue)]
+        [InlineData(long.MaxValue, long.MinValue)]
+        [InlineData(-5L, 4L)]
+        [InlineData(4L, -5L)]
+        [InlineData(0L, long.MinValue)]
+        public void Test_ADD_OVF_UN__Int64(long arg0, long arg1) { Test("Test_ADD_OVF_UN__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(double.MinValue, double.MaxValue)]
+        [InlineData(double.MaxValue, double.MinValue)]
+        [InlineData(-5d, 4d)]
+        [InlineData(4d, -5d)]
+        [InlineData(42, -5d)]
+        [InlineData(48, 55)]
+        [InlineData(0d, double.MinValue)]
+        [InlineData(0.0d, double.Epsilon)]
+        [InlineData(0, double.PositiveInfinity)]
+        [InlineData(double.PositiveInfinity, 0)]
+        [InlineData(0, double.NegativeInfinity)]
+        [InlineData(double.NegativeInfinity, 0)]
+        [InlineData(double.NegativeInfinity, double.PositiveInfinity)]
+        public void Test_ADD_OVF_UN__Double(object arg0, object arg1) { Test("Test_ADD_OVF_UN__Double", arg0, arg1); }
+
         [Fact]
         public void Test_AND__Int32() { Test("Test_AND__Int32", 0x5AA51234, 0x3FF37591); }
 
