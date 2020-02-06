@@ -14,16 +14,15 @@
  *   limitations under the License.
  *
  */
-
-namespace MMC.Exception {
-
+namespace MMC.Exception
+{
 	using System;
 	using MMC.State;
 
-	class FieldNotFoundException : ApplicationException {
-
-		public FieldNotFoundException(Allocation alloc, string fieldName) :
-			base (alloc.GetType() + " does not contain field " + fieldName) {}
-	}
-
+    public class FieldNotFoundException : ApplicationException
+    {
+        public FieldNotFoundException(Allocation alloc, string fieldName) :
+            base(alloc.GetType() + " does not contain field " + fieldName)
+        { }
+    }
 }

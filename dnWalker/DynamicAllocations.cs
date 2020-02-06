@@ -17,39 +17,36 @@
 
 namespace MMC.State {
 
-	using System.Diagnostics;
 	using MMC.Data;
 	using MMC.Exception;
-	using MMC.Util;
     using dnlib.DotNet;
     using System.Collections.Generic;
-    using System;
 
+    /// <summary>
     /// An object instances on the heap.
-    public class AllocatedObject : DynamicAllocation {
-
-		DataElementList m_fields;
-
-		public override AllocationType AllocationType {
+    /// </summary>
+    public class AllocatedObject : DynamicAllocation
+    {
+        public override AllocationType AllocationType
+        {
 			get { return AllocationType.Object; }
 		}
 
-		public override int InnerSize {
-			get { return m_fields.Length; }
+		public override int InnerSize
+        {
+			get { return Fields.Length; }
 		}
 
-		/// The fields of the object (including the static ones).
-		///
-		/// Note that the static fields never get assigned.
-		public DataElementList Fields {
-			get { return m_fields; }
-			set { m_fields = value; }
-		}
+        /// <summary>
+        /// The fields of the object (including the static ones).
+        /// </summary>
+        /// <remarks>Note that the static fields never get assigned.</remarks>
+        public DataElementList Fields { get; set; }
 
-		/// <summary>
-		/// The offset of the value field for wrapped types.
-		/// </summary>
-		public int ValueFieldOffset
+        /// <summary>
+        /// The offset of the value field for wrapped types.
+        /// </summary>
+        public int ValueFieldOffset
         {
             get
             {
@@ -62,7 +59,9 @@ namespace MMC.State {
                     found = typeDef.Fields[i].Name == VALUE_FIELD_NAME;
 
                 if (!found)
-                    throw new FieldNotFoundException(this, VALUE_FIELD_NAME);
+                {
+                    throw new FieldNotFoundException(this, Type.FullName + "." + VALUE_FIELD_NAME);
+                }
 
                 return i - 1;
             }
@@ -73,7 +72,7 @@ namespace MMC.State {
         /// </summary>
         public override bool IsDirty()
         {
-            return m_fields.IsDirty() || Lock.IsDirty();
+            return Fields.IsDirty() || Lock.IsDirty();
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace MMC.State {
         /// </summary>
         public override void Clean()
         {
-            m_fields.Clean();
+            Fields.Clean();
             Lock.Clean();
         }
 
@@ -90,7 +89,7 @@ namespace MMC.State {
 		/// </summary>
 		public override void Dispose()
         {
-			m_fields.Dispose();
+			Fields.Dispose();
 		}
 
         /// <summary>
@@ -118,8 +117,8 @@ namespace MMC.State {
                 }
             }
 
-            if (m_fields == null)
-                m_fields = cur.StorageFactory.CreateList(fields.Count);
+            if (Fields == null)
+                Fields = cur.StorageFactory.CreateList(fields.Count);
 
             /*
 			 * Initialize the fields with default values
@@ -134,10 +133,10 @@ namespace MMC.State {
                 var type = cur.DefinitionProvider.GetTypeDefinition(fields[i].FieldType);
                 if (type == null && !fields[i].FieldType.IsPrimitive)
                 {
-                    m_fields[i] = ObjectReference.Null;
+                    Fields[i] = ObjectReference.Null;
                     continue;
                 }
-                m_fields[i] = DefinitionProvider.GetNullValue(type);
+                Fields[i] = DefinitionProvider.GetNullValue(type);
             }
             //typeOffset += typeDef.Fields.Count; 			}
         }
@@ -166,9 +165,9 @@ namespace MMC.State {
                     if (!typeDef.Fields[i].IsStatic)
                     {
                         sb.AppendFormat("{1}={2}{0}",
-                                i == m_fields.Length ? "" : ", ",
+                                i == Fields.Length ? "" : ", ",
                                 typeDef.Fields[i].Name,
-                                m_fields[typeOffset + i].ToString());
+                                Fields[typeOffset + i].ToString());
                     }
                 }
 

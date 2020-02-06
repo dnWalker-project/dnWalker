@@ -1530,8 +1530,7 @@ namespace MMC.InstructionExec
 
     public class BOX : ObjectModelInstructionExec
     {
-        public BOX(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public BOX(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -1543,16 +1542,23 @@ namespace MMC.InstructionExec
                 cur.DynamicArea.DeterminePlacement(),
                 Operand as ITypeDefOrRef);
             AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
-            wrapped.Fields[wrapped.ValueFieldOffset] = cur.EvalStack.Pop();
-            cur.EvalStack.Push(wrappedRef);
+            if (wrapped.Type.IsValueType)
+            {
+                wrapped.Fields[wrapped.ValueFieldOffset] = cur.EvalStack.Pop();
+                cur.EvalStack.Push(wrappedRef);
+            }
+            else
+            {
+                // TODO hack
+            }
+
             return nextRetval;
         }
     }
 
     public class UNBOX : ObjectModelInstructionExec
     {
-        public UNBOX(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public UNBOX(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -1560,12 +1566,26 @@ namespace MMC.InstructionExec
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // Operand is a type definition of the wrapper type to use.
-            ObjectReference wrappedRef = (ObjectReference)cur.EvalStack.Pop();
-            AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
-            // Maybe a clone isn't even really needed here, the object pushed on the
-            // stack will probably not live very long and the field will probably not
-            // be updated while it's on the stack.
-            cur.EvalStack.Push(wrapped.Fields[wrapped.ValueFieldOffset]);
+            var reference = (IReferenceType)cur.EvalStack.Pop();
+            if (reference is ObjectReference objRef)
+            {
+                AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[objRef];
+                // Maybe a clone isn't even really needed here, the object pushed on the
+                // stack will probably not live very long and the field will probably not
+                // be updated while it's on the stack.
+                if (wrapped.Type.IsValueType)
+                {
+                    cur.EvalStack.Push(wrapped.Fields[wrapped.ValueFieldOffset]);
+                }
+                else
+                {
+                    cur.EvalStack.Push(reference);
+                }
+            }
+            else
+            {
+                cur.EvalStack.Push(reference);
+            }
             return nextRetval;
         }
     }

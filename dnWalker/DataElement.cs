@@ -2125,8 +2125,10 @@ namespace MMC.Data {
 
 	public struct ConstantString : IReferenceType, IConvertible
     {
+        private string m_value;
+
         public string WrapperName { get { return "System.String"; } }
-        public string Value { get; }
+        public string Value => m_value;
         // public DataElementKind Kind => DataElementKind.String;
 
         // Should never be called.
@@ -2249,7 +2251,7 @@ namespace MMC.Data {
 
         public ConstantString(string val)
         {
-			Value = val;
+			m_value = val;
 		}
 	}
 
