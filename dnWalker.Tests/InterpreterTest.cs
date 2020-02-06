@@ -22,91 +22,13 @@
 // Test exceptions (slower)
 //#define EXCEPTIONS
 
-using dnWalker;
 using dnWalker.Tests;
-using FluentAssertions;
 using MMC;
-using MMC.Data;
 using System;
-using System.IO;
-using System.Reflection;
 using Xunit;
 
 namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 {
-    /*abstract class TestRuntime
-    {
-        public abstract DmdRuntime Runtime { get; }
-        public abstract DebuggerRuntime DebuggerRuntime { get; }
-        public abstract void SetMethodExecState(ILValue[] arguments, DmdMethodBody body);
-
-        public object Convert(ILValue v, DmdType type)
-        {
-            if (v.IsNull)
-                return null;
-            switch (v.Kind)
-            {
-                case ILValueKind.Int32:
-                    var v32 = (ConstantInt32ILValue)v;
-                    switch (DmdType.GetTypeCode(type))
-                    {
-                        case TypeCode.Boolean: return v32.Value != 0;
-                        case TypeCode.Char: return (char)v32.Value;
-                        case TypeCode.SByte: return (sbyte)v32.Value;
-                        case TypeCode.Byte: return (byte)v32.Value;
-                        case TypeCode.Int16: return (short)v32.Value;
-                        case TypeCode.UInt16: return (ushort)v32.Value;
-                        case TypeCode.Int32: return (int)v32.Value;
-                        case TypeCode.UInt32: return (uint)v32.Value;
-                        case TypeCode.Int64: return (long)v32.Value;
-                        case TypeCode.UInt64: return (ulong)v32.Value;
-                        default:
-                            throw new InvalidOperationException();
-                    }
-
-                case ILValueKind.Int64:
-                    var v64 = (ConstantInt64ILValue)v;
-                    switch (DmdType.GetTypeCode(type))
-                    {
-                        case TypeCode.Int64: return (long)v64.Value;
-                        case TypeCode.UInt64: return (ulong)v64.Value;
-                        default:
-                            throw new InvalidOperationException();
-                    }
-
-                case ILValueKind.Float:
-                    var f = (ConstantFloatILValue)v;
-                    switch (DmdType.GetTypeCode(type))
-                    {
-                        case TypeCode.Single: return (float)f.Value;
-                        case TypeCode.Double: return (double)f.Value;
-                        default:
-                            throw new InvalidOperationException();
-                    }
-
-                case ILValueKind.NativeInt:
-                    if (v is ConstantNativeIntILValue ni)
-                    {
-                        if (type == type.AppDomain.System_IntPtr)
-                            return IntPtr.Size == 4 ? new IntPtr(ni.Value32) : new IntPtr(ni.Value64);
-                        if (type == type.AppDomain.System_UIntPtr)
-                            return UIntPtr.Size == 4 ? new UIntPtr(ni.UnsignedValue32) : new UIntPtr(ni.UnsignedValue64);
-                    }
-                    break;
-
-                case ILValueKind.Type:
-                    if (v is Fake.ConstantStringILValue s)
-                        return s.Value;
-                    break;
-
-                case ILValueKind.ByRef:
-                    break;
-            }
-
-            throw new InvalidOperationException();
-        }
-    }*/
-
     [Trait("Category", "Interpreter")]
     public sealed class InterpreterTest : TestBase
     {
@@ -115,57 +37,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         protected static Lazy<DefinitionProvider> Lazy =
             new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
 
-        /*
-
-sealed class DmdEvaluatorImpl : DmdEvaluator
-{
-public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) => throw new NotImplementedException();
-public override object? Invoke(object? context, DmdMethodBase method, object? obj, object?[] parameters) => throw new NotImplementedException();
-public override object? LoadField(object? context, DmdFieldInfo field, object? obj) => throw new NotImplementedException();
-public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) => throw new NotImplementedException();
-}
-
-TestRuntime CreateTestRuntime()
-{
-var rt = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
-var ad = rt.CreateAppDomain(1);
-ad.CreateAssembly(typeof(void).Assembly.Location);
-ad.CreateAssembly(GetTestAssemblyFilename());
-return new Fake.TestRuntimeImpl(rt);
-}*/
-
-        //public static void Test() => new InterpreterTest().TestCore();
-
-        /*void TestCore()
-        {
-            try
-            {
-                TestCore2();
-            }
-            catch (Exception ex)
-            {
-                Console.Out.WriteLine(ex.ToString());
-                System.Diagnostics.Debugger.Break();
-            }
-        }
-
-        TestRuntime testRuntime;
-        DmdAssembly testAsm1;
-        Assembly testAsm2;
-        DmdType testType1;
-        Type testType2;
-        ILVM ilvm;*/
-        /*
-        void TestCore2()
-        {
-            testRuntime = CreateTestRuntime();
-            var aas = testRuntime.Runtime.GetAppDomains().First().GetAssemblies().Select(a => a.FullName).ToList();
-            testAsm1 = testRuntime.Runtime.GetAppDomains().First().GetAssemblies()[1]/*(();
-            testAsm2 = Assembly.LoadFile(testAsm1.Location);
-            testType1 = testAsm1.GetType("dnSpy.Debugger.DotNet.Interpreter.Tests.TestClass") ?? throw new InvalidOperationException();
-            testType2 = testAsm2.GetType(testType1.FullName) ?? throw new InvalidOperationException();
-            ilvm = ILVMFactory.Create();
-            */
         public InterpreterTest() : base(Lazy.Value)
         {
             _config.StateStorageSize = 5;
@@ -178,48 +49,48 @@ return new Fake.TestRuntimeImpl(rt);
         }
 
         [Theory]
-        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
         public void Test_ADD__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
         public void Test_ADD__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD__IntPtr_Int32", new IntPtr(arg0), arg1); }
 
         [Theory]
-        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
         public void Test_ADD_OVF__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD_OVF__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
         public void Test_ADD_OVF__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD_OVF__IntPtr_Int32", new IntPtr(arg0), arg1); }
 
         [Theory]
-        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
         public void Test_ADD_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
@@ -824,13 +695,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_I__Int64(object arg0) { Test("Test_CONV_I__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_I__IntPtr(int arg0) { Test("Test_CONV_I__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -879,12 +750,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_I__UInt64(object arg0) { Test("Test_CONV_I__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_I__UIntPtr(int arg0) { Test("Test_CONV_I__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(/*UIntPtr.Size == 4 ? new UIntPtr(*/uint.MinValue/*) : new UIntPtr(ulong.MinValue)*/)]
+        [InlineData(/*UIntPtr.Size == 4 ? new UIntPtr(*/uint.MaxValue/*) : new UIntPtr(ulong.MaxValue)*/)]
+        [InlineData(/*UIntPtr.Size == 4 ? new UIntPtr(*/0x12345678U/*) : new UIntPtr(0x123456789ABCDEF0UL)*/)]
+        [InlineData(/*UIntPtr.Size == 4 ? new UIntPtr(*/0x9ABCDEF0U/*) : new UIntPtr(0x9ABCDEF012345678UL)*/)]
+        public void Test_CONV_I__UIntPtr(uint arg0) { Test("Test_CONV_I__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -951,13 +822,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_I1__Int64(object arg0) { Test("Test_CONV_I1__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_I1__IntPtr(int arg0) { Test("Test_CONV_I1__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -1006,12 +877,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_I1__UInt64(object arg0) { Test("Test_CONV_I1__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_I1__UIntPtr(int arg0) { Test("Test_CONV_I1__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I1__UIntPtr(uint arg0) { Test("Test_CONV_I1__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1078,13 +949,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_I2__Int64(object arg0) { Test("Test_CONV_I2__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_I2__IntPtr(int arg0) { Test("Test_CONV_I2__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -1133,12 +1004,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_I2__UInt64(object arg0) { Test("Test_CONV_I2__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_I2__UIntPtr(int arg0) { Test("Test_CONV_I2__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I2__UIntPtr(uint arg0) { Test("Test_CONV_I2__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1205,13 +1076,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_I4__Int64(object arg0) { Test("Test_CONV_I4__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)]  // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_I4__IntPtr(int arg0) { Test("Test_CONV_I4__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -1260,12 +1131,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_I4__UInt64(object arg0) { Test("Test_CONV_I4__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_I4__UIntPtr(int arg0) { Test("Test_CONV_I4__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I4__UIntPtr(uint arg0) { Test("Test_CONV_I4__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1332,13 +1203,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_I8__Int64(object arg0) { Test("Test_CONV_I8__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)]  // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_I8__IntPtr(int arg0) { Test("Test_CONV_I8__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -1387,12 +1258,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_I8__UInt64(object arg0) { Test("Test_CONV_I8__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_I8__UIntPtr(int arg0) { Test("Test_CONV_I8__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_I8__UIntPtr(uint arg0) { Test("Test_CONV_I8__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1447,13 +1318,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_I__Int64(object arg0) { Test("Test_CONV_OVF_I__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)]  // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_I__IntPtr(int arg0) { Test("Test_CONV_OVF_I__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -1493,12 +1364,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(ulong.MaxValue)]
         public void Test_CONV_OVF_I__UInt64(object arg0) { Test("Test_CONV_OVF_I__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_OVF_I__UIntPtr(int arg0) { Test("Test_CONV_OVF_I__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_OVF_I__UIntPtr(uint arg0) { Test("Test_CONV_OVF_I__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1539,10 +1410,10 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_I_UN__Int64(object arg0) { Test("Test_CONV_OVF_I_UN__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_I_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I_UN__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -1567,10 +1438,10 @@ return new Fake.TestRuntimeImpl(rt);
         [Fact]
         public void Test_CONV_OVF_I_UN__UInt64() { Test("Test_CONV_OVF_I_UN__UInt64", ulong.MinValue); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        public void Test_CONV_OVF_I_UN__UIntPtr(int arg0) { Test("Test_CONV_OVF_I_UN__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        public void Test_CONV_OVF_I_UN__UIntPtr(uint arg0) { Test("Test_CONV_OVF_I_UN__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1644,10 +1515,10 @@ return new Fake.TestRuntimeImpl(rt);
         [Fact]
         public void Test_CONV_OVF_I1__UInt64() { Test("Test_CONV_OVF_I1__UInt64", ulong.MinValue); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        public void Test_CONV_OVF_I1__UIntPtr(int arg0) { Test("Test_CONV_OVF_I1__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        public void Test_CONV_OVF_I1__UIntPtr(uint arg0) { Test("Test_CONV_OVF_I1__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -1935,10 +1806,10 @@ return new Fake.TestRuntimeImpl(rt);
         [Fact]
         public void Test_CONV_OVF_I4__UInt64() { Test("Test_CONV_OVF_I4__UInt64", ulong.MinValue); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        public void Test_CONV_OVF_I4__UIntPtr(int arg0) { Test("Test_CONV_OVF_I4__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        public void Test_CONV_OVF_I4__UIntPtr(uint arg0) { Test("Test_CONV_OVF_I4__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -2065,13 +1936,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_I8__Int64(object arg0) { Test("Test_CONV_OVF_I8__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_I8__IntPtr(int arg0) { Test("Test_CONV_OVF_I8__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -2113,12 +1984,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x123456789ABCDEF0)]
         public void Test_CONV_OVF_I8__UInt64(object arg0) { Test("Test_CONV_OVF_I8__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_OVF_I8__UIntPtr(int arg0) { Test("Test_CONV_OVF_I8__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_OVF_I8__UIntPtr(uint arg0) { Test("Test_CONV_OVF_I8__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -2165,10 +2036,10 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_I8_UN__Int64(object arg0) { Test("Test_CONV_OVF_I8_UN__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_I8_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_I8_UN__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -2243,10 +2114,10 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_U__Int64(object arg0) { Test("Test_CONV_OVF_U__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_U__IntPtr(int arg0) { Test("Test_CONV_OVF_U__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -2278,10 +2149,10 @@ return new Fake.TestRuntimeImpl(rt);
         [Fact]
         public void Test_CONV_OVF_U__UInt64() { Test("Test_CONV_OVF_U__UInt64", ulong.MinValue); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        public void Test_CONV_OVF_U__UIntPtr(int arg0) { Test("Test_CONV_OVF_U__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        public void Test_CONV_OVF_U__UIntPtr(uint arg0) { Test("Test_CONV_OVF_U__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -2328,13 +2199,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_U_UN__Int64(object arg0) { Test("Test_CONV_OVF_U_UN__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_U_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U_UN__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -2826,10 +2697,10 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_U8__Int64(object arg0) { Test("Test_CONV_OVF_U8__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_U8__IntPtr(int arg0) { Test("Test_CONV_OVF_U8__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -2863,10 +2734,10 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x123456789ABCDEF0)]
         public void Test_CONV_OVF_U8__UInt64(object arg0) { Test("Test_CONV_OVF_U8__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        public void Test_CONV_OVF_U8__UIntPtr(int arg0) { Test("Test_CONV_OVF_U8__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        public void Test_CONV_OVF_U8__UIntPtr(uint arg0) { Test("Test_CONV_OVF_U8__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -2918,13 +2789,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_OVF_U8_UN__Int64(object arg0) { Test("Test_CONV_OVF_U8_UN__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_U8_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U8_UN__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3005,13 +2876,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_R_UN__Int64(object arg0) { Test("Test_CONV_R_UN__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_R_UN__IntPtr(int arg0) { Test("Test_CONV_R_UN__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3110,13 +2981,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_R4__Int64(object arg0) { Test("Test_CONV_R4__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_R4__IntPtr(int arg0) { Test("Test_CONV_R4__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3165,12 +3036,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_R4__UInt64(object arg0) { Test("Test_CONV_R4__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_R4__UIntPtr(int arg0) { Test("Test_CONV_R4__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_R4__UIntPtr(uint arg0) { Test("Test_CONV_R4__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -3237,13 +3108,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_R8__Int64(object arg0) { Test("Test_CONV_R8__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_R8__IntPtr(int arg0) { Test("Test_CONV_R8__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3292,12 +3163,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_R8__UInt64(object arg0) { Test("Test_CONV_R8__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_R8__UIntPtr(int arg0) { Test("Test_CONV_R8__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_R8__UIntPtr(uint arg0) { Test("Test_CONV_R8__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -3364,13 +3235,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_U__Int64(object arg0) { Test("Test_CONV_U__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_U__IntPtr(int arg0) { Test("Test_CONV_U__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3419,12 +3290,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_U__UInt64(object arg0) { Test("Test_CONV_U__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_U__UIntPtr(int arg0) { Test("Test_CONV_U__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U__UIntPtr(uint arg0) { Test("Test_CONV_U__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -3491,13 +3362,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_U1__Int64(object arg0) { Test("Test_CONV_U1__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_U1__IntPtr(int arg0) { Test("Test_CONV_U1__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3546,12 +3417,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_U1__UInt64(object arg0) { Test("Test_CONV_U1__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_U1__UIntPtr(int arg0) { Test("Test_CONV_U1__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U1__UIntPtr(uint arg0) { Test("Test_CONV_U1__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -3618,13 +3489,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_U2__Int64(object arg0) { Test("Test_CONV_U2__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_U2__IntPtr(int arg0) { Test("Test_CONV_U2__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3673,12 +3544,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_U2__UInt64(object arg0) { Test("Test_CONV_U2__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_U2__UIntPtr(int arg0) { Test("Test_CONV_U2__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U2__UIntPtr(uint arg0) { Test("Test_CONV_U2__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -3745,13 +3616,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_U4__Int64(object arg0) { Test("Test_CONV_U4__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_U4__IntPtr(int arg0) { Test("Test_CONV_U4__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3800,12 +3671,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_U4__UInt64(object arg0) { Test("Test_CONV_U4__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_U4__UIntPtr(int arg0) { Test("Test_CONV_U4__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U4__UIntPtr(uint arg0) { Test("Test_CONV_U4__UIntPtr", new UIntPtr(arg0)); }
 
         [Theory]
         [InlineData(false)]
@@ -3872,13 +3743,13 @@ return new Fake.TestRuntimeImpl(rt);
         public void Test_CONV_U8__Int64(object arg0) { Test("Test_CONV_U8__Int64", arg0); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_U8__IntPtr(int arg0) { Test("Test_CONV_U8__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3927,12 +3798,12 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData((ulong)0x9ABCDEF012345678)]
         public void Test_CONV_U8__UInt64(object arg0) { Test("Test_CONV_U8__UInt64", arg0); }
 
-        // TODO [Theory]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
-        // TODO [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
-        public void Test_CONV_U8__UIntPtr(int arg0) { Test("Test_CONV_U8__UIntPtr", new IntPtr(arg0)); }
+        [Theory]
+        [InlineData(uint.MinValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MinValue) : new UIntPtr(ulong.MinValue))]
+        [InlineData(uint.MaxValue)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(uint.MaxValue) : new UIntPtr(ulong.MaxValue))]
+        [InlineData(0x12345678U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x12345678U) : new UIntPtr(0x123456789ABCDEF0UL))]
+        [InlineData(0x9ABCDEF0U)] // [InlineData(UIntPtr.Size == 4 ? new UIntPtr(0x9ABCDEF0U) : new UIntPtr(0x9ABCDEF012345678UL))]
+        public void Test_CONV_U8__UIntPtr(uint arg0) { Test("Test_CONV_U8__UIntPtr", new UIntPtr(arg0)); }
 
         [Fact]
         public void Test_CPOBJ() { Test("Test_CPOBJ"); }
@@ -4650,8 +4521,8 @@ return new Fake.TestRuntimeImpl(rt);
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(1)]
-        [InlineData(int.MinValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        [InlineData(int.MaxValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(4)]

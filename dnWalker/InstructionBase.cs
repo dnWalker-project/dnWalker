@@ -170,7 +170,7 @@ namespace MMC.InstructionExec
                 operand = method.ResolveMethodDef();// DefinitionProvider.GetMethodDefinition(operand as IMethod);
                 if (operand == null)
                 {
-                    throw new NotImplementedException();
+                    throw new NotImplementedException(method.FullName);
                 }
                 //    Logger.l.Warning("failed to lookup method reference");
             }

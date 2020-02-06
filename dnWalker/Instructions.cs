@@ -2999,6 +2999,70 @@ namespace MMC.InstructionExec
     }
 
     /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed native int, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I : ConvertInstructionExec
+    {
+        public CONV_OVF_I(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(false));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed native int, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_I_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(CheckOverflow));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
     /// Converts the unsigned value on top of the evaluation stack to signed int64, throwing OverflowException on overflow.
     /// </summary>
     public class CONV_OVF_I8_UN : ConvertInstructionExec
