@@ -1019,28 +1019,49 @@ namespace MMC.InstructionExec
         }
     }
 
-
+    /// <summary>
+    /// Attempts to cast an object passed by reference to the specified class.
+    /// </summary>
     public class CASTCLASS : ObjectModelInstructionExec
     {
-
-        public CASTCLASS(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CASTCLASS(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
+            IReferenceType objRef = (IReferenceType)cur.EvalStack.Pop();
             var toCastToType = (ITypeDefOrRef)Operand;
+            if (objRef.Equals(ObjectReference.Null))
+            {
+                cur.EvalStack.Push(objRef);
+                return nextRetval;
+            }
+
+            if (objRef is ConstantString s)
+            {
+                var st = cur.DefinitionProvider.GetTypeDefinition("System.String");
+                if (cur.DefinitionProvider.IsSubtype(st, toCastToType))
+                {
+                    cur.EvalStack.Push(objRef);
+                }
+                else
+                {
+                    RaiseException("System.InvalidCastException", cur);
+                }
+
+                return nextRetval;
+            }
 
             /*
-			 * TODO: make this work for arrays! See ECMA spec on this
-			 */
-            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
-
+             * TODO: make this work for arrays! See ECMA spec on this
+             */
+            AllocatedObject ao = cur.DynamicArea.Allocations[(int)objRef.Location] as AllocatedObject;
             if (cur.DefinitionProvider.IsSubtype(ao.Type, toCastToType))
+            {
                 cur.EvalStack.Push(objRef);
+            }
             else
             {
                 RaiseException("System.InvalidCastException", cur);
