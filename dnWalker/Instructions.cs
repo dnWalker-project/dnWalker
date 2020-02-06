@@ -475,15 +475,18 @@ namespace MMC.InstructionExec
             // Operand is either an implicit Int4, or a ParameterDefinition object.
             int argIndex;
             if (HasImplicitOperand)
+            {
                 argIndex = ((Int4)Operand).Value;
+            }
             else
             {
                 argIndex = ((ParameterDefinition)Operand).ParamDef.Sequence;
 
                 if (!cur.CurrentMethod.Definition.HasThis)
+                {
                     argIndex--;
+                }
             }
-
 
             cur.EvalStack.Push(cur.CurrentMethod.Arguments[argIndex]);
             return nextRetval;
@@ -3504,9 +3507,11 @@ namespace MMC.InstructionExec
             // starg.s is used, which has a more efficient encoding for the first
             // 256 arguments (programmers defining method with that many arguments
             // should be in the circus).
-            int index = ((ParameterDefinition)Operand).Index;
+            int index = ((ParameterDefinition)Operand).ParamDef.Sequence;
             if (!cur.CurrentMethod.Definition.HasThis)
+            {
                 index--;
+            }
 
             IDataElement ide = cur.EvalStack.Pop();
 

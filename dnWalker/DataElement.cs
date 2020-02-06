@@ -18,16 +18,13 @@
 namespace MMC.Data {
     using System; // For ObsoleteAttribute :-)
 
-    using dnlib.DotNet.Emit;
     using MMC.State;
     using dnlib.DotNet;
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using TypeDefinition = dnlib.DotNet.TypeDef;
-    using FieldDefinition = dnlib.DotNet.FieldDef;
-    using ParameterDefinition = dnlib.DotNet.Parameter;
     using dnWalker;
 
-    public interface IDataElement : System.IComparable
+    public interface IDataElement : IComparable
     {
 		bool Equals(IDataElement other);
 		bool ToBool();
