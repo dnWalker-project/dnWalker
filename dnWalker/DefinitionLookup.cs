@@ -92,7 +92,12 @@ namespace MMC
 
         public int SizeOf(string type)
         {
-            return (int)m_typeSizes[type];
+            if (m_typeSizes.TryGetValue(type, out var result))
+            {
+                return result;
+            }
+
+            throw new KeyNotFoundException(type);
         }
 
         /// <summary>
@@ -543,18 +548,21 @@ namespace MMC
 			 */
             m_typeSizes = new Dictionary<string, int>
             {
-                ["System.UInt16"] = 2,
-                ["System.UInt32"] = 4,
-                ["System.UInt64"] = 8,
-                ["System.Int16"] = 2,
-                ["System.Int32"] = 4,
-                ["System.Int64"] = 8,
-                ["System.SByte"] = 1,
-                ["System.Byte"] = 1,
-                ["System.Boolean"] = 1,
-                ["System.Char"] = 1,
-                ["System.Double"] = 8,
-                ["System.Decimal"] = 16
+                ["System.UInt16"] = sizeof(ushort),
+                ["System.UInt32"] = sizeof(uint),
+                ["System.UInt64"] = sizeof(ulong),
+                ["System.Int16"] = sizeof(short),
+                ["System.Int32"] = sizeof(int),
+                ["System.Int64"] = sizeof(long),
+                ["System.SByte"] = sizeof(sbyte),
+                ["System.Byte"] = sizeof(byte),
+                ["System.Boolean"] = sizeof(bool),
+                ["System.Char"] = sizeof(char),
+                ["System.Double"] = sizeof(double),
+                ["System.Decimal"] = sizeof(decimal),
+                ["System.Single"] = sizeof(float),
+                ["System.IntPtr"] = IntPtr.Size,
+                ["System.UIntPtr"] = UIntPtr.Size
             };
 
             AssemblyDefinition = assemblyLoader.GetModule();

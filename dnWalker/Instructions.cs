@@ -3851,4 +3851,35 @@ namespace MMC.InstructionExec
             return true;
         }
     }
+
+    /// <summary>
+    /// Pushes the size, in bytes, of a supplied value type onto the evaluation stack.
+    /// </summary>
+    public class SIZEOF : InstructionExecBase
+    {
+        public SIZEOF(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            var type = (ITypeDefOrRef)Operand;
+            if (type.IsValueType)
+            {
+                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));
+            }
+            else
+            {
+                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf("System.IntPtr")));
+            }
+
+            return nextRetval;
+        }
+
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
+        {
+            return true;
+        }
+    }
 }
