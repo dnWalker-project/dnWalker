@@ -1301,28 +1301,56 @@ namespace MMC.InstructionExec
     // We're putting these classes where they belong functionally, not where
     // they would be put "in the real world".
 
+
+    /// <summary>
+    /// Tests whether an object reference (type O) is an instance of a particular class.
+    /// </summary>
     public class ISINST : ObjectModelInstructionExec
     {
-
-        public ISINST(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public ISINST(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement reference = cur.EvalStack.Pop();
-            DynamicAllocation obj = (DynamicAllocation)cur.DynamicArea.Allocations[(ObjectReference)reference];
-
+            var value = cur.EvalStack.Pop();
             var typeDef = Operand as ITypeDefOrRef;
 
-            if (cur.DefinitionProvider.IsSubtype(obj.Type, typeDef))
-                cur.EvalStack.Push(reference);
-            else
-                cur.EvalStack.Push(ObjectReference.Null);
+            switch (value)
+            {
+                case ConstantString constantString:
+                    var st = cur.DefinitionProvider.GetTypeDefinition("System.String");
+                    if (cur.DefinitionProvider.IsSubtype(st, typeDef))
+                    {
+                        cur.EvalStack.Push(value);
+                    }
+                    else
+                    {
+                        cur.EvalStack.Push(ObjectReference.Null);
+                    }
+                    return nextRetval;
+                case ObjectReference reference:
+                    if (reference.Equals(ObjectReference.Null))
+                    {
+                        cur.EvalStack.Push(ObjectReference.Null);
+                        return nextRetval;
+                    }
 
-            return nextRetval;
+                    DynamicAllocation obj = cur.DynamicArea.Allocations[reference];
+                    if (cur.DefinitionProvider.IsSubtype(obj.Type, typeDef))
+                    {
+                        cur.EvalStack.Push(reference);
+                    }
+                    else
+                    {
+                        cur.EvalStack.Push(ObjectReference.Null);
+                    }
+
+                    return nextRetval;
+            }
+
+            throw new NotImplementedException(value.GetType().FullName);
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
