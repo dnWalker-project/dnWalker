@@ -420,8 +420,7 @@ namespace MMC.InstructionExec
     // Shift right
     public class SHR : LogicalIntsructionExec
     {
-        public SHR(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public SHR(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -432,6 +431,27 @@ namespace MMC.InstructionExec
             int shiftBy = (int)Convert.ChangeType(value, typeof(int));
             IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shr(shiftBy));
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Shifts an unsigned integer value (in zeroes) to the right by a specified number of bits, pushing the result onto the evaluation stack.
+    /// </summary>
+    public class SHR_UN : LogicalIntsructionExec
+    {
+        public SHR_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            var value = cur.EvalStack.Pop();
+            int shiftBy = (int)Convert.ChangeType(value, typeof(int));
+            var a = (ISignedIntegerElement)cur.EvalStack.Pop();
+            var u = (IIntegerElement)a.ToUnsigned();
+            cur.EvalStack.Push(u.Shr(shiftBy));
             return nextRetval;
         }
     }
@@ -1732,6 +1752,9 @@ namespace MMC.InstructionExec
         }
     }
 
+    /// <summary>
+    /// Converts a metadata token to its runtime representation, pushing it onto the evaluation stack.
+    /// </summary>
     public class LDTOKEN : ObjectModelInstructionExec
     {
         public LDTOKEN(Instruction instr, object operand, InstructionExecAttributes atr)
@@ -1742,18 +1765,23 @@ namespace MMC.InstructionExec
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             IIEReturnValue retval = nincRetval;
-            if (Operand is TypeDefinition)
+            switch (Operand)
             {
-                TypeDefinition typeDef = Operand as TypeDefinition;
-                if (LoadClass(typeDef, cur))
-                {
+                case TypeDefinition typeDef:
+                    if (LoadClass(typeDef, cur))
+                    {
+                        retval = nextRetval;
+                    }
+                    cur.EvalStack.Push(new TypePointer(typeDef));
+                    break;
+                case MethodDefinition methodDef:
+                    cur.EvalStack.Push(new MethodPointer(methodDef));
                     retval = nextRetval;
-                }
-                cur.EvalStack.Push(new TypePointer(typeDef));
-            }
-            else
-            {
-                throw new NotSupportedException("LDTOKEN is currently unsupported");
+                    break;
+                //case FieldDefinition fieldDef:
+                //    break;
+                default:
+                    throw new NotSupportedException("LDTOKEN is currently unsupported with " + Operand);
             }
 
             // TODO: handle field and method definitions
