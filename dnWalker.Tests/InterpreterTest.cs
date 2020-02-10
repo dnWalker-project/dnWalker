@@ -4719,46 +4719,6 @@ void TestMethod_BR(string methodName1, string methodName2, params object[] args)
     TestMethod(methodName1, args);
     TestMethod(methodName2, args2);
 }
-
-ILValue[] CreateArguments(object[] args)
-{
-    if (args.Length == 0)
-        return Array.Empty<ILValue>();
-    var res = new ILValue[args.Length];
-    for (int i = 0; i < res.Length; i++)
-        res[i] = CreateArgument(args[i]);
-    return res;
-}
-
-ILValue CreateArgument(object value)
-{
-    if (value is null)
-        return new NullObjectRefILValue();
-    switch (Type.GetTypeCode(value.GetType()))
-    {
-        case TypeCode.Boolean: return new ConstantInt32ILValue(testAsm1.AppDomain, (bool)value ? 1 : 0);
-        case TypeCode.Char: return new ConstantInt32ILValue(testAsm1.AppDomain, (char)value);
-        case TypeCode.SByte: return new ConstantInt32ILValue(testAsm1.AppDomain, (sbyte)value);
-        case TypeCode.Byte: return new ConstantInt32ILValue(testAsm1.AppDomain, (byte)value);
-        case TypeCode.Int16: return new ConstantInt32ILValue(testAsm1.AppDomain, (short)value);
-        case TypeCode.UInt16: return new ConstantInt32ILValue(testAsm1.AppDomain, (ushort)value);
-        case TypeCode.Int32: return new ConstantInt32ILValue(testAsm1.AppDomain, (int)value);
-        case TypeCode.UInt32: return new ConstantInt32ILValue(testAsm1.AppDomain, (int)(uint)value);
-        case TypeCode.Int64: return new ConstantInt64ILValue(testAsm1.AppDomain, (long)value);
-        case TypeCode.UInt64: return new ConstantInt64ILValue(testAsm1.AppDomain, (long)(ulong)value);
-        case TypeCode.Single: return new ConstantFloatILValue(testAsm1.AppDomain, (float)value);
-        case TypeCode.Double: return new ConstantFloatILValue(testAsm1.AppDomain, (double)value);
-        case TypeCode.String: return new Fake.ConstantStringILValue(testAsm1.AppDomain.System_String, (string)value);
-        default:
-            if (value is IntPtr ip)
-                return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(testAsm1.AppDomain, ip.ToInt32()) : ConstantNativeIntILValue.Create64(testAsm1.AppDomain, ip.ToInt64());
-            if (value is UIntPtr up)
-                return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(testAsm1.AppDomain, (int)up.ToUInt32()) : ConstantNativeIntILValue.Create64(testAsm1.AppDomain, (long)up.ToUInt64());
-            throw new InvalidOperationException();
-    }
-}
-    }
-}
 */
     }
 }

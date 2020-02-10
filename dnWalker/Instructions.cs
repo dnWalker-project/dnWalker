@@ -3584,6 +3584,44 @@ namespace MMC.InstructionExec
     }
 
     /// <summary>
+    /// Converts the value on top of the evaluation stack to unsigned int16, and extends it to int32.
+    /// </summary>
+    public class CONV_U2 : ConvertInstructionExec
+    {
+        public CONV_U2(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is IRealElement r)
+                {
+                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)r.ToFloat8(false).Value));
+                    return nextRetval;
+                }
+
+                cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)a.ToInt8(false).Value));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
     /// Converts the value on top of the evaluation stack to unsigned int64, and extends it to int64.
     /// </summary>
     public class CONV_U8 : ConvertInstructionExec

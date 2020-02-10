@@ -1534,10 +1534,16 @@ namespace MMC.Data {
 
 		public bool Equals(IDataElement other) {
 
-			return (other is UnsignedInt8) && ((UnsignedInt8)other).Value == m_value;
+			return (other is UnsignedInt8 u) && u.Value == m_value;
 		}
 
-		public int CompareTo(object obj) {
+		public int CompareTo(object obj)
+        {
+            if (obj is IIntegerElement i)
+            {
+                return m_value.CompareTo(i.ToUnsignedInt8(true).Value);
+            }
+
 			return m_value.CompareTo(((UnsignedInt8)obj).Value);
 		}
 
@@ -1974,8 +1980,14 @@ namespace MMC.Data {
 
 		public int CompareTo(object obj)
         {
-			return Value.CompareTo(((Float8)obj).Value);
-			//return (int)(m_value - ((Float8)obj).Value);
+            if (obj is IRealElement r)
+            {
+                return Value.CompareTo(r.ToFloat8(true).Value);
+            }
+
+            //return Value.CompareTo(((Float8)obj).Value);
+            //return (int)(m_value - ((Float8)obj).Value);
+            throw new NotSupportedException();
 		}
 
 		public override string ToString()
