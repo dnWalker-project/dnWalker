@@ -1474,7 +1474,17 @@ namespace MMC.InstructionExec
         public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             IDataElement refVal = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
-            ObjectReference or;
+
+            switch (refVal)
+            {
+                case ObjectReference or:
+                    AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
+                    int offset = GetFieldOffset(ao.Type);
+                    return new MemoryLocation(offset, or, cur);
+            }
+
+            throw new NotImplementedException(refVal.GetType().FullName);
+            /*ObjectReference or;
 
             if (refVal is ObjectReference)
                 or = (ObjectReference)refVal;
@@ -1484,7 +1494,7 @@ namespace MMC.InstructionExec
             AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
             int offset = GetFieldOffset(ao.Type);
 
-            return new MemoryLocation(offset, or, cur);
+            return new MemoryLocation(offset, or, cur);*/
         }
     }
 
@@ -1806,10 +1816,11 @@ namespace MMC.InstructionExec
                     cur.EvalStack.Push(new MethodPointer(methodDef));
                     retval = nextRetval;
                     break;
-                //case FieldDefinition fieldDef:
-                //    break;
+                case FieldDefinition fieldDef:
+                    cur.EvalStack.Push(new FieldHandle(fieldDef));
+                    return nextRetval;
                 default:
-                    throw new NotSupportedException("LDTOKEN is currently unsupported with " + Operand);
+                    throw new NotSupportedException("LDTOKEN is currently unsupported with " + Operand.GetType());
             }
 
             // TODO: handle field and method definitions

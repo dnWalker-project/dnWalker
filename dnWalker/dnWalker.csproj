@@ -94,6 +94,9 @@
     <Compile Include="MMCExceptions.cs" />
     <Compile Include="NativePeers\SystemFloat.cs" />
     <Compile Include="NativePeers\SystemDouble.cs" />
+    <Compile Include="NativePeers\SystemRuntimeMethodHandle.cs" />
+    <Compile Include="NativePeers\SystemRuntimeFieldHandle.cs" />
+    <Compile Include="NativePeers\SystemRuntimeTypeHandle.cs" />
     <Compile Include="PartialOrderReduction.cs" />
     <Compile Include="PlacementMapping.cs" />
     <Compile Include="Pool.cs" />

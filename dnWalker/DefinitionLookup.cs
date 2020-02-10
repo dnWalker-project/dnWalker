@@ -523,6 +523,23 @@ namespace MMC
             return new DefinitionProvider(assemblyLoader);
         }
 
+        public bool TryGetTypeHandle(ITypeDefOrRef typeRef, out RuntimeTypeHandle typeHandle)
+        {
+            var corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
+            if (corLibType != null)
+            {
+                var typeSig = typeRef.ToTypeSig();
+                if (corLibType == AssemblyDefinition.CorLibTypes.String)
+                {
+                    typeHandle = typeof(string).TypeHandle;
+                    return true;
+                }
+            }
+
+            typeHandle = default(RuntimeTypeHandle);
+            return false;
+        }
+
         // ----------------------------------------------------------------------------------------------
 
         /// \brief Initialize a new HashedDefinitionProvider.

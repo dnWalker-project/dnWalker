@@ -2082,48 +2082,280 @@ namespace MMC.Data {
         }
     }
 
-	struct IntPointer : IDataElement {
+	struct IntPointer : IIntegerElement, ISignedIntegerElement
+    {
+        public string WrapperName { get { return "System.IntPtr"; } }
 
-		System.IntPtr m_value;
+        public IntPtr Value { get; }
 
-		public string WrapperName { get { return "System.IntPtr"; } }
-		public System.IntPtr Value { get { return m_value; } }
-        // public DataElementKind Kind => DataElementKind.NativeInt;
+        public bool ToBool() { return ((uint)Value) == 0; }
 
-        public bool ToBool() { return ((uint)m_value) == 0; }
-
-		public override string ToString() {
-
-			return ((uint)m_value).ToString();
+		public override string ToString()
+        {
+			return ((uint)Value).ToString();
 		}
 
-		public bool Equals(IDataElement other) {
-
+		public bool Equals(IDataElement other)
+        {
 			return (other is IntPointer) && CompareTo(other) == 0;
 		}
 
-		public int CompareTo(object other) {
-
+		public int CompareTo(object other)
+        {
 			// Special case: int32 and native int are the same in this
 			// implementation (see ConvertInstructions.cs). Comparison
 			// will only be signed with int32.
 			if (other is Int4)
-				return (int)((uint)m_value - ((Int4)other).ToUnsignedInt4(false).Value);
-			return (int)((uint)m_value - (uint)((IntPointer)other).Value);
+				return (int)((uint)Value - ((Int4)other).ToUnsignedInt4(false).Value);
+			return (int)((uint)Value - (uint)((IntPointer)other).Value);
 		}
 
 		public override int GetHashCode() {
 
-			return (int)m_value * 677;
+			return (int)Value * 677;
 		}
 
-		public IntPointer(int i) {
+        public IIntegerElement And(IIntegerElement other)
+        {
+            if (IntPtr.Size == 4)
+            {
+                return new Int4(Value.ToInt32() & other.ToInt4(false).Value);
+            }
 
-			m_value = new System.IntPtr(i);
+            return new Int8(Value.ToInt64() & other.ToInt8(false).Value);
+        }
+
+        public IIntegerElement Not()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Or(IIntegerElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Xor(IIntegerElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Shl(int x)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Shr(int x)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement Mul(INumericElement other, bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement Div(INumericElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement Rem(INumericElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Int4 ToInt4(bool checkOverflow)
+        {
+            return new Int4(Value.ToInt32());
+        }
+
+        public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Int8 ToInt8(bool checkOverflow)
+        {
+            return new Int8(Value.ToInt64());
+        }
+
+        public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Float4 ToFloat4(bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Float8 ToFloat8(bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAddElement Add(INumericElement other, bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISubElement Sub(INumericElement other, bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement ToUnsigned()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IntPointer(IntPtr value) {
+
+			Value = value;
 		}
 	}
 
-	public struct ConstantString : IReferenceType, IConvertible
+    struct UnsignedIntPointer : IIntegerElement, ISignedIntegerElement
+    {
+        public string WrapperName { get { return "System.UIntPtr"; } }
+
+        public UIntPtr Value { get; }
+
+        public bool ToBool() { return ((uint)Value) == 0; }
+
+        public override string ToString()
+        {
+            return ((uint)Value).ToString();
+        }
+
+        public bool Equals(IDataElement other)
+        {
+            return (other is UnsignedIntPointer) && CompareTo(other) == 0;
+        }
+
+        public int CompareTo(object other)
+        {
+            // Special case: int32 and native int are the same in this
+            // implementation (see ConvertInstructions.cs). Comparison
+            // will only be signed with int32.
+            if (other is Int4)
+                return (int)((uint)Value - ((Int4)other).ToUnsignedInt4(false).Value);
+            return (int)((uint)Value - (uint)((UnsignedIntPointer)other).Value);
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)Value * 677;
+        }
+
+        public IIntegerElement And(IIntegerElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Not()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Or(IIntegerElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Xor(IIntegerElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Shl(int x)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIntegerElement Shr(int x)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement Mul(INumericElement other, bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement Div(INumericElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement Rem(INumericElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Int4 ToInt4(bool checkOverflow)
+        {
+            if (checkOverflow)
+            {
+                return new Int4(checked((int)Value.ToUInt32()));
+            }
+
+            return new Int4((int)Value.ToUInt32());
+        }
+
+        public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
+        {
+            return new UnsignedInt4(Value.ToUInt32());
+        }
+
+        public Int8 ToInt8(bool checkOverflow)
+        {
+            if (checkOverflow)
+            {
+                return new Int8(checked((long)Value.ToUInt64()));
+            }
+
+            return new Int8((long)Value.ToUInt64());
+        }
+
+        public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
+        {
+            return new UnsignedInt8(Value.ToUInt64());
+        }
+
+        public Float4 ToFloat4(bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Float8 ToFloat8(bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAddElement Add(INumericElement other, bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISubElement Sub(INumericElement other, bool checkOverflow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericElement ToUnsigned()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UnsignedIntPointer(UIntPtr value)
+        {
+            Value = value;
+        }
+    }
+
+    public struct ConstantString : IReferenceType, IConvertible
     {
         private string m_value;
 
@@ -2715,4 +2947,38 @@ namespace MMC.Data {
 			m_method = method;
 		}
 	}
+
+    public struct FieldHandle : IRuntimeHandle
+    {
+        public string WrapperName { get { return ""; } }
+
+        public FieldDef Value { get; set; }
+
+        public bool ToBool() { return Value != null; }
+
+        public bool Equals(IDataElement other)
+        {
+            return (other is FieldHandle) && ((FieldHandle)other).Value == Value;
+        }
+
+        public override string ToString()
+        {
+            return "FP^" + (Value != null ? Value.Name.String : "null");
+        }
+
+        public int CompareTo(object other)
+        {
+            return Value.Name.CompareTo(((FieldHandle)other).Value.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)(Value.GetHashCode() * 3329);
+        }
+
+        public FieldHandle(FieldDef field)
+        {
+            Value = field;
+        }
+    }
 }
