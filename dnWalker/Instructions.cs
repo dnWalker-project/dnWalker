@@ -2102,9 +2102,7 @@ namespace MMC.InstructionExec
 
     public class SUB : NumericInstructionExec
     {
-
-        public SUB(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public SUB(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -2126,6 +2124,52 @@ namespace MMC.InstructionExec
             try
             {
                 cur.EvalStack.Push(left.Sub(right, CheckOverflow));
+            }
+            catch (OverflowException)
+            {
+                RaiseException("System.OverflowException", cur);
+            }
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Subtracts one unsigned integer value from another, performs an overflow check, and pushes the result onto the evaluation stack.
+    /// </summary>
+    public class SUB_OVF_UN : NumericInstructionExec
+    {
+        public SUB_OVF_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement a = cur.EvalStack.Pop();
+            IDataElement b = cur.EvalStack.Pop();
+
+            ISubElement left = (ISubElement)b;
+            INumericElement right = (INumericElement)a;
+
+            left = ((ISignedIntegerElement)left).ToUnsigned();
+            right = ((ISignedIntegerElement)right).ToUnsigned();
+
+            try
+            {
+                var sub = left.Sub(right, CheckOverflow);
+                switch (sub)
+                {
+                    case UnsignedInt4 ui4:
+                        cur.EvalStack.Push(ui4.ToInt4(false));
+                        break;
+                    case UnsignedInt8 ui8:
+                        cur.EvalStack.Push(ui8.ToInt8(false));
+                        break;
+                    default:
+                        cur.EvalStack.Push(sub);
+                        break;
+                }
             }
             catch (OverflowException)
             {

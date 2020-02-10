@@ -4410,16 +4410,33 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         public void Test_STLOC_S__128() { Test("Test_STLOC_S__128", 123); }
 
         [Theory]
-        // TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        // TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MinValue, int.MaxValue)]// TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
+        [InlineData(int.MaxValue, int.MinValue)]// TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
         public void Test_SUB__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_SUB_OVF_UN__Int32(object arg0, object arg1) { Test("Test_SUB_OVF_UN__Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(long.MinValue, long.MaxValue)]
+        [InlineData(long.MaxValue, long.MinValue)]
+        [InlineData(-5L, 4L)]
+        [InlineData(4L, -5L)]
+        [InlineData(0L, long.MinValue)]
+        [InlineData(long.MaxValue, int.MaxValue)]
+        public void Test_SUB_OVF_UN__Int64(object arg0, object arg1) { Test("Test_SUB_OVF_UN__Int64", arg0, arg1); }
+
+        [Theory]
+        [InlineData(int.MinValue, int.MaxValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
@@ -4443,7 +4460,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         public void Test_SUB_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
 
         [Theory]
-        // TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(int.MinValue, int.MinValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
         [InlineData(-5, 4)]
         [InlineData(0, int.MinValue)]
         public void Test_SUB_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
@@ -4536,7 +4553,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         [InlineData(6.0d)]
         public void Test_SWITCH__6_Double(object arg0) { Test("Test_SWITCH__6_Double", arg0); }*/
 
-        [Theory]
+        /*[Theory]
         [InlineData(0L)]
         [InlineData(-1L)]
         [InlineData(1L)]
@@ -4547,7 +4564,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         [InlineData(4L)]
         [InlineData(5L)]
         [InlineData(6L)]
-        public void Test_SWITCH__6_Int64(object arg0) { Test("Test_SWITCH__6_Int64", arg0); }
+        public void Test_SWITCH__6_Int64(object arg0) { Test("Test_SWITCH__6_Int64", arg0); }*/
 
         [Theory]
         [InlineData(0)]

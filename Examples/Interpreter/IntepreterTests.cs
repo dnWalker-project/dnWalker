@@ -52,6 +52,24 @@ namespace Examples.Interpreter
                 default:
                     return 15;
             }
-}
+        }
+
+        public static int Test_SWITCH__6_Int64(long A_0)
+        {
+            switch (A_0)
+            {
+                case 3L:
+                    return 3;
+                default:
+                    return 8;
+                case 1L:
+                    return 1;
+                case 0L:
+                    return 0;
+                case 2L:
+                case 5L:
+                    return 2;
+            }
+        }
     }
 }
