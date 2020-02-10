@@ -3260,9 +3260,16 @@ namespace MMC.InstructionExec
 
             try
             {
-                var unsigned = a.ToUnsignedInt4(false).Value;
-                cur.EvalStack.Push(new Int8(checked(unsigned)));
-                return nextRetval;
+                switch (a)
+                {
+                    case Int4 i4:
+                        cur.EvalStack.Push(i4.ToUnsignedInt4(false).ToInt8(false)); // todo why?
+                        return nextRetval;
+                    default:
+                        var unsigned = a.ToUnsignedInt8(true).ToInt8(false);//.Value;
+                        cur.EvalStack.Push(unsigned);// new Int8((long)unsigned));
+                        return nextRetval;
+                }
             }
             catch (OverflowException e)
             {
