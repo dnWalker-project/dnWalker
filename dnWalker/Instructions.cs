@@ -275,9 +275,17 @@ namespace MMC.InstructionExec
                 return nextRetval;
             }
 
-            var index = (int)Convert.ChangeType(a, typeof(int));
-            return index >= 0 && index < targets.Length ?
-                new JumpReturnValue(targets[index]) : nextRetval;
+            try
+            {
+                var index = (int)Convert.ChangeType(a, typeof(int));
+                return index >= 0 && index < targets.Length ?
+                    new JumpReturnValue(targets[index]) :
+                    nextRetval;
+            }
+            catch (OverflowException o)
+            {
+                return nextRetval;
+            }
         }
     }
 
@@ -312,6 +320,18 @@ namespace MMC.InstructionExec
         }
     }
 
+    public class READONLY : InstructionExecBase
+    {
+        public READONLY(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            return nextRetval;
+        }
+    }
 
     public class LogicalIntsructionExec : InstructionExecBase
     {
