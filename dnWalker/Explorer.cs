@@ -593,12 +593,12 @@ namespace MMC
             }
         }
 
-		public bool CheckDeadlock() {
-
+		public bool CheckDeadlock()
+        {
 			bool allStopped = true;
 			if (cur.ThreadPool.RunnableThreadCount == 0)
 				for (int i = 0; allStopped && i < cur.ThreadPool.Threads.Length; ++i)
-					allStopped = cur.ThreadPool.Threads[i].State == (int)System.Threading.ThreadState.Stopped;
+					allStopped = cur.ThreadPool.Threads[i].State == System.Threading.ThreadState.Stopped;
 
 			return !allStopped;
 		}

@@ -72,7 +72,7 @@ namespace MMC.InstructionExec
 			 * VYN: disabled this, this cannot detect whether two threads fail to make progress, and run infinitely
 			 */
             return true;
-            //return cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) > 1;
+            //return cur.ThreadPool.GetThreadCount(System.Threading.ThreadState.Running) > 1;
         }
 
         public override bool IsDependent(ExplicitActiveState cur)
@@ -84,7 +84,7 @@ namespace MMC.InstructionExec
 			 * VYN: disabled this, this cannot detect whether two threads fail to make progress, and run infinitely
 			 */
             return false;
-            //return cur.ThreadPool.GetThreadCount(MMC.ThreadStatus.Running) == 1;
+            //return cur.ThreadPool.GetThreadCount(System.Threading.ThreadState.Running) == 1;
         }
 
         protected int CompareOperands(IDataElement a, IDataElement b)

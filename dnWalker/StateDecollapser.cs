@@ -221,12 +221,14 @@ namespace MMC.State {
 		// Threads
 		/////////////////////////////////////////////////////////////////////
 
-		void RestoreThread(int thread_id, int pool_index) {
-
+		void RestoreThread(int thread_id, int pool_index)
+        {
 			WrappedIntArray collapsed_trd = m_pool.GetList(pool_index);
 			ThreadState trd = cur.ThreadPool.Threads[thread_id];
-			if (trd.State != collapsed_trd[ThreadPartOffsets.State])
-				trd.State = collapsed_trd[ThreadPartOffsets.State];
+            if ((int)trd.State != collapsed_trd[ThreadPartOffsets.State])
+            {
+                trd.State = (System.Threading.ThreadState)collapsed_trd[ThreadPartOffsets.State];
+            }
 			trd.WaitingFor = collapsed_trd[ThreadPartOffsets.WaitingFor];
 
 			if (collapsed_trd[ThreadPartOffsets.ExceptionReference] == 0) {

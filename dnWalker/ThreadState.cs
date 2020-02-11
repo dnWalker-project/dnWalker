@@ -24,12 +24,12 @@ namespace MMC.State {
 	using MMC.Data;
 	using MMC.Util;
 
-    public class ThreadState : IMustDispose, ICleanable, IStorageVisitable {
-
+    public class ThreadState : IMustDispose, ICleanable, IStorageVisitable
+    {
 		public static int state_field_offset = LockManager.NoThread;
 
 		CallStack m_callStack;
-        int m_state; // Short-hand for the 'state' field.
+        System.Threading.ThreadState m_state; // Short-hand for the 'state' field.
         bool m_isDirty;
 		int m_me; // an ID.
 
@@ -37,15 +37,16 @@ namespace MMC.State {
 
         // ---------------- Accessors and Short-hands -------------- 
 
-        public CallStack CallStack {
-
+        public CallStack CallStack
+        {
 			get { return m_callStack; }
 			set { m_callStack = value; } // for restoring the state
 		}
 
-		public MethodState CurrentMethod {
-
-			get {
+		public MethodState CurrentMethod
+        {
+			get
+            {
 				if (m_callStack.IsEmpty())
 					return null;
 				else
@@ -89,18 +90,18 @@ namespace MMC.State {
 
         // ---------------- State, Locking and Waiting -------------- 
 
-        public int State {
-
+        public System.Threading.ThreadState State
+        {
 			get { return m_state; }
 			set {
-				if (m_state == MMC.ThreadStatus.Stopped) {
+				if (m_state == System.Threading.ThreadState.Stopped) {
 					Debug.Assert(value != m_state, "Stopping already stopped thread.");
-					if (value == MMC.ThreadStatus.Running || value == MMC.ThreadStatus.WaitSleepJoin) {
+					if (value == System.Threading.ThreadState.Running || value == System.Threading.ThreadState.WaitSleepJoin) {
 						cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
 						ThreadObjectWatcher.Increment(m_me, ThreadObject, cur);
 					}
 				}
-				if (value == MMC.ThreadStatus.Stopped)
+				if (value == System.Threading.ThreadState.Stopped)
 					ReleaseObject();
 
 				m_isDirty |= m_state != value;
@@ -111,24 +112,29 @@ namespace MMC.State {
 						(AllocatedObject)cur.DynamicArea.Allocations[ThreadObject];
 					Debug.Assert(theThreadObject != null,
 							"Thread object should not be null when setting state (even to Stopped).");
-					theThreadObject.Fields[state_field_offset] = new Int4(m_state);
+					theThreadObject.Fields[state_field_offset] = new Int4((int)m_state);
 				}
 			}
 		}
 
-		public bool IsAlive {
-
-			get { return ThreadStatus.IsAlive(m_state); }
+		public bool IsAlive
+        {
+            get
+            {
+                return m_state == System.Threading.ThreadState.Unstarted
+                  || m_state == System.Threading.ThreadState.Running
+                  || m_state == System.Threading.ThreadState.WaitSleepJoin;
+            }
 		}
 
-		public bool IsRunnable {
-
-			get { return m_state == ThreadStatus.Running; }
+		public bool IsRunnable
+        { 
+			get { return m_state == System.Threading.ThreadState.Running; }
 		}
 
-		public void WaitFor(int other) {
-
-			m_state = MMC.ThreadStatus.WaitSleepJoin;
+		public void WaitFor(int other)
+        {
+			m_state = System.Threading.ThreadState.WaitSleepJoin;
 			m_isDirty |= WaitingFor != other;
 			//m_isDirty = true;
 			WaitingFor = other;
@@ -136,7 +142,7 @@ namespace MMC.State {
 
         public void Awaken(Logger logger)
         {
-            m_state = MMC.ThreadStatus.Running;
+            m_state = System.Threading.ThreadState.Running;
             //m_isDirty |= m_waitFor != LockManager.NoThread;
             m_isDirty = true;
             WaitingFor = LockManager.NoThread;
@@ -213,7 +219,7 @@ namespace MMC.State {
         {
 			m_callStack = cur.StorageFactory.CreateCallStack();
 			ThreadObject = threadObj;
-			m_state = MMC.ThreadStatus.Running;
+			m_state = System.Threading.ThreadState.Running;
 			WaitingFor = LockManager.NoThread;
 			m_isDirty = true;
 			m_me = me;

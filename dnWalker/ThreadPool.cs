@@ -84,8 +84,8 @@ namespace MMC.State {
 		// Query and enumerate threads.
 		////////////////////////////////////////////////////////////////////
 
-		public int GetThreadCount(int state) {
-
+		public int GetThreadCount(System.Threading.ThreadState state)
+        {
 			int retval = 0;
 			for (int i=0; i < m_tl.Length; ++i)
 				if (m_tl[i] != null && m_tl[i].State == state)
@@ -93,16 +93,16 @@ namespace MMC.State {
 			return retval;
 		}
 
-		public int GetThreadCount() {
-
+		public int GetThreadCount()
+        {
 			int retval = 0;
 			for (int i=0; i < m_tl.Length; ++i)
 				if (m_tl[i] != null) ++retval;
 			return retval;
 		}
 
-		public Queue<int> GetThreadCollection(int state) {
-
+		public Queue<int> GetThreadCollection(System.Threading.ThreadState state)
+        {
 			Queue<int> retval = new Queue<int>(m_tl.Length);
 			for (int i=0; i < m_tl.Length; ++i)
 				if (m_tl[i] != null && m_tl[i].State == state)
@@ -159,7 +159,7 @@ namespace MMC.State {
 
 			// This would be an MMC error: the thread to be blocked does a Join
 			// call, but it's not running.
-			Debug.Assert(to_block.State == MMC.ThreadStatus.Running, 
+			Debug.Assert(to_block.State == System.Threading.ThreadState.Running, 
 					"Thread to be blocked is not running.");
 
 			// If the thread to wait on is not alive, skip the whole waiting thingy.
@@ -171,7 +171,7 @@ namespace MMC.State {
 			else {
 				// Set the waiting-for and state fields of the blocking thread.
 				to_block.WaitingFor = to_terminate;
-				to_block.State = MMC.ThreadStatus.WaitSleepJoin;
+				to_block.State = System.Threading.ThreadState.WaitSleepJoin;
 
 				_logger.Debug("thread {0} is now waiting for thread {1}.",
 						blocking_thread, to_terminate);
@@ -211,14 +211,14 @@ namespace MMC.State {
                 _logger.Warning("terminating a thread with a non-empty call stack.");
             }
 
-            theThread.State = MMC.ThreadStatus.Stopped;
+            theThread.State = System.Threading.ThreadState.Stopped;
 
             //Explorer.ActivateGC = true;
 
             // Check for threads that called Join on the terminating thread, and wake them.
             for (int i = 0; i < m_tl.Length; ++i)
             {
-                if (m_tl[i] != null && m_tl[i].State == MMC.ThreadStatus.WaitSleepJoin 
+                if (m_tl[i] != null && m_tl[i].State == System.Threading.ThreadState.WaitSleepJoin
                     && m_tl[i].WaitingFor == thread_id)
                 {
                     m_tl[i].Awaken(_logger);
@@ -277,22 +277,22 @@ namespace MMC.State {
 		// Short-hands.
 		////////////////////////////////////////////////////////////////////
 
-		public ThreadState CurrentThread {
-
+		public ThreadState CurrentThread
+        {
 			get { return m_tl[m_curThread]; }
 		}
 
-		public Queue<int> RunnableThreads {
-
-			get {
-				return GetThreadCollection(ThreadStatus.Running);			
+		public Queue<int> RunnableThreads
+        {
+			get
+            {
+				return GetThreadCollection(System.Threading.ThreadState.Running);
 			}
 		}
 
-		public int RunnableThreadCount {
-
-			get { return GetThreadCount(ThreadStatus.Running); }
+		public int RunnableThreadCount
+        {
+			get { return GetThreadCount(System.Threading.ThreadState.Running); }
 		}
-
 	}
 }

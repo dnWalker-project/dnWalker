@@ -203,7 +203,7 @@ namespace MMC.State {
                     collapsed_trd = (collapsed_trd == null) ?
                             new WrappedIntArray(ThreadPartOffsets.Count) : collapsed_trd.Clone();
 
-                    collapsed_trd[ThreadPartOffsets.State] = trd.State;
+                    collapsed_trd[ThreadPartOffsets.State] = (int)trd.State;
                     collapsed_trd[ThreadPartOffsets.WaitingFor] = trd.WaitingFor;
                     collapsed_trd[ThreadPartOffsets.ExceptionReference] = (int)trd.ExceptionReference.Location;
 
