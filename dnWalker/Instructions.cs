@@ -1494,6 +1494,10 @@ namespace MMC.InstructionExec
         public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             IDataElement refVal = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
+            if (refVal is LocalVariablePointer localVariablePointer)
+            {
+                refVal = localVariablePointer.Value;
+            }
 
             switch (refVal)
             {
@@ -1533,32 +1537,29 @@ namespace MMC.InstructionExec
             IDataElement toChange = cur.EvalStack.Pop();
             //FieldDefinition fld = GetFieldDefinition();
 
+            if (toChange is LocalVariablePointer lvp)
+            {
+                toChange = lvp.Value;
+            }
+
             // This is somewhat rancid, but for now we'll do it like this.
             if (toChange is ObjectReference objectReference)
             {
                 // Change a field of an object.
-                AllocatedObject theObject =
-                    cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
+                AllocatedObject theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
                 int offset = GetFieldOffset(theObject.Type);
                 cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
 
-                /// Can be the case that an object reference was written, thereby changing the object graph
+                // Can be the case that an object reference was written, thereby changing the object graph
                 ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val, cur);
 
                 theObject.Fields[offset] = val;
                 cur.ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC);
+                return nextRetval;
             }
-            else if (toChange is LocalVariablePointer)
-            {
-                // Change by pointer to local variable.
-                LocalVariablePointer lvp = (LocalVariablePointer)toChange;
-                lvp.Value = val;
-            }
-            else
-                cur.Logger.Warning("unknown type storage destination: {0}", toChange.GetType());
 
-            return nextRetval;
+            throw new NotSupportedException($"unknown type storage destination: {toChange.GetType()}");
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
@@ -3995,6 +3996,39 @@ namespace MMC.InstructionExec
             }
 
             return nextRetval;
+        }
+
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Copies the value type located at the address of an object (type &, or native int) to the address 
+    /// of the destination object (type &, or native int).
+    /// </summary>
+    public class CPOBJ : InstructionExecBase
+    {
+        public CPOBJ(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            // The two object references are popped from the stack; 
+            IDataElement ref2 = cur.EvalStack.Pop();
+            IDataElement ref1 = cur.EvalStack.Pop();
+
+            // the value type at the address of the source object is copied to the address of the destination object.
+            if (ref2 is MethodMemberPointer mmp2 && ref1 is MethodMemberPointer mmp1)
+            {
+                mmp1.Value = mmp2.Value;
+                return nextRetval;
+            }
+
+            throw new NotImplementedException("CPOBJ " + ref2.GetType().FullName + " & " + ref1.GetType().FullName);
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
