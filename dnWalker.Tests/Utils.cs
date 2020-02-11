@@ -44,7 +44,7 @@ namespace dnWalker.Tests
 
             if (!_lazyTypes.Value.TryGetValue(methodTypeName, out var type))
             {
-                throw new Exception("Type not found");
+                throw new Exception($"Type {methodName} not found");
             }
 
             return type.GetMethod(methodName.Substring(lastDot + 1));

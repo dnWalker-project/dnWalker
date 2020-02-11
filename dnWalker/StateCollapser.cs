@@ -55,12 +55,12 @@ namespace MMC.State {
             m_pool = pool;
         }
 
-		/// \brief Reset the collapser after an interruption in the chain of states.
+		/// <summary>Reset the collapser after an interruption in the chain of states.</summary>
 		///
 		/// This sets the specified state as the last visited (and collapsed)
 		/// state. This method should be called after backtracking.
 		///
-		/// \param s The restored (collapsed) state.
+		/// <param name="s">The restored (collapsed) state.</param>
 		public void Reset(CollapsedState s) {
 			m_curstate = s;
 

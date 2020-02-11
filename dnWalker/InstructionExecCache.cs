@@ -59,8 +59,8 @@ namespace MMC.InstructionExec
 		///
 		/// This always creates a new one.
 		///
-		/// \param instr The instruction to create a new IE for.
-		/// \return An IE for the given instruction.
+		/// <param name="instr">The instruction to create a new IE for.</param>
+		/// <returns>An IE for the given instruction.</returns>
 		public InstructionExecBase GetExecFor(Instruction instr) {
 
 			return InstructionExecBase.CreateInstructionExec(instr);
@@ -92,8 +92,8 @@ namespace MMC.InstructionExec
 		/// This re-uses previously allocated IEs to avoid a 'new' operation
 		/// and parsing operands, etc.
 		///
-		/// \param instr The instruction to create a new IE for.
-		/// \return An IE for the given instruction.
+		/// <param name="instr">The instruction to create a new IE for.</param>
+		/// <returns>An IE for the given instruction.</returns>
 		public InstructionExecBase GetExecFor(Instruction instr) {
 
 			/*

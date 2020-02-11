@@ -51,12 +51,12 @@ namespace MMC {
 		int m_indent;
 		TextWriter o;
 
-		/// \brief Print a formatted string to the output.
+		/// <summary>Print a formatted string to the output.</summary>
 		///
 		/// This method prefixes the string with 2*m_indent spaces.
 		///
-		/// \param str Format string (cf. string.Format).
-		/// \param values Values for {0}, {1}, etc.
+		/// <param name="str">Format string (cf. string.Format).</param>
+		/// <param name="values">Values for {0}, {1}, etc.</param>
 		public void Print(string str, params object[] values) {
 
 			StringBuilder sb = new StringBuilder();
@@ -66,12 +66,12 @@ namespace MMC {
 			o.WriteLine(sb.ToString());
 		}
 
-		/// \brief Format and print instruction.
+		/// <summary>Format and print instruction.</summary>
 		///
 		/// Example:
 		/// <tt>0010 | ldstr "Apenkooi is leuk."</tt>
 		///
-		/// \param instr The Instruction to print and format.
+		/// <param name="instr">The Instruction to print and format.</param>
 		public void PrintInstruction(Instruction instr) {
 
 			++m_indent;
@@ -88,7 +88,7 @@ namespace MMC {
 			--m_indent;
 		}
 
-		/// \brief Format and print method.
+		/// <summary>Format and print method.</summary>
 		///
 		/// This prints:
 		/// <nl>
@@ -98,7 +98,7 @@ namespace MMC {
 		///   <li>instructions: see PrintInstruction</li>
 		/// </nl>
 		///
-		/// \param meth The method to format and print.
+		/// <param name="meth">The method to format and print.</param>
 		/// \sa PrintInstruction
 		public void PrintMethod(MethodDefinition meth) {
 
@@ -131,7 +131,7 @@ namespace MMC {
 			--m_indent;
 		}
 
-		/// \brief Format and print a type (class, struct, etc.)
+		/// <summary>Format and print a type (class, struct, etc.)</summary>
 		///
 		/// This prints:
 		/// <nl>
@@ -141,7 +141,7 @@ namespace MMC {
 		///	  <li>methods: see constructors</li>
 		/// </nl>
 		///
-		/// \param type The type to format and print.
+		/// <param name="type">The type to format and print.</param>
 		/// \sa PrintMethod
 		public void PrintType(TypeDefinition type) {
 
@@ -180,11 +180,11 @@ namespace MMC {
 			--m_indent;
 		}
 
-		/// \brief Format and print a module.
+		/// <summary>Format and print a module.</summary>
 		///
 		/// This prints all types in the module.
 		///
-		/// \param mod The module to format and print.
+		/// <param name="mod">The module to format and print.</param>
 		/// \sa PrintType
 		public void PrintModule(dnlib.DotNet.ModuleDef mod) {
 
@@ -200,11 +200,11 @@ namespace MMC {
 			--m_indent;
 		}
 
-		/// \brief Format and print an assembly.
+		/// <summary>Format and print an assembly.</summary>
 		///
 		/// This prints all modules in the assembly.
 		///
-		/// \param asm The assembly format and to print.
+		/// <param name="asm">The assembly format and to print.</param>
 		/// \sa PrintModule
 		public void PrintAssembly(dnlib.DotNet.AssemblyDef asm) {
 
@@ -217,18 +217,18 @@ namespace MMC {
 			--m_indent;
 		}
 
-		/// \brief Initiate a new CILDumper.
+		/// <summary>Initiate a new CILDumper.</summary>
 		///
-		/// \param output Text output to write to.
+		/// <param name="output">Text output to write to.</param>
 		public CILDumper(TextWriter output) {
 
 			m_indent = 0;
 			o = output;
 		}
 
-		/// \brief Fatal error: print message and exit.
+		/// <summary>Fatal error: print message and exit.</summary>
 		///
-		/// \param msg Message to be printed
+		/// <param name="msg">Message to be printed</param>
 		public static void Fatal(string msg) {
 
 			System.Console.WriteLine("FATAL: " + msg);
@@ -236,12 +236,12 @@ namespace MMC {
 		}
 
 
-		/// \brief Assembly entry point for cildump.exe.
+		/// <summary>Assembly entry point for cildump.exe.</summary>
 		///
 		/// This loads the assembly specified by name as the first argument.
 		/// This assembly is then printed on stdout.
 		///
-		/// \param args Command-line arguments.
+		/// <param name="args">Command-line arguments.</param>
 		/// \sa PrintAssembly
 		public static void _Main(string[] args) {
 

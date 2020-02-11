@@ -108,6 +108,12 @@ namespace dnWalker.Tests
                     return;
                 }
 
+                if (modelCheckerException == null && modelCheckerResult == null && res2 != null)
+                {
+                    modelCheckerResult.Should().Be(res2);
+                    return;
+                }
+
                 if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult.GetType() == typeof(IntPtr))
                 {
                     modelCheckerResult = ((IntPtr)modelCheckerResult).ToInt64();

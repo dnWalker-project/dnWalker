@@ -26,19 +26,19 @@ namespace MMC {
 
 		/// The string to write in the preamble of the Dot graph.
 		string Begin { get; }
-		/// \brief Format string for writing nodes.
+		/// <summary>Format string for writing nodes.</summary>
 		/// The format parameters are as follows. 
 		/// 0 (int) is the node ID
 		/// 1 (string) is the list of runnable threads (comma separated).
 		string Node { get; }
-		/// \brief The format for writing edges.
+		/// <summary>The format for writing edges.</summary>
 		/// The format parameters are as follows. 
 		/// 0 (int) is the "from" node.
 		/// 1 (int) is the "to" node.
 		/// 2 (int) is the edge ID.
 		/// 3 (int) is the thread that was run.
 		string Edge { get; }
-		/// \brief Format string for a backtrack edge.
+		/// <summary>Format string for a backtrack edge.</summary>
 		/// Same format as Edge, except parameter 3 does not exist.
 		/// \sa Edge
 		string BacktrackEdge { get; }

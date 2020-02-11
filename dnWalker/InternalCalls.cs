@@ -31,8 +31,8 @@ namespace MMC.ICall {
 
 
 	/// Singleton access class.
-	static class IntCallManager {
-
+	static class IntCallManager
+    {
 		public static readonly HashedICM icm = new HashedICM();
 	}
 
@@ -154,7 +154,7 @@ namespace MMC.ICall {
 
 		/// Check if an internal call is multi-thread safe.
 		///
-		/// \return True iff it is safe.
+		/// <returns>True iff it is safe.</returns>
 		public bool IsMultiThreadSafe(string methodName) {
 
 			return !m_threadUnsafe.Contains(methodName); // default policy is true

@@ -49,7 +49,7 @@ namespace MMC.State {
 			}
 		}
 
-		/// \brief Stack pointer is always one above last value, i.e. the place to write to.
+		/// <summary>Stack pointer is always one above last value, i.e. the place to write to.</summary>
 		public int StackPointer {
 
 			get { return m_stackptr; }

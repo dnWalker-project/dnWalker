@@ -48,7 +48,7 @@ namespace MMC.State
             }
         }
 
-		/// \brief The number of locks.
+		/// <summary>The number of locks.</summary>
 		///
 		/// In other words, the number of Acquire() calls minus the number of
 		/// Release() calls.
@@ -74,22 +74,22 @@ namespace MMC.State
             }
         }
 
-		/// \brief Check if this lock has an associated wait queue. [const]
+		/// <summary>Check if this lock has an associated wait queue. [const]</summary>
 		///
 		/// This operation does not create one on-demand, use WaitQueue for that.
 		/// A positive result means no threads are waiting on this allocation, it does
 		/// not mean the wait queue as an object does not exist. In other words, an
 		/// empty wait queue is regarded the same as none at all.
 		///
-		/// \return True iff at least one thread is waiting on the specified allocation.
+		/// <returns>True iff at least one thread is waiting on the specified allocation.</returns>
 		public bool HasWaitQueue() {
 
 			return m_waitQueue != null && m_waitQueue.Count > 0;
 		}
 
-		/// \brief Get the wait queue for an allocation.
+		/// <summary>Get the wait queue for an allocation.</summary>
 		///
-		/// \return The associated wait queue, or a new (empty) one if none was
+		/// <returns>The associated wait queue, or a new (empty) one if none was</returns>
 		/// 		previously defined.
 		public Queue<int> WaitQueue {
 
@@ -101,23 +101,23 @@ namespace MMC.State
 			}
 		}
 
-		/// \brief Check if this lock has an associated ready queue. [const]
+		/// <summary>Check if this lock has an associated ready queue. [const]</summary>
 		///
 		/// This operation does not create one on-demand, use ReadyQueue for that.
 		/// A positive result means no threads are ready on this allocation, it does
 		/// not mean the ready queue as an object does not exist. In other words, an
 		/// empty ready queue is regarded the same as none at all.
 		///
-		/// \return True iff at least one thread is ready on the specified allocation.
+		/// <returns>True iff at least one thread is ready on the specified allocation.</returns>
 		public bool HasReadyQueue() {
 
 			return m_readyQueue != null && m_readyQueue.Count > 0;
 		}
 
-		/// \brief Get the ready queue for an allocation.
+		/// <summary>Get the ready queue for an allocation.</summary>
 		///
-		/// \param obj Reference to the allocation.
-		/// \return The associated ready queue, or a new (empty) one if none was
+		/// <param name="obj">Reference to the allocation.</param>
+		/// <returns>The associated ready queue, or a new (empty) one if none was</returns>
 		/// 		previously defined.
 		public Queue<int> ReadyQueue {
 
@@ -181,9 +181,9 @@ namespace MMC.State
 			}
 		}
 
-		/// \brief Create a deep copy of this lock.
+		/// <summary>Create a deep copy of this lock.</summary>
 		///
-		/// \return A clone.
+		/// <returns>A clone.</returns>
 		public IStorable StorageCopy() {
 
 			Queue<int> rdy = (HasReadyQueue() ? new Queue<int>(ReadyQueue) : null);
@@ -207,18 +207,18 @@ namespace MMC.State
 			return m_isDirty;
 		}
 
-		/// \brief Create a new lock.
+		/// <summary>Create a new lock.</summary>
 		///
 		/// By default, the lock count is zero, and no one owns the thread.
 		/// Both the ready and wait queues are empty.
 		public Lock() : this(LockManager.NoThread, 0, null, null) { }
 
-		/// \brief Create a new lock.
+		/// <summary>Create a new lock.</summary>
 		///
-		/// \param onwer Owner of the lock.
-		/// \param count The amount of locks the owner has.
-		/// \param rdy Ready queue (keeps reference, not values).
-		/// \param wait Wait queue (keeps reference, not values).
+		/// <param name="onwer">Owner of the lock.</param>
+		/// <param name="count">The amount of locks the owner has.</param>
+		/// <param name="rdy">Ready queue (keeps reference, not values).</param>
+		/// <param name="wait">Wait queue (keeps reference, not values).</param>
 		protected Lock(int owner, int count, Queue<int> rdy, Queue<int> wait) {
 
 			m_owner = owner;

@@ -2503,7 +2503,7 @@ namespace MMC.Data {
     {
         public static readonly ObjectReference Null = new ObjectReference(0);
 
-        public string WrapperName { get { return ""; } }
+        public string WrapperName { get; }
 
         public uint Location { get; }
 
@@ -2536,9 +2536,13 @@ namespace MMC.Data {
         public ObjectReference(uint loc)
         {
             Location = loc;
+            WrapperName = null;
         }
 
-        public ObjectReference(int loc) : this((uint)loc) { }
+        public ObjectReference(int loc, string wrapperName = null) : this((uint)loc)
+        {
+            WrapperName = wrapperName;
+        }
     }
 
     abstract class MethodMemberPointer : IManagedPointer

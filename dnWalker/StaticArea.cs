@@ -50,16 +50,16 @@ namespace MMC.State {
 
 	class StaticArea : IStaticArea {
 
-		/// \brief Mapping of type definitions to the location of the allocated
+		/// <summary>Mapping of type definitions to the location of the allocated</summary>
 		/// class.
 		/// This mapping does not change during the exploration. In other
 		/// words: the first loading of a class defines its place forever. 
 		IDictionary m_typeToLocation;
 
-		/// \brief The allocated (not necessarily loaded) classes.
+		/// <summary>The allocated (not necessarily loaded) classes.</summary>
 		SparseReferenceList<AllocatedClass> m_classes;
 
-		/// \brief An object that provides IEnumerator objects to iterate over
+		/// <summary>An object that provides IEnumerator objects to iterate over</summary>
 		/// the loaded classes.
 		LoadedClassEnumeratorProvider m_enumeratorProvider;
         private readonly ExplicitActiveState _cur;
@@ -69,22 +69,22 @@ namespace MMC.State {
 		/// List containing all dirty classes.
 		public IEnumerable LoadedClasses { get { return m_enumeratorProvider; } }
 
-		/// \brief Check if a class for a given type is loaded.
+		/// <summary>Check if a class for a given type is loaded.</summary>
 		///
-		/// \param typeDef Type for which to check this.
-		/// \return True iff the class exists and is loaded.
+		/// <param name="typeDef">Type for which to check this.</param>
+		/// <returns>True iff the class exists and is loaded.</returns>
 		public bool ClassLoaded(TypeDefinition typeDef) {
 
 			object loc = m_typeToLocation[typeDef];
 			return (loc != null && m_classes[(int)loc].Loaded);
 		}
 
-		/// \brief Get the location at which a class for the given type is loaded.
+		/// <summary>Get the location at which a class for the given type is loaded.</summary>
 		///
 		/// This queries the mapping m_typeToLocation, documented above.
 		///
-		/// \param typeDef The type.
-		/// \return The location.
+		/// <param name="typeDef">The type.</param>
+		/// <returns>The location.</returns>
 		public int GetClassLocation(TypeDefinition typeDef) {
 
 			object retval = m_typeToLocation[typeDef];
@@ -97,13 +97,13 @@ namespace MMC.State {
 			return (int)retval;
 		}
 		
-		/// \brief Get the class for a given type.
+		/// <summary>Get the class for a given type.</summary>
 		///
 		/// This calls GetClass with the location found with GetClassLocation.
 		/// Convenience method.
 		///
-		/// \param typeDef The type.
-		/// \return The class.
+		/// <param name="typeDef">The type.</param>
+		/// <returns>The class.</returns>
 		public AllocatedClass GetClass(TypeDefinition typeDef) {
 
 			return GetClass(GetClassLocation(typeDef));
@@ -126,11 +126,11 @@ namespace MMC.State {
             return retval;
         } 
 
-        /// \brief Delete the class at a given location.
+        /// <summary>Delete the class at a given location.</summary>
         ///
         /// Actually, this only unloads the class. The structure is not deleted.
         ///
-        /// \param location The location.
+        /// <param name="location">The location.</param>
         public void DeleteClassAtLocation(int location)
         {
 			m_classes[location].Loaded = false;

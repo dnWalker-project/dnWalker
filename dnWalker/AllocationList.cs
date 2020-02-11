@@ -15,11 +15,9 @@
  *
  */
 
-namespace MMC.State {
-
-	using System;
+namespace MMC.State
+{
 	using System.Collections;
-	using System.Diagnostics;
 	using MMC.Collections;
 	using MMC.Data;
 	using MMC.Util;
@@ -29,21 +27,21 @@ namespace MMC.State {
     /// </summary>
     public sealed class AllocationList : SparseReferenceList<DynamicAllocation>, IEnumerable, ICleanable
     {
-		const int INITIAL_SIZE = 64;
-		DirtyList m_dirtyLocs;
+		private const int INITIAL_SIZE = 64;
 
-		/// \brief Indexer keeping track of changes.
-		///
-		/// \param index Offset in the linear heap.
-		/// \return	The Allocation at the specified offset.
-		public override DynamicAllocation this[int index]
+        /// <summary>
+        /// Indexer keeping track of changes.
+        /// </summary>
+        /// <param name="index">Offset in the linear heap.</param>
+        /// <returns>The Allocation at the specified offset.</returns>
+        public override DynamicAllocation this[int index]
         {
             get { return base[index]; }
             set
             {
                 if (base[index] != value)
                 {
-                    m_dirtyLocs.SetDirty(index);
+                    DirtyLocations.SetDirty(index);
                 }
 
                 base[index] = value;
@@ -59,29 +57,29 @@ namespace MMC.State {
 			set { this[(int)obj.Location - 1] = value; }
 		}
 
-		///	\brief Location that have changed.
-		///	Either by pointing to a diffent allocation (changed reference), or
-		///	the allocation pointed to is changed (changed value).
-		public DirtyList DirtyLocations
-        {
-            get { return m_dirtyLocs; }
-		}
+        /// <summary>Location that have changed.</summary>
+        /// <remarks>
+        ///	Either by pointing to a diffent allocation (changed reference), or
+        ///	the allocation pointed to is changed (changed value).
+        ///	</remarks>
+        public DirtyList DirtyLocations { get; }
 
-		/// <summary>
-		/// Enumerator for all allocations.
-		/// </summary>
-		public IEnumerator GetEnumerator()
+        /// <summary>
+        /// Enumerator for all allocations.
+        /// </summary>
+        public IEnumerator GetEnumerator()
         {
 			return new AllocationListEnumerator(this);
 		}
 
-		/// \brief Check if this allocation list is dirty.
-		///
-		/// \return True iff at least one allocation has changed.
+		/// <summary>
+        /// Check if this allocation list is dirty.
+        /// </summary>
+		/// <returns>True iff at least one allocation has changed.</returns>
 		/// \sa DirtyLocations
-		public bool IsDirty() {
-
-			return m_dirtyLocs.Count > 0;
+		public bool IsDirty()
+        {
+			return DirtyLocations.Count > 0;
 		}
 
 		/// <summary>
@@ -90,39 +88,40 @@ namespace MMC.State {
 		public void Clean()
         {
 			//m_dirtyLocs = new DirtyList(Length);
-			m_dirtyLocs.Clean();
+			DirtyLocations.Clean();
 		}
 
-		/// \brief Constructor for an empty allocation list.
-		///
-		/// Create a SparseAllocationList as a base class, using a pre-set
-		/// initial size.
-		public AllocationList()
-			: base(INITIAL_SIZE) {
-
-			m_dirtyLocs = new DirtyList(INITIAL_SIZE);
+        /// <summary>
+        /// Constructor for an empty allocation list.
+        /// </summary>
+        /// <remarks>
+        /// Create a SparseAllocationList as a base class, using a pre-set
+        /// initial size.
+        /// </remarks>
+        public AllocationList() : base(INITIAL_SIZE)
+        {
+			DirtyLocations = new DirtyList(INITIAL_SIZE);
 		}
 
+		/// <summary>
 		/// Enumerator for the allocation list.
-		private class AllocationListEnumerator : IEnumerator {
+		/// </summary>
+		private class AllocationListEnumerator : IEnumerator
+        {
+			private readonly AllocationList m_al;
+            private int m_cur;
 
-			AllocationList m_al;
-			int m_cur;
-
-			/// \brief Current object in iteration.
-			///
-			/// \return Object at the cursor, not null.
-			public object Current {
-
+			/// <summary>Current object in iteration.</summary>
+			/// <returns>Object at the cursor, not null.</returns>
+			public object Current
+            {
 				get { return m_al[m_cur]; }
 			}
 
-			/// \brief Move iteration to next allocation, skipping gaps.
-			///
-			/// \return True if a new object has been found, false otherwise
-			/// 		(end of iteration).
-			public bool MoveNext() {
-
+            /// <summary>Move iteration to next allocation, skipping gaps.</summary>
+            /// <returns>True if a new object has been found, false otherwise (end of iteration).</returns>
+            public bool MoveNext()
+            {
 				bool retval = false;
 				for (++m_cur; !retval && m_cur < m_al.Length; ++m_cur)
 					retval = m_al[m_cur] != null;
@@ -131,17 +130,21 @@ namespace MMC.State {
 				return retval;
 			}
 
+			/// <summary>
 			/// Reset the iterator to the begin.
-			public void Reset() {
-
+			/// </summary>
+			public void Reset()
+            {
 				m_cur = -1;
 			}
 
+			/// <summary>
 			/// Constructor.
-			public AllocationListEnumerator(AllocationList al) {
-
+			/// </summary>
+			public AllocationListEnumerator(AllocationList al)
+            {
 				m_al = al;
 			}
 		}
-	} 
+	}
 }

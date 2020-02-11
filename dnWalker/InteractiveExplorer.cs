@@ -33,7 +33,7 @@ namespace MMC {
 		public const int ListThreads     = -11;
 	}
 
-	/// \brief Explorer which allows the user to interactively guide the exploration.
+	/// <summary>Explorer which allows the user to interactively guide the exploration.</summary>
 	///
 	/// The interactive explorer is split up into an abstract base class
 	/// (InteractiveExplorer) and a InteractiveExplorerCLI class. The class

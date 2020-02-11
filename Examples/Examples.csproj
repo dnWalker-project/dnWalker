@@ -47,6 +47,7 @@
     <Compile Include="ExceptionHandling.cs" />
     <Compile Include="IncDec.cs" />
     <Compile Include="Interpreter\IntepreterTests.cs" />
+    <Compile Include="Interpreter\PatternMatching.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -97,13 +97,15 @@ namespace MMC
     {
         private Logger _logger;
 
+        /// <summary>
         /// Print a verbose (debug) message.
-        ///
+        /// </summary>
+        /// <remarks>
         /// Do not use this function as an alternative to the logger, only to
         /// print debug information when actually debugging.
-        ///
-        /// \param msg Message (cf. string.Format).
-        /// \param value Values for the message string.
+        /// </remarks>
+        /// <param name="msg">Message (cf. string.Format).</param>
+        /// <param name="value">Values for the message string.</param>
         public void Message(string msg, params object[] values)
         {
             //if (Config.Instance.Verbose)
@@ -113,9 +115,10 @@ namespace MMC
             }
         }
 
+        /// <summary>
         /// Print a fatal message and die.
-        ///
-        /// \param msg Message to print before quitting.
+        /// </summary>
+        /// <param name="msg">Message to print before quitting.</param>
         public void Fatal(string msg)
         {
             _logger?.CloseAll();
@@ -125,9 +128,10 @@ namespace MMC
             System.Environment.Exit(2);
         }
 
+        /// <summary>
         /// Open a file for writing.
-        ///
-        /// \param filename Name of the file to output to.
+        /// </summary>
+        /// <param name="filename">Name of the file to output to.</param>
         TextWriter TryOpen(string filename)
         {
             StreamWriter retval = null;
@@ -155,11 +159,13 @@ namespace MMC
             return retval;
         }
 
+        /// <summary>
         /// Parse command line options.
-        ///
+        /// </summary>
+        /// <remarks>
         /// This sets various fields in class Config.
-        ///
-        /// \param args Command-line options as passed to Main.
+        /// </remarks>
+        /// <param name="args">Command-line options as passed to Main.</param>
         public IConfig GetConfigFromCommandLine(string[] args)
         {
             var config = new Config();
@@ -398,12 +404,12 @@ Disabling/enabling features:
 
         /// <summary>
         /// MMC entry point
-        ///
+        /// </summary>
+        /// <remarks>
         /// First, parse command line arguments. Then create an initial state,
         /// create an explorer, and let it run.
-        ///
-        /// \param args Command-line options to MMC.
-        /// </summary>
+        /// </remarks>
+        /// <param name="args">Command-line options to MMC.</param>
         public static void Main(string[] args)
         {
             new MonoModelChecker().Go(args);

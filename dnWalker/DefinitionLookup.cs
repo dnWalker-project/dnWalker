@@ -125,14 +125,14 @@ namespace MMC
             return false;
         }
 
-        /// \brief Look up a type definition by name in a given assembly.
-        ///
+        /// <summary>Look up a type definition by name in a given assembly.</summary>
+        /// <remarks>
         /// This uses its <b>full</b> name, so including namespaces. As a
         /// result, this search is <b>not</b> approximate.
-        ///
-        /// \param name The full name of the type to look up.
-        /// \param asm The assembly to look in (all modules are searched).
-        /// \return A definition of the found type, or null is nothing was found.
+        /// </remarks>
+        /// <param name="name">The full name of the type to look up.</param>
+        /// <param name="asm">The assembly to look in (all modules are searched).</param>
+        /// <returns>A definition of the found type, or null is nothing was found.</returns>
         internal TypeDef SearchType(string name, ModuleDef asm)
         {
             TypeDef retval = null;
@@ -161,15 +161,17 @@ namespace MMC
             return retval;
         }
 
-        /// \brief Look up a type definition by reference in the main assembly
+        /// <summary>
+        /// Look up a type definition by reference in the main assembly
         /// and its reference assemblies.
-        ///
+        /// </summary>
+        /// <remarks>
         /// This simply calls GetTypeDefinition(typeRef.FullName), which is okay
         /// as long as the search by name is not approximate.
-        ///
-        /// \param Type reference to find the definition of.
-        /// \return The definition, or null if none was found.
-        /// \sa GetTypeDefinition(string)
+        /// </remarks>
+        /// <param name="typeRef">reference to find the definition of.</param>
+        /// <returns>The definition, or null if none was found.</returns>
+        /// <seealso cref="GetTypeDefinition(string)"/> 
         internal TypeDef GetTypeDefinition(TypeRef typeRef)
         {
             return typeRef.ResolveTypeDef();
@@ -197,15 +199,17 @@ namespace MMC
             return typeDef;
         }
 
-        /// \brief Look up a type definition by name in the main assembly
+        /// <summary>
+        /// Look up a type definition by name in the main assembly
         /// and its reference assemblies.
-        ///
+        /// </summary>
+        /// <remarks>
         /// This calls GetTypeDefinition(name, ...) for the main assembly, and
         /// then all its referenced assemblies until a definition is found.
-        ///
-        /// \param Name of the type to find a definition for.
-        /// \return The definition, or null if none was found.
-        /// \sa GetTypeDefinition(string, AssemblyDefinition)
+        /// </remarks>
+        /// <param name="Name">of the type to find a definition for.</param>
+        /// <returns>The definition, or null if none was found.</returns>
+        /// <seealso cref="GetTypeDefinition(string, AssemblyDefinition)"/>
         public TypeDef GetTypeDefinition(string name)
         {
             var retval = SearchType(name, AssemblyDefinition);
@@ -380,13 +384,13 @@ namespace MMC
             return fieldDefinition;
         }
 
-        /// \brief Look up a field definition by name, in a type given by name.
-        ///
+        /// <summary>Look up a field definition by name, in a type given by name.</summary>
+        /// <remarks>
         /// The type name should be fully specified, i.e. with namespace.
-        ///
-        /// \param declTypeName Name of the type to look in.
-        /// \param fieldName Name of the field to look for.
-        /// \return Definition of the field to look for, or null if none was found.
+        /// </remarks>
+        /// <param name="declTypeName">Name of the type to look in.</param>
+        /// <param name="fieldName">Name of the field to look for.</param>
+        /// <returns>Definition of the field to look for, or null if none was found.</returns>
         public FieldDefinition GetFieldDefinition(string declTypeName, string fieldName)
         {
             string key = declTypeName + "::" + fieldName;
@@ -416,21 +420,17 @@ namespace MMC
             return GetFieldDefinition(retval);
         }
 
-        /// \brief Get the number of static fields in a type definition.
-        ///
-        /// \param typeDef The definition of the type of which to count the
-        /// static fields.
-        /// \return The number of static fields.
+        /// <summary>Get the number of static fields in a type definition.</summary>
+        /// <param name="typeDef">The definition of the type of which to count the static fields.</param>
+        /// <returns>The number of static fields.</returns>
         public int GetStaticFieldCount(TypeDef typeDef)
         {
             return typeDef.Fields.Count - GetNonStaticFieldCount(typeDef);
         }
 
-        /// \brief Get the number of non-static fields in a type definition.
-        ///
-        /// \param typeDef The definition of the type of which to count the
-        /// non-static fields.
-        /// \return The number of non-static fields.
+        /// <summary>Get the number of non-static fields in a type definition.</summary>
+        /// <param name="typeDef">The definition of the type of which to count the non-static fields.</param>
+        /// <returns>The number of non-static fields.</returns>
         public int GetNonStaticFieldCount(TypeDef typeDef)
         {
             int count = 0;
@@ -542,16 +542,16 @@ namespace MMC
 
         // ----------------------------------------------------------------------------------------------
 
-        /// \brief Initialize a new HashedDefinitionProvider.
-        ///
+        /// <summary>Initialize a new HashedDefinitionProvider.</summary>
+        /// <remarks>
         /// This initialized the hash tables, and load the referenced
-        /// assemblies. This loading is done in a terribly inefficient way.  In
+        /// assemblies. This loading is done in a terribly inefficient way. In
         /// order to find the file name of a references assembly, we use Mono
         /// reflection classes. These classes provide only constructor methods
         /// that immediately load the whole thing into memory. All that just
         /// for a file name. This is the reason MMC starts so slowly.
-        ///
-        /// \param asmDef Main assembly definition.
+        /// </remarks>
+        /// <param name="assemblyLoader">Assembly loader</param>
         private DefinitionProvider(AssemblyLoader assemblyLoader)
         {
             m_typeDefinitions = new Dictionary<string, TypeDef>();

@@ -837,8 +837,8 @@ namespace MMC.InstructionExec
 
     public class ObjectModelInstructionExec : InstructionExecBase
     {
-        /// \brief Loads a public class into the static area.
-        ///
+        /// <summary>Loads a public class into the static area.</summary>
+        /// <remarks>
         /// We return true if the calling thread is okay to continue
         /// operating on the public class. This is NOT the case if any of the
         /// following conditions hold:
@@ -852,10 +852,10 @@ namespace MMC.InstructionExec
         ///        waiting for us. In this case we're put on wait, and should
         ///        not execute the instruction. </li>
         /// </nl>
-        ///
-        /// \param type The type of public class to load.
-        /// \return True iff we can continue to execute the instruction (i.e.
-        /// it's okay to access the static fields).
+        /// </remarks>
+        /// <param name="type">The type of public class to load.</param>
+        /// <returns>True iff we can continue to execute the instruction (i.e.
+        /// it's okay to access the static fields).</returns>
         public bool LoadClass(TypeDefinition type, ExplicitActiveState cur)
         {
             int me = cur.ThreadPool.CurrentThreadId;
@@ -2368,7 +2368,6 @@ namespace MMC.InstructionExec
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             IIEReturnValue retval;
             ExceptionHandler eh;
             MethodState current = cur.CurrentMethod;
@@ -2396,9 +2395,7 @@ namespace MMC.InstructionExec
 
     public class ENDFINALLY : ExceptionHandlingInstructionExec
     {
-
-        public ENDFINALLY(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public ENDFINALLY(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -2422,39 +2419,41 @@ namespace MMC.InstructionExec
         }
     }
 
+    /// <summary>
     /// Common base public class for all instructions that call a method.
+    /// </summary>
     public class CallInstructionExec : InstructionExecBase
     {
-
-        public CallInstructionExec(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CallInstructionExec(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         protected MethodDefinition Method => Operand as MethodDefinition;
 
-        /// Check if a method is empty, i.e. it has no code.
-        ///
-        /// \param meth The method.
-        /// \return False iff the method has code.
+        /// <summary>Check if a method is empty, i.e. it has no code.</summary>
+        /// <param name="meth">The method.</param>
+        /// <returns>False iff the method has code.</returns>
         protected bool IsEmptyMethod(MethodDefinition meth)
         {
-
-            return (meth.Body == null || meth.Body.Instructions.Count == 0);
+            return meth.Body == null || meth.Body.Instructions.Count == 0;
         }
 
-        /// Handle an empty method body.
-        ///
+        /// <summary>Handle an empty method body.</summary>
+        /// <remarks>
+        /// <para>
         /// This checks if the empty body is a delegate invocation, or an
         /// internal call. Both are handled in this method.
-        ///
+        /// </para>
+        /// <para>
         /// At the moment, many internal calls and asynchronous invocations of
         /// delegates are not handled.
-        ///
-        /// \paran args Arguments to the method to be called.
-        /// \return True iff the method has been properly handled.
-        /// \sa IntCallManager
+        /// </para>
+        /// </remarks>
+        /// <param name="args">Arguments to the method to be called.</param>
+        /// <param name="cur"></param>
+        /// <returns>True iff the method has been properly handled.</returns>
+        /// <seealso cref="IntCallManager"/>
         protected bool HandleEmptyMethod(ExplicitActiveState cur, DataElementList args)
         {
             bool handled = false;
@@ -2511,18 +2510,19 @@ namespace MMC.InstructionExec
         }
 
         // TODO fix documentation of args
-        /// \brief Handle assertion violations.
-        ///
-        /// This handles calls System.Diagnostics.Debug.Assert(*).
-        ///
+        /// <summary>Handle assertion violations.</summary>
+        /// <remarks>
+        /// <para>This handles calls System.Diagnostics.Debug.Assert(*).</para>
+        /// <para>
         /// This is not a nice place to put this code. All code should be put
         /// in the ICM, which is not just an internal call manager any more,
         /// but this makes the approach much more generic. 
         /// The ICM should be adjusted to handle polymorphic calls for this to
         /// be possible.
-        ///
-        /// \param args Arguments to the Assert call.
-        /// \return True iff the call was handled by this method.
+        /// </para>
+        /// </remarks>
+        /// <param name="args">Arguments to the Assert call.</param>
+        /// <returns>True iff the call was handled by this method.</returns>
         protected bool HandleAssertCall(DataElementList args, ExplicitActiveState cur, out bool violated)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
@@ -2575,12 +2575,12 @@ namespace MMC.InstructionExec
             return filtered;
         }
 
-        /// \brief Create an argument list.
-        ///
+        /// <summary>Create an argument list.</summary>
+        /// <remarks>
         /// This constructs a argument list of the correct size, and fills it
         /// with elements popped off the eval stack (in right to left order).
-        ///
-        /// \return A list containing the arguments.
+        /// </remarks>
+        /// <returns>A list containing the arguments.</returns>
         protected DataElementList CreateArgumentList(ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
@@ -2608,29 +2608,31 @@ namespace MMC.InstructionExec
 			 * Restore the eval stack
 			 */
             for (int i = 0; i < retval.Length; i++)
+            {
                 cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Push(retval[i]);
+            }
 
             return retval;
         }
 
-
         protected void CheckTailCall()
         {
-
         }
 
-        /// Determine if this call is safe.
-        ///
+        /// <summary>Determine if this call is safe.</summary>
+        /// <remarks>
         /// Usually calls are safe, but this may not be the case for some
         /// internal calls. In this case, return the value given by the ICM.
-        ///
-        /// \return True iff the call is safe.
+        /// </remarks>
+        /// <returns>True iff the call is safe.</returns>
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             bool safe = true;
             MethodDefinition methDef = Operand as MethodDefinition;
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
-                safe = MMC.ICall.IntCallManager.icm.IsMultiThreadSafe(methDef.Name);
+            {
+                safe = IntCallManager.icm.IsMultiThreadSafe(methDef.Name);
+            }
 
             return safe;
         }
@@ -2641,10 +2643,12 @@ namespace MMC.InstructionExec
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
                 DataElementList args = CopyArgumentList(cur, cur.ThreadPool.CurrentThreadId);
-                return MMC.ICall.IntCallManager.icm.IsDependent(methDef, args);
+                return IntCallManager.icm.IsDependent(methDef, args);
             }
             else
+            {
                 return false;
+            }
         }
 
         public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
@@ -2828,6 +2832,15 @@ namespace MMC.InstructionExec
             // Skip certain calls.
             if (!FilterCall(cur))
             {
+                var bypass = NativePeer.Get(methDef);
+                if (bypass != null)
+                {
+                    if (bypass.TryGetValue(args, cur, out var dataElement))
+                    {
+                        cur.EvalStack.Push(dataElement);
+                        return nextRetval;
+                    }
+                }
                 // Check for empty body. This will catch the virtual calls to e.g.
                 // the Invoke method of delegate types.
                 /*

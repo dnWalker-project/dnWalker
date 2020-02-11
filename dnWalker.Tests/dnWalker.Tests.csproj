@@ -68,6 +68,7 @@
     <Compile Include="ExampleTests\ExamplesTestBase.cs" />
     <Compile Include="ExampleTests\ExceptionHandlingTests.cs" />
     <Compile Include="ExampleTests\IncDecTests.cs" />
+    <Compile Include="ExampleTests\PatternMatchingTests.cs" />
     <Compile Include="InterpreterTest.cs" />
     <Compile Include="Interpreter\IntepreterTests.cs" />
     <Compile Include="TestBase.cs" />

@@ -37,7 +37,7 @@ namespace MMC.Util {
 			get { return m_currVals.Length; }
 		}
 
-		/// \brief Indexer for elements.
+		/// <summary>Indexer for elements.</summary>
 		///
 		/// First, try to get the value from the new values list. If that
 		/// fails, return the old value. If the value has been deleted, not_set
@@ -62,9 +62,9 @@ namespace MMC.Util {
 		}
 
 
-		/// \brief Return a list of values as returned by the indexer.
+		/// <summary>Return a list of values as returned by the indexer.</summary>
 		///
-		/// \return Old values overwritten with new values.
+		/// <returns>Old values overwritten with new values.</returns>
 		public ChangingIntVector WriteBack() {
 
 			int[] retval = new int[m_currVals.Length];
@@ -73,18 +73,18 @@ namespace MMC.Util {
 		}
 
 
-		/// \brief Get the old values for which a new value exists.
+		/// <summary>Get the old values for which a new value exists.</summary>
 		///
-		/// \return The reverse delta.
+		/// <returns>The reverse delta.</returns>
 		public ISparseElement GetReverseDelta() {
 
 			return m_delta;
 		}
 
-		/// \brief Compare two lists.
+		/// <summary>Compare two lists.</summary>
 		///
-		/// \param other The list to compare to (should be IChangingIntVector!).
-		/// \return True iff the lists are equal.
+		/// <param name="other">The list to compare to (should be IChangingIntVector!).</param>
+		/// <returns>True iff the lists are equal.</returns>
 		public override bool Equals(object other) {
 
 			ChangingIntVector o = other as ChangingIntVector;
@@ -105,7 +105,7 @@ namespace MMC.Util {
 			return equal;
 		}
 
-		/// \brief Get the hash code of a list.
+		/// <summary>Get the hash code of a list.</summary>
 		public override int GetHashCode() {
 			return ArrayIntHasher.GetHashCodeIntArray(m_currVals);	
 		}
@@ -114,11 +114,11 @@ namespace MMC.Util {
 			m_delta = null;
 		}
 
-		/// \brief Get a string representation of the list.
+		/// <summary>Get a string representation of the list.</summary>
 		///
 		/// The format is: 0 -> 23, 1 -> 322, etc.
 		///
-		/// \return The formatted list.
+		/// <returns>The formatted list.</returns>
 		public override string ToString() {
 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -133,7 +133,7 @@ namespace MMC.Util {
 
 		/// Create a ChangingIntVector.
 		///
-		/// \param initial_length Initial length of the list.
+		/// <param name="initial_length">Initial length of the list.</param>
 		public ChangingIntVector(int initial_length) {
 
 			m_currVals = new int[initial_length];
@@ -147,7 +147,7 @@ namespace MMC.Util {
 		///
 		/// The passed array is NOT copied, it is referenced. 
 		///
-		/// \param old_vals An array containing the old values.
+		/// <param name="old_vals">An array containing the old values.</param>
 		protected ChangingIntVector(int[] old_vals) {
 
 			m_currVals = old_vals;

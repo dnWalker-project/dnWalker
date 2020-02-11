@@ -26,7 +26,7 @@ namespace MMC.Util {
 
 	public delegate bool ObjectFilter(IList lst, int i);
 
-	/// \brief Simple class that can be used as a string representation of a list.
+	/// <summary>Simple class that can be used as a string representation of a list.</summary>
 	///
 	/// Alas, I cannot inherit from System.String, since it's sealed. This
 	/// class gives a snapshot string representation of a list, i.e. it does

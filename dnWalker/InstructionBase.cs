@@ -172,17 +172,17 @@ namespace MMC.InstructionExec
             // Lookup definitions.
             switch (operand)
             {
-                case IField field:
-                    operand = DefinitionProvider.GetFieldDefinition(field)
-                        ?? throw new NullReferenceException("Field not resolved: " + operand);
+                case ITypeDefOrRef typeDefOrRef:
+                    operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef)
+                        ?? throw new NullReferenceException("Type not resolved: " + operand);
                     break;
                 case IMethod method:
                     operand = method.ResolveMethodDef()
                         ?? throw new NullReferenceException("Method not resolved: " + operand);
                     break;
-                case ITypeDefOrRef typeDefOrRef:
-                    operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef)
-                        ?? throw new NullReferenceException("Type not resolved: " + operand);
+                case IField field:
+                    operand = DefinitionProvider.GetFieldDefinition(field)
+                        ?? throw new NullReferenceException("Field not resolved: " + operand);
                     break;
             }
 

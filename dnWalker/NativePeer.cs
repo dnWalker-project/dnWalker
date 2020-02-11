@@ -9,49 +9,48 @@ using System.Threading.Tasks;
 
 namespace dnWalker
 {
-    public class NativePeer
+    public abstract class NativePeer
     {
-        public static NativePeer Get(MethodDef meth)
+        public static NativePeer Get(MethodDef methodDef)
         {
-            if (meth.DeclaringType.FullName == typeof(Environment).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(Environment).FullName)
             {
-                switch (meth.Name)
-                {
-                    case "GetResourceString":
-                        return new NativePeer(meth);
-                    default:
-                        throw new NotImplementedException(meth.FullName);
-                }
+                return new NativePeers.SystemEnvironment(methodDef);
             }
 
-            if (meth.DeclaringType.FullName == typeof(double).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(double).FullName)
             {
-                return new NativePeers.SystemDouble(meth);
+                return new NativePeers.SystemDouble(methodDef);
             }
 
-            if (meth.DeclaringType.FullName == typeof(float).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(float).FullName)
             {
-                return new NativePeers.SystemSingle(meth);
+                return new NativePeers.SystemSingle(methodDef);
             }
 
-            if (meth.DeclaringType.FullName == typeof(IntPointer).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(IntPointer).FullName)
             {
-                return new NativePeers.SystemSingle(meth);
+                return new NativePeers.SystemSingle(methodDef);
             }
 
-            if (meth.DeclaringType.FullName == typeof(RuntimeTypeHandle).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(RuntimeTypeHandle).FullName)
             {
-                return new NativePeers.SystemRuntimeTypeHandle(meth);
+                return new NativePeers.SystemRuntimeTypeHandle(methodDef);
             }
 
-            if (meth.DeclaringType.FullName == typeof(RuntimeMethodHandle).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(RuntimeMethodHandle).FullName)
             {
-                return new NativePeers.SystemRuntimeMethodHandle(meth);
+                return new NativePeers.SystemRuntimeMethodHandle(methodDef);
             }
 
-            if (meth.DeclaringType.FullName == typeof(RuntimeFieldHandle).FullName)
+            if (methodDef.DeclaringType.FullName == typeof(RuntimeFieldHandle).FullName)
             {
-                return new NativePeers.SystemRuntimeFieldHandle(meth);
+                return new NativePeers.SystemRuntimeFieldHandle(methodDef);
+            }
+
+            if (methodDef.DeclaringType.FullName == typeof(string).FullName)
+            {
+                return new NativePeers.SystemString(methodDef);
             }
 
             return null;
@@ -64,10 +63,6 @@ namespace dnWalker
             _method = method;
         }
 
-        public virtual bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement)
-        {
-            dataElement = args[0];
-            return true;
-        }
+        public abstract bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement);
     }
 }

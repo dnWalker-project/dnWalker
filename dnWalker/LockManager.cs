@@ -28,10 +28,10 @@ namespace MMC.State {
 		/// Constant for 'not owner'. Nullable types would be nice, but...
 		public const int NoThread = -1;
 
-		/// \brief Check if an allocation has an associated locking thread. [const]
+		/// <summary>Check if an allocation has an associated locking thread. [const]</summary>
 		///
-		/// \param obj Reference to the allocation.
-		/// \return True iff a thread owns the lock on this allocation.
+		/// <param name="obj">Reference to the allocation.</param>
+		/// <returns>True iff a thread owns the lock on this allocation.</returns>
 		public bool IsLocked(ObjectReference obj, ExplicitActiveState cur) {
 
 			DynamicAllocation alloc = cur.DynamicArea.Allocations[obj];
@@ -39,13 +39,13 @@ namespace MMC.State {
 			return alloc.Locked;
 		}
 
-		/// \brief Get the lock associated with an allocation.
+		/// <summary>Get the lock associated with an allocation.</summary>
 		///
 		/// This creates a new (empty) lock if none exists (done by the
 		/// Allocation class).
 		///
-		/// \param obj Reference to the allocation.
-		/// \return The associated lock (possibly new).
+		/// <param name="obj">Reference to the allocation.</param>
+		/// <returns>The associated lock (possibly new).</returns>
 		public Lock GetLock(ObjectReference obj, ExplicitActiveState cur) {
 
 			DynamicAllocation alloc = cur.DynamicArea.Allocations[obj];
@@ -53,15 +53,15 @@ namespace MMC.State {
 			return alloc.Lock;
 		}
 
-		/// \brief Attempt to acquire the lock on an allocation for a thread.
+		/// <summary>Attempt to acquire the lock on an allocation for a thread.</summary>
 		///
 		/// One thread can own more than one lock on an allocation. To release
 		/// the lock completely the number of Release() calls should equal the
 		/// number of Acquire() calls.
 		///
-		/// \param obj Reference to the allocation.
-		/// \param thread_id The number of the thread to acquire the lock for.
-		/// \return True iff the lock was succesfully acquired.
+		/// <param name="obj">Reference to the allocation.</param>
+		/// <param name="thread_id">The number of the thread to acquire the lock for.</param>
+		/// <returns>True iff the lock was succesfully acquired.</returns>
 		public bool Acquire(ObjectReference obj, int thread_id, ExplicitActiveState cur) {
 
 			Lock l = GetLock(obj, cur);
@@ -78,13 +78,13 @@ namespace MMC.State {
 			return l.Owner == thread_id || l.Owner == NoThread;
 		}
 
-		/// \brief Notify (all) waiting threads.
+		/// <summary>Notify (all) waiting threads.</summary>
 		///
 		/// This moves one (or all, if all is true) thread from the waiting
 		/// queue to the ready queue.
 		///
-		/// \param obj Reference to the allocation.
-		/// \param all Notify all waiting threads if true. Just one otherwise.
+		/// <param name="obj">Reference to the allocation.</param>
+		/// <param name="all">Notify all waiting threads if true. Just one otherwise.</param>
 		public void Pulse(ObjectReference obj, bool all, ExplicitActiveState cur) {
 
 			Lock l = GetLock(obj, cur);
@@ -97,14 +97,14 @@ namespace MMC.State {
 			}
 		}
 
-		/// \brief Release the lock on an allocation.
+		/// <summary>Release the lock on an allocation.</summary>
 		///
 		/// If the lock is completely released (i.e. the number of Release()
 		/// calls equals the number of Acquire() calls), the ownership of the
 		/// lock is automatically passed to the first thread in the ready
 		/// queue.
 		///
-		/// \param obj Reference to the allocation.
+		/// <param name="obj">Reference to the allocation.</param>
 		public void Release(ObjectReference obj, ExplicitActiveState cur) {
 
 			Lock l = GetLock(obj, cur);

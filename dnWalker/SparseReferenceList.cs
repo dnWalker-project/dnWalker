@@ -55,12 +55,12 @@ namespace MMC.Collections {
 			return m_length - 1;
 		}
 
-		/// \brief Generate a string representation of the list.
+		/// <summary>Generate a string representation of the list.</summary>
 		///
 		/// The format looks like: <tt>[offset -> value, offset -> value,
 		/// ...]</tt>, marking deleted elements as such.
 		///
-		/// \return A string representation of the list.
+		/// <returns>A string representation of the list.</returns>
 		public override string ToString() {
 
 			StringBuilder sb = new StringBuilder("{");
@@ -75,8 +75,8 @@ namespace MMC.Collections {
 			return sb.ToString();
 		}
 
-		/// \brief Create a shallow copy of this list.
-		/// \return A shallow copy of the list.
+		/// <summary>Create a shallow copy of this list.</summary>
+		/// <returns>A shallow copy of the list.</returns>
 		public SparseReferenceList<T> Clone() {
 
 			return new SparseReferenceList<T>(this);
@@ -101,9 +101,9 @@ namespace MMC.Collections {
 				Add(key);
 		}
 
-		/// \brief Construct a new empty list with the specified capacity.
+		/// <summary>Construct a new empty list with the specified capacity.</summary>
 		///
-		/// \param n Initial size.
+		/// <param name="n">Initial size.</param>
 		public SparseReferenceList(int n) {
 
 			m_data = new T[n];

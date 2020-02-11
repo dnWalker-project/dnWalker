@@ -71,11 +71,11 @@ namespace MMC.State {
 			visitor.VisitDynamicArea(this, cur);
 		}
 
-		/// \brief Check if the heap is dirty.
+		/// <summary>Check if the heap is dirty.</summary>
 		///
 		/// This checks if the list itself, or one of its allocations is dirty.
 		///
-		/// \return True iff the heap is dirty.
+		/// <returns>True iff the heap is dirty.</returns>
 		public bool IsDirty() {
 
 			bool retval = m_alloc.IsDirty();
@@ -87,7 +87,7 @@ namespace MMC.State {
 			return retval;
 		}
 
-		/// \brief Set all heap elements as clean.
+		/// <summary>Set all heap elements as clean.</summary>
 		///
 		/// This cleans the list itself as well as all allocations.
 		public void Clean() {
@@ -105,13 +105,13 @@ namespace MMC.State {
 			}
 		}
 
-		/// \brief Get the list of dirty allocations.
+		/// <summary>Get the list of dirty allocations.</summary>
 		///
 		/// This includes locations that have been dirtied (e.g. an allocation
 		/// was deleted), as well as allocations that have been altered.
 		/// The list contains offsets in the allocations list.
 		///
-		/// \return List of indeces of dirty allocations.
+		/// <returns>List of indeces of dirty allocations.</returns>
 		public DirtyList DirtyAllocations {
 
 			get {
@@ -137,7 +137,7 @@ namespace MMC.State {
 			get { return m_pinned; }
 		}
 
-		/// \brief Set an allocation to be pinned-down.
+		/// <summary>Set an allocation to be pinned-down.</summary>
 		///
 		/// Pinned-down allocations are never deleted in GC runs. Typical use
 		/// for this is thread objects of running threads. Pinning down
@@ -147,8 +147,8 @@ namespace MMC.State {
 		/// before an object is to be released by the GC if it's no longer
 		/// referenced. Very much like reference counting.
 		///
-		/// \param objRef Reference to the allocation being pinned down.
-		/// \param pin True iff the object is to be pinned-down.
+		/// <param name="objRef">Reference to the allocation being pinned down.</param>
+		/// <param name="pin">True iff the object is to be pinned-down.</param>
 		public void SetPinnedAllocation(ObjectReference objRef, bool pin)
         {
             if (objRef.Location > 0)
@@ -193,43 +193,45 @@ namespace MMC.State {
             }
         }
 
-		// ------------------------- Allocation Related -------------------------
+        // ------------------------- Allocation Related -------------------------
 
-		/// \brief Allocate a new object of the given type at the given place.
-		///
-		/// \param loc The location to put the object.				
-		/// \param typeDef The type of the object to create.
-		/// \return A reference to the newly created object.
-		/// \sa DeterminePlacement
-		public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef)
+        /// <summary>
+        /// Allocate a new object of the given type at the given place.
+        /// </summary>
+        /// <param name="loc">The location to put the object.</param>
+        /// <param name="typeDef">The type of the object to create.</param>
+        /// <seealso cref="DeterminePlacement"/>
+        /// <returns>A reference to the newly created object.</returns>
+        public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef)
         {
 			AllocatedObject newObj = new AllocatedObject(typeDef, _cur.Configuration);
 			newObj.ClearFields(_cur);
 			m_alloc[loc] = newObj;
-			return new ObjectReference(loc + 1);
+			return new ObjectReference(loc + 1, typeDef.FullName);
 		}
 
-		/// \brief Allocate a new array of the given type and length at the given place.
-		///
-		/// \param loc The location to put the array.
-		/// \param typeDef The element type of the array.
-		/// \param length The length of the array.
-		/// \return A reference to the newly created array.
-		/// \sa DeterminePlacement
-		public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length)
+        /// <summary>
+        /// Allocate a new array of the given type and length at the given place.
+        /// </summary>
+        /// <param name="loc">The location to put the array.</param>
+        /// <param name="typeDef">The element type of the array.</param>
+        /// <param name="length">The length of the array.</param>
+        /// <seealso cref="DeterminePlacement"/>
+        /// <returns>A reference to the newly created array.</returns>
+        public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length)
         {
 			AllocatedArray newArr = new AllocatedArray(typeDef, length, _cur.Configuration);
 			newArr.ClearFields(_cur);
 			m_alloc[loc] = newArr;
-			return new ObjectReference(loc + 1);
+			return new ObjectReference(loc + 1, typeDef.FullName);
 		}
 
-		/// \brief Allocate a new delegate at the given place.
+		/// <summary>Allocate a new delegate at the given place.</summary>
 		///
-		/// \param loc The location to put the delegate.
-		/// \param obj The object to invoke the method on.
-		/// \param ptr A pointer to the method to invoke.
-		/// \return A reference to the newly created delegate.
+		/// <param name="loc">The location to put the delegate.</param>
+		/// <param name="obj">The object to invoke the method on.</param>
+		/// <param name="ptr">A pointer to the method to invoke.</param>
+        /// <returns>A reference to the newly created delegate.</returns>
 		/// \sa DeterminePlacement
 		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr)
         {
@@ -257,7 +259,7 @@ namespace MMC.State {
         ///
         /// If the reference count reaches zero, this deletes the allocation!
         ///
-        /// \param obj A reference to the allocation.
+        /// <param name="obj">A reference to the allocation.</param>
         public void DecRefCount(ObjectReference obj)
         {
             if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
@@ -292,7 +294,7 @@ namespace MMC.State {
 
 		/// Dispose allocation on the given location.
 		///
-		/// \param loc The location (offset in the list) of the allocation to
+		/// <param name="loc">The location (offset in the list) of the allocation to</param>
 		/// delete.
 		public void DisposeLocation(int loc) {
 
@@ -304,7 +306,7 @@ namespace MMC.State {
 
 		/// Dispose allocation on the given location.
 		///
-		/// \param obj Reference to the object of the allocation to delete.
+		/// <param name="obj">Reference to the object of the allocation to delete.</param>
 		public void DisposeAllocation(ObjectReference obj) {
 
 			DisposeLocation(((int)obj.Location) - 1);
@@ -329,29 +331,29 @@ namespace MMC.State {
 
 		// ------------------------- Symmetry Reduction Helpers -------------------------
 
-		/// \brief Get a new free slot.
+		/// <summary>Get a new free slot.</summary>
 		///
 		/// This location has never been used before. Backtracking etc. has no
 		/// influence on this behavior.
 		///
-		/// \return A never before used location.
+		/// <returns>A never before used location.</returns>
 		public int FreeSlot() {
 
 			return m_freeSlot++;
 		}
 
-		/// \brief Determine the placement for an allocation being allocated at
+		/// <summary>Determine the placement for an allocation being allocated at</summary>
 		/// the current instruction.
 		///
 		/// This calls DeterminePlacement(true).
 		///
-		/// \return The place to put the allocation.
+		/// <returns>The place to put the allocation.</returns>
 		public int DeterminePlacement() {
 
 			return DeterminePlacement(true);
 		}
 
-		/// \brief Determine the placement for an allocation.
+		/// <summary>Determine the placement for an allocation.</summary>
 		///
 		/// If byCil is true, the current instruction is used to determine the
 		/// placement. If byCil is false, or if Config.SymmetryReduction is
@@ -360,8 +362,8 @@ namespace MMC.State {
 		/// We could also check for the absence of any CIL instruction to be
 		/// executed, as this is (atm) only called from SetupMainState.
 		///
-		/// \param byCil Determine the place by the current instruction.
-		/// \return The place to put the allocation.
+		/// <param name="byCil">Determine the place by the current instruction.</param>
+		/// <returns>The place to put the allocation.</returns>
 		/// \sa PlacementMapping
 		/// \sa FreeSlot
 		public int DeterminePlacement(bool byCil)
