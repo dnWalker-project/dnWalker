@@ -1381,20 +1381,29 @@ namespace MMC.InstructionExec
 
     public class LDFLDA : ObjectModelInstructionExec
     {
-        public LDFLDA(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDFLDA(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
-            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
-            int offset = GetFieldOffset(ao.Type);
+            IDataElement dataElement = cur.EvalStack.Pop();
+            if (dataElement is LocalVariablePointer localVariablePointer)
+            {
+                dataElement = localVariablePointer.Value;
+            }
 
-            cur.EvalStack.Push(new ObjectFieldPointer(cur, objRef, offset));
-            return nextRetval;
+            switch (dataElement)
+            {
+                case ObjectReference objRef:
+                    AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+                    int offset = GetFieldOffset(ao.Type);
+                    cur.EvalStack.Push(new ObjectFieldPointer(cur, objRef, offset));
+                    return nextRetval;
+            }
+
+            throw new NotImplementedException(dataElement.GetType().FullName);
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)

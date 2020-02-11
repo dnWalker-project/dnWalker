@@ -123,7 +123,7 @@ namespace MMC.InstructionExec
 
             if (t == null)
             {
-                throw new Exception("No IE found for " + name);
+                throw new Exception("No instruction executor found for " + name);
             }
 
             InstructionExecAttributes attr = InstructionExecAttributes.None;
@@ -137,9 +137,11 @@ namespace MMC.InstructionExec
                 {
                     char c = lastToken[0];
                     if (c >= '0' && c <= '9')
-                        operand = new Int4((int)(c - '0'));
+                    {
+                        operand = new Int4(c - '0');
+                    }
                 }
-                else if (lastToken.ToUpper().Equals("M1"))
+                else if (lastToken.Equals("M1", StringComparison.OrdinalIgnoreCase))
                 {
                     operand = new Int4(-1);
                 }
@@ -150,9 +152,13 @@ namespace MMC.InstructionExec
             for (int i = 1; i < tokens.Length; ++i)
             {
                 if (tokens[i] == "un")
+                {
                     attr |= InstructionExecAttributes.Unsigned;
+                }
                 else if (tokens[i] == "ovf")
+                {
                     attr |= InstructionExecAttributes.CheckOverflow;
+                }
             }
 
             // If no implicit operand was found, we pass the operand of
@@ -164,44 +170,38 @@ namespace MMC.InstructionExec
             }
 
             // Lookup definitions.
-            if (operand is IMethod method)
+            switch (operand)
             {
-                // && !(operand is MethodDefinition)) {
-                operand = method.ResolveMethodDef();// DefinitionProvider.GetMethodDefinition(operand as IMethod);
-                if (operand == null)
-                {
-                    throw new NotImplementedException(method.FullName);
-                }
-                //    Logger.l.Warning("failed to lookup method reference");
-            }
-            else if (operand is IField field)
-            {//&& !(operand is FieldDefinition)) {
-                operand = DefinitionProvider.GetFieldDefinition(field);// foperand as FieldReference);
-                //if (operand == null) Logger.l.Warning("failed to lookup field reference");
-            }
-            else if (operand is ITypeDefOrRef typeDefOrRef)
-            {//&& !(operand is TypeDefinition)) {
-                operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef);// operand as TypeReference);
-                // if (operand == null) Logger.l.Warning("failed to lookup type reference");
+                case IField field:
+                    operand = DefinitionProvider.GetFieldDefinition(field)
+                        ?? throw new NullReferenceException("Field not resolved: " + operand);
+                    break;
+                case IMethod method:
+                    operand = method.ResolveMethodDef()
+                        ?? throw new NullReferenceException("Method not resolved: " + operand);
+                    break;
+                case ITypeDefOrRef typeDefOrRef:
+                    operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef)
+                        ?? throw new NullReferenceException("Type not resolved: " + operand);
+                    break;
             }
 
             // Check for short form.
             if (instr.OpCode.OperandType == OperandType.ShortInlineBrTarget ||
-                    instr.OpCode.OperandType == OperandType.ShortInlineI ||
-                    instr.OpCode.OperandType == OperandType.ShortInlineR ||
-                    instr.OpCode.OperandType == OperandType.ShortInlineVar //||instr.OpCode.OperandType == OperandTypeShortInlineParam
-                    )
+                instr.OpCode.OperandType == OperandType.ShortInlineI ||
+                instr.OpCode.OperandType == OperandType.ShortInlineR ||
+                instr.OpCode.OperandType == OperandType.ShortInlineVar) //||instr.OpCode.OperandType == OperandTypeShortInlineParam
             {
                 attr |= InstructionExecAttributes.ShortForm;
             }
 
             // Create an InstructionExec object, using reflection.
             return (InstructionExecBase)t.InvokeMember(null,
-                    BindingFlags.DeclaredOnly |
-                    BindingFlags.Public |
-                    BindingFlags.Instance |
-                    BindingFlags.CreateInstance,
-                    null, null, new object[] { instr, operand, attr });
+                BindingFlags.DeclaredOnly |
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.CreateInstance,
+                null, null, new object[] { instr, operand, attr });
         }
 
         public void RaiseException(string type, ExplicitActiveState cur)
