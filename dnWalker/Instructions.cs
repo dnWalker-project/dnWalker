@@ -3982,6 +3982,25 @@ namespace MMC.InstructionExec
         }
     }
 
+    public class UNALIGNED : InstructionExecBase
+    {
+        public UNALIGNED(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            cur.CurrentMethod.IsPrefixed = true;
+            return nextRetval;
+        }
+
+        public override bool IsMultiThreadSafe(ExplicitActiveState cur)
+        {
+            return true;
+        }
+    }
+
     /// <summary>
     /// Pushes the size, in bytes, of a supplied value type onto the evaluation stack.
     /// </summary>
