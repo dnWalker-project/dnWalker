@@ -18,6 +18,7 @@
 namespace MMC.InstructionExec
 {
     using dnlib.DotNet.Emit;
+    using dnWalker.Factories;
     using MMC.Collections;
 
 	/// <summary>
@@ -39,85 +40,95 @@ namespace MMC.InstructionExec
         /// <summary>
         /// The singleton instruction executor provider.
         /// </summary>
-        public static IInstructionExecProvider Get(IConfig config)
+        public static IInstructionExecProvider Get(IConfig config, IInstructionFactory instructionFactory)
         {
             if (config.UseInstructionCache)
             {
-                return new HashedIEC();
+                return new HashedIEC(instructionFactory);
             }
             else
             {
-                return new NoStorageIEC();
+                return new NoStorageIEC(instructionFactory);
             }
         }
 	}
 
-	/// Provide a fresh instruction executor every time. No storage.
-	class NoStorageIEC : IInstructionExecProvider {
+    /// <summary>
+    /// Provide a fresh instruction executor every time. No storage.
+    /// </summary>
+    internal class NoStorageIEC : IInstructionExecProvider
+    {
+        private readonly IInstructionFactory _instructionFactory;
 
-		/// Get an instruction executor for the given instruction.
-		///
-		/// This always creates a new one.
-		///
-		/// <param name="instr">The instruction to create a new IE for.</param>
-		/// <returns>An IE for the given instruction.</returns>
-		public InstructionExecBase GetExecFor(Instruction instr) {
+        /// <summary>
+        /// Get an instruction executor for the given instruction.
+        /// </summary>
+        /// <remarks>
+        /// This always creates a new one.
+        /// </remarks>
+        /// <param name="instr">The instruction to create a new IE for.</param>
+        /// <returns>An IE for the given instruction.</returns>
+        public InstructionExecBase GetExecFor(Instruction instr)
+        {
+            return _instructionFactory.CreateInstructionExec(instr);
+        }
 
-			return InstructionExecBase.CreateInstructionExec(instr);
+        public NoStorageIEC(IInstructionFactory instructionFactory)
+        {
+            _instructionFactory = instructionFactory;
+        }
+    }
+
+    /// <summary>
+    /// A instruction executor provider that caches the IEs.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A test that re-used code a lot (calculate the same thing 10000 times)
+    /// showed a speed-up of about 30 times when using HashedIEC instead of the NoStorageIEC.
+    /// </para>
+    /// <para>
+    /// However, calculate that same thing 100 times, and other factors become
+    /// much more important, and this ratio drops to 1.5--2.
+    /// </para>
+    /// <para>
+    /// Calculate it just once, and the two perform the same. Other factors outweigh the small hashing overhead.
+    /// </para>
+    /// <para>
+    /// Note that this structure grows indefinitely. This is not a really big
+    /// problem. If the code is really big, this is still a relatively small
+    /// part of the consumed memory.
+    /// </para>
+    /// </remarks>
+    internal class HashedIEC : IInstructionExecProvider
+    {
+        private readonly IInstructionFactory _instructionFactory;
+        private readonly FastHashtable<Instruction, InstructionExecBase> m_instrExecCache;
+
+        /// <summary>
+        /// Get an instruction executor for the given instruction.
+        /// </summary>
+        /// <remarks>
+        /// This re-uses previously allocated IEs to avoid a 'new' operation
+        /// and parsing operands, etc.
+        /// </remarks>
+        /// <param name="instr">The instruction to create a new IE for.</param>
+        /// <returns>An IE for the given instruction.</returns>
+        public InstructionExecBase GetExecFor(Instruction instr)
+        {
+            if (!m_instrExecCache.Find(instr, out InstructionExecBase retval))
+            {
+                retval = _instructionFactory.CreateInstructionExec(instr);
+                m_instrExecCache.UncheckedAdd(instr, retval);
+            }
+
+            return retval;
 		}
-	}
 
-	/// A instruction executor provider that caches the IEs.
-	///
-	/// A test that re-used code a lot (calculate the same thing 10000 times)
-	/// showed a speed-up of about 30 times when using HashedIEC instead of the
-	/// NoStorageIEC.
-	///
-	/// However, calculate that same thing 100 times, and other factors become
-	/// much more important, and this ratio drops to 1.5--2.
-	///
-	/// Calculate it just once, and the two perform the same. Other factors
-	/// outweigh the small hashing overhead.
-	///
-	/// Note that this structure grows indefinitely. This is not a really big
-	/// problem. If the code is really big, this is still a relatively small
-	/// part of the consumed memory.
-	class HashedIEC : IInstructionExecProvider {
-
-		//IDictionary m_instrExecCache;
-		public FastHashtable<Instruction, InstructionExecBase> m_instrExecCache;
-
-		/// Get an instruction executor for the given instruction.
-		///
-		/// This re-uses previously allocated IEs to avoid a 'new' operation
-		/// and parsing operands, etc.
-		///
-		/// <param name="instr">The instruction to create a new IE for.</param>
-		/// <returns>An IE for the given instruction.</returns>
-		public InstructionExecBase GetExecFor(Instruction instr) {
-
-			/*
-			InstructionExecBase retval = m_instrExecCache[instr] as InstructionExecBase;
-			if (retval == null) {
-				retval = InstructionExecBase.CreateInstructionExec(instr);
-				m_instrExecCache.Add(instr, retval);
-			}
-			return retval;*/
-
-			InstructionExecBase retval;
-			if (!m_instrExecCache.Find(instr, out retval)) {
-				retval = InstructionExecBase.CreateInstructionExec(instr);
-				m_instrExecCache.UncheckedAdd(instr, retval);
-			}
-
-			return retval;
-
-		}
-
-		public HashedIEC() {
-
-			//m_instrExecCache = new Hashtable();
-			m_instrExecCache = new FastHashtable<Instruction, InstructionExecBase>(14);
+		public HashedIEC(IInstructionFactory instructionFactory)
+        {
+            _instructionFactory = instructionFactory;
+            m_instrExecCache = new FastHashtable<Instruction, InstructionExecBase>(14);
 		}
 	}
 }

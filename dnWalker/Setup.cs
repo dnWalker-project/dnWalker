@@ -71,7 +71,9 @@ namespace MMC
 
             args = args ?? new IDataElement[] { };
 
-            IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(config);
+            IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(
+                config,
+                new dnWalker.Factories.InstructionFactory());
 
             var cur = new ExplicitActiveState(config, instructionExecProvider, _definitionProvider, _logger);
 
@@ -84,7 +86,6 @@ namespace MMC
             DataElementList dataElementList = null;
             if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
             {
-                // Wrap run arguments in ConstantString objects, and create the method state for Main().
                 ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
                     cur.DynamicArea.DeterminePlacement(false),
                     cur.DefinitionProvider.GetTypeDefinition("System.String"),
@@ -95,7 +96,7 @@ namespace MMC
                     AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
                     for (int i = 0; i < config.RunTimeParameters.Length; ++i)
                     {
-                        runArgs.Fields[i] = args[i];// new ConstantString(config.RunTimeParameters[i]);
+                        runArgs.Fields[i] = args[i];
                     }
                 }
 
@@ -166,7 +167,7 @@ namespace MMC
 
             // 2b
             // Note from corlib Thread.cs sources:
-            // /* Don't lock on synch_lock in managed code, since it can result in deadlocks */
+            // Don't lock on synch_lock in managed code, since it can result in deadlocks
             // What? Oh well, we'll just do what Mono does.
             var synch_lockField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "synch_lock");
 
@@ -214,7 +215,9 @@ namespace MMC
                 _logger.Warning("Behaviour might differ from normal execution!");
             }
             else
+            {
                 ThreadState.state_field_offset = (int)stateField.FieldOffset;
+            }
 
             return threadObjectRef;
         }

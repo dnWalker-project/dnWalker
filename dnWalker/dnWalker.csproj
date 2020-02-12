@@ -71,6 +71,7 @@
     <Compile Include="DynamicBitArray.cs" />
     <Compile Include="ExplorationLogger.cs" />
     <Compile Include="Explorer.cs" />
+    <Compile Include="Factories\InstructionFactory.cs" />
     <Compile Include="FastHashtable.cs" />
     <Compile Include="GarbageCollection.cs" />
     <Compile Include="HashFunctions.cs" />
