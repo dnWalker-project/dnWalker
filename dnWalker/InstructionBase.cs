@@ -45,7 +45,6 @@ namespace MMC.InstructionExec
 
     public class InstructionExecBase
     {
-
         // Static return types for next and no-increment. Those do not contain data,
         // so no need for more than one copy.
         public static IIEReturnValue nextRetval = new NextReturnValue();
@@ -204,7 +203,7 @@ namespace MMC.InstructionExec
                 null, null, new object[] { instr, operand, attr });
         }
 
-        public void RaiseException(string type, ExplicitActiveState cur)
+        /*public void RaiseException(string type, ExplicitActiveState cur)
         {
             var exceptionType = cur.DefinitionProvider.GetTypeDefinition(type);
 
@@ -218,9 +217,7 @@ namespace MMC.InstructionExec
             // Constructor calls should leave object reference on the stack.
             cur.EvalStack.Push(exceptionRef);
 
-            /*
-			 * lookup the constructor with no arguments
-			 */
+            // lookup the constructor with no arguments
             MethodDef noArgsCtor = null;
             foreach (var constructor in exceptionType.FindInstanceConstructors())
             {
@@ -234,6 +231,27 @@ namespace MMC.InstructionExec
             // Call the constructor.
             MethodState called = new MethodState(noArgsCtor, cur.StorageFactory.CreateSingleton(exceptionRef), cur);
             cur.CallStack.Push(called);
+        }*/
+
+        public IIEReturnValue ThrowException(Exception ex, ExplicitActiveState cur)
+        {
+            var exceptionType = cur.DefinitionProvider.GetTypeDefinition(ex.GetType().FullName);
+
+            ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
+                cur.DynamicArea.DeterminePlacement(),
+                exceptionType);
+
+            var exceptionObject = cur.DynamicArea.Allocations[exceptionRef];
+            //exceptionObject.From(ex);
+
+            cur.CurrentThread.ExceptionReference = exceptionRef;
+            cur.CurrentThread.UnhandledException = ex;
+            cur.CurrentMethod.IsExceptionSource = true;
+
+            // Constructor calls should leave object reference on the stack.
+            cur.EvalStack.Push(exceptionRef);
+
+            return ehLookupRetval;
         }
 
         public virtual bool IsMultiThreadSafe(ExplicitActiveState cur)
@@ -260,6 +278,11 @@ namespace MMC.InstructionExec
         public virtual MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
         {
             return MemoryLocation.Null;
+        }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()} IL_{Instruction.Offset:X4} {Instruction.OpCode.Name}";
         }
     }
 }

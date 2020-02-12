@@ -17,14 +17,9 @@
 
 namespace MMC
 {
-
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Reflection;
     using MMC.Data;
-    using System.Security.Policy;
-    using System.IO;
     using MMC.State;
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using MethodReference = dnlib.DotNet.MethodDef;
@@ -33,11 +28,12 @@ namespace MMC
     using System.Linq;
     using dnWalker;
 
+    /// <summary>
     /// This definition is used for quick storage of methodreferences.
-    /// 
-    /// A virtual method is associated with an object, that is why
-    /// the objectreference is also included in the virtualmethdef
-    struct VirtualMethodDefinition
+    /// </summary>
+    /// <remarks>A virtual method is associated with an object, that is why
+    /// the objectreference is also included in the virtualmethdef</remarks>
+    internal struct VirtualMethodDefinition
     {
         public MethodReference Method;
         public ObjectReference Reference;
@@ -52,12 +48,15 @@ namespace MMC
         {
             VirtualMethodDefinition other = (VirtualMethodDefinition)obj;
 
-            bool equals = other.Method.Name.Equals(this.Method.Name) &&
-                other.Reference.Equals(this.Reference) &&
-                other.Method.Parameters.Count == this.Method.Parameters.Count;
+            bool equals = other.Method.Name.Equals(Method.Name) &&
+                other.Reference.Equals(Reference) &&
+                other.Method.Parameters.Count == Method.Parameters.Count;
+
             for (int i = 0; equals && i < other.Method.Parameters.Count; ++i)
+            {
                 equals = other.Method.Parameters[i].Type.TypeName ==
-                    this.Method.Parameters[i].Type.TypeName;
+                   Method.Parameters[i].Type.TypeName;
+            }
 
             return equals;
         }
@@ -74,8 +73,9 @@ namespace MMC
     /// <remarks>
     /// Hashing is used to speed up the lookup process.
     /// </remarks>
-    public class DefinitionProvider
+    public sealed class DefinitionProvider
     {
+        private readonly object _lock = new object();
         private readonly ModuleDef[] m_referencedAssemblies;
         private readonly IDictionary<string, TypeDef> m_typeDefinitions;
         private readonly Dictionary<VirtualMethodDefinition, MethodDefinition> m_virtualMethodDefinitions;
@@ -135,30 +135,22 @@ namespace MMC
         /// <returns>A definition of the found type, or null is nothing was found.</returns>
         internal TypeDef SearchType(string name, ModuleDef asm)
         {
-            TypeDef retval = null;
-
-            if (m_typeDefinitions.TryGetValue(name, out retval))
+            lock (_lock)
             {
+                if (m_typeDefinitions.TryGetValue(name, out TypeDef retval))
+                {
+                    return retval;
+                }
+
+                retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+
+                if (retval != null)
+                {
+                    m_typeDefinitions.Add(name, retval);
+                }
+
                 return retval;
             }
-
-            retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
-
-            /*IEnumerator types = asm.Types.GetEnumerator();
-
-            while (retval == null && types.MoveNext())
-            {
-                var curr = types.Current as TypeDef;
-                if (curr.FullName == name)
-                    retval = curr;
-            }*/
-
-            if (retval != null)
-            {
-                m_typeDefinitions.Add(name, retval);
-            }
-
-            return retval;
         }
 
         /// <summary>
@@ -207,7 +199,7 @@ namespace MMC
         /// This calls GetTypeDefinition(name, ...) for the main assembly, and
         /// then all its referenced assemblies until a definition is found.
         /// </remarks>
-        /// <param name="Name">of the type to find a definition for.</param>
+        /// <param name="name">of the type to find a definition for.</param>
         /// <returns>The definition, or null if none was found.</returns>
         /// <seealso cref="GetTypeDefinition(string, AssemblyDefinition)"/>
         public TypeDef GetTypeDefinition(string name)
@@ -285,7 +277,9 @@ namespace MMC
                 }
 
                 if (retval != null)
+                {
                     break;
+                }
             }
 
             m_virtualMethodDefinitions.Add(vmdef, retval);
@@ -320,44 +314,8 @@ namespace MMC
                 return null;
             }
 
-            throw new NotImplementedException("SearchMethod " + methodName);
-            /*
-            if (retval == null)
-            {
-                // Look in either the constructor or method definition collection.
-                IEnumerator definitions = null;
-                if (name == ".ctor")
-                {
-                    definitions = typeDef.FindConstructors().GetEnumerator();
-                }
-                else if (name == ".cctor")
-                {
-                    definitions = typeDef.FindConstructors().GetEnumerator();
-                }
-                else
-                {
-                    definitions = typeDef.Methods.GetEnumerator();
-                }
-                // Search in all method definitions.
-                while (retval == null && definitions.MoveNext())
-                {
-                    MethodDefinition curr = definitions.Current as MethodDefinition;
-                    if (curr.Name == name)
-                    {
-                        retval = curr;
-                    }
-                }
-                // Store in cache.
-                if (retval != null)
-                {
-                    m_methodDefinitionsByReference.Add(methodName, retval);
-                }
-            }*/
-
-            return retval;
+            throw new NotSupportedException("SearchMethod " + methodName);
         }
-
-        // ----------------------------------------------------------------------------------------------
 
         public static FieldDefinition GetFieldDefinition(IField fieldRef)
         {
@@ -379,8 +337,7 @@ namespace MMC
                     }
                 }
             }
-            //if (m_fieldDefinitions.TryGetValue()
-            //return GetFieldDefinition(fieldRef.DeclaringType.FullName, fieldRef.Name);
+
             return fieldDefinition;
         }
 
@@ -406,7 +363,9 @@ namespace MMC
                     bool equal = false;
                     int i = 0;
                     for (; !equal && i < declType.Fields.Count; ++i)
+                    {
                         equal = declType.Fields[i].Name == fieldName;
+                    }
                     if (equal)
                     {
                         retval = declType.Fields[i - 1];
@@ -414,7 +373,9 @@ namespace MMC
                     }
                 }
                 if (retval != null)
+                {
                     m_fieldDefinitions[key] = retval;
+                }
             }
 
             return GetFieldDefinition(retval);
@@ -515,7 +476,7 @@ namespace MMC
                 return UnsignedInt8.Zero;
             }
 
-            throw new NotImplementedException("GetNullValue for " + typeRef.FullName);
+            throw new NotSupportedException("GetNullValue for " + typeRef.FullName);
         }
 
         public static DefinitionProvider Create(AssemblyLoader assemblyLoader)

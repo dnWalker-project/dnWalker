@@ -1033,9 +1033,7 @@ namespace MMC.InstructionExec
 
     public class NEWARR : ObjectModelInstructionExec
     {
-
-        public NEWARR(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public NEWARR(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -1046,7 +1044,7 @@ namespace MMC.InstructionExec
 
             if (length.Value < 0)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(new OverflowException(), cur);
             }
             else
             {
@@ -1088,7 +1086,7 @@ namespace MMC.InstructionExec
                 }
                 else
                 {
-                    RaiseException("System.InvalidCastException", cur);
+                    return ThrowException(new InvalidCastException(), cur);
                 }
 
                 return nextRetval;
@@ -1104,7 +1102,7 @@ namespace MMC.InstructionExec
             }
             else
             {
-                RaiseException("System.InvalidCastException", cur);
+                return ThrowException(new InvalidCastException(), cur);
             }
 
             return nextRetval;
@@ -1166,9 +1164,7 @@ namespace MMC.InstructionExec
 
     public class LDELEM : ObjectModelInstructionExec
     {
-
-        public LDELEM(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public LDELEM(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -1183,11 +1179,18 @@ namespace MMC.InstructionExec
             AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (theArray == null)
-                RaiseException("System.NullReferenceException", cur);
-            else if (CheckBounds(theArray, idx))
+            {
+                return ThrowException(new NullReferenceException(), cur);
+            }
+
+            if (CheckBounds(theArray, idx))
+            {
                 cur.EvalStack.Push(theArray.Fields[idx.Value]);
+            }
             else
-                RaiseException("System.IndexOutOfRangeException", cur);
+            {
+                return ThrowException(new IndexOutOfRangeException(), cur);
+            }
 
             return retval;
         }
@@ -1243,7 +1246,7 @@ namespace MMC.InstructionExec
 
             if (theArray == null)
             {
-                RaiseException("System.NullReferenceException", cur);
+                return ThrowException(new System.NullReferenceException(), cur);
             }
             else if (CheckBounds(theArray, idx))
             {
@@ -1255,7 +1258,7 @@ namespace MMC.InstructionExec
             }
             else
             {
-                RaiseException("System.IndexOutOfRangeException", cur);
+                return ThrowException(new IndexOutOfRangeException(), cur);
             }
 
             return retval;
@@ -1304,7 +1307,7 @@ namespace MMC.InstructionExec
 
             if (theArray == null)
             {
-                RaiseException("System.NullReferenceException", cur);
+                return ThrowException(new System.NullReferenceException(), cur);
             }
             else
             {
@@ -1453,12 +1456,12 @@ namespace MMC.InstructionExec
 
             if (theObject == null)
             {
-                RaiseException("System.NullReferenceException", cur);
+                return ThrowException(new System.NullReferenceException(), cur);
             }
             else
             {
                 int offset = GetFieldOffset(theObject.Type);
-                //			FieldDefinition fld = GetFieldDefinition();
+                // FieldDefinition fld = GetFieldDefinition();
                 cur.EvalStack.Push(theObject.Fields[offset]);
             }
 
@@ -1910,9 +1913,9 @@ namespace MMC.InstructionExec
             {
                 cur.EvalStack.Push(left.Add(right, CheckOverflow));
             }
-            catch (OverflowException)
+            catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -1983,9 +1986,9 @@ namespace MMC.InstructionExec
             {
                 cur.EvalStack.Push(left.Add(right, CheckOverflow));
             }
-            catch (OverflowException)
+            catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -1998,16 +2001,13 @@ namespace MMC.InstructionExec
 	 */
     public class DIV : NumericInstructionExec
     {
-
-        public DIV(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public DIV(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             INumericElement b = (INumericElement)cur.EvalStack.Pop();
             INumericElement a = (INumericElement)cur.EvalStack.Pop();
 
@@ -2019,20 +2019,15 @@ namespace MMC.InstructionExec
 
             try
             {
-                /*if (b.Equals(b.Zero))
-                {
-                // TODO optimize!
-                }*/
-
                 cur.EvalStack.Push(a.Div(b));
             }
             catch (DivideByZeroException e)
             {
-                RaiseException(e.GetType().FullName, cur);
+                return ThrowException(e, cur);
             }
             catch (ArithmeticException e)
             {
-                RaiseException(e.GetType().FullName, cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -2063,9 +2058,9 @@ namespace MMC.InstructionExec
             {
                 cur.EvalStack.Push(a.Mul(b, CheckOverflow));
             }
-            catch (OverflowException)
+            catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -2074,16 +2069,13 @@ namespace MMC.InstructionExec
 
     public class REM : NumericInstructionExec
     {
-
-        public REM(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public REM(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             INumericElement b = (INumericElement)cur.EvalStack.Pop();
             INumericElement a = (INumericElement)cur.EvalStack.Pop();
 
@@ -2099,11 +2091,11 @@ namespace MMC.InstructionExec
             }
             catch (DivideByZeroException e)
             {
-                RaiseException(e.GetType().FullName, cur);
+                return ThrowException(e, cur);
             }
             catch (ArithmeticException e)
             {
-                RaiseException(e.GetType().FullName, cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -2135,9 +2127,9 @@ namespace MMC.InstructionExec
             {
                 cur.EvalStack.Push(left.Sub(right, CheckOverflow));
             }
-            catch (OverflowException)
+            catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -2181,9 +2173,9 @@ namespace MMC.InstructionExec
                         break;
                 }
             }
-            catch (OverflowException)
+            catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             return nextRetval;
@@ -2192,16 +2184,13 @@ namespace MMC.InstructionExec
 
     public class NEG : NumericInstructionExec
     {
-
-        public NEG(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public NEG(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             ISignedNumericElement a = (ISignedNumericElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Neg());
             return nextRetval;
@@ -2990,17 +2979,16 @@ namespace MMC.InstructionExec
         }
     }
 
+    /// <summary>
     /// A RET instruction.
+    /// </summary>
     public class RET : InstructionExecBase
     {
-
-        public RET(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public RET(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
 
-        /// Execute the RET instruction.
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // If there's something on the evaluation stack of the callee, we
@@ -3059,9 +3047,7 @@ namespace MMC.InstructionExec
 
     public class CKFINITE : ConvertInstructionExec
     {
-
-        public CKFINITE(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public CKFINITE(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -3082,7 +3068,7 @@ namespace MMC.InstructionExec
 				 * as specified in the ECMA standard. Overflow is a subtype of
 				 * arithmetic anyway, so we just follow Microsoft here
 				 */
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(new ArithmeticException(), cur);
             }
 
             return nextRetval;
@@ -3218,7 +3204,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3256,7 +3242,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3288,7 +3274,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3320,7 +3306,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3360,7 +3346,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3406,7 +3392,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3439,7 +3425,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3480,7 +3466,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3524,7 +3510,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3568,7 +3554,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3606,7 +3592,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3641,7 +3627,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3679,7 +3665,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);
@@ -3717,7 +3703,7 @@ namespace MMC.InstructionExec
             }
             catch (OverflowException e)
             {
-                RaiseException("System.OverflowException", cur);
+                return ThrowException(e, cur);
             }
 
             cur.EvalStack.Push(toPush);

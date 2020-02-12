@@ -22,10 +22,8 @@ namespace dnWalker.Tests.ExampleTests
         [Fact]
         public void CallMethodWithFinallyWithException()
         {
-            Exception ex = Assert.Throws<Exception>(() =>
-            {
-                var retValue = Test("Examples.ExceptionHandling.MethodWithFinally", 4, 0);
-            });
+            var retValue = Test("Examples.ExceptionHandling.MethodWithFinally", out var ex, 4, 0);
+            ex.Should().NotBeNull();
         }
 
         [Theory]
@@ -35,6 +33,15 @@ namespace dnWalker.Tests.ExampleTests
         public void CallMethodWithConcreteExceptionHandlerWithoutParameter(int x, int y)
         {
             TestAndCompare("Examples.ExceptionHandling.MethodWithConcreteExceptionHandlerWithoutParameter", x, y);
+        }
+
+        [Theory]
+        [InlineData(4, 0)]
+        [InlineData(12, 5)]
+        [InlineData(12, 4)]
+        public void MethodWithoutCatch(int x, int y)
+        {
+            TestAndCompare("Examples.ExceptionHandling.MethodWithoutCatch", x, y);
         }
     }
 }

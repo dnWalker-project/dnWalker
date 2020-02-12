@@ -36,7 +36,7 @@ namespace dnWalker.Tests
 
         public Logger _logger { get; }
 
-        protected virtual object Test(string methodName, params object[] args)
+        protected virtual object Test(string methodName, out Exception unhandledException, params object[] args)
         {
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
@@ -52,28 +52,16 @@ namespace dnWalker.Tests
             var explorer = new Explorer(state, statistics, _logger, _config);
             explorer.Run();
 
-            var ex = explorer.GetUnhandledException();
-            if (ex != null)
-            {
-                throw ex;
-            }
+            unhandledException = explorer.GetUnhandledException();
 
             return state.CurrentThread.RetValue;
         }
 
         protected virtual void TestAndCompare(string methodName, params object[] args)
         {
-            object modelCheckerResult = null, res2 = null;
+            object res2 = null;
             Exception modelCheckerException = null, ex2 = null;
-            try
-            {
-                modelCheckerResult = Test(methodName, args);
-            }
-            catch (Exception ex)
-            {
-                modelCheckerException = ex;
-                modelCheckerResult = null;
-            }
+            var modelCheckerResult = Test(methodName, out modelCheckerException, args);
 
             var methodInfo = Utils.GetMethodInfo(methodName);
             try
@@ -91,9 +79,13 @@ namespace dnWalker.Tests
                 res2 = null;
             }
 
-            if (modelCheckerException != null && ex2 == null)
+            if (modelCheckerException != null || ex2 != null)
             {
-                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(modelCheckerException).Throw();
+                _logger.Log(LogPriority.Fatal, modelCheckerException?.ToString());
+
+                modelCheckerException?.GetType().Should().Be(ex2?.GetType(), modelCheckerException?.ToString());
+                modelCheckerException?.Message.Should().BeEquivalentTo(ex2?.Message);
+                return;
             }
 
             if (methodInfo.ReturnType != typeof(void))

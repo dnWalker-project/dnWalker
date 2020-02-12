@@ -65,7 +65,7 @@ namespace MMC.State {
 
         public ObjectReference ThreadObject { get; set; }
 
-        public System.Exception UnhandledException { get; private set; }
+        public System.Exception UnhandledException { get; internal set; }
 
         private ObjectReference _exceptionReference;
 
