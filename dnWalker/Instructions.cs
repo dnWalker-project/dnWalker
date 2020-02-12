@@ -2980,7 +2980,8 @@ namespace MMC.InstructionExec
     }
 
     /// <summary>
-    /// A RET instruction.
+    /// Returns from the current method, pushing a return value (if present) from the callee's evaluation stack onto 
+    /// the caller's evaluation stack.
     /// </summary>
     public class RET : InstructionExecBase
     {
@@ -3000,17 +3001,11 @@ namespace MMC.InstructionExec
             // it calls the Dispose() method on the method state, which, in turn,
             // calls Dispose() on all members (like locals and argument lists).
             MethodState callee = cur.CallStack.Pop();
-            if (cur.CallStack.StackPointer > 0 && callee.EvalStack.StackPointer > 0)
+            if (cur.CallStack.StackPointer >= /* was > before */ 0 && callee.EvalStack.StackPointer > 0)
             {
-                cur.EvalStack.Push(callee.EvalStack.Pop());
-            }
-            else
-            {
-                if (callee.Definition.ReturnType.IsValueType
-                    || callee.Definition.ReturnType == callee.Definition.ReturnType.Module.CorLibTypes.String)
-                {
-                    cur.CurrentThread.RetValue = callee.EvalStack.Top(); // TODO a little bit hacky
-                }
+                var retValue = callee.EvalStack.Pop();
+                cur.CurrentThread.RetValue = retValue;
+                cur.EvalStack?.Push(retValue);
             }
 
             ThreadObjectWatcher.DecrementAll(callee.Arguments, cur);
@@ -3027,8 +3022,9 @@ namespace MMC.InstructionExec
                 return nextRetval;
         }
 
-        /// Return is always safe. 
-        /// Locks are released in MethodState.Dispose().
+        /// <summary>
+        /// Return is always safe. Locks are released in MethodState.Dispose().
+        /// </summary>
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             return true;

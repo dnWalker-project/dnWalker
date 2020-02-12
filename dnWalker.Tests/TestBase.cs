@@ -79,10 +79,8 @@ namespace dnWalker.Tests
                 res2 = null;
             }
 
-            if (modelCheckerException != null || ex2 != null)
+            if (ex2 != null)
             {
-                _logger.Log(LogPriority.Fatal, modelCheckerException?.ToString());
-
                 modelCheckerException?.GetType().Should().Be(ex2?.GetType(), modelCheckerException?.ToString());
                 modelCheckerException?.Message.Should().BeEquivalentTo(ex2?.Message);
                 return;
