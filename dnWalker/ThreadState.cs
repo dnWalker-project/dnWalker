@@ -23,6 +23,7 @@ namespace MMC.State {
 	
 	using MMC.Data;
 	using MMC.Util;
+    using dnWalker.DataElements;
 
     public class ThreadState : IMustDispose, ICleanable, IStorageVisitable
     {
@@ -150,7 +151,29 @@ namespace MMC.State {
         }
 
         public int WaitingFor { get; set; }
-        public IDataElement RetValue { get; internal set; }
+
+        private IDataElement _retValue;
+        public IDataElement RetValue
+        {
+            get
+            {
+                return _retValue;
+            }
+            internal set 
+            {
+                _retValue = value;
+
+                if (value.Equals(ObjectReference.Null))
+                {
+                    return;
+                }
+
+                if (value is ObjectReference objectReference)
+                {
+                    _retValue = new ReturnValue(cur.DynamicArea.Allocations[objectReference], cur);
+                }
+            }
+        }
 
         // ---------------- Cleanup and Cleanliness -------------- 
 

@@ -15,7 +15,8 @@
  *
  */
 
-namespace MMC.Data {
+namespace MMC.Data 
+{
     using System; // For ObsoleteAttribute :-)
 
     using MMC.State;
@@ -2516,7 +2517,7 @@ namespace MMC.Data {
 
         public bool Equals(IDataElement other)
         {
-            return other is ObjectReference objectReference && (objectReference).Location == Location;
+            return other is ObjectReference objectReference && objectReference.Location == Location;
         }
 
         public override string ToString()
@@ -2881,8 +2882,6 @@ namespace MMC.Data {
 		}
 	}
 
-
-
 	struct TypePointer : IRuntimeHandle {
 
 		ITypeDefOrRef m_typeDef;
@@ -2997,4 +2996,6 @@ namespace MMC.Data {
             Value = field;
         }
     }
+
+    
 }

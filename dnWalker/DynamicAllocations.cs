@@ -104,21 +104,13 @@ namespace MMC.State {
 
             foreach (var typeDefOrRef in DefinitionProvider.InheritanceEnumerator(Type))
             {
-                if (typeDefOrRef is TypeDef typeDef)
-                {
-                    fields.AddRange(typeDef.Fields);
-                    continue;
-                }
-
-                if (typeDefOrRef is TypeRef typeRef)
-                {
-                    fields.AddRange(typeRef.Resolve().Fields);
-                    continue;
-                }
+                fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
             }
 
             if (Fields == null)
+            {
                 Fields = cur.StorageFactory.CreateList(fields.Count);
+            }
 
             /*
 			 * Initialize the fields with default values

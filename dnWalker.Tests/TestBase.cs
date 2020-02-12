@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using dnWalker.DataElements;
+using FluentAssertions;
 using MMC;
 using MMC.Data;
 using System;
@@ -59,9 +60,9 @@ namespace dnWalker.Tests
 
         protected virtual void TestAndCompare(string methodName, params object[] args)
         {
-            object res2 = null;
-            Exception modelCheckerException = null, ex2 = null;
-            var modelCheckerResult = Test(methodName, out modelCheckerException, args);
+            object res2;
+            Exception ex2 = null;
+            var modelCheckerResult = Test(methodName, out Exception modelCheckerException, args);
 
             var methodInfo = Utils.GetMethodInfo(methodName);
             try
@@ -136,6 +137,25 @@ namespace dnWalker.Tests
 
                 modelCheckerResult.Should().NotBeNull("value returned from model checker shoud not be null, but " + res2.ToString());
                 res2.Should().NotBeNull();
+
+                if (!methodInfo.ReturnType.IsValueType && methodInfo.ReturnType != typeof(string))
+                {
+                    if (res2 == null && modelCheckerResult != null)
+                    {
+                        modelCheckerResult.Should().BeNull("method returned a null reference.");
+                        return;
+                    }
+
+                    if (res2 != null && modelCheckerResult == null)
+                    {
+                        modelCheckerResult.Should().NotBeNull("method did not return a null reference.");
+                        return;
+                    }
+
+                    modelCheckerResult.Should().BeAssignableTo<ReturnValue>();
+                    (modelCheckerResult as IComparable).CompareTo(res2).Should().Be(0);
+                    return;
+                }
 
                 modelCheckerResult.Should().BeAssignableTo<IConvertible>();
                 res2.Should().BeAssignableTo<IConvertible>();

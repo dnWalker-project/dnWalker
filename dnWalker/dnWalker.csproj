@@ -63,6 +63,7 @@
     <Compile Include="DataElement.cs" />
     <Compile Include="DataElementList.cs" />
     <Compile Include="DataElementStack.cs" />
+    <Compile Include="DataElements\ReturnValue.cs" />
     <Compile Include="DefinitionLookup.cs" />
     <Compile Include="DirtyList.cs" />
     <Compile Include="DotWriter.cs" />

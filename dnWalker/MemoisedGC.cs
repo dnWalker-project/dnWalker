@@ -244,7 +244,6 @@ namespace MMC.State
             }
         }
 
-
         private void AddModified(int i, ExplicitActiveState cur)
         {
             DynamicAllocation ida = cur.DynamicArea.Allocations[i];
@@ -276,8 +275,10 @@ namespace MMC.State
             for (int i = 0; i < ao.Fields.Length; i++)
             {
                 IDataElement ide = ao.Fields[i];
-                if (ide is ObjectReference)
-                    ProcessChild((ObjectReference)ide, cur);
+                if (ide is ObjectReference objectReference)
+                {
+                    ProcessChild(objectReference, cur);
+                }
             }
         }
 

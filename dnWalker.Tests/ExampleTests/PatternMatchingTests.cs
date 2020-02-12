@@ -27,9 +27,9 @@ namespace dnWalker.Tests.ExampleTests
             TestAndCompare("CreateShape", shapeName);
         }
 
-        public void ComputeAreaModernIs()
+        /*public void ComputeAreaModernIs()
         {
 
-        }
+        }*/
     }
 }

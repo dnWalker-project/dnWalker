@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         public void Test_BRFALSE__Double(object arg0) { Test("Test_BRFALSE__Double", arg0); }
 
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         public void Test_BRFALSE__Single(object arg0) { Test("Test_BRFALSE__Single", arg0); }
 
@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         public void Test_BRFALSE_S__Double(object arg0) { Test("Test_BRFALSE_S__Double", arg0); }
 
@@ -278,7 +278,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         public void Test_BRFALSE_S__Single(object arg0) { Test("Test_BRFALSE_S__Single", arg0); }
 
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         public void Test_BRTRUE__Double(object arg0) { Test("Test_BRTRUE__Double", arg0); }
 
@@ -313,7 +313,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         public void Test_BRTRUE__Single(object arg0) { Test("Test_BRTRUE__Single", arg0); }
 
@@ -322,7 +322,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         public void Test_BRTRUE_S__Double(object arg0) { Test("Test_BRTRUE_S__Double", arg0); }
 
@@ -348,7 +348,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         public void Test_BRTRUE_S__Single(object arg0) { Test("Test_BRTRUE_S__Single", arg0); }
 
@@ -542,14 +542,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(double.MaxValue)]
         [InlineData(double.Epsilon)]
         public void Test_CKFINITE__Double(object arg0) { Test("Test_CKFINITE__Double", arg0); }
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(float.MaxValue)]
         [InlineData(float.Epsilon)]
         public void Test_CKFINITE__Single(object arg0) { Test("Test_CKFINITE__Single", arg0); }
@@ -676,7 +676,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -748,7 +748,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -803,7 +803,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -875,7 +875,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -930,7 +930,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -1002,7 +1002,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -1057,7 +1057,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -1129,7 +1129,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -1184,7 +1184,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -1256,7 +1256,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -1311,7 +1311,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
@@ -1371,7 +1371,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
@@ -1487,7 +1487,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
@@ -1532,7 +1532,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
@@ -1618,7 +1618,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
@@ -1669,7 +1669,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
@@ -1760,7 +1760,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
@@ -1817,7 +1817,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
@@ -1922,7 +1922,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
@@ -1989,7 +1989,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
@@ -2114,7 +2114,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
         public void Test_CONV_OVF_U__Double(object arg0) { Test("Test_CONV_OVF_U__Double", arg0); }
@@ -2161,7 +2161,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
         public void Test_CONV_OVF_U__Single(object arg0) { Test("Test_CONV_OVF_U__Single", arg0); }
@@ -2237,7 +2237,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         [InlineData(-1)]
         [InlineData(1)]
         [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_OVF_U_UN__IntPtr(int arg0) { Test("Test_CONV_OVF_U_UN__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -2281,7 +2281,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
         public void Test_CONV_OVF_U1__Double(object arg0) { Test("Test_CONV_OVF_U1__Double", arg0); }
@@ -2318,7 +2318,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
         public void Test_CONV_OVF_U1__Single(object arg0) { Test("Test_CONV_OVF_U1__Single", arg0); }
@@ -2400,7 +2400,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
         public void Test_CONV_OVF_U2__Double(object arg0) { Test("Test_CONV_OVF_U2__Double", arg0); }
@@ -2443,7 +2443,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
         public void Test_CONV_OVF_U2__Single(object arg0) { Test("Test_CONV_OVF_U2__Single", arg0); }
@@ -2539,7 +2539,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
         public void Test_CONV_OVF_U4__Double(object arg0) { Test("Test_CONV_OVF_U4__Double", arg0); }
@@ -2584,7 +2584,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
         public void Test_CONV_OVF_U4__Single(object arg0) { Test("Test_CONV_OVF_U4__Single", arg0); }
@@ -2694,7 +2694,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(1.0d)]
         [InlineData(double.Epsilon)]
         [InlineData(12345678910111213.1415d)]
@@ -2744,7 +2744,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(1.0f)]
         [InlineData(float.Epsilon)]
         public void Test_CONV_OVF_U8__Single(object arg0) { Test("Test_CONV_OVF_U8__Single", arg0); }
@@ -2962,7 +2962,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3019,7 +3019,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         [InlineData(-1)]
         [InlineData(1)]
         [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(0x12345678) : new IntPtr(0x123456789ABCDEF0L))]
-        [InlineData(0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
+        [InlineData(-0x12345678)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(-0x12345678) : new IntPtr(-0x123456789ABCDEF0L))]
         public void Test_CONV_R4__IntPtr(int arg0) { Test("Test_CONV_R4__IntPtr", new IntPtr(arg0)); }
 
         [Theory]
@@ -3034,7 +3034,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -3089,7 +3089,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3161,7 +3161,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -3216,7 +3216,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3288,7 +3288,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -3343,7 +3343,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3415,7 +3415,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -3470,7 +3470,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3542,7 +3542,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -3597,7 +3597,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3669,7 +3669,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
@@ -3724,7 +3724,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0d)]
-        [InlineData(-0.0d)]
+        // [InlineData(-0.0d)]
         [InlineData(-1.0d)]
         [InlineData(double.MinValue)]
         [InlineData(1.0d)]
@@ -3796,7 +3796,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         [Theory]
         [InlineData(0.0f)]
-        [InlineData(-0.0f)]
+        // [InlineData(-0.0f)]
         [InlineData(-1.0f)]
         [InlineData(float.MinValue)]
         [InlineData(1.0f)]
