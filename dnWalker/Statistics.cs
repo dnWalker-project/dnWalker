@@ -22,6 +22,7 @@ namespace MMC
         int StateCount { get; }
         int RevisitCount { get; }
 
+        void Start();
         void NewState();
         void RevisitState();
         void Backtrack();

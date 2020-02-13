@@ -42,10 +42,10 @@ namespace MMC
             this.tw = tw;
         }
 
-        protected override int SelectRunnableThread(SchedulingData sd)
+        /*protected override int SelectRunnableThread(SchedulingData sd)
         {
             return m_tracingQueue.Pop();
-        }
+        }*/
 
         /*
 		 * This method is not really pretty, but it works...

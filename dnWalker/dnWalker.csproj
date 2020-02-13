@@ -55,6 +55,8 @@
     <Compile Include="BreakPointHandler.cs" />
     <Compile Include="CallStack.cs" />
     <Compile Include="ChangingIntVector.cs" />
+    <Compile Include="ChoiceGenerators\IChoiceGenerator.cs" />
+    <Compile Include="ChoiceGenerators\SchedulingChoiceGenerator.cs" />
     <Compile Include="CILDumper.cs" />
     <Compile Include="CILUtils.cs" />
     <Compile Include="CollapsedState.cs" />
@@ -136,5 +138,6 @@
     <Content Include="Mono.Cecil.dll" />
     <Content Include="README.html" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

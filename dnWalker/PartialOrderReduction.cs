@@ -19,75 +19,83 @@
 using System;
 using System.Collections.Generic;
 
-namespace MMC {
-	using MMC.State;
-	using MMC.Data;
-	using MMC.Util;
-	using MMC.InstructionExec;
-	using MMC.Collections;
-	using System.Collections;
+namespace MMC
+{
+    using MMC.State;
+    using MMC.Data;
+    using MMC.Util;
+    using MMC.InstructionExec;
+    using MMC.Collections;
+    using System.Collections;
     using dnlib.DotNet.Emit;
 
     /// This is L in the stateful dynamic POR algorithm outlined in the 
     /// Collapsing Interleaving Information of VY's thesis
-    class LastTransitionMapper {
+    class LastTransitionMapper
+    {
 
-		public static FastHashtable<MemoryLocation, Stack<SchedulingData>> m_lasttrans = new FastHashtable<MemoryLocation,Stack<SchedulingData>>(10);
+        public static FastHashtable<MemoryLocation, Stack<SchedulingData>> m_lasttrans = new FastHashtable<MemoryLocation, Stack<SchedulingData>>(10);
 
-		public SchedulingData Get(MemoryLocation ml) {
+        public SchedulingData Get(MemoryLocation ml)
+        {
 
-			Stack<SchedulingData> list;
+            Stack<SchedulingData> list;
 
-			if (m_lasttrans.Find(ml, out list) && list.Count != 0)
-				return list.Peek();
-			else
-				return null;
-		}
+            if (m_lasttrans.Find(ml, out list) && list.Count != 0)
+                return list.Peek();
+            else
+                return null;
+        }
 
-		public void Put(SchedulingData sd) {
-			if (sd.LastAccess.IsThreadLocal)
-				return;
+        public void Put(SchedulingData sd)
+        {
+            if (sd.LastAccess.IsThreadLocal)
+                return;
 
-			MemoryLocation ml = sd.LastAccess.MemoryLocation;			
-			Stack<SchedulingData> list;
+            MemoryLocation ml = sd.LastAccess.MemoryLocation;
+            Stack<SchedulingData> list;
 
-			if (!m_lasttrans.Find(ml, out list)) {
-				list = new Stack<SchedulingData>();
-				m_lasttrans.UncheckedAdd(ml, list);
-			}
+            if (!m_lasttrans.Find(ml, out list))
+            {
+                list = new Stack<SchedulingData>();
+                m_lasttrans.UncheckedAdd(ml, list);
+            }
 
-			list.Push(sd);
-		}
+            list.Push(sd);
+        }
 
-		public void Remove(SchedulingData sd) {
-			if (sd.LastAccess.IsThreadLocal)
-				return;
+        public void Remove(SchedulingData sd)
+        {
+            if (sd.LastAccess.IsThreadLocal)
+                return;
 
-			MemoryLocation ml = sd.LastAccess.MemoryLocation;
-			Stack<SchedulingData> list;
+            MemoryLocation ml = sd.LastAccess.MemoryLocation;
+            Stack<SchedulingData> list;
 
-			if (m_lasttrans.Find(ml, out list)) {
-				SchedulingData poppedSD = list.Pop();
-				System.Diagnostics.Debug.Assert(poppedSD == sd, "The SD's are different, should not be possible.");
-			}
-		}
-	}
+            if (m_lasttrans.Find(ml, out list))
+            {
+                SchedulingData poppedSD = list.Pop();
+                System.Diagnostics.Debug.Assert(poppedSD == sd, "The SD's are different, should not be possible.");
+            }
+        }
+    }
 
-	class StatefulDynamicPOR {
-		private Stack<SchedulingData> backtrack;
-		private LastTransitionMapper mapper;
+    class StatefulDynamicPOR
+    {
+        private readonly LastTransitionMapper mapper;
         private readonly IConfig _config;
 
-        public StatefulDynamicPOR(Stack<SchedulingData> stack, IConfig config) {
-			backtrack = stack;
-			mapper = new LastTransitionMapper();
+        public StatefulDynamicPOR(IConfig config)
+        {
+            mapper = new LastTransitionMapper();
             _config = config;
         }
 
-		/// Update L
-		public void ThreadPicked(SchedulingData sd, int chosen) {
-			mapper.Put(sd);
-		}
+        /// Update L
+        public void ThreadPicked(SchedulingData sd, int chosen)
+        {
+            mapper.Put(sd);
+        }
 
         /// Merge the SII's 
         public void Backtracked(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
@@ -130,48 +138,53 @@ namespace MMC {
             collapsed.SchedulingData = sd; // for C3 proviso
         }
 
-		public void OnSeenState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur) {
+        public void OnSeenState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
+        {
+            sd.SII = collapsed.SII;
 
-			sd.SII = collapsed.SII;
+            /* C3 proviso */
+            if (collapsed.OnStack)
+            {
+                foreach (int enabled in collapsed.SchedulingData.Enabled)
+                    collapsed.SchedulingData.Enqueue(enabled);
+            }
 
-			/* C3 proviso */
-			if (collapsed.OnStack) {
-				foreach (int enabled in collapsed.SchedulingData.Enabled)
-					collapsed.SchedulingData.Enqueue(enabled);
-			}
+            /// Check dependency with transitions in the SII
+            foreach (MemoryAccess ma in sd.SII)
+                ExpandSelectedSet(ma);
+        }
 
-			/// Check dependency with transitions in the SII
-			foreach (MemoryAccess ma in sd.SII)
-				ExpandSelectedSet(ma);
-		}
+        public void ExpandSelectedSet(MemoryAccess next)
+        {
+            if (next.IsThreadLocal)
+                return;
 
-		public void ExpandSelectedSet(MemoryAccess next) {
+            SchedulingData sd = mapper.Get(next.MemoryLocation);
 
-			if (next.IsThreadLocal)
-				return;
+            if (sd != null)
+            {
+                if (sd.Enabled.Contains(next.ThreadId))
+                {
+                    sd.Enqueue(next.ThreadId);
+                }
+                else
+                {
+                    foreach (int enabledThread in sd.Enabled)
+                        sd.Enqueue(enabledThread);
+                }
+            }
+        }
+    }
 
-			SchedulingData sd = mapper.Get(next.MemoryLocation);
+    class ObjectEscapePOR
+    {
+        int m_dfscount = 0;
 
-			if (sd != null) {
-				if (sd.Enabled.Contains(next.ThreadId)) {
-					sd.Enqueue(next.ThreadId);
-				} else {
-					foreach (int enabledThread in sd.Enabled)
-						sd.Enqueue(enabledThread);
-				}
-			}
-		}
-	}
-
-	class ObjectEscapePOR {
-
-		int m_dfscount = 0;
-
-		/// Update the reachability of objects when
-		/// 1. An objectreference is written to object o
-		/// 2. o is threadshared, and the o' referenced by
-		/// the objectreference is not
-		public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, ExplicitActiveState cur)
+        /// Update the reachability of objects when
+        /// 1. An objectreference is written to object o
+        /// 2. o is threadshared, and the o' referenced by
+        /// the objectreference is not
+        public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, ExplicitActiveState cur)
         {
             if (!cur.Configuration.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
             {
@@ -180,10 +193,11 @@ namespace MMC {
 
             // literally and shamelessly mimiced from JPF:
 
-            if (parentIsShared) {
-				if (!((ObjectReference)newRef).Equals(ObjectReference.Null))
+            if (parentIsShared)
+            {
+                if (!((ObjectReference)newRef).Equals(ObjectReference.Null))
                 {
-					DynamicAllocation da = cur.DynamicArea.Allocations[(ObjectReference)newRef];
+                    DynamicAllocation da = cur.DynamicArea.Allocations[(ObjectReference)newRef];
 
                     if (!da.ThreadShared)
                     {
@@ -192,15 +206,15 @@ namespace MMC {
                         if (markAndSweep != null)
                         {
                             markAndSweep.MarkSharedRecursive(cur, (ObjectReference)newRef);
-                        }                        
+                        }
                     }
                 }
-			}
+            }
 
-			return;
-		}
+            return;
+        }
 
-		public int GetPersistentThread(Explorer explorer)
+        public int GetPersistentThread(Explorer explorer)
         {
             var cur = explorer.cur;
             /*
@@ -220,40 +234,40 @@ namespace MMC {
                 {
                     markAndSweep.Mark(cur);
                 }
-				explorer.DoSharingAnalysis = false;
-			}
+                explorer.DoSharingAnalysis = false;
+            }
 
             int oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
-			int retval = -1;
+            int retval = -1;
 
-			foreach (int threadId in cur.ThreadPool.RunnableThreads)
+            foreach (int threadId in cur.ThreadPool.RunnableThreads)
             {
-				Instruction instr = cur.ThreadPool.Threads[threadId].CurrentMethod.ProgramCounter;
+                Instruction instr = cur.ThreadPool.Threads[threadId].CurrentMethod.ProgramCounter;
                 if (instr == null)
                 {
                     continue;
                 }
 
-				InstructionExecBase instrExec = cur.InstructionExecProvider.GetExecFor(instr);
+                InstructionExecBase instrExec = cur.InstructionExecProvider.GetExecFor(instr);
 
-				cur.ThreadPool.CurrentThreadId = threadId;
+                cur.ThreadPool.CurrentThreadId = threadId;
 
-				if (!instrExec.IsDependent(cur) || instrExec.IsMultiThreadSafe(cur))
+                if (!instrExec.IsDependent(cur) || instrExec.IsMultiThreadSafe(cur))
                 {
-					retval = threadId;
-					break;
-				}
-			}
+                    retval = threadId;
+                    break;
+                }
+            }
 
-			cur.ThreadPool.CurrentThreadId = oldCurrentThreadId;
+            cur.ThreadPool.CurrentThreadId = oldCurrentThreadId;
 
-			return retval;
-		}
+            return retval;
+        }
 
-		public void CheckStoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
+        public void CheckStoreThreadSharingData(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
         {
-			m_dfscount = stack.Count;
-		}
+            m_dfscount = stack.Count;
+        }
 
         public void StoreThreadSharingData(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
@@ -285,5 +299,5 @@ namespace MMC {
                 }
             }
         }
-	}
+    }
 }
