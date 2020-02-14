@@ -32,6 +32,7 @@ namespace MMC.InstructionExec
     using ParameterDefinition = dnlib.DotNet.Parameter;
     using MMC.ICall;
     using dnWalker;
+    using ThreadState = State.ThreadState;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -702,9 +703,9 @@ namespace MMC.InstructionExec
                 return false;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            IDataElement reference = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
+            IDataElement reference = thread.CurrentMethod.EvalStack.Peek();
 
             if (reference is ObjectFieldPointer)
             {
@@ -717,7 +718,7 @@ namespace MMC.InstructionExec
                 return sfp.MemoryLocation;
             }
 
-            return base.Accessed(threadId, cur);
+            return base.Accessed(thread, cur);
         }
     }
 
@@ -757,7 +758,7 @@ namespace MMC.InstructionExec
 				return false;
 		}
 
-		public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur) {
+		public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur) {
 			IDataElement reference = cur.EvalStack.Peek();
 
 			if (reference is ObjectFieldPointer) {
@@ -768,7 +769,7 @@ namespace MMC.InstructionExec
 				return sfp.MemoryLocation;
 			}
 
-			return base.Accessed(threadId);
+			return base.Accessed(thread);
 		}*/
     }
 
@@ -1156,9 +1157,9 @@ namespace MMC.InstructionExec
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            return base.Accessed(threadId, cur);
+            return base.Accessed(thread, cur);
         }
     }
 
@@ -1213,9 +1214,9 @@ namespace MMC.InstructionExec
 
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            DataElementStack des = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
+            DataElementStack des = thread.CurrentMethod.EvalStack;
             int length = des.Length;
 
             Int4 idx = (Int4)des.Peek();
@@ -1279,9 +1280,9 @@ namespace MMC.InstructionExec
             return theArray.ThreadShared;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            DataElementStack des = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
+            DataElementStack des = thread.CurrentMethod.EvalStack;
             int length = des.Length;
 
             Int4 idx = (Int4)des[length - 2];
@@ -1419,9 +1420,9 @@ namespace MMC.InstructionExec
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            return base.Accessed(threadId, cur);
+            return base.Accessed(thread, cur);
         }
     }
 
@@ -1503,9 +1504,9 @@ namespace MMC.InstructionExec
             return theObject.ThreadShared;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            IDataElement refVal = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Peek();
+            IDataElement refVal = thread.CurrentMethod.EvalStack.Peek();
             if (refVal is LocalVariablePointer localVariablePointer)
             {
                 refVal = localVariablePointer.Value;
@@ -1599,9 +1600,9 @@ namespace MMC.InstructionExec
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            DataElementStack des = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack;
+            DataElementStack des = thread.CurrentMethod.EvalStack;
 
             int length = des.Length;
             IDataElement toChange = des[length - 2];
@@ -1615,7 +1616,7 @@ namespace MMC.InstructionExec
                 return new MemoryLocation(offset, or, cur);
             }
 
-            return base.Accessed(threadId, cur);
+            return base.Accessed(thread, cur);
         }
     }
 
@@ -1718,7 +1719,7 @@ namespace MMC.InstructionExec
             return !GetFieldDefinition().IsInitOnly;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
             var fld = GetFieldDefinition();
             var declType = GetTypeDefinition();
@@ -1760,9 +1761,9 @@ namespace MMC.InstructionExec
             return false;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            return base.Accessed(threadId, cur);
+            return base.Accessed(thread, cur);
         }
     }
 
@@ -1814,7 +1815,7 @@ namespace MMC.InstructionExec
                 return true;
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
             FieldDefinition fld = GetFieldDefinition();
             TypeDefinition declType = GetTypeDefinition();
@@ -2583,7 +2584,7 @@ namespace MMC.InstructionExec
             return retval;
         }
 
-        protected DataElementList CopyArgumentList(ExplicitActiveState cur, int threadId)
+        protected DataElementList CopyArgumentList(ExplicitActiveState cur, ThreadState thread)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.Parameters.Count + (methDef.HasThis ? 1 : 0);
@@ -2591,14 +2592,16 @@ namespace MMC.InstructionExec
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
-                retval[size] = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Pop();
+            {
+                retval[size] = thread.CurrentMethod.EvalStack.Pop();
+            }
 
             /*
 			 * Restore the eval stack
 			 */
             for (int i = 0; i < retval.Length; i++)
             {
-                cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Push(retval[i]);
+                thread.CurrentMethod.EvalStack.Push(retval[i]);
             }
 
             return retval;
@@ -2631,7 +2634,7 @@ namespace MMC.InstructionExec
             MethodDefinition methDef = Operand as MethodDefinition;
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
-                DataElementList args = CopyArgumentList(cur, cur.ThreadPool.CurrentThreadId);
+                DataElementList args = CopyArgumentList(cur, cur.ThreadPool.CurrentThread);
                 return IntCallManager.icm.IsDependent(methDef, args);
             }
             else
@@ -2640,11 +2643,11 @@ namespace MMC.InstructionExec
             }
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
-            DataElementList args = CopyArgumentList(cur, threadId);
-            return MMC.ICall.IntCallManager.icm.HandleICallAccessed(methDef, args, threadId);
+            DataElementList args = CopyArgumentList(cur, thread);
+            return MMC.ICall.IntCallManager.icm.HandleICallAccessed(methDef, args, thread.Id);
         }
 
         public override string ToString()
@@ -2814,7 +2817,7 @@ namespace MMC.InstructionExec
                 {
                     throw new NotSupportedException("Owning thread not found.");
                 }
-                cur.ThreadPool.Threads[threadId].State = (int)System.Threading.ThreadState.Running;
+                cur.ThreadPool.Threads[threadId].State = System.Threading.ThreadState.Running;
                 return nextRetval;
             }
 
@@ -3848,7 +3851,7 @@ namespace MMC.InstructionExec
 				return false;
 		}
 
-		public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur) {
+		public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur) {
 			IDataElement reference = cur.EvalStack.Peek();
 
 			if (reference is ObjectFieldPointer) {
@@ -3859,7 +3862,7 @@ namespace MMC.InstructionExec
 				return sfp.MemoryLocation;
 			}
 
-			return base.Accessed(threadId);
+			return base.Accessed(thread);
 		}*/
     }
 
@@ -3907,10 +3910,10 @@ namespace MMC.InstructionExec
             }
         }
 
-        public override MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            int length = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack.Length;
-            IDataElement reference = cur.ThreadPool.Threads[threadId].CurrentMethod.EvalStack[length - 2];
+            int length = thread.CurrentMethod.EvalStack.Length;
+            IDataElement reference = thread.CurrentMethod.EvalStack[length - 2];
 
             if (reference is ObjectFieldPointer)
             {
@@ -3923,7 +3926,7 @@ namespace MMC.InstructionExec
                 return sfp.MemoryLocation;
             }
 
-            return base.Accessed(threadId, cur);
+            return base.Accessed(thread, cur);
         }
     }
 

@@ -73,7 +73,8 @@ namespace MMC {
 		}
 	}
 
-	class StatefulDynamicPOR {
+	public class StatefulDynamicPOR 
+    {
 		private Stack<SchedulingData> backtrack;
 		private LastTransitionMapper mapper;
         private readonly IConfig _config;
@@ -226,9 +227,9 @@ namespace MMC {
             int oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
 			int retval = -1;
 
-			foreach (int threadId in cur.ThreadPool.RunnableThreads)
+			foreach (var thread in cur.ThreadPool.RunnableThreads)
             {
-				Instruction instr = cur.ThreadPool.Threads[threadId].CurrentMethod.ProgramCounter;
+				Instruction instr = thread.CurrentMethod.ProgramCounter;
                 if (instr == null)
                 {
                     continue;
@@ -236,11 +237,11 @@ namespace MMC {
 
 				InstructionExecBase instrExec = cur.InstructionExecProvider.GetExecFor(instr);
 
-				cur.ThreadPool.CurrentThreadId = threadId;
+				cur.ThreadPool.CurrentThreadId = thread.Id;
 
 				if (!instrExec.IsDependent(cur) || instrExec.IsMultiThreadSafe(cur))
                 {
-					retval = threadId;
+					retval = thread.Id;
 					break;
 				}
 			}

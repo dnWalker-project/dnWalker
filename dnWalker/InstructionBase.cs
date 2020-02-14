@@ -136,7 +136,7 @@ namespace MMC.InstructionExec
             return false;
         }
 
-        public virtual MemoryLocation Accessed(int threadId, ExplicitActiveState cur)
+        public virtual MemoryLocation Accessed(State.ThreadState thread, ExplicitActiveState cur)
         {
             return MemoryLocation.Null;
         }

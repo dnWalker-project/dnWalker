@@ -15,54 +15,47 @@
  *
  */
 
-namespace MMC.State {
+namespace MMC.State
+{
+    using System.Diagnostics;
 
-	using System.Collections.Generic;
-	using System.Collections;
-	using System.Diagnostics;
-	
-	using MMC.Data;
-	using MMC.Util;
+    using MMC.Data;
+    using MMC.Util;
     using dnWalker.DataElements;
+    using MMC.InstructionExec;
 
     public class ThreadState : IMustDispose, ICleanable, IStorageVisitable
     {
-		public static int state_field_offset = LockManager.NoThread;
-
-		CallStack m_callStack;
-        System.Threading.ThreadState m_state; // Short-hand for the 'state' field.
-        bool m_isDirty;
-		int m_me; // an ID.
-
+        public static int state_field_offset = LockManager.NoThread;
+        private System.Threading.ThreadState m_state; // Short-hand for the 'state' field.
+        private bool m_isDirty;
         private readonly ExplicitActiveState cur;
 
         // ---------------- Accessors and Short-hands -------------- 
+        public int Id { get; }
 
-        public CallStack CallStack
-        {
-			get { return m_callStack; }
-			set { m_callStack = value; } // for restoring the state
-		}
+        public CallStack CallStack { get; set; }
 
-		public MethodState CurrentMethod
+        public MethodState CurrentMethod
         {
-			get
+            get
             {
-				if (m_callStack.IsEmpty())
-					return null;
-				else
-					return m_callStack.Peek();
-			}
-		}
+                if (CallStack.IsEmpty())
+                {
+                    return null;
+                }
 
-		public CILLocation CurrentLocation {
+                return CallStack.Peek();
+            }
+        }
 
-			get {
-				return new CILLocation(
-				  CurrentMethod.ProgramCounter,
-				  CurrentMethod.Definition);
-			}
-		}
+        public CILLocation CurrentLocation
+        {
+            get
+            {
+                return new CILLocation(CurrentMethod.ProgramCounter, CurrentMethod.Definition);
+            }
+        }
 
         public ObjectReference ThreadObject { get; set; }
 
@@ -93,32 +86,39 @@ namespace MMC.State {
 
         public System.Threading.ThreadState State
         {
-			get { return m_state; }
-			set {
-				if (m_state == System.Threading.ThreadState.Stopped) {
-					Debug.Assert(value != m_state, "Stopping already stopped thread.");
-					if (value == System.Threading.ThreadState.Running || value == System.Threading.ThreadState.WaitSleepJoin) {
-						cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
-						ThreadObjectWatcher.Increment(m_me, ThreadObject, cur);
-					}
-				}
-				if (value == System.Threading.ThreadState.Stopped)
-					ReleaseObject();
+            get { return m_state; }
+            set
+            {
+                if (m_state == System.Threading.ThreadState.Stopped)
+                {
+                    Debug.Assert(value != m_state, "Stopping already stopped thread.");
+                    if (value == System.Threading.ThreadState.Running
+                        || value == System.Threading.ThreadState.WaitSleepJoin)
+                    {
+                        cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
+                        ThreadObjectWatcher.Increment(Id, ThreadObject, cur);
+                    }
+                }
+                if (value == System.Threading.ThreadState.Stopped)
+                {
+                    ReleaseObject();
+                }
 
-				m_isDirty |= m_state != value;
-				m_state = value;
+                m_isDirty |= m_state != value;
+                m_state = value;
 
-				if (state_field_offset != LockManager.NoThread) {
-					AllocatedObject theThreadObject =
-						(AllocatedObject)cur.DynamicArea.Allocations[ThreadObject];
-					Debug.Assert(theThreadObject != null,
-							"Thread object should not be null when setting state (even to Stopped).");
-					theThreadObject.Fields[state_field_offset] = new Int4((int)m_state);
-				}
-			}
-		}
+                if (state_field_offset != LockManager.NoThread)
+                {
+                    AllocatedObject theThreadObject =
+                        (AllocatedObject)cur.DynamicArea.Allocations[ThreadObject];
+                    Debug.Assert(theThreadObject != null,
+                        "Thread object should not be null when setting state (even to Stopped).");
+                    theThreadObject.Fields[state_field_offset] = new Int4((int)m_state);
+                }
+            }
+        }
 
-		public bool IsAlive
+        public bool IsAlive
         {
             get
             {
@@ -126,20 +126,20 @@ namespace MMC.State {
                   || m_state == System.Threading.ThreadState.Running
                   || m_state == System.Threading.ThreadState.WaitSleepJoin;
             }
-		}
+        }
 
-		public bool IsRunnable
-        { 
-			get { return m_state == System.Threading.ThreadState.Running; }
-		}
-
-		public void WaitFor(int other)
+        public bool IsRunnable
         {
-			m_state = System.Threading.ThreadState.WaitSleepJoin;
-			m_isDirty |= WaitingFor != other;
-			//m_isDirty = true;
-			WaitingFor = other;
-		}
+            get { return m_state == System.Threading.ThreadState.Running; }
+        }
+
+        public void WaitFor(int other)
+        {
+            m_state = System.Threading.ThreadState.WaitSleepJoin;
+            m_isDirty |= WaitingFor != other;
+            //m_isDirty = true;
+            WaitingFor = other;
+        }
 
         public void Awaken(Logger logger)
         {
@@ -147,7 +147,7 @@ namespace MMC.State {
             //m_isDirty |= m_waitFor != LockManager.NoThread;
             m_isDirty = true;
             WaitingFor = LockManager.NoThread;
-            logger.Debug("thread {0} woke up", m_me);
+            logger.Debug("thread {0} woke up", Id);
         }
 
         public int WaitingFor { get; set; }
@@ -159,7 +159,7 @@ namespace MMC.State {
             {
                 return _retValue;
             }
-            internal set 
+            internal set
             {
                 _retValue = value;
 
@@ -180,76 +180,153 @@ namespace MMC.State {
         void ReleaseObject()
         {
             cur.DynamicArea.SetPinnedAllocation(ThreadObject, false);
-            ThreadObjectWatcher.Decrement(m_me, ThreadObject, cur);
+            ThreadObjectWatcher.Decrement(Id, ThreadObject, cur);
         }
 
         public void Dispose()
         {
             ReleaseObject();
-            m_callStack.Dispose();
+            CallStack.Dispose();
         }
 
-		public bool IsDirty() {
-
-			// This is okay for checking whether the thread state is dirty,
-			// but note lower frames may be dirty as well.
-			MethodState top = CurrentMethod;
-			return m_isDirty || m_callStack.IsDirty() || (top != null && top.IsDirty());
-		}
-
-		public void Clean() {
-
-			m_isDirty = false;
-			m_callStack.Clean();
-		}
-
-		// ---------------- Miscellaneaous and Helpers -------------- 
-
-		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
+        public bool IsDirty()
         {
-			visitor.VisitThreadState(this);
-		}
+            // This is okay for checking whether the thread state is dirty,
+            // but note lower frames may be dirty as well.
+            MethodState top = CurrentMethod;
+            return m_isDirty || CallStack.IsDirty() || (top != null && top.IsDirty());
+        }
 
-		public override string ToString() {
-
-			int currentWaitFor = WaitingFor;
-
-			for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++) {
-				DynamicAllocation ida = cur.DynamicArea.Allocations[i];
-				if (ida != null && ida.Locked) {
-					Lock l = ida.Lock;
-					if (l.ReadyQueue.Contains(m_me) || l.WaitQueue.Contains(m_me)) {
-						currentWaitFor = l.Owner;
-						break;
-					}
-				}
-			}
-
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			sb.AppendFormat("object: {0}, state: {1}{2}, {3}, call stacks:\n",
-					ThreadObject.ToString(),
-					(System.Threading.ThreadState)m_state,
-					(currentWaitFor != LockManager.NoThread ? " waiting for " + currentWaitFor : ""),
-					(IsDirty() ? "dirty" : "clean"));
-			for (int j = 0; j < m_callStack.StackPointer; ++j)
-				sb.AppendFormat("    {0}\n", m_callStack[j].ToString());
-			if (m_callStack.IsEmpty())
-				sb.Append("    Empty call stack.\n");
-			return sb.ToString();
-		}
-
-		public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me)
+        public void Clean()
         {
-			m_callStack = cur.StorageFactory.CreateCallStack();
-			ThreadObject = threadObj;
-			m_state = System.Threading.ThreadState.Running;
-			WaitingFor = LockManager.NoThread;
-			m_isDirty = true;
-			m_me = me;
-			ExceptionReference = ObjectReference.Null;
+            m_isDirty = false;
+            CallStack.Clean();
+        }
+
+        // ---------------- Miscellaneaous and Helpers -------------- 
+
+        public void Accept(IStorageVisitor visitor, ExplicitActiveState cur)
+        {
+            visitor.VisitThreadState(this);
+        }
+
+        public override string ToString()
+        {
+            int currentWaitFor = WaitingFor;
+
+            for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++)
+            {
+                DynamicAllocation ida = cur.DynamicArea.Allocations[i];
+                if (ida != null && ida.Locked)
+                {
+                    Lock l = ida.Lock;
+                    if (l.ReadyQueue.Contains(Id) || l.WaitQueue.Contains(Id))
+                    {
+                        currentWaitFor = l.Owner;
+                        break;
+                    }
+                }
+            }
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendFormat("object: {0}, state: {1}{2}, {3}, call stacks:\n",
+                ThreadObject.ToString(),
+                m_state,
+                currentWaitFor != LockManager.NoThread ? " waiting for " + currentWaitFor : "",
+                IsDirty() ? "dirty" : "clean");
+            for (int j = 0; j < CallStack.StackPointer; ++j)
+            {
+                sb.AppendFormat("    {0}\n", CallStack[j].ToString());
+            }
+            if (CallStack.IsEmpty())
+            {
+                sb.Append("    Empty call stack.\n");
+            }
+            return sb.ToString();
+        }
+
+        public ThreadState(ExplicitActiveState cur, ObjectReference threadObj, int me)
+        {
+            CallStack = cur.StorageFactory.CreateCallStack();
+            ThreadObject = threadObj;
+            m_state = System.Threading.ThreadState.Running;
+            WaitingFor = LockManager.NoThread;
+            m_isDirty = true;
+            Id = me;
+            ExceptionReference = ObjectReference.Null;
             this.cur = cur;
-			cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
-			ThreadObjectWatcher.Increment(me, threadObj, cur);
-		}
-	}
+            cur.DynamicArea.SetPinnedAllocation(ThreadObject, true);
+            ThreadObjectWatcher.Increment(me, threadObj, cur);
+        }
+
+        public bool ExecuteStep(IInstructionExecProvider instructionExecProvider, 
+            Logger logger,
+            IConfig config,
+            StatefulDynamicPOR m_dpor,
+            out bool threadTerm)
+        {
+            ThreadState thread = this;
+
+            cur.ThreadPool.CurrentThreadId = thread.Id;
+
+            MethodState currentMethod = thread.CurrentMethod;
+            var currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
+            bool continueExploration;
+            IIEReturnValue ier;
+            bool canForward;
+
+            do
+            {
+                logger.Trace(currentInstrExec.ToString());
+                ier = currentInstrExec.Execute(cur);
+
+                currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
+
+                /* if a RET was performed, currentMethod.ProgramCounter is null
+				 * and the PC should be set to programcounter of the current method, i.e.,
+				 * the method jumped to
+				 */
+                currentMethod = cur.CurrentMethod;
+                continueExploration = ier.ContinueExploration(currentMethod);
+
+                if (currentMethod != null && continueExploration)
+                {
+                    currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
+                }
+                else
+                {
+                    currentInstrExec = null;
+                }
+
+                canForward = currentInstrExec != null 
+                    && cur.CurrentThread.IsRunnable
+                    && (currentInstrExec.IsMultiThreadSafe(cur) || cur.ThreadPool.RunnableThreadCount == 1);
+
+                /*
+				 * Optimization related to merging states that have only one outgoing transition,
+				 * need to ensure stateful DPOR correctness
+				 */
+                if (canForward
+                    && config.UseStatefulDynamicPOR
+                    && !currentInstrExec.IsMultiThreadSafe(cur)
+                    && cur.ThreadPool.RunnableThreadCount == 1)
+                {
+                    MemoryLocation ml = cur.NextAccess(thread);
+                    m_dpor.ExpandSelectedSet(new MemoryAccess(ml, thread.Id));
+                }
+            } while (canForward);
+
+            if (thread.CallStack.IsEmpty())
+            {
+                cur.ThreadPool.TerminateThread(thread);
+                threadTerm = true;
+            }
+            else
+            {
+                threadTerm = false;
+            }
+
+            return continueExploration;
+        }
+    }
 }

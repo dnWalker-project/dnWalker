@@ -25,60 +25,58 @@ namespace MMC.State {
 	using MMC.Data;
 	using MMC.Util;
 	using MMC.Collections;
+    using System.Linq;
 
-    public class ThreadPool : ICleanable, IStorageVisitable {
-
-		SparseReferenceList<ThreadState>	m_tl;
-		int					m_curThread;
-		DirtyList			m_dirty;
+    public class ThreadPool : ICleanable, IStorageVisitable 
+    {
+        private DirtyList m_dirty;
         private readonly Logger _logger;
 
         ////////////////////////////////////////////////////////////////////
         // Accessors
         ////////////////////////////////////////////////////////////////////
 
-        public int CurrentThreadId {
+        public int CurrentThreadId { get; set; }
 
-			get { return m_curThread; }
-			set { m_curThread = value; }
-		}
+        public SparseReferenceList<ThreadState> Threads { get; }
 
-		public SparseReferenceList<ThreadState> Threads {
+        ////////////////////////////////////////////////////////////////////
+        // ICleanable implementation and such.
+        ////////////////////////////////////////////////////////////////////
 
-			get { return m_tl; }
-		}
-
-		////////////////////////////////////////////////////////////////////
-		// ICleanable implementation and such.
-		////////////////////////////////////////////////////////////////////
-
-		public DirtyList DirtyThreads {
-
-			get {
-				// Add all changed threads to m_dirty and return the list.
-				for (int thread_id = 0; thread_id < m_tl.Length; ++thread_id)
-					if (m_tl[thread_id] != null && m_tl[thread_id].IsDirty())
-						m_dirty.SetDirty(thread_id);
-				return m_dirty;
-			}
+        public DirtyList DirtyThreads 
+        {
+            get
+            {
+                // Add all changed threads to m_dirty and return the list.
+                for (int thread_id = 0; thread_id < Threads.Length; ++thread_id)
+                {
+                    if (Threads[thread_id] != null && Threads[thread_id].IsDirty())
+                    {
+                        m_dirty.SetDirty(thread_id);
+                    }
+                }
+                return m_dirty;
+            }
 		}
 
 		public bool IsDirty() {
 
 			bool retval = m_dirty.Count > 0;
-			for (int thread_id = 0; !retval && thread_id < m_tl.Length; ++thread_id)
-				retval = m_tl[thread_id] != null && m_tl[thread_id].IsDirty();
+			for (int thread_id = 0; !retval && thread_id < Threads.Length; ++thread_id)
+				retval = Threads[thread_id] != null && Threads[thread_id].IsDirty();
 			return retval;
 		}
 
-		public void Clean() {
-
-			//m_dirty = new DirtyList(m_tl.Length);
-			m_dirty.Clean();
-			for (int thread_id = 0; thread_id < m_tl.Length; ++thread_id)
-				if (m_tl[thread_id] != null)
-					m_tl[thread_id].Clean();
-		}
+        public void Clean()
+        {
+            //m_dirty = new DirtyList(m_tl.Length);
+            m_dirty.Clean();
+            foreach (var thread in Threads.Where(t => t != null))
+            {
+                thread.Clean();
+            }
+        }
 
 		////////////////////////////////////////////////////////////////////
 		// Query and enumerate threads.
@@ -86,40 +84,32 @@ namespace MMC.State {
 
 		public int GetThreadCount(System.Threading.ThreadState state)
         {
-			int retval = 0;
-			for (int i=0; i < m_tl.Length; ++i)
-				if (m_tl[i] != null && m_tl[i].State == state)
-					++retval;
-			return retval;
-		}
+            return Threads.Count(t => t?.State == state);
+        }
 
 		public int GetThreadCount()
         {
-			int retval = 0;
-			for (int i=0; i < m_tl.Length; ++i)
-				if (m_tl[i] != null) ++retval;
-			return retval;
-		}
+            return Threads.Count(t => t != null);
+        }
 
-		public Queue<int> GetThreadCollection(System.Threading.ThreadState state)
+		public Queue<ThreadState> GetThreadCollection(System.Threading.ThreadState state)
         {
-			Queue<int> retval = new Queue<int>(m_tl.Length);
-			for (int i=0; i < m_tl.Length; ++i)
-				if (m_tl[i] != null && m_tl[i].State == state)
-					retval.Enqueue(i);
-			return retval;
+            return new Queue<ThreadState>(Threads.Where(t => t?.State == state));
 		}
 
-		public int FindOwningThread(IDataElement e) {
-
+		public int FindOwningThread(IDataElement e) 
+        {
 			int retval = LockManager.NoThread;
-			for (int i = 0; retval == LockManager.NoThread && i < m_tl.Length; ++i) {
-				// For now, only look in thread object field. It would be nice to
-				// have a more advanced implementation that looks into the call stacks,
-				// and tries to find the data element there (of course, implement the
-				// relevant code in MethodState, DataElementList, DataElementStack, etc.).
-				if (m_tl[i].ThreadObject.Equals(e))
-					retval = i;
+			for (int i = 0; retval == LockManager.NoThread && i < Threads.Length; ++i) 
+            {
+                // For now, only look in thread object field. It would be nice to
+                // have a more advanced implementation that looks into the call stacks,
+                // and tries to find the data element there (of course, implement the
+                // relevant code in MethodState, DataElementList, DataElementStack, etc.).
+                if (Threads[i].ThreadObject.Equals(e))
+                {
+                    retval = i;
+                }
 			}
 			return retval;
 		}
@@ -130,9 +120,9 @@ namespace MMC.State {
 
 		public int NewThread(ExplicitActiveState cur, MethodState entry, ObjectReference threadObj)
         {
-			int thread_id = m_tl.Length;
+			int thread_id = Threads.Length;
 			ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
-			m_tl.Add(newThread);
+			Threads.Add(newThread);
 			newThread.CallStack.Push(entry);
 			_logger.Debug("spawned new thread with id {0}", thread_id);
 
@@ -152,9 +142,9 @@ namespace MMC.State {
 
 		public void JoinThreads(int blocking_thread, int to_terminate) {
 
-			ThreadState to_block = m_tl[blocking_thread];
+			ThreadState to_block = Threads[blocking_thread];
 			Debug.Assert(to_block != null, "Thread to be blocked is null!?");
-			ThreadState to_term = m_tl[to_terminate];
+			ThreadState to_term = Threads[to_terminate];
 			Debug.Assert(to_term != null, "Thread to be blocked is null!?");
 
 			// This would be an MMC error: the thread to be blocked does a Join
@@ -185,12 +175,12 @@ namespace MMC.State {
 			// Perform early deadlock detection by cycle detection in the
 			// "waiting-for" graph.
 			int current = begin_thread;
-			BitArray seen = new BitArray(m_tl.Length, false);
+			BitArray seen = new BitArray(Threads.Length, false);
 			while (current != LockManager.NoThread && !seen[current]) {
-				Debug.Assert(m_tl[current] != null, 
+				Debug.Assert(Threads[current] != null, 
 						"some thread is waiting for some a null thread at offset "+current+".");
 				seen[current] = true;
-				current = m_tl[current].WaitingFor;
+				current = Threads[current].WaitingFor;
 			}
 			if (current != LockManager.NoThread)
 				_logger.Log(LogPriority.Severe,
@@ -201,9 +191,9 @@ namespace MMC.State {
         // Terminate and delete threads.
         ////////////////////////////////////////////////////////////////////
 
-        public void TerminateThread(int thread_id)
+        public void TerminateThread(ThreadState theThread)
         {
-            ThreadState theThread = m_tl[thread_id];
+            var thread_id = theThread.Id;
             Debug.Assert(theThread != null, "Terminating a null thread.");
             _logger.Debug("thread termination: {0}", thread_id);
             if (!theThread.CallStack.IsEmpty())
@@ -216,51 +206,56 @@ namespace MMC.State {
             //Explorer.ActivateGC = true;
 
             // Check for threads that called Join on the terminating thread, and wake them.
-            for (int i = 0; i < m_tl.Length; ++i)
+            foreach (var thread in Threads)
             {
-                if (m_tl[i] != null && m_tl[i].State == System.Threading.ThreadState.WaitSleepJoin
-                    && m_tl[i].WaitingFor == thread_id)
+                if (thread != null
+                    && thread.State == System.Threading.ThreadState.WaitSleepJoin
+                    && thread.WaitingFor == thread_id)
                 {
-                    m_tl[i].Awaken(_logger);
+                    thread.Awaken(_logger);
                 }
             }
         }
 
-		public void DeleteThread(int thread_id) {
-
-			if (thread_id < 0 && thread_id >= m_tl.Length)
+		public void DeleteThread(int thread_id) 
+        {
+			if (thread_id < 0 && thread_id >= Threads.Length)
 				throw new System.ArgumentException("thread ID not within bounds of thread list");
 
-			ThreadState bokje = m_tl[thread_id];
+			ThreadState bokje = Threads[thread_id];
 			if (bokje != null) {
 				//bokje.Dispose(); 
-				m_tl[thread_id] = null;
+				Threads[thread_id] = null;
 				m_dirty.SetDirty(thread_id);
 			}
 		}
 
-		public void SetThreadUpperBound(int first_to_die) {
-
-			for (int i=first_to_die; i < m_tl.Length; ++i)
-				DeleteThread(i);
+		public void SetThreadUpperBound(int first_to_die) 
+        {
+            for (int i = first_to_die; i < Threads.Length; ++i)
+            {
+                DeleteThread(i);
+            }
 		}
 
 		////////////////////////////////////////////////////////////////////
 		// Constructor and other boring stuff.
 		////////////////////////////////////////////////////////////////////
 
-		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) {
-
+		public void Accept(IStorageVisitor visitor, ExplicitActiveState cur) 
+        {
 			visitor.VisitThreadPool(this);
 		}
 
-		public override string ToString() {
-
+		public override string ToString() 
+        {
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			for (int i=0; i < m_tl.Length; ++i) {
-				if (m_tl[i] != null) {
-					sb.AppendFormat("* Thread {0}: ", i);
-					sb.Append(m_tl[i].ToString());
+            foreach (var thread in Threads)
+            {
+				if (thread != null) 
+                {
+					sb.AppendFormat("* Thread {0}: ", thread.Id);
+					sb.Append(thread.ToString());
 				}
 			}
 			return sb.ToString();
@@ -268,7 +263,7 @@ namespace MMC.State {
 
         public ThreadPool(Logger logger)
         {
-            m_tl = new SparseReferenceList<ThreadState>();
+            Threads = new SparseReferenceList<ThreadState>();
             m_dirty = new DirtyList();
             _logger = logger;
         }
@@ -279,10 +274,10 @@ namespace MMC.State {
 
 		public ThreadState CurrentThread
         {
-			get { return m_tl[m_curThread]; }
+			get { return Threads[CurrentThreadId]; }
 		}
 
-		public Queue<int> RunnableThreads
+		public Queue<ThreadState> RunnableThreads
         {
 			get
             {
@@ -290,7 +285,15 @@ namespace MMC.State {
 			}
 		}
 
-		public int RunnableThreadCount
+        public Queue<int> RunnableThreadIds
+        {
+            get
+            {
+                return new Queue<int>(RunnableThreads.Select(t => t.Id));
+            }
+        }
+
+        public int RunnableThreadCount
         {
 			get { return GetThreadCount(System.Threading.ThreadState.Running); }
 		}

@@ -175,12 +175,22 @@ namespace MMC.State
 
         public MemoryLocation NextAccess(int threadId)
         {
-            var cur = this;
+            var thread = ThreadPool.Threads[threadId];
+            /*var cur = this;
             MethodState method = cur.ThreadPool.Threads[threadId].CurrentMethod;
             var instr = method.ProgramCounter;
             InstructionExecBase instrExec = InstructionExecProvider.GetExecFor(instr);
 
-            return instrExec.Accessed(threadId, cur);
+            return instrExec.Accessed(threadId, cur);*/
+            return NextAccess(thread);
+        }
+
+        public MemoryLocation NextAccess(ThreadState thread)
+        {
+            var instr = thread.CurrentMethod.ProgramCounter;
+            var instrExec = InstructionExecProvider.GetExecFor(instr);
+
+            return instrExec.Accessed(thread, this);
         }
 
         /// <summary>

@@ -17,12 +17,13 @@
 
 namespace MMC.Collections {
 
-	//	using C5;
-	using System.Text;
-	using System.Collections.Generic;
+    //	using C5;
+    using System.Text;
+    using System.Collections.Generic;
+    using System.Collections;
 
-    public class SparseReferenceList<T> where T : class {
-
+    public class SparseReferenceList<T> : IEnumerable<T> where T : class 
+    {
 		const int DEFAULT_SIZE = 16;
 		T[] m_data;
 		int m_length;
@@ -82,8 +83,17 @@ namespace MMC.Collections {
 			return new SparseReferenceList<T>(this);
 		}
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            return ((IEnumerable<T>)m_data).GetEnumerator();
+        }
 
-		public SparseReferenceList(SparseReferenceList<T> s) {
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<T>)m_data).GetEnumerator();
+        }
+
+        public SparseReferenceList(SparseReferenceList<T> s) {
 
 			if (s != null) {
 				m_length = s.Length;

@@ -235,7 +235,7 @@ namespace MMC
             bool logAssert = false;
             bool logDeadlock = false;
             bool noErrors;
-            int threadId = 0;
+            ThreadState thread = cur.ThreadPool.CurrentThread;
 
             //Statistics.Start();
             m_continue = true;
@@ -249,11 +249,11 @@ namespace MMC
 				 */
                 if (Config.UseObjectEscapePOR)
                 {
-                    noErrors = ExecutePorStep(threadId);
+                    noErrors = ExecutePorStep(thread);
                 }
                 else
                 {
-                    noErrors = ExecuteStep(threadId, out bool dummyBool);
+                    noErrors = ExecuteStep(thread, out bool dummyBool);
                 }
 
                 /*
@@ -320,14 +320,15 @@ namespace MMC
                 if (sd.Working.Count > 0)
                 {
                     m_dfs.Push(sd);
-                    threadId = SelectRunnableThread(sd); // for the next round		
+                    var threadId = SelectRunnableThread(sd); // for the next round
+                    thread = cur.ThreadPool.Threads[threadId];
 
                     // update last access information 
                     // (used by dynamic POR + tracing explorer) 
-                    MemoryLocation ml = cur.NextAccess(threadId);
-                    sd.LastAccess = new MemoryAccess(ml, threadId);
+                    MemoryLocation ml = cur.NextAccess(thread);
+                    sd.LastAccess = new MemoryAccess(ml, thread.Id);
 
-                    ThreadPicked(sd, threadId);
+                    ThreadPicked(sd, thread.Id);
                 }
                 else
                 {
@@ -441,7 +442,7 @@ namespace MMC
             {
                 // state is new
                 collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
-                sd.Enabled = cur.ThreadPool.RunnableThreads;
+                sd.Enabled = cur.ThreadPool.RunnableThreadIds;
 
                 if (sd.Enabled.Count > 0)
                 {
@@ -466,85 +467,31 @@ namespace MMC
 		 * Execute one (unsafe) instruction, followed by 0 or more safe instructions,
 		 * where safe are intrathread instructions or where the is only one thread left 
 		 * for execution */
-        public bool ExecuteStep(int threadId, out bool threadTerm)
+        public bool ExecuteStep(ThreadState thread, out bool threadTerm)
         {
-            cur.ThreadPool.CurrentThreadId = threadId;
-
-            MethodState currentMethod = cur.CurrentMethod;
-            InstructionExecBase currentInstrExec = _instructionExecProvider.GetExecFor(cur.CurrentMethod.ProgramCounter);
-            bool continueExploration;
-            IIEReturnValue ier;
-            bool canForward = false;
-
-            do
-            {
-                PrintTransition();
-
-                Logger.Trace(currentInstrExec.ToString());
-                ier = currentInstrExec.Execute(cur);
-
-                currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
-                /* if a RET was performed, currentMethod.ProgramCounter is null
-				 * and the PC should be set to programcounter of the current method, i.e.,
-				 * the method jumped to
-				 */
-                currentMethod = cur.CurrentMethod;
-                continueExploration = ier.ContinueExploration(currentMethod);
-
-                if (currentMethod != null && continueExploration)
-                {
-                    currentInstrExec = _instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
-                }
-                else
-                {
-                    currentInstrExec = null;
-                }
-
-                canForward = currentInstrExec != null && cur.CurrentThread.IsRunnable
-                    && (currentInstrExec.IsMultiThreadSafe(cur) || cur.ThreadPool.RunnableThreadCount == 1);
-
-                /*
-				 * Optimization related to merging states that have only one outgoing transition,
-				 * need to ensure stateful DPOR correctness
-				 */
-                if (canForward
-                        && Config.UseStatefulDynamicPOR
-                        && !currentInstrExec.IsMultiThreadSafe(cur)
-                        && cur.ThreadPool.RunnableThreadCount == 1)
-                {
-                    MemoryLocation ml = cur.NextAccess(threadId);
-                    m_dpor.ExpandSelectedSet(new MemoryAccess(ml, threadId));
-                }
-            } while (canForward);
-
-            if (cur.CallStack.IsEmpty())
-            {
-                cur.ThreadPool.TerminateThread(threadId);
-                threadTerm = true;
-            }
-            else
-            {
-                threadTerm = false;
-            }
-
-            return continueExploration;
+            return thread.ExecuteStep(_instructionExecProvider, Logger, Config, m_dpor, out threadTerm);
         }
 
-        public bool ExecutePorStep(int threadId)
+        public bool ExecutePorStep(ThreadState thread)
         {
             bool noErrors;
             bool threadTerm;
 
             if (Config.OneTraceAndStop)
             {
-                PrintTransition(threadId);
+                PrintTransition(thread);
             }
 
             do
             {
-                noErrors = ExecuteStep(threadId, out threadTerm);
-                threadId = m_spor.GetPersistentThread(this);
-            } while (noErrors && !threadTerm && threadId >= 0);
+                noErrors = ExecuteStep(thread, out threadTerm);
+                var threadId = m_spor.GetPersistentThread(this);
+                if (threadId < 0)
+                {
+                    break;
+                }
+                thread = cur.ThreadPool.Threads[threadId];
+            } while (noErrors && !threadTerm);
 
             return noErrors;
         }
@@ -552,8 +499,8 @@ namespace MMC
 		/*
 		 * This method is not really pretty, but it works...
 		 */
-		public void PrintTransition(int tid) {
-			MethodState currentMethod = cur.ThreadPool.Threads[tid].CurrentMethod;
+		public void PrintTransition(ThreadState thread) {
+			MethodState currentMethod = thread.CurrentMethod;
 			Instruction instr = currentMethod.ProgramCounter;
 			bool isRet = instr.OpCode.Code == Code.Ret;
 			string operandString = (instr.Operand == null ?
@@ -562,7 +509,7 @@ namespace MMC
 
 			StringBuilder sb = new StringBuilder();
 
-			sb.AppendFormat("- thread: {0} ", tid);
+			sb.AppendFormat("- thread: {0} ", thread.Id);
 
 			sb.AppendFormat("{0:D4} {1} {2} on stack {3}, RunnableThreadCount={4} ",
 							instr.Offset,
