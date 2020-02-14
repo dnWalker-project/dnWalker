@@ -292,8 +292,7 @@ namespace MMC.InstructionExec
 
     public class NOP : InstructionExecBase
     {
-        public NOP(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+        public NOP(Instruction instr, object operand, InstructionExecAttributes atr)
             : base(instr, operand, atr)
         {
         }
@@ -301,6 +300,11 @@ namespace MMC.InstructionExec
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             return nextRetval;
+        }
+
+        public override bool IsDependent(ExplicitActiveState cur)
+        {
+            return false;
         }
     }
 
