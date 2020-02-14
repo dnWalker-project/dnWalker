@@ -8,7 +8,10 @@ namespace dnWalker.ChoiceGenerators
 {
     public interface IChoiceGenerator
     {
-        int Next();
+        object GetNextChoice();
+
+        bool HasMoreChoices { get; }
+
         Stack<int> GetErrorTrace();
     }
 }

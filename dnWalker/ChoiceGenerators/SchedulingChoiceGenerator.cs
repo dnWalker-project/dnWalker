@@ -9,23 +9,24 @@ using MMC.State;
 
 namespace dnWalker.ChoiceGenerators
 {
-    public class SchedulingChoiceGenerator : IChoiceGenerator
+    public interface IScheduler { }
+
+    public class SchedulingChoiceGenerator : IChoiceGenerator, IScheduler
     {
         private readonly ExplicitActiveState cur;
         private Collapser m_stateConvertor;
         private readonly Stack<SchedulingData> m_dfs;
-        private readonly Explorer _explorer;
         private readonly BacktrackEventHandler backtrackStart;
+        private readonly BacktrackEventHandler backtracked;
+        private readonly BacktrackEventHandler backtrackStop;
         private readonly PickThreadEventHandle threadPicked;
         private readonly StateEventHandler stateConstructed;
         private readonly StateEventHandler _stateRevisited;
         private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
         private readonly IStatistics _statistics;
-
         private readonly FastHashtable<CollapsedState, int> m_stateStorage;
 
-        public BacktrackEventHandler backtracked { get; }
-        public BacktrackEventHandler backtrackStop { get; }
+        public bool HasMoreChoices => throw new NotImplementedException();
 
         internal SchedulingChoiceGenerator(
             Explorer explorer,
@@ -39,7 +40,6 @@ namespace dnWalker.ChoiceGenerators
             PickThreadEventHandle threadPicked,
             StateEventHandler stateConstructed)
         {
-            _explorer = explorer;
             this.backtrackStart = backtrackStart;
             this.backtracked = backtracked;
             this.backtrackStop = backtrackStop;
@@ -55,7 +55,7 @@ namespace dnWalker.ChoiceGenerators
             m_dfs = new Stack<SchedulingData>();            
         }
 
-        public int Next()
+        public object GetNextChoice()
         {
             /* Do a state matching, store if unmatched,
 			 * if matched, a backtracking is initiated by

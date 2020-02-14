@@ -29,8 +29,8 @@ namespace MMC
     /// </summary>
     public class TracingExplorer : Explorer
     {
-        readonly Stack<int> m_tracingQueue;
-        string prevMethod = "";
+        private readonly Stack<int> m_tracingQueue;
+        private string prevMethod = "";
         private readonly TextWriter tw;
 
         public TracingExplorer(ExplicitActiveState cur, IStatistics statistics, Stack<int> tracingQueue, TextWriter tw, Logger logger, IConfig config)

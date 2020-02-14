@@ -300,7 +300,14 @@ namespace MMC
                 // Run garbage collection
                 cur.GarbageCollector.Run(cur);
 
-                threadId = _choiceGenerator.Next();
+                if (_choiceGenerator is IScheduler)
+                {
+                    threadId = (int)_choiceGenerator.GetNextChoice();
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
                 
                 Statistics.MaxHashtableSize(m_stateStorage.Count);
                 Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
@@ -320,7 +327,7 @@ namespace MMC
         {
             if (m_measureMemory)
             {
-                long memUsed = System.GC.GetTotalMemory(false);
+                long memUsed = GC.GetTotalMemory(false);
                 Statistics.MeasureMemory(memUsed);
 
                 /// If ex post facto transition merging is enabled...
