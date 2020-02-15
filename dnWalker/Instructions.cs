@@ -1209,7 +1209,6 @@ namespace MMC.InstructionExec
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-
             int length = cur.EvalStack.Length;
 
             ObjectReference arrayRef = (ObjectReference)cur.EvalStack[length - 2];
@@ -1586,11 +1585,11 @@ namespace MMC.InstructionExec
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-
             FieldDefinition fieldDef = GetFieldDefinition();
             if (fieldDef.IsInitOnly)
+            {
                 return false;
-
+            }
 
             int length = cur.EvalStack.Length;
             IDataElement toChange = cur.EvalStack[length - 2];

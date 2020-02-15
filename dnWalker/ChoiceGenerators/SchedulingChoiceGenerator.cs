@@ -23,8 +23,10 @@ namespace dnWalker.ChoiceGenerators
         private readonly StateEventHandler stateConstructed;
         private readonly StateEventHandler _stateRevisited;
         private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
+        private readonly Explorer explorer;
         private readonly IStatistics _statistics;
         private readonly FastHashtable<CollapsedState, int> m_stateStorage;
+        private readonly ObjectEscapePOR m_spor;
 
         public bool HasMoreChoices => throw new NotImplementedException();
 
@@ -33,6 +35,7 @@ namespace dnWalker.ChoiceGenerators
             IStatistics statistics,
             FastHashtable<CollapsedState, int> stateStorage,
             Collapser stateConvertor,
+            ObjectEscapePOR m_spor,
             StateEventHandler stateRevisited,
             BacktrackEventHandler backtrackStart,
             BacktrackEventHandler backtracked,
@@ -49,7 +52,10 @@ namespace dnWalker.ChoiceGenerators
             cur = explorer.cur;
             m_stateStorage = stateStorage;
             m_stateConvertor = stateConvertor;
+            this.explorer = explorer;
             _statistics = statistics;
+
+            this.m_spor = m_spor;
 
             // DFS stack
             m_dfs = new Stack<SchedulingData>();            
@@ -57,6 +63,12 @@ namespace dnWalker.ChoiceGenerators
 
         public object GetNextChoice()
         {
+            var threadId = m_spor.GetPersistentThread(explorer);
+            if (threadId >= 0)
+            {
+                return threadId;
+            }
+
             // Run garbage collection
             cur.GarbageCollector.Run(cur);
 
@@ -80,8 +92,6 @@ namespace dnWalker.ChoiceGenerators
 
             m_stateConvertor.Reset(sd.State);
             cur.Clean();
-
-            var threadId = -1;
 
             /*
 		     * either the recently explored sd can be pushed on the stack, 

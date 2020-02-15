@@ -198,6 +198,7 @@ namespace MMC
                 Statistics,
                 m_stateStorage,
                 m_stateConvertor,
+                m_spor,
                 StateRevisited,
                 BacktrackStart,
                 Backtracked,
@@ -242,7 +243,7 @@ namespace MMC
         {
             bool logAssert = false;
             bool logDeadlock = false;
-            bool noErrors;
+            bool noErrors = false;
             ThreadState thread = cur.ThreadPool.CurrentThread;
 
             Statistics.Start();
@@ -252,8 +253,13 @@ namespace MMC
 
             do
             {
+                if (!SetExecutingThread(out thread))
+                {
+                    break;
+                }
+
                 // Execute instructions
-                noErrors = ExecuteNextStep(out thread);
+                noErrors = ExecuteNextStep(thread);
 
                 // Check for specification dissatifaction
                 if (!noErrors)
@@ -375,11 +381,8 @@ namespace MMC
             return thread.ExecuteStep(_instructionExecProvider, Logger, Config, m_dpor, out threadTerm);
         }
 
-        public bool ExecuteNextStep(out ThreadState thread)
+        private bool SetExecutingThread(out ThreadState thread)
         {
-            bool noErrors;
-            bool threadTerm;
-
             if (_choiceGenerator is IScheduler)
             {
                 var threadId = (int)_choiceGenerator.GetNextChoice();
@@ -396,21 +399,30 @@ namespace MMC
                 thread = cur.CurrentThread;
             }
 
+            return true;
+        }
+
+        public bool ExecuteNextStep(ThreadState thread)
+        {
+            bool noErrors;
+            bool threadTerm;
+
             if (Config.OneTraceAndStop)
             {
                 PrintTransition(thread);
             }
 
-            do
-            {
-                noErrors = ExecuteStep(thread, out threadTerm);
+            //do
+            //{
+            noErrors = ExecuteStep(thread, out threadTerm);
+            /*
                 var threadId = m_spor.GetPersistentThread(this);
                 if (threadId < 0)
                 {
                     break;
                 }
                 thread = cur.ThreadPool.Threads[threadId];
-            } while (noErrors && !threadTerm);
+            } while (noErrors && !threadTerm);*/
 
             return noErrors;
         }

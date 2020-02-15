@@ -215,16 +215,18 @@ namespace MMC
             return;
         }
 
+        /// <summary>
+        /// Return the thread id which executes an independent action
+        /// It either returns -1 (no set), or an integer > 0, because
+        /// we do it the quick and easy way: mutual dependent threads in a subset 
+        /// of the enabled set is not possible to computer with the coarse grained
+        /// object escape analysis
+        /// </summary>
+        /// <param name="explorer"></param>
+        /// <returns></returns>
         public int GetPersistentThread(Explorer explorer)
         {
             var cur = explorer.cur;
-            /*
-			 * Return the thread id which executes an independent action
-			 * It either returns -1 (no set), or an integer > 0, because 
-			 * we do it the quick and easy way: mutual dependent threads in a subset 
-			 * of the enabled set is not possible to computer with the coarse grained
-			 * object escape analysis */
-
             /* 
 			 * Run a object escape analysis 
 			 */
