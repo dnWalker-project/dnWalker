@@ -269,6 +269,12 @@ namespace MMC.State
 
             cur.ThreadPool.CurrentThreadId = thread.Id;
 
+            if (thread.State == System.Threading.ThreadState.Stopped)
+            {
+                threadTerm = true;
+                return false;
+            }
+
             MethodState currentMethod = thread.CurrentMethod;
             var currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
             bool continueExploration;
@@ -277,7 +283,7 @@ namespace MMC.State
 
             do
             {
-                logger.Trace(currentInstrExec.ToString());
+                logger.Trace($"[{thread.Id}] {currentInstrExec}");
                 ier = currentInstrExec.Execute(cur);
 
                 currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);

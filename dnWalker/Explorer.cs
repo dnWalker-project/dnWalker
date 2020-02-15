@@ -252,15 +252,8 @@ namespace MMC
 
             do
             {
-                // Execute instructions. 
-                if (Config.UseObjectEscapePOR)
-                {
-                    noErrors = ExecutePorStep(thread);
-                }
-                else
-                {
-                    noErrors = ExecuteStep(thread, out bool dummyBool);
-                }
+                // Execute instructions
+                noErrors = ExecuteNextStep(out thread);
 
                 // Check for specification dissatifaction
                 if (!noErrors)
@@ -298,22 +291,27 @@ namespace MMC
                 }
 
                 // Run garbage collection
-                cur.GarbageCollector.Run(cur);
+                // cur.GarbageCollector.Run(cur);
 
-                if (_choiceGenerator is IScheduler)
+                /*if (_choiceGenerator is IScheduler)
                 {
-                    threadId = (int)_choiceGenerator.GetNextChoice();
+                    var threadId = (int)_choiceGenerator.GetNextChoice();
+                    if (threadId < 0)
+                    {
+                        break;
+                    }
+                    cur.ThreadPool.CurrentThreadId = threadId;
                 }
                 else
                 {
                     throw new NotImplementedException();
-                }
+                }*/
                 
                 Statistics.MaxHashtableSize(m_stateStorage.Count);
                 Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
 
                 MemoryLimiting();
-            } while (threadId >= 0 && m_continue);
+            } while (m_continue);
 
             Logger.Message("End of story: explored the whole state space");
 
@@ -372,15 +370,31 @@ namespace MMC
         /// <param name="threadId"></param>
         /// <param name="threadTerm"></param>
         /// <returns></returns>
-        public bool ExecuteStep(int threadId, out bool threadTerm)
+        public bool ExecuteStep(ThreadState thread, out bool threadTerm)
         {
             return thread.ExecuteStep(_instructionExecProvider, Logger, Config, m_dpor, out threadTerm);
         }
 
-        public bool ExecutePorStep(ThreadState thread)
+        public bool ExecuteNextStep(out ThreadState thread)
         {
             bool noErrors;
             bool threadTerm;
+
+            if (_choiceGenerator is IScheduler)
+            {
+                var threadId = (int)_choiceGenerator.GetNextChoice();
+                if (threadId < 0)
+                {
+                    thread = null;
+                    return false;
+                }
+
+                thread = cur.ThreadPool.Threads[threadId];
+            }
+            else
+            {
+                thread = cur.CurrentThread;
+            }
 
             if (Config.OneTraceAndStop)
             {

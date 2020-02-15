@@ -57,6 +57,9 @@ namespace dnWalker.ChoiceGenerators
 
         public object GetNextChoice()
         {
+            // Run garbage collection
+            cur.GarbageCollector.Run(cur);
+
             /* Do a state matching, store if unmatched,
 			 * if matched, a backtracking is initiated by
 			 * returning an empty working queue 
@@ -138,7 +141,7 @@ namespace dnWalker.ChoiceGenerators
             {
                 // state is new
                 collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
-                sd.Enabled = cur.ThreadPool.RunnableThreads;
+                sd.Enabled = cur.ThreadPool.RunnableThreadIds;
 
                 if (sd.Enabled.Count > 0)
                 {
