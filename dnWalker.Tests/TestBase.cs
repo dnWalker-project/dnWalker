@@ -63,7 +63,7 @@ namespace dnWalker.Tests
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
             var entryPoint = _definitionProvider.GetMethodDefinition(methodName)
-                ?? throw new NullReferenceException("Method not found");
+                ?? throw new NullReferenceException($"Method {methodName} not found");
 
             var state = stateSpaceSetup.CreateInitialState(
                 entryPoint,
