@@ -5,21 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using MMC.Data;
+using MMC.InstructionExec;
 using MMC.State;
 
 namespace dnWalker.NativePeers
 {
     public class SystemRuntimeTypeHandle : NativePeer
     {
-        public SystemRuntimeTypeHandle(MethodDef meth) : base(meth)
+        public override bool TryGetValue(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
         {
-        }
-
-        public override bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement)
-        {
-            dataElement = null;
-
-            if (_method.FullName == "System.IntPtr System.RuntimeTypeHandle::get_Value()")
+            if (method.FullName == "System.IntPtr System.RuntimeTypeHandle::get_Value()")
             {
                 var value = args[0];
                 switch (value)
@@ -27,12 +22,13 @@ namespace dnWalker.NativePeers
                     case LocalVariablePointer localVariablePointer:
                         args = new DataElementList(1);
                         args[0] = localVariablePointer.Value;
-                        return TryGetValue(args, cur, out dataElement);
+                        return TryGetValue(method, args, cur, out iieReturnValue);
                     case TypePointer typePointer:
                         var type = typePointer.Type;
                         if (cur.DefinitionProvider.TryGetTypeHandle(type, out var handle))
                         {
-                            dataElement = cur.DefinitionProvider.CreateDataElement(handle.Value);
+                            cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(handle.Value));
+                            iieReturnValue = InstructionExecBase.nextRetval;
                             return true;
                         }
 
@@ -42,7 +38,7 @@ namespace dnWalker.NativePeers
                 }
             }
 
-            throw new NotImplementedException("Native peer for " + _method.FullName);
+            throw new NotImplementedException("Native peer for " + method.FullName);
         }
     }
 }

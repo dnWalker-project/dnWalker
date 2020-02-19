@@ -454,26 +454,26 @@ namespace MMC.ICall {
 		}*/
     }
 
-    class MonitorHandlers {
-
+    internal class MonitorHandlers 
+    {
         // private extern static void Monitor_exit(object obj)
-        public static void Monitor_exit(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
+        public static void Exit(DataElementList args, ExplicitActiveState cur)
         {
             LockManager lm = cur.DynamicArea.LockManager;
             ObjectReference obj = (ObjectReference)args[0];
 
             // This thread must own the lock on the object.
-            if (cur.me != lm.GetLock(obj, cur).Owner)
+            if (cur.me != lm.GetLock(obj).Owner)
             {
                 cur.Logger.Warning("thread {0} attemts to exit monitor on {1} but isn't the owner", cur.me, obj.ToString());
             }
             else
             {
-                lm.Release(obj, cur);
+                lm.Release(obj);
                 // If the lock was acquired by a new thread, make sure that
                 // thread is runnable.
-                if (lm.IsLocked(obj, cur))
-                    cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken(cur.Logger);
+                if (lm.IsLocked(obj))
+                    cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken(cur.Logger);
             }
         }
 
@@ -489,12 +489,12 @@ namespace MMC.ICall {
 			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (cur.me != lm.GetLock(obj, cur).Owner)
+			if (cur.me != lm.GetLock(obj).Owner)
                 cur.Logger.Warning(
 						"thread {0} attemts to pulse first waiting thread on {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else
-				lm.Pulse(obj, false, cur);
+				lm.Pulse(obj, false);
 		}
 
 		// private extern static void Monitor_pulse_all(object obj);
@@ -503,19 +503,19 @@ namespace MMC.ICall {
 			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (cur.me != lm.GetLock(obj, cur).Owner)
+			if (cur.me != lm.GetLock(obj).Owner)
                 cur.Logger.Warning(
 						"thread {0} attemts to pulse all waiting threads on {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else
-				lm.Pulse(obj, true, cur);
+				lm.Pulse(obj, true);
 		}
 
 		// private extern static bool Monitor_test_synchronised(object obj);
 		public static void Monitor_test_synchronised(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
 			LockManager lm = cur.DynamicArea.LockManager;
-			bool locked = lm.IsLocked((ObjectReference)args[0], cur);
+			bool locked = lm.IsLocked((ObjectReference)args[0]);
 			cur.EvalStack.Push((locked ? new Int4(1) : new Int4(0)));
 		}
 
@@ -528,11 +528,11 @@ namespace MMC.ICall {
 			ObjectReference obj = (ObjectReference)args[0];
 			// IDataElement ms = args[1]; // todo: don't block forever if ms > 0 && ms < \infty
 
-			bool acquired = lm.Acquire(obj, cur.me, cur);
+			bool acquired = lm.Acquire(obj, cur.me);
 			if (!acquired) {
 				// Not acquired, but ms is non-zero, which we will interpret as infinity,
 				// so add this thread to the wait queue.
-				Lock lock_we_want = lm.GetLock(obj, cur);
+				Lock lock_we_want = lm.GetLock(obj);
 				lock_we_want.ReadyQueue.Enqueue(cur.me);
 				//				cur.CurrentThread.WaitFor(lock_we_want.Owner);
 				cur.CurrentThread.WaitFor(LockManager.NoThread);
@@ -545,12 +545,36 @@ namespace MMC.ICall {
 			cur.EvalStack.Push((acquired ? new Int4(1) : new Int4(0)));
 		}
 
+        public static IDataElement Enter(DataElementList args, ExplicitActiveState cur)
+        {
+            LockManager lm = cur.DynamicArea.LockManager;
+            ObjectReference obj = (ObjectReference)args[0];
+            // IDataElement ms = args[1]; // todo: don't block forever if ms > 0 && ms < \infty
+
+            bool acquired = lm.Acquire(obj, cur.me);
+            if (!acquired)
+            {
+                // Not acquired, but ms is non-zero, which we will interpret as infinity,
+                // so add this thread to the wait queue.
+                Lock lock_we_want = lm.GetLock(obj);
+                lock_we_want.ReadyQueue.Enqueue(cur.me);
+                //				cur.CurrentThread.WaitFor(lock_we_want.Owner);
+                cur.CurrentThread.WaitFor(LockManager.NoThread);
+
+                cur.ThreadPool.CheckDeadlockFrom(cur.me);
+            }
+
+            // Return if we were able to get the lock immediately. This value is discarded
+            // if the call was made from Monitor.Enter(object).
+            return acquired ? new Int4(1) : new Int4(0);
+        }
+
         public static MemoryLocation Monitor_try_enter_Accessed(MethodDefinition methDef, DataElementList args, int threadId, ExplicitActiveState cur)
         {
             LockManager lm = cur.DynamicArea.LockManager;
             ObjectReference obj = (ObjectReference)args[0];
 
-            bool acquirable = lm.IsAcquireable(obj, threadId, cur);
+            bool acquirable = lm.IsAcquireable(obj, threadId);
 
             if (acquirable)
             {
@@ -571,19 +595,19 @@ namespace MMC.ICall {
 			LockManager lm = cur.DynamicArea.LockManager;
 			ObjectReference obj = (ObjectReference)args[0];
 
-			if (cur.me != lm.GetLock(obj, cur).Owner)
+			if (cur.me != lm.GetLock(obj).Owner)
                 cur.Logger.Warning(
 						"thread {0} attemts to wait on monitor for {1} but isn't the owner",
 						cur.me, obj.ToString());
 			else {
-				lm.Release(obj, cur);
-				lm.GetLock(obj, cur).WaitQueue.Enqueue(cur.me);
+				lm.Release(obj);
+				lm.GetLock(obj).WaitQueue.Enqueue(cur.me);
 				// We're not specifically waiting for an other thread, just to
 				// re-acquire this lock.
 				cur.CurrentThread.WaitFor(LockManager.NoThread);
 
-				if (lm.IsLocked(obj, cur))
-					cur.ThreadPool.Threads[lm.GetLock(obj, cur).Owner].Awaken(cur.Logger);
+				if (lm.IsLocked(obj))
+					cur.ThreadPool.Threads[lm.GetLock(obj).Owner].Awaken(cur.Logger);
 			}
 
 			// If this thread is rescheduled, it has apperently reacquired the lock,

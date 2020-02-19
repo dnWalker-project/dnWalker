@@ -72,7 +72,7 @@ namespace MMC.Data {
 			m_isDirty = true;
 			m_elements[m_stackptr++] = e;
 
-			ThreadObjectWatcher.Increment(-1, e, cur);
+			ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, e, cur);
 		}
 
 		public virtual IDataElement Pop()

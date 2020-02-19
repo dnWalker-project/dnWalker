@@ -181,7 +181,7 @@ namespace MMC.State {
 
         public DynamicArea(ExplicitActiveState cur)
         {
-            m_lockManager = new LockManager();
+            m_lockManager = new LockManager(cur);
             m_alloc = new AllocationList();
             m_pinned = new HashSet<ObjectReference>();
             m_freeSlot = 0;

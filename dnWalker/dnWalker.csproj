@@ -97,6 +97,7 @@
     <Compile Include="MethodState.cs" />
     <Compile Include="MMCExceptions.cs" />
     <Compile Include="NativePeers\SystemEnvironment.cs" />
+    <Compile Include="NativePeers\SystemThreadingMonitor.cs" />
     <Compile Include="NativePeers\SystemString.cs" />
     <Compile Include="NativePeers\SystemFloat.cs" />
     <Compile Include="NativePeers\SystemDouble.cs" />

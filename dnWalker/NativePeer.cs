@@ -1,68 +1,67 @@
 ﻿using dnlib.DotNet;
 using MMC.Data;
+using MMC.InstructionExec;
 using MMC.State;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker
 {
     public abstract class NativePeer
     {
-        public static NativePeer Get(MethodDef methodDef)
+        public static NativePeer Get(TypeDef typeDef)
         {
-            if (methodDef.DeclaringType.FullName == typeof(Environment).FullName)
+            if (typeDef.FullName == typeof(Environment).FullName)
             {
-                return new NativePeers.SystemEnvironment(methodDef);
+                return new NativePeers.SystemEnvironment();
             }
 
-            if (methodDef.DeclaringType.FullName == typeof(double).FullName)
+            if (typeDef.FullName == typeof(double).FullName)
             {
-                return new NativePeers.SystemDouble(methodDef);
+                return new NativePeers.SystemDouble();
             }
 
-            if (methodDef.DeclaringType.FullName == typeof(float).FullName)
+            if (typeDef.FullName == typeof(float).FullName)
+            {
+                return new NativePeers.SystemSingle();
+            }
+
+            /*if (methodDef.DeclaringType.FullName == typeof(IntPointer).FullName)
             {
                 return new NativePeers.SystemSingle(methodDef);
+            }*/
+
+            if (typeDef.FullName == typeof(RuntimeTypeHandle).FullName)
+            {
+                return new NativePeers.SystemRuntimeTypeHandle();
             }
 
-            if (methodDef.DeclaringType.FullName == typeof(IntPointer).FullName)
+            if (typeDef.FullName == typeof(RuntimeMethodHandle).FullName)
             {
-                return new NativePeers.SystemSingle(methodDef);
+                return new NativePeers.SystemRuntimeMethodHandle();
             }
 
-            if (methodDef.DeclaringType.FullName == typeof(RuntimeTypeHandle).FullName)
+            if (typeDef.FullName == typeof(RuntimeFieldHandle).FullName)
             {
-                return new NativePeers.SystemRuntimeTypeHandle(methodDef);
+                return new NativePeers.SystemRuntimeFieldHandle();
             }
 
-            if (methodDef.DeclaringType.FullName == typeof(RuntimeMethodHandle).FullName)
+            if (typeDef.FullName == typeof(string).FullName)
             {
-                return new NativePeers.SystemRuntimeMethodHandle(methodDef);
+                return new NativePeers.SystemString();
             }
 
-            if (methodDef.DeclaringType.FullName == typeof(RuntimeFieldHandle).FullName)
+            if (typeDef.FullName == typeof(System.Threading.Monitor).FullName)
             {
-                return new NativePeers.SystemRuntimeFieldHandle(methodDef);
-            }
-
-            if (methodDef.DeclaringType.FullName == typeof(string).FullName)
-            {
-                return new NativePeers.SystemString(methodDef);
+                return new NativePeers.SystemThreadingMonitor();
             }
 
             return null;
         }
 
-        protected readonly MethodDef _method;
-
-        public NativePeer(MethodDef method)
+        public NativePeer()
         {
-            _method = method;
         }
 
-        public abstract bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement);
+        public abstract bool TryGetValue(MethodDef methodDef, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue);
     }
 }

@@ -244,7 +244,6 @@ namespace MMC
             bool logAssert = false;
             bool logDeadlock = false;
             bool noErrors = false;
-            ThreadState thread = cur.ThreadPool.CurrentThread;
 
             Statistics.Start();
             m_continue = true;
@@ -253,9 +252,9 @@ namespace MMC
 
             do
             {
-                if (!SetExecutingThread(out thread))
+                if (!SetExecutingThread(out ThreadState thread))
                 {
-                    break;
+                    break; // no thread was selected 
                 }
 
                 // Execute instructions
@@ -295,23 +294,6 @@ namespace MMC
                         break;
                     }
                 }
-
-                // Run garbage collection
-                // cur.GarbageCollector.Run(cur);
-
-                /*if (_choiceGenerator is IScheduler)
-                {
-                    var threadId = (int)_choiceGenerator.GetNextChoice();
-                    if (threadId < 0)
-                    {
-                        break;
-                    }
-                    cur.ThreadPool.CurrentThreadId = threadId;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }*/
                 
                 Statistics.MaxHashtableSize(m_stateStorage.Count);
                 Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
@@ -396,7 +378,7 @@ namespace MMC
             }
             else
             {
-                thread = cur.CurrentThread;
+                thread = cur.CurrentThread; // no thread switching
             }
 
             return true;

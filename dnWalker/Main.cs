@@ -224,13 +224,6 @@ namespace MMC
                         case 'c':
                             config.StopOnError = false;
                             break;
-                        case 'd':
-                            ++i;
-                            if (i < args.Length)
-                                DotWriter.Begin(TryOpen(args[i]));
-                            else
-                                Fatal("-d option requies an argument");
-                            break;
                         case 'f':
                             ++i;
                             if (i < args.Length)
@@ -423,6 +416,10 @@ Disabling/enabling features:
 
             var logger = new Logger(config.LogFilter);
             _logger = logger;
+
+            string dotFile = config.AssemblyToCheckFileName + ".dot";
+            File.Delete(dotFile);
+            DotWriter.Begin(TryOpen(dotFile));
 
             // Defaults.
             if (!config.Quiet)

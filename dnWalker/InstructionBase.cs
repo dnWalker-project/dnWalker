@@ -94,7 +94,7 @@ namespace MMC.InstructionExec
             return null;
         }
 
-        public IIEReturnValue ThrowException(Exception ex, ExplicitActiveState cur)
+        public static IIEReturnValue ThrowException(Exception ex, ExplicitActiveState cur)
         {
             var exceptionType = cur.DefinitionProvider.GetTypeDefinition(ex.GetType().FullName);
 

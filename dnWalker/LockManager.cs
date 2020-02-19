@@ -21,16 +21,22 @@ namespace MMC.State
     using System.Diagnostics;
     using MMC.Data;
 
-    public static class LockManager
+    public class LockManager
     {
         /// Constant for 'not owner'. Nullable types would be nice, but...
         public const int NoThread = -1;
+        private readonly ExplicitActiveState cur;
+
+        public LockManager(ExplicitActiveState cur)
+        {
+            this.cur = cur;
+        }
 
         /// <summary>Check if an allocation has an associated locking thread. [const]</summary>
         ///
         /// <param name="obj">Reference to the allocation.</param>
         /// <returns>True iff a thread owns the lock on this allocation.</returns>
-        public static bool IsLocked(ObjectReference obj, ExplicitActiveState cur)
+        public bool IsLocked(ObjectReference obj)
         {
             DynamicAllocation alloc = cur.DynamicArea.Allocations[obj];
             Debug.Assert(alloc != null, "Checking lock on null allocation.");
@@ -44,7 +50,7 @@ namespace MMC.State
         /// </remarks>
         /// <param name="obj">Reference to the allocation.</param>
         /// <returns>The associated lock (possibly new).</returns>
-        public static Lock GetLock(ObjectReference obj, ExplicitActiveState cur)
+        public Lock GetLock(ObjectReference obj)
         {
             DynamicAllocation alloc = cur.DynamicArea.Allocations[obj];
             Debug.Assert(alloc != null, "Getting lock on null allocation.");
@@ -60,9 +66,9 @@ namespace MMC.State
         /// <param name="obj">Reference to the allocation.</param>
         /// <param name="thread_id">The number of the thread to acquire the lock for.</param>
         /// <returns>True iff the lock was succesfully acquired.</returns>
-        public static bool Acquire(ObjectReference obj, int thread_id, ExplicitActiveState cur)
+        public bool Acquire(ObjectReference obj, int thread_id)
         {
-            Lock l = GetLock(obj, cur);
+            Lock l = GetLock(obj);
             bool retval = l.Owner == thread_id || l.Owner == NoThread;
             if (retval)
             {
@@ -72,9 +78,9 @@ namespace MMC.State
             return retval;
         }
 
-        public static bool IsAcquireable(ObjectReference obj, int thread_id, ExplicitActiveState cur)
+        public bool IsAcquireable(ObjectReference obj, int thread_id)
         {
-            Lock l = GetLock(obj, cur);
+            Lock l = GetLock(obj);
             return l.Owner == thread_id || l.Owner == NoThread;
         }
 
@@ -85,9 +91,9 @@ namespace MMC.State
         /// </remarks>
         /// <param name="obj">Reference to the allocation.</param>
         /// <param name="all">Notify all waiting threads if true. Just one otherwise.</param>
-        public static void Pulse(ObjectReference obj, bool all, ExplicitActiveState cur)
+        public void Pulse(ObjectReference obj, bool all)
         {
-            Lock l = GetLock(obj, cur);
+            Lock l = GetLock(obj);
             if (l.HasWaitQueue())
             {
                 Queue<int> waitQueue = l.WaitQueue;
@@ -108,9 +114,9 @@ namespace MMC.State
         /// queue.
         /// </remarks>
         /// <param name="obj">Reference to the allocation.</param>
-        public static void Release(ObjectReference obj, ExplicitActiveState cur)
+        public void Release(ObjectReference obj)
         {
-            Lock l = GetLock(obj, cur);
+            Lock l = GetLock(obj);
             l.Count--;
             // If lock is fully released...
             if (l.Count == 0)

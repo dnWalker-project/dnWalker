@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using dnlib.DotNet;
 using MMC.Data;
 using MMC.State;
+using MMC.InstructionExec;
 
 namespace dnWalker.NativePeers
 {
     public class SystemRuntimeFieldHandle : NativePeer
     {
-        public SystemRuntimeFieldHandle(MethodDef meth) : base(meth)
+        public override bool TryGetValue(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
         {
-        }
-
-        public override bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement)
-        {
-            dataElement = null;
-
-            if (_method.FullName == "System.IntPtr System.RuntimeFieldHandle::get_Value()")
+            if (method.FullName == "System.IntPtr System.RuntimeFieldHandle::get_Value()")
             {
                 var value = args[0];
                 switch (value)
@@ -25,16 +18,17 @@ namespace dnWalker.NativePeers
                     case LocalVariablePointer localVariablePointer:
                         args = new DataElementList(1);
                         args[0] = localVariablePointer.Value;
-                        return TryGetValue(args, cur, out dataElement);
+                        return TryGetValue(method, args, cur, out iieReturnValue);
                     case FieldHandle fieldHandle:
-                        dataElement = cur.DefinitionProvider.CreateDataElement(fieldHandle.Value.GetHashCode());
+                        cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(fieldHandle.Value.GetHashCode()));
+                        iieReturnValue = InstructionExecBase.nextRetval;
                         return true;
                     default:
                         throw new NotImplementedException(value.GetType().FullName);
                 }
             }
 
-            throw new NotImplementedException("Native peer for " + _method.FullName);
+            throw new NotImplementedException("Native peer for " + method.FullName);
         }
     }
 }

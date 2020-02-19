@@ -1,30 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MMC.InstructionExec;
 using dnlib.DotNet;
 using MMC.Data;
 using MMC.State;
+using System.Reflection;
+using System.Linq;
 
 namespace dnWalker.NativePeers
 {
     public class SystemEnvironment : NativePeer
     {
-        public SystemEnvironment(MethodDef method) : base(method)
+        private static MethodInfo _getResourceStringMethodInfo;
+
+        static SystemEnvironment()
         {
+            _getResourceStringMethodInfo = typeof(System.Environment)
+                .GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Default)
+                .FirstOrDefault(m => m.Name == "GetResourceString" && m.GetParameters().Length == 1);
         }
 
-        public override bool TryGetValue(DataElementList args, ExplicitActiveState cur, out IDataElement dataElement)
+        public static string GetResourceString(string key)
         {
-            switch (_method.Name)
+            var resourceValue = _getResourceStringMethodInfo.Invoke(null, new object[] { key });
+            return (string)resourceValue;
+        }
+
+        public override bool TryGetValue(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
+        {
+            switch (method.Name)
             {
                 case "GetResourceString":
-                    dataElement = args[0];
+                    var resourceValue = GetResourceString(((ConstantString)args[0]).Value);
+                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(resourceValue));                    
+                    iieReturnValue = InstructionExecBase.nextRetval;
                     return true;
             }
 
-            dataElement = null;
+            iieReturnValue = null;
             return false;
         }
     }

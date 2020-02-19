@@ -2708,6 +2708,15 @@ namespace MMC.InstructionExec
             bool violated;
             if (!HandleAssertCall(args, cur, out violated) && !FilterCall(cur))
             {
+                var bypass = NativePeer.Get(methDef.DeclaringType);
+                if (bypass != null)
+                {
+                    if (bypass.TryGetValue(methDef, args, cur, out var returnValue))
+                    {
+                        return returnValue;
+                    }
+                }
+
                 // Check for empty body (stub).
                 if (IsEmptyMethod(methDef))
                 {
@@ -2719,16 +2728,6 @@ namespace MMC.InstructionExec
                 }
                 else
                 {
-                    var bypass = NativePeer.Get(methDef);
-                    if (bypass != null)
-                    {
-                        if (bypass.TryGetValue(args, cur, out var dataElement))
-                        {
-                            cur.EvalStack.Push(dataElement);
-                            return retval;
-                        }
-                    }
-
                     // Create new frame. Note we still return nextRetval, so
                     // the call instruction is not re-executed after returning.
                     //
@@ -2827,13 +2826,12 @@ namespace MMC.InstructionExec
             // Skip certain calls.
             if (!FilterCall(cur))
             {
-                var bypass = NativePeer.Get(methDef);
+                var bypass = NativePeer.Get(methDef.DeclaringType);
                 if (bypass != null)
                 {
-                    if (bypass.TryGetValue(args, cur, out var dataElement))
+                    if (bypass.TryGetValue(methDef, args, cur, out var returnValue))
                     {
-                        cur.EvalStack.Push(dataElement);
-                        return nextRetval;
+                        return returnValue;
                     }
                 }
                 // Check for empty body. This will catch the virtual calls to e.g.

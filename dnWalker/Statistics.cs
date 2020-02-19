@@ -43,14 +43,15 @@ namespace MMC
         int m_revisitCount;
         int m_backtrackCount;
         int m_maxBacktrackStack;
-        long m_maxMemUsage = 0;
-        int m_deadlocks;
+        long m_maxMemUsage = 0;        
         int m_assertions;
         int m_maxAllocArray;
 
+        public int Deadlocks { get; private set; }
+
         public void Deadlock()
         {
-            m_deadlocks++;
+            Deadlocks++;
         }
 
         public void AssertionViolation()
@@ -134,7 +135,7 @@ namespace MMC
             sb.AppendFormat("Max. stored states    : {0}\n", m_hashtableCount);
             sb.AppendFormat("Max. mem. used        : {0} Kb\n", m_maxMemUsage / 1024);
             sb.AppendFormat("Current. mem. use     : {0} Kb\n", usedAfterGC);
-            sb.AppendFormat("Deadlocks             : {0}\n", m_deadlocks);
+            sb.AppendFormat("Deadlocks             : {0}\n", Deadlocks);
             sb.AppendFormat("Assertion violations  : {0}\n", m_assertions);
             sb.Append("--------------------------------------\n");
 
