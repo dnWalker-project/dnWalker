@@ -354,8 +354,7 @@ namespace MMC.ICall {
             ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false),
                 methDef.DeclaringType);
-            AllocatedObject threadObject =
-                cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
+            //AllocatedObject threadObject = cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
             // First, create a new thread. The first argument is the this pointer
             // to the thread object. The second argument is a reference to the
@@ -374,7 +373,7 @@ namespace MMC.ICall {
 
             MethodState newThreadState = new MethodState(del.Method.Value, delPars, cur);
 
-            int newThreadId = cur.ThreadPool.NewThread(cur, newThreadState, threadObjectRef);// (ObjectReference)args[0]);
+            /*int newThreadId = */cur.ThreadPool.NewThread(cur, newThreadState, threadObjectRef);// (ObjectReference)args[0]);
 
             // Push ID on stack as an IntPointer.
             cur.EvalStack.Push(threadObjectRef);// new IntPointer(newThreadId));

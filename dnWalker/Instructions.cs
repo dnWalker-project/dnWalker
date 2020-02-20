@@ -2717,6 +2717,12 @@ namespace MMC.InstructionExec
                     }
                 }
 
+                if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
+                {
+                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(args[0].ToString()));
+                    return nextRetval;
+                }
+
                 // Check for empty body (stub).
                 if (IsEmptyMethod(methDef))
                 {
@@ -2925,20 +2931,28 @@ namespace MMC.InstructionExec
                 args[i] = cur.EvalStack.Pop();
             }
 
-            if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
+            var nativePeer = NativePeer.Get(methDef.DeclaringType);
+            if (Method.IsConstructor 
+                && nativePeer != null
+                && nativePeer.TryConstruct(methDef, args, cur))
+            {
+                return nextRetval;
+            }
+
+            /*if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
             {
                 ThreadHandlers.Thread_internal(Method, args, cur);
 
                 //MMC.ICall.IntCallManager.
-                /*ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
-                    cur.DynamicArea.DeterminePlacement(false),
-                    cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));*/
+                //ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
+                //cur.DynamicArea.DeterminePlacement(false),
+                //cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));*
 
                 //cur.ThreadPool.NewThread(null, threadObjectRef);
                 //return threadObjectRef;
                 //return cur.EvalStack.Pop();
                 return nextRetval;
-            }
+            }*/
 
             // Check for empty body.
             if (IsEmptyMethod(methDef))

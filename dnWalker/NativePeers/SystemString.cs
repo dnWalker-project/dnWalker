@@ -2,6 +2,7 @@
 using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
+using System.Text;
 
 namespace dnWalker.NativePeers
 {
@@ -28,8 +29,29 @@ namespace dnWalker.NativePeers
                 dataElement = new Int4(s.Value.Length);
             }
 
+            if (method.FullName.StartsWith("System.String System.String::Concat("))
+            {
+                var sb = new StringBuilder();
+                foreach (var arg in args)
+                {
+                    if (arg is ConstantString cs)
+                    {
+                        sb.Append(cs.Value);
+                        continue;
+                    }
+                    sb.Append(arg.ToString());
+                }
+                dataElement = new ConstantString(sb.ToString());
+            }
+
+            if (method.FullName == "System.Boolean System.String::IsNullOrEmpty(System.String)")
+            {
+
+            }
+
             if (dataElement != null)
             {
+                cur.EvalStack.Push(dataElement);
                 iieReturnValue = InstructionExecBase.nextRetval;
                 return true;
             }

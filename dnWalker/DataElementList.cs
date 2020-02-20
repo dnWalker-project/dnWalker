@@ -20,8 +20,10 @@ namespace MMC.Data
     using System.Diagnostics;
     using MMC.Util;
     using MMC.Collections;
+    using System.Collections.Generic;
+    using System.Collections;
 
-    public class DataElementList : IDataElementContainer
+    public class DataElementList : IDataElementContainer, IEnumerable<IDataElement>
     {
         protected IDataElement[] m_elements;
         protected bool m_isDirty;
@@ -96,6 +98,16 @@ namespace MMC.Data
             }
 
             return equal;
+        }
+
+        public IEnumerator<IDataElement> GetEnumerator()
+        {
+            return ((IEnumerable<IDataElement>)m_elements).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<IDataElement>)m_elements).GetEnumerator();
         }
 
         public DataElementList(int length)

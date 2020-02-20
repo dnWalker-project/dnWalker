@@ -309,9 +309,14 @@ namespace MMC
                 return retval;
             }
 
-            if (name == ".cctor" && typeDef.FindStaticConstructor() == null)
+            if (name == ".cctor")
             {
-                return null;
+                var cctor = typeDef.FindStaticConstructor();
+                if (cctor != null)
+                {
+                    m_methodDefinitionsByReference.Add(methodName, cctor);
+                    return cctor;
+                }
             }
 
             throw new NotSupportedException("SearchMethod " + methodName);

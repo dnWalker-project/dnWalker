@@ -97,6 +97,7 @@
     <Compile Include="MethodState.cs" />
     <Compile Include="MMCExceptions.cs" />
     <Compile Include="NativePeers\SystemEnvironment.cs" />
+    <Compile Include="NativePeers\SystemRandom.cs" />
     <Compile Include="NativePeers\SystemThreadingMonitor.cs" />
     <Compile Include="NativePeers\SystemString.cs" />
     <Compile Include="NativePeers\SystemFloat.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="NativePeers\SystemRuntimeMethodHandle.cs" />
     <Compile Include="NativePeers\SystemRuntimeFieldHandle.cs" />
     <Compile Include="NativePeers\SystemRuntimeTypeHandle.cs" />
+    <Compile Include="NativePeers\SystemThreadingThread.cs" />
     <Compile Include="PartialOrderReduction.cs" />
     <Compile Include="PlacementMapping.cs" />
     <Compile Include="Pool.cs" />

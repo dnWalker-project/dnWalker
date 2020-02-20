@@ -50,9 +50,19 @@ namespace dnWalker
                 return new NativePeers.SystemString();
             }
 
+            if (typeDef.FullName == typeof(System.Threading.Thread).FullName)
+            {
+                return new NativePeers.SystemThreadingThread();
+            }
+
             if (typeDef.FullName == typeof(System.Threading.Monitor).FullName)
             {
                 return new NativePeers.SystemThreadingMonitor();
+            }
+
+            if (typeDef.FullName == typeof(Random).FullName)
+            {
+                return new NativePeers.SystemRandom();
             }
 
             return null;
@@ -63,5 +73,10 @@ namespace dnWalker
         }
 
         public abstract bool TryGetValue(MethodDef methodDef, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue);
+
+        public virtual bool TryConstruct(MethodDef methodDef, DataElementList args, ExplicitActiveState cur)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
