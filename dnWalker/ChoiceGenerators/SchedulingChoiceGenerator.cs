@@ -14,18 +14,14 @@ namespace dnWalker.ChoiceGenerators
     public class SchedulingChoiceGenerator : IChoiceGenerator, IScheduler
     {
         private readonly ExplicitActiveState cur;
-        private Collapser m_stateConvertor;
         private readonly Stack<SchedulingData> m_dfs;
         private readonly BacktrackEventHandler backtrackStart;
         private readonly BacktrackEventHandler backtracked;
         private readonly BacktrackEventHandler backtrackStop;
         private readonly PickThreadEventHandle threadPicked;
-        private readonly StateEventHandler stateConstructed;
-        private readonly StateEventHandler _stateRevisited;
-        private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
         private readonly Explorer explorer;
         private readonly IStatistics _statistics;
-        private readonly FastHashtable<CollapsedState, int> m_stateStorage;
+        private readonly StateStorage m_stateStorage;
         private readonly ObjectEscapePOR m_spor;
 
         public bool HasMoreChoices => throw new NotImplementedException();
@@ -33,28 +29,21 @@ namespace dnWalker.ChoiceGenerators
         internal SchedulingChoiceGenerator(
             Explorer explorer,
             IStatistics statistics,
-            FastHashtable<CollapsedState, int> stateStorage,
-            Collapser stateConvertor,
+            StateStorage stateStorage,
             ObjectEscapePOR m_spor,
-            StateEventHandler stateRevisited,
             BacktrackEventHandler backtrackStart,
             BacktrackEventHandler backtracked,
             BacktrackEventHandler backtrackStop,
-            PickThreadEventHandle threadPicked,
-            StateEventHandler stateConstructed)
+            PickThreadEventHandle threadPicked)
         {
             this.backtrackStart = backtrackStart;
             this.backtracked = backtracked;
             this.backtrackStop = backtrackStop;
             this.threadPicked = threadPicked;
-            this.stateConstructed = stateConstructed;
-            _stateRevisited = stateRevisited;
             cur = explorer.cur;
-            m_stateStorage = stateStorage;
-            m_stateConvertor = stateConvertor;
             this.explorer = explorer;
             _statistics = statistics;
-
+            m_stateStorage = stateStorage;
             this.m_spor = m_spor;
 
             // DFS stack
@@ -69,6 +58,8 @@ namespace dnWalker.ChoiceGenerators
                 return threadId;
             }
 
+            var m_stateConvertor = cur.StateCollapser;
+
             // Run garbage collection
             cur.GarbageCollector.Run(cur);
 
@@ -76,7 +67,7 @@ namespace dnWalker.ChoiceGenerators
 			 * if matched, a backtracking is initiated by
 			 * returning an empty working queue 
 			 */
-            SchedulingData sd = UpdateHashtable(cur);
+            SchedulingData sd = cur.Collapse(m_stateStorage);
 
             backtrackStart(m_dfs, sd, cur);
 
@@ -117,57 +108,6 @@ namespace dnWalker.ChoiceGenerators
         protected virtual int SelectRunnableThread(SchedulingData sd)
         {
             return sd.Dequeue();
-        }
-
-        private SchedulingData UpdateHashtable(ExplicitActiveState cur)
-        {
-            var collapsedCurrent = m_stateConvertor.CollapseCurrentState();
-
-            var sd = new SchedulingData
-            {
-                Delta = collapsedCurrent.GetDelta()
-            };
-
-            int id = m_stateStorage.Count + 1;
-            bool seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
-
-            /*
-			 * Note: the collapsedCurrent stored in the hashtable can be
-			 * different from the current collapsedCurrent, although they
-			 * represent the same collapsedState. This is due to the 
-			 * changingintvector, which also contains information about
-			 * the reversed delta, which may be different for two 
-			 * representative collapsed states */
-            sd.ID = id;
-            sd.State = collapsedCurrent;
-
-            if (seenState)
-            {
-                // state is not new
-                sd.Working = m_emptyQueue;
-                _stateRevisited(collapsedCurrent, sd, cur);
-            }
-            else
-            {
-                // state is new
-                collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
-                sd.Enabled = cur.ThreadPool.RunnableThreadIds;
-
-                if (sd.Enabled.Count > 0)
-                {
-                    sd.Working = sd.Enabled;
-                    sd.Done = new Queue<int>();
-                }
-                else
-                {
-                    sd.Working = m_emptyQueue;
-                    sd.Done = m_emptyQueue;
-                }
-
-                stateConstructed(collapsedCurrent, sd, cur);
-            }
-
-            return sd;
         }
 
         /// <summary>

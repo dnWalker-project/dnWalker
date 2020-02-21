@@ -118,6 +118,7 @@
     <Compile Include="SparseReferenceList.cs" />
     <Compile Include="StateCollapser.cs" />
     <Compile Include="StateDecollapser.cs" />
+    <Compile Include="StateStorage.cs" />
     <Compile Include="StaticAllocations.cs" />
     <Compile Include="StaticArea.cs" />
     <Compile Include="Statistics.cs" />

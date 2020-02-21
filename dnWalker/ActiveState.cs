@@ -20,6 +20,9 @@ namespace MMC.State
     using MMC.Data;
     using MMC.Util;
     using MMC.InstructionExec;
+    using MMC.Collections;
+    using System.Collections.Generic;
+    using dnWalker;
 
     /// <summary>
     /// An implementation of the active state of the virtual machine.
@@ -30,6 +33,7 @@ namespace MMC.State
         IStaticArea m_stat;
         ThreadPool m_tp;
         IGarbageCollector m_gc;
+        private readonly Collapser m_stateConvertor;
 
         /// <summary>
         /// The allocation heap, i.e. the dynamic part of the state.
@@ -108,6 +112,8 @@ namespace MMC.State
         internal ThreadObjectWatcher ThreadObjectWatcher { get; }
 
         public DefinitionProvider DefinitionProvider { get; }
+
+        internal Collapser StateCollapser => m_stateConvertor;
 
         /// <summary>
         /// Evaluation stack of top of callstack of currently running thread.
@@ -233,6 +239,8 @@ namespace MMC.State
             InstructionExecProvider = instructionExecProvider;
             Reset();
 
+            m_stateConvertor = new Collapser(this);
+
             /*
 			 * Pick out the garbage collector. Note that only memoised GC and
 			 * Mark & sweep are available. Reference counting is broken. */
@@ -243,6 +251,60 @@ namespace MMC.State
             StorageFactory = new StorageFactory(this);
             ParentWatcher = new ParentWatcher(config, DefinitionProvider);
             ThreadObjectWatcher = new ThreadObjectWatcher();
+        }
+
+        private readonly Queue<int> m_emptyQueue = new Queue<int>(0);        
+
+        internal SchedulingData Collapse(StateStorage m_stateStorage)
+        {
+            var cur = this;
+            var collapsedCurrent = cur.StateCollapser.CollapseCurrentState();
+
+            var sd = new SchedulingData
+            {
+                Delta = collapsedCurrent.GetDelta()
+            };
+
+            int id = m_stateStorage.Count + 1;
+            bool seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
+
+            /*
+			 * Note: the collapsedCurrent stored in the hashtable can be
+			 * different from the current collapsedCurrent, although they
+			 * represent the same collapsedState. This is due to the 
+			 * changingintvector, which also contains information about
+			 * the reversed delta, which may be different for two 
+			 * representative collapsed states */
+            sd.ID = id;
+            sd.State = collapsedCurrent;
+
+            if (seenState)
+            {
+                // state is not new
+                sd.Working = m_emptyQueue;
+                m_stateStorage.StateRevisited(collapsedCurrent, sd, cur);
+            }
+            else
+            {
+                // state is new
+                collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
+                sd.Enabled = cur.ThreadPool.RunnableThreadIds;
+
+                if (sd.Enabled.Count > 0)
+                {
+                    sd.Working = sd.Enabled;
+                    sd.Done = new Queue<int>();
+                }
+                else
+                {
+                    sd.Working = m_emptyQueue;
+                    sd.Done = m_emptyQueue;
+                }
+
+                m_stateStorage.StateConstructed(collapsedCurrent, sd, cur);
+            }
+
+            return sd;
         }
     }
 }

@@ -28,6 +28,7 @@ namespace MMC
 	using MMC.Collections;
     using dnlib.DotNet.Emit;
     using dnWalker.ChoiceGenerators;
+    using dnWalker;
 
     /// <summary>
     /// Handler for events that indicate the exploration of a state.
@@ -101,8 +102,7 @@ namespace MMC
 		/// </summary>
 		protected event ExplorationHaltEventHandle ExplorationHalted;
 
-        private readonly Collapser m_stateConvertor;
-        private readonly FastHashtable<CollapsedState, int> m_stateStorage;
+        private readonly StateStorage m_stateStorage;
         private readonly StatefulDynamicPOR m_dpor;
 		private readonly ObjectEscapePOR m_spor;
         private readonly Timer m_explorationTimer;
@@ -119,15 +119,11 @@ namespace MMC
 
             Config = config;
             _instructionExecProvider = cur.InstructionExecProvider;            
-            m_stateConvertor = new Collapser(cur);
-
+            
             cur.DoSharingAnalysisRequest += () => DoSharingAnalysis = true;
 
             var size = Math.Max(20, config.StateStorageSize);
             size = Math.Min(5, size);
-
-            // hashtable
-            m_stateStorage = new FastHashtable<CollapsedState, int>(size);
 
             ExplorationLogger el = new ExplorationLogger(Statistics, this);
 
@@ -193,18 +189,22 @@ namespace MMC
             m_memoryTimer.Interval = 5 * 1000;
             m_memoryTimer.Enabled = true;
 
+            // hashtable
+            m_stateStorage = new StateStorage(size)
+            {
+                StateConstructed = StateConstructed,
+                StateRevisited = StateRevisited
+            };
+
             _choiceGenerator = new SchedulingChoiceGenerator(
                 this,
                 Statistics,
                 m_stateStorage,
-                m_stateConvertor,
                 m_spor,
-                StateRevisited,
                 BacktrackStart,
                 Backtracked,
                 BacktrackStop,
-                ThreadPicked,
-                StateConstructed);
+                ThreadPicked);
         }
 
         public IConfig Config { get; }
