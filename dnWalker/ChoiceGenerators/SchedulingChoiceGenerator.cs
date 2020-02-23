@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MMC;
-using MMC.Collections;
 using MMC.State;
 
 namespace dnWalker.ChoiceGenerators
 {
-    public interface IScheduler { }
+    public interface IScheduler
+    {
+        Stack<int> GetErrorTrace();
+    }
 
     public class SchedulingChoiceGenerator : IChoiceGenerator, IScheduler
     {
@@ -23,8 +22,6 @@ namespace dnWalker.ChoiceGenerators
         private readonly IStatistics _statistics;
         private readonly StateStorage m_stateStorage;
         private readonly ObjectEscapePOR m_spor;
-
-        public bool HasMoreChoices => throw new NotImplementedException();
 
         internal SchedulingChoiceGenerator(
             Explorer explorer,
@@ -50,7 +47,7 @@ namespace dnWalker.ChoiceGenerators
             m_dfs = new Stack<SchedulingData>();            
         }
 
-        public object GetNextChoice()
+        object IChoiceGenerator.GetNextChoice()
         {
             var threadId = m_spor.GetPersistentThread(explorer);
             if (threadId >= 0)
@@ -67,7 +64,7 @@ namespace dnWalker.ChoiceGenerators
 			 * if matched, a backtracking is initiated by
 			 * returning an empty working queue 
 			 */
-            SchedulingData sd = cur.Collapse(m_stateStorage);
+            var sd = cur.Collapse(m_stateStorage);
 
             backtrackStart(m_dfs, sd, cur);
 
@@ -94,7 +91,7 @@ namespace dnWalker.ChoiceGenerators
 
                 // update last access information 
                 // (used by dynamic POR + tracing explorer) 
-                MemoryLocation ml = cur.NextAccess(threadId);
+                var ml = cur.NextAccess(threadId);
                 sd.LastAccess = new MemoryAccess(ml, threadId);
 
                 threadPicked(sd, threadId);
@@ -115,7 +112,7 @@ namespace dnWalker.ChoiceGenerators
         /// </summary>
         public Stack<int> GetErrorTrace()
         {
-            Stack<int> retval = new Stack<int>();
+            var retval = new Stack<int>();
             foreach (SchedulingData sd in m_dfs)
             {
                 retval.Push(sd.LastAccess.ThreadId);
@@ -123,5 +120,19 @@ namespace dnWalker.ChoiceGenerators
 
             return retval;
         }
+
+        void IChoiceGenerator.SetContext(ExplicitActiveState activeState)
+        {
+        }
+
+        SchedulingData IChoiceGenerator.Advance()
+        {
+            return null;
+        }
+
+        bool IChoiceGenerator.HasMoreChoices => throw new NotImplementedException();
+
+        IChoiceGenerator IChoiceGenerator.Previous { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     }
 }

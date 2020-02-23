@@ -65,7 +65,12 @@ namespace MMC.Data {
 			}
 		}
 
-		public virtual void Push(IDataElement e) {
+        public void Push(object o)
+        {
+			Push(cur.DefinitionProvider.CreateDataElement(o));
+        }
+
+        public virtual void Push(IDataElement e) {
 
 			if (m_isReadonly)
 				throw new System.InvalidOperationException("Changing read-only data element stack.");

@@ -2590,7 +2590,7 @@ namespace MMC.InstructionExec
         protected DataElementList CopyArgumentList(ExplicitActiveState cur, ThreadState thread)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
-            int size = methDef.Parameters.Count + (methDef.HasThis ? 1 : 0);
+            int size = methDef.Parameters.Count;// + (methDef.HasThis ? 1 : 0);
             DataElementList retval = cur.StorageFactory.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).

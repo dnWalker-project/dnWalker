@@ -18,6 +18,10 @@ namespace dnWalker.Tests.ExampleTests
         public void Rand()
         {
             Explore("Examples.Rand.Go",
+                c =>
+                {
+                    c.SetCustomSetting("evaluateRandom", true);
+                },
                 (ex, stats) =>
                 {
                     //ex.Should().BeNull();

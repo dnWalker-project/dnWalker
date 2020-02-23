@@ -58,7 +58,11 @@ namespace dnWalker.Tests
             return state.CurrentThread.RetValue;
         }
 
-        protected virtual void Explore(string methodName, Action<Exception, SimpleStatistics> finished, params object[] args)
+        protected void Explore(
+            string methodName, 
+            Action<IConfig> before,
+            Action<Exception, SimpleStatistics> finished, 
+            params object[] args)
         {
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
@@ -70,6 +74,8 @@ namespace dnWalker.Tests
                 args.Select(a => _definitionProvider.CreateDataElement(a)).ToArray());
 
             var statistics = new SimpleStatistics();
+
+            before?.Invoke(_config);
 
             var explorer = new Explorer(state, statistics, _logger, _config);
             explorer.Run();

@@ -139,6 +139,7 @@ namespace MMC
             Deadlocked += new DeadlockEventHandler(el.LogDeadlock);
             ThreadPicked += new PickThreadEventHandle(el.LogPickedThread);
             ExplorationHalted += new ExplorationHaltEventHandle(el.ExplorationHalted);
+            cur.ChoiceGeneratorCreated += OnChoiceGeneratorCreated;
 
             if (DotWriter.IsEnabled())
             {
@@ -250,6 +251,8 @@ namespace MMC
 
             Logger.Notice("Exploration starts now");
 
+            cur.StateStorage = m_stateStorage;
+
             do
             {
                 if (!SetExecutingThread(out ThreadState thread))
@@ -294,6 +297,8 @@ namespace MMC
                         break;
                     }
                 }
+
+                Advance();
                 
                 Statistics.MaxHashtableSize(m_stateStorage.Count);
                 Statistics.MaxHeapArray(cur.DynamicArea.Allocations.Length);
@@ -304,6 +309,35 @@ namespace MMC
             Logger.Message("End of story: explored the whole state space");
 
             return noErrors;
+        }
+
+        private void Advance()
+        {
+            if (_choiceGenerator is IScheduler)
+            {
+                return;
+            }
+
+            if (!_choiceGenerator.HasMoreChoices)
+            {
+                _choiceGenerator = _choiceGenerator.Previous;
+                return;
+            }
+
+            var sd = _choiceGenerator.Advance();
+            var m_dfs = new Stack<SchedulingData>();
+            m_dfs.Push(sd);
+            BacktrackStart(m_dfs, sd, cur);
+
+            //while (sd.Working.Count == 0 && m_dfs.Count > 0)
+            //{
+                // apply the reverse delta
+                cur.StateCollapser.DecollapseByDelta(sd.Delta);
+                Backtracked(m_dfs, sd, cur);
+              //  sd = m_dfs.Pop();
+            //}
+
+            BacktrackStop(m_dfs, sd, cur);
         }
 
         /// <summary>
@@ -346,7 +380,7 @@ namespace MMC
         /// </summary>
         public Stack<int> GetErrorTrace()
         {
-            return _choiceGenerator.GetErrorTrace();
+            return (_choiceGenerator as IScheduler).GetErrorTrace();
         }
 
         public virtual void PrintTransition() { }
@@ -355,7 +389,7 @@ namespace MMC
         /// Execute one (unsafe) instruction, followed by 0 or more safe instructions,
         /// where safe are intrathread instructions or where the is only one thread left for execution
         /// </summary>
-        /// <param name="threadId"></param>
+        /// <param name="thread"></param>
         /// <param name="threadTerm"></param>
         /// <returns></returns>
         public bool ExecuteStep(ThreadState thread, out bool threadTerm)
@@ -479,5 +513,11 @@ namespace MMC
 		}
 
         public ExplicitActiveState cur { get; }
-	}
+
+        private void OnChoiceGeneratorCreated(IChoiceGenerator choiceGenerator)
+        {
+            choiceGenerator.Previous = _choiceGenerator;
+            _choiceGenerator = choiceGenerator;
+        }
+    }
 }

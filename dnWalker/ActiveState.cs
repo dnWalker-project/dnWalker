@@ -15,6 +15,8 @@
  *
  */
 
+using dnWalker.ChoiceGenerators;
+
 namespace MMC.State
 {
     using MMC.Data;
@@ -23,6 +25,8 @@ namespace MMC.State
     using MMC.Collections;
     using System.Collections.Generic;
     using dnWalker;
+
+    public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
     /// <summary>
     /// An implementation of the active state of the virtual machine.
@@ -34,6 +38,8 @@ namespace MMC.State
         ThreadPool m_tp;
         IGarbageCollector m_gc;
         private readonly Collapser m_stateConvertor;
+
+        public event ChoiceGeneratorCreated ChoiceGeneratorCreated;
 
         /// <summary>
         /// The allocation heap, i.e. the dynamic part of the state.
@@ -130,6 +136,8 @@ namespace MMC.State
         }
 
         public Logger Logger { get; internal set; }
+        
+        internal StateStorage StateStorage { get; set; }
 
         /// <summary>
         /// Determine if we are "running" in the assembly to be checked.
@@ -210,11 +218,10 @@ namespace MMC.State
         /// <returns>A string representation of the active state.</returns>
         public override string ToString()
         {
-            return string.Format(@"------------------------- DYNAMIC AREA -------------------------
-{0}------------------------- STATIC  AREA -------------------------
-{1}------------------------- THREAD  POOL -------------------------
-{2}",
-                m_dyn.ToString(), m_stat.ToString(), m_tp.ToString());
+            return $@"------------------------- DYNAMIC AREA -------------------------
+{m_dyn}------------------------- STATIC  AREA -------------------------
+{m_stat}------------------------- THREAD  POOL -------------------------
+{m_tp}";
         }
 
         public void Reset()
@@ -305,6 +312,13 @@ namespace MMC.State
             }
 
             return sd;
+        }
+
+        public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
+        {
+            choiceGenerator.SetContext(this);
+
+            ChoiceGeneratorCreated?.Invoke(choiceGenerator);
         }
     }
 }

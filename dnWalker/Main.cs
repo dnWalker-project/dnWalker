@@ -15,6 +15,8 @@
  *
  */
 
+using System.ComponentModel;
+
 namespace MMC
 {
 
@@ -53,6 +55,9 @@ namespace MMC
         string LogFileName { get; }
 
         int StateStorageSize { get; }
+
+        void SetCustomSetting(string key, object value);
+        T GetCustomSetting<T>(string key);
     }
 
     /// <summary>
@@ -90,6 +95,29 @@ namespace MMC
         public double MemoryLimit { get; set; } = double.PositiveInfinity;
         public string LogFileName { get; set; }
         public int StateStorageSize { get; set; } = 20;
+
+        private readonly System.Collections.Generic.IDictionary<string, object> _custom =
+            new System.Collections.Generic.Dictionary<string, object>();
+        public void SetCustomSetting(string key, object value)
+        {
+            _custom[key] = value;
+        }
+
+        public T GetCustomSetting<T>(string key)
+        {
+            if (!_custom.TryGetValue(key, out var value))
+            {
+                return default(T);
+            }
+
+            if (value is IConvertible convertible)
+            {
+                return (T) Convert.ChangeType(convertible, typeof(T));
+            }
+
+            return (T) value;
+
+        }
     }
 
     /// The main application class.
@@ -406,6 +434,7 @@ Disabling/enabling features:
         public static void Main(string[] args)
         {
             new MonoModelChecker().Go(args);
+            Console.ReadKey();
         }
 
         public void Go(string[] args)

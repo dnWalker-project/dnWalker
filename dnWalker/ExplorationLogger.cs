@@ -72,7 +72,7 @@ namespace MMC
 
         public void LogBacktrack(Stack<SchedulingData> stack, SchedulingData fromSd, ExplicitActiveState cur)
         {
-            m_explorer.Logger.Debug("backtracked from " + fromSd.ID);
+            m_explorer.Logger.Debug(stack.Peek().ID + " backtracked from " + fromSd.ID);
             Statistics.Backtrack();
         }
 

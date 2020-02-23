@@ -19,6 +19,7 @@ namespace dnWalker.Tests.ExampleTests
         public void Go()
         {
             Explore("Deadlock.Go",
+                null,
                 (ex, stats) => 
                 {
                     ex.Should().BeNull();

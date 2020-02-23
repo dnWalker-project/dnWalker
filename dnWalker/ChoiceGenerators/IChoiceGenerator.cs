@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MMC.State;
 
 namespace dnWalker.ChoiceGenerators
 {
@@ -11,7 +12,10 @@ namespace dnWalker.ChoiceGenerators
         object GetNextChoice();
 
         bool HasMoreChoices { get; }
+        IChoiceGenerator Previous { get; set; }
 
-        Stack<int> GetErrorTrace();
-    }
+        void SetContext(ExplicitActiveState activeState);
+
+        SchedulingData Advance();
+    }   
 }
