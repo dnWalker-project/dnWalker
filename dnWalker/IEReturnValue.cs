@@ -83,9 +83,16 @@ namespace MMC.InstructionExec
 
     class NoIncrementReturnValue : IIEReturnValue
     {
+        private readonly bool _continueExploration;
+
+        internal NoIncrementReturnValue(bool continueExploration = true)
+        {
+            _continueExploration = continueExploration;
+        }
+
         public bool ContinueExploration(MethodState current)
         {
-            return true;
+            return _continueExploration;
         }
 
         public override string ToString()

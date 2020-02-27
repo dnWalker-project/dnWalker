@@ -31,7 +31,8 @@ namespace MMC.Util {
 		int Index { get; }
 		int DeltaVal { get; }
 		ISparseElement Next { get; }
-	}
+        ISparseElement Clone();
+    }
 
 
     public struct SparseElement : ISparseElement {
@@ -55,8 +56,13 @@ namespace MMC.Util {
 			get { return m_next; }
 		}
 
-		public int m_index;
-		public int m_deltaVal;
-		public ISparseElement m_next;
-	}
+        public ISparseElement Clone()
+        {
+            return new SparseElement(m_index, m_deltaVal, m_next?.Clone());
+        }
+
+        private readonly int m_index;
+        private readonly int m_deltaVal;
+		private readonly ISparseElement m_next;
+    }
 }

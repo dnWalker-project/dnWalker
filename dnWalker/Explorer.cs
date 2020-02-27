@@ -324,6 +324,13 @@ namespace MMC
                 return;
             }
 
+            cur.Next();
+            
+            if (cur.ChoiceGenerator != null)
+            {
+                return;
+            }
+
             var sd = _choiceGenerator.Advance();
             var m_dfs = new Stack<SchedulingData>();
             m_dfs.Push(sd);

@@ -295,6 +295,12 @@ namespace MMC.State
                 currentMethod = cur.CurrentMethod;
                 continueExploration = ier.ContinueExploration(currentMethod);
 
+                if (cur.Break())
+                {
+                    continueExploration = true;
+                    break;
+                }
+
                 if (currentMethod != null && continueExploration)
                 {
                     currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);

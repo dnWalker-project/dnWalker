@@ -18,6 +18,32 @@ namespace dnWalker.NativePeers
                 var maxValue = ((Int4) args[1]).Value;
                 var cg = new IntChoiceFromValueSet(0, maxValue);
 
+                if (cur.ChoiceGenerator is IntChoiceFromValueSet choiceFromValueSet)
+                {
+                    foreach (var arg in args)
+                    {
+                        cur.EvalStack.Push(arg);
+                    }
+
+                    var schedulingData = cur.Collapse();
+                    foreach (var _ in args)
+                    {
+                        cur.EvalStack.Pop();
+                    }
+
+                    if (schedulingData.ID == choiceFromValueSet.SchedulingData.ID)
+                    {
+                        cur.EvalStack.Push(cg.GetNextChoice());
+                        iieReturnValue = InstructionExecBase.nextRetval;
+                        //cur.SetNextChoiceGenerator(choiceFromValueSet);
+                        return true;
+                    }
+                    else
+                    {
+
+                    }
+                }
+
                 if (cur.Configuration.GetCustomSetting<bool>("evaluateRandom"))
                 {
                     foreach (var arg in args)
@@ -27,10 +53,12 @@ namespace dnWalker.NativePeers
 
                     cur.SetNextChoiceGenerator(cg);
                     
-                    foreach (var arg in args)
+                    /*foreach (var arg in args)
                     {
                         cur.EvalStack.Pop();
-                    }
+                    }*/
+                    iieReturnValue = InstructionExecBase.nincRetval;
+                    return true;
                 }
 
                 cur.EvalStack.Push(cg.GetNextChoice());

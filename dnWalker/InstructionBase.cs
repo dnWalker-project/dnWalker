@@ -49,6 +49,7 @@ namespace MMC.InstructionExec
         // so no need for more than one copy.
         public static IIEReturnValue nextRetval = new NextReturnValue();
         public static IIEReturnValue nincRetval = new NoIncrementReturnValue();
+        public static IIEReturnValue nincRetvalBreak = new NoIncrementReturnValue(false);
         public static IIEReturnValue assertionViolatedRetval = new AssertionViolatedReturnValue();
         public static IIEReturnValue ehLookupRetval = new ExceptionHandlerLookupReturnValue();
         public static IIEReturnValue finallyLookupRetval = new ExceptionFinallyReturnValue();

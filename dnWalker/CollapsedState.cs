@@ -47,12 +47,19 @@ namespace MMC.State {
 
 		public ISparseElement Threads {
 			get { return m_trdsDelta; }
-		}
+            internal set { m_trdsDelta = value; }
+        }
 
 		public int ThreadsUpperBound {
 			get { return m_threadsUpperbound; }
 		}
-	}
+
+        public CollapsedStateDelta Clone()
+        {
+            return new CollapsedStateDelta(m_allocDelta?.Clone(), m_classDelta?.Clone(), m_trdsDelta?.Clone(),
+                ThreadsUpperBound);
+        }
+    }
 
     public class CollapsedState
     {
@@ -75,11 +82,14 @@ namespace MMC.State {
 
         public CollapsedState Clone()
         {
-			return new CollapsedState(
-				m_alloc.WriteBack(),
-				m_class.WriteBack(),
-				m_trds.WriteBack());
-		}
+            return new CollapsedState(
+                m_alloc.WriteBack(),
+                m_class.WriteBack(),
+                m_trds.WriteBack())
+            {
+                SII = SII
+            };
+        }
 
 		public void ClearDelta() {
 			m_alloc.ClearDelta();

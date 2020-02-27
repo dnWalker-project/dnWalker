@@ -91,11 +91,16 @@ namespace MMC.State {
             return m_curstate;
         }
 
-        /////////////////////////////////////////////////////////////////////
-        // Heap
-        /////////////////////////////////////////////////////////////////////
+        public static CollapsedState CollapseCurrent(ExplicitActiveState state)
+        {
+			return new StateCollapser(new PoolData(), state).GetStorableState();
+		}
 
-        void CollapseDynamicArea(ExplicitActiveState cur)
+		/////////////////////////////////////////////////////////////////////
+		// Heap
+		/////////////////////////////////////////////////////////////////////
+
+		void CollapseDynamicArea(ExplicitActiveState cur)
         {
             foreach (int da in cur.DynamicArea.DirtyAllocations)
             {
@@ -301,6 +306,6 @@ namespace MMC.State {
 
 			return retval;
 		}
-	}
+    }
 
 }

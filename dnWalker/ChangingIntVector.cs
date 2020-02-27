@@ -106,11 +106,13 @@ namespace MMC.Util {
 		}
 
 		/// <summary>Get the hash code of a list.</summary>
-		public override int GetHashCode() {
+		public override int GetHashCode() 
+        {
 			return ArrayIntHasher.GetHashCodeIntArray(m_currVals);	
 		}
 
-		public void ClearDelta() {
+		public void ClearDelta() 
+        {
 			m_delta = null;
 		}
 

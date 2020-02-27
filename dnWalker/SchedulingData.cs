@@ -15,6 +15,8 @@
  *
  */
 
+using System.Linq;
+
 namespace MMC.State
 {
     using System.Collections.Generic;
@@ -44,7 +46,12 @@ namespace MMC.State
 
         public override string ToString()
         {
-            return ThreadId + " " + MemoryLocation.ToString();
+            return ThreadId + " " + MemoryLocation;
+        }
+
+        public MemoryAccess Clone()
+        {
+            return new MemoryAccess(MemoryLocation.Clone(), ThreadId);
         }
     }
 
@@ -58,9 +65,9 @@ namespace MMC.State
         /// 1 is a static area object
         /// 0 is a heap object
         int m_type;
-
         int m_location;
         int m_offset;
+
         private readonly ExplicitActiveState cur;
 
         public static readonly MemoryLocation Null = new MemoryLocation(int.MaxValue, 0, 0, null);
@@ -133,82 +140,48 @@ namespace MMC.State
         {
             return MMC.Collections.SingleIntHasher.Hash(m_type) ^ MMC.Collections.SingleIntHasher.Hash(m_location) ^ MMC.Collections.SingleIntHasher.Hash(m_offset);
         }
-    }
 
+        public MemoryLocation Clone()
+        {
+            return new MemoryLocation(m_type, m_location, m_location, cur);
+        }
+    }
 
     // Should be a normal struct, but those are not nullable.
     public class SchedulingData
     {
+        private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
 
-        int m_id;
         Queue<int> m_enabled;
         Queue<int> m_done;
-        Queue<int> m_working;
 
         //CollapsedState m_delta;
-        ISparseElement m_allocAttr;
-        CollapsedStateDelta m_delta;
-        CollapsedState m_collapsedState;
 
-        MemoryAccess m_access;
-        ISII m_sii;
+        public ISII SII { get; set; }
 
-        public ISII SII
-        {
-            get { return m_sii; }
-            set { m_sii = value; }
-        }
+        public ISparseElement AllocAtttributes { get; set; }
 
-        public ISparseElement AllocAtttributes
-        {
-            get { return m_allocAttr; }
-            set { m_allocAttr = value; }
-        }
+        public MemoryAccess LastAccess { get; set; }
 
-        public MemoryAccess LastAccess
-        {
-            get { return m_access; }
-            set { m_access = value; }
-        }
+        public CollapsedStateDelta Delta { get; set; }
 
-        public CollapsedStateDelta Delta
-        {
+        public CollapsedState State { get; set; }
 
-            get { return m_delta; }
-            set { m_delta = value; }
-        }
-
-        public CollapsedState State
-        {
-
-            get { return m_collapsedState; }
-            set { m_collapsedState = value; }
-        }
-
-        public Queue<int> Enabled
+        public Queue<int> Enabled { get; set; }/* => m_enabled;/*
         {
             get { return m_enabled; }
             set { m_enabled = value; }
-        }
+        }*/
 
-        public Queue<int> Working
-        {
-            get { return m_working; }
-            set { m_working = value; }
-        }
+        public Queue<int> Working { get; set; }
 
-        public Queue<int> Done
+        public Queue<int> Done { get; set; }/* => m_done;/*
         {
             get { return m_done; }
             set { m_done = value; }
-        }
+        }*/
 
-        public int ID
-        {
-
-            get { return m_id; }
-            set { m_id = value; }
-        }
+        public int ID { get; set; }
 
         public int Dequeue()
         {
@@ -229,12 +202,33 @@ namespace MMC.State
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-            sb.AppendFormat("Backtrack ID:       {0}\t", m_id);
+            sb.AppendFormat("Backtrack ID:       {0}\t", ID);
             //            sb.AppendFormat("Last chosen thread: {0}\t", this.m_lastChosenThread);
             //            sb.AppendFormat("Threads to run:     {0}\t\t", new ListToString(m_threadsToRun.ToArray()));
             //            sb.AppendFormat("- Delta:\n{0}\n", m_delta.ToString());
             return sb.ToString();
         }
 
+        public SchedulingData()
+        {
+            m_done = m_emptyQueue;
+            Working = m_emptyQueue;
+        }
+
+        public SchedulingData Clone()
+        {
+            return new SchedulingData
+            {
+                AllocAtttributes = AllocAtttributes?.Clone(),
+                ID = ID,
+                Enabled = Enabled != null ? new Queue<int>(Enabled) : null,
+                Delta = Delta.Clone(),
+                Done = Done != null ? new Queue<int>(Done) : null,
+                LastAccess = LastAccess.Clone(),
+                State = State?.Clone(),
+                Working = Working != null ? new Queue<int>(Working) : null,
+                SII = SII
+            };
+        }
     }
 }
