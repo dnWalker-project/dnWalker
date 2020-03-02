@@ -33,7 +33,7 @@ namespace dnWalker.NativePeers
 
                     if (schedulingData.ID == choiceFromValueSet.SchedulingData.ID)
                     {
-                        cur.EvalStack.Push(cg.GetNextChoice());
+                        cur.EvalStack.Push(choiceFromValueSet.GetNextChoice());
                         iieReturnValue = InstructionExecBase.nextRetval;
                         //cur.SetNextChoiceGenerator(choiceFromValueSet);
                         return true;

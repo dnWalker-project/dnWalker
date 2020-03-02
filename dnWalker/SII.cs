@@ -125,8 +125,9 @@ namespace MMC
     {
         readonly internal ISparseElement[] m_list;
         private readonly ExplicitActiveState cur;
+        private readonly PoolData poolData;
 
-        public CollapsedSII(SimplifiedSII sii)
+        public CollapsedSII(SimplifiedSII sii, PoolData poolData)
         {
             cur = sii.Cur;
 
@@ -140,21 +141,22 @@ namespace MMC
                 {
                     ObjectSII otherOsii = currOther[i];
                     if (otherOsii != null)
-                        curr = new SparseElement(i, Collapser.POOL_DATA.GetInt(otherOsii), curr);
+                        curr = new SparseElement(i, poolData.GetInt(otherOsii), curr);
                 }
 
                 m_list[k] = curr;
             }
+
+            this.poolData = poolData;
         }
 
         public IEnumerator<MemoryAccess> GetEnumerator()
         {
             for (int i = 0; i < m_list.Length; i++)
             {
-
                 for (ISparseElement curr = m_list[i]; curr != null; curr = curr.Next)
                 {
-                    ObjectSII osii = Collapser.POOL_DATA.GetObjectSII(curr.DeltaVal);
+                    ObjectSII osii = poolData.GetObjectSII(curr.DeltaVal);
                     for (int k = 0; k < osii.Length; k++)
                     {
                         int threadset = osii[k];

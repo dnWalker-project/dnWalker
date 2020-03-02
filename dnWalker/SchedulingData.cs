@@ -152,11 +152,6 @@ namespace MMC.State
     {
         private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
 
-        Queue<int> m_enabled;
-        Queue<int> m_done;
-
-        //CollapsedState m_delta;
-
         public ISII SII { get; set; }
 
         public ISparseElement AllocAtttributes { get; set; }
@@ -211,8 +206,9 @@ namespace MMC.State
 
         public SchedulingData()
         {
-            m_done = m_emptyQueue;
+            Done = m_emptyQueue;
             Working = m_emptyQueue;
+            Enabled = m_emptyQueue;
         }
 
         public SchedulingData Clone()

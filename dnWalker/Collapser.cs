@@ -19,10 +19,9 @@ namespace MMC.State
 {
     internal class Collapser
     {
-        public static PoolData POOL_DATA = new PoolData();
-
         private readonly StateCollapser m_storer;
         private readonly StateDecollapser m_restorer;
+        internal readonly PoolData m_pool_data;
 
         public CollapsedState CollapseCurrentState()
         {
@@ -41,8 +40,18 @@ namespace MMC.State
 
         public Collapser(ExplicitActiveState cur)
         {
-            m_storer = new StateCollapser(POOL_DATA, cur);
-            m_restorer = new StateDecollapser(POOL_DATA, cur);
+            m_pool_data = new PoolData();
+            m_storer = new StateCollapser(m_pool_data, cur);
+            m_restorer = new StateDecollapser(m_pool_data, cur);
         }
+
+        internal Collapser(PoolData poolData, ExplicitActiveState cur)
+        {
+            m_pool_data = poolData;
+            m_storer = new StateCollapser(m_pool_data, cur);
+            m_restorer = new StateDecollapser(m_pool_data, cur);
+        }
+
+        internal PoolData PoolData => m_pool_data;
     }
 }

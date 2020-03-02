@@ -32,6 +32,7 @@ namespace dnWalker.ChoiceGenerators
             var index = random.Next(_numbers.Count - 1) % _numbers.Count;
             var nextChoice = _numbers[index];
             _numbers.RemoveAt(index);
+            System.Diagnostics.Debug.WriteLine($"[{GetHashCode()}] {this} next={nextChoice} ({_numbers.Count()})");
             return nextChoice;
         }
 
@@ -39,11 +40,24 @@ namespace dnWalker.ChoiceGenerators
 
         IChoiceGenerator IChoiceGenerator.Previous { get; set; }
 
+        //private Collapser stateCollapser;
+        private ThreadState _threadState;
+
         void IChoiceGenerator.SetContext(ExplicitActiveState activeState)
         {
-            _schedulingData = activeState.CollapseOnly().Clone();
-            _delta = _schedulingData.Delta.Clone();
-            _state = _schedulingData.State;
+            _threadState = activeState.CurrentThread;
+            _schedulingData = activeState.Collapse/*Only*/().Clone();
+
+            //var poolData = activeState.StateCollapser.PoolData.Clone();
+            //stateCollapser = new Collapser(poolData, activeState);
+
+            //_schedulingData = activeState.Collapse(stateCollapser, activeState.StateStorage);
+
+            //var s = activeState.CollapseOnly();
+            //_delta = _schedulingData.Delta.Clone();
+            //_state = _schedulingData.State;
+            //_schedulingData.Working.Enqueue(activeState.CurrentThread.Id);
+            //_schedulingData.Enqueue(activeState.CurrentThread.Id);
             //_schedulingData = new SchedulingData
             /*{
                 Delta = collapsedCurrent.Delta
@@ -59,6 +73,11 @@ namespace dnWalker.ChoiceGenerators
 
         SchedulingData IChoiceGenerator.Advance()
         {
+            /*var x = false;
+            if (x)
+            {
+                stateCollapser.DecollapseByDelta(_schedulingData.Delta);
+            }*/
             //_schedulingData.Delta = _state.GetDelta();
             return _schedulingData;
         }

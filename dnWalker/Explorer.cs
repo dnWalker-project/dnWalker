@@ -253,6 +253,8 @@ namespace MMC
 
             cur.StateStorage = m_stateStorage;
 
+            cur.Collapse();
+
             do
             {
                 if (!SetExecutingThread(out ThreadState thread))
@@ -321,30 +323,58 @@ namespace MMC
             if (!_choiceGenerator.HasMoreChoices)
             {
                 _choiceGenerator = _choiceGenerator.Previous;
-                return;
             }
-
-            cur.Next();
             
-            if (cur.ChoiceGenerator != null)
+            cur.Next(); // NOTE what if I switch to prev. CG and _next is not null
+            
+            if (cur.ChoiceGenerator == null)
             {
                 return;
             }
 
+            System.Diagnostics.Debug.WriteLine("Advancing ...");
             var sd = _choiceGenerator.Advance();
             var m_dfs = new Stack<SchedulingData>();
             m_dfs.Push(sd);
+            
+            var m_stateConvertor = cur.StateCollapser;
+
+            // Run garbage collection
+            cur.GarbageCollector.Run(cur);
+
             BacktrackStart(m_dfs, sd, cur);
 
-            //while (sd.Working.Count == 0 && m_dfs.Count > 0)
-            //{
+            while (sd.Working.Count == 0 && m_dfs.Count > 0)
+            {
                 // apply the reverse delta
-                cur.StateCollapser.DecollapseByDelta(sd.Delta);
+                m_stateConvertor.DecollapseByDelta(sd.Delta);
                 Backtracked(m_dfs, sd, cur);
-              //  sd = m_dfs.Pop();
-            //}
+                sd = m_dfs.Pop();
+            }
 
             BacktrackStop(m_dfs, sd, cur);
+
+            m_stateConvertor.Reset(sd.State);
+            cur.Clean();
+
+            var threadId = -1;
+            /*
+		     * either the recently explored sd can be pushed on the stack, 
+			 * or the last popped sd from the stack is not fully explored */
+            if (sd.Working.Count > 0)
+            {
+                m_dfs.Push(sd);
+                threadId = sd.Dequeue(); // for the next round		
+
+                // update last access information 
+                // (used by dynamic POR + tracing explorer) 
+                var ml = cur.NextAccess(threadId);
+                sd.LastAccess = new MemoryAccess(ml, threadId);
+
+                //threadPicked(sd, threadId);
+            }
+
+            //_statistics.BacktrackStackDepth(m_dfs.Count);
         }
 
         /// <summary>

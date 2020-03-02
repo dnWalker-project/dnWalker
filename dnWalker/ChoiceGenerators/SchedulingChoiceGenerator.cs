@@ -64,7 +64,7 @@ namespace dnWalker.ChoiceGenerators
 			 * if matched, a backtracking is initiated by
 			 * returning an empty working queue 
 			 */
-            var sd = cur.Collapse(m_stateStorage);
+            var sd = cur.Collapse();
 
             backtrackStart(m_dfs, sd, cur);
 

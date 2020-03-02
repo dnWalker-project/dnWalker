@@ -17,15 +17,16 @@
 
 namespace MMC.Data {
 
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Text;
-	using MMC.Util;
-	using MMC.Collections;
-	
-	
-	/// This pool clones the objects stored and retrieved from it
-	class CloningFastPool<T> : FastPool<T> where T : class {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Text;
+    using MMC.Util;
+    using MMC.Collections;
+    using System;
+
+
+    /// This pool clones the objects stored and retrieved from it
+    class CloningFastPool<T> : FastPool<T> where T : class {
 
 		public CloningFastPool(int size) : base(size) {
 		}
@@ -64,7 +65,16 @@ namespace MMC.Data {
 			return retval;
 		}
 
-		public new T GetObject(int i) {
+        internal new CloningFastPool<T> Clone()
+        {
+            return new CloningFastPool<T>
+            {
+                m_elemToInt = m_elemToInt.Clone(),
+                m_intToElem = m_intToElem == null ? null : new List<T>(m_intToElem),
+            };
+        }
+
+        public new T GetObject(int i) {
 			// ---------------------------------------------------------------
 			if (i == CollectionConstants.NotSet)
 				return null;
@@ -127,7 +137,21 @@ namespace MMC.Data {
 		public T GetObject(int i) {
 			return m_intToElem[i];
 		}
-	}
+
+        internal virtual FastPool<T> Clone()
+        {
+            return new FastPool<T>
+            {
+                m_elemToInt = m_elemToInt?.Clone(),
+                m_intToElem = m_intToElem == null ? null : new List<T>(m_intToElem)
+            };
+        }
+
+        /*public static implicit operator FastPool<T>(FastPool<WrappedIntArray> v)
+        {
+            throw new NotImplementedException();
+        }*/
+    }
 
 	class Pool  {
 
@@ -216,5 +240,16 @@ namespace MMC.Data {
 				sb.Append("Empty.");
 			return sb.ToString();
 		}
-	}
+
+        internal Pool Clone()
+        {
+            return new Pool
+            {
+                m_clone = m_clone,
+                m_elemToInt = m_elemToInt == null ? null : new Hashtable(m_elemToInt),
+                m_intToElem = m_intToElem == null ? null : new ArrayList(m_intToElem),
+                m_tsc = m_tsc
+            };
+        }
+    }
 }

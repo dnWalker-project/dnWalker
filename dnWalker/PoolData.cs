@@ -17,13 +17,14 @@
 
 namespace MMC.State {
 
-	using System.Text;
-	using MMC.Data;
-	using MMC.Util;
-	using MMC.Collections;
+    using System.Text;
+    using MMC.Data;
+    using MMC.Util;
+    using MMC.Collections;
+    using System;
 
-	/// An implementation of the sack of stuff.
-	class PoolData  {
+    /// An implementation of the sack of stuff.
+    class PoolData  {
 
 		/*
 		Pool m_elementPool;		
@@ -68,7 +69,21 @@ namespace MMC.State {
 			return i;
 		}
 
-		public int GetInt(object o) {
+        internal PoolData Clone()
+        {
+            return new PoolData
+            {
+                m_decPool = m_decPool?.Clone(),
+                m_elementPool = m_elementPool?.Clone(),
+                m_idPool = m_idPool?.Clone(),
+                m_listPool = m_listPool?.Clone(),
+                m_lockPool = m_lockPool?.Clone(),
+                m_objectSIIPool = m_objectSIIPool?.Clone(),
+                m_oPool = m_oPool?.Clone()
+            };
+        }
+
+        public int GetInt(object o) {
 
 			return m_oPool.GetInt(o);
 		}

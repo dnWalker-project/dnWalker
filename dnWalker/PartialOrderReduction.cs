@@ -104,7 +104,7 @@ namespace MMC
             if (fromSD.State.SII == null)
             {
                 if (_config.UseDPORCollapser)
-                    fromSD.State.SII = new CollapsedSII(fromSD.SII as SimplifiedSII);
+                    fromSD.State.SII = new CollapsedSII(fromSD.SII as SimplifiedSII, cur.StateCollapser.PoolData);
                 else
                     fromSD.State.SII = fromSD.SII;
             }

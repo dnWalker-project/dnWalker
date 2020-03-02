@@ -25,6 +25,7 @@ namespace MMC.State
     using MMC.Collections;
     using System.Collections.Generic;
     using dnWalker;
+    using System;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
@@ -267,18 +268,13 @@ namespace MMC.State
 
         internal SchedulingData Collapse()
         {
-            return Collapse(StateStorage);
+            return Collapse(StateCollapser, StateStorage);
         }
 
-        internal SchedulingData CollapseOnly()
-        {
-            return CollapseOnly(StateStorage);
-        }
-
-        internal SchedulingData Collapse(StateStorage m_stateStorage)
+        internal SchedulingData Collapse(Collapser stateCollapser, StateStorage m_stateStorage)
         {
             var cur = this;
-            var collapsedCurrent = cur.StateCollapser.CollapseCurrentState();
+            var collapsedCurrent = stateCollapser.CollapseCurrentState();
 
             var sd = new SchedulingData
             {
@@ -328,56 +324,17 @@ namespace MMC.State
             return sd;
         }
 
-        internal SchedulingData CollapseOnly(StateStorage m_stateStorage)
+        public bool TryTerminateThread(ThreadState thread)
         {
-            var sd = Collapse(m_stateStorage);
+            if (_nextChoiceGenerator != null
+                || (ChoiceGenerator?.Previous != null)
+                || (ChoiceGenerator?.HasMoreChoices == true))
+            {
+                return false;
+            }
 
-            var collapsedCurrent = State.StateCollapser.CollapseCurrent(this);
-
-            sd.Delta = collapsedCurrent.GetDelta();
-
-    //        var id = m_stateStorage.Count + 1;
-    //        var seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
-
-    //        /*
-			 //* Note: the collapsedCurrent stored in the hashtable can be
-			 //* different from the current collapsedCurrent, although they
-			 //* represent the same collapsedState. This is due to the 
-			 //* changingintvector, which also contains information about
-			 //* the reversed delta, which may be different for two 
-			 //* representative collapsed states */
-    //        sd.ID = id;
-    //        sd.State = collapsedCurrent;
-
-    //        if (seenState)
-    //        {
-    //            sd.SII = collapsedCurrent.SII;
-    //            // state is not new
-    //            // sd.Working = m_emptyQueue;
-    //            // m_stateStorage.StateRevisited(collapsedCurrent, sd, cur);
-    //        }
-    //        else
-    //        {
-    //            // state is new
-    //            // collapsedCurrent.ClearDelta(); // delta's do not need to be stored				
-    //            sd.Enabled = cur.ThreadPool.RunnableThreadIds;
-    //            sd.SII = new SimplifiedSII(cur);
-    //            if (sd.Enabled.Count > 0)
-    //            {
-    //                sd.Working = sd.Enabled; 
-    //                sd.Done = new Queue<int>();
-    //            }
-    //            else
-    //            {
-    //                //sd = sd.ClearWorking();
-    //                sd.Working = m_emptyQueue;
-    //                sd.Done = m_emptyQueue;
-    //            }
-
-    //            m_stateStorage.StateConstructed(collapsedCurrent, sd, cur);
-    //        }
-
-            return sd;
+            ThreadPool.TerminateThread(thread);
+            return true;
         }
 
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
@@ -398,6 +355,11 @@ namespace MMC.State
 
         public void Next()
         {
+            if (_nextChoiceGenerator == null)
+            {
+                return;
+            }
+
             _choiceGenerator = _nextChoiceGenerator;
             _nextChoiceGenerator = null;
         }

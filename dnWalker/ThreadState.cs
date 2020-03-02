@@ -330,8 +330,9 @@ namespace MMC.State
 
             if (thread.CallStack.IsEmpty())
             {
-                cur.ThreadPool.TerminateThread(thread);
-                threadTerm = true;
+                threadTerm = cur.TryTerminateThread(thread);
+                //cur.ThreadPool.TerminateThread(thread);
+                //threadTerm = true;
             }
             else
             {

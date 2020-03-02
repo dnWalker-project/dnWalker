@@ -17,15 +17,17 @@
 
 namespace MMC.Collections {
 
-	//	using C5;
-	using System.Text;
-	using System.Collections.Generic;
+    //	using C5;
+    using System.Text;
+    using System.Collections.Generic;
+    using System;
+    using System.Linq;
 
-	/// <summary>
-	/// Hashtable with a power of two size, allows the modulo
-	/// to be performed by masking bits
-	/// </summary>
-	class FastHashtable<K, V>
+    /// <summary>
+    /// Hashtable with a power of two size, allows the modulo
+    /// to be performed by masking bits
+    /// </summary>
+    class FastHashtable<K, V>
     {
 		private class Bucket
         {
@@ -33,7 +35,18 @@ namespace MMC.Collections {
 			public V val;
 			public Bucket next;
 			public int hashcode;
-		}
+
+            internal Bucket Clone()
+            {
+                return new Bucket
+                {
+                    key = key,
+                    val = val,
+                    hashcode = hashcode,
+                    next = next?.Clone()
+                };
+            }
+        }
 
 		Bucket[] m_buckets;
 		int m_power;
@@ -103,7 +116,16 @@ namespace MMC.Collections {
 			return false;
 		}
 
-		public bool Find(ref K o) {
+        internal FastHashtable<K, V> Clone()
+        {
+            return new FastHashtable<K, V>(m_power)
+            {
+                m_count = m_count,
+                m_buckets = m_buckets?.Select(b => b?.Clone()).ToArray()
+            };
+        }
+
+        public bool Find(ref K o) {
 			int hashcode = o.GetHashCode();
 			int index = hashcode & m_mask;
 
