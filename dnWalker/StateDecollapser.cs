@@ -31,15 +31,15 @@ namespace MMC.State {
 		public const int deleted = ChangingIntVector.deleted;
 
 		private readonly PoolData m_pool;
-        private readonly ExplicitActiveState cur;
+        //private readonly ExplicitActiveState cur;
 
-        public StateDecollapser(PoolData pool, ExplicitActiveState cur)
+        public StateDecollapser(PoolData pool)//, ExplicitActiveState cur)
         {
-            this.cur = cur;
+            //this.cur = cur;
 			m_pool = pool;
 		}
 
-		public void RestoreState(CollapsedStateDelta delta)
+		public void RestoreState(ExplicitActiveState cur, CollapsedStateDelta delta)
         {
             // We restore the state in the following order:
             //   - Restore allocations.
@@ -62,7 +62,7 @@ namespace MMC.State {
                     /// The removal of childs is done by the RestoreAllocation method
                     ///
                     /// TODO: should be cleaned up, and moves here
-                    RestoreAllocation(i, pool_index);
+                    RestoreAllocation(cur, i, pool_index);
                     cur.ParentWatcher.AddParentToAllChilds(new ObjectReference(i + 1), cur);
                 }
             }
@@ -76,7 +76,7 @@ namespace MMC.State {
 				if (pool_index != not_set && pool_index != deleted) {
 					AllocatedClass ac = cur.StaticArea.GetClass(i);
 					ThreadObjectWatcher.DecrementAll(ac.Fields, cur);
-					RestoreClass(i, pool_index);
+					RestoreClass(cur, i, pool_index);
 					ThreadObjectWatcher.IncrementAll(ac.Fields, cur);
 				} else if (pool_index == deleted) {
 					AllocatedClass ac = cur.StaticArea.GetClass(i);
@@ -94,7 +94,7 @@ namespace MMC.State {
 				if (pool_index == deleted)
 					cur.ThreadPool.DeleteThread(i);
 				else if (pool_index != not_set)
-					RestoreThread(i, pool_index);
+					RestoreThread(cur, i, pool_index);
 			}
 		}
 
@@ -102,21 +102,21 @@ namespace MMC.State {
 		// Heap
 		/////////////////////////////////////////////////////////////////////
 
-		void RestoreAllocation(int alloc_id, int pool_index) {
-
+		private void RestoreAllocation(ExplicitActiveState cur, int alloc_id, int pool_index) 
+        {
 			WrappedIntArray pool_entry = m_pool.GetList(pool_index);
 			int alloc_type = pool_entry[AllocationPartsOffsets.AllocationType];
 			DynamicAllocation alloc = null;
             switch (alloc_type)
             {
                 case (int)AllocationType.Object:
-                    alloc = RestoreObject(alloc_id, pool_entry);
+                    alloc = RestoreObject(cur, alloc_id, pool_entry);
                     break;
                 case (int)AllocationType.Array:
-                    alloc = RestoreArray(alloc_id, pool_entry);
+                    alloc = RestoreArray(cur, alloc_id, pool_entry);
                     break;
                 case (int)AllocationType.Delegate:
-                    alloc = RestoreDelegate(alloc_id, pool_entry);
+                    alloc = RestoreDelegate(cur, alloc_id, pool_entry);
                     break;
                 default:
                     throw new System.Exception/* Logger.l.Warning*/("unknown allocation type: " + alloc_type);                  //break;
@@ -132,7 +132,7 @@ namespace MMC.State {
 			}
 		}
 
-        DynamicAllocation RestoreObject(int alloc_id, WrappedIntArray co)
+        private DynamicAllocation RestoreObject(ExplicitActiveState cur, int alloc_id, WrappedIntArray co)
         {
             // If the old allocation is still here, re-use it.
             var type = (ITypeDefOrRef)m_pool.GetObject(co[ObjectPartsOffsets.Definition]);
@@ -156,7 +156,7 @@ namespace MMC.State {
             return obj;
         }
 
-		DynamicAllocation RestoreArray(int alloc_id, WrappedIntArray ca)
+		DynamicAllocation RestoreArray(ExplicitActiveState cur, int alloc_id, WrappedIntArray ca)
         {
 			// Again, check if there is some old value we can re-use.
 			var type = (ITypeDefOrRef)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
@@ -174,7 +174,7 @@ namespace MMC.State {
 			return arr;
 		}
 
-		DynamicAllocation RestoreDelegate(int alloc_id, WrappedIntArray cd)
+		DynamicAllocation RestoreDelegate(ExplicitActiveState cur, int alloc_id, WrappedIntArray cd)
         {
             ObjectReference obj_ref = (ObjectReference)m_pool.GetElement(cd[DelegatePartsOffsets.Object]);
 			MethodPointer meth_ptr = (MethodPointer)m_pool.GetElement(cd[DelegatePartsOffsets.MethodPointer]);
@@ -199,7 +199,7 @@ namespace MMC.State {
 		// Classes
 		/////////////////////////////////////////////////////////////////////
 
-		void RestoreClass(int class_id, int pool_index) {
+		void RestoreClass(ExplicitActiveState cur, int class_id, int pool_index) {
 
 			WrappedIntArray cc = m_pool.GetList(pool_index);
 
@@ -221,7 +221,7 @@ namespace MMC.State {
 		// Threads
 		/////////////////////////////////////////////////////////////////////
 
-		void RestoreThread(int thread_id, int pool_index)
+		void RestoreThread(ExplicitActiveState cur,int thread_id, int pool_index)
         {
 			WrappedIntArray collapsed_trd = m_pool.GetList(pool_index);
 			ThreadState trd = cur.ThreadPool.Threads[thread_id];
@@ -237,10 +237,10 @@ namespace MMC.State {
 				trd.ExceptionReference = new ObjectReference(collapsed_trd[ThreadPartOffsets.ExceptionReference]);
 
 			if (collapsed_trd[ThreadPartOffsets.CallStack] != not_set)
-				RestoreCallStack(thread_id, collapsed_trd[ThreadPartOffsets.CallStack]);
+				RestoreCallStack(cur, thread_id, collapsed_trd[ThreadPartOffsets.CallStack]);
 		}
 
-        void RestoreCallStack(int thread_id, int pool_index)
+        void RestoreCallStack(ExplicitActiveState cur, int thread_id, int pool_index)
         {
             WrappedIntArray collapsed_frames = m_pool.GetList(pool_index);
 
@@ -268,13 +268,13 @@ namespace MMC.State {
             {
                 if (collapsed_frames[i] != not_set)
                 {
-                    RestoreMethod(thread_id, i, collapsed_frames[i]);
+                    RestoreMethod(cur, thread_id, i, collapsed_frames[i]);
                 }
             }
             cur.ThreadPool.Threads[thread_id].CallStack.StackPointer = collapsed_frames.Length;
         }
 
-		void RestoreMethod(int thread_id, int method_id, int pool_index)
+		void RestoreMethod(ExplicitActiveState cur, int thread_id, int method_id, int pool_index)
         {
             WrappedIntArray cm = m_pool.GetList(pool_index);
 

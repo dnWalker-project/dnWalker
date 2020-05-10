@@ -71,7 +71,7 @@ namespace dnWalker.ChoiceGenerators
             while (sd.Working.Count == 0 && m_dfs.Count > 0)
             {
                 // apply the reverse delta
-                m_stateConvertor.DecollapseByDelta(sd.Delta);
+                m_stateConvertor.DecollapseByDelta(cur, sd.Delta);
                 backtracked(m_dfs, sd, cur);
                 sd = m_dfs.Pop();
             }
@@ -130,9 +130,9 @@ namespace dnWalker.ChoiceGenerators
             return null;
         }
 
-        bool IChoiceGenerator.HasMoreChoices => throw new NotImplementedException();
+        bool IChoiceGenerator.HasMoreChoices => cur.ThreadPool.RunnableThreadCount > 0;
 
-        IChoiceGenerator IChoiceGenerator.Previous { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        IChoiceGenerator IChoiceGenerator.Previous { get; set; }
 
     }
 }

@@ -47,11 +47,9 @@ namespace MMC.State {
 
 		CollapsedState m_curstate;
 		PoolData m_pool;
-        ExplicitActiveState cur;
 
-        public StateCollapser(PoolData pool, ExplicitActiveState cur)
+        public StateCollapser(PoolData pool)
         {
-            this.cur = cur;
             m_pool = pool;
         }
 
@@ -61,7 +59,8 @@ namespace MMC.State {
 		/// state. This method should be called after backtracking.
 		///
 		/// <param name="s">The restored (collapsed) state.</param>
-		public void Reset(CollapsedState s) {
+		public void Reset(CollapsedState s) 
+        {
 			m_curstate = s;
 
 			/*
@@ -71,7 +70,7 @@ namespace MMC.State {
 				throw new System.ArgumentException("s");*/
 		}
 
-        public CollapsedState GetStorableState()
+        public CollapsedState GetStorableState(ExplicitActiveState cur)
         {
             m_curstate = m_curstate == null ? new CollapsedState(cur) : m_curstate.Clone();
 
@@ -93,7 +92,7 @@ namespace MMC.State {
 
         public static CollapsedState CollapseCurrent(ExplicitActiveState state)
         {
-			return new StateCollapser(new PoolData(), state).GetStorableState();
+			return new StateCollapser(new PoolData()).GetStorableState(state);
 		}
 
 		/////////////////////////////////////////////////////////////////////
@@ -107,7 +106,7 @@ namespace MMC.State {
                 DynamicAllocation alloc = cur.DynamicArea.Allocations[da];
                 if (alloc != null)
                 {
-                    m_curstate.Allocations[da] = CollapseAllocation(da);
+                    m_curstate.Allocations[da] = CollapseAllocation(cur, da);
                 }
                 else if (da < m_curstate.Allocations.Length && m_curstate.Allocations[da] != not_set)
                 {
@@ -120,7 +119,7 @@ namespace MMC.State {
             }
         }
 
-		int CollapseAllocation(int loc) {
+		int CollapseAllocation(ExplicitActiveState cur, int loc) {
 
 			DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
 			WrappedIntArray collapsed_alloc = null;

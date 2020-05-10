@@ -112,8 +112,7 @@ namespace MMC
 
             if (fmtChars[0] == '-')
                 newLogFilter = ~newLogFilter;
-            else
-                newLogFilter = newLogFilter;
+            // else newLogFilter = newLogFilter;
 
             return true;
         }

@@ -274,7 +274,7 @@ namespace MMC.State
         internal SchedulingData Collapse(Collapser stateCollapser, StateStorage m_stateStorage)
         {
             var cur = this;
-            var collapsedCurrent = stateCollapser.CollapseCurrentState();
+            var collapsedCurrent = stateCollapser.CollapseCurrentState(this);
 
             var sd = new SchedulingData
             {

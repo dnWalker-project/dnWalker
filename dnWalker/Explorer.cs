@@ -253,8 +253,6 @@ namespace MMC
 
             cur.StateStorage = m_stateStorage;
 
-            cur.Collapse();
-
             do
             {
                 if (!SetExecutingThread(out ThreadState thread))
@@ -347,7 +345,7 @@ namespace MMC
             while (sd.Working.Count == 0 && m_dfs.Count > 0)
             {
                 // apply the reverse delta
-                m_stateConvertor.DecollapseByDelta(sd.Delta);
+                m_stateConvertor.DecollapseByDelta(cur, sd.Delta);
                 Backtracked(m_dfs, sd, cur);
                 sd = m_dfs.Pop();
             }
