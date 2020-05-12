@@ -4,12 +4,14 @@ using MMC.InstructionExec;
 using MMC.State;
 using System;
 using dnWalker.ChoiceGenerators;
+using System.Text;
 
 namespace dnWalker.NativePeers
 {
     public class SystemRandom : NativePeer
     {
         private static Random _random;
+        public static StringBuilder Sb = new StringBuilder();
 
         public override bool TryGetValue(MethodDef methodDef, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
         {
@@ -35,7 +37,9 @@ namespace dnWalker.NativePeers
                     {
                         cur.EvalStack.Push(choiceFromValueSet.GetNextChoice());
                         iieReturnValue = InstructionExecBase.nextRetval;
-                        //cur.SetNextChoiceGenerator(choiceFromValueSet);
+
+                        Sb.AppendLine($"{schedulingData.ID} {cur.CurrentThread.CurrentLocation} {cur.EvalStack}");
+
                         return true;
                     }
                     else

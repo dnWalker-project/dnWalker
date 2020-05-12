@@ -348,7 +348,7 @@ namespace MMC.State
 
         public bool Break()
         {
-            return _nextChoiceGenerator != null;
+            return _nextChoiceGenerator != null;// || (ChoiceGenerator != null && !ChoiceGenerator.HasMoreChoices);
             // return ((nextCg != null) || isIgnored);
             //throw new System.NotImplementedException();
         }

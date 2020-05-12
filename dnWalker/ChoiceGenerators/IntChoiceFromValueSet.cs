@@ -48,6 +48,20 @@ namespace dnWalker.ChoiceGenerators
             _threadState = activeState.CurrentThread;
             _schedulingData = activeState.Collapse/*Only*/().Clone();
 
+            if (_schedulingData.Delta.Threads.DeltaVal == -20)
+            {
+                _schedulingData = activeState.Collapse/*Only*/().Clone();
+            }
+            
+            if (!_schedulingData.Working.Any())
+            {
+                //_schedulingData.Enabled.Enqueue(activeState.CurrentThread.Id);
+                //_schedulingData.Working.Enqueue(activeState.CurrentThread.Id);
+            }
+
+            //var sd = activeState.Collapse(new Collapser(activeState.StateCollapser.PoolData), activeState.StateStorage).Clone();
+            //var sd = stateConvertor.SchedulingData;
+
             //var poolData = activeState.StateCollapser.PoolData.Clone();
             //stateCollapser = new Collapser(poolData, activeState);
 
@@ -79,7 +93,7 @@ namespace dnWalker.ChoiceGenerators
                 stateCollapser.DecollapseByDelta(_schedulingData.Delta);
             }*/
             //_schedulingData.Delta = _state.GetDelta();
-            return _schedulingData;
+            return _schedulingData.Clone();
         }
     }
 }

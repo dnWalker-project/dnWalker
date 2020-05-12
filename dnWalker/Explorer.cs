@@ -25,10 +25,10 @@ namespace MMC
 	using MMC.State;
 	using MMC.Util;
 	using MMC.InstructionExec;
-	using MMC.Collections;
     using dnlib.DotNet.Emit;
     using dnWalker.ChoiceGenerators;
     using dnWalker;
+    using System.Linq;
 
     /// <summary>
     /// Handler for events that indicate the exploration of a state.
@@ -318,21 +318,37 @@ namespace MMC
                 return;
             }
 
-            if (!_choiceGenerator.HasMoreChoices)
+            var m_dfs = new Stack<SchedulingData>();
+
+            var hasMoreChoices = _choiceGenerator.HasMoreChoices;
+            if (!hasMoreChoices)
             {
+                m_dfs.Push(_choiceGenerator.Advance());
                 _choiceGenerator = _choiceGenerator.Previous;
             }
+            else
+            {
+                cur.Next(); // NOTE what if I switch to prev. CG and _next is not null
+
+                /*if (cur.ChoiceGenerator == null)
+                {
+                    return;
+                }
+                */
+                if (cur.CurrentMethod != null)
+                {
+                    return;
+                }
+            }
             
-            cur.Next(); // NOTE what if I switch to prev. CG and _next is not null
-            
-            if (cur.ChoiceGenerator == null)
+            var sd = _choiceGenerator.Advance();
+            if (sd == null)
             {
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine("Advancing ...");
-            var sd = _choiceGenerator.Advance();
-            var m_dfs = new Stack<SchedulingData>();
+            System.Diagnostics.Debug.WriteLine("Backtracking ...");
+            
             m_dfs.Push(sd);
             
             var m_stateConvertor = cur.StateCollapser;
@@ -342,12 +358,16 @@ namespace MMC
 
             BacktrackStart(m_dfs, sd, cur);
 
-            while (sd.Working.Count == 0 && m_dfs.Count > 0)
+            var l = m_dfs.Reverse().ToList();
+            while (l.Count > 0)
             {
+                sd = l.First();// m_dfs.Last();
                 // apply the reverse delta
+                System.Diagnostics.Debug.WriteLine("... to " + sd.ID);
                 m_stateConvertor.DecollapseByDelta(cur, sd.Delta);
                 Backtracked(m_dfs, sd, cur);
-                sd = m_dfs.Pop();
+                //sd = m_dfs.Pop();
+                l.RemoveAt(0);
             }
 
             BacktrackStop(m_dfs, sd, cur);
@@ -366,8 +386,8 @@ namespace MMC
 
                 // update last access information 
                 // (used by dynamic POR + tracing explorer) 
-                var ml = cur.NextAccess(threadId);
-                sd.LastAccess = new MemoryAccess(ml, threadId);
+                //var ml = cur.NextAccess(threadId);
+                //sd.LastAccess = new MemoryAccess(ml, threadId);
 
                 //threadPicked(sd, threadId);
             }
@@ -450,7 +470,7 @@ namespace MMC
                 thread = cur.CurrentThread; // no thread switching
             }
 
-            return true;
+            return thread != null;
         }
 
         public bool ExecuteNextStep(ThreadState thread)
