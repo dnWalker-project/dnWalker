@@ -324,7 +324,7 @@ namespace MMC
             if (!hasMoreChoices)
             {
                 m_dfs.Push(_choiceGenerator.Advance());
-                _choiceGenerator = _choiceGenerator.Previous;
+                _choiceGenerator = cur.Back();// _choiceGenerator.Previous;
             }
             else
             {

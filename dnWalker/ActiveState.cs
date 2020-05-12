@@ -337,6 +337,12 @@ namespace MMC.State
             return true;
         }
 
+        public IChoiceGenerator Back()
+        {
+            _choiceGenerator = ChoiceGenerator.Previous;
+            return ChoiceGenerator;
+        }
+
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
         {
             choiceGenerator.SetContext(this);
