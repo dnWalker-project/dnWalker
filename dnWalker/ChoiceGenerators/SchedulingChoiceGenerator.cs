@@ -125,7 +125,7 @@ namespace dnWalker.ChoiceGenerators
         {
         }
 
-        SchedulingData IChoiceGenerator.Advance()
+        SchedulingData IChoiceGenerator.GetBacktrackData()
         {
             return null;
         }

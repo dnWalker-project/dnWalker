@@ -323,8 +323,12 @@ namespace MMC
             var hasMoreChoices = _choiceGenerator.HasMoreChoices;
             if (!hasMoreChoices)
             {
-                m_dfs.Push(_choiceGenerator.Advance());
+                m_dfs.Push(_choiceGenerator.GetBacktrackData());
                 _choiceGenerator = cur.Back();// _choiceGenerator.Previous;
+                if (!_choiceGenerator.HasMoreChoices)
+                {
+                    _choiceGenerator = cur.Back();
+                }
             }
             else
             {
@@ -340,10 +344,11 @@ namespace MMC
                     return;
                 }
             }
-            
-            var sd = _choiceGenerator.Advance();
+
+            var sd = _choiceGenerator.GetBacktrackData();
             if (sd == null)
             {
+                m_continue = false;
                 return;
             }
 
@@ -356,9 +361,9 @@ namespace MMC
             // Run garbage collection
             cur.GarbageCollector.Run(cur);
 
+            var l = m_dfs.Reverse().ToList();
             BacktrackStart(m_dfs, sd, cur);
 
-            var l = m_dfs.Reverse().ToList();
             while (l.Count > 0)
             {
                 sd = l.First();// m_dfs.Last();

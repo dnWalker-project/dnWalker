@@ -340,7 +340,7 @@ namespace MMC.State
         public IChoiceGenerator Back()
         {
             _choiceGenerator = ChoiceGenerator.Previous;
-            return ChoiceGenerator;
+            return _choiceGenerator;
         }
 
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)

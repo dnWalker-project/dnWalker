@@ -85,7 +85,7 @@ namespace dnWalker.ChoiceGenerators
             }*/
         }
 
-        SchedulingData IChoiceGenerator.Advance()
+        SchedulingData IChoiceGenerator.GetBacktrackData()
         {
             /*var x = false;
             if (x)

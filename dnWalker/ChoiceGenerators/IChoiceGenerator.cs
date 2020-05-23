@@ -16,6 +16,6 @@ namespace dnWalker.ChoiceGenerators
 
         void SetContext(ExplicitActiveState activeState);
 
-        SchedulingData Advance();
+        SchedulingData GetBacktrackData();
     }   
 }
