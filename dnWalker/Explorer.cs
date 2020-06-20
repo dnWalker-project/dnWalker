@@ -110,6 +110,7 @@ namespace MMC
         private readonly IInstructionExecProvider _instructionExecProvider;
         private readonly LinkedList<CollapsedState> m_atomicStates;
         private IChoiceGenerator _choiceGenerator;
+        private ExplorationLogger _explorationLogger;
 
         public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config)
         {
@@ -125,7 +126,8 @@ namespace MMC
             var size = Math.Max(20, config.StateStorageSize);
             size = Math.Min(5, size);
 
-            ExplorationLogger el = new ExplorationLogger(Statistics, this);
+            _explorationLogger = new ExplorationLogger(Statistics, this);
+            var el = _explorationLogger;
 
             /*
 			 * Logging
@@ -308,6 +310,8 @@ namespace MMC
 
             Logger.Message("End of story: explored the whole state space");
 
+            _explorationLogger.Dispose();
+
             return noErrors;
         }
 
@@ -327,7 +331,7 @@ namespace MMC
                 _choiceGenerator = cur.Back();// _choiceGenerator.Previous;
                 if (!_choiceGenerator.HasMoreChoices)
                 {
-                    _choiceGenerator = cur.Back();
+                    _choiceGenerator = cur.Back(); //TODO
                 }
             }
             else

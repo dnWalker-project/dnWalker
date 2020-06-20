@@ -434,7 +434,6 @@ Disabling/enabling features:
         public static void Main(string[] args)
         {
             new MonoModelChecker().Go(args);
-            Console.ReadKey();
         }
 
         public void Go(string[] args)

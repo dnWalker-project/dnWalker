@@ -17,13 +17,13 @@
 
 namespace MMC
 {
-
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using MMC.InstructionExec;
     using MMC.State;
 
-    public class ExplorationLogger
+    public class ExplorationLogger : IDisposable
     {
         const int newstate_progress_delta = 25000; // states
         const int revisit_progress_delta = 25000; // times
@@ -126,6 +126,12 @@ namespace MMC
         private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
         {
             m_explorer.Logger.Message("NewStates={0}, Revisits={1}, CurrDFSCount={2}", Statistics.StateCount, Statistics.RevisitCount, m_explorer.GetDFSStackSize());
+        }
+
+        public void Dispose()
+        {
+            timer.Enabled = false;
+            timer.Elapsed -= OnTimedEvent;
         }
     }
 }
