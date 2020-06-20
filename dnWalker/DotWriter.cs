@@ -101,8 +101,8 @@ namespace MMC {
 			}
 		}
 
-		public static void Begin(TextWriter dotsink) {
-
+		public static void Begin(TextWriter dotsink) 
+        {
 			if (dotsink == null)
 				throw new System.ArgumentNullException("dotsink");
 			if (s_dotsink != null)

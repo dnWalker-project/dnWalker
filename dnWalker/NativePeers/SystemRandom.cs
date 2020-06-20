@@ -10,7 +10,6 @@ namespace dnWalker.NativePeers
 {
     public class SystemRandom : NativePeer
     {
-        private static Random _random;
         public static StringBuilder Sb = new StringBuilder();
 
         public override bool TryGetValue(MethodDef methodDef, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
@@ -41,10 +40,6 @@ namespace dnWalker.NativePeers
                         Sb.AppendLine($"{schedulingData.ID} {cur.CurrentThread.CurrentLocation} {cur.EvalStack}");
 
                         return true;
-                    }
-                    else
-                    {
-
                     }
                 }
 
@@ -79,10 +74,6 @@ namespace dnWalker.NativePeers
             ObjectReference objectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false),
                 methodDef.DeclaringType);
-            AllocatedObject allocatedObject = cur.DynamicArea.Allocations[objectRef] as AllocatedObject;
-
-            _random = new Random(((Int4)args[1]).Value);
-
             cur.EvalStack.Push(objectRef);
             return true;
         }

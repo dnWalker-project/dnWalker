@@ -20,6 +20,16 @@ namespace dnWalker
                 return new NativePeers.SystemDouble();
             }
 
+            if (typeDef.FullName == typeof(Console).FullName)
+            {
+                return new NativePeers.SystemConsole();
+            }
+
+            if (typeDef.FullName == typeof(System.IO.TextWriter).FullName)
+            {
+                return new NativePeers.SystemIOTextWriter();
+            }
+
             if (typeDef.FullName == typeof(float).FullName)
             {
                 return new NativePeers.SystemSingle();

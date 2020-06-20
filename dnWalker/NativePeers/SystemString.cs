@@ -46,7 +46,7 @@ namespace dnWalker.NativePeers
 
             if (method.FullName == "System.Boolean System.String::IsNullOrEmpty(System.String)")
             {
-
+                throw new System.Exception(method.FullName);
             }
 
             if (dataElement != null)

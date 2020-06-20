@@ -369,5 +369,25 @@ namespace MMC.State
             _choiceGenerator = _nextChoiceGenerator;
             _nextChoiceGenerator = null;
         }
+
+        public bool TryGetObjectAttribute<T>(Allocation alloc, /*string attributeName, */out T attributeValue)
+        {
+            attributeValue = default(T);
+            if (_attr == null)
+            {
+                return false;
+            }
+
+            attributeValue = (T)_attr;
+            return true;
+        }
+
+        private object _attr;
+
+        public T SetObjectAttribute<T>(Allocation alloc, T attributeValue)
+        {
+            _attr = attributeValue;
+            return attributeValue;
+        }
     }
 }

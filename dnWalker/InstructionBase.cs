@@ -103,7 +103,7 @@ namespace MMC.InstructionExec
                 cur.DynamicArea.DeterminePlacement(),
                 exceptionType);
 
-            var exceptionObject = cur.DynamicArea.Allocations[exceptionRef];
+            //var exceptionObject = cur.DynamicArea.Allocations[exceptionRef];
             //exceptionObject.From(ex);
 
             cur.CurrentThread.ExceptionReference = exceptionRef;

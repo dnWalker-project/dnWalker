@@ -1295,12 +1295,12 @@ namespace MMC.InstructionExec
         }
     }
 
+    /// <summary>
+    /// Pushes the number of elements of a zero-based, one-dimensional array onto the evaluation stack.
+    /// </summary>
     public class LDLEN : ObjectModelInstructionExec
     {
-
-        public LDLEN(Instruction instr, object operand,
-                InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+        public LDLEN(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
         }
 
@@ -1311,7 +1311,7 @@ namespace MMC.InstructionExec
 
             if (theArray == null)
             {
-                return ThrowException(new System.NullReferenceException(), cur);
+                return ThrowException(new NullReferenceException(), cur);
             }
             else
             {
@@ -2559,8 +2559,9 @@ namespace MMC.InstructionExec
             string name = methDef.Name;
             string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
             bool filtered =
-                (name == "WriteLine" && decl == "System.Console")
-                || name == "StartupSetApartmentStateInternal";
+                //(name == "WriteLine" && decl == "System.Console")
+                //|| 
+                name == "StartupSetApartmentStateInternal";
             if (filtered)
             {
                 cur.Logger.Log(LogPriority.Call, "{0}: method is filtered out, not executed", name);

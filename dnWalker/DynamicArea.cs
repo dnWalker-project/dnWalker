@@ -211,6 +211,14 @@ namespace MMC.State {
 		}
 
         /// <summary>
+        /// Allocate a new object of the given type.
+        /// </summary>
+        /// <param name="typeDef">The type of the object to create.</param>
+        /// <seealso cref="DeterminePlacement"/>
+        /// <returns>A reference to the newly created object.</returns>
+        public ObjectReference AllocateObject(ITypeDefOrRef typeDef) => AllocateObject(DeterminePlacement(), typeDef);
+
+        /// <summary>
         /// Allocate a new array of the given type and length at the given place.
         /// </summary>
         /// <param name="loc">The location to put the array.</param>

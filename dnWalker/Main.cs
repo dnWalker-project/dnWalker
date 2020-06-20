@@ -352,11 +352,7 @@ namespace MMC
             return (string[])toReturn.ToArray(typeof(string));
         }
 
-        //		static string copyright = @"MMC - Mono Model Checker (version 1.0.0 - 19 December 2007)
-        //(C) University of Twente, Formal Methods and Tools group";
-
-        static string copyright = @"MoonWalker 1.0.1 (11 April 2008)
-(C) University of Twente, Formal Methods and Tools group";
+        static string copyright = @"dnSpy + MoonWalker ((C) University of Twente, Formal Methods and Tools group)";
         
         static void PrintCommandLineUsage()
         {
@@ -441,6 +437,7 @@ Disabling/enabling features:
             Console.WriteLine(copyright + "\n");
 
             var config = GetConfigFromCommandLine(args);
+            config.SetCustomSetting("evaluateRandom", true);
 
             var logger = new Logger(config.LogFilter);
             _logger = logger;
@@ -467,7 +464,7 @@ Disabling/enabling features:
             var methodArgs = config.RunTimeParameters.Select(a => new ConstantString(a)).Cast<IDataElement>().ToArray();
 
             var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
-            var statistics = new SimpleStatistics();
+            var statistics = new SimpleStatistics();            
 
             Explorer ex = new Explorer(
                 cur,

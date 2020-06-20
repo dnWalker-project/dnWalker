@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CaptureOutput.cs" />
     <Compile Include="DataRace.cs" />
     <Compile Include="Deadlock.cs" />
     <Compile Include="ExceptionHandling.cs" />
