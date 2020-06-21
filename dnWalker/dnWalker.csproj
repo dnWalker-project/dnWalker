@@ -132,6 +132,7 @@
     <Compile Include="ThreadPool.cs" />
     <Compile Include="ThreadState.cs" />
     <Compile Include="TracingExplorer.cs" />
+    <Compile Include="Traversal\Path.cs" />
     <Compile Include="ValueComparer.cs" />
     <Compile Include="VirtualMachineDefaults.cs" />
   </ItemGroup>

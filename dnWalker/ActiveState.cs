@@ -26,6 +26,7 @@ namespace MMC.State
     using System.Collections.Generic;
     using dnWalker;
     using System;
+    using dnWalker.Traversal;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
@@ -370,24 +371,30 @@ namespace MMC.State
             _nextChoiceGenerator = null;
         }
 
-        public bool TryGetObjectAttribute<T>(Allocation alloc, /*string attributeName, */out T attributeValue)
+        private Path _currentPath;
+        private IList<Path> _paths = new List<Path>();
+
+        public IEnumerable<Path> Paths => _paths;
+
+        public void StartNewPath()
         {
-            attributeValue = default(T);
-            if (_attr == null)
+            if (_currentPath != null)
             {
-                return false;
+                throw new NotImplementedException();
             }
 
-            attributeValue = (T)_attr;
-            return true;
+            _currentPath = new Path();
+            _paths.Add(_currentPath);
         }
 
-        private object _attr;
-
-        public T SetObjectAttribute<T>(Allocation alloc, T attributeValue)
+        public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
         {
-            _attr = attributeValue;
-            return attributeValue;
+            return _currentPath.TryGetObjectAttribute(alloc, attributeName, out attributeValue);
+        }
+
+        public T SetObjectAttribute<T>(Allocation alloc, string name, T attributeValue)
+        {
+            return _currentPath.SetObjectAttribute(alloc, name, attributeValue);
         }
     }
 }

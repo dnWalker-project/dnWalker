@@ -83,6 +83,31 @@ namespace dnWalker.Tests
             finished(explorer.GetUnhandledException(), statistics);
         }
 
+        protected void Explore(
+            string methodName,
+            Action<IConfig> before,
+            Action<Explorer> finished,
+            params object[] args)
+        {
+            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
+
+            var entryPoint = _definitionProvider.GetMethodDefinition(methodName)
+                ?? throw new NullReferenceException($"Method {methodName} not found");
+
+            var state = stateSpaceSetup.CreateInitialState(
+                entryPoint,
+                args.Select(a => _definitionProvider.CreateDataElement(a)).ToArray());
+
+            var statistics = new SimpleStatistics();
+
+            before?.Invoke(_config);
+
+            var explorer = new Explorer(state, statistics, _logger, _config);
+            explorer.Run();
+
+            finished(explorer);
+        }
+
         protected virtual void TestAndCompare(string methodName, params object[] args)
         {
             object res2;

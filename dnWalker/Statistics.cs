@@ -39,8 +39,6 @@ namespace MMC
         System.DateTime m_start;
         System.TimeSpan m_elapsed = new System.TimeSpan(0, 0, 0, 0, 0);
         int m_hashtableCount;
-        int m_stateCount;
-        int m_revisitCount;
         int m_backtrackCount;
         int m_maxBacktrackStack;
         long m_maxMemUsage = 0;        
@@ -64,15 +62,9 @@ namespace MMC
             get { return m_elapsed; }
         }
 
-        public int StateCount
-        {
-            get { return m_stateCount; }
-        }
+        public int StateCount { get; private set; }
 
-        public int RevisitCount
-        {
-            get { return m_revisitCount; }
-        }
+        public int RevisitCount { get; private set; }
 
         public void Start()
         {
@@ -86,12 +78,12 @@ namespace MMC
 
         public void NewState()
         {
-            m_stateCount++;
+            StateCount++;
         }
 
         public void RevisitState()
         {
-            m_revisitCount++;
+            RevisitCount++;
         }
 
         public void Backtrack()
@@ -127,8 +119,8 @@ namespace MMC
 
             sb.Append("\n--------------------------------------\n");
             sb.AppendFormat("Time                  : {0} sec\n", m_elapsed.TotalSeconds);
-            sb.AppendFormat("States                : {0}\n", m_stateCount);
-            sb.AppendFormat("Revisits              : {0}\n", m_revisitCount);
+            sb.AppendFormat("States                : {0}\n", StateCount);
+            sb.AppendFormat("Revisits              : {0}\n", RevisitCount);
             sb.AppendFormat("Backtracks            : {0}\n", m_backtrackCount);
             sb.AppendFormat("Max. DFS stack        : {0}\n", m_maxBacktrackStack);
             sb.AppendFormat("Max. heap array len.  : {0}\n", m_maxAllocArray);

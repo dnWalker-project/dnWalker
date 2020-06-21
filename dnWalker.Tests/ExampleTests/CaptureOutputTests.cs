@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FluentAssertions;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +17,30 @@ namespace dnWalker.Tests.ExampleTests
         }
 
         [Fact]
-        public void CallMethodThreeWithArgument()
+        public void CaptureOutputTest1()
         {
             Explore("Examples.CaptureOutput.Capture1",
-                c => {},
-                (ex, stats) =>
+                null,//c => {},
+                (explorer) =>
                 {
-                    //ex.Should().BeNull();
-                    //stats.Deadlocks.Should().BeGreaterThan(0, "deadlock should have been detected.");
+                    explorer.GetUnhandledException().Should().BeNull();
+                    explorer.GetExploredPaths().Count().Should().Be(1);
+                    var tw = explorer.GetExploredPaths().First().Get<TextWriter>("System.Console.Out");
+                    tw.ToString().Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
+                });
+        }
+
+        [Fact]
+        public void CaptureOutputTest2()
+        {
+            Explore("Examples.CaptureOutput.Capture2",
+                null,//c => {},
+                (explorer) =>
+                {
+                    explorer.GetUnhandledException().Should().BeNull();
+                    explorer.GetExploredPaths().Count().Should().Be(1);
+                    var tw = explorer.GetExploredPaths().First().Get<TextWriter>("System.Console.Out");
+                    tw.ToString().Should().Be($"X=2{Environment.NewLine}X=2{Environment.NewLine}");
                 });
         }
     }

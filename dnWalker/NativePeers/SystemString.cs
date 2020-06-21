@@ -2,6 +2,7 @@
 using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
+using System;
 using System.Text;
 
 namespace dnWalker.NativePeers
@@ -15,6 +16,16 @@ namespace dnWalker.NativePeers
             if (method.FullName == "System.Boolean System.String::op_Equality(System.String,System.String)")
             {
                 dataElement = new Int4(args[0].CompareTo(args[1]) == 0 ? 1 : 0);
+            }
+
+            if (method.FullName == "System.String System.String::Format(System.String,System.Object)")
+            {
+                var format = (ConstantString)args[0];
+                //cur.DynamicArea.Allocations[args[1]];
+                var allocatedObject = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
+                var value = allocatedObject.Fields[allocatedObject.ValueFieldOffset];
+                var arg = ((IConvertible)value).ToString(System.Globalization.CultureInfo.CurrentCulture);
+                dataElement = new ConstantString(string.Format(format.Value, arg));
             }
 
             if (method.FullName == "System.String System.String::Trim()")

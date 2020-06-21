@@ -29,6 +29,7 @@ namespace MMC
     using dnWalker.ChoiceGenerators;
     using dnWalker;
     using System.Linq;
+    using dnWalker.Traversal;
 
     /// <summary>
     /// Handler for events that indicate the exploration of a state.
@@ -254,6 +255,8 @@ namespace MMC
             Logger.Notice("Exploration starts now");
 
             cur.StateStorage = m_stateStorage;
+
+            cur.StartNewPath();
 
             do
             {
@@ -561,20 +564,22 @@ namespace MMC
 		}
 
 		// DEBUG method 
-		public String DebugSharedObjects {
-			get {
-				String result = "";
-
-				for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++) {
-					DynamicAllocation ida = cur.DynamicArea.Allocations[i];
-
-					if (ida != null) {
-						result += String.Format("{0} FirstThread={1} ThreadShared={2}\n", i + 1, ida.HeapAttribute, ida.ThreadShared).ToString();
-					}
-				}
-				return result;
-			}
-		}
+		public string DebugSharedObjects
+        {
+            get
+            {
+                var result = "";
+                for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++)
+                {
+                    DynamicAllocation ida = cur.DynamicArea.Allocations[i];
+                    if (ida != null)
+                    {
+                        result += String.Format("{0} FirstThread={1} ThreadShared={2}\n", i + 1, ida.HeapAttribute, ida.ThreadShared).ToString();
+                    }
+                }
+                return result;
+            }
+        }
 
         public ExplicitActiveState cur { get; }
 
@@ -582,6 +587,11 @@ namespace MMC
         {
             choiceGenerator.Previous = _choiceGenerator;
             _choiceGenerator = choiceGenerator;
+        }
+
+        public IEnumerable<Path> GetExploredPaths()
+        {
+            return cur.Paths;
         }
     }
 }

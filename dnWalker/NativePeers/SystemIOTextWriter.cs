@@ -14,15 +14,15 @@ namespace dnWalker.NativePeers
         {
             var textWriterAlloc = cur.DynamicArea.Allocations[(ObjectReference)args[0]];
 
-            if (!cur.TryGetObjectAttribute<TextWriter>(textWriterAlloc, out var tw))
+            if (!cur.TryGetObjectAttribute<TextWriter>(textWriterAlloc, "TextWriter", out var tw))
             {
-                tw = cur.SetObjectAttribute<TextWriter>(textWriterAlloc, new StringWriter());
+                throw new Exception();
             }
             
             switch (methodDef.Name)
             {
-                case "WriteLine":
-                    tw.WriteLine("X");
+                case "WriteLine" when methodDef.Parameters.Count == 2:
+                    tw.WriteLine(((IConvertible)args[1]).ToString(System.Globalization.CultureInfo.CurrentCulture));
                     iieReturnValue = InstructionExecBase.nextRetval;
                     return true;
             }
