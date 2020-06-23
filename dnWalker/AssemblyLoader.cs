@@ -25,7 +25,7 @@ namespace dnWalker
 
             ((AssemblyResolver)module.Context.AssemblyResolver).AddToCache(module);
 
-            AssemblyDef asm = module.Assembly;
+            //AssemblyDef asm = module.Assembly;
 
             /*var m = new ModuleDef();
             var asmDef = LoadAssemblies(config);

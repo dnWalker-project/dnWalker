@@ -25,7 +25,8 @@ namespace dnWalker
                 return new NativePeers.SystemConsole();
             }
 
-            if (typeDef.FullName == typeof(System.IO.TextWriter).FullName)
+            if (typeDef.FullName == typeof(System.IO.TextWriter).FullName
+                || typeDef.FullName == typeof(NativePeers.SystemIOTextWriterImpl).FullName)
             {
                 return new NativePeers.SystemIOTextWriter();
             }

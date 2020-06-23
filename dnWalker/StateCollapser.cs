@@ -106,7 +106,7 @@ namespace MMC.State {
                 DynamicAllocation alloc = cur.DynamicArea.Allocations[da];
                 if (alloc != null)
                 {
-                    m_curstate.Allocations[da] = CollapseAllocation(cur, da);
+                    m_curstate.Allocations[da] = CollapseAllocation(alloc);
                 }
                 else if (da < m_curstate.Allocations.Length && m_curstate.Allocations[da] != not_set)
                 {
@@ -119,20 +119,19 @@ namespace MMC.State {
             }
         }
 
-		int CollapseAllocation(ExplicitActiveState cur, int loc) {
-
-			DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
+		private int CollapseAllocation(DynamicAllocation alloc) 
+        {
 			WrappedIntArray collapsed_alloc = null;
 			// Bit dirty...
-			switch ((int)alloc.AllocationType) {
-				case (int)AllocationType.Object:
+			switch (alloc.AllocationType) {
+				case AllocationType.Object:
 					collapsed_alloc = CollapseObject((AllocatedObject)alloc);
 					break;
-				case (int)AllocationType.Array:
+				case AllocationType.Array:
 					collapsed_alloc = CollapseObject((AllocatedArray)alloc);
 					collapsed_alloc[ArrayPartsOffsets.AllocationType] = (int)AllocationType.Array;
 					break;
-				case (int)AllocationType.Delegate:
+				case AllocationType.Delegate:
 					collapsed_alloc = CollapseDelegate((AllocatedDelegate)alloc);
 					break;
 				default:
@@ -145,7 +144,8 @@ namespace MMC.State {
 			return m_pool.GetInt(collapsed_alloc);
 		}
 
-		WrappedIntArray CollapseObject(AllocatedObject ao) {
+		private WrappedIntArray CollapseObject(AllocatedObject ao) 
+        {
 			WrappedIntArray col = new WrappedIntArray(ObjectPartsOffsets.Count);
 			col[ObjectPartsOffsets.AllocationType] = (int)AllocationType.Object;
 			col[ObjectPartsOffsets.Definition] = m_pool.GetInt(ao.Type);
@@ -153,8 +153,8 @@ namespace MMC.State {
 			return col;
 		}
 
-		WrappedIntArray CollapseDelegate(AllocatedDelegate ad) {
-
+		private WrappedIntArray CollapseDelegate(AllocatedDelegate ad) 
+        {
 			WrappedIntArray col = new WrappedIntArray(DelegatePartsOffsets.Count);
 			col[DelegatePartsOffsets.AllocationType] = (int)AllocationType.Delegate;
 			col[DelegatePartsOffsets.Object] = m_pool.GetInt(ad.Object);

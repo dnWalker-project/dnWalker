@@ -27,6 +27,8 @@ namespace MMC
     using dnlib.DotNet;
     using System.Linq;
     using dnWalker;
+    using System.IO;
+    using dnWalker.NativePeers;
 
     /// <summary>
     /// This definition is used for quick storage of methodreferences.
@@ -109,6 +111,10 @@ namespace MMC
             do
             {
                 var currentTypeDef = GetTypeDefinition(currentType);
+                if (currentTypeDef == null)
+                {
+                    break;
+                }
                 yield return currentTypeDef;
                 currentType = currentTypeDef.BaseType;
             } while (currentType != null);
@@ -142,7 +148,15 @@ namespace MMC
                     return retval;
                 }
 
-                retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+                if (name == "System.IO.TextWriter")
+                {
+                    retval = GetOwnTypeDefinition(typeof(SystemIOTextWriterImpl).FullName);
+                }
+
+                if (retval == null)
+                {
+                    retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+                }
 
                 if (retval != null)
                 {
@@ -151,6 +165,18 @@ namespace MMC
 
                 return retval;
             }
+        }
+
+        private TypeDef GetOwnTypeDefinition(string name)
+        {
+            //var assemblyLoader = new AssemblyLoader();
+
+            //var data = File.ReadAllBytes(GetType().Assembly.Modules);
+            return GetType().Assembly.Modules.Select(m =>
+            {
+                var moduleDef = ModuleDefMD.Load(m);
+                return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+            }).FirstOrDefault();
         }
 
         /// <summary>
@@ -172,7 +198,11 @@ namespace MMC
         internal TypeDef GetTypeDefinition(TypeSig typeSig)
         {
             var typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
-            if (typeDef.HasGenericParameters)
+            if (typeDef == null)
+            {
+                typeDef = GetTypeDefinition(typeSig.FullName);
+            }
+            if (typeDef != null && typeDef.HasGenericParameters)
             {
                 //    return typeDef;
             }
@@ -183,7 +213,18 @@ namespace MMC
         // TODO TypeDefFinder
         internal static TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
         {
-            return typeRef.ResolveTypeDefThrow();
+            try
+            {
+                return typeRef.ResolveTypeDefThrow();
+            }
+            catch
+            {
+                if (typeRef.FullName == "System.Object")
+                {
+                    return null;
+                }
+                throw;
+            }
         }
 
         internal TypeDef GetTypeDefinition(TypeDef typeDef)
