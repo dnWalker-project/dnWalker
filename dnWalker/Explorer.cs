@@ -256,6 +256,8 @@ namespace MMC
 
             cur.StateStorage = m_stateStorage;
 
+            InitializeStaticGlobals(cur);
+
             cur.StartNewPath();
 
             do
@@ -316,6 +318,11 @@ namespace MMC
             _explorationLogger.Dispose();
 
             return noErrors;
+        }
+
+        private void InitializeStaticGlobals(ExplicitActiveState cur)
+        {
+            dnWalker.NativePeers.SystemConsole.Init(cur);
         }
 
         private void Advance()

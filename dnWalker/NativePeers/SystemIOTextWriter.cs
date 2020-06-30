@@ -4,7 +4,6 @@ using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace dnWalker.NativePeers
@@ -50,6 +49,6 @@ namespace dnWalker.NativePeers
 
     internal class SystemIOTextWriterImpl
     {
-        private string _buffer;
+        private string m_value;
     }
 }

@@ -18,28 +18,28 @@
 using MMC.Data;
 using MMC.Util;
 using MMC.Collections;
-using TypeReference = dnlib.DotNet.TypeRef;
 using MethodDefinition = dnlib.DotNet.MethodDef;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet;
 
-namespace MMC.State {
-	class StateDecollapser
+namespace MMC.State
+{
+    class StateDecollapser
     {
-		// Use the same constants as the ones used in the vectors.
-		public const int not_set = ChangingIntVector.not_set;
-		public const int deleted = ChangingIntVector.deleted;
+        // Use the same constants as the ones used in the vectors.
+        public const int not_set = ChangingIntVector.not_set;
+        public const int deleted = ChangingIntVector.deleted;
 
-		private readonly PoolData m_pool;
+        private readonly PoolData m_pool;
         //private readonly ExplicitActiveState cur;
 
         public StateDecollapser(PoolData pool)//, ExplicitActiveState cur)
         {
             //this.cur = cur;
-			m_pool = pool;
-		}
+            m_pool = pool;
+        }
 
-		public void RestoreState(ExplicitActiveState cur, CollapsedStateDelta delta)
+        public void RestoreState(ExplicitActiveState cur, CollapsedStateDelta delta)
         {
             // We restore the state in the following order:
             //   - Restore allocations.
@@ -67,46 +67,47 @@ namespace MMC.State {
                 }
             }
 
-			for (ISparseElement d = delta.Classes; d != null; d = d.Next) {
-				int pool_index = d.DeltaVal;
-				int i = d.Index;
+            for (ISparseElement d = delta.Classes; d != null; d = d.Next)
+            {
+                int pool_index = d.DeltaVal;
+                int i = d.Index;
 
-				// we don't delete class definitions, but reset its init data,
-				// so a class may be "unloaded" here.
-				if (pool_index != not_set && pool_index != deleted) {
-					AllocatedClass ac = cur.StaticArea.GetClass(i);
-					ThreadObjectWatcher.DecrementAll(ac.Fields, cur);
-					RestoreClass(cur, i, pool_index);
-					ThreadObjectWatcher.IncrementAll(ac.Fields, cur);
-				} else if (pool_index == deleted) {
-					AllocatedClass ac = cur.StaticArea.GetClass(i);
-					ThreadObjectWatcher.DecrementAll(ac.Fields, cur);
-					cur.StaticArea.DeleteClassAtLocation(i);
-				}
-			}
+                // we don't delete class definitions, but reset its init data,
+                // so a class may be "unloaded" here.
+                if (pool_index != not_set && pool_index != deleted)
+                {
+                    AllocatedClass ac = cur.StaticArea.GetClass(i);
+                    ThreadObjectWatcher.DecrementAll(ac.Fields, cur);
+                    RestoreClass(cur, i, pool_index);
+                    ThreadObjectWatcher.IncrementAll(ac.Fields, cur);
+                }
+                else if (pool_index == deleted)
+                {
+                    AllocatedClass ac = cur.StaticArea.GetClass(i);
+                    ThreadObjectWatcher.DecrementAll(ac.Fields, cur);
+                    cur.StaticArea.DeleteClassAtLocation(i);
+                }
+            }
 
-			cur.ThreadPool.SetThreadUpperBound(delta.ThreadsUpperBound);
+            cur.ThreadPool.SetThreadUpperBound(delta.ThreadsUpperBound);
 
-			for (ISparseElement d = delta.Threads; d != null; d = d.Next) {
-				int pool_index = d.DeltaVal;
-				int i = d.Index;
+            for (ISparseElement d = delta.Threads; d != null; d = d.Next)
+            {
+                int pool_index = d.DeltaVal;
+                int i = d.Index;
 
-				if (pool_index == deleted)
-					cur.ThreadPool.DeleteThread(i);
-				else if (pool_index != not_set)
-					RestoreThread(cur, i, pool_index);
-			}
-		}
+                if (pool_index == deleted)
+                    cur.ThreadPool.DeleteThread(i);
+                else if (pool_index != not_set)
+                    RestoreThread(cur, i, pool_index);
+            }
+        }
 
-		/////////////////////////////////////////////////////////////////////
-		// Heap
-		/////////////////////////////////////////////////////////////////////
-
-		private void RestoreAllocation(ExplicitActiveState cur, int alloc_id, int pool_index) 
+        private void RestoreAllocation(ExplicitActiveState cur, int alloc_id, int pool_index)
         {
-			WrappedIntArray pool_entry = m_pool.GetList(pool_index);
-			int alloc_type = pool_entry[AllocationPartsOffsets.AllocationType];
-			DynamicAllocation alloc = null;
+            WrappedIntArray pool_entry = m_pool.GetList(pool_index);
+            int alloc_type = pool_entry[AllocationPartsOffsets.AllocationType];
+            DynamicAllocation alloc = null;
             switch (alloc_type)
             {
                 case (int)AllocationType.Object:
@@ -121,16 +122,17 @@ namespace MMC.State {
                 default:
                     throw new System.Exception/* Logger.l.Warning*/("unknown allocation type: " + alloc_type);                  //break;
             }
-			if (alloc != null) {
-				// Store back in the heap.
-				cur.DynamicArea.Allocations[alloc_id] = alloc;
-				// Restore the lock (if it has one).
-				if (pool_entry[AllocationPartsOffsets.Lock] > CollectionConstants.NotSet)
-					alloc.Lock = m_pool.GetLock(pool_entry[AllocationPartsOffsets.Lock]);
-				else
-					alloc.Lock = null;
-			}
-		}
+            if (alloc != null)
+            {
+                // Store back in the heap.
+                cur.DynamicArea.Allocations[alloc_id] = alloc;
+                // Restore the lock (if it has one).
+                if (pool_entry[AllocationPartsOffsets.Lock] > CollectionConstants.NotSet)
+                    alloc.Lock = m_pool.GetLock(pool_entry[AllocationPartsOffsets.Lock]);
+                else
+                    alloc.Lock = null;
+            }
+        }
 
         private DynamicAllocation RestoreObject(ExplicitActiveState cur, int alloc_id, WrappedIntArray co)
         {
@@ -156,29 +158,29 @@ namespace MMC.State {
             return obj;
         }
 
-		DynamicAllocation RestoreArray(ExplicitActiveState cur, int alloc_id, WrappedIntArray ca)
+        private DynamicAllocation RestoreArray(ExplicitActiveState cur, int alloc_id, WrappedIntArray ca)
         {
-			// Again, check if there is some old value we can re-use.
-			var type = (ITypeDefOrRef)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
+            // Again, check if there is some old value we can re-use.
+            var type = (ITypeDefOrRef)m_pool.GetObject(ca[ArrayPartsOffsets.Definition]);
 
-			//int array_length = ca.Length - ArrayPartsOffsets.Count;
-			DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
+            //int array_length = ca.Length - ArrayPartsOffsets.Count;
+            DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
 
-			DataElementList newFields = m_pool.GetDataElementList(ca[ArrayPartsOffsets.Elements]);
-			int array_length = newFields.Length;
-			AllocatedArray arr = (alloc == null) ? new AllocatedArray(type, array_length, cur.Configuration) : (AllocatedArray)alloc;
+            DataElementList newFields = m_pool.GetDataElementList(ca[ArrayPartsOffsets.Elements]);
+            int array_length = newFields.Length;
+            AllocatedArray arr = (alloc == null) ? new AllocatedArray(type, array_length, cur.Configuration) : (AllocatedArray)alloc;
 
             // Overwrite the elements.
             cur.ParentWatcher.RemoveParentFromAllChilds(new ObjectReference(alloc_id + 1), arr.Fields, cur);
-			arr.Fields = newFields;
-			return arr;
-		}
+            arr.Fields = newFields;
+            return arr;
+        }
 
-		DynamicAllocation RestoreDelegate(ExplicitActiveState cur, int alloc_id, WrappedIntArray cd)
+        private DynamicAllocation RestoreDelegate(ExplicitActiveState cur, int alloc_id, WrappedIntArray cd)
         {
             ObjectReference obj_ref = (ObjectReference)m_pool.GetElement(cd[DelegatePartsOffsets.Object]);
-			MethodPointer meth_ptr = (MethodPointer)m_pool.GetElement(cd[DelegatePartsOffsets.MethodPointer]);
-			DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
+            MethodPointer meth_ptr = (MethodPointer)m_pool.GetElement(cd[DelegatePartsOffsets.MethodPointer]);
+            DynamicAllocation alloc = cur.DynamicArea.Allocations[alloc_id];
 
             if (alloc != null)
             {
@@ -192,55 +194,50 @@ namespace MMC.State {
                 alloc = new AllocatedDelegate(obj_ref, meth_ptr, cur.Configuration);
             }
 
-			return alloc;
-		}
+            return alloc;
+        }
 
-		/////////////////////////////////////////////////////////////////////
-		// Classes
-		/////////////////////////////////////////////////////////////////////
-
-		void RestoreClass(ExplicitActiveState cur, int class_id, int pool_index) {
-
-			WrappedIntArray cc = m_pool.GetList(pool_index);
-
-			AllocatedClass cls = cur.StaticArea.GetClass(class_id);
-
-			//			ThreadObjectWatcher.DecrementAll(int.MaxValue, cls.Fields);
-
-			cls.Fields = m_pool.GetDataElementList(cc[ClassPartsOffsets.Fields]);
-			cls.InitData = m_pool.GetInitData(cc[ClassPartsOffsets.InitData]);
-			if (cc[ClassPartsOffsets.Lock] >= 0)
-				cls.Lock = m_pool.GetLock(cc[ClassPartsOffsets.Lock]);
-			else
-				cls.Lock = null;
-
-			//			ThreadObjectWatcher.IncrementAll(int.MaxValue, cls.Fields);
-		}
-
-		/////////////////////////////////////////////////////////////////////
-		// Threads
-		/////////////////////////////////////////////////////////////////////
-
-		void RestoreThread(ExplicitActiveState cur,int thread_id, int pool_index)
+        private void RestoreClass(ExplicitActiveState cur, int class_id, int pool_index)
         {
-			WrappedIntArray collapsed_trd = m_pool.GetList(pool_index);
-			ThreadState trd = cur.ThreadPool.Threads[thread_id];
+
+            WrappedIntArray cc = m_pool.GetList(pool_index);
+
+            AllocatedClass cls = cur.StaticArea.GetClass(class_id);
+
+            //			ThreadObjectWatcher.DecrementAll(int.MaxValue, cls.Fields);
+
+            cls.Fields = m_pool.GetDataElementList(cc[ClassPartsOffsets.Fields]);
+            cls.InitData = m_pool.GetInitData(cc[ClassPartsOffsets.InitData]);
+            if (cc[ClassPartsOffsets.Lock] >= 0)
+                cls.Lock = m_pool.GetLock(cc[ClassPartsOffsets.Lock]);
+            else
+                cls.Lock = null;
+
+            //			ThreadObjectWatcher.IncrementAll(int.MaxValue, cls.Fields);
+        }
+
+        private void RestoreThread(ExplicitActiveState cur, int thread_id, int pool_index)
+        {
+            WrappedIntArray collapsed_trd = m_pool.GetList(pool_index);
+            ThreadState trd = cur.ThreadPool.Threads[thread_id];
             if ((int)trd.State != collapsed_trd[ThreadPartOffsets.State])
             {
                 trd.State = (System.Threading.ThreadState)collapsed_trd[ThreadPartOffsets.State];
             }
-			trd.WaitingFor = collapsed_trd[ThreadPartOffsets.WaitingFor];
+            trd.WaitingFor = collapsed_trd[ThreadPartOffsets.WaitingFor];
 
-			if (collapsed_trd[ThreadPartOffsets.ExceptionReference] == 0) {
-				trd.ExceptionReference = ObjectReference.Null;
-			} else
-				trd.ExceptionReference = new ObjectReference(collapsed_trd[ThreadPartOffsets.ExceptionReference]);
+            if (collapsed_trd[ThreadPartOffsets.ExceptionReference] == 0)
+            {
+                trd.ExceptionReference = ObjectReference.Null;
+            }
+            else
+                trd.ExceptionReference = new ObjectReference(collapsed_trd[ThreadPartOffsets.ExceptionReference]);
 
-			if (collapsed_trd[ThreadPartOffsets.CallStack] != not_set)
-				RestoreCallStack(cur, thread_id, collapsed_trd[ThreadPartOffsets.CallStack]);
-		}
+            if (collapsed_trd[ThreadPartOffsets.CallStack] != not_set)
+                RestoreCallStack(cur, thread_id, collapsed_trd[ThreadPartOffsets.CallStack]);
+        }
 
-        void RestoreCallStack(ExplicitActiveState cur, int thread_id, int pool_index)
+        private void RestoreCallStack(ExplicitActiveState cur, int thread_id, int pool_index)
         {
             WrappedIntArray collapsed_frames = m_pool.GetList(pool_index);
 
@@ -274,41 +271,41 @@ namespace MMC.State {
             cur.ThreadPool.Threads[thread_id].CallStack.StackPointer = collapsed_frames.Length;
         }
 
-		void RestoreMethod(ExplicitActiveState cur, int thread_id, int method_id, int pool_index)
+        private void RestoreMethod(ExplicitActiveState cur, int thread_id, int method_id, int pool_index)
         {
             WrappedIntArray cm = m_pool.GetList(pool_index);
 
-			// Check if we can re-use the value on the current stack. If we only
-			// have a partially collapsed method here, this is mandatory, not just
-			// an optimalization.
-			MethodState method = cur.ThreadPool.Threads[thread_id].CallStack[method_id];
+            // Check if we can re-use the value on the current stack. If we only
+            // have a partially collapsed method here, this is mandatory, not just
+            // an optimalization.
+            MethodState method = cur.ThreadPool.Threads[thread_id].CallStack[method_id];
 
-			MethodDefinition meth_def = (MethodDefinition)m_pool.GetObject(cm[MethodPartsOffsets.Definition]);
-			/*
+            MethodDefinition meth_def = (MethodDefinition)m_pool.GetObject(cm[MethodPartsOffsets.Definition]);
+            /*
 			 * It is well possible that the CallStack still contains an old methodstate instance
 			 * while the stackpointer is below that instance. This is originally implemented as
 			 * a caching feature. 
 			 * 
 			 * However, now we have to compensate that during counting object references
 			 */
-			bool stillOnStack = method_id < cur.ThreadPool.Threads[thread_id].CallStack.StackPointer;
+            bool stillOnStack = method_id < cur.ThreadPool.Threads[thread_id].CallStack.StackPointer;
 
             if (method == null)
             {
                 method = new MethodState(null, null, null, null, cur);
             }
 
-			bool sameMethod = meth_def == method.Definition;
+            bool sameMethod = meth_def == method.Definition;
 
-			method.ProgramCounter = m_pool.GetObject(cm[MethodPartsOffsets.ProgramCounter]) as Instruction;
-			method.IsExceptionSource = (cm[MethodPartsOffsets.IsExceptionSource] == 1) ? true : false;
-			//method.EndFinallyTarget = m_pool.GetObject(cm[MethodPartsOffsets.EndFinallyTarget]) as Instruction;
-			method.OnDispose = m_pool.GetObject(cm[MethodPartsOffsets.OnDispose]) as MethodStateCallback;
-			method.Definition = meth_def;
+            method.ProgramCounter = m_pool.GetObject(cm[MethodPartsOffsets.ProgramCounter]) as Instruction;
+            method.IsExceptionSource = (cm[MethodPartsOffsets.IsExceptionSource] == 1) ? true : false;
+            //method.EndFinallyTarget = m_pool.GetObject(cm[MethodPartsOffsets.EndFinallyTarget]) as Instruction;
+            method.OnDispose = m_pool.GetObject(cm[MethodPartsOffsets.OnDispose]) as MethodStateCallback;
+            method.Definition = meth_def;
 
-			if (cm[MethodPartsOffsets.Arguments] != not_set)
+            if (cm[MethodPartsOffsets.Arguments] != not_set)
             {
-				DataElementList args = m_pool.GetDataElementList(cm[MethodPartsOffsets.Arguments]);
+                DataElementList args = m_pool.GetDataElementList(cm[MethodPartsOffsets.Arguments]);
 
                 /*
 				 * When the lengths match, it is likely that the lists are similar 
@@ -329,12 +326,12 @@ namespace MMC.State {
                     ThreadObjectWatcher.IncrementAll(thread_id, args, cur);
                 }
 
-				method.Arguments = args;
+                method.Arguments = args;
             }
 
-			if (cm[MethodPartsOffsets.Locals] != not_set)
+            if (cm[MethodPartsOffsets.Locals] != not_set)
             {
-				DataElementList locals = m_pool.GetDataElementList(cm[MethodPartsOffsets.Locals]);
+                DataElementList locals = m_pool.GetDataElementList(cm[MethodPartsOffsets.Locals]);
 
                 /*
 				 * When the lengths match, it is likely that the lists are similar 
@@ -355,12 +352,12 @@ namespace MMC.State {
                     ThreadObjectWatcher.IncrementAll(thread_id, locals, cur);
                 }
 
-				method.Locals = locals;
-			}
+                method.Locals = locals;
+            }
 
-			if (cm[MethodPartsOffsets.EvalStack] != not_set)
+            if (cm[MethodPartsOffsets.EvalStack] != not_set)
             {
-				DataElementStack stack = m_pool.GetDataElementStack(cm[MethodPartsOffsets.EvalStack]);
+                DataElementStack stack = m_pool.GetDataElementStack(cm[MethodPartsOffsets.EvalStack]);
 
                 /*
 				 * When the lengths match, it is likely that the lists are similar 
@@ -381,10 +378,10 @@ namespace MMC.State {
                     ThreadObjectWatcher.IncrementAll(thread_id, stack, cur);
                 }
 
-				method.EvalStack = stack;
-			}
+                method.EvalStack = stack;
+            }
 
-			cur.ThreadPool.Threads[thread_id].CallStack[method_id] = method;
-		}
-	}
+            cur.ThreadPool.Threads[thread_id].CallStack[method_id] = method;
+        }
+    }
 }

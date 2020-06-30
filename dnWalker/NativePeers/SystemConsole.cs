@@ -17,7 +17,8 @@ namespace dnWalker.NativePeers
             switch (name)
             {
                 case "Out":
-                    if (_outTextWriterRef.Equals(ObjectReference.Null))
+                    Init(cur);
+                    /*if (_outTextWriterRef.Equals(ObjectReference.Null))
                     {
                         var textWriterType = cur.DefinitionProvider.GetTypeDefinition(typeof(TextWriter).FullName);
                         _outTextWriterRef = cur.DynamicArea.AllocateObject(textWriterType);
@@ -26,9 +27,9 @@ namespace dnWalker.NativePeers
                         var textWriterAlloc = cur.DynamicArea.Allocations[_outTextWriterRef];
                         var stringWriter = new StringWriter();
                         // "static" attribute
-                        cur.SetObjectAttribute<TextWriter>(null, methodDef.DeclaringType.FullName + "." + name, stringWriter);
-                        cur.SetObjectAttribute<TextWriter>(textWriterAlloc, "TextWriter", stringWriter);
-                    }
+                        //cur.SetObjectAttribute<TextWriter>(null, methodDef.DeclaringType.FullName + "." + name, stringWriter);
+                        //cur.SetObjectAttribute<TextWriter>(textWriterAlloc, "TextWriter", stringWriter);
+                    }*/
                     
                     cur.EvalStack.Push(_outTextWriterRef);
                     iieReturnValue = InstructionExecBase.nextRetval;
@@ -37,6 +38,22 @@ namespace dnWalker.NativePeers
 
             iieReturnValue = InstructionExecBase.nextRetval;
             return false;
+        }
+
+        public static void Init(ExplicitActiveState cur)
+        {
+            if (_outTextWriterRef.Equals(ObjectReference.Null))
+            {
+                var textWriterType = cur.DefinitionProvider.GetTypeDefinition(typeof(TextWriter).FullName);
+                _outTextWriterRef = cur.DynamicArea.AllocateObject(textWriterType);
+                cur.DynamicArea.SetPinnedAllocation(_outTextWriterRef, true);
+
+                //var textWriterAlloc = cur.DynamicArea.Allocations[_outTextWriterRef];
+                //var stringWriter = new StringWriter();
+                // "static" attribute
+                //cur.SetObjectAttribute<TextWriter>(null, methodDef.DeclaringType.FullName + "." + name, stringWriter);
+                //cur.SetObjectAttribute<TextWriter>(textWriterAlloc, "TextWriter", stringWriter);
+            }
         }
     }
 }
