@@ -8,7 +8,7 @@ namespace dnWalker.NativePeers
 {
     public class SystemConsole : NativePeer
     {
-        private static ObjectReference _outTextWriterRef = ObjectReference.Null;
+        public static ObjectReference OutTextWriterRef { get; private set; } = ObjectReference.Null;
 
         public override bool TryGetValue(MethodDef methodDef, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
         {
@@ -31,7 +31,7 @@ namespace dnWalker.NativePeers
                         //cur.SetObjectAttribute<TextWriter>(textWriterAlloc, "TextWriter", stringWriter);
                     }*/
                     
-                    cur.EvalStack.Push(_outTextWriterRef);
+                    cur.EvalStack.Push(OutTextWriterRef);
                     iieReturnValue = InstructionExecBase.nextRetval;
                     return true;
             }
@@ -42,11 +42,11 @@ namespace dnWalker.NativePeers
 
         public static void Init(ExplicitActiveState cur)
         {
-            if (_outTextWriterRef.Equals(ObjectReference.Null))
+            if (OutTextWriterRef.Equals(ObjectReference.Null))
             {
                 var textWriterType = cur.DefinitionProvider.GetTypeDefinition(typeof(TextWriter).FullName);
-                _outTextWriterRef = cur.DynamicArea.AllocateObject(textWriterType);
-                cur.DynamicArea.SetPinnedAllocation(_outTextWriterRef, true);
+                OutTextWriterRef = cur.DynamicArea.AllocateObject(textWriterType);
+                cur.DynamicArea.SetPinnedAllocation(OutTextWriterRef, true);
 
                 //var textWriterAlloc = cur.DynamicArea.Allocations[_outTextWriterRef];
                 //var stringWriter = new StringWriter();

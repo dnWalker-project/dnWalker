@@ -23,6 +23,11 @@ namespace MMC.State
     using MMC.Util;
     using dnWalker.DataElements;
     using MMC.InstructionExec;
+    using System;
+
+    public delegate void ThreadStateChanged(ThreadState threadState, System.Threading.ThreadState state);
+
+    public delegate void CallStackEmptied(ThreadState threadState);
 
     public class ThreadState : IMustDispose, ICleanable, IStorageVisitable
     {
@@ -35,6 +40,10 @@ namespace MMC.State
         public int Id { get; }
 
         public CallStack CallStack { get; set; }
+
+        public event ThreadStateChanged ThreadStateChanged;
+
+        public event CallStackEmptied CallStackEmptied;
 
         public MethodState CurrentMethod
         {
@@ -59,7 +68,9 @@ namespace MMC.State
 
         public ObjectReference ThreadObject { get; set; }
 
-        public System.Exception UnhandledException { get; internal set; }
+        public Exception UnhandledException { get; internal set; }
+
+        public ExplicitActiveState Cur => cur;
 
         private ObjectReference _exceptionReference;
 
@@ -115,6 +126,8 @@ namespace MMC.State
                         "Thread object should not be null when setting state (even to Stopped).");
                     theThreadObject.Fields[state_field_offset] = new Int4((int)m_state);
                 }
+
+                ThreadStateChanged?.Invoke(this, m_state);
             }
         }
 
@@ -331,6 +344,10 @@ namespace MMC.State
             if (thread.CallStack.IsEmpty())
             {
                 threadTerm = cur.TryTerminateThread(thread);
+                if (!threadTerm)
+                {
+                    thread.SignalEnd();
+                }
                 //cur.ThreadPool.TerminateThread(thread);
                 //threadTerm = true;
             }
@@ -340,6 +357,11 @@ namespace MMC.State
             }
 
             return continueExploration;
+        }
+
+        private void SignalEnd()
+        {
+            CallStackEmptied?.Invoke(this);
         }
     }
 }

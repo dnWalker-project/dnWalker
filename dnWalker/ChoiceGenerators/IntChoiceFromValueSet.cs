@@ -23,7 +23,7 @@ namespace dnWalker.ChoiceGenerators
             _minValue = minValue;
             _maxValue = maxValue;
 
-            _numbers = Enumerable.Range(minValue, maxValue + 1).ToList();
+            _numbers = Enumerable.Range(minValue, maxValue).ToList();
         }
 
         public object GetNextChoice()

@@ -125,8 +125,6 @@ namespace MMC
             // Initialize main thread.
             cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, CreateMainThreadObject(cur, entryPoint));
 
-            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
-
             return cur;
         }
 

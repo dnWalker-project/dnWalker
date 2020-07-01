@@ -27,6 +27,8 @@ namespace MMC.State {
 	using MMC.Collections;
     using System.Linq;
 
+    public delegate void NewThreadSpawned(ThreadState threadState);
+
     public class ThreadPool : ICleanable, IStorageVisitable 
     {
         private DirtyList m_dirty;
@@ -121,7 +123,7 @@ namespace MMC.State {
 		public int NewThread(ExplicitActiveState cur, MethodState entry, ObjectReference threadObj)
         {
 			int thread_id = Threads.Length;
-			ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
+            ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
 			Threads.Add(newThread);
 			newThread.CallStack.Push(entry);
 			_logger.Debug("spawned new thread with id {0}", thread_id);
@@ -133,14 +135,23 @@ namespace MMC.State {
 
             cur.RequestSharingAnalysis();
 
+            RaiseNewThreadSpawned(newThread);
+
             return thread_id;
 		}
 
-		////////////////////////////////////////////////////////////////////
-		// Suspending threads.
-		////////////////////////////////////////////////////////////////////
+        public event NewThreadSpawned OnNewThreadSpawned;
 
-		public void JoinThreads(int blocking_thread, int to_terminate) {
+        private void RaiseNewThreadSpawned(ThreadState threadState)
+        {
+            OnNewThreadSpawned?.Invoke(threadState);
+        }
+
+        ////////////////////////////////////////////////////////////////////
+        // Suspending threads.
+        ////////////////////////////////////////////////////////////////////
+
+        public void JoinThreads(int blocking_thread, int to_terminate) {
 
 			ThreadState to_block = Threads[blocking_thread];
 			Debug.Assert(to_block != null, "Thread to be blocked is null!?");

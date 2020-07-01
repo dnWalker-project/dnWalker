@@ -1,12 +1,23 @@
-﻿using MMC.State;
+﻿using dnWalker.NativePeers;
+using MMC.State;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace dnWalker.Traversal
 {
     public class Path
     {
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
+
+        private IList<Segment> _segments = new List<Segment>();
+
+        public void Extend(int toState)
+        {
+            var fromState = _segments.LastOrDefault()?.ToState ?? 0;
+
+            _segments.Add(new Segment(fromState, toState));
+        }
 
         public T Get<T>(string name)
         {
@@ -36,6 +47,26 @@ namespace dnWalker.Traversal
 
             attributeValue = default;
             return false;
+        }
+
+        public bool Faulted => Exception != null;
+
+        public string Exception { get; private set; }
+
+        public string StackTrace { get; private set; }
+
+        public string Output { get; private set; }
+
+        public void Terminate(ThreadState threadState)
+        {
+            if (threadState.UnhandledException != null)
+            {
+                Exception = threadState.UnhandledException.Message;
+                StackTrace = threadState.CallStack.ToString();
+            }
+
+            AllocatedObject theObject = threadState.Cur.DynamicArea.Allocations[SystemConsole.OutTextWriterRef] as AllocatedObject;
+            Output = ((IConvertible)theObject.Fields[0]).ToString(System.Globalization.CultureInfo.CurrentCulture);
         }
     }
 }

@@ -112,6 +112,7 @@ namespace MMC
         private readonly LinkedList<CollapsedState> m_atomicStates;
         private IChoiceGenerator _choiceGenerator;
         private ExplorationLogger _explorationLogger;
+        private readonly PathStore _pathStore;
 
         public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config)
         {
@@ -129,6 +130,8 @@ namespace MMC
 
             _explorationLogger = new ExplorationLogger(Statistics, this);
             var el = _explorationLogger;
+
+            _pathStore = new PathStore();
 
             /*
 			 * Logging
@@ -167,6 +170,14 @@ namespace MMC
                 StateConstructed += new StateEventHandler(m_spor.StoreThreadSharingData);
                 BacktrackStop += new BacktrackEventHandler(m_spor.RestoreThreadSharingData);
             }
+            
+            // execution path tracking
+            BacktrackStart += new BacktrackEventHandler(_pathStore.BacktrackStart);
+            StateConstructed += new StateEventHandler(_pathStore.StateConstructed);
+            BacktrackStop += new BacktrackEventHandler(_pathStore.BacktrackStop);
+            cur.ThreadPool.OnNewThreadSpawned += _pathStore.NewThreadSpawned;
+
+            _pathStore.NewThreadSpawned(cur.CurrentThread);
 
             if (!double.IsInfinity(config.MaxExploreInMinutes))
             {
@@ -209,6 +220,8 @@ namespace MMC
                 Backtracked,
                 BacktrackStop,
                 ThreadPicked);
+
+            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
         }
 
         public IConfig Config { get; }
@@ -255,10 +268,9 @@ namespace MMC
             Logger.Notice("Exploration starts now");
 
             cur.StateStorage = m_stateStorage;
+            cur.PathStore = _pathStore;
 
             InitializeStaticGlobals(cur);
-
-            cur.StartNewPath();
 
             do
             {
@@ -575,16 +587,17 @@ namespace MMC
         {
             get
             {
-                var result = "";
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++)
                 {
                     DynamicAllocation ida = cur.DynamicArea.Allocations[i];
                     if (ida != null)
                     {
-                        result += String.Format("{0} FirstThread={1} ThreadShared={2}\n", i + 1, ida.HeapAttribute, ida.ThreadShared).ToString();
+                        sb.AppendFormat("{0} FirstThread={1} ThreadShared={2}\n", i + 1, ida.HeapAttribute, ida.ThreadShared);
+                        sb.AppendLine();
                     }
                 }
-                return result;
+                return sb.ToString();
             }
         }
 
@@ -598,7 +611,7 @@ namespace MMC
 
         public IEnumerable<Path> GetExploredPaths()
         {
-            return cur.Paths;
+            return _pathStore.Paths;
         }
     }
 }

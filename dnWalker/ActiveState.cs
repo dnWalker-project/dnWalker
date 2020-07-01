@@ -22,10 +22,8 @@ namespace MMC.State
     using MMC.Data;
     using MMC.Util;
     using MMC.InstructionExec;
-    using MMC.Collections;
     using System.Collections.Generic;
     using dnWalker;
-    using System;
     using dnWalker.Traversal;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
@@ -140,6 +138,8 @@ namespace MMC.State
         public Logger Logger { get; internal set; }
         
         internal StateStorage StateStorage { get; set; }
+
+        public PathStore PathStore { get; set; }
 
         /// <summary>
         /// Determine if we are "running" in the assembly to be checked.
@@ -371,30 +371,15 @@ namespace MMC.State
             _nextChoiceGenerator = null;
         }
 
-        private Path _currentPath;
-        private IList<Path> _paths = new List<Path>();
-
-        public IEnumerable<Path> Paths => _paths;
-
-        public void StartNewPath()
-        {
-            if (_currentPath != null)
-            {
-                throw new NotImplementedException();
-            }
-
-            _currentPath = new Path();
-            _paths.Add(_currentPath);
-        }
-
         public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
         {
-            return _currentPath.TryGetObjectAttribute(alloc, attributeName, out attributeValue);
+            attributeValue = default;
+            return false;// _currentPath.TryGetObjectAttribute(alloc, attributeName, out attributeValue);
         }
 
         public T SetObjectAttribute<T>(Allocation alloc, string name, T attributeValue)
         {
-            return _currentPath.SetObjectAttribute(alloc, name, attributeValue);
+            return default;// _currentPath.SetObjectAttribute(alloc, name, attributeValue);
         }
     }
 }

@@ -133,6 +133,8 @@
     <Compile Include="ThreadState.cs" />
     <Compile Include="TracingExplorer.cs" />
     <Compile Include="Traversal\Path.cs" />
+    <Compile Include="Traversal\PathStore.cs" />
+    <Compile Include="Traversal\Segment.cs" />
     <Compile Include="ValueComparer.cs" />
     <Compile Include="VirtualMachineDefaults.cs" />
   </ItemGroup>
