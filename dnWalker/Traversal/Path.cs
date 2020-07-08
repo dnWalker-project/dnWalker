@@ -36,6 +36,14 @@ namespace dnWalker.Traversal
             return attributeValue;
         }
 
+        public Path BacktrackTo(int id)
+        {
+            return new Path
+            {
+                _segments = _segments.TakeWhile(s => s.ToState != id).Union(_segments.Where(s => s.ToState == id)).ToList()
+            };
+        }
+
         public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
         {
             var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
@@ -57,8 +65,17 @@ namespace dnWalker.Traversal
 
         public string Output { get; private set; }
 
+        public int Length => _segments.Count;
+
         public void Terminate(ThreadState threadState)
         {
+            var fromState = _segments.LastOrDefault()?.ToState ?? 0;
+
+            var segment = new Segment(fromState, -1)
+            {
+                Terminal = threadState.UnhandledException != null
+            };
+
             if (threadState.UnhandledException != null)
             {
                 Exception = threadState.UnhandledException.Message;
@@ -67,6 +84,8 @@ namespace dnWalker.Traversal
 
             AllocatedObject theObject = threadState.Cur.DynamicArea.Allocations[SystemConsole.OutTextWriterRef] as AllocatedObject;
             Output = ((IConvertible)theObject.Fields[0]).ToString(System.Globalization.CultureInfo.CurrentCulture);
+
+            _segments.Add(segment);
         }
     }
 }

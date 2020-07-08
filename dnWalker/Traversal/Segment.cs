@@ -16,5 +16,7 @@ namespace dnWalker.Traversal
 
         public int FromState { get; }
         public int ToState { get; }
+
+        public bool Terminal { get; set; }
     }
 }

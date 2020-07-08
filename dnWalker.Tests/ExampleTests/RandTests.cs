@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,10 +23,12 @@ namespace dnWalker.Tests.ExampleTests
                 {
                     c.SetCustomSetting("evaluateRandom", true);
                 },
-                (ex, stats) =>
+                (explorer) =>
                 {
-                    //ex.Should().BeNull();
-                    //stats.Deadlocks.Should().BeGreaterThan(0, "deadlock should have been detected.");
+                    var paths = explorer.GetExploredPaths();
+                    paths.Should().HaveCount(6);
+                    paths.Where(p => p.Exception != null).Should().HaveCount(2);
+                    paths.Select(p => p.Length).Should().AllBeEquivalentTo(3);
                 });
         }
     }
