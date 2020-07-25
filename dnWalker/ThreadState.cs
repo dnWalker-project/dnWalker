@@ -113,6 +113,7 @@ namespace MMC.State
                 if (value == System.Threading.ThreadState.Stopped)
                 {
                     ReleaseObject();
+                    SignalEnd();
                 }
 
                 m_isDirty |= m_state != value;

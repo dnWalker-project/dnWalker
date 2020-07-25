@@ -25,15 +25,16 @@ namespace dnWalker.NativePeers
                 case "WriteLine" when methodDef.Parameters.Count == 2:
                     AllocatedObject theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
                     int offset = 0;// GetFieldOffset(theObject.Type);
-                    var values = new[] { args[1] };
+                    var eol = new ConstantString(Environment.NewLine);
+                    var values = new[] { args[1], eol };
                     if (!theObject.Fields[offset].Equals(ObjectReference.Null))
                     {
-                        values = new[] { theObject.Fields[offset], args[1] };
+                        values = new[] { theObject.Fields[offset], args[1], eol };
                     }
 
                     var val = new ConstantString(
                         string.Join(
-                            Environment.NewLine, 
+                            string.Empty,
                             values.Select(v => ((IConvertible)v).ToString(System.Globalization.CultureInfo.CurrentCulture))));
                     cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
                     ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val, cur);

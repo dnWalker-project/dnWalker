@@ -38,6 +38,11 @@ namespace dnWalker.Traversal
 
         public Path BacktrackTo(int id)
         {
+            if (id == _segments.Last().ToState)
+            {
+                return null;
+            }
+
             return new Path
             {
                 _segments = _segments.TakeWhile(s => s.ToState != id).Union(_segments.Where(s => s.ToState == id)).ToList()

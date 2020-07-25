@@ -27,7 +27,13 @@ namespace dnWalker.Traversal
 
         public void BacktrackStop(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)
         {
-            _currentPath = _currentPath.BacktrackTo(sd.ID);
+            var path = _currentPath.BacktrackTo(sd.ID);
+            if (path == null)
+            {
+                return;
+            }
+
+            _currentPath = path;
             _paths.Add(_currentPath);
         }
 

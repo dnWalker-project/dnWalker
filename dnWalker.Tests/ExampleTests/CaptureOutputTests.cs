@@ -20,13 +20,13 @@ namespace dnWalker.Tests.ExampleTests
         public void CaptureOutputTest1()
         {
             Explore("Examples.CaptureOutput.Capture1",
-                null,//c => {},
+                null,
                 (explorer) =>
                 {
                     explorer.GetUnhandledException().Should().BeNull();
                     explorer.GetExploredPaths().Count().Should().Be(1);
-                    var tw = explorer.GetExploredPaths().First().Get<TextWriter>("System.Console.Out");
-                    tw.ToString().Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
+                    var output = explorer.GetExploredPaths().First().Output;
+                    output.Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
                 });
         }
 
@@ -34,13 +34,13 @@ namespace dnWalker.Tests.ExampleTests
         public void CaptureOutputTest2()
         {
             Explore("Examples.CaptureOutput.Capture2",
-                null,//c => {},
+                null,
                 (explorer) =>
                 {
                     explorer.GetUnhandledException().Should().BeNull();
                     explorer.GetExploredPaths().Count().Should().Be(1);
-                    var tw = explorer.GetExploredPaths().First().Get<TextWriter>("System.Console.Out");
-                    tw.ToString().Should().Be($"X=2{Environment.NewLine}X=2{Environment.NewLine}");
+                    var output = explorer.GetExploredPaths().First().Output;
+                    output.Should().Be($"X=2{Environment.NewLine}X=2{Environment.NewLine}");
                 });
         }
     }
