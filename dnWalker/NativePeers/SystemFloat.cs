@@ -9,11 +9,12 @@ namespace dnWalker.NativePeers
     {
         public override bool TryGetValue(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)
         {
-            IDataElement dataElement = null;
-
             if (method.FullName == "System.Boolean System.Single::IsNaN(System.Single)")
             {
-                dataElement = new Int4(double.IsNaN(((Float4)args[0]).Value) ? 1 : 0);
+                var dataElement = new Int4(double.IsNaN(((Float4)args[0]).Value) ? 1 : 0);
+                cur.EvalStack.Push(dataElement);
+                iieReturnValue = InstructionExecBase.nextRetval;
+                return true;
             }
 
             if (method.FullName == "System.Boolean System.Single::Equals(System.Single)")
@@ -30,11 +31,8 @@ namespace dnWalker.NativePeers
                     right = rp.Value;
                 }
 
-                dataElement = new Int4(left.CompareTo(right) == 0 ? 1 : 0);
-            }
-
-            if (dataElement != null)
-            {
+                var dataElement = new Int4(left.CompareTo(right) == 0 ? 1 : 0);
+                cur.EvalStack.Push(dataElement);
                 iieReturnValue = InstructionExecBase.nextRetval;
                 return true;
             }
