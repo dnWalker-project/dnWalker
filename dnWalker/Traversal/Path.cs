@@ -1,4 +1,5 @@
 ﻿using dnWalker.NativePeers;
+using MMC.Data;
 using MMC.State;
 using System;
 using System.Collections.Generic;
@@ -87,10 +88,31 @@ namespace dnWalker.Traversal
                 StackTrace = threadState.CallStack.ToString();
             }
 
-            AllocatedObject theObject = threadState.Cur.DynamicArea.Allocations[SystemConsole.OutTextWriterRef] as AllocatedObject;
-            Output = ((IConvertible)theObject.Fields[0]).ToString(System.Globalization.CultureInfo.CurrentCulture);
-
             _segments.Add(segment);
+
+            if (SystemConsole.OutTextWriterRef.Equals(ObjectReference.Null))
+            {
+                return;
+            }
+
+            if (threadState.Cur.DynamicArea.Allocations[SystemConsole.OutTextWriterRef] is AllocatedObject theObject)
+            {
+                var field = theObject.Fields[0];
+                if (field.Equals(ObjectReference.Null))
+                {
+                    return;
+
+                }
+
+                if (field is IConvertible c)
+                {
+                    Output = c.ToString(System.Globalization.CultureInfo.CurrentCulture);
+                }
+                else
+                {
+                    throw new Exception(field.WrapperName);
+                }
+            }
         }
     }
 }
