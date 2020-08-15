@@ -12,6 +12,7 @@ namespace dnWalker.ChoiceGenerators
         object GetNextChoice();
 
         bool HasMoreChoices { get; }
+
         IChoiceGenerator Previous { get; set; }
 
         void SetContext(ExplicitActiveState activeState);
