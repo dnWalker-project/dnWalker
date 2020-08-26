@@ -55,6 +55,8 @@
     <Compile Include="BreakPointHandler.cs" />
     <Compile Include="CallStack.cs" />
     <Compile Include="ChangingIntVector.cs" />
+    <Compile Include="ChoiceGenerators\DefaultChoiceStrategy.cs" />
+    <Compile Include="ChoiceGenerators\IChoiceStrategy.cs" />
     <Compile Include="ChoiceGenerators\IntChoiceFromValueSet.cs" />
     <Compile Include="ChoiceGenerators\IChoiceGenerator.cs" />
     <Compile Include="ChoiceGenerators\SchedulingChoiceGenerator.cs" />

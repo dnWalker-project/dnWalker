@@ -110,8 +110,8 @@ namespace MMC
         private readonly Timer m_memoryTimer;
         private readonly IInstructionExecProvider _instructionExecProvider;
         private readonly LinkedList<CollapsedState> m_atomicStates;
-        private IChoiceGenerator _choiceGenerator;
         private ExplorationLogger _explorationLogger;
+        private IChoiceStrategy _strategy;
         private readonly PathStore _pathStore;
 
         public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config)
@@ -145,7 +145,7 @@ namespace MMC
             Deadlocked += new DeadlockEventHandler(el.LogDeadlock);
             ThreadPicked += new PickThreadEventHandle(el.LogPickedThread);
             ExplorationHalted += new ExplorationHaltEventHandle(el.ExplorationHalted);
-            cur.ChoiceGeneratorCreated += OnChoiceGeneratorCreated;
+            //cur.ChoiceGeneratorCreated += OnChoiceGeneratorCreated;
 
             if (DotWriter.IsEnabled())
             {
@@ -211,7 +211,7 @@ namespace MMC
                 StateRevisited = StateRevisited
             };
 
-            _choiceGenerator = new SchedulingChoiceGenerator(
+            var schedulingChoiceGenerator = new SchedulingChoiceGenerator(
                 this,
                 Statistics,
                 m_stateStorage,
@@ -220,6 +220,16 @@ namespace MMC
                 Backtracked,
                 BacktrackStop,
                 ThreadPicked);
+
+            _strategy = new DefaultChoiceStrategy(
+                cur,
+                BacktrackStart,
+                Backtracked,
+                BacktrackStop);
+
+            _strategy.RegisterChoiceGenerator(schedulingChoiceGenerator);
+
+            cur.ChoiceStrategy = _strategy;
 
             cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
         }
@@ -339,91 +349,7 @@ namespace MMC
 
         private void Advance()
         {
-            if (_choiceGenerator is IScheduler)
-            {
-                return;
-            }
-
-            var m_dfs = new Stack<SchedulingData>();
-
-            var hasMoreChoices = _choiceGenerator.HasMoreChoices;
-            if (!hasMoreChoices)
-            {
-                m_dfs.Push(_choiceGenerator.GetBacktrackData());
-                _choiceGenerator = cur.Back();// _choiceGenerator.Previous;
-                if (!_choiceGenerator.HasMoreChoices)
-                {
-                    _choiceGenerator = cur.Back(); //TODO
-                }
-            }
-            else
-            {
-                cur.Next(); // NOTE what if I switch to prev. CG and _next is not null
-
-                /*if (cur.ChoiceGenerator == null)
-                {
-                    return;
-                }
-                */
-                if (cur.CurrentMethod != null)
-                {
-                    return;
-                }
-            }
-
-            var sd = _choiceGenerator.GetBacktrackData();
-            if (sd == null)
-            {
-                m_continue = false;
-                return;
-            }
-
-            System.Diagnostics.Debug.WriteLine("Backtracking ...");
-            
-            m_dfs.Push(sd);
-            
-            var m_stateConvertor = cur.StateCollapser;
-
-            // Run garbage collection
-            cur.GarbageCollector.Run(cur);
-
-            var l = m_dfs.Reverse().ToList();
-            BacktrackStart(m_dfs, sd, cur);
-
-            while (l.Count > 0)
-            {
-                sd = l.First();// m_dfs.Last();
-                // apply the reverse delta
-                System.Diagnostics.Debug.WriteLine("... to " + sd.ID);
-                m_stateConvertor.DecollapseByDelta(cur, sd.Delta);
-                Backtracked(m_dfs, sd, cur);
-                //sd = m_dfs.Pop();
-                l.RemoveAt(0);
-            }
-
-            BacktrackStop(m_dfs, sd, cur);
-
-            m_stateConvertor.Reset(sd.State);
-            cur.Clean();
-
-            var threadId = -1;
-            /*
-		     * either the recently explored sd can be pushed on the stack, 
-			 * or the last popped sd from the stack is not fully explored */
-            if (sd.Working.Count > 0)
-            {
-                m_dfs.Push(sd);
-                threadId = sd.Dequeue(); // for the next round		
-
-                // update last access information 
-                // (used by dynamic POR + tracing explorer) 
-                //var ml = cur.NextAccess(threadId);
-                //sd.LastAccess = new MemoryAccess(ml, threadId);
-
-                //threadPicked(sd, threadId);
-            }
-
-            //_statistics.BacktrackStackDepth(m_dfs.Count);
+            cur.Advance(out m_continue);
         }
 
         /// <summary>
@@ -437,15 +363,17 @@ namespace MMC
                 Statistics.MeasureMemory(memUsed);
 
                 /// If ex post facto transition merging is enabled...
-                if (!Double.IsInfinity(Config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > Config.OptimizeStorageAtMegabyte)
+                if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > Config.OptimizeStorageAtMegabyte)
                 {
                     int count = m_atomicStates.Count;
 
                     foreach (CollapsedState cs in m_atomicStates)
+                    {
                         m_stateStorage.Remove(cs);
+                    }
                     m_atomicStates.Clear();
 
-                    long memAfter = System.GC.GetTotalMemory(true);
+                    long memAfter = GC.GetTotalMemory(true);
 
                     Logger.Notice("Optimized hashtable from " + memUsed / 1024 / 1024 + " Mb to " + memAfter / 1024 / 1024 + " Mb by removing " + count + " states");
                     memUsed = memAfter;
@@ -455,8 +383,9 @@ namespace MMC
                 if (!double.IsInfinity(Config.MemoryLimit) && (memUsed / 1024 / 1024) > Config.MemoryLimit)
                 {
                     Logger.Notice("Ran out of memory");
-                    this.m_continue = false;
+                    m_continue = false;
                 }
+
                 m_measureMemory = false;
             }
         }
@@ -466,7 +395,7 @@ namespace MMC
         /// </summary>
         public Stack<int> GetErrorTrace()
         {
-            return (_choiceGenerator as IScheduler).GetErrorTrace();
+            return new Stack<int>();// (_choiceGenerator as IScheduler).GetErrorTrace();
         }
 
         public virtual void PrintTransition() { }
@@ -485,22 +414,7 @@ namespace MMC
 
         private bool SetExecutingThread(out ThreadState thread)
         {
-            if (_choiceGenerator is IScheduler)
-            {
-                var threadId = (int)_choiceGenerator.GetNextChoice();
-                if (threadId < 0)
-                {
-                    thread = null;
-                    return false;
-                }
-
-                thread = cur.ThreadPool.Threads[threadId];
-            }
-            else
-            {
-                thread = cur.CurrentThread; // no thread switching
-            }
-
+            thread = _strategy.GetExecutingThread();
             return thread != null;
         }
 
@@ -605,8 +519,8 @@ namespace MMC
 
         private void OnChoiceGeneratorCreated(IChoiceGenerator choiceGenerator)
         {
-            choiceGenerator.Previous = _choiceGenerator;
-            _choiceGenerator = choiceGenerator;
+            //choiceGenerator.Previous = _choiceGenerator;
+            //_choiceGenerator = choiceGenerator;
         }
 
         public IEnumerable<Path> GetExploredPaths()

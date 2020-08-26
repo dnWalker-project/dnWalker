@@ -244,14 +244,14 @@ namespace MMC
             int retval = -1;
 
 			foreach (var thread in cur.ThreadPool.RunnableThreads)
-            {
-				Instruction instr = thread.CurrentMethod.ProgramCounter;
+            {				
+                var instr = thread.CurrentMethod?.ProgramCounter;
                 if (instr == null)
                 {
                     continue;
                 }
 
-                InstructionExecBase instrExec = cur.InstructionExecProvider.GetExecFor(instr);
+                var instrExec = cur.InstructionExecProvider.GetExecFor(instr);
 
 				cur.ThreadPool.CurrentThreadId = thread.Id;
 

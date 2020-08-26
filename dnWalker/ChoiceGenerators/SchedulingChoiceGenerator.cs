@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MMC;
 using MMC.State;
 
@@ -49,7 +50,12 @@ namespace dnWalker.ChoiceGenerators
 
         object IChoiceGenerator.GetNextChoice()
         {
-            var threadId = m_spor.GetPersistentThread(explorer);
+            var threadId = -1;
+            if (cur.ThreadPool.RunnableThreadCount > 0)
+            {
+                threadId = m_spor.GetPersistentThread(explorer);
+            }
+
             if (threadId >= 0)
             {
                 return threadId;
@@ -130,7 +136,8 @@ namespace dnWalker.ChoiceGenerators
             return null;
         }
 
-        bool IChoiceGenerator.HasMoreChoices => cur.ThreadPool.RunnableThreadCount > 0;
+        bool IChoiceGenerator.HasMoreChoices => 
+            cur.ThreadPool.Threads.Count(t => t != null && t.State == System.Threading.ThreadState.Running && t.CurrentMethod != null) > 0;
 
         IChoiceGenerator IChoiceGenerator.Previous { get; set; }
 

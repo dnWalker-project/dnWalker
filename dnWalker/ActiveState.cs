@@ -25,6 +25,7 @@ namespace MMC.State
     using System.Collections.Generic;
     using dnWalker;
     using dnWalker.Traversal;
+    using System;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
@@ -263,9 +264,10 @@ namespace MMC.State
         }
 
         private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
-        private IChoiceGenerator _choiceGenerator, _nextChoiceGenerator;
+        
+        internal IChoiceStrategy ChoiceStrategy { get; set; }
 
-        public IChoiceGenerator ChoiceGenerator => _choiceGenerator;
+        public IChoiceGenerator ChoiceGenerator => ChoiceStrategy.ChoiceGenerator;
 
         internal SchedulingData Collapse()
         {
@@ -327,9 +329,9 @@ namespace MMC.State
 
         public bool TryTerminateThread(ThreadState thread)
         {
-            if (_nextChoiceGenerator != null
+            if (ChoiceStrategy.HasOptions)/* _nextChoiceGenerator != null
                 || (ChoiceGenerator?.Previous != null)
-                || (ChoiceGenerator?.HasMoreChoices == true))
+                || (ChoiceGenerator?.HasMoreChoices == true))*/
             {
                 return false;
             }
@@ -338,37 +340,20 @@ namespace MMC.State
             return true;
         }
 
-        public IChoiceGenerator Back()
+        public SchedulingData Advance(out bool @continue)
         {
-            _choiceGenerator = ChoiceGenerator.Previous;
-            return _choiceGenerator;
+            ChoiceStrategy.DoBacktrack(out @continue);
+            return null;
         }
 
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
         {
-            choiceGenerator.SetContext(this);
-
-            ChoiceGeneratorCreated?.Invoke(choiceGenerator);
-
-            _nextChoiceGenerator = choiceGenerator;
+            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);
         }
 
         public bool Break()
         {
-            return _nextChoiceGenerator != null;// || (ChoiceGenerator != null && !ChoiceGenerator.HasMoreChoices);
-            // return ((nextCg != null) || isIgnored);
-            //throw new System.NotImplementedException();
-        }
-
-        public void Next()
-        {
-            if (_nextChoiceGenerator == null)
-            {
-                return;
-            }
-
-            _choiceGenerator = _nextChoiceGenerator;
-            _nextChoiceGenerator = null;
+            return ChoiceStrategy.CanBreak();
         }
 
         public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
