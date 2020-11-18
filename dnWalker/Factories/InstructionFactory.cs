@@ -28,6 +28,7 @@ namespace dnWalker.Factories
         /// <returns>The executor.</returns>
         public virtual InstructionExecBase CreateInstructionExec(Instruction instr)
         {
+            // TODO add cache for faster resolution
             string[] tokens = instr.OpCode.Name.Split(new char[] { '.' });
 
             // Before doing anything else, check if we have an implementing class for this type of instruction.
@@ -44,6 +45,11 @@ namespace dnWalker.Factories
                 throw new Exception("No instruction executor found for " + name);
             }
 
+            return CreateInstructionExec(t, tokens, instr);
+        }
+
+        protected InstructionExecBase CreateInstructionExec(Type type, string[] tokens, Instruction instr)
+        { 
             InstructionExecAttributes attr = InstructionExecAttributes.None;
             object operand = null;
 
@@ -114,7 +120,7 @@ namespace dnWalker.Factories
             }
 
             // Create an InstructionExec object, using reflection.
-            return (InstructionExecBase)t.InvokeMember(null,
+            return (InstructionExecBase)type.InvokeMember(null,
                 BindingFlags.DeclaredOnly |
                 BindingFlags.Public |
                 BindingFlags.Instance |

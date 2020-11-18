@@ -63,6 +63,11 @@ namespace dnWalker.Traversal
             return false;
         }
 
+        public void AddPathConstraint()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Faulted => Exception != null;
 
         public string Exception { get; private set; }

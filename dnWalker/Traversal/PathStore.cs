@@ -16,6 +16,8 @@ namespace dnWalker.Traversal
             _paths.Add(_currentPath);
         }
 
+        public Path CurrentPath => _currentPath;
+
         public void BacktrackStart(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
         {
         }
@@ -43,6 +45,11 @@ namespace dnWalker.Traversal
         {
             threadState.ThreadStateChanged += ThreadState_ThreadStateChanged;
             threadState.CallStackEmptied += ThreadState_CallStackEmptied;
+        }
+
+        public void AddPathConstraint()
+        {
+
         }
 
         private void ThreadState_CallStackEmptied(ThreadState threadState)

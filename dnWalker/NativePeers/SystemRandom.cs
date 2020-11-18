@@ -18,19 +18,24 @@ namespace dnWalker.NativePeers
 
                 if (cur.ChoiceGenerator is IntChoiceFromValueSet choiceFromValueSet)
                 {
+                    // push all arguments back on stack (they were popped before the execution got here)
+                    // push them back so current state can be collapsed to detect reaching the same Rand spot on the execution path
                     foreach (var arg in args)
                     {
                         cur.EvalStack.Push(arg);
                     }
 
                     var schedulingData = cur.Collapse();
+                    // args are not needed any more on stack, their presence will cause problems
                     foreach (var _ in args)
                     {
                         cur.EvalStack.Pop();
                     }
 
+                    // execution has backtracked to the same spot on the execution path
                     if (schedulingData.ID == choiceFromValueSet.SchedulingData.ID)
                     {
+                        // advance and use the next rand value ...
                         cur.EvalStack.Push(choiceFromValueSet.GetNextChoice());
                         iieReturnValue = InstructionExecBase.nextRetval;
                         return true;
@@ -39,6 +44,8 @@ namespace dnWalker.NativePeers
 
                 if (cur.Configuration.GetCustomSetting<bool>("evaluateRandom"))
                 {
+                    // push all arguments back on stack (they were popped before the execution got here)
+                    // the execution will get back here, but next time a value from the choice generator will be used
                     foreach (var arg in args)
                     {
                         cur.EvalStack.Push(arg);

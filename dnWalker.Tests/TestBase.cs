@@ -87,7 +87,7 @@ namespace dnWalker.Tests
             string methodName,
             Action<IConfig> before,
             Action<Explorer> finished,
-            params object[] args)
+            params IArg[] args)
         {
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
@@ -96,7 +96,7 @@ namespace dnWalker.Tests
 
             var state = stateSpaceSetup.CreateInitialState(
                 entryPoint,
-                args.Select(a => _definitionProvider.CreateDataElement(a)).ToArray());
+                args.Select(a => a.AsDataElement(_definitionProvider)).ToArray());
 
             var statistics = new SimpleStatistics();
 

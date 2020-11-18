@@ -73,7 +73,7 @@ namespace MMC
 
             IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(
                 config,
-                new dnWalker.Factories.InstructionFactory());
+                new dnWalker.Symbolic.Instructions.InstructionFactory()); // TODO enable dynamic switch
 
             var cur = new ExplicitActiveState(config, instructionExecProvider, _definitionProvider, _logger);
 

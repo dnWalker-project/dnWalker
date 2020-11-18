@@ -45,6 +45,7 @@
     <Compile Include="CaptureOutput.cs" />
     <Compile Include="DataRace.cs" />
     <Compile Include="Deadlock.cs" />
+    <Compile Include="Simple\Branches.cs" />
     <Compile Include="ExceptionHandling.cs" />
     <Compile Include="IncDec.cs" />
     <Compile Include="Interpreter\IntepreterTests.cs" />
@@ -55,6 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Examples\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

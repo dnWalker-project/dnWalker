@@ -358,13 +358,12 @@ namespace MMC.State
 
         public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
         {
-            attributeValue = default;
-            return false;// _currentPath.TryGetObjectAttribute(alloc, attributeName, out attributeValue);
+            return PathStore.CurrentPath.TryGetObjectAttribute(alloc, attributeName, out attributeValue);
         }
 
         public T SetObjectAttribute<T>(Allocation alloc, string name, T attributeValue)
         {
-            return default;// _currentPath.SetObjectAttribute(alloc, name, attributeValue);
+            return PathStore.CurrentPath.SetObjectAttribute(alloc, name, attributeValue);
         }
     }
 }
