@@ -1,0 +1,3 @@
+[submodule "Z3.LinqBinding"]
+	path = Z3.LinqBinding
+	url = https://github.com/kfrajtak/Z3.LinqBinding.git
