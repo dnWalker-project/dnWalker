@@ -24,8 +24,8 @@ namespace dnWalker.Tests.ExampleTests
                 (explorer) =>
                 {
                     explorer.GetUnhandledException().Should().BeNull();
-                    explorer.GetExploredPaths().Count().Should().Be(1);
-                    var output = explorer.GetExploredPaths().First().Output;
+                    explorer.PathStore.Paths.Count().Should().Be(1);
+                    var output = explorer.PathStore.Paths.First().Output;
                     output.Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
                 });
         }
@@ -38,8 +38,8 @@ namespace dnWalker.Tests.ExampleTests
                 (explorer) =>
                 {
                     explorer.GetUnhandledException().Should().BeNull();
-                    explorer.GetExploredPaths().Count().Should().Be(1);
-                    var output = explorer.GetExploredPaths().First().Output;
+                    explorer.PathStore.Paths.Count().Should().Be(1);
+                    var output = explorer.PathStore.Paths.First().Output;
                     output.Should().Be($"X=2{Environment.NewLine}X=2{Environment.NewLine}");
                 });
         }

@@ -1,30 +1,29 @@
-﻿using dnWalker.Symbolic.Expressions;
-using MMC.Data;
+﻿using MMC.Data;
 using System;
+using System.Linq.Expressions;
 
 namespace dnWalker.Symbolic.Primitives
 {
     [System.Diagnostics.DebuggerDisplay("SymbolicInt4({Value})")]
-	public struct SymbolicInt4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible, ISymbolic
+	public struct SymbolicInt4 : IHasIntValue, IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible, ISymbolic
 	{
 		int m_value;
+		Expression _expression;
 
 		public static readonly Int4 Zero = new Int4(0);
 		public string WrapperName { get { return "System.Int32 (symbolic)"; } }
 		public int Value { get { return m_value; } }
 
-        IExpression ISymbolic.Expression { get; set; }
-
-        // public DataElementKind Kind => DataElementKind.Int32;
+		Expression ISymbolic.Expression => _expression;
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
 		{
 			int op = other.ToInt4(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new SymbolicInt4(checked(m_value + op));
+				return new SymbolicInt4(checked(m_value + op), null);
 			else
-				return new SymbolicInt4(m_value + op);
+				return new SymbolicInt4(m_value + op, null);
 		}
 
 		public INumericElement ToUnsigned()
@@ -35,7 +34,7 @@ namespace dnWalker.Symbolic.Primitives
 		public INumericElement Div(INumericElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value / op);
+			return new SymbolicInt4(m_value / op, null);
 		}
 
 		public INumericElement Mul(INumericElement other, bool checkOverflow)
@@ -44,20 +43,20 @@ namespace dnWalker.Symbolic.Primitives
 
 			if (checkOverflow)
 			{
-				return new SymbolicInt4(checked(m_value * op));
+				return new SymbolicInt4(checked(m_value * op), null);
 			}
-			return new SymbolicInt4(m_value * op);
+			return new SymbolicInt4(m_value * op, null);
 		}
 
 		public INumericElement Rem(INumericElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value % op);
+			return new SymbolicInt4(m_value % op, null);
 		}
 
 		public ISignedNumericElement Neg()
 		{
-			return new SymbolicInt4(-m_value);
+			return new SymbolicInt4(-m_value, Expression.MakeUnary(ExpressionType.Negate, _expression, typeof(int)));
 		}
 
 		public ISubElement Sub(INumericElement other, bool checkOverflow)
@@ -65,44 +64,43 @@ namespace dnWalker.Symbolic.Primitives
 			int op = other.ToInt4(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new SymbolicInt4(checked(m_value - op));
+				return new SymbolicInt4(checked(m_value - op), null);
 			else
-				return new SymbolicInt4(m_value - op);
+				return new SymbolicInt4(m_value - op, null);
 		}
 
 		public IIntegerElement And(IIntegerElement other)
 		{
 
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value & op);
+			return new SymbolicInt4(m_value & op, null);
 		}
 
 		public IIntegerElement Not()
 		{
-
-			return new SymbolicInt4(~m_value);
+			return new SymbolicInt4(~m_value, null);
 		}
 
 		public IIntegerElement Or(IIntegerElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value | op);
+			return new SymbolicInt4(m_value | op, null);
 		}
 
 		public IIntegerElement Xor(IIntegerElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value ^ op);
+			return new SymbolicInt4(m_value ^ op, null);
 		}
 
 		public IIntegerElement Shl(int x)
 		{
-			return new SymbolicInt4(m_value << x);
+			return new SymbolicInt4(m_value << x, null);
 		}
 
 		public IIntegerElement Shr(int x)
 		{
-			return new SymbolicInt4(m_value >> x);
+			return new SymbolicInt4(m_value >> x, null);
 		}
 
 		public Int4 ToInt4(bool checkOverflow) { throw new NotImplementedException(); }
@@ -169,13 +167,12 @@ namespace dnWalker.Symbolic.Primitives
 
 		public bool Equals(IDataElement other)
 		{
-
 			return (other is Int4) && (((Int4)other).Value == m_value);
 		}
 
 		public int CompareTo(object obj)
 		{
-			return m_value.CompareTo(((Int4)obj).Value);
+			return m_value.CompareTo(((IHasIntValue)obj).Value);
 		}
 
 		public override string ToString()
@@ -275,11 +272,12 @@ namespace dnWalker.Symbolic.Primitives
 			return ((IConvertible)m_value).ToType(conversionType, provider);
 		}
 
-		public SymbolicInt4(int val)
+		public SymbolicInt4(int val, Expression expression)
 		{
 			m_value = val;
+			_expression = expression ?? throw new ArgumentNullException(nameof(expression));
 		}
 
-		public static explicit operator SymbolicInt4(int b) => new SymbolicInt4(b);
+		public static explicit operator SymbolicInt4(int b) => new SymbolicInt4(b, null);
 	}
 }

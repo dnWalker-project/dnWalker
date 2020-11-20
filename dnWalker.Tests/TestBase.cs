@@ -13,6 +13,7 @@ namespace dnWalker.Tests
     {
         protected readonly Config _config;
         private readonly DefinitionProvider _definitionProvider;
+        public Logger _logger { get; }
 
         protected TestBase(DefinitionProvider definitionProvider)
         {
@@ -22,7 +23,7 @@ namespace dnWalker.Tests
             _definitionProvider = definitionProvider;
         }
 
-        protected static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
+        public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
         {
             var assemblyLoader = new AssemblyLoader();
 
@@ -35,8 +36,6 @@ namespace dnWalker.Tests
             return assemblyLoader;
         }
 
-        public Logger _logger { get; }
-
         protected virtual object Test(string methodName, out Exception unhandledException, params object[] args)
         {
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
@@ -46,7 +45,7 @@ namespace dnWalker.Tests
 
             var state = stateSpaceSetup.CreateInitialState(
                 entryPoint,
-                args.Select(a => _definitionProvider.CreateDataElement(a)).ToArray());
+                args.Select(a => new Arg<object>(a)).ToArray());
 
             var statistics = new SimpleStatistics();
 
@@ -71,7 +70,7 @@ namespace dnWalker.Tests
 
             var state = stateSpaceSetup.CreateInitialState(
                 entryPoint,
-                args.Select(a => _definitionProvider.CreateDataElement(a)).ToArray());
+                args.Select(a => new Arg<object>(a)).ToArray());
 
             var statistics = new SimpleStatistics();
 
@@ -94,9 +93,7 @@ namespace dnWalker.Tests
             var entryPoint = _definitionProvider.GetMethodDefinition(methodName)
                 ?? throw new NullReferenceException($"Method {methodName} not found");
 
-            var state = stateSpaceSetup.CreateInitialState(
-                entryPoint,
-                args.Select(a => a.AsDataElement(_definitionProvider)).ToArray());
+            var state = stateSpaceSetup.CreateInitialState(entryPoint, args);
 
             var statistics = new SimpleStatistics();
 

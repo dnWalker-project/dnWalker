@@ -22,6 +22,8 @@ namespace MMC
     using dnlib.DotNet;
     using MMC.InstructionExec;
     using System;
+    using dnWalker;
+    using System.Linq;
 
     public class StateSpaceSetup
     {
@@ -65,11 +67,11 @@ namespace MMC
         /// Creates initial state for exploration.
         /// </summary>
         /// <returns></returns>
-        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IDataElement[] args = null)
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IArg[] arguments = null)
         {
             var config = _config;
 
-            args = args ?? new IDataElement[] { };
+            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
             IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(
                 config,

@@ -4,6 +4,7 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace dnWalker.Traversal
 {
@@ -63,10 +64,15 @@ namespace dnWalker.Traversal
             return false;
         }
 
-        public void AddPathConstraint()
+        private IList<Expression> _pathConstraints;
+
+        public void AddPathConstraint(Expression expression, ExplicitActiveState cur)
         {
-            throw new NotImplementedException();
+            _pathConstraints = _pathConstraints ?? new List<Expression>();
+            _pathConstraints.Add(ExpressionOptimizer.visit(expression));
         }
+
+        public IReadOnlyCollection<Expression> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<Expression>(_pathConstraints);
 
         public bool Faulted => Exception != null;
 

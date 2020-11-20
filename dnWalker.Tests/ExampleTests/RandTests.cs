@@ -25,7 +25,7 @@ namespace dnWalker.Tests.ExampleTests
                 },
                 (explorer) =>
                 {
-                    var paths = explorer.GetExploredPaths();
+                    var paths = explorer.PathStore.Paths;
                     paths.Should().HaveCount(6);
                     paths.Where(p => p.Exception != null).Should().HaveCount(2);
                     paths.Select(p => p.Length).Should().AllBeEquivalentTo(3);

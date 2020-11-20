@@ -8,12 +8,13 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>dnWalker</RootNamespace>
     <AssemblyName>dnWalker</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,6 +38,28 @@
   <PropertyGroup>
     <StartupObject>MMC.MonoModelChecker</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="C5, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\C5.3.0.0-beta\lib\netstandard2.0\C5.dll</HintPath>
@@ -44,8 +67,11 @@
     <Reference Include="dnlib, Version=3.3.2.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
       <HintPath>..\packages\dnlib.3.3.2\lib\net45\dnlib.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Z3, Version=4.8.9.0, Culture=neutral, PublicKeyToken=9c8d792caae602a2, processorArchitecture=AMD64">
-      <HintPath>..\packages\Microsoft.Z3.x64.4.8.9\lib\netstandard1.4\Microsoft.Z3.dll</HintPath>
+    <Reference Include="FSharp.Core, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Core.4.5.0\lib\net45\FSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Linq.Expression.Optimizer, Version=1.0.6.0, Culture=neutral, PublicKeyToken=34b6af2337893e15, processorArchitecture=MSIL">
+      <HintPath>..\packages\Linq.Expression.Optimizer.1.0.13\lib\net45\Linq.Expression.Optimizer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,6 +96,7 @@
     <Compile Include="CILUtils.cs" />
     <Compile Include="CollapsedState.cs" />
     <Compile Include="Collapser.cs" />
+    <Compile Include="Concolic\Explorer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataElement.cs" />
     <Compile Include="DataElementList.cs" />
@@ -138,11 +165,8 @@
     <Compile Include="StorageVisitor.cs" />
     <Compile Include="Symbolic\AllocationExtensions.cs" />
     <Compile Include="Symbolic\Arg.cs" />
+    <Compile Include="Symbolic\DataElementExtensions.cs" />
     <Compile Include="Symbolic\DataElementFactory.cs" />
-    <Compile Include="Symbolic\Expressions\Constant.cs" />
-    <Compile Include="Symbolic\Expressions\ExpressionBuilder.cs" />
-    <Compile Include="Symbolic\Expressions\IExpression.cs" />
-    <Compile Include="Symbolic\Expressions\Variable.cs" />
     <Compile Include="Symbolic\Instructions\BranchInstruction.cs" />
     <Compile Include="Symbolic\Instructions\CompareInstruction.cs" />
     <Compile Include="Symbolic\Instructions\InstructionFactory.cs" />
@@ -161,6 +185,7 @@
     <None Include="App.config" />
     <None Include="Makefile" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.jpg" />

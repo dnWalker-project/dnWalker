@@ -1,14 +1,9 @@
 ﻿using dnlib.DotNet.Emit;
-using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Primitives;
 using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
-using dnWalker.Symbolic;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace dnWalker.Symbolic.Instructions
 {
@@ -47,7 +42,10 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            var isSymbolic = a is ISymbolic || b is ISymbolic;
+            var symbA = a as ISymbolic;
+            var symbB = b as ISymbolic;
+
+            var isSymbolic = symbA != null || symbB != null;
             if (!isSymbolic)
             {
                 cur.EvalStack.Push(CompareOperands(a, b) < 0 ? new Int4(1) : new Int4(0));
@@ -56,12 +54,11 @@ namespace dnWalker.Symbolic.Instructions
 
             var cltValue = CompareOperands(a, b) < 0 ? 1 : 0;
 
-            var expression = ExpressionBuilder.CreateCompareExpression(
-                //a.GetExpression<IExpression>(cur),
-                a, 
-                b, "lt");
+            var expression = Expression.MakeBinary(ExpressionType.LessThan, 
+                symbA?.Expression ?? a.AsExpression(),
+                symbB?.Expression ?? b.AsExpression());
 
-            cur.EvalStack.Push(new SymbolicInt4(cltValue));
+            cur.EvalStack.Push(new SymbolicInt4(cltValue, expression));
             return nextRetval;
         }
     }

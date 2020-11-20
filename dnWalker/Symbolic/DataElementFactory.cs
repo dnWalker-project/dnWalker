@@ -1,18 +1,15 @@
 ﻿using dnWalker.Symbolic.Primitives;
 using MMC.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace dnWalker.Symbolic
 {
     public class DataElementFactory
     {
-        public static IDataElement CreateDataElement(Type type)
+        public static IDataElement CreateDataElement<T>(object value, Expression expression)
         {
-            switch (Type.GetTypeCode(type))
+            switch (Type.GetTypeCode(typeof(T)))
             {/*
                 case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
                 case TypeCode.Char: return new Int4((char)value);
@@ -20,7 +17,7 @@ namespace dnWalker.Symbolic
                 case TypeCode.Byte: return new Int4((byte)value);
                 case TypeCode.Int16: return new Int4((short)value);
                 case TypeCode.UInt16: return new UnsignedInt4((ushort)value);*/
-                case TypeCode.Int32: return new SymbolicInt4();
+                case TypeCode.Int32: return new SymbolicInt4((int)value, expression);
                 //case TypeCode.UInt32: return new UnsignedInt4((uint)value);
                 //case TypeCode.Int64: return new Int8((long)value);
                 //case TypeCode.UInt64: return new UnsignedInt8((ulong)value);
@@ -36,7 +33,7 @@ namespace dnWalker.Symbolic
                     {
                         return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
                     }*/
-                    throw new NotSupportedException("CreateDataElement for " + type);
+                    throw new NotSupportedException("CreateDataElement for " + typeof(T));
             }
         }
     }

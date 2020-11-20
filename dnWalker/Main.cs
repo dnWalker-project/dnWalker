@@ -27,6 +27,7 @@ namespace MMC
     using System;
     using System.Linq;
     using MMC.Data;
+    using dnWalker;
 
     public interface IConfig
     {
@@ -461,7 +462,7 @@ Disabling/enabling features:
 
             var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
 
-            var methodArgs = config.RunTimeParameters.Select(a => new ConstantString(a)).Cast<IDataElement>().ToArray();
+            var methodArgs = config.RunTimeParameters.Select(a => new Arg<string>(a)).ToArray();
 
             var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
             var statistics = new SimpleStatistics();            

@@ -92,6 +92,11 @@ namespace MMC.Data
         IIntegerElement Shr(int x);
     }
 
+    public interface IHasIntValue
+    {
+        int Value { get; }
+    }
+
     public interface IReferenceType : IDataElement {
 
 		uint Location { get; }
@@ -102,7 +107,7 @@ namespace MMC.Data
 	 * the stack by load instructions, or be the result of the
 	 * execution of some other (e.g. arithmetic) operation.
 	 * -------------------------------------------------------------- */
-    public struct Int4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
+    public struct Int4 : IHasIntValue, IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
     {
 		int m_value;
 

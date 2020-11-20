@@ -28,7 +28,6 @@ namespace MMC
     using dnlib.DotNet.Emit;
     using dnWalker.ChoiceGenerators;
     using dnWalker;
-    using System.Linq;
     using dnWalker.Traversal;
 
     /// <summary>
@@ -114,7 +113,7 @@ namespace MMC
         private IChoiceStrategy _strategy;
         private readonly PathStore _pathStore;
 
-        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config)
+        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config, PathStore pathStore = null)
         {
             Statistics = statistics;
             this.Logger = Logger;
@@ -131,7 +130,7 @@ namespace MMC
             _explorationLogger = new ExplorationLogger(Statistics, this);
             var el = _explorationLogger;
 
-            _pathStore = new PathStore();
+            _pathStore = pathStore ?? new PathStore();
 
             /*
 			 * Logging
@@ -237,6 +236,8 @@ namespace MMC
         public IConfig Config { get; }
 
         public Logger Logger { get; }
+
+        public PathStore PathStore => _pathStore;
 
         private IStatistics Statistics { get; }
 
@@ -516,16 +517,5 @@ namespace MMC
         }
 
         public ExplicitActiveState cur { get; }
-
-        private void OnChoiceGeneratorCreated(IChoiceGenerator choiceGenerator)
-        {
-            //choiceGenerator.Previous = _choiceGenerator;
-            //_choiceGenerator = choiceGenerator;
-        }
-
-        public IEnumerable<Path> GetExploredPaths()
-        {
-            return _pathStore.Paths;
-        }
     }
 }
