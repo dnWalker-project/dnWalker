@@ -1,7 +1,10 @@
-﻿using MMC.State;
+﻿using dnlib.DotNet.Emit;
+using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace dnWalker.Traversal
 {
@@ -27,6 +30,11 @@ namespace dnWalker.Traversal
             _currentPath.Extend(sd.ID);
         }
 
+        public virtual void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
+        {
+            _currentPath.AddPathConstraint(expression, next, cur);
+        }
+
         public void BacktrackStop(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)
         {
             var path = _currentPath.BacktrackTo(sd.ID);
@@ -39,17 +47,19 @@ namespace dnWalker.Traversal
             _paths.Add(_currentPath);
         }
 
+        public virtual Expression GetNextPathConstraint(Path path)
+        {
+            var pc = path.PathConstraints.Select(p => p.Expression).Take(path.PathConstraints.Count - 1).ToList();
+            pc.Add(Expression.Not(path.PathConstraints.Last().Expression));
+            return pc.Aggregate((a, b) => Expression.And(a, b));
+        }
+
         public IReadOnlyList<Path> Paths => new ReadOnlyCollection<Path>(_paths);
 
         public void NewThreadSpawned(ThreadState threadState)
         {
             threadState.ThreadStateChanged += ThreadState_ThreadStateChanged;
             threadState.CallStackEmptied += ThreadState_CallStackEmptied;
-        }
-
-        public void AddPathConstraint()
-        {
-
         }
 
         private void ThreadState_CallStackEmptied(ThreadState threadState)

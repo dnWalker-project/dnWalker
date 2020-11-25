@@ -67,6 +67,22 @@
     <Reference Include="dnlib, Version=3.3.2.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
       <HintPath>..\packages\dnlib.3.3.2\lib\net45\dnlib.dll</HintPath>
     </Reference>
+    <Reference Include="Echo.ControlFlow, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Echo\Echo.ControlFlow.dll</HintPath>
+    </Reference>
+    <Reference Include="Echo.Core, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Echo\Echo.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Echo.DataFlow, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Echo\Echo.DataFlow.dll</HintPath>
+    </Reference>
+    <Reference Include="Echo.Platforms.Dnlib, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Echo\Echo.Platforms.Dnlib.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.Core, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\FSharp.Core.4.5.0\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
@@ -74,7 +90,20 @@
       <HintPath>..\packages\Linq.Expression.Optimizer.1.0.13\lib\net45\Linq.Expression.Optimizer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractAllocations.cs" />
@@ -97,6 +126,8 @@
     <Compile Include="CollapsedState.cs" />
     <Compile Include="Collapser.cs" />
     <Compile Include="Concolic\Explorer.cs" />
+    <Compile Include="Concolic\Traversal\MethodExplorer.cs" />
+    <Compile Include="Concolic\Traversal\PathStore.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataElement.cs" />
     <Compile Include="DataElementList.cs" />
@@ -122,6 +153,7 @@
     <Compile Include="IntArrayUtil.cs" />
     <Compile Include="InteractiveExplorer.cs" />
     <Compile Include="InternalCalls.cs" />
+    <Compile Include="ISolver.cs" />
     <Compile Include="ListToString.cs" />
     <Compile Include="Lock.cs" />
     <Compile Include="LockManager.cs" />
@@ -193,7 +225,15 @@
     <Content Include="Mono.Cecil.dll" />
     <Content Include="README.html" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj">
+      <Project>{5E7DD7ED-9AC0-4095-AB6B-A6BF21FE5B7F}</Project>
+      <Name>Z3.LinqBinding</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Z3.x64.4.8.9\build\Microsoft.Z3.x64.targets" Condition="Exists('..\packages\Microsoft.Z3.x64.4.8.9\build\Microsoft.Z3.x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

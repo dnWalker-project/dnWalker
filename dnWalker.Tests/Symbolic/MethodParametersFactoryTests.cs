@@ -27,13 +27,10 @@ namespace dnWalker.Tests.Symbolic
                     paths.Count().Should().Be(1);
                     var path = paths.First();
                     path.PathConstraints.Should().HaveCount(3);
-                    string.Join("; ", path.PathConstraints).Should().Be("Not((x < 0)); (y < 0); (x < -y)");
+                    path.PathConstraintString.Should().Be("Not((x < 0)); (y < 0); (x < -y)");
 
-                    var pc = //path.PathConstraints.Take(0).ToList();// 
-                        path.PathConstraints.Take(path.PathConstraints.Count - 1).ToList();
-                    pc.Add(Expression.Not(path.PathConstraints.Last()));
-
-                    var andExpression = pc.Aggregate((a, b) => Expression.And(a, b));
+                    var andExpression = explorer.PathStore.GetNextPathConstraint(path);// Expression.Constant(true);// pc.Aggregate((a, b) => Expression.And(a, b));
+                    andExpression.ToString().Should().Be("((Not((x < 0)) And (y < 0)) And Not((x < -y)))");
 
                     using (var ctx = new Z3Context())
                     {

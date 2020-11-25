@@ -1,6 +1,9 @@
-﻿using dnWalker.NativePeers;
+﻿using dnlib.DotNet.Emit;
+using dnWalker.NativePeers;
+using Echo.ControlFlow;
 using MMC.Data;
 using MMC.State;
+using MMC.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +11,18 @@ using System.Linq.Expressions;
 
 namespace dnWalker.Traversal
 {
+    public class PathConstraint
+    {
+        public Expression Expression { get; set; }
+        public Instruction Next { get; set; }
+        public CILLocation Location { get; set; }
+    }
+
     public class Path
     {
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
+        //private readonly IDictionary<ControlFlowNode<Instruction>, Expression> _nodeExpressions;
+        //_nodeExpressions = new Dictionary<ControlFlowNode<Instruction>, Expression>();
 
         private IList<Segment> _segments = new List<Segment>();
 
@@ -64,15 +76,23 @@ namespace dnWalker.Traversal
             return false;
         }
 
-        private IList<Expression> _pathConstraints;
+        private IList<PathConstraint> _pathConstraints;
 
-        public void AddPathConstraint(Expression expression, ExplicitActiveState cur)
+        public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
-            _pathConstraints = _pathConstraints ?? new List<Expression>();
-            _pathConstraints.Add(ExpressionOptimizer.visit(expression));
+            _pathConstraints = _pathConstraints ?? new List<PathConstraint>();
+            _pathConstraints.Add(
+                new PathConstraint
+                {
+                    Expression = ExpressionOptimizer.visit(expression),
+                    Location = new CILLocation(cur.CurrentLocation.Instruction, cur.CurrentLocation.Method),
+                    Next = next
+                });
         }
 
-        public IReadOnlyCollection<Expression> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<Expression>(_pathConstraints);
+        public IReadOnlyCollection<PathConstraint> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(_pathConstraints);
+
+        public string PathConstraintString => string.Join("; ", PathConstraints.Select(pc => pc.Expression));
 
         public bool Faulted => Exception != null;
 

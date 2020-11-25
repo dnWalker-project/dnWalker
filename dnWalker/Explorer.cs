@@ -50,6 +50,8 @@ namespace MMC
     /// </summary>
     public delegate void PickThreadEventHandle(SchedulingData sd, int chosen);
 
+    public delegate void InstructionExecuted(CILLocation cilLocation);
+
     /// <summary>
     /// Handler for the event that the exploration stops.
     /// </summary>
@@ -101,6 +103,8 @@ namespace MMC
 		/// Exploration was halted (e.g. because of an unhandled exception).
 		/// </summary>
 		protected event ExplorationHaltEventHandle ExplorationHalted;
+
+        public event InstructionExecuted InstructionExecuted;
 
         private readonly StateStorage m_stateStorage;
         private readonly StatefulDynamicPOR m_dpor;
@@ -175,8 +179,10 @@ namespace MMC
             StateConstructed += new StateEventHandler(_pathStore.StateConstructed);
             BacktrackStop += new BacktrackEventHandler(_pathStore.BacktrackStop);
             cur.ThreadPool.OnNewThreadSpawned += _pathStore.NewThreadSpawned;
+            cur.ThreadPool.OnNewThreadSpawned += threadState => threadState.InstructionExecuted += InstructionExecuted;
 
-            _pathStore.NewThreadSpawned(cur.CurrentThread);
+            // TODO CurrentThread was created in advance, explicit event registration/firing
+            _pathStore.NewThreadSpawned(cur.CurrentThread);            
 
             if (!double.IsInfinity(config.MaxExploreInMinutes))
             {

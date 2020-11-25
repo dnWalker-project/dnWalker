@@ -21,8 +21,7 @@ namespace dnWalker.Tests.ExampleTests
         protected readonly Config _config;
         private readonly DefinitionProvider _definitionProvider;
         private readonly Logger _logger;
-        private readonly PathStore _pathStore;
-
+        
         protected static Lazy<DefinitionProvider> Lazy =
             new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(@"..\..\..\..\Examples\bin\debug\Examples.exe")));
 
@@ -31,8 +30,7 @@ namespace dnWalker.Tests.ExampleTests
             _config = new Config();
             _logger = new Logger(Logger.Default | LogPriority.Trace);
             _logger.AddOutput(new TestLoggerOutput());
-            _definitionProvider = Lazy.Value;
-            _pathStore = new PathStore();
+            _definitionProvider = Lazy.Value;            
         }
 
         protected void Explore(
@@ -43,7 +41,7 @@ namespace dnWalker.Tests.ExampleTests
         {
             before?.Invoke(_config);
 
-            var explorer = new Concolic.Explorer(_definitionProvider, _config, _logger, _pathStore);
+            var explorer = new Concolic.Explorer(_definitionProvider, _config, _logger);
             explorer.Run(methodName, args);
 
             finished(explorer);

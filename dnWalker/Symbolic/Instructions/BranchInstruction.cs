@@ -16,14 +16,17 @@ namespace dnWalker.Symbolic.Instructions
         {
             var a = cur.EvalStack.Pop();
             var value = a.ToBool();
-            
+            var operand = (Instruction)Operand;
+
             if (a is ISymbolic s)
             {
-                var path = cur.PathStore.CurrentPath;
-                path.AddPathConstraint(!value ? Expression.Not(s.Expression) : s.Expression, cur);
+                cur.PathStore.AddPathConstraint(
+                    !value ? Expression.Not(s.Expression) : s.Expression, 
+                    !value ? operand : null, // fall-through
+                    cur);
             }
 
-            return !value ? new JumpReturnValue((Instruction)Operand) : nextRetval;
+            return !value ? new JumpReturnValue(operand) : nextRetval;
         }
     }
 }

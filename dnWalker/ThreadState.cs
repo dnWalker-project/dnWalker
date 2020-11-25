@@ -45,6 +45,8 @@ namespace MMC.State
 
         public event CallStackEmptied CallStackEmptied;
 
+        public event InstructionExecuted InstructionExecuted;
+
         public MethodState CurrentMethod
         {
             get
@@ -297,8 +299,12 @@ namespace MMC.State
 
             do
             {
+                var location = CurrentLocation;
+
                 logger.Trace($"[{thread.Id}] {currentInstrExec}");
                 ier = currentInstrExec.Execute(cur);
+
+                InstructionExecuted?.Invoke(location);
 
                 currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
 
