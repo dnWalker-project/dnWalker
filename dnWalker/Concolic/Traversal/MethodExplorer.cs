@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnWalker.Traversal;
 using Echo.ControlFlow;
 using Echo.Platforms.Dnlib;
 using MMC.State;
@@ -30,7 +31,7 @@ namespace dnWalker.Concolic.Traversal
             _method = method;
         }
 
-        public void OnInstructionExecuted(CILLocation location)
+        public void OnInstructionExecuted(CILLocation location, Path path)
         {
             if (location.Method != _method)
             {
@@ -38,6 +39,45 @@ namespace dnWalker.Concolic.Traversal
             }
 
             _coverageMap[location.Instruction]++;
+
+            var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(location.Instruction));
+            _nodes[node] = true;
+
+            path.AddVisitedNode(node);
+        }
+
+        public Expression Flip(PathConstraint pathConstraint)
+        {
+            var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(pathConstraint.Location.Instruction));
+            var edges = node.GetOutgoingEdges();
+            if (!edges.Any())
+            {
+                return pathConstraint.Expression;
+            }
+
+            // all outgoing edges are covered
+            if (node.GetOutgoingEdges().All(edge => _edges[edge]))
+            {
+                return pathConstraint.Expression;
+            }
+
+            var next = pathConstraint.Next;
+            if (next != null)
+            {
+                var conditionalEdge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.Conditional && e.Target.Offset == next.Offset);
+                if (!_edges[conditionalEdge])
+                {
+                    return Expression.Not(pathConstraint.Expression);
+                }
+            }
+
+            var fallThroughEdge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.FallThrough);
+            if (!_edges[fallThroughEdge])
+            {
+                return Expression.Not(pathConstraint.Expression);
+            }
+
+            return pathConstraint.Expression;
         }
 
         public void OnConstraint(Expression expression, Instruction next, ExplicitActiveState cur)

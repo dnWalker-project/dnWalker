@@ -21,6 +21,12 @@ namespace dnWalker.Traversal
 
         public Path CurrentPath => _currentPath;
 
+        public void ResetPath()
+        {
+            _currentPath = new Path();
+            _paths.Add(_currentPath);
+        }
+
         public void BacktrackStart(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
         {
         }
@@ -47,13 +53,6 @@ namespace dnWalker.Traversal
             _paths.Add(_currentPath);
         }
 
-        public virtual Expression GetNextPathConstraint(Path path)
-        {
-            var pc = path.PathConstraints.Select(p => p.Expression).Take(path.PathConstraints.Count - 1).ToList();
-            pc.Add(Expression.Not(path.PathConstraints.Last().Expression));
-            return pc.Aggregate((a, b) => Expression.And(a, b));
-        }
-
         public IReadOnlyList<Path> Paths => new ReadOnlyCollection<Path>(_paths);
 
         public void NewThreadSpawned(ThreadState threadState)
@@ -63,6 +62,11 @@ namespace dnWalker.Traversal
         }
 
         private void ThreadState_CallStackEmptied(ThreadState threadState)
+        {
+            TerminatePath(threadState);
+        }
+
+        protected virtual void TerminatePath(ThreadState threadState)
         {
             _currentPath.Terminate(threadState);
         }

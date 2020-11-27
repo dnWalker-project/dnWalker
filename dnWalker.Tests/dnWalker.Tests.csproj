@@ -121,13 +121,13 @@
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj">
+      <Project>{94f59759-127e-42f3-b88f-a0540f988d1e}</Project>
+      <Name>dnWalker.Z3</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnWalker\dnWalker.csproj">
       <Project>{7434cf07-14ca-4df7-b03d-36c3ad0a67eb}</Project>
       <Name>dnWalker</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj">
-      <Project>{5e7dd7ed-9ac0-4095-ab6b-a6bf21fe5b7f}</Project>
-      <Name>Z3.LinqBinding</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

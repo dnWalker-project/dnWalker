@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace dnWalker.Traversal
 {
@@ -48,6 +49,16 @@ namespace dnWalker.Traversal
             var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
             _attributes[key] = attributeValue;
             return attributeValue;
+        }
+
+        private IList<ControlFlowNode<Instruction>> _visitedNodes = new List<ControlFlowNode<Instruction>>();
+
+        public void AddVisitedNode(ControlFlowNode<Instruction> node)
+        {
+            if (!_visitedNodes.Contains(node))
+            {
+                _visitedNodes.Add(node);
+            }
         }
 
         public Path BacktrackTo(int id)
@@ -92,9 +103,34 @@ namespace dnWalker.Traversal
 
         public IReadOnlyCollection<PathConstraint> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(_pathConstraints);
 
-        public string PathConstraintString => string.Join("; ", PathConstraints.Select(pc => pc.Expression));
+        public Expression PathConstraint => _pathConstraints.Select(p => p.Expression)
+            .Aggregate((a, b) => Expression.And(a, b));
+
+        public string PathConstraintString => PathConstraint.ToString();
+
+        public string GetPathInfo()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Path constraint: " + PathConstraintString);
+            sb.AppendLine("Input:");
+            sb.AppendLine("Output:");
+            sb.AppendLine(Output);
+            sb.AppendLine("Visited nodes:");
+            foreach (var node in _visitedNodes)
+            {
+                sb.AppendLine(" - " + node.ToString());
+            }
+            return sb.ToString();
+        }
 
         public bool Faulted => Exception != null;
+
+        private CILLocation _lastLocation;
+
+        public void OnInstructionExecuted(CILLocation location)
+        {
+            _lastLocation = location;
+        }
 
         public string Exception { get; private set; }
 
@@ -104,9 +140,13 @@ namespace dnWalker.Traversal
 
         public int Length => _segments.Count;
 
+        public bool IsTerminated { get; private set; }
+
         public void Terminate(ThreadState threadState)
         {
             var fromState = _segments.LastOrDefault()?.ToState ?? 0;
+
+            IsTerminated = true;
 
             var segment = new Segment(fromState, -1)
             {

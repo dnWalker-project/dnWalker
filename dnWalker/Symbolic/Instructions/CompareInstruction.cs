@@ -62,4 +62,37 @@ namespace dnWalker.Symbolic.Instructions
             return nextRetval;
         }
     }
+
+    public class CEQ : BranchInstructionExec
+    {
+        public CEQ(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        {
+            IDataElement b = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
+
+            var symbA = a as ISymbolic;
+            var symbB = b as ISymbolic;
+
+            var isSymbolic = symbA != null || symbB != null;
+            if (!isSymbolic)
+            {
+                cur.EvalStack.Push(CompareOperands(a, b) == 0 ? new Int4(1) : new Int4(0));
+                return nextRetval;
+            }
+
+            var ceqValue = CompareOperands(a, b) == 0 ? 1 : 0;
+
+            var expression = Expression.MakeBinary(ExpressionType.Equal,
+                symbA?.Expression ?? a.AsExpression(),
+                symbB?.Expression ?? b.AsExpression());
+
+            cur.EvalStack.Push(new SymbolicInt4(ceqValue, expression));
+            return nextRetval;
+        }
+    }
 }

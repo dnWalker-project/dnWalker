@@ -28,5 +28,5 @@ namespace dnWalker.Symbolic.Instructions
 
             return !value ? new JumpReturnValue(operand) : nextRetval;
         }
-    }
+    }    
 }

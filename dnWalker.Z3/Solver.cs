@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Z3.LinqBinding;
 
@@ -16,14 +17,14 @@ namespace dnWalker.Z3
                     .Where(Expression.Lambda(expression,
                         Expression.Parameter(typeof(int), "x"),
                         Expression.Parameter(typeof(int), "y")));
-                /*
-                    from t in ctx.NewTheorem(new { x = default(bool), y = default(bool) })
-                              where t.x ^ t.y
-                              select t;*/
-
+                
                 var result = theorem.Solve();
-                Console.WriteLine(result);
-                return null;
+                if (result == null)
+                {
+                    return null;
+                }
+
+                return result.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(result, null));
             }
         }
     }

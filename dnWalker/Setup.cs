@@ -63,15 +63,19 @@ namespace MMC
             _logger = logger;
         }
 
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IArg[] arguments = null)
+        {
+            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
+            return CreateInitialState(entryPoint, args);
+        }
+
         /// <summary>
         /// Creates initial state for exploration.
         /// </summary>
         /// <returns></returns>
-        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IArg[] arguments = null)
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IDataElement[] arguments = null)
         {
             var config = _config;
-
-            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
             IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(
                 config,
@@ -91,14 +95,14 @@ namespace MMC
                 ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
                     cur.DynamicArea.DeterminePlacement(false),
                     cur.DefinitionProvider.GetTypeDefinition("System.String"),
-                    args.Length);
+                    arguments.Length);
 
                 if (config.RunTimeParameters.Length > 0)
                 {
                     AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
                     for (int i = 0; i < config.RunTimeParameters.Length; ++i)
                     {
-                        runArgs.Fields[i] = args[i];
+                        runArgs.Fields[i] = arguments[i];
                     }
                 }
 
@@ -106,14 +110,14 @@ namespace MMC
             }
             else
             {
-                dataElementList = cur.StorageFactory.CreateList(args.Length);
-                for (int i = 0; i < args.Length; i++)
+                dataElementList = cur.StorageFactory.CreateList(arguments.Length);
+                for (int i = 0; i < arguments.Length; i++)
                 {
-                    dataElementList[i] = args[i];
+                    dataElementList[i] = arguments[i];
                 }
 
                 //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
-                if (args.Length != entryPoint.Parameters.Count)
+                if (arguments.Length != entryPoint.Parameters.Count)
                 {
                     throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);
                 }

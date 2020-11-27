@@ -41,7 +41,7 @@ namespace dnWalker.Tests.ExampleTests
         {
             before?.Invoke(_config);
 
-            var explorer = new Concolic.Explorer(_definitionProvider, _config, _logger);
+            var explorer = new Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
             explorer.Run(methodName, args);
 
             finished(explorer);

@@ -13,11 +13,14 @@ namespace dnWalker.Concolic.Traversal
 {
     public class PathStore : dnWalker.Traversal.PathStore
     {
-        private readonly IDictionary<MethodDef, MethodExplorer> _methodExlorers;        
+        private readonly IDictionary<MethodDef, MethodExplorer> _methodExlorers;
+        private readonly MethodDef entryPoint;
+        private IList<Expression> _expressions = new List<Expression>();
 
-        public PathStore()
+        public PathStore(MethodDef entryPoint)
         {
             _methodExlorers = new Dictionary<MethodDef, MethodExplorer>();
+            this.entryPoint = entryPoint;
         }
 
         public override void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
@@ -27,16 +30,93 @@ namespace dnWalker.Concolic.Traversal
             GetMethodExplorer(cur.CurrentLocation).OnConstraint(expression, next, cur);
         }
 
-        public override Expression GetNextPathConstraint(Path path)
+        public IDictionary<string, object> GetNextInputValues(ISolver solver)
         {
-            var pc = path.PathConstraints.Select(p => p.Expression).Take(path.PathConstraints.Count - 1).ToList();
-            pc.Add(Expression.Not(path.PathConstraints.Last().Expression));
-            return pc.Aggregate((a, b) => Expression.And(a, b));
+            if (!_expressions.Contains(CurrentPath.PathConstraint))
+            {
+                _expressions.Add(CurrentPath.PathConstraint);
+            }
+
+            var expressionToSolve = GetNextPathConstraint();
+            if (expressionToSolve == null)
+            {
+                return null;
+            }            
+
+            var next = solver.Solve(expressionToSolve);
+            if (next == null)
+            {
+                var length = int.MaxValue;
+                Path shortestPath = null;
+                foreach (var path in Paths)
+                {
+                    if (path.PathConstraints.Count < length)
+                    {
+                        length = path.PathConstraints.Count;
+                        shortestPath = path;
+                    }
+                }
+
+                expressionToSolve = Flip(
+                    new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(
+                        shortestPath.PathConstraints.Take(shortestPath.PathConstraints.Count - 1).ToList()));
+
+                next = solver.Solve(expressionToSolve);
+                if (next == null)
+                {
+                    return null;
+                }
+            }
+
+            _expressions.Add(expressionToSolve);
+
+            return next;
+        }
+
+        public Expression GetNextPathConstraint()
+        {
+            return Flip(CurrentPath.PathConstraints);
+        }
+
+        public Expression Flip(IReadOnlyCollection<PathConstraint> pathConstraints)
+        {
+            var pc = new List<Expression>();
+
+            var flipped = false;
+
+            foreach (var pathConstraint in pathConstraints.Reverse())
+            {
+                var methodExplorer = GetMethodExplorer(pathConstraint.Location);
+                if (flipped)
+                {
+                    pc.Insert(0, pathConstraint.Expression);
+                    continue;
+                }
+
+                var expression = methodExplorer.Flip(pathConstraint);
+                if (expression != pathConstraint.Expression)
+                {
+                    flipped = true;
+                }
+
+                pc.Insert(0, expression);
+            }
+
+            if (!flipped)
+            {
+                return null;
+            }
+
+            //var pc = path.PathConstraints.Select(p => p.Expression).Take(path.PathConstraints.Count - 1).ToList();
+            //pc.Add(Expression.Not(path.PathConstraints.Last().Expression));
+            return ExpressionOptimizer.visit(pc.Aggregate((a, b) => Expression.And(a, b)));
         }
 
         public void OnInstructionExecuted(CILLocation location)
         {
-            GetMethodExplorer(location).OnInstructionExecuted(location);
+            GetMethodExplorer(location).OnInstructionExecuted(location, CurrentPath);
+
+            CurrentPath.OnInstructionExecuted(location);            
 
             /*if (location.Method != entryPoint)
             {

@@ -9,7 +9,12 @@ namespace dnWalker.Symbolic
     {
         public static IDataElement CreateDataElement<T>(object value, Expression expression)
         {
-            switch (Type.GetTypeCode(typeof(T)))
+            return CreateDataElement(typeof(T), value, expression);
+        }
+
+        internal static IDataElement CreateDataElement(Type type, object value, Expression expression)
+        {
+            switch (Type.GetTypeCode(type))
             {/*
                 case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
                 case TypeCode.Char: return new Int4((char)value);
@@ -33,7 +38,7 @@ namespace dnWalker.Symbolic
                     {
                         return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
                     }*/
-                    throw new NotSupportedException("CreateDataElement for " + typeof(T));
+                    throw new NotSupportedException("CreateDataElement for " + type);
             }
         }
     }
