@@ -203,6 +203,7 @@
     <Compile Include="Symbolic\Instructions\CompareInstruction.cs" />
     <Compile Include="Symbolic\Instructions\InstructionFactory.cs" />
     <Compile Include="Symbolic\Primitives\SymbolicInt4.cs" />
+    <Compile Include="Symbolic\Primitives\SymbolicFloat8.cs" />
     <Compile Include="TestDriver.cs" />
     <Compile Include="ThreadPool.cs" />
     <Compile Include="ThreadState.cs" />

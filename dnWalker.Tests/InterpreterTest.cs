@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
     [Trait("Category", "Interpreter")]
     public sealed class InterpreterTest : TestBase
     {
-        private const string AssemblyFilename = @"..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
+        private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
 
         protected static Lazy<DefinitionProvider> Lazy =
             new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));

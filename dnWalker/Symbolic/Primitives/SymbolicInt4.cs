@@ -7,12 +7,13 @@ namespace dnWalker.Symbolic.Primitives
     [System.Diagnostics.DebuggerDisplay("SymbolicInt4({Value})")]
 	public struct SymbolicInt4 : IHasIntValue, IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible, ISymbolic
 	{
-		int m_value;
-		Expression _expression;
-
-		public static readonly Int4 Zero = new Int4(0);
+        public static readonly Int4 Zero = new Int4(0);
+		
 		public string WrapperName { get { return "System.Int32 (symbolic)"; } }
-		public int Value { get { return m_value; } }
+
+        public int Value { get; }
+
+        Expression _expression;
 
 		Expression ISymbolic.Expression => _expression;
 
@@ -21,9 +22,9 @@ namespace dnWalker.Symbolic.Primitives
 			int op = other.ToInt4(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new SymbolicInt4(checked(m_value + op), null);
+				return new SymbolicInt4(checked(Value + op), null);
 			else
-				return new SymbolicInt4(m_value + op, null);
+				return new SymbolicInt4(Value + op, null);
 		}
 
 		public INumericElement ToUnsigned()
@@ -34,7 +35,7 @@ namespace dnWalker.Symbolic.Primitives
 		public INumericElement Div(INumericElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value / op, null);
+			return new SymbolicInt4(Value / op, null);
 		}
 
 		public INumericElement Mul(INumericElement other, bool checkOverflow)
@@ -43,20 +44,20 @@ namespace dnWalker.Symbolic.Primitives
 
 			if (checkOverflow)
 			{
-				return new SymbolicInt4(checked(m_value * op), null);
+				return new SymbolicInt4(checked(Value * op), null);
 			}
-			return new SymbolicInt4(m_value * op, null);
+			return new SymbolicInt4(Value * op, null);
 		}
 
 		public INumericElement Rem(INumericElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value % op, null);
+			return new SymbolicInt4(Value % op, null);
 		}
 
 		public ISignedNumericElement Neg()
 		{
-			return new SymbolicInt4(-m_value, Expression.MakeUnary(ExpressionType.Negate, _expression, typeof(int)));
+			return new SymbolicInt4(-Value, Expression.MakeUnary(ExpressionType.Negate, _expression, typeof(int)));
 		}
 
 		public ISubElement Sub(INumericElement other, bool checkOverflow)
@@ -64,43 +65,42 @@ namespace dnWalker.Symbolic.Primitives
 			int op = other.ToInt4(checkOverflow).Value;
 
 			if (checkOverflow)
-				return new SymbolicInt4(checked(m_value - op), null);
+				return new SymbolicInt4(checked(Value - op), null);
 			else
-				return new SymbolicInt4(m_value - op, null);
+				return new SymbolicInt4(Value - op, null);
 		}
 
 		public IIntegerElement And(IIntegerElement other)
 		{
-
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value & op, null);
+			return new SymbolicInt4(Value & op, null);
 		}
 
 		public IIntegerElement Not()
 		{
-			return new SymbolicInt4(~m_value, null);
+			return new SymbolicInt4(~Value, null);
 		}
 
 		public IIntegerElement Or(IIntegerElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value | op, null);
+			return new SymbolicInt4(Value | op, null);
 		}
 
 		public IIntegerElement Xor(IIntegerElement other)
 		{
 			int op = other.ToInt4(false).Value;
-			return new SymbolicInt4(m_value ^ op, null);
+			return new SymbolicInt4(Value ^ op, null);
 		}
 
 		public IIntegerElement Shl(int x)
 		{
-			return new SymbolicInt4(m_value << x, null);
+			return new SymbolicInt4(Value << x, null);
 		}
 
 		public IIntegerElement Shr(int x)
 		{
-			return new SymbolicInt4(m_value >> x, null);
+			return new SymbolicInt4(Value >> x, null);
 		}
 
 		public Int4 ToInt4(bool checkOverflow) { throw new NotImplementedException(); }
@@ -108,41 +108,41 @@ namespace dnWalker.Symbolic.Primitives
 		public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
 		{
 			if (checkOverflow)
-				return new UnsignedInt4(checked((uint)m_value));
+				return new UnsignedInt4(checked((uint)Value));
 			else
-				return new UnsignedInt4((uint)m_value);
+				return new UnsignedInt4((uint)Value);
 		}
 
 		public Int8 ToInt8(bool checkOverflow)
 		{
 			if (checkOverflow)
-				return new Int8(checked((long)m_value));
+				return new Int8(checked((long)Value));
 			else
-				return new Int8((long)m_value);
+				return new Int8((long)Value);
 		}
 
 		public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
 		{
 			if (checkOverflow)
-				return new UnsignedInt8(checked((ulong)m_value));
+				return new UnsignedInt8(checked((ulong)Value));
 			else
-				return new UnsignedInt8((ulong)m_value);
+				return new UnsignedInt8((ulong)Value);
 		}
 
 		public Float4 ToFloat4(bool checkOverflow)
 		{
 			if (checkOverflow)
-				return new Float4(checked((float)m_value));
+				return new Float4(checked((float)Value));
 			else
-				return new Float4((float)m_value);
+				return new Float4((float)Value);
 		}
 
 		public Float8 ToFloat8(bool checkOverflow)
 		{
 			if (checkOverflow)
-				return new Float8(checked((double)m_value));
+				return new Float8(checked((double)Value));
 			else
-				return new Float8((double)m_value);
+				return new Float8((double)Value);
 		}
 
 		public Int4 ToByte(bool checkOverflow)
@@ -163,16 +163,16 @@ namespace dnWalker.Symbolic.Primitives
 				return new SymbolicInt4((short)m_value);*/
 		}
 
-		public bool ToBool() { return m_value != 0; }
+		public bool ToBool() { return Value != 0; }
 
 		public bool Equals(IDataElement other)
 		{
-			return (other is Int4) && (((Int4)other).Value == m_value);
+			return (other is Int4) && (((Int4)other).Value == Value);
 		}
 
 		public int CompareTo(object obj)
 		{
-			return m_value.CompareTo(((IHasIntValue)obj).Value);
+			return Value.CompareTo(((IHasIntValue)obj).Value);
 		}
 
 		public override string ToString()
@@ -184,97 +184,97 @@ namespace dnWalker.Symbolic.Primitives
 		public override int GetHashCode()
 		{
 
-			return (int)m_value;
+			return (int)Value;
 		}
 
 		public TypeCode GetTypeCode()
 		{
-			return m_value.GetTypeCode();
+			return Value.GetTypeCode();
 		}
 
 		public bool ToBoolean(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToBoolean(provider);
+			return ((IConvertible)Value).ToBoolean(provider);
 		}
 
 		public char ToChar(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToChar(provider);
+			return ((IConvertible)Value).ToChar(provider);
 		}
 
 		public sbyte ToSByte(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToSByte(provider);
+			return ((IConvertible)Value).ToSByte(provider);
 		}
 
 		public byte ToByte(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToByte(provider);
+			return ((IConvertible)Value).ToByte(provider);
 		}
 
 		public short ToInt16(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToInt16(provider);
+			return ((IConvertible)Value).ToInt16(provider);
 		}
 
 		public ushort ToUInt16(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToUInt16(provider);
+			return ((IConvertible)Value).ToUInt16(provider);
 		}
 
 		public int ToInt32(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToInt32(provider);
+			return ((IConvertible)Value).ToInt32(provider);
 		}
 
 		public uint ToUInt32(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToUInt32(provider);
+			return ((IConvertible)Value).ToUInt32(provider);
 		}
 
 		public long ToInt64(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToInt64(provider);
+			return ((IConvertible)Value).ToInt64(provider);
 		}
 
 		public ulong ToUInt64(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToUInt64(provider);
+			return ((IConvertible)Value).ToUInt64(provider);
 		}
 
 		public float ToSingle(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToSingle(provider);
+			return ((IConvertible)Value).ToSingle(provider);
 		}
 
 		public double ToDouble(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToDouble(provider);
+			return ((IConvertible)Value).ToDouble(provider);
 		}
 
 		public decimal ToDecimal(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToDecimal(provider);
+			return ((IConvertible)Value).ToDecimal(provider);
 		}
 
 		public DateTime ToDateTime(IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToDateTime(provider);
+			return ((IConvertible)Value).ToDateTime(provider);
 		}
 
 		public string ToString(IFormatProvider provider)
 		{
-			return m_value.ToString(provider);
+			return Value.ToString(provider);
 		}
 
 		public object ToType(Type conversionType, IFormatProvider provider)
 		{
-			return ((IConvertible)m_value).ToType(conversionType, provider);
+			return ((IConvertible)Value).ToType(conversionType, provider);
 		}
 
 		public SymbolicInt4(int val, Expression expression)
 		{
-			m_value = val;
+			Value = val;
 			_expression = expression ?? throw new ArgumentNullException(nameof(expression));
 		}
 

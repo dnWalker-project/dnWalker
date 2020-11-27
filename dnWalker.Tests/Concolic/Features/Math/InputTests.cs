@@ -2,29 +2,26 @@
 using dnWalker.Tests.ExampleTests;
 using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace dnWalker.Tests.Symbolic
+namespace dnWalker.Tests.Concolic.Features.Math
 {
-    public class MethodParametersFactoryTests : SymbolicExamplesTestBase
+    public class InputTests : SymbolicExamplesTestBase
     {
-        public MethodParametersFactoryTests()
-        {
-        }
-
         [Fact]
         public void ArgsTest()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch",
+            Explore("Examples.Concolic.Features.Math.Input.foo",
                 null,
                 (explorer) =>
                 {
-                    //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
 
-                    foreach(var p in paths)
+                    foreach (var p in paths)
                     {
                         System.Diagnostics.Debug.WriteLine(p.GetPathInfo());
                     }
@@ -34,8 +31,7 @@ namespace dnWalker.Tests.Symbolic
                     path.PathConstraints.Should().HaveCount(4);
                     path.PathConstraintString.Should().Be("(((Not((x < 0)) And Not((y < 0))) And Not((x < y))) And Not((x == 0)))");
                 },
-                SymbolicArgs.Arg<int>("x", 10),
-                SymbolicArgs.Arg("y", 2));
+                SymbolicArgs.Arg<double>("d"));
         }
     }
 }

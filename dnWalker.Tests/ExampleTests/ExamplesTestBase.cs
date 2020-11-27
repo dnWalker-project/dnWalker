@@ -36,12 +36,12 @@ namespace dnWalker.Tests.ExampleTests
         protected void Explore(
             string methodName,
             Action<IConfig> before,
-            Action<Concolic.Explorer> finished,
+            Action<dnWalker.Concolic.Explorer> finished,
             params IArg[] args)
         {
             before?.Invoke(_config);
 
-            var explorer = new Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
+            var explorer = new dnWalker.Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
             explorer.Run(methodName, args);
 
             finished(explorer);

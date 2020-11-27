@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Examples.Simple
+namespace Examples.Concolic.Simple
 {
     public class Branches
     {

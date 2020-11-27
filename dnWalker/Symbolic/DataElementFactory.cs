@@ -22,12 +22,12 @@ namespace dnWalker.Symbolic
                 case TypeCode.Byte: return new Int4((byte)value);
                 case TypeCode.Int16: return new Int4((short)value);
                 case TypeCode.UInt16: return new UnsignedInt4((ushort)value);*/
-                case TypeCode.Int32: return new SymbolicInt4((int)value, expression);
+                case TypeCode.Int32: return new Int4((int)value, expression);
                 //case TypeCode.UInt32: return new UnsignedInt4((uint)value);
                 //case TypeCode.Int64: return new Int8((long)value);
                 //case TypeCode.UInt64: return new UnsignedInt8((ulong)value);
                 //case TypeCode.Single: return new Float4((float)value);
-                //case TypeCode.Double: return new Float8((double)value);
+                case TypeCode.Double: return new Float8((double)value);
                 //case TypeCode.String: return new ConstantString(value.ToString());*/
                 default:/*
                     if (value is IntPtr ip)
