@@ -1,5 +1,4 @@
 ﻿using dnlib.DotNet.Emit;
-using dnWalker.Symbolic.Primitives;
 using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
@@ -42,10 +41,10 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            var symbA = a as ISymbolic;
-            var symbB = b as ISymbolic;
+            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
+            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
-            var isSymbolic = symbA != null || symbB != null;
+            var isSymbolic = symbA || symbB;
             if (!isSymbolic)
             {
                 cur.EvalStack.Push(CompareOperands(a, b) < 0 ? new Int4(1) : new Int4(0));
@@ -55,10 +54,13 @@ namespace dnWalker.Symbolic.Instructions
             var cltValue = CompareOperands(a, b) < 0 ? 1 : 0;
 
             var expression = Expression.MakeBinary(ExpressionType.LessThan, 
-                symbA?.Expression ?? a.AsExpression(),
-                symbB?.Expression ?? b.AsExpression());
+                exprA ?? a.AsExpression(),
+                exprB ?? b.AsExpression());
 
-            cur.EvalStack.Push(new SymbolicInt4(cltValue, expression));
+            var newValue = new Int4(cltValue);
+            cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+
+            cur.EvalStack.Push(newValue);//, expression));
             return nextRetval;
         }
     }
@@ -75,10 +77,10 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            var symbA = a as ISymbolic;
-            var symbB = b as ISymbolic;
+            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
+            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
-            var isSymbolic = symbA != null || symbB != null;
+            var isSymbolic = symbA || symbB;
             if (!isSymbolic)
             {
                 cur.EvalStack.Push(CompareOperands(a, b) == 0 ? new Int4(1) : new Int4(0));
@@ -88,10 +90,12 @@ namespace dnWalker.Symbolic.Instructions
             var ceqValue = CompareOperands(a, b) == 0 ? 1 : 0;
 
             var expression = Expression.MakeBinary(ExpressionType.Equal,
-                symbA?.Expression ?? a.AsExpression(),
-                symbB?.Expression ?? b.AsExpression());
+                exprA ?? a.AsExpression(),
+                exprB ?? b.AsExpression());
 
-            cur.EvalStack.Push(new SymbolicInt4(ceqValue, expression));
+            var newValue = new Int4(ceqValue);
+            cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+            cur.EvalStack.Push(newValue);
             return nextRetval;
         }
     }

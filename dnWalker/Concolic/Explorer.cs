@@ -6,6 +6,8 @@ using Echo.ControlFlow.Serialization.Dot;
 using Echo.Platforms.Dnlib;
 using MMC;
 using MMC.Data;
+using MMC.InstructionExec;
+using MMC.State;
 using System;
 using System.IO;
 using System.Linq;
@@ -61,7 +63,61 @@ namespace dnWalker.Concolic
 
                 try
                 {
-                    var cur = stateSpaceSetup.CreateInitialState(entryPoint, args);
+                    // initial state
+                    // -------------
+                    var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
+                    var cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
+                    DataElementList dataElementList;
+                    if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
+                    {
+                        ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
+                            cur.DynamicArea.DeterminePlacement(false),
+                            cur.DefinitionProvider.GetTypeDefinition("System.String"),
+                            arguments.Length);
+
+                        if (_config.RunTimeParameters.Length > 0)
+                        {
+                            AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
+                            for (int i = 0; i < _config.RunTimeParameters.Length; ++i)
+                            {
+                                runArgs.Fields[i] = args[i];
+                            }
+                        }
+
+                        dataElementList = cur.StorageFactory.CreateSingleton(runArgsRef);
+                    }
+                    else
+                    {
+                        dataElementList = cur.StorageFactory.CreateList(arguments.Length);
+                        for (int i = 0; i < arguments.Length; i++)
+                        {
+                            dataElementList[i] = args[i];
+                            PathStore.CurrentPath.SetObjectAttribute<Expression>(
+                                dataElementList[i], 
+                                "expression", 
+                                Expression.Parameter(
+                                    typeof(int), 
+                                    entryPoint.Parameters[i].Name));
+                        }
+
+                        //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
+                        if (arguments.Length != entryPoint.Parameters.Count)
+                        {
+                            throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);
+                        }
+                    }
+
+                    MethodState mainState = new MethodState(
+                        entryPoint,
+                        dataElementList,
+                        cur);
+
+                    // Initialize main thread.
+                    cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, _logger));                    
+
+                    // -------------
+
+                    //var cur = stateSpaceSetup.CreateInitialState(entryPoint, args);
                     cur.CurrentThread.InstructionExecuted += pathStore.OnInstructionExecuted;
 
                     var statistics = new SimpleStatistics();
@@ -86,7 +142,7 @@ namespace dnWalker.Concolic
 
                     args = entryPoint.Parameters.Select(p => new { p.Name, Value = next[p.Name] })
                         .Select(v =>
-                        DataElementFactory.CreateDataElement(v.Value.GetType(), v.Value, Expression.Parameter(v.Value.GetType(), v.Name)))
+                        _definitionProvider.CreateDataElement(v.Value))//, Expression.Parameter(v.Value.GetType(), v.Name)))
                         .ToArray();
 
                     PathStore.ResetPath();

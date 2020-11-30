@@ -204,6 +204,11 @@ namespace MMC.State
 
         public MemoryLocation NextAccess(ThreadState thread)
         {
+            if (thread?.CurrentMethod?.ProgramCounter == null)
+            {
+                return MemoryLocation.Null;
+            }
+
             var instr = thread.CurrentMethod.ProgramCounter;
             var instrExec = InstructionExecProvider.GetExecFor(instr);
 
@@ -355,7 +360,7 @@ namespace MMC.State
         {
             return ChoiceStrategy.CanBreak();
         }
-
+        /*
         public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
         {
             return PathStore.CurrentPath.TryGetObjectAttribute(alloc, attributeName, out attributeValue);
@@ -364,6 +369,6 @@ namespace MMC.State
         public T SetObjectAttribute<T>(Allocation alloc, string name, T attributeValue)
         {
             return PathStore.CurrentPath.SetObjectAttribute(alloc, name, attributeValue);
-        }
+        }*/
     }
 }

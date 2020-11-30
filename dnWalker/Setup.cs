@@ -89,7 +89,7 @@ namespace MMC
                 _logger.Notice("using reference counting");
             }
 
-            DataElementList dataElementList = null;
+            DataElementList dataElementList;
             if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
             {
                 ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
@@ -129,12 +129,12 @@ namespace MMC
                 cur);
 
             // Initialize main thread.
-            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, CreateMainThreadObject(cur, entryPoint));
+            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, CreateMainThreadObject(cur, entryPoint, _logger));
 
             return cur;
         }
 
-        private ObjectReference CreateMainThreadObject(ExplicitActiveState cur, MethodDef mainDefinition)
+        public static ObjectReference CreateMainThreadObject(ExplicitActiveState cur, MethodDef mainDefinition, Logger logger)
         {
             // A thread is created as follows:
             // 1. A threadstart delegate is created: newobj ThreadStart::.ctor(Object, IntPtr),
@@ -188,7 +188,7 @@ namespace MMC
             }
             else
             {
-                _logger.Warning("No thread local synchronisation object field found!");
+                logger.Warning("No thread local synchronisation object field found!");
             }
 
             // 2c
@@ -202,21 +202,21 @@ namespace MMC
                 cur.ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC);
             }
             else
-                _logger.Warning("No thread field found for storing Main delegate!");
+                logger.Warning("No thread field found for storing Main delegate!");
 
             // 3
             var stateField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "state");
 
             if (stateField == null)
             {
-                _logger.Warning("No field 'state' found in System.Threading.Thread object.");
-                _logger.Warning("This probably means your class corlib is other than the");
-                _logger.Warning("current SVN version for Linux we use. Try running the");
-                _logger.Warning("application using: mono --debug mmc.exe ...");
-                _logger.Warning("The state of thread will not be written back into the");
-                _logger.Warning("System.Threading.Thread object, but a field in MMC");
-                _logger.Warning("itself is used.");
-                _logger.Warning("Behaviour might differ from normal execution!");
+                logger.Warning("No field 'state' found in System.Threading.Thread object.");
+                logger.Warning("This probably means your class corlib is other than the");
+                logger.Warning("current SVN version for Linux we use. Try running the");
+                logger.Warning("application using: mono --debug mmc.exe ...");
+                logger.Warning("The state of thread will not be written back into the");
+                logger.Warning("System.Threading.Thread object, but a field in MMC");
+                logger.Warning("itself is used.");
+                logger.Warning("Behaviour might differ from normal execution!");
             }
             else
             {

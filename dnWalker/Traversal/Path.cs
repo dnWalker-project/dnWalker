@@ -51,6 +51,43 @@ namespace dnWalker.Traversal
             return attributeValue;
         }
 
+        private class Eq : IEqualityComparer<IDataElement>
+        {
+            public bool Equals(IDataElement x, IDataElement y)
+            {
+                return GetHashCode(x) == GetHashCode(y);
+            }
+
+            public int GetHashCode(IDataElement obj)
+            {
+                return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
+            }
+        }
+
+        private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
+        public T SetObjectAttribute<T>(IDataElement dataElement, string attributeName, T attributeValue)
+        {
+            if (!_properties.TryGetValue(dataElement, out var dict))
+            {
+                dict = new Dictionary<string, object>();
+                _properties.Add(dataElement, dict);
+            }
+            dict[attributeName] = attributeValue;
+            return attributeValue;
+        }
+
+        public bool TryGetObjectAttribute<T>(IDataElement dataElement, string attributeName, out T attributeValue)
+        {
+            attributeValue = default;
+            if (!_properties.TryGetValue(dataElement, out var dict) || !dict.TryGetValue(attributeName, out var value))
+            {
+                return false;
+            }
+
+            attributeValue = (T)value;
+            return true;
+        }
+
         private IList<ControlFlowNode<Instruction>> _visitedNodes = new List<ControlFlowNode<Instruction>>();
 
         public void AddVisitedNode(ControlFlowNode<Instruction> node)

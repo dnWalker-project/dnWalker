@@ -198,12 +198,9 @@
     <Compile Include="Symbolic\AllocationExtensions.cs" />
     <Compile Include="Symbolic\Arg.cs" />
     <Compile Include="Symbolic\DataElementExtensions.cs" />
-    <Compile Include="Symbolic\DataElementFactory.cs" />
     <Compile Include="Symbolic\Instructions\BranchInstruction.cs" />
     <Compile Include="Symbolic\Instructions\CompareInstruction.cs" />
     <Compile Include="Symbolic\Instructions\InstructionFactory.cs" />
-    <Compile Include="Symbolic\Primitives\SymbolicInt4.cs" />
-    <Compile Include="Symbolic\Primitives\SymbolicFloat8.cs" />
     <Compile Include="TestDriver.cs" />
     <Compile Include="ThreadPool.cs" />
     <Compile Include="ThreadState.cs" />
@@ -234,6 +231,9 @@
       <Project>{5E7DD7ED-9AC0-4095-AB6B-A6BF21FE5B7F}</Project>
       <Name>Z3.LinqBinding</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Symbolic\Primitives\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Z3.x64.4.8.9\build\Microsoft.Z3.x64.targets" Condition="Exists('..\packages\Microsoft.Z3.x64.4.8.9\build\Microsoft.Z3.x64.targets')" />

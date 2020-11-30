@@ -4,11 +4,6 @@ using System.Linq.Expressions;
 
 namespace dnWalker.Symbolic
 {
-    public interface ISymbolic
-    {
-        Expression Expression { get; }
-    }
-
     public static class SymbolicArgs
     {
         public static SymbolicArg<T> Arg<T>(string name)
@@ -35,7 +30,7 @@ namespace dnWalker.Symbolic
 
         public IDataElement AsDataElement(DefinitionProvider definitionProvider)
         {
-            return DataElementFactory.CreateDataElement<T>(_value, Expression.Parameter(typeof(T), _name));
+            return definitionProvider.CreateDataElement(_value);//, Expression.Parameter(typeof(T), _name));
         }
     }
 }

@@ -120,14 +120,14 @@ namespace MMC
 
         public void OnNewState(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
-            /// Pick a transition as the current optimal persistent set
+            // Pick a transition as the current optimal persistent set
             if (sd.Working.Count > 0)
             {
                 sd.Working = new Queue<int>();
                 sd.Working.Enqueue(sd.Enabled.Peek());
             }
 
-            /// Check all enabled transitions for dependency with transitions on the DFS stack
+            // Check all enabled transitions for dependency with transitions on the DFS stack
             foreach (int threadId in sd.Enabled)
             {
                 MemoryLocation ml = cur.NextAccess(threadId);

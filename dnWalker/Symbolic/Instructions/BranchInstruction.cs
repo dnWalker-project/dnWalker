@@ -17,11 +17,11 @@ namespace dnWalker.Symbolic.Instructions
             var a = cur.EvalStack.Pop();
             var value = a.ToBool();
             var operand = (Instruction)Operand;
-
-            if (a is ISymbolic s)
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
+            if (symb)
             {
                 cur.PathStore.AddPathConstraint(
-                    !value ? Expression.Not(s.Expression) : s.Expression, 
+                    !value ? Expression.Not(expression) : expression, 
                     !value ? operand : null, // fall-through
                     cur);
             }

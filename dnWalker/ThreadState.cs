@@ -291,14 +291,25 @@ namespace MMC.State
                 return false;
             }
 
+            InstructionExecBase currentInstrExec = null;
             MethodState currentMethod = thread.CurrentMethod;
-            var currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
+            if (currentMethod != null)
+            {
+                currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
+            }
+            
             bool continueExploration;
             IIEReturnValue ier;
             bool canForward;
 
             do
             {
+                if (currentInstrExec == null)
+                {
+                    continueExploration = true;
+                    break;
+                }
+
                 var location = CurrentLocation;
 
                 logger.Trace($"[{thread.Id}] {currentInstrExec}");

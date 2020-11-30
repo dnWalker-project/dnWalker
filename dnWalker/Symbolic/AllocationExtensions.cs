@@ -7,12 +7,12 @@ namespace dnWalker.Symbolic
     {
         public static Expression GetExpression(this Allocation allocation, ExplicitActiveState cur)
         {
-            if (!cur.TryGetObjectAttribute<Expression>(allocation, "symbolic_expression", out var expression))
+            /*if (!cur.TryGetObjectAttribute<Expression>(allocation, "symbolic_expression", out var expression))
             {
 
-            }
+            }*/
 
-            return expression;
+            return null;// expression;
         }
     }
 }

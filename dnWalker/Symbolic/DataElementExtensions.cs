@@ -8,11 +8,6 @@ namespace dnWalker.Symbolic
     {
         public static Expression AsExpression(this IDataElement dataElement)
         {
-            if (dataElement is ISymbolic symbolic)
-            {
-                return symbolic.Expression;
-            }
-
             if (dataElement is IIntegerElement integerElement)
             {
                 return Expression.Constant(Convert.ChangeType(integerElement, typeof(int)), typeof(int));

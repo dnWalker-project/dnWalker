@@ -515,6 +515,7 @@ Disabling/enabling features:
 
             // to wake me (the user) up after a (long) exploration :)
             //System.Console.Write("\a");
+            System.Console.ReadLine();
         }
 
     }
