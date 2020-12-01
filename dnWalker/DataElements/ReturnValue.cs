@@ -4,9 +4,6 @@ using MMC.Data;
 using MMC.State;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker.DataElements
 {
@@ -19,7 +16,10 @@ namespace dnWalker.DataElements
         {
             _allocatedObject = allocatedObject;
             _explicitActiveState = explicitActiveState;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
+
+        public int HashCode { get; }
 
         string IDataElement.WrapperName => throw new NotImplementedException();
 

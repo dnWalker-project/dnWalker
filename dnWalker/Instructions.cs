@@ -779,11 +779,7 @@ namespace MMC.InstructionExec
 
     public class LDLOC : LoadInstructionExec
     {
-        public LDLOC(Instruction instr, object operand,
-                InstructionExecAttributes atr)
-            : base(instr, operand, atr)
-        {
-        }
+        public LDLOC(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr) { }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
@@ -3776,16 +3772,10 @@ namespace MMC.InstructionExec
 
     public class STLOC : StoreInstructionExec
     {
-
-        public STLOC(Instruction instr, object operand,
-                InstructionExecAttributes atr)
-            : base(instr, operand, atr)
-        {
-        }
+        public STLOC(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr) {}
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-
             // Operand is either a number 0-3, or a VariableDefinition, which
             // has a property Index, which is the number we want.
             int index;
@@ -3796,14 +3786,12 @@ namespace MMC.InstructionExec
 
             IDataElement ide = cur.EvalStack.Pop();
 
-            /*
-			 * For heap analysis, TODO this should be done in a much cleaner fashion... */
-            if (ide is ObjectReference)
+            // For heap analysis, TODO this should be done in a much cleaner fashion ...
+            if (ide is ObjectReference objRef)
             {
                 IDataElement oldIde = cur.CurrentMethod.Locals[index];
                 ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde, cur);
-                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, (ObjectReference)ide, cur);
-
+                ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, objRef, cur);
                 //if (!oldIde.Equals(ObjectReference.Null))
                 //	Explorer.ActivateGC = true;
             }

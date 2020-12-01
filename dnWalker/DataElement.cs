@@ -31,6 +31,7 @@ namespace MMC.Data
         bool ToBool();
         string ToString();
         string WrapperName { get; }
+        int HashCode { get; }
     }
 
     /// The following two interfaces are used to abstract
@@ -113,11 +114,11 @@ namespace MMC.Data
 	 * -------------------------------------------------------------- */
     public struct Int4 : IHasIntValue, IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
     {
-        int m_value;
+        public int HashCode { get; }
 
         public static readonly Int4 Zero = new Int4(0);
         public string WrapperName { get { return "System.Int32"; } }
-        public int Value { get { return m_value; } }
+        public int Value { get; }
         // public DataElementKind Kind => DataElementKind.Int32;
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
@@ -125,9 +126,9 @@ namespace MMC.Data
             int op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
-                return new Int4(checked(m_value + op));
+                return new Int4(checked(Value + op));
             else
-                return new Int4(m_value + op);
+                return new Int4(Value + op);
 
         }
 
@@ -140,7 +141,7 @@ namespace MMC.Data
         {
 
             int op = other.ToInt4(false).Value;
-            return new Int4(m_value / op);
+            return new Int4(Value / op);
         }
 
         public INumericElement Mul(INumericElement other, bool checkOverflow)
@@ -149,9 +150,9 @@ namespace MMC.Data
             int op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
-                return new Int4(checked(m_value * op));
+                return new Int4(checked(Value * op));
             else
-                return new Int4(m_value * op);
+                return new Int4(Value * op);
 
         }
 
@@ -159,13 +160,13 @@ namespace MMC.Data
         {
 
             int op = other.ToInt4(false).Value;
-            return new Int4(m_value % op);
+            return new Int4(Value % op);
         }
 
         public ISignedNumericElement Neg()
         {
 
-            return new Int4(-m_value);
+            return new Int4(-Value);
         }
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
@@ -174,48 +175,48 @@ namespace MMC.Data
             int op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
-                return new Int4(checked(m_value - op));
+                return new Int4(checked(Value - op));
             else
-                return new Int4(m_value - op);
+                return new Int4(Value - op);
         }
 
         public IIntegerElement And(IIntegerElement other)
         {
 
             int op = other.ToInt4(false).Value;
-            return new Int4(m_value & op);
+            return new Int4(Value & op);
         }
 
         public IIntegerElement Not()
         {
 
-            return new Int4(~m_value);
+            return new Int4(~Value);
         }
 
         public IIntegerElement Or(IIntegerElement other)
         {
 
             int op = other.ToInt4(false).Value;
-            return new Int4(m_value | op);
+            return new Int4(Value | op);
         }
 
         public IIntegerElement Xor(IIntegerElement other)
         {
 
             int op = other.ToInt4(false).Value;
-            return new Int4(m_value ^ op);
+            return new Int4(Value ^ op);
         }
 
         public IIntegerElement Shl(int x)
         {
 
-            return new Int4(m_value << x);
+            return new Int4(Value << x);
         }
 
         public IIntegerElement Shr(int x)
         {
 
-            return new Int4(m_value >> x);
+            return new Int4(Value >> x);
         }
 
         public Int4 ToInt4(bool checkOverflow) { return this; }
@@ -223,70 +224,70 @@ namespace MMC.Data
         public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
         {
             if (checkOverflow)
-                return new UnsignedInt4(checked((uint)m_value));
+                return new UnsignedInt4(checked((uint)Value));
             else
-                return new UnsignedInt4((uint)m_value);
+                return new UnsignedInt4((uint)Value);
         }
 
         public Int8 ToInt8(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Int8(checked((long)m_value));
+                return new Int8(checked((long)Value));
             else
-                return new Int8((long)m_value);
+                return new Int8((long)Value);
         }
 
         public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
         {
             if (checkOverflow)
-                return new UnsignedInt8(checked((ulong)m_value));
+                return new UnsignedInt8(checked((ulong)Value));
             else
-                return new UnsignedInt8((ulong)m_value);
+                return new UnsignedInt8((ulong)Value);
         }
 
         public Float4 ToFloat4(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Float4(checked((float)m_value));
+                return new Float4(checked((float)Value));
             else
-                return new Float4((float)m_value);
+                return new Float4((float)Value);
         }
 
         public Float8 ToFloat8(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Float8(checked((double)m_value));
+                return new Float8(checked((double)Value));
             else
-                return new Float8((double)m_value);
+                return new Float8((double)Value);
         }
 
         public Int4 ToByte(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Int4(checked((sbyte)m_value));
+                return new Int4(checked((sbyte)Value));
             else
-                return new Int4((sbyte)m_value);
+                return new Int4((sbyte)Value);
         }
 
         public Int4 ToShort(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Int4(checked((short)m_value));
+                return new Int4(checked((short)Value));
             else
-                return new Int4((short)m_value);
+                return new Int4((short)Value);
         }
 
-        public bool ToBool() { return m_value != 0; }
+        public bool ToBool() { return Value != 0; }
 
         public bool Equals(IDataElement other)
         {
 
-            return (other is Int4 i) && (i.Value == m_value);
+            return (other is Int4 i) && (i.Value == Value);
         }
 
         public int CompareTo(object obj)
         {
-            return m_value.CompareTo(((Int4)obj).Value);
+            return Value.CompareTo(((Int4)obj).Value);
         }
 
         public override string ToString()
@@ -297,98 +298,99 @@ namespace MMC.Data
 
         public override int GetHashCode()
         {
-            return m_value;
+            return Value;
         }
 
         public TypeCode GetTypeCode()
         {
-            return m_value.GetTypeCode();
+            return Value.GetTypeCode();
         }
 
         public bool ToBoolean(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToBoolean(provider);
+            return ((IConvertible)Value).ToBoolean(provider);
         }
 
         public char ToChar(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToChar(provider);
+            return ((IConvertible)Value).ToChar(provider);
         }
 
         public sbyte ToSByte(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToSByte(provider);
+            return ((IConvertible)Value).ToSByte(provider);
         }
 
         public byte ToByte(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToByte(provider);
+            return ((IConvertible)Value).ToByte(provider);
         }
 
         public short ToInt16(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToInt16(provider);
+            return ((IConvertible)Value).ToInt16(provider);
         }
 
         public ushort ToUInt16(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToUInt16(provider);
+            return ((IConvertible)Value).ToUInt16(provider);
         }
 
         public int ToInt32(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToInt32(provider);
+            return ((IConvertible)Value).ToInt32(provider);
         }
 
         public uint ToUInt32(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToUInt32(provider);
+            return ((IConvertible)Value).ToUInt32(provider);
         }
 
         public long ToInt64(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToInt64(provider);
+            return ((IConvertible)Value).ToInt64(provider);
         }
 
         public ulong ToUInt64(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToUInt64(provider);
+            return ((IConvertible)Value).ToUInt64(provider);
         }
 
         public float ToSingle(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToSingle(provider);
+            return ((IConvertible)Value).ToSingle(provider);
         }
 
         public double ToDouble(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToDouble(provider);
+            return ((IConvertible)Value).ToDouble(provider);
         }
 
         public decimal ToDecimal(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToDecimal(provider);
+            return ((IConvertible)Value).ToDecimal(provider);
         }
 
         public DateTime ToDateTime(IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToDateTime(provider);
+            return ((IConvertible)Value).ToDateTime(provider);
         }
 
         public string ToString(IFormatProvider provider)
         {
-            return m_value.ToString(provider);
+            return Value.ToString(provider);
         }
 
         public object ToType(Type conversionType, IFormatProvider provider)
         {
-            return ((IConvertible)m_value).ToType(conversionType, provider);
+            return ((IConvertible)Value).ToType(conversionType, provider);
         }
 
         public Int4(int val)
-        {
-
-            m_value = val;
+        {            
+            Value = val;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
 
         public static explicit operator Int4(int b) => new Int4(b);
@@ -396,20 +398,19 @@ namespace MMC.Data
 
     public struct IntPtr4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement
     {
-        IntPtr m_value;
-
+        public int HashCode { get; }
         public static readonly IntPtr4 Zero = new IntPtr4(IntPtr.Zero);
         public string WrapperName { get { return "System.IntPtr"; } }
-        public IntPtr Value { get { return m_value; } }
+        public IntPtr Value { get; }
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
             int op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
-                return new IntPtr4(checked(m_value + op));
+                return new IntPtr4(checked(Value + op));
             else
-                return new IntPtr4(m_value + op);
+                return new IntPtr4(Value + op);
         }
 
         public INumericElement ToUnsigned()
@@ -454,9 +455,9 @@ namespace MMC.Data
             int op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
-                return new IntPtr4(checked(m_value - op));
+                return new IntPtr4(checked(Value - op));
             else
-                return new IntPtr4(m_value - op);
+                return new IntPtr4(Value - op);
         }
 
         public IIntegerElement And(IIntegerElement other)
@@ -515,33 +516,33 @@ namespace MMC.Data
         public Int8 ToInt8(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Int8(checked((long)m_value));
+                return new Int8(checked((long)Value));
             else
-                return new Int8((long)m_value);
+                return new Int8((long)Value);
         }
 
         public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
         {
             if (checkOverflow)
-                return new UnsignedInt8(checked((ulong)m_value));
+                return new UnsignedInt8(checked((ulong)Value));
             else
-                return new UnsignedInt8((ulong)m_value);
+                return new UnsignedInt8((ulong)Value);
         }
 
         public Float4 ToFloat4(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Float4(checked((float)m_value));
+                return new Float4(checked((float)Value));
             else
-                return new Float4((float)m_value);
+                return new Float4((float)Value);
         }
 
         public Float8 ToFloat8(bool checkOverflow)
         {
             if (checkOverflow)
-                return new Float8(checked((double)m_value));
+                return new Float8(checked((double)Value));
             else
-                return new Float8((double)m_value);
+                return new Float8((double)Value);
         }
 
         public IntPtr4 ToByte(bool checkOverflow)
@@ -562,16 +563,16 @@ namespace MMC.Data
                 return new IntPtr4((short)m_value);*/
         }
 
-        public bool ToBool() { return m_value != IntPtr.Zero; }
+        public bool ToBool() { return Value != IntPtr.Zero; }
 
         public bool Equals(IDataElement other)
         {
-            return (other is IntPtr4) && (((IntPtr4)other).Value == m_value);
+            return (other is IntPtr4) && (((IntPtr4)other).Value == Value);
         }
 
         public int CompareTo(object obj)
         {
-            return m_value.ToInt32().CompareTo(((IntPtr4)obj).Value.ToInt32());
+            return Value.ToInt32().CompareTo(((IntPtr4)obj).Value.ToInt32());
         }
 
         public override string ToString()
@@ -583,7 +584,7 @@ namespace MMC.Data
         public override int GetHashCode()
         {
 
-            return (int)m_value;
+            return (int)Value;
         }
 
         public TypeCode GetTypeCode()
@@ -674,7 +675,9 @@ namespace MMC.Data
 
         public IntPtr4(IntPtr val)
         {
-            m_value = val;
+            Value = val;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
 
         //public static explicit operator IntPtr4(int b) => new IntPtr4(b);
@@ -954,6 +957,8 @@ namespace MMC.Data
         public static UnsignedInt4 Zero = new UnsignedInt4(0);
         uint m_value;
 
+        public int HashCode { get; }
+
         public uint Value { get { return m_value; } }
         public string WrapperName { get { return "System.UInt32"; } }
         // public DataElementKind Kind => DataElementKind.UInt32;
@@ -1215,8 +1220,9 @@ namespace MMC.Data
 
         public UnsignedInt4(uint val)
         {
-
             m_value = val;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -1224,6 +1230,8 @@ namespace MMC.Data
     {
         public static Int8 Zero = new Int8(0);
         long m_value;
+        private int _hashCode;
+        public int HashCode => _hashCode;
 
         public string WrapperName { get { return "System.Int64"; } }
         public long Value { get { return m_value; } }
@@ -1479,8 +1487,9 @@ namespace MMC.Data
 
         public Int8(long val)
         {
-
             m_value = val;
+            _hashCode = 1;
+            _hashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -1488,9 +1497,11 @@ namespace MMC.Data
     {
         public static UnsignedInt8 Zero = new UnsignedInt8(0);
         ulong m_value;
+        int _hashCode;
 
         public string WrapperName { get { return "System.UInt64"; } }
         public ulong Value { get { return m_value; } }
+        public int HashCode => _hashCode;
         // public DataElementKind Kind => DataElementKind.UInt64;
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
@@ -1739,8 +1750,9 @@ namespace MMC.Data
 
         public UnsignedInt8(ulong val)
         {
-
             m_value = val;
+            _hashCode = 1;
+            _hashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -1749,9 +1761,11 @@ namespace MMC.Data
         public static Float4 Zero = new Float4(0);
 
         float m_value;
+        int _hashCode;
 
         public string WrapperName { get { return "System.Single"; } }
         public float Value { get { return m_value; } }
+        public int HashCode => _hashCode;
         // public DataElementKind Kind => DataElementKind.Single;
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
@@ -1974,8 +1988,9 @@ namespace MMC.Data
 
         public Float4(float val)
         {
-
             m_value = val;
+            _hashCode = 1;
+            _hashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -1989,6 +2004,9 @@ namespace MMC.Data
         public string WrapperName { get { return "System.Double"; } }
 
         public double Value { get; }
+
+        int _hashCode;
+        public int HashCode => _hashCode;
 
         public bool IsFinite()
         {
@@ -2084,7 +2102,13 @@ namespace MMC.Data
 
         public Float8 ToFloat8(bool checkOverflow) { return this; }
 
-        public Float8(double val) { Value = val; }
+        public Float8(double val) 
+        { 
+            Value = val;
+            _hashCode = 1;
+            _hashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
+        }
+
         public bool ToBool() { return Value != 0; }
 
         public bool Equals(IDataElement other)
@@ -2214,6 +2238,8 @@ namespace MMC.Data
 
         public IntPtr Value { get; }
 
+        public int HashCode { get; }
+
         public bool ToBool() { return ((uint)Value) == 0; }
 
         public override string ToString()
@@ -2339,8 +2365,9 @@ namespace MMC.Data
 
         public IntPointer(IntPtr value)
         {
-
             Value = value;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -2349,6 +2376,8 @@ namespace MMC.Data
         public string WrapperName { get { return "System.UIntPtr"; } }
 
         public UIntPtr Value { get; }
+
+        public int HashCode { get; }
 
         public bool ToBool() { return ((uint)Value) == 0; }
 
@@ -2480,15 +2509,17 @@ namespace MMC.Data
         public UnsignedIntPointer(UIntPtr value)
         {
             Value = value;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
     public struct ConstantString : IReferenceType, IConvertible
     {
-        private string m_value;
+        public int HashCode { get; }
 
         public string WrapperName { get { return "System.String"; } }
-        public string Value => m_value;
+        public string Value { get; }
         // public DataElementKind Kind => DataElementKind.String;
 
         // Should never be called.
@@ -2615,13 +2646,17 @@ namespace MMC.Data
 
         public ConstantString(string val)
         {
-            m_value = val;
+            Value = val;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
     public struct ObjectReference : IReferenceType
     {
         public static readonly ObjectReference Null = new ObjectReference(0);
+
+        public int HashCode { get; }
 
         public string WrapperName { get; }
 
@@ -2657,6 +2692,8 @@ namespace MMC.Data
         {
             Location = loc;
             WrapperName = null;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
 
         public ObjectReference(int loc, string wrapperName = null) : this((uint)loc)
@@ -2669,6 +2706,9 @@ namespace MMC.Data
     {
         protected MethodState m_method;
         protected int m_index;
+        private int _hashCode;
+
+        public int HashCode => _hashCode;
 
         public string WrapperName { get { return ""; } }
 
@@ -2779,9 +2819,8 @@ namespace MMC.Data
 
     class ObjectFieldPointer : IManagedPointer
     {
-
         private readonly ObjectReference m_objectRef;
-        private readonly int m_index;
+        private readonly int m_index, _hashCode;
         private readonly ExplicitActiveState cur;
 
         public ObjectFieldPointer(ExplicitActiveState cur, ObjectReference or, int i)
@@ -2793,6 +2832,8 @@ namespace MMC.Data
         }
 
         public string WrapperName { get { return ""; } }
+
+        public int HashCode => _hashCode;
 
         public Int4 ToInt4()
         {
@@ -2974,6 +3015,9 @@ namespace MMC.Data
             throw new InvalidOperationException("Sub ptr manipulation not implemented (yet)");
         }
 
+        private int _hashCode;
+        public int HashCode => _hashCode;
+
         public IDataElement Value
         {
             get
@@ -3029,6 +3073,8 @@ namespace MMC.Data
 
         public ITypeDefOrRef Type { get; }
 
+        public int HashCode { get; }
+
         public bool ToBool() { return false; }
 
         public bool Equals(IDataElement other)
@@ -3055,6 +3101,8 @@ namespace MMC.Data
         public TypePointer(ITypeDefOrRef typeDef)
         {
             Type = typeDef;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -3063,6 +3111,8 @@ namespace MMC.Data
         public string WrapperName { get { return ""; } }
 
         public MethodDefinition Value { get; set; }
+        
+        public int HashCode { get; }
 
         public bool ToBool() { return Value != null; }
 
@@ -3090,8 +3140,9 @@ namespace MMC.Data
 
         public MethodPointer(MethodDefinition method)
         {
-
             Value = method;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 
@@ -3100,6 +3151,8 @@ namespace MMC.Data
         public string WrapperName { get { return ""; } }
 
         public FieldDef Value { get; set; }
+        
+        public int HashCode { get; }
 
         public bool ToBool() { return Value != null; }
 
@@ -3126,6 +3179,8 @@ namespace MMC.Data
         public FieldHandle(FieldDef field)
         {
             Value = field;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
     }
 }

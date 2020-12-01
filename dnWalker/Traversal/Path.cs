@@ -55,12 +55,12 @@ namespace dnWalker.Traversal
         {
             public bool Equals(IDataElement x, IDataElement y)
             {
-                return GetHashCode(x) == GetHashCode(y);
+                return x.HashCode == y.HashCode;
             }
 
             public int GetHashCode(IDataElement obj)
             {
-                return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
+                return obj.HashCode;
             }
         }
 
