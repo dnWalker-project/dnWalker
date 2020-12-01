@@ -26,10 +26,10 @@ namespace dnWalker.Tests.Concolic.Features.Math
                         System.Diagnostics.Debug.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(5);
+                    paths.Count().Should().Be(2);
                     var path = paths.First();
-                    path.PathConstraints.Should().HaveCount(4);
-                    path.PathConstraintString.Should().Be("(((Not((x < 0)) And Not((y < 0))) And Not((x < y))) And Not((x == 0)))");
+                    path.PathConstraints.Should().HaveCount(1);
+                    path.PathConstraintString.Should().Be("Not((-Convert(Convert(-d)) == 10))");
                 },
                 SymbolicArgs.Arg<double>("d"));
         }

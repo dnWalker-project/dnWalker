@@ -92,11 +92,21 @@ namespace dnWalker.Concolic
                         for (int i = 0; i < arguments.Length; i++)
                         {
                             dataElementList[i] = args[i];
+
+                            // TODO
+                            Type paramType = typeof(int);
+                            switch (entryPoint.Parameters[i].Type.FullName)
+                            {
+                                case "System.Double":
+                                    paramType = typeof(double);
+                                    break;
+                            }
+
                             PathStore.CurrentPath.SetObjectAttribute<Expression>(
                                 dataElementList[i], 
                                 "expression", 
                                 Expression.Parameter(
-                                    typeof(int), 
+                                    paramType, 
                                     entryPoint.Parameters[i].Name));
                         }
 
@@ -114,7 +124,6 @@ namespace dnWalker.Concolic
 
                     // Initialize main thread.
                     cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, _logger));                    
-
                     // -------------
 
                     //var cur = stateSpaceSetup.CreateInitialState(entryPoint, args);
@@ -150,6 +159,7 @@ namespace dnWalker.Concolic
                 catch (Exception e)
                 {
                     _logger.Log(LogPriority.Fatal, e.Message);
+                    throw;
                 }
             }
         }

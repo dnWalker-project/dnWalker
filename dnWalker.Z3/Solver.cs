@@ -13,10 +13,12 @@ namespace dnWalker.Z3
             using (var ctx = new Z3Context())
             {
                 ctx.Log = Console.Out; // see internal logging
-                var theorem = ctx.NewTheorem(new { x = default(int), y = default(int) })
+                // TODO
+                var theorem = ctx.NewTheorem(new { d = default(double) })//, y = default(int) })
                     .Where(Expression.Lambda(expression,
-                        Expression.Parameter(typeof(int), "x"),
-                        Expression.Parameter(typeof(int), "y")));
+                    // TODO
+                        Expression.Parameter(typeof(double), "d")/*,
+                        Expression.Parameter(typeof(int), "y"))*/));
                 
                 var result = theorem.Solve();
                 if (result == null)

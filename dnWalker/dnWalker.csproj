@@ -167,6 +167,7 @@
     <Compile Include="NativePeers\SystemConsole.cs" />
     <Compile Include="NativePeers\SystemEnvironment.cs" />
     <Compile Include="NativePeers\SystemIOTextWriter.cs" />
+    <Compile Include="NativePeers\SystemMath.cs" />
     <Compile Include="NativePeers\SystemRandom.cs" />
     <Compile Include="NativePeers\SystemThreadingMonitor.cs" />
     <Compile Include="NativePeers\SystemString.cs" />

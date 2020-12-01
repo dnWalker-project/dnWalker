@@ -76,6 +76,11 @@ namespace dnWalker
                 return new NativePeers.SystemRandom();
             }
 
+            if (typeDef.FullName == typeof(Math).FullName)
+            {
+                return new NativePeers.SystemMath();
+            }
+
             return null;
         }
 
