@@ -103,5 +103,14 @@ namespace dnWalker.Concolic.Traversal
                 _edges[edge] = true;
             }
         }
+
+        public Coverage GetCoverage()
+        {
+            return new Coverage
+            {
+                Nodes = _nodes.Count(n => n.Value) / (double)_nodes.Count,
+                Edges = _edges.Count(e => e.Value) / (double)_edges.Count,
+            };
+        }
     }
 }

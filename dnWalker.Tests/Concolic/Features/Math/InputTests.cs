@@ -13,7 +13,8 @@ namespace dnWalker.Tests.Concolic.Features.Math
     public class InputTests : SymbolicExamplesTestBase
     {
         [Fact]
-        public void ArgsTest()
+        [Trait("Category", "Concolic")]
+        public void Foo()
         {
             Explore("Examples.Concolic.Features.Math.Input.foo",
                 null,
@@ -32,6 +33,32 @@ namespace dnWalker.Tests.Concolic.Features.Math
                     path.PathConstraintString.Should().Be("Not((-Convert(Convert(-d)) == 10))");
                 },
                 SymbolicArgs.Arg<double>("d"));
+        }
+
+        [Fact]
+        [Trait("Category", "Concolic")]
+        public void Bar()
+        {
+            Explore("Examples.Concolic.Features.Math.Input.bar",
+                null,
+                (explorer) =>
+                {
+                    var paths = explorer.PathStore.Paths;
+
+                    foreach (var p in paths)
+                    {
+                        System.Diagnostics.Debug.WriteLine(p.GetPathInfo());
+                    }
+
+                    paths.Select(p => p.PathConstraintString)
+                        .Should()
+                        .BeEquivalentTo(
+                            "Not((d1 > d2))",
+                            "((d1 > d2) And Not(((Sqrt(d1) * 0.0383972435438753) < 0)))",
+                            "((d1 > d2) And ((Sqrt(d1) * 0.0383972435438753) >= 0))");
+                },
+                SymbolicArgs.Arg<double>("d1"),
+                SymbolicArgs.Arg<double>("d2"));
         }
     }
 }

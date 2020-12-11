@@ -8,6 +8,7 @@ namespace dnWalker.NativePeers
 {
     public class SystemConsole : NativePeer
     {
+        // TODO remove
         public static ObjectReference OutTextWriterRef { get; set; } = ObjectReference.Null;
 
         public override bool TryGetValue(MethodDef methodDef, DataElementList args, ExplicitActiveState cur, out IIEReturnValue iieReturnValue)

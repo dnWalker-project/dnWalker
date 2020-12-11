@@ -10,6 +10,6 @@ namespace dnWalker
 {
     public interface ISolver
     {
-        Dictionary<string, object> Solve(Expression expression);
+        Dictionary<string, object> Solve(Expression expression, IList<ParameterExpression> parameters);
     }
 }

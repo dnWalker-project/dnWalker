@@ -32,5 +32,10 @@ namespace dnWalker.Symbolic
         {
             cur.PathStore.CurrentPath.SetObjectAttribute(dataElement, nameof(expression), expression);
         }
+
+        public static bool TryGetExpression(this IDataElement dataElement, ExplicitActiveState cur, out Expression expression)
+        {
+            return cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(dataElement, nameof(expression), out expression);
+        }
     }
 }

@@ -9,6 +9,7 @@ using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -44,7 +45,7 @@ namespace dnWalker.Concolic
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
             
             var pathStore = new Traversal.PathStore(entryPoint);
-            PathStore = pathStore;
+            PathStore = pathStore;            
 
             using (TextWriter writer = File.CreateText(@"c:\temp\dot.dot"))
             {
@@ -63,10 +64,13 @@ namespace dnWalker.Concolic
 
                 try
                 {
+                    var parameters = new List<ParameterExpression>();
                     // initial state
                     // -------------
                     var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
                     var cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
+                    cur.PathStore = pathStore;
+
                     DataElementList dataElementList;
                     if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
                     {
@@ -102,12 +106,12 @@ namespace dnWalker.Concolic
                                     break;
                             }
 
-                            PathStore.CurrentPath.SetObjectAttribute<Expression>(
-                                dataElementList[i], 
-                                "expression", 
-                                Expression.Parameter(
-                                    paramType, 
-                                    entryPoint.Parameters[i].Name));
+                            var parameter = Expression.Parameter(
+                                paramType,
+                                entryPoint.Parameters[i].Name);
+                            parameters.Add(parameter);
+
+                            dataElementList[i].SetExpression(parameter, cur);
                         }
 
                         //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
@@ -140,7 +144,7 @@ namespace dnWalker.Concolic
 
                     System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", args.Select(a => a.ToString()))}");
 
-                    var next = PathStore.GetNextInputValues(_solver);
+                    var next = PathStore.GetNextInputValues(_solver, parameters);
 
                     OnPathExplored?.Invoke(path);
 

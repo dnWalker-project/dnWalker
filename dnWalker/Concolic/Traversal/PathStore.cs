@@ -14,13 +14,15 @@ namespace dnWalker.Concolic.Traversal
     public class PathStore : dnWalker.Traversal.PathStore
     {
         private readonly IDictionary<MethodDef, MethodExplorer> _methodExlorers;
-        private readonly MethodDef entryPoint;
+        private readonly MethodDef _entryPoint;
         private IList<Expression> _expressions = new List<Expression>();
+
+        public Coverage Coverage => GetCodeCoverage();
 
         public PathStore(MethodDef entryPoint)
         {
             _methodExlorers = new Dictionary<MethodDef, MethodExplorer>();
-            this.entryPoint = entryPoint;
+            _entryPoint = entryPoint;
         }
 
         public override void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
@@ -30,7 +32,7 @@ namespace dnWalker.Concolic.Traversal
             GetMethodExplorer(cur.CurrentLocation).OnConstraint(expression, next, cur);
         }
 
-        public IDictionary<string, object> GetNextInputValues(ISolver solver)
+        public IDictionary<string, object> GetNextInputValues(ISolver solver, IList<ParameterExpression> parameters)
         {
             if (!_expressions.Contains(CurrentPath.PathConstraint))
             {
@@ -43,7 +45,7 @@ namespace dnWalker.Concolic.Traversal
                 return null;
             }            
 
-            var next = solver.Solve(expressionToSolve);
+            var next = solver.Solve(expressionToSolve, parameters);
             if (next == null)
             {
                 var length = int.MaxValue;
@@ -61,7 +63,7 @@ namespace dnWalker.Concolic.Traversal
                     new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(
                         shortestPath.PathConstraints.Take(shortestPath.PathConstraints.Count - 1).ToList()));
 
-                next = solver.Solve(expressionToSolve);
+                next = solver.Solve(expressionToSolve, parameters);
                 if (next == null)
                 {
                     return null;
@@ -142,6 +144,12 @@ namespace dnWalker.Concolic.Traversal
             }
 
             return explorer;
+        }
+
+        private Coverage GetCodeCoverage()
+        {
+            var methodExplorer = GetMethodExplorer(new CILLocation(null, _entryPoint));
+            return methodExplorer.GetCoverage();
         }
     }
 }

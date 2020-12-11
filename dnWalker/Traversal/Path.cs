@@ -124,11 +124,10 @@ namespace dnWalker.Traversal
             return false;
         }
 
-        private IList<PathConstraint> _pathConstraints;
+        private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
 
         public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
-            _pathConstraints = _pathConstraints ?? new List<PathConstraint>();
             _pathConstraints.Add(
                 new PathConstraint
                 {
@@ -140,10 +139,12 @@ namespace dnWalker.Traversal
 
         public IReadOnlyCollection<PathConstraint> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(_pathConstraints);
 
-        public Expression PathConstraint => _pathConstraints.Select(p => p.Expression)
-            .Aggregate((a, b) => Expression.And(a, b));
+        public Expression PathConstraint =>
+            _pathConstraints.Any() ? 
+            PathConstraints.Select(p => p.Expression).Aggregate((a, b) => Expression.And(a, b)) :
+            null;
 
-        public string PathConstraintString => PathConstraint.ToString();
+        public string PathConstraintString => PathConstraint?.ToString();
 
         public string GetPathInfo()
         {

@@ -35,6 +35,23 @@ namespace dnWalker.NativePeers
                 return true;
             }
 
+            if (method.FullName == "System.Double System.Math::Sqrt(System.Double)")
+            {
+                var arg = (Float8)args[0];
+                var value = arg.Value;
+                var dataElement = new Float8(Math.Sqrt(value));
+
+                var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arg, "expression", out var expression);
+                if (symb)
+                {
+                    Expression sqrtExpression = Expression.Call(typeof(Math).GetMethod("Sqrt"), expression);
+                    dataElement.SetExpression(sqrtExpression, cur);
+                }
+                cur.EvalStack.Push(dataElement);
+                iieReturnValue = InstructionExecBase.nextRetval;
+                return true;
+            }
+
             iieReturnValue = null;
             return false;
         }
