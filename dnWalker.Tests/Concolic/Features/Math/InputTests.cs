@@ -30,7 +30,7 @@ namespace dnWalker.Tests.Concolic.Features.Math
                     paths.Count().Should().Be(2);
                     var path = paths.First();
                     path.PathConstraints.Should().HaveCount(1);
-                    path.PathConstraintString.Should().Be("Not((-Convert(Convert(-d)) == 10))");
+                    path.PathConstraintString.Should().Be("(-Convert(Convert(-d)) != 10)");
                 },
                 SymbolicArgs.Arg<double>("d"));
         }
@@ -53,7 +53,7 @@ namespace dnWalker.Tests.Concolic.Features.Math
                     paths.Select(p => p.PathConstraintString)
                         .Should()
                         .BeEquivalentTo(
-                            "Not((d1 > d2))",
+                            "(d1 <= d2)",
                             "((d1 > d2) And Not(((Sqrt(d1) * 0.0383972435438753) < 0)))",
                             "((d1 > d2) And ((Sqrt(d1) * 0.0383972435438753) >= 0))");
                 },

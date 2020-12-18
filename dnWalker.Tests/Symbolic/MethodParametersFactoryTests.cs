@@ -29,19 +29,16 @@ namespace dnWalker.Tests.Symbolic
                     {
                         System.Diagnostics.Debug.WriteLine(p.GetPathInfo());
                     }
-
-                    explorer.PathStore.Coverage.Edges.Should().Be(1d);
-                    explorer.PathStore.Coverage.Nodes.Should().Be(1d);
-
+                    
                     paths.Count().Should().Be(5);
                     paths.Select(p => p.PathConstraintString)
                         .Should()
                         .BeEquivalentTo(
                             "((((x >= 0) And (y >= 0)) And (x >= y)) And (x != 0))",
-                            "((((x >= 0) And (y >= 0)) And (x >= y)) And Not((x == 0)))",
-                            "(((x >= 0) And (y >= 0)) And Not((x < y)))",
-                            "(((x >= 0) And Not((y < 0))) And Not((x < 1)))",
-                            "((Not((x < 0)) And (y >= 0)) And (1 >= y))");
+                            "((((x >= 0) And (y >= 0)) And (x >= y)) And (x == 0))",
+                            "(((x >= 0) And (y >= 0)) And (x < y))",
+                            "(((x >= 0) And (y < 0)) And (x < 1))",
+                            "((x < 0) And (y < 0))");
                 },
                 SymbolicArgs.Arg("x", 10),
                 SymbolicArgs.Arg("y", 2));

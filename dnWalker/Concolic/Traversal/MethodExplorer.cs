@@ -61,7 +61,7 @@ namespace dnWalker.Concolic.Traversal
                 return pathConstraint.Expression;
             }
 
-            var next = pathConstraint.Next;
+            /*var next = pathConstraint.Next;
             if (next != null)
             {
                 var conditionalEdge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.Conditional && e.Target.Offset == next.Offset);
@@ -75,9 +75,10 @@ namespace dnWalker.Concolic.Traversal
             if (!_edges[fallThroughEdge])
             {
                 return Expression.Not(pathConstraint.Expression);
-            }
+            }*/
 
-            return pathConstraint.Expression;
+            return Expression.Not(pathConstraint.Expression);
+            //return pathConstraint.Expression;
         }
 
         public void OnConstraint(Expression expression, Instruction next, ExplicitActiveState cur)

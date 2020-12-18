@@ -265,7 +265,7 @@ namespace dnWalker.Symbolic.Instructions
             if (symb)
             {
                 cur.PathStore.AddPathConstraint(
-                    !value ? expression : Expression.Not(expression),
+                    expression,
                     !value ? operand : null, // fall-through
                     cur);
             }
@@ -2317,13 +2317,13 @@ namespace dnWalker.Symbolic.Instructions
             var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
             var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
-            var cgtValue = CompareOperands(a, b) > 0 ? 1 : 0;
-            var newValue = new Int4(cgtValue);
+            var cgtValue = CompareOperands(a, b) > 0;
+            var newValue = new Int4(cgtValue ? 1 : 0);
 
             var isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                var expression = Expression.MakeBinary(ExpressionType.GreaterThan,
+                var expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
                     exprA ?? a.AsExpression(),
                     exprB ?? b.AsExpression());
 
