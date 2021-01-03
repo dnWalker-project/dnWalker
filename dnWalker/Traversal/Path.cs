@@ -55,7 +55,7 @@ namespace dnWalker.Traversal
         {
             public bool Equals(IDataElement x, IDataElement y)
             {
-                return x.HashCode == y.HashCode;
+                return x.GetType() == y.GetType() && x.HashCode == y.HashCode;
             }
 
             public int GetHashCode(IDataElement obj)

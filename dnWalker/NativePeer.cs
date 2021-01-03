@@ -92,7 +92,12 @@ namespace dnWalker
 
         public virtual bool TryConstruct(MethodDef methodDef, DataElementList args, ExplicitActiveState cur)
         {
-            throw new NotImplementedException();
+            if (methodDef.DeclaringType.FullName == typeof(string).FullName)
+            {
+                return new NativePeers.SystemString().TryConstruct(methodDef, args, cur);
+            }
+
+            return false;
         }
     }
 }

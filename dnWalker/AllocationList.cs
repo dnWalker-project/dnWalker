@@ -51,7 +51,7 @@ namespace MMC.State
 		/// <summary>
 		/// Syntactic sugar for the offset-based indexer.
 		/// </summary>
-		public DynamicAllocation this[ObjectReference obj]
+		public DynamicAllocation this[IReferenceType obj]
         {
 			get { return base[(int)obj.Location - 1]; }
 			set { this[(int)obj.Location - 1] = value; }

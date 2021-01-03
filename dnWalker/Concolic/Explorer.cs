@@ -72,8 +72,15 @@ namespace dnWalker.Concolic
                     cur.PathStore = pathStore;
 
                     DataElementList dataElementList;
+
+                    /*foreach (var allocation in args.OfType<IReferenceType>())
+                    {
+                        //if (cur.
+                    }*/
+
                     if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
                     {
+                        throw new NotImplementedException("Obsolete");/*
                         ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
                             cur.DynamicArea.DeterminePlacement(false),
                             cur.DefinitionProvider.GetTypeDefinition("System.String"),
@@ -88,22 +95,48 @@ namespace dnWalker.Concolic
                             }
                         }
 
-                        dataElementList = cur.StorageFactory.CreateSingleton(runArgsRef);
+                        dataElementList = cur.StorageFactory.CreateSingleton(runArgsRef);*/
                     }
                     else
                     {
                         dataElementList = cur.StorageFactory.CreateList(arguments.Length);
                         for (int i = 0; i < arguments.Length; i++)
                         {
-                            dataElementList[i] = args[i];
+                            var arg = args[i];
+                            dataElementList[i] = arg;
 
-                            // TODO
                             Type paramType = typeof(int);
-                            switch (entryPoint.Parameters[i].Type.FullName)
+
+                            if (arg is ArrayOf arrayOf)
                             {
-                                case "System.Double":
-                                    paramType = typeof(double);
-                                    break;
+                                var placement = cur.DynamicArea.DeterminePlacement(false);
+                                ObjectReference arrayRef = cur.DynamicArea.AllocateArray(
+                                    placement,
+                                    arrayOf.ElementType,
+                                    arrayOf.Length);
+
+                                /*if (_config.RunTimeParameters.Length > 0)
+                                {
+                                    AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
+                                    for (int i = 0; i < _config.RunTimeParameters.Length; ++i)
+                                    {
+                                        runArgs.Fields[i] = args[i];
+                                    }
+                                }*/
+                                dataElementList[i] = arrayRef;
+                                // todo
+                                paramType = typeof(char[]);
+                                //dataElementList = cur.StorageFactory.CreateSingleton(arrayRef);
+                            }
+                            else
+                            {
+                                // TODO
+                                switch (entryPoint.Parameters[i].Type.FullName)
+                                {
+                                    case "System.Double":
+                                        paramType = typeof(double);
+                                        break;
+                                }
                             }
 
                             var parameter = Expression.Parameter(

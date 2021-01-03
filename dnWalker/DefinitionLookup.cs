@@ -603,7 +603,13 @@ namespace MMC
                 return ObjectReference.Null;
             }
 
-            switch (Type.GetTypeCode(value.GetType()))
+            var type = value.GetType();
+            if (type.IsArray)
+            {
+                return new ArrayOf(0, GetTypeDefinition(type.GetElementType().FullName));
+            }
+
+            switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
                 case TypeCode.Char: return new Int4((char)value);

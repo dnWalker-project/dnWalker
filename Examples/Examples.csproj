@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaptureOutput.cs" />
+    <Compile Include="Concolic\Features\Arrays\Input.cs" />
     <Compile Include="Concolic\Features\Math\Input.cs" />
     <Compile Include="Concolic\Protocol.cs" />
     <Compile Include="DataRace.cs" />

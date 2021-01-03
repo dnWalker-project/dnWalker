@@ -2537,19 +2537,16 @@ namespace MMC.Data
 
         public bool Equals(IDataElement other)
         {
-
             return (other is ConstantString) && ((ConstantString)other).Value == Value;
         }
 
         public int CompareTo(object obj)
         {
-
             return Value.CompareTo(((ConstantString)obj).Value);
         }
 
         public override string ToString()
         {
-
             return string.Format("\"{0}\"", Value);
         }
 
@@ -3181,6 +3178,46 @@ namespace MMC.Data
             Value = field;
             HashCode = 1;
             HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
+        }
+    }
+
+    public struct ArrayOf : IDataElement, IReferenceType
+    {
+        private readonly ITypeDefOrRef elementType;
+        private uint _location;
+        private bool _allocated;
+
+        public string WrapperName => $"System.Array<{ElementType.Name}>[{Length}]";
+
+        public int HashCode => 1; // TODO
+
+        public int Length { get; }
+
+        uint IReferenceType.Location => _location;
+
+        public ITypeDefOrRef ElementType => elementType;
+
+        public ArrayOf(int length, ITypeDefOrRef elementType, uint location = 0)
+        {
+            _location = location;
+            _allocated = false;
+            Length = length;
+            this.elementType = elementType;
+        }
+
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Equals(IDataElement other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ToBool()
+        {
+            throw new NotImplementedException();
         }
     }
 }

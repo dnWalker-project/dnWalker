@@ -70,5 +70,24 @@ namespace dnWalker.NativePeers
             iieReturnValue = null;
             return false;
         }
+
+        public override bool TryConstruct(MethodDef methodDef, DataElementList args, ExplicitActiveState cur)
+        {
+            if (methodDef.FullName == "System.Void System.String::.ctor(System.Char[])")
+            {
+                var arrayRef = (IReferenceType)args[1];
+                AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+                if (theArray.Fields.Length > 0)
+                {
+                    throw new NotImplementedException();
+                }
+
+                var dataElement = new ConstantString();// new string((char)Convert.ChangeType(args[0], typeof(char)));
+                cur.EvalStack.Push(dataElement);
+                return true;
+            }
+
+            return false;
+        }
     }
 }

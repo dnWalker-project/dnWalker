@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Examples.Concolic.Features.Math
 {
@@ -14,7 +10,9 @@ namespace Examples.Concolic.Features.Math
         }
     }
 
-    // https://github.com/psycopaths/jdart/blob/master/src/examples/features/math/Input.java
+    /// <summary>
+    /// https://github.com/psycopaths/jdart/blob/master/src/examples/features/math/Input.java
+    /// </summary>
     public class Input
     {
         public static void foo(double d)

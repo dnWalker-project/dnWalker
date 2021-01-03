@@ -243,8 +243,19 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = cur.EvalStack.Pop();
-            return a.ToBool() ? new JumpReturnValue((Instruction)Operand) : nextRetval;
+            var a = cur.EvalStack.Pop();
+            var value = a.ToBool();
+            var operand = (Instruction)Operand;
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
+            if (symb)
+            {
+                cur.PathStore.AddPathConstraint(
+                    expression,
+                    value ? operand : null, // fall-through
+                    cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
         }
     }
 
@@ -1316,18 +1327,26 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
+            var arrayRef = (IReferenceType)cur.EvalStack.Pop();
             AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
 
             if (theArray == null)
             {
                 return ThrowException(new NullReferenceException(), cur);
             }
-            else
+
+            var length = new UnsignedInt4((uint)theArray.Fields.Length);
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
+            if (symb)
             {
-                cur.EvalStack.Push(new UnsignedInt4((uint)theArray.Fields.Length));
+                length.SetExpression(
+                    Expression.MakeMemberAccess(
+                        expression, 
+                        typeof(Array).GetProperty("Length")
+                    ), cur);
             }
 
+            cur.EvalStack.Push(length);
             return nextRetval;
         }
     }
@@ -3315,6 +3334,12 @@ namespace dnWalker.Symbolic.Instructions
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
+            }
+
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
+            if (symb)
+            {
+                toPush.SetExpression(expression, cur);
             }
 
             cur.EvalStack.Push(toPush);
