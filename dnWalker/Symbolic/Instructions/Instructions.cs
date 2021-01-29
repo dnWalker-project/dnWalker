@@ -1210,6 +1210,17 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(new NullReferenceException(), cur);
             }
 
+            /*var length = new UnsignedInt4((uint)theArray.Fields.Length);
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
+            if (symb)
+            {
+                length.SetExpression(
+                    Expression.MakeMemberAccess(
+                        expression, 
+                        typeof(Array).GetProperty("Length")
+                    ), cur);
+            }*/
+
             if (CheckBounds(theArray, idx))
             {
                 cur.EvalStack.Push(theArray.Fields[idx.Value]);

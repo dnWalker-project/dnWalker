@@ -3,6 +3,7 @@ using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace dnWalker.NativePeers
@@ -79,7 +80,10 @@ namespace dnWalker.NativePeers
                 AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
                 if (theArray.Fields.Length > 0)
                 {
-                    throw new NotImplementedException();
+                    // TODO improve
+                    var s = new string(theArray.Fields.Cast<INumericElement>().Select(i => (char)i.ToInt4(true).Value).ToArray());
+                    cur.EvalStack.Push(new ConstantString(s));
+                    return true;
                 }
 
                 var dataElement = new ConstantString();// new string((char)Convert.ChangeType(args[0], typeof(char)));

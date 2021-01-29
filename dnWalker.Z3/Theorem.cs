@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Z3.LinqBinding;
 using Z3Theorem = Z3.LinqBinding.Theorem;
+using Z3Environment = Z3.LinqBinding.Environment;
 
 namespace dnWalker.Z3
 {
@@ -26,9 +25,9 @@ namespace dnWalker.Z3
             return (T)Activator.CreateInstance(contextType);
         }
 
-        protected override Dictionary<PropertyInfo, Expr> GetEnvironment<T>(Context context)
+        protected override Z3Environment GetEnvironment<T>(Context context)
         {
-            var environment = new Dictionary<PropertyInfo, Expr>();
+            var environment = new Environment();
 
             //
             // All public properties are considered part of the theorem's environment.
@@ -42,30 +41,7 @@ namespace dnWalker.Z3
                 // typing within the theorem, while underlying variable representations are Z3-
                 // friendly types.
                 //
-                var parameterType = parameter.PropertyType;
-                var parameterTypeMapping = (TheoremVariableTypeMappingAttribute)parameterType.GetCustomAttributes(typeof(TheoremVariableTypeMappingAttribute), false).SingleOrDefault();
-                if (parameterTypeMapping != null)
-                    parameterType = parameterTypeMapping.RegularType;
-
-                //
-                // Map the environment onto Z3-compatible types.
-                //
-                switch (Type.GetTypeCode(parameterType))
-                {
-                    case TypeCode.Boolean:
-                        //environment.Add(parameter, context.MkConst(parameter.Name, context.MkBoolType()));
-                        environment.Add(parameter, context.MkBoolConst(parameter.Name));
-                        break;
-                    case TypeCode.Int32:
-                        //environment.Add(parameter, context.MkConst(parameter.Name, context.MkIntType()));
-                        environment.Add(parameter, context.MkIntConst(parameter.Name));
-                        break;
-                    case TypeCode.Double:
-                        environment.Add(parameter, context.MkRealConst(parameter.Name));
-                        break;
-                    default:
-                        throw new NotSupportedException("Unsupported parameter type for " + parameter.Name + ".");
-                }
+                environment.Add(parameter, context);
             }
 
             return environment;
@@ -74,6 +50,17 @@ namespace dnWalker.Z3
         public object Solve()
         {
             return Solve<object>();
+        }
+
+        protected override object GetSolutionValue(PropertyInfo parameter, Model model, Z3Environment environment)
+        {
+            var env = environment as Environment;
+            if(env.TryGetSolutionValue(parameter, model, out var solution))
+            {
+                return solution;
+            }
+
+            return base.GetSolutionValue(parameter, model, environment);
         }
     }
 }

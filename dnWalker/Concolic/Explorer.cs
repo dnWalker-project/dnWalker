@@ -188,7 +188,7 @@ namespace dnWalker.Concolic
 
                     args = entryPoint.Parameters.Select(p => new { p.Name, Value = next[p.Name] })
                         .Select(v =>
-                        _definitionProvider.CreateDataElement(v.Value))//, Expression.Parameter(v.Value.GetType(), v.Name)))
+                        _definitionProvider.CreateDataElement(v.Value))
                         .ToArray();
 
                     PathStore.ResetPath();
