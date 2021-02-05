@@ -10,7 +10,7 @@ namespace dnWalker.Tests.Symbolic
 {
     public class MethodParametersFactoryTests : SymbolicExamplesTestBase
     {
-        public MethodParametersFactoryTests()
+        public MethodParametersFactoryTests(Xunit.Abstractions.ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
         }
 
@@ -27,7 +27,7 @@ namespace dnWalker.Tests.Symbolic
 
                     foreach(var p in paths)
                     {
-                        System.Diagnostics.Debug.WriteLine(p.GetPathInfo());
+                        System.Console.Out.WriteLine(p.GetPathInfo());
                     }
                     
                     paths.Count().Should().Be(5);

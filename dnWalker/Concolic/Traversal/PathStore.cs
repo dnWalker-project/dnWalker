@@ -111,7 +111,14 @@ namespace dnWalker.Concolic.Traversal
 
             //var pc = path.PathConstraints.Select(p => p.Expression).Take(path.PathConstraints.Count - 1).ToList();
             //pc.Add(Expression.Not(path.PathConstraints.Last().Expression));
-            return ExpressionOptimizer.visit(pc.Aggregate((a, b) => Expression.And(a, b)));
+            try
+            {
+                return ExpressionOptimizer.visit(pc.Aggregate((a, b) => Expression.And(a, b)));
+            }
+            catch
+            {
+                return pc.Aggregate((a, b) => Expression.And(a, b));
+            }
         }
 
         public void OnInstructionExecuted(CILLocation location)

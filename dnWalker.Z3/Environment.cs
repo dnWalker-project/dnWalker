@@ -62,6 +62,29 @@ namespace dnWalker.Z3
         {
             solution = null;
 
+            var rootVal = model.Eval(this[parameter]);
+
+            if (parameter.PropertyType.IsArray)
+            {
+                var arrayExpr = rootVal as ArrayExpr;
+                if (_support.TryGetValue(parameter.Name, out var list))
+                {
+                    if (list.TryGetValue(parameter.Name + "_Length", out var expr))
+                    {
+                        var val = model.Eval(expr);
+                        var array = Array.CreateInstance(parameter.PropertyType.GetElementType(), ((IntNum)val).Int);
+                        var index = 0;
+                        foreach (var elementExpr in arrayExpr.Args)
+                        {
+                            array.SetValue((char)((IntNum)elementExpr).Int, index++);
+                        }
+                        solution = array;
+                        return true;
+                    }
+                }
+                throw new NotImplementedException();
+            }
+
             switch (Type.GetTypeCode(parameter.PropertyType))
             {
                 case TypeCode.Object:

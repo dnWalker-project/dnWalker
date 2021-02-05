@@ -12,6 +12,10 @@ namespace dnWalker.Tests.Concolic.Features.Arrays
 {
     public class InputTests : SymbolicExamplesTestBase
     {
+        public InputTests(Xunit.Abstractions.ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         [Trait("Category", "Concolic")]
         public void M1()
@@ -24,7 +28,7 @@ namespace dnWalker.Tests.Concolic.Features.Arrays
 
                     foreach (var p in paths)
                     {
-                        System.Diagnostics.Debug.WriteLine(p.GetPathInfo());
+                        System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
                     paths.Count().Should().Be(2);
@@ -34,6 +38,30 @@ namespace dnWalker.Tests.Concolic.Features.Arrays
                 },
                 SymbolicArgs.Arg("d", new char[] { }), 
                 SymbolicArgs.Arg<int>("n")); // (char[] c, int n)
+        }
+
+        [Fact]
+        [Trait("Category", "Concolic")]
+        public void Calc()
+        {
+            Explore("Examples.Concolic.Features.Arrays.Array.comp",
+                null,
+                (explorer) =>
+                {
+                    var paths = explorer.PathStore.Paths;
+
+                    foreach (var p in paths)
+                    {
+                        System.Console.Out.WriteLine(p.GetPathInfo());
+                    }
+
+                    paths.Count().Should().Be(2);
+                    var path = paths.First();
+                    path.PathConstraints.Should().HaveCount(1);
+                    path.PathConstraintString.Should().Be("(-Convert(Convert(-d)) != 10)");
+                },
+                SymbolicArgs.Arg<int>("i"),
+                SymbolicArgs.Arg("arr", new int[] { })); // (char[] c, int n)
         }
 
         /*[Fact]

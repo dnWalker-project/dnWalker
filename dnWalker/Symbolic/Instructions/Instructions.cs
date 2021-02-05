@@ -37,6 +37,7 @@ namespace dnWalker.Symbolic.Instructions
     using MMC.InstructionExec;
     using System.Linq.Expressions;
     using MMC;
+    using dnWalker.ChoiceGenerators;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -1210,20 +1211,56 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            /*var length = new UnsignedInt4((uint)theArray.Fields.Length);
-            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
-            if (symb)
+            var isSymbolicArray = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var arrayExpression);
+            var isSymbolicIndex = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(idx, "expression", out var indexExpression);
+
+            if (isSymbolicIndex)
             {
-                length.SetExpression(
-                    Expression.MakeMemberAccess(
-                        expression, 
-                        typeof(Array).GetProperty("Length")
-                    ), cur);
-            }*/
+                /*
+                 * JPF (Java) https://kasperluckow.com/papers/jpf2016-array.pdf
+                 * During the symbolic execution of a *ALOAD instruction, e.g. IALOAD or BALOAD, an instance of JPCChoiceGenerator is created. 
+                 * There are three paths to explore: 
+                 * (i) The index is strictly smaller than 0, which throws an ArrayIndexOutOfBoundsException;
+                 * (ii) the index is greater than the length of the array; 
+                 * or (iii) the index is in bounds and we are loading an element.
+                 */
+                var cg = new IntChoiceFromValueSet(1, 3);
+                if (cur.ChoiceGenerator is IntChoiceFromValueSet choiceFromValueSet)
+                {
+                    var path = choiceFromValueSet.Path;
+                    switch (choiceFromValueSet.GetNextChoice())
+                    {
+                        case 1: // index < 0
+                                //path.AddPathConstraint(Expression.MakeBinary(ExpressionType.LessThan, indexExpression, Expression.Constant(0)))
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                    }
+                }
+                else
+                {
+                    cur.EvalStack.Push(arrayRef);
+                    cur.EvalStack.Push(idx);
+                    cur.SetNextChoiceGenerator(cg);
+                    return nincRetval;
+                }
+            }
 
             if (CheckBounds(theArray, idx))
             {
-                cur.EvalStack.Push(theArray.Fields[idx.Value]);
+                var elementAt = theArray.Fields[idx.Value];
+                cur.EvalStack.Push(elementAt);
+                if (isSymbolicArray)
+                {
+                    elementAt.SetExpression(
+                        Expression.MakeIndex(
+                            arrayExpression,
+                            typeof(Array).GetProperty("Item"),
+                            new [] { Expression.Constant(idx.Value) }
+                        ), cur);
+                }
             }
             else
             {
@@ -2320,9 +2357,15 @@ namespace dnWalker.Symbolic.Instructions
             }
             else
             {
+                left = exprA ?? a.AsExpression();
+                var right = exprB ?? b.AsExpression();
+                if (right.Type != left.Type)
+                {
+                    right = Expression.Convert(right, left.Type);
+                }
                 expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual,
-                    exprA ?? a.AsExpression(),
-                    exprB ?? b.AsExpression());
+                    left,
+                    right);
             }
 
             var newValue = new Int4(ceqValue ? 1 : 0);

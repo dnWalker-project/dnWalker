@@ -3185,7 +3185,7 @@ namespace MMC.Data
     {
         private readonly ITypeDefOrRef elementType;
         private uint _location;
-        private bool _allocated;
+        private Array _array;
 
         public string WrapperName => $"System.Array<{ElementType.Name}>[{Length}]";
 
@@ -3197,11 +3197,14 @@ namespace MMC.Data
 
         public ITypeDefOrRef ElementType => elementType;
 
-        public ArrayOf(int length, ITypeDefOrRef elementType, uint location = 0)
+        public Array Inner => _array;
+
+        public ArrayOf(Array array, ITypeDefOrRef elementType)
         {
-            _location = location;
-            _allocated = false;
-            Length = length;
+            _location = 0;// location;
+            //_allocated = false;
+            Length = array.Length;
+            _array = array;
             this.elementType = elementType;
         }
 

@@ -353,7 +353,7 @@ namespace MMC.State
 
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
         {
-            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);
+            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);            
         }
 
         public bool Break()

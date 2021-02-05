@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using dnWalker.Traversal;
 using MMC.State;
 using MMC.Util;
 
@@ -11,6 +12,7 @@ namespace dnWalker.ChoiceGenerators
         private readonly int _minValue;
         private readonly int _maxValue;
         private readonly List<int> _numbers;
+        private Path _path;
 
         public SchedulingData SchedulingData { get; private set; }
 
@@ -21,6 +23,8 @@ namespace dnWalker.ChoiceGenerators
 
             _numbers = Enumerable.Range(minValue, maxValue).ToList();
         }
+
+        public Path Path => _path;
 
         public object GetNextChoice()
         {
@@ -44,6 +48,8 @@ namespace dnWalker.ChoiceGenerators
             {
                 SchedulingData = activeState.Collapse().Clone();
             }
+
+            _path = (Path)((ICloneable)activeState.PathStore.CurrentPath).Clone();
         }
 
         SchedulingData IChoiceGenerator.GetBacktrackData()

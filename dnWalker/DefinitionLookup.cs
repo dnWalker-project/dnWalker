@@ -607,7 +607,7 @@ namespace MMC
             if (type.IsArray)
             {
                 var array = value as Array;
-                return new ArrayOf(array.Length, GetTypeDefinition(type.GetElementType().FullName));
+                return new ArrayOf(array, GetTypeDefinition(type.GetElementType().FullName));
             }
 
             switch (Type.GetTypeCode(type))

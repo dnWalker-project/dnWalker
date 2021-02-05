@@ -12,6 +12,10 @@ namespace dnWalker.Tests.Concolic.Features.Math
 {
     public class InputTests : SymbolicExamplesTestBase
     {
+        public InputTests(Xunit.Abstractions.ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         [Trait("Category", "Concolic")]
         public void Foo()

@@ -70,8 +70,7 @@ namespace MMC.Util
 
         public override string ToString()
         {
-
-            return string.Format("{0}:{1}", m_meth.Name, m_instr.Offset);
+            return string.Format("{0}:{1:X4}", m_meth.Name, m_instr.Offset);
         }
 
         public CILLocation(Instruction instr, MethodDefinition meth)

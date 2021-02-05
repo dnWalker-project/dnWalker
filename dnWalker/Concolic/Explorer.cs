@@ -115,17 +115,16 @@ namespace dnWalker.Concolic
                                     arrayOf.ElementType,
                                     arrayOf.Length);
 
-                                /*if (_config.RunTimeParameters.Length > 0)
+                                AllocatedArray allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+
+                                for (int j = 0; j < arrayOf.Inner.Length; j++)
                                 {
-                                    AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
-                                    for (int i = 0; i < _config.RunTimeParameters.Length; ++i)
-                                    {
-                                        runArgs.Fields[i] = args[i];
-                                    }
-                                }*/
+                                    allocatedArray.Fields[j] = _definitionProvider.CreateDataElement(arrayOf.Inner.GetValue(j));
+                                }
+
                                 dataElementList[i] = arrayRef;
                                 // todo
-                                paramType = typeof(char[]);
+                                paramType = arrayOf.Inner.GetType();
                                 //dataElementList = cur.StorageFactory.CreateSingleton(arrayRef);
                             }
                             else

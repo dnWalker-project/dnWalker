@@ -2,13 +2,14 @@
 using System.Linq;
 using dnWalker.Traversal;
 using MMC;
+using Xunit.Abstractions;
 
 namespace dnWalker.Tests.ExampleTests
 {
     public abstract class ExamplesTestBase : TestBase
     {
         protected static Lazy<DefinitionProvider> Lazy =
-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(@"..\..\..\Examples\bin\debug\Examples.exe")));
+            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(@"C:\work\playground\c#\dnWalker\Examples\bin\Debug\Examples.exe")));//..\..\..\Examples\bin\debug\Examples.exe")));
 
         protected ExamplesTestBase(DefinitionProvider definitionProvider) : base(definitionProvider)
         {
@@ -16,7 +17,7 @@ namespace dnWalker.Tests.ExampleTests
         }
     }
 
-    public abstract class SymbolicExamplesTestBase
+    public abstract class SymbolicExamplesTestBase : AbstractTestBase
     {
         protected readonly Config _config;
         private readonly DefinitionProvider _definitionProvider;
@@ -25,7 +26,7 @@ namespace dnWalker.Tests.ExampleTests
         protected static Lazy<DefinitionProvider> Lazy =
             new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(@"..\..\..\..\Examples\bin\debug\Examples.exe")));
 
-        protected SymbolicExamplesTestBase()
+        protected SymbolicExamplesTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
             _config = new Config();
             _logger = new Logger(Logger.Default | LogPriority.Trace);

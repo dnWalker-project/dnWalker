@@ -56,7 +56,7 @@ namespace dnWalker.Concolic.Traversal
             }
 
             // all outgoing edges are covered
-            if (node.GetOutgoingEdges().All(edge => _edges[edge]))
+            if (edges.All(edge => _edges[edge]))
             {
                 return pathConstraint.Expression;
             }

@@ -19,13 +19,15 @@ namespace dnWalker.Traversal
         public CILLocation Location { get; set; }
     }
 
-    public class Path
+    public class Path : ICloneable
     {
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
-        //private readonly IDictionary<ControlFlowNode<Instruction>, Expression> _nodeExpressions;
-        //_nodeExpressions = new Dictionary<ControlFlowNode<Instruction>, Expression>();
-
         private IList<Segment> _segments = new List<Segment>();
+        private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
+        private IList<ControlFlowNode<Instruction>> _visitedNodes = new List<ControlFlowNode<Instruction>>();
+        private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
+        private CILLocation _lastLocation;
+        private IDictionary<CILLocation, int> _counter = new Dictionary<CILLocation, int>();
 
         public void Extend(int toState)
         {
@@ -63,8 +65,7 @@ namespace dnWalker.Traversal
                 return obj.HashCode;
             }
         }
-
-        private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
+        
         public T SetObjectAttribute<T>(IDataElement dataElement, string attributeName, T attributeValue)
         {
             if (!_properties.TryGetValue(dataElement, out var dict))
@@ -87,8 +88,6 @@ namespace dnWalker.Traversal
             attributeValue = (T)value;
             return true;
         }
-
-        private IList<ControlFlowNode<Instruction>> _visitedNodes = new List<ControlFlowNode<Instruction>>();
 
         public void AddVisitedNode(ControlFlowNode<Instruction> node)
         {
@@ -124,14 +123,21 @@ namespace dnWalker.Traversal
             return false;
         }
 
-        private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
-
         public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
+            try
+            {
+                expression = ExpressionOptimizer.visit(expression);
+            }
+            catch
+            {
+                // exception is ignored, 3rd party 
+            }
+
             _pathConstraints.Add(
                 new PathConstraint
                 {
-                    Expression = ExpressionOptimizer.visit(expression),
+                    Expression = expression,
                     Location = new CILLocation(cur.CurrentLocation.Instruction, cur.CurrentLocation.Method),
                     Next = next
                 });
@@ -163,11 +169,18 @@ namespace dnWalker.Traversal
 
         public bool Faulted => Exception != null;
 
-        private CILLocation _lastLocation;
-
         public void OnInstructionExecuted(CILLocation location)
         {
             _lastLocation = location;
+
+            if (_counter.ContainsKey(location))
+            {
+                _counter[location]++;
+            }
+            else
+            {
+                _counter[location] = 1;
+            }
         }
 
         public string Exception { get; private set; }
@@ -222,6 +235,19 @@ namespace dnWalker.Traversal
                     throw new Exception(field.WrapperName);
                 }
             }
+        }
+
+        object ICloneable.Clone()
+        {
+            return new Path
+            {
+                _attributes = new Dictionary<string, object>(_attributes),
+                _segments = new List<Segment>(_segments),
+                _pathConstraints = new List<PathConstraint>(_pathConstraints),
+                _visitedNodes = new List<ControlFlowNode<Instruction>>(_visitedNodes),
+                _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties),
+                _lastLocation = _lastLocation
+            };
         }
     }
 }
