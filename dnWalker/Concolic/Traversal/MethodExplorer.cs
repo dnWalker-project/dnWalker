@@ -1,34 +1,44 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnWalker.Traversal;
-using Echo.ControlFlow;
 using Echo.Platforms.Dnlib;
 using MMC.State;
 using MMC.Util;
+using QuikGraph.Graphviz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker.Concolic.Traversal
 {
     public class MethodExplorer
     {
-        private readonly ControlFlowGraph<Instruction> _cfg;
+        private readonly Graphs.ControlFlowGraph _cfg;
         private readonly Dictionary<Instruction, int> _coverageMap;
         private readonly MethodDef _method;
-        private readonly IDictionary<ControlFlowEdge<Instruction>, bool> _edges;
-        private readonly IDictionary<ControlFlowNode<Instruction>, bool> _nodes;
         
         public MethodExplorer(MethodDef method)
         {
-            _cfg = method.ConstructStaticFlowGraph();
             _coverageMap = method.Body.Instructions.ToDictionary(i => i, i => 0);
-            _edges = _cfg.GetEdges().ToDictionary(e => e, e => false);
-            _nodes = _cfg.Nodes.ToDictionary(n => n, n => false);            
             _method = method;
+            _cfg = new Graphs.ControlFlowGraph(method);
+
+            //string graphAsSvg = _cfg.ToGraphviz();
+
+            //System.IO.File.WriteAllText(@"c:\temp\g.dot", graphAsSvg);
+
+            // Or using a custom init for the algorithm
+            /*string graphAsSvg = _cfg.ToSvg(algorithm =>
+            {
+                // Custom init example
+                algorithm.CommonVertexFormat.Shape = GraphvizVertexShape.Diamond;
+                algorithm.CommonEdgeFormat.ToolTip = "Edge tooltip";
+                algorithm.FormatVertex += (sender, args) =>
+                {
+                    args.VertexFormat.Label = $"Vertex {args.Vertex}";
+                };
+            });*/
         }
 
         public void OnInstructionExecuted(CILLocation location, Path path)
@@ -40,26 +50,30 @@ namespace dnWalker.Concolic.Traversal
 
             _coverageMap[location.Instruction]++;
 
-            var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(location.Instruction));
-            _nodes[node] = true;
+            var node = _cfg.GetNode(location.Instruction);
+            node.SetIsCovered();
 
             path.AddVisitedNode(node);
         }
 
         public Expression Flip(PathConstraint pathConstraint)
         {
-            var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(pathConstraint.Location.Instruction));
-            var edges = node.GetOutgoingEdges();
-            if (!edges.Any())
+            var node = _cfg.GetNode(pathConstraint.Location.Instruction);
+            var edge = node.GetNextUncoveredOutgoingEdge(); 
+            if (edge == null)
             {
                 return pathConstraint.Expression;
             }
+            //if (!edges.Any())
+            //{
+            //    return pathConstraint.Expression;
+            //}
 
             // all outgoing edges are covered
-            if (edges.All(edge => _edges[edge]))
-            {
-                return pathConstraint.Expression;
-            }
+            //if (edges.All(edge => _edges[edge] != 0))
+            //{
+            //    return pathConstraint.Expression;
+            //}
 
             /*var next = pathConstraint.Next;
             if (next != null)
@@ -81,13 +95,67 @@ namespace dnWalker.Concolic.Traversal
             //return pathConstraint.Expression;
         }
 
+        public Expression FlipBackEdge(PathConstraint pathConstraint)
+        {
+            var cov = _coverageMap.Count(n => n.Value != 0) / (double)_coverageMap.Count;
+            if (!_coverageMap.Any(c => c.Value == 0))
+            {
+                return pathConstraint.Expression; // everything has been covered
+            }
+
+            //var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(pathConstraint.Location.Instruction));
+            var node = _cfg.GetNode(pathConstraint.Location.Instruction);
+            var edges = node.GetOutgoingEdges();
+            if (!edges.Any())
+            {
+                return pathConstraint.Expression;
+            }
+
+            foreach (var edge in edges.Where(e => e.Source.Offset > e.Target.Offset))
+            {
+                if (edge.Tag.Times > 20)
+                {
+                    throw new Exception("Max cycles reached");
+                }
+
+                //if (edge.Tag.Times > 1)
+                //{
+                return Expression.Not(pathConstraint.Expression);
+                //}
+            }
+            
+            //if (_cfg.GetEdges().First())
+
+            /*var next = pathConstraint.Next;
+            if (next != null)
+            {
+                var conditionalEdge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.Conditional && e.Target.Offset == next.Offset);
+                if (!_edges[conditionalEdge])
+                {
+                    return Expression.Not(pathConstraint.Expression);
+                }
+            }
+
+            var fallThroughEdge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.FallThrough);
+            if (!_edges[fallThroughEdge])
+            {
+                return Expression.Not(pathConstraint.Expression);
+            }*/
+
+            return pathConstraint.Expression;
+            //return pathConstraint.Expression;
+        }
+
         public void OnConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
             var instruction = cur.CurrentLocation.Instruction;
-            var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(instruction));
-            _nodes[node] = true;
-
-            var edges = node.GetOutgoingEdges();            
+            //var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(instruction));
+            var node = _cfg.GetNode(instruction);
+            node.SetExpression(expression);
+            node.SetIsCovered(next, cur);
+            //_nodes[node] = true;
+            /*
+            var edges = node.GetOutgoingEdges();
             if (!edges.Any())
             {
                 return;
@@ -96,21 +164,21 @@ namespace dnWalker.Concolic.Traversal
             if (next == null)
             {
                 var edge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.FallThrough);
-                _edges[edge] = true;
+                _edges[edge]++;
             }
             else
             {
                 var edge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.Conditional && e.Target.Offset == next.Offset);
-                _edges[edge] = true;
-            }
+                _edges[edge]++;
+            }*/
         }
 
         public Coverage GetCoverage()
         {
             return new Coverage
             {
-                Nodes = _nodes.Count(n => n.Value) / (double)_nodes.Count,
-                Edges = _edges.Count(e => e.Value) / (double)_edges.Count,
+                //Nodes = 0,//_nodes.Count(n => n.Value) / (double)_nodes.Count,
+                //Edges = _edges.Count(e => e.Value != 0) / (double)_edges.Count,
             };
         }
     }

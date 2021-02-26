@@ -104,21 +104,38 @@ namespace dnWalker.Concolic.Traversal
                 pc.Insert(0, expression);
             }
 
-            if (!flipped)
+            if (flipped)
             {
-                return null;
+                return pc.Aggregate((a, b) => Expression.And(a, b)).Simplify();
             }
 
-            //var pc = path.PathConstraints.Select(p => p.Expression).Take(path.PathConstraints.Count - 1).ToList();
-            //pc.Add(Expression.Not(path.PathConstraints.Last().Expression));
-            try
+            pc.Clear();
+
+            foreach (var pathConstraint in pathConstraints.Reverse())
             {
-                return ExpressionOptimizer.visit(pc.Aggregate((a, b) => Expression.And(a, b)));
+                var methodExplorer = GetMethodExplorer(pathConstraint.Location);
+                if (flipped)
+                {
+                    pc.Insert(0, pathConstraint.Expression);
+                    continue;
+                }
+
+                var expression = methodExplorer.FlipBackEdge(pathConstraint);
+                if (expression != pathConstraint.Expression)
+                {
+                    expression = expression.Simplify();
+                    flipped = true;
+                }
+
+                pc.Insert(0, expression);
             }
-            catch
+
+            if (flipped)
             {
-                return pc.Aggregate((a, b) => Expression.And(a, b));
+                return pc.Aggregate((a, b) => Expression.And(a, b)).Simplify();
             }
+
+            return null;
         }
 
         public void OnInstructionExecuted(CILLocation location)
