@@ -89,6 +89,12 @@
     <Reference Include="Linq.Expression.Optimizer, Version=1.0.6.0, Culture=neutral, PublicKeyToken=34b6af2337893e15, processorArchitecture=MSIL">
       <HintPath>..\packages\Linq.Expression.Optimizer.1.0.13\lib\net45\Linq.Expression.Optimizer.dll</HintPath>
     </Reference>
+    <Reference Include="QuikGraph, Version=2.3.0.0, Culture=neutral, PublicKeyToken=46bd58b0789759cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuikGraph.2.3.0\lib\net45\QuikGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuikGraph.Graphviz, Version=2.3.0.0, Culture=neutral, PublicKeyToken=46bd58b0789759cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuikGraph.Graphviz.2.3.0\lib\net40\QuikGraph.Graphviz.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -127,6 +133,8 @@
     <Compile Include="Collapser.cs" />
     <Compile Include="Concolic\Coverage.cs" />
     <Compile Include="Concolic\Explorer.cs" />
+    <Compile Include="Concolic\ExpressionExtensions.cs" />
+    <Compile Include="Concolic\Strategies\ConstraintSolving\FlipItStrategy.cs" />
     <Compile Include="Concolic\Traversal\MethodExplorer.cs" />
     <Compile Include="Concolic\Traversal\PathStore.cs" />
     <Compile Include="Constants.cs" />
@@ -145,6 +153,7 @@
     <Compile Include="Factories\InstructionFactory.cs" />
     <Compile Include="FastHashtable.cs" />
     <Compile Include="GarbageCollection.cs" />
+    <Compile Include="Graphs\ControlFlow\ControlFlowGraph.cs" />
     <Compile Include="HashFunctions.cs" />
     <Compile Include="IEReturnValue.cs" />
     <Compile Include="InstructionBase.cs" />

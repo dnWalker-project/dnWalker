@@ -72,13 +72,7 @@ namespace dnWalker.Z3
                     if (list.TryGetValue(parameter.Name + "_Length", out var expr))
                     {
                         var val = model.Eval(expr);
-                        var array = Array.CreateInstance(parameter.PropertyType.GetElementType(), ((IntNum)val).Int);
-                        var index = 0;
-                        foreach (var elementExpr in arrayExpr.Args)
-                        {
-                            array.SetValue((char)((IntNum)elementExpr).Int, index++);
-                        }
-                        solution = array;
+                        solution = Factories.ArrayFactory.CreateArray(parameter.PropertyType.GetElementType(), arrayExpr, ((IntNum)val).Int);                        
                         return true;
                     }
                 }

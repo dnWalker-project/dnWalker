@@ -1,4 +1,5 @@
 ﻿using dnlib.DotNet.Emit;
+using dnWalker.Graphs;
 using dnWalker.NativePeers;
 using Echo.ControlFlow;
 using MMC.Data;
@@ -24,7 +25,7 @@ namespace dnWalker.Traversal
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
         private IList<Segment> _segments = new List<Segment>();
         private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
-        private IList<ControlFlowNode<Instruction>> _visitedNodes = new List<ControlFlowNode<Instruction>>();
+        private IList<long> _visitedNodes = new List<long>();
         private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
         private CILLocation _lastLocation;
         private IDictionary<CILLocation, int> _counter = new Dictionary<CILLocation, int>();
@@ -89,11 +90,11 @@ namespace dnWalker.Traversal
             return true;
         }
 
-        public void AddVisitedNode(ControlFlowNode<Instruction> node)
+        public void AddVisitedNode(Node node)
         {
-            if (!_visitedNodes.Contains(node))
+            if (!_visitedNodes.Contains(node.Offset))
             {
-                _visitedNodes.Add(node);
+                _visitedNodes.Add(node.Offset);
             }
         }
 
@@ -244,7 +245,7 @@ namespace dnWalker.Traversal
                 _attributes = new Dictionary<string, object>(_attributes),
                 _segments = new List<Segment>(_segments),
                 _pathConstraints = new List<PathConstraint>(_pathConstraints),
-                _visitedNodes = new List<ControlFlowNode<Instruction>>(_visitedNodes),
+                _visitedNodes = new List<long>(_visitedNodes),
                 _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties),
                 _lastLocation = _lastLocation
             };
