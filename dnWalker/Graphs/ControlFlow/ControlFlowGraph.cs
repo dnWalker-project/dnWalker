@@ -6,6 +6,7 @@ using MMC.State;
 using QuikGraph;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -87,6 +88,7 @@ namespace dnWalker.Graphs
         }
     }
 
+    [DebuggerDisplay("Covered: {Times}, [{Coverage}]")]
     public class CoverageInfo
     {
         public int Times { get; set; }
@@ -120,6 +122,13 @@ namespace dnWalker.Graphs
         {
             _originalCfg = method.ConstructStaticFlowGraph();
             _nodeMapping = new Dictionary<long, Node>();
+
+            // ensure that entry point is in the graph => method with no branching will not throw error in GetNode(...);
+            var entryPoint = _originalCfg.Entrypoint;
+            var entryPointNode = new Node(entryPoint, this);
+
+            AddVertex(entryPointNode);
+            _nodeMapping[entryPointNode.Offset] = entryPointNode;
 
             foreach (var edge in _originalCfg.GetEdges())
             {
