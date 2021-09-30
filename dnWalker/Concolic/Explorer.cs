@@ -69,7 +69,7 @@ namespace dnWalker.Concolic
                 try
                 {
                     // check iteration
-                    if (maxIterations <= 0 || curIteration < maxIterations)
+                    if (maxIterations > 0 && curIteration < maxIterations)
                     {
                         throw new Exception("Execution ran out of iterations without finishing " + maxIterations);
                     }
