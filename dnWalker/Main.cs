@@ -31,6 +31,10 @@ namespace MMC
 
     public interface IConfig
     {
+        /// <summary>
+        /// Gets, sets the maximum iterations. Negative value of zero for unlimited.
+        /// </summary>
+        int MaxIterations { get; set; }
         string[] RunTimeParameters { get; set; }
         bool Verbose { get; set; }
         bool SymmetryReduction { get; set; }
@@ -71,6 +75,7 @@ namespace MMC
     /// </summary>
     public class Config : IConfig
     {
+        public int MaxIterations { get; set; }
         public string AssemblyToCheckFileName { get; set; }
         public string[] RunTimeParameters { get; set; } = new string[] { };
         public bool ShowStatistics { get; set; }

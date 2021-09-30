@@ -58,12 +58,24 @@ namespace dnWalker.Concolic
 
             var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
+            // setup iteration management
+            int maxIterations = _config.MaxIterations;
+            int curIteration = 0;
+
             while (true)
             {
                 SystemConsole.OutTextWriterRef = ObjectReference.Null;
 
                 try
                 {
+                    // check iteration
+                    if (maxIterations <= 0 || curIteration < maxIterations)
+                    {
+                        throw new Exception("Execution ran out of iterations without finishing " + maxIterations);
+                    }
+
+                    ++curIteration;
+
                     var parameters = new List<ParameterExpression>();
                     // initial state
                     // -------------
