@@ -66,5 +66,29 @@ namespace dnWalker.Tests.Symbolic
                 },
                 SymbolicArgs.Arg("x", 10));
         }
+
+        [Fact]
+        [Trait("Category", "Concolic")]
+        public void InvertingVariableValue()
+        {
+            Explore("Examples.Concolic.Simple.Branches.SingleBranchingWithModification",
+                (cgf) =>
+                {
+                    cgf.MaxIterations = 2;
+                },
+                (explorer) =>
+                {
+                    //explorer.GetUnhandledException().Should().BeNull();
+                    var paths = explorer.PathStore.Paths;
+
+                    foreach (var p in paths)
+                    {
+                        System.Console.Out.WriteLine(p.GetPathInfo());
+                    }
+
+                    paths.Count().Should().Be(2);
+                },
+                SymbolicArgs.Arg("x", 10));
+        }
     }
 }

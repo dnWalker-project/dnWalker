@@ -17,9 +17,24 @@ namespace Examples.Concolic.Simple
             }
 			else
             {
-				Console.Out.WriteLine(" x > 0");
+				Console.Out.WriteLine(" x >= 0");
             }
         }
+
+		public static void SingleBranchingWithModification(int x)
+        {
+            x = -x;
+
+            //if (-x < 0)
+            if (x < 0)
+			{
+				Console.Out.WriteLine("x > 0");
+			}
+			else
+			{
+				Console.Out.WriteLine(" x <= 0");
+			}
+		}
 
 		// https://github.com/SymbolicPathFinder/jpf-symbc/blob/master/src/examples/simple/Branches.java
 
