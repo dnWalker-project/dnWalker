@@ -9,7 +9,6 @@ namespace dnWalker.Tests.ExampleTests
     public abstract class ExamplesTestBase : TestBase
     {
         protected static Lazy<DefinitionProvider> Lazy =
-            //new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(@"C:\work\playground\c#\dnWalker\Examples\bin\Debug\Examples.exe")));//..\..\..\Examples\bin\debug\Examples.exe")));
             new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(@"..\..\..\..\Examples\bin\debug\Examples.exe")));//..\..\..\Examples\bin\debug\Examples.exe")));
 
         protected ExamplesTestBase(DefinitionProvider definitionProvider) : base(definitionProvider)

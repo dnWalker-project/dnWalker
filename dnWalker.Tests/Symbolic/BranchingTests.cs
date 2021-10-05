@@ -1,4 +1,5 @@
-﻿using dnWalker.Symbolic;
+﻿using dnWalker.Concolic;
+using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
 
 using FluentAssertions;
@@ -89,6 +90,35 @@ namespace dnWalker.Tests.Symbolic
                     paths.Count().Should().Be(2);
                 },
                 SymbolicArgs.Arg("x", 10));
+        }
+
+        [Fact]
+        [Trait("Category", "Concolic")]
+        public void ExceedingMaxNumberOfIterations_Should_Throw()
+        {
+            Assert.Throws<MaxIterationsExceededException>(() =>
+            {
+                Explore("Examples.Concolic.Simple.Branches.MultipleBranchingWithMultipleParameters",
+                    (cgf) =>
+                    {
+                        cgf.MaxIterations = 10;
+                    },
+                    (explorer) =>
+                    {
+                        //explorer.GetUnhandledException().Should().BeNull();
+                        var paths = explorer.PathStore.Paths;
+
+                        foreach (var p in paths)
+                        {
+                            System.Console.Out.WriteLine(p.GetPathInfo());
+                        }
+
+                        paths.Count().Should().Be(4);
+                    },
+                    SymbolicArgs.Arg("x", 10),
+                    SymbolicArgs.Arg("y", -5),
+                    SymbolicArgs.Arg("z", 6));
+            });
         }
     }
 }

@@ -7,12 +7,14 @@ using MMC.State;
 using MMC.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
 namespace dnWalker.Traversal
 {
+    [DebuggerDisplay("{Expression}")]
     public class PathConstraint
     {
         public Expression Expression { get; set; }
@@ -194,7 +196,7 @@ namespace dnWalker.Traversal
 
         public bool IsTerminated { get; private set; }
 
-        public void Terminate(ThreadState threadState)
+        public void Terminate(MMC.State.ThreadState threadState)
         {
             var fromState = _segments.LastOrDefault()?.ToState ?? 0;
 
