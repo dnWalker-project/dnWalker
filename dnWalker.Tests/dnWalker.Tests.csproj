@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="AbstractTestBase.cs" />
     <Compile Include="Arg.cs" />
+    <Compile Include="Concolic\ArgumentsCacheTests.cs" />
     <Compile Include="Concolic\Features\Arrays\InputTests.cs" />
     <Compile Include="Concolic\Features\Math\InputTests.cs" />
     <Compile Include="ExampleTests\CaptureOutputTests.cs" />

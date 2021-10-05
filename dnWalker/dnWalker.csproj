@@ -131,6 +131,7 @@
     <Compile Include="CILUtils.cs" />
     <Compile Include="CollapsedState.cs" />
     <Compile Include="Collapser.cs" />
+    <Compile Include="Concolic\ArgumentsCache.cs" />
     <Compile Include="Concolic\Coverage.cs" />
     <Compile Include="Concolic\Explorer.cs" />
     <Compile Include="Concolic\ExplorerException.cs" />
