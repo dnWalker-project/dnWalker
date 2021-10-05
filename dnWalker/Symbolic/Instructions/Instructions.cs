@@ -2287,8 +2287,22 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ISignedNumericElement a = (ISignedNumericElement)cur.EvalStack.Pop();
-            cur.EvalStack.Push(a.Neg());
+            //ISignedNumericElement a = (ISignedNumericElement)cur.EvalStack.Pop();
+            //cur.EvalStack.Push(a.Neg());
+            //return nextRetval;
+
+            ISignedNumericElement oldValue = (ISignedNumericElement)cur.EvalStack.Pop();
+            ISignedNumericElement newValue = oldValue.Neg();
+            cur.EvalStack.Push(newValue);
+            
+            bool isSymbolic = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(oldValue, "expression", out Expression oldExpression);
+            if (isSymbolic)
+            {
+                Expression newExpression = Expression.Negate(oldExpression);
+
+                cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", newExpression);
+            }
+
             return nextRetval;
         }
     }

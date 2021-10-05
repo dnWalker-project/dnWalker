@@ -101,7 +101,7 @@ namespace dnWalker.Tests.Symbolic
                 Explore("Examples.Concolic.Simple.Branches.MultipleBranchingWithMultipleParameters",
                     (cgf) =>
                     {
-                        cgf.MaxIterations = 10;
+                        cgf.MaxIterations = 2;
                     },
                     (explorer) =>
                     {
