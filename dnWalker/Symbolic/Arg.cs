@@ -1,5 +1,7 @@
 ﻿using MMC;
 using MMC.Data;
+
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace dnWalker.Symbolic
@@ -31,6 +33,13 @@ namespace dnWalker.Symbolic
         public IDataElement AsDataElement(DefinitionProvider definitionProvider)
         {
             return definitionProvider.CreateDataElement(_value);//, Expression.Parameter(typeof(T), _name));
+        }
+
+        public override System.Boolean Equals(System.Object obj)
+        {
+            return obj is SymbolicArg<T> arg &&
+                   _name == arg._name &&
+                   EqualityComparer<T>.Default.Equals(_value, arg._value);
         }
     }
 }

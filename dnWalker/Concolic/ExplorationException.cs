@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic
 {
-    public class ExplorerException : Exception
+    public class ExplorationException : Exception
     {
-        public ExplorerException()
+        public ExplorationException()
         {
         }
 
-        public ExplorerException(String message) : base(message)
+        public ExplorationException(String message) : base(message)
         {
         }
 
-        public ExplorerException(String message, Exception innerException) : base(message, innerException)
+        public ExplorationException(String message, Exception innerException) : base(message, innerException)
         {
         }
 
-        protected ExplorerException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ExplorationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
 
-    public class MaxIterationsExceededException : ExplorerException
+    public class MaxIterationsExceededException : ExplorationException
     {
         //public MaxIterationsExceededException()
         //{
