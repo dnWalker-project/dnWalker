@@ -38,6 +38,17 @@ namespace dnWalker.Concolic
 
             public bool Remove(IArg[] args, int index)
             {
+                if (args.Length - 1 == index)
+                {
+                    // last item
+                    return _items.Remove(args[index]);
+                }
+
+                if (_items.TryGetValue(args[index], out ArgumentsCacheLayer nextLayer))
+                {
+                    return nextLayer.Remove(args, index + 1);
+                }
+
                 return false;
             }
 

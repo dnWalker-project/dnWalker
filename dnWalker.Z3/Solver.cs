@@ -25,7 +25,6 @@ namespace dnWalker.Z3
 
                 var context = Activator.CreateInstance(TP);
 
-                // co dela tenhle cyklus? nijak neovlivnuje veci mimo
                 foreach (var param in parameters)
                 {
                     var getDefaultValue =
