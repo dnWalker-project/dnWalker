@@ -134,7 +134,7 @@
     <Compile Include="Concolic\ArgumentsCache.cs" />
     <Compile Include="Concolic\Coverage.cs" />
     <Compile Include="Concolic\Explorer.cs" />
-    <Compile Include="Concolic\ExplorerException.cs" />
+    <Compile Include="Concolic\ExplorationException.cs" />
     <Compile Include="Concolic\ExpressionExtensions.cs" />
     <Compile Include="Concolic\Strategies\ConstraintSolving\FlipItStrategy.cs" />
     <Compile Include="Concolic\Traversal\MethodExplorer.cs" />

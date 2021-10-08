@@ -68,6 +68,8 @@
     <Compile Include="Concolic\Features\Arrays\Array.cs" />
     <Compile Include="Concolic\Features\Arrays\Input.cs" />
     <Compile Include="Concolic\Features\Math\Input.cs" />
+    <Compile Include="Concolic\MethodInvoking\InterfaceMethodInvoking.cs" />
+    <Compile Include="Concolic\MethodInvoking\TestClass.cs" />
     <Compile Include="Concolic\Protocol.cs" />
     <Compile Include="DataRace.cs" />
     <Compile Include="Deadlock.cs" />

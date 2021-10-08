@@ -41,5 +41,13 @@ namespace dnWalker.Symbolic
                    _name == arg._name &&
                    EqualityComparer<T>.Default.Equals(_value, arg._value);
         }
+
+        public override System.Int32 GetHashCode()
+        {
+            System.Int32 hashCode = 179903332;
+            hashCode = hashCode * -1521134295 + EqualityComparer<System.String>.Default.GetHashCode(_name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(_value);
+            return hashCode;
+        }
     }
 }

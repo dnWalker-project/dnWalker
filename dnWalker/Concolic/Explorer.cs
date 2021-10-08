@@ -48,24 +48,24 @@ namespace dnWalker.Concolic
 
         public void Run(string methodName, params IArg[] arguments)
         {
-            var entryPoint = _definitionProvider.GetMethodDefinition(methodName)
+            dnlib.DotNet.MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName)
                 ?? throw new NullReferenceException($"Method {methodName} not found");
 
-            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
-            
-            var pathStore = new Traversal.PathStore(entryPoint);
+            StateSpaceSetup stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
+
+            Traversal.PathStore pathStore = new Traversal.PathStore(entryPoint);
             PathStore = pathStore;            
 
             using (TextWriter writer = File.CreateText(@"c:\temp\dot.dot"))
             {
-                var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
+                Echo.Core.Graphing.Serialization.Dot.DotWriter dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
                 dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
                 dotWriter.NodeAdorner = new ControlFlowNodeAdorner<Instruction>();
                 dotWriter.EdgeAdorner = new ControlFlowEdgeAdorner<Instruction>();
                 dotWriter.Write(entryPoint.ConstructStaticFlowGraph());
             }
 
-            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
+            IDataElement[] args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
             // setup iteration management
             int maxIterations = _config.MaxIterations;
@@ -85,11 +85,11 @@ namespace dnWalker.Concolic
 
                     ++_iterationCount;
 
-                    var parameters = new List<ParameterExpression>();
+                    List<ParameterExpression> parameters = new List<ParameterExpression>();
                     // initial state
                     // -------------
-                    var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
-                    var cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
+                    IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
+                    ExplicitActiveState cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
                     cur.PathStore = pathStore;
 
                     DataElementList dataElementList;
@@ -123,14 +123,14 @@ namespace dnWalker.Concolic
                         dataElementList = cur.StorageFactory.CreateList(arguments.Length);
                         for (int i = 0; i < arguments.Length; i++)
                         {
-                            var arg = args[i];
+                            IDataElement arg = args[i];
                             dataElementList[i] = arg;
 
                             Type paramType = typeof(int);
 
                             if (arg is ArrayOf arrayOf)
                             {
-                                var placement = cur.DynamicArea.DeterminePlacement(false);
+                                Int32 placement = cur.DynamicArea.DeterminePlacement(false);
                                 ObjectReference arrayRef = cur.DynamicArea.AllocateArray(
                                     placement,
                                     arrayOf.ElementType,
@@ -156,10 +156,14 @@ namespace dnWalker.Concolic
                                     case "System.Double":
                                         paramType = typeof(double);
                                         break;
+
+                                    case "System.Int32":
+                                        paramType = typeof(Int32);
+                                        break;
                                 }
                             }
 
-                            var parameter = Expression.Parameter(
+                            ParameterExpression parameter = Expression.Parameter(
                                 paramType,
                                 entryPoint.Parameters[i].Name);
                             parameters.Add(parameter);
@@ -186,18 +190,18 @@ namespace dnWalker.Concolic
                     //var cur = stateSpaceSetup.CreateInitialState(entryPoint, args);
                     cur.CurrentThread.InstructionExecuted += pathStore.OnInstructionExecuted;
 
-                    var statistics = new SimpleStatistics();
+                    SimpleStatistics statistics = new SimpleStatistics();
 
-                    var explorer = new MMC.Explorer(cur, statistics, _logger, _config, PathStore);
+                    MMC.Explorer explorer = new MMC.Explorer(cur, statistics, _logger, _config, PathStore);
                     explorer.InstructionExecuted += pathStore.OnInstructionExecuted;
 
                     explorer.Run();
 
-                    var path = PathStore.CurrentPath;
+                    dnWalker.Traversal.Path path = PathStore.CurrentPath;
 
                     System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", args.Select(a => a.ToString()))}");
 
-                    var next = PathStore.GetNextInputValues(_solver, parameters);
+                    IDictionary<String, Object> next = PathStore.GetNextInputValues(_solver, parameters);
 
                     OnPathExplored?.Invoke(path);
 
