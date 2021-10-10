@@ -29,6 +29,7 @@ namespace MMC
     using dnWalker;
     using System.IO;
     using dnWalker.NativePeers;
+    using dnWalker.DataElements;
 
     /// <summary>
     /// This definition is used for quick storage of methodreferences.
@@ -69,8 +70,11 @@ namespace MMC
         }
     }
 
+
+    // TODO: create IDefinitionProvider interface & setup to use a special implementation
+
     /// <summary>
-    /// This is a straitforward implementation of IDefinitionProvider.
+    /// This is a straightforward implementation of IDefinitionProvider.
     /// </summary>
     /// <remarks>
     /// Hashing is used to speed up the lookup process.
@@ -94,7 +98,7 @@ namespace MMC
 
         public int SizeOf(string type)
         {
-            if (m_typeSizes.TryGetValue(type, out var result))
+            if (m_typeSizes.TryGetValue(type, out Int32 result))
             {
                 return result;
             }
@@ -110,7 +114,7 @@ namespace MMC
             ITypeDefOrRef currentType = m_typeDef;
             do
             {
-                var currentTypeDef = GetTypeDefinition(currentType);
+                TypeDef currentTypeDef = GetTypeDefinition(currentType);
                 if (currentTypeDef == null)
                 {
                     break;
@@ -122,7 +126,7 @@ namespace MMC
 
         public bool IsSubtype(ITypeDefOrRef supertype, ITypeDefOrRef subtype)
         {
-            foreach (var typeRef in InheritanceEnumerator(supertype))
+            foreach (ITypeDefOrRef typeRef in InheritanceEnumerator(supertype))
             {
                 if (typeRef.FullName.Equals(subtype.FullName))
                     return true;
@@ -174,7 +178,7 @@ namespace MMC
             //var data = File.ReadAllBytes(GetType().Assembly.Modules);
             return GetType().Assembly.Modules.Select(m =>
             {
-                var moduleDef = ModuleDefMD.Load(m);
+                ModuleDefMD moduleDef = ModuleDefMD.Load(m);
                 return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
             }).FirstOrDefault();
         }
@@ -197,7 +201,7 @@ namespace MMC
 
         internal TypeDef GetTypeDefinition(TypeSig typeSig)
         {
-            var typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
+            TypeDef typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
             if (typeDef == null)
             {
                 typeDef = GetTypeDefinition(typeSig.FullName);
@@ -245,8 +249,8 @@ namespace MMC
         /// <seealso cref="GetTypeDefinition(string, AssemblyDefinition)"/>
         public TypeDef GetTypeDefinition(string name)
         {
-            var retval = SearchType(name, AssemblyDefinition);
-            foreach (var refA in m_referencedAssemblies)
+            TypeDef retval = SearchType(name, AssemblyDefinition);
+            foreach (ModuleDef refA in m_referencedAssemblies)
             {
                 retval = SearchType(name, refA);
                 if (retval != null)
@@ -265,13 +269,13 @@ namespace MMC
 
         public MethodDefinition GetMethodDefinition(string methodName)
         {
-            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
+            if (m_methodDefinitionsByReference.TryGetValue(methodName, out MethodDefinition retval))
             {
                 return retval;
             }
 
-            var lastDot = methodName.LastIndexOf(".");
-            var methodTypeName = methodName.Substring(0, lastDot);
+            Int32 lastDot = methodName.LastIndexOf(".");
+            String methodTypeName = methodName.Substring(0, lastDot);
 
             TypeDef typeDef = GetTypeDefinition(methodTypeName);
             retval = typeDef.FindMethod(new UTF8String(methodName.Substring(lastDot + 1)));
@@ -291,17 +295,17 @@ namespace MMC
             }
 
             AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
-            var superType = ao.Type;
+            ITypeDefOrRef superType = ao.Type;
             VirtualMethodDefinition vmdef = new VirtualMethodDefinition(methRef, objRef);
 
-            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out var retval))
+            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out MethodDefinition retval))
             {
                 return retval;
             }
 
-            foreach (var typeRef in InheritanceEnumerator(superType))
+            foreach (ITypeDefOrRef typeRef in InheritanceEnumerator(superType))
             {
-                var typeDef = GetTypeDefinition(typeRef);
+                TypeDef typeDef = GetTypeDefinition(typeRef);
 
                 foreach (MethodDefinition curr in typeDef.Methods)
                 {
@@ -345,14 +349,14 @@ namespace MMC
         {
             string methodName = typeDef + "::" + name;
 
-            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
+            if (m_methodDefinitionsByReference.TryGetValue(methodName, out MethodDefinition retval))
             {
                 return retval;
             }
 
             if (name == ".cctor")
             {
-                var cctor = typeDef.FindStaticConstructor();
+                MethodDefinition cctor = typeDef.FindStaticConstructor();
                 if (cctor != null)
                 {
                     m_methodDefinitionsByReference.Add(methodName, cctor);
@@ -370,11 +374,11 @@ namespace MMC
                 return null;
             }
 
-            var fieldDefinition = fieldRef.ResolveFieldDef();
+            FieldDefinition fieldDefinition = fieldRef.ResolveFieldDef();
             if (!fieldDefinition.FieldOffset.HasValue)
             {
-                var fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
-                for (var i = 0; i < fields.Count; i++)
+                IList<FieldDefinition> fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
+                for (Int32 i = 0; i < fields.Count; i++)
                 {
                     if (fields[i] == fieldDefinition)
                     {
@@ -459,7 +463,7 @@ namespace MMC
 
         public IDataElement GetParameterNullOrDefaultValue(Parameter parameter)
         {
-            var methodDef = parameter.Method;
+            MethodDefinition methodDef = parameter.Method;
             if (parameter.IsHiddenThisParameter)
             {
                 return ObjectReference.Null;
@@ -474,7 +478,7 @@ namespace MMC
         /// </summary>
         public static IDataElement GetNullValue(ITypeDefOrRef typeRef)
         {
-            var typeSig = typeRef.ToTypeSig();
+            TypeSig typeSig = typeRef.ToTypeSig();
             if (!typeSig.IsPrimitive)
             {
                 return ObjectReference.Null;
@@ -532,10 +536,10 @@ namespace MMC
 
         public bool TryGetTypeHandle(ITypeDefOrRef typeRef, out RuntimeTypeHandle typeHandle)
         {
-            var corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
+            CorLibTypeSig corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
             if (corLibType != null)
             {
-                var typeSig = typeRef.ToTypeSig();
+                TypeSig typeSig = typeRef.ToTypeSig();
                 if (corLibType == AssemblyDefinition.CorLibTypes.String)
                 {
                     typeHandle = typeof(string).TypeHandle;
@@ -603,27 +607,27 @@ namespace MMC
                 return ObjectReference.Null;
             }
 
-            var type = value.GetType();
+            Type type = value.GetType();
             if (type.IsArray)
             {
-                var array = value as Array;
+                Array array = value as Array;
                 return new ArrayOf(array, GetTypeDefinition(type.GetElementType().FullName));
             }
 
             switch (Type.GetTypeCode(type))
             {
-                case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
-                case TypeCode.Char: return new Int4((char)value);
-                case TypeCode.SByte: return new Int4((sbyte)value);
-                case TypeCode.Byte: return new Int4((byte)value);
-                case TypeCode.Int16: return new Int4((short)value);
-                case TypeCode.UInt16: return new UnsignedInt4((ushort)value);
-                case TypeCode.Int32: return new Int4((int)value);
-                case TypeCode.UInt32: return new UnsignedInt4((uint)value);
-                case TypeCode.Int64: return new Int8((long)value);
-                case TypeCode.UInt64: return new UnsignedInt8((ulong)value);
-                case TypeCode.Single: return new Float4((float)value);
-                case TypeCode.Double: return new Float8((double)value);
+                case TypeCode.Boolean: return new Int4((Boolean)value ? 1 : 0);
+                case TypeCode.Char: return new Int4((Char)value);
+                case TypeCode.SByte: return new Int4((SByte)value);
+                case TypeCode.Byte: return new Int4((Byte)value);
+                case TypeCode.Int16: return new Int4((Int16)value);
+                case TypeCode.UInt16: return new UnsignedInt4((UInt16)value);
+                case TypeCode.Int32: return new Int4((Int32)value);
+                case TypeCode.UInt32: return new UnsignedInt4((UInt32)value);
+                case TypeCode.Int64: return new Int8((Int64)value);
+                case TypeCode.UInt64: return new UnsignedInt8((UInt64)value);
+                case TypeCode.Single: return new Float4((Single)value);
+                case TypeCode.Double: return new Float8((Double)value);
                 case TypeCode.String: return new ConstantString(value.ToString());
                 default:
                     if (value is IntPtr ip)
@@ -634,7 +638,19 @@ namespace MMC
                     {
                         return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
                     }
-                    throw new NotSupportedException("CreateDataElement for " + value.GetType());
+
+                    // TODO: handle reference & complex types...
+                    String typeName = type.FullName;
+
+                    TypeDef typeDef = this.GetTypeDefinition(typeName);
+
+                    if (typeDef.IsInterface)
+                    {
+                        return new InterfaceProxy(typeDef);
+                    }
+
+                    //throw new NotSupportedException("CreateDataElement for " + value.GetType());
+                    return ObjectReference.Null;
             }
         }
     }

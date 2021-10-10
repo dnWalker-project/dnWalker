@@ -21,11 +21,12 @@ namespace dnWalker.Tests.Concolic.MethodInvoking
         }
 
         [Fact]
-        public void TestSupplyDummyObject_InsteadOfInterfaceType()
+        public void Test_UsingIntefaceProxy_For_PureMethods()
         {
             Explore("Examples.Concolic.MethodInvoking.InterfaceMethodInvoking.BranchingBasedOnPureValueProvider",
-                (cgf) =>
+                (cfg) =>
                 {
+                    cfg.MaxIterations = 10;
                 },
                 (explorer) =>
                 {
@@ -39,7 +40,8 @@ namespace dnWalker.Tests.Concolic.MethodInvoking
 
                     paths.Count().Should().Be(2);
                 },
-                SymbolicArgs.Arg("x", new Object()));
+                //SymbolicArgs.Arg<Object>("x", null)
+                new InterfaceArg("valueProvider", "Examples.Concolic.MethodInvoking.IPureValueProvider"));
         }
     }
 }

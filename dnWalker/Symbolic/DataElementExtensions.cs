@@ -16,8 +16,13 @@ namespace dnWalker.Symbolic
 
             switch (dataElement)
             {
-                case Float8 float8:
-                    return Expression.Constant(float8.Value, typeof(double));
+                case Float8 float8: return Expression.Constant(float8.Value, typeof(Double));
+                case Float4 float4: return Expression.Constant(float4.Value, typeof(Single));
+                case Int4 int4: return Expression.Constant(int4.Value, typeof(Int32));
+                case UnsignedInt4 uint4: return Expression.Constant(uint4.Value, typeof(UInt32));
+                case Int8 int8: return Expression.Constant(int8.Value, typeof(Int64));
+                case UnsignedInt8 uint8: return Expression.Constant(uint8.Value, typeof(UInt64));
+                case ConstantString s: return Expression.Constant(s, typeof(String));
             }
 
             if (dataElement is INumericElement numericElement)

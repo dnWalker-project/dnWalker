@@ -10,14 +10,14 @@ namespace Examples.Concolic.MethodInvoking
     {
         int GetIntValue();
         double GetDoubleValue();
-        string GetStringValue();
+        //string GetStringValue();
     }
 
     public interface INotPureValueProvider
     {
         int GetIntValue(int x);
         double GetDoubleValue(int x);
-        string GetStringValue(int x);
+        //string GetStringValue(int x);
     }
 
     public class InterfaceMethodInvoking

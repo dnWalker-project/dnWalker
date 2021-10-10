@@ -38,6 +38,7 @@ namespace dnWalker.Symbolic.Instructions
     using System.Linq.Expressions;
     using MMC;
     using dnWalker.ChoiceGenerators;
+    using dnWalker.DataElements;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -3067,7 +3068,26 @@ namespace dnWalker.Symbolic.Instructions
 					Debug.Assert(theObject.Type != null, "No type set for object.");
 					type = theObject.Type;
 				}*/
-                // Search inheritence tree for most derived implementation.
+
+                // Check whether we work with an interface proxy
+                IDataElement instance = args[0];
+
+                if (args[0] is InterfaceProxy proxy)
+                {
+                    if (proxy.TryResolveMethod(methDef, cur, out IDataElement result))
+                    {
+                        cur.EvalStack.Push(result);
+                    }
+                    else
+                    {
+                        throw new Exception("This proxy cannot resolve supplied method!");
+                    }
+
+                    return nextRetval;
+                }
+
+
+                // Search inheritance tree for most derived implementation.
                 MethodDefinition toCall = null;
                 ITypeDefOrRef constrained = cur.CurrentMethod.Constrained;
                 if (cur.CurrentMethod.IsPrefixed

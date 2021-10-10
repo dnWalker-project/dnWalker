@@ -115,7 +115,7 @@ namespace dnWalker.Tests.Dynamic
 
         }
 
-        private TypeDef AsTypeDef(this Type type, ModuleContext context)
+        private static TypeDef AsTypeDef(Type type, ModuleContext context)
         {
             ModuleDefMD module = ModuleDefMD.Load(type.Module, context);
             TypeDef dnlibType = module.Assembly.Find(type.FullName, true);

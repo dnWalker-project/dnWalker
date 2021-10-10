@@ -1,6 +1,11 @@
-﻿using MMC;
+﻿using dnlib.DotNet;
+
+using dnWalker.DataElements;
+
+using MMC;
 using MMC.Data;
 
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -16,6 +21,24 @@ namespace dnWalker.Symbolic
         public static SymbolicArg<T> Arg<T>(string name, T value)
         {
             return new SymbolicArg<T>(name, value);
+        }
+    }
+
+    public class InterfaceArg : IArg
+    {
+        private readonly String _name;
+        private readonly String _interfaceName;
+
+        public InterfaceArg(String name, String interfaceName)
+        {
+            _name = name;
+            _interfaceName = interfaceName;
+        }
+
+        public IDataElement AsDataElement(DefinitionProvider definitionProvider)
+        {
+            TypeDef type = definitionProvider.GetTypeDefinition(_interfaceName);
+            return new InterfaceProxy(type);
         }
     }
 
