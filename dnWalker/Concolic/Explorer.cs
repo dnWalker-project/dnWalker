@@ -128,7 +128,7 @@ namespace dnWalker.Concolic
                         // we add parameter in the parameter list for every element
                         if (arg is ArrayOf arrayOf)
                         {
-                            Type elementType = arrayOf.GetType().GetElementType();
+                            Type elementType = arrayOf.Inner.GetType().GetElementType();
 
                             // first we construct an array and initialize its items
                             // then we add the expressions for each item <PARAM_NAME>[i]...
@@ -137,7 +137,7 @@ namespace dnWalker.Concolic
                             dataElementList[i] = arrayRef;
 
                             // add array.Length parameter
-                            ParameterExpression arrayLengthParameterExpression = Expression.Parameter(typeof(int), argName + "->Length");
+                            //ParameterExpression arrayLengthParameterExpression = Expression.Parameter(typeof(int), argName + "->Length");
 
                             AllocatedArray allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
 
@@ -149,11 +149,16 @@ namespace dnWalker.Concolic
 
                                 allocatedArray.Fields[j] = item;
 
-                                ParameterExpression itemParameterExpression = Expression.Parameter(elementType, elementName);
-                                parameters.Add(itemParameterExpression);
+                                //ParameterExpression itemParameterExpression = Expression.Parameter(elementType, elementName);
+                                //parameters.Add(itemParameterExpression);
 
-                                item.SetExpression(itemParameterExpression, cur);
+                                //item.SetExpression(itemParameterExpression, cur);
                             }
+
+                            ParameterExpression arrayParameterExpression = Expression.Parameter(arrayOf.Inner.GetType(), entryPoint.Parameters[i].Name);
+                            parameters.Add(arrayParameterExpression);
+
+                            arrayRef.SetExpression(arrayParameterExpression, cur);
                         }
 
                         // we use InterfaceProxy to inject custom values whenever its methods are requested

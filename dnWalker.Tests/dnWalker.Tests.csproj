@@ -114,6 +114,7 @@
     <Compile Include="ExampleTests\Simple\BranchesTests.cs" />
     <Compile Include="InterpreterTest.cs" />
     <Compile Include="Interpreter\IntepreterTests.cs" />
+    <Compile Include="Symbolic\ArrayTests.cs" />
     <Compile Include="Symbolic\BranchingTests.cs" />
     <Compile Include="Symbolic\MethodParametersFactoryTests.cs" />
     <Compile Include="Symbolic\SymbolicArgTest.cs" />
