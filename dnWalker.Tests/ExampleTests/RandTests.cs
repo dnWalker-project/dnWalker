@@ -21,6 +21,7 @@ namespace dnWalker.Tests.ExampleTests
             Explore("Examples.Rand.Go",
                 c =>
                 {
+                    c.MaxIterations = 1;
                     c.SetCustomSetting("evaluateRandom", true);
                 },
                 (explorer) =>
