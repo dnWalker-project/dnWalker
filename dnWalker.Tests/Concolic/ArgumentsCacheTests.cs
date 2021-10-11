@@ -107,7 +107,7 @@ namespace dnWalker.Tests.Concolic
         [Theory]
         [InlineData(new object[] { 1, 2.5, "hello world" })]
         [InlineData(new object[] { 1, 2.5, "hi world" })]
-        public void RemovingArgsWhichAreInTheCache_Returns_False(params object[] argsArray)
+        public void RemovingArgsWhichAreInTheCache_Returns_True(params object[] argsArray)
         {
             ArgumentsCache threeArgsCache = new ArgumentsCache(3);
             IArg[] threeArgs = ConstructArgs(argsArray);
