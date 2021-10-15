@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.DataElements;
 using dnWalker.NativePeers;
@@ -27,6 +28,26 @@ namespace dnWalker.Concolic
         private readonly ISolver _solver;
         private readonly DefinitionProvider _definitionProvider;
 
+        public static Explorer ForAssembly(String assemblyFilename, ISolver solver, Action<Config> setup = null, TextWriter loggerOutput = null)
+        {
+            AssemblyLoader assemblyLoader = new AssemblyLoader();
+
+            Byte[] data = File.ReadAllBytes(assemblyFilename);
+
+            _ = assemblyLoader.GetModuleDef(data);
+
+            System.Reflection.Assembly.LoadFrom(assemblyFilename);
+            DefinitionProvider definitionProvider = DefinitionProvider.Create(assemblyLoader);
+
+
+            Config config = new Config();
+            Logger logger = new Logger(Logger.Default); // | LogPriority.Trace);
+
+            logger.AddOutput(new TextLoggerOutput(loggerOutput ?? Console.Out));
+
+            return new Explorer(definitionProvider, config, logger, solver);
+        }
+
         public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
             _config = config;
@@ -38,6 +59,8 @@ namespace dnWalker.Concolic
         public event PathExploredHandler OnPathExplored;
 
         private int _iterationCount;
+        private List<ExplorationIterationData> _iterationData;
+
         public int IterationCount
         {
             get
@@ -60,10 +83,24 @@ namespace dnWalker.Concolic
             }
         }
 
+        public IReadOnlyList<ExplorationIterationData> IterationData
+        {
+            get { return _iterationData; }
+        }
+
+        public void Run(String methodName)
+        {
+            MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
+
+            // generate IArg[] array for default values
+            IArg[] arguments = new IArg[entryPoint.Parameters.Count];
+
+            Run(methodName, arguments);
+        }
+
         public void Run(string methodName, params IArg[] arguments)
         {
-            dnlib.DotNet.MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName)
-                ?? throw new NullReferenceException($"Method {methodName} not found");
+            MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
             WriteFlowGraph(entryPoint);
 
@@ -79,6 +116,8 @@ namespace dnWalker.Concolic
             _iterationCount = 0;
 
             IDictionary<String, Object> next = null;
+
+            _iterationData = new List<ExplorationIterationData>();
 
             while (true)
             {
@@ -103,6 +142,10 @@ namespace dnWalker.Concolic
 
                     DataElementList dataElementList = cur.StorageFactory.CreateList(arguments.Length);
 
+                    //ParameterStore parameterStore = new ParameterStore(cur);
+
+                    Boolean useArgs = next == null;
+                    if (useArgs) next = new Dictionary<String, Object>();
                     for (int i = 0; i < arguments.Length; i++)
                     {
                         //IDataElement arg = args[i];
@@ -113,15 +156,15 @@ namespace dnWalker.Concolic
                         String argName = entryPoint.Parameters[i].Name;
                         IDataElement arg = null;
 
-                        if (next != null && next.TryGetValue(argName, out Object value))
+                        if (!useArgs && next.TryGetValue(argName, out Object value))
                         {
                             // we have an explicit desired value from the solver
                             arg = _definitionProvider.CreateDataElement(value);
                         }
                         else
                         {
-                            // we do not have an explicit desired value from the solver => use the value provided by outside
-                            arg = arguments[i].AsDataElement(_definitionProvider);
+                            // we do not have an explicit desired value from the solver => use the value provided by outside                            
+                            arg = arguments[i] != null ? arguments[i].AsDataElement(_definitionProvider) : _definitionProvider.GetParameterNullOrDefaultValue(entryPoint.Parameters[i]);
                         }
 
                         // we use ArrayOf whenever we are working with an array of items
@@ -261,6 +304,44 @@ namespace dnWalker.Concolic
                     dnWalker.Traversal.Path path = PathStore.CurrentPath;
 
                     System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", dataElementList.Select(a => a.ToString()))}");
+
+                    Dictionary<String, ParameterInfo> usedArgs = new Dictionary<String, ParameterInfo>();
+                    for (Int32 i = 0; i < entryPoint.Parameters.Count; ++i)
+                    {
+                        String paramName = entryPoint.Parameters[i].Name;
+                        String typeName = entryPoint.Parameters[i].Type.FullName;
+                        TypeDef type = _definitionProvider.GetTypeDefinition(typeName);
+
+                        if (type.IsInterface)
+                        {
+                            usedArgs[paramName] = ParameterInfo.FromInterface(paramName, typeName, next);
+                        }
+                        else
+                        {
+                            switch (typeName)
+                            {
+                                case "System.Boolean": usedArgs[paramName] = ParameterInfo.FromValue(paramName, dataElementList[i].ToBool()); break;
+                                case "System.Char": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Char)((Int4)dataElementList[i]).Value); break;
+                                case "System.SByte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (SByte)((Int4)dataElementList[i]).Value); break;
+                                case "System.Byte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Byte)((Int4)dataElementList[i]).Value); break;
+                                case "System.Int16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int16)((Int4)dataElementList[i]).Value); break;
+                                case "System.UInt16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt16)((Int4)dataElementList[i]).Value); break;
+                                case "System.Int32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Int4)dataElementList[i]).Value); break;
+                                case "System.UInt32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt32)((Int4)dataElementList[i]).Value); break;
+                                case "System.Int64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int64)((Int4)dataElementList[i]).Value); break;
+                                case "System.UInt64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt64)((Int4)dataElementList[i]).Value); break;
+                                case "System.Single": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float4)dataElementList[i]).Value); break;
+                                case "System.Double": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float8)dataElementList[i]).Value); break;
+                                case "System.String": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((ConstantString)dataElementList[i]).Value); break;
+
+                                default:
+                                    throw new Exception("Unexpected TYPE");
+                            }
+                        }
+                    }
+                    ExplorationIterationData iterationData = new ExplorationIterationData(path.PathConstraintString, usedArgs);
+
+                    _iterationData.Add(iterationData);
 
                     next = PathStore.GetNextInputValues(_solver, parameters);
 

@@ -24,6 +24,24 @@ namespace dnWalker.Symbolic
         }
     }
 
+    public class DefaultValueArg : IArg
+    {
+        public String TypeName { get; set; }
+
+        public IDataElement AsDataElement(DefinitionProvider definitionProvider)
+        {
+            return DefinitionProvider.GetNullValue(definitionProvider.GetTypeDefinition(TypeName));
+        }
+    }
+    public class DefaultValueArg<T> : IArg
+    {
+
+        public IDataElement AsDataElement(DefinitionProvider definitionProvider)
+        {
+            return DefinitionProvider.GetNullValue(definitionProvider.GetTypeDefinition(typeof(T).FullName));
+        }
+    }
+
     public class InterfaceArg : IArg
     {
         private readonly String _name;
