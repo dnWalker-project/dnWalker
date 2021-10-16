@@ -37,13 +37,13 @@ namespace dnWalker.Tests.ExampleTests
         protected void Explore(
             string methodName,
             Action<IConfig> before,
-            Action<dnWalker.Concolic.Explorer> finished,
+            Action<dnWalker.Concolic.Explorer2> finished,
             params IArg[] args)
         {
             before?.Invoke(_config);
 
-            var explorer = new dnWalker.Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
-            explorer.Run(methodName, args);
+            var explorer = new dnWalker.Concolic.Explorer2(_definitionProvider, _config, _logger, new Z3.Solver());
+            explorer.Run(methodName);//, args);
 
             finished(explorer);
         }

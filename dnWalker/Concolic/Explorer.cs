@@ -305,43 +305,43 @@ namespace dnWalker.Concolic
 
                     System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", dataElementList.Select(a => a.ToString()))}");
 
-                    Dictionary<String, ParameterInfo> usedArgs = new Dictionary<String, ParameterInfo>();
-                    for (Int32 i = 0; i < entryPoint.Parameters.Count; ++i)
-                    {
-                        String paramName = entryPoint.Parameters[i].Name;
-                        String typeName = entryPoint.Parameters[i].Type.FullName;
-                        TypeDef type = _definitionProvider.GetTypeDefinition(typeName);
+                    //Dictionary<String, ParameterInfo> usedArgs = new Dictionary<String, ParameterInfo>();
+                    //for (Int32 i = 0; i < entryPoint.Parameters.Count; ++i)
+                    //{
+                    //    String paramName = entryPoint.Parameters[i].Name;
+                    //    String typeName = entryPoint.Parameters[i].Type.FullName;
+                    //    TypeDef type = _definitionProvider.GetTypeDefinition(typeName);
 
-                        if (type.IsInterface)
-                        {
-                            usedArgs[paramName] = ParameterInfo.FromInterface(paramName, typeName, next);
-                        }
-                        else
-                        {
-                            switch (typeName)
-                            {
-                                case "System.Boolean": usedArgs[paramName] = ParameterInfo.FromValue(paramName, dataElementList[i].ToBool()); break;
-                                case "System.Char": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Char)((Int4)dataElementList[i]).Value); break;
-                                case "System.SByte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (SByte)((Int4)dataElementList[i]).Value); break;
-                                case "System.Byte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Byte)((Int4)dataElementList[i]).Value); break;
-                                case "System.Int16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int16)((Int4)dataElementList[i]).Value); break;
-                                case "System.UInt16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt16)((Int4)dataElementList[i]).Value); break;
-                                case "System.Int32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Int4)dataElementList[i]).Value); break;
-                                case "System.UInt32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt32)((Int4)dataElementList[i]).Value); break;
-                                case "System.Int64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int64)((Int4)dataElementList[i]).Value); break;
-                                case "System.UInt64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt64)((Int4)dataElementList[i]).Value); break;
-                                case "System.Single": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float4)dataElementList[i]).Value); break;
-                                case "System.Double": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float8)dataElementList[i]).Value); break;
-                                case "System.String": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((ConstantString)dataElementList[i]).Value); break;
+                    //    if (type.IsInterface)
+                    //    {
+                    //        usedArgs[paramName] = ParameterInfo.FromInterface(paramName, typeName, next);
+                    //    }
+                    //    else
+                    //    {
+                    //        switch (typeName)
+                    //        {
+                    //            case "System.Boolean": usedArgs[paramName] = ParameterInfo.FromValue(paramName, dataElementList[i].ToBool()); break;
+                    //            case "System.Char": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Char)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.SByte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (SByte)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Byte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Byte)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Int16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int16)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.UInt16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt16)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Int32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Int4)dataElementList[i]).Value); break;
+                    //            case "System.UInt32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt32)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Int64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int64)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.UInt64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt64)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Single": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float4)dataElementList[i]).Value); break;
+                    //            case "System.Double": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float8)dataElementList[i]).Value); break;
+                    //            case "System.String": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((ConstantString)dataElementList[i]).Value); break;
 
-                                default:
-                                    throw new Exception("Unexpected TYPE");
-                            }
-                        }
-                    }
-                    ExplorationIterationData iterationData = new ExplorationIterationData(path.PathConstraintString, usedArgs);
+                    //            default:
+                    //                throw new Exception("Unexpected TYPE");
+                    //        }
+                    //    }
+                    //}
+                    //ExplorationIterationData iterationData = new ExplorationIterationData(path.PathConstraintString, usedArgs);
 
-                    _iterationData.Add(iterationData);
+                    //_iterationData.Add(iterationData);
 
                     next = PathStore.GetNextInputValues(_solver, parameters);
 
