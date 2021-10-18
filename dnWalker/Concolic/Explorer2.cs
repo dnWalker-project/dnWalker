@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -84,7 +85,7 @@ namespace dnWalker.Concolic
             get { return _currentIteration; }
         }
 
-        public void Run(String methodName)
+        public void Run(String methodName, IDictionary<String, Object> data = null)
         {
             _currentIteration = 0;
             Int32 maxIterations = _config.MaxIterations;
@@ -111,7 +112,10 @@ namespace dnWalker.Concolic
             IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
                 
             ParameterStore parameterStore = new ParameterStore();
-            IDictionary<String, Object> solverOutput = new Dictionary<String, Object>();
+            if (data == null)
+            {
+                data = new Dictionary<String, Object>();
+            }
 
             // run iteration
             while (true)
@@ -126,8 +130,17 @@ namespace dnWalker.Concolic
                     ExplicitActiveState cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
                     cur.PathStore = _pathStore;
 
-                    // generate method arguments using values from the solver for current path
-                    DataElementList arguments = parameterStore.GetArguments(cur, entryPoint.Parameters, solverOutput);
+                    // 1. clear parameterStore
+                    parameterStore.Clear();
+
+                    // 2. setup default values for the arguments
+                    parameterStore.InitializeDefaultMethodParameters(cur, entryPoint);
+
+                    // 3. set traits using the 'data' dictionary - either passed as argument or as solver output
+                    parameterStore.SetTraits(cur, data);
+
+                    // 4. construct the arguments DataElementList
+                    DataElementList arguments = parameterStore.GetMethodParmaters(cur, entryPoint);
 
                     MethodState mainState = new MethodState(entryPoint, arguments, cur);
 
@@ -141,18 +154,25 @@ namespace dnWalker.Concolic
                     SimpleStatistics statistics = new SimpleStatistics();
 
                     MMC.Explorer explorer = new MMC.Explorer(cur, statistics, _logger, _config, PathStore);
+
+                    _logger.Log(LogPriority.Message, "Starting exploration, parameters: {0}", parameterStore.ToString());
+                    
                     explorer.InstructionExecuted += _pathStore.OnInstructionExecuted;
 
-                    List<System.Linq.Expressions.ParameterExpression> exprs = parameterStore.GetLeafsAsParameterExpression();
                     explorer.Run();
 
+                    explorer.InstructionExecuted -= _pathStore.OnInstructionExecuted;
+
                     dnWalker.Traversal.Path path = _pathStore.CurrentPath;
-
-                    solverOutput = PathStore.GetNextInputValues(_solver, exprs);
-
                     OnPathExplored?.Invoke(path);
 
-                    if (solverOutput == null)
+                    _logger.Log(LogPriority.Message, "Explored path: {0}", path.PathConstraintString);
+
+
+                    List<ParameterExpression> exprs = parameterStore.GetParametersAsExpressions();
+                    data = PathStore.GetNextInputValues(_solver, exprs);
+
+                    if (data == null)
                     {
                         break;
                     }

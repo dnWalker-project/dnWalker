@@ -6,6 +6,7 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,13 +24,40 @@ namespace dnWalker.Concolic.Parameters
             cur.PathStore.CurrentPath.SetObjectAttribute<Parameter>(dataElement, "parameter", parameter);
 
             // TODO: redo it somehow...
-            System.Linq.Expressions.ParameterExpression pExpr = parameter.GetParameterExpressions().First();
-            dataElement.SetExpression(pExpr, cur);
+            ParameterExpression pExpr = parameter.GetExpression();
+
+            if (pExpr != null)
+            {
+                dataElement.SetExpression(pExpr, cur);
+            }
+
         }
 
-        public static Boolean IsInterfaceProxy(this ObjectReference objectReference, ExplicitActiveState cur)
+        public static Boolean IsInterfaceParameter(this ObjectReference objectReference, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
         {
-            return TryGetParameter(objectReference, cur, out Parameter p) && p is InterfaceParameter;
+            if (TryGetParameter(objectReference, cur, out Parameter p) && p is InterfaceParameter ip)
+            {
+                interfaceParameter = ip;
+                return true;
+            }
+            else
+            {
+                interfaceParameter = null;
+                return false;
+            }
+        }
+        public static Boolean IsObjectParameter(this ObjectReference objectReference, ExplicitActiveState cur, out ObjectParameter objectParameter)
+        {
+            if (TryGetParameter(objectReference, cur, out Parameter p) && p is ObjectParameter op)
+            {
+                objectParameter = op;
+                return true;
+            }
+            else
+            {
+                objectParameter = null;
+                return false;
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace dnWalker.Concolic.Parameters
         protected PrimitiveValueParameter(String typeName, IEnumerable<ParameterTrait> traits) : base(typeName, traits)
         {
         }
+
     }
 
     public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
@@ -71,42 +73,27 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public override void SetTraits(IDictionary<String, Object> data, ParameterStore parameterStore)
+        protected override Type GetFrameworkType()
         {
-            if (this.TryGetName(out String name) &&             // we really are a named parameter => we can look for stuff in data dictionary
-                data.TryGetValue(name, out Object value))       // we are a primitive type, so we expected no speciality (array indexing, field access, method invoking...), key will be just our name
-            {
-                //? use something like: (too complicated to handle stuff like solver is using Int32 but the parameter is actually Int16?)
-                // if (value is TValue correctValue) ...
-
-                Value = (TValue)value;
-            }
+            return typeof(TValue);
         }
 
-        public override IEnumerable<Expressions.ParameterExpression> GetParameterExpressions()
+        public override String ToString()
         {
-            if (this.TryGetName(out String name))
+            if (TryGetTrait<ValueTrait>(out ValueTrait valueTrait))
             {
-                yield return Expressions.Expression.Parameter(typeof(TValue), name);
+                return $"Parameter: {Name}, Type: {TypeName}, Value: {valueTrait.Value}";
             }
-
-            yield break;
+            else
+            {
+                return $"Parameter: {Name}, Type: {TypeName}, Value: DEFAULT";
+            }
+            
         }
     }
 
     public class BooleanParameter : PrimitiveValueParameter<Boolean>
     {
-        public static BooleanParameter True 
-        {
-            // each parameter should have its own instance
-            get { return new BooleanParameter(true); }
-        }
-        public static BooleanParameter False
-        {
-            // each parameter should have its own instance
-            get { return new BooleanParameter(false); }
-        }
-
         public BooleanParameter() : base(TypeNames.BooleanTypeName)
         {
         }
@@ -115,7 +102,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int4((Value.HasValue && Value.Value) ? 1 : 0 );
             element.SetParameter(this, cur);
@@ -133,7 +120,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -151,7 +138,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -169,7 +156,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -187,7 +174,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -205,7 +192,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -223,7 +210,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Int8(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -241,7 +228,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new UnsignedInt4(Value.HasValue ? Value.Value : 0U);
             element.SetParameter(this, cur);
@@ -259,7 +246,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new UnsignedInt4(Value.HasValue ? Value.Value : 0U);
             element.SetParameter(this, cur);
@@ -277,7 +264,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new UnsignedInt8(Value.HasValue ? Value.Value : 0);
             element.SetParameter(this, cur);
@@ -295,7 +282,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Float4(Value.HasValue ? Value.Value : 0.0f);
             element.SetParameter(this, cur);
@@ -313,7 +300,7 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             IDataElement element = new Float8(Value.HasValue ? Value.Value : 0.0d);
             element.SetParameter(this, cur);

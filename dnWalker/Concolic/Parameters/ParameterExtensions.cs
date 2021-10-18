@@ -6,58 +6,57 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace dnWalker.Concolic.Parameters
 {
-    public static class ParameterExtensions
+    public static partial class ParameterExtensions
     {
-        public static Boolean TryGetName(this Parameter parameter, out String name)
+        public static List<ParameterExpression> GetParametersAsExpressions(this ParameterStore parameterStore)
         {
-            if (parameter.TryGetTrait<NamedParameterTrait>(out NamedParameterTrait trait))
-            {
-                name = trait.Name;
-                return true;
-            }
-            name = String.Empty;
-            return false;
+            return parameterStore.Parameters.Values
+                .Select(p => p.GetExpression())
+                .Where(e => e != null)
+                .ToList();
         }
 
-        public static DataElementList GetArguments(this ParameterStore store, ExplicitActiveState cur, ParameterList methodParameters, IDictionary<String, Object> solvedValues)
+
+        public static ParameterStore InitializeDefaultMethodParameters(this ParameterStore store, ExplicitActiveState cur, MethodDef method)
         {
-            store.Parameters.Clear();
-
-            Parameter[] parameters = new Parameter[methodParameters.Count()];
-            DataElementList arguments = cur.StorageFactory.CreateList(methodParameters.Count());
-
-            // 1. add named parameters for each parameter in the method && set its traits
-            for(Int32 i = 0; i < methodParameters.Count; ++i)
+            for (Int32 i = 0; i < method.Parameters.Count(); ++i)
             {
-                ref Parameter p = ref parameters[i];
+                dnlib.DotNet.Parameter methodParameter = method.Parameters[i];
 
-                p = store.AddNamedParameter(methodParameters[i].Name, methodParameters[i].Type.ToTypeDefOrRef());
-                p.SetTraits(solvedValues, store);
-
+                Parameter parameter = ParameterFactory.CreateParameter(methodParameter.Name, methodParameter.Type.ToTypeDefOrRef());
+                store.AddParameter(parameter);
             }
 
-            // 2. create && setup the DataElementList
-            for (Int32 i = 0; i < methodParameters.Count; ++i)
+            return store;
+        }
+
+        public static DataElementList GetMethodParmaters(this ParameterStore store, ExplicitActiveState cur, MethodDef method)
+        {
+            Int32 count = method.Parameters.Count;
+
+            DataElementList arguments = cur.StorageFactory.CreateList(count);
+
+            for (Int32 i = 0; i < count; ++i)
             {
-                arguments[i] = parameters[i].AsDataElement(cur);
+                arguments[i] = store.Parameters[method.Parameters[i].Name].CreateDataElement(cur);
             }
+
             return arguments;
         }
 
 
-        public static List<System.Linq.Expressions.ParameterExpression> GetLeafsAsParameterExpression(this ParameterStore store)
+        private static TypeDef GetType(String typeName, ExplicitActiveState cur)
         {
-            List<System.Linq.Expressions.ParameterExpression> expressions = new List<System.Linq.Expressions.ParameterExpression>();
-
-            foreach (Parameter p in store.Parameters)
-            {
-                expressions.AddRange(p.GetParameterExpressions());
-            }
-
-            return expressions;
+            return cur.DefinitionProvider.GetTypeDefinition(typeName);
         }
+        private static TypeDef GetType(Parameter parameter, ExplicitActiveState cur)
+        {
+            return GetType(parameter.TypeName, cur);
+        }
+
     }
 }

@@ -11,18 +11,18 @@ namespace dnWalker.Concolic.Parameters
 
     }
 
-    public class NamedParameterTrait : ParameterTrait
-    {
-        public NamedParameterTrait()
-        { }
+    //public class NamedParameterTrait : ParameterTrait
+    //{
+    //    public NamedParameterTrait()
+    //    { }
 
-        public NamedParameterTrait(String name)
-        {
-            Name = name ?? String.Empty;
-        }
+    //    public NamedParameterTrait(String name)
+    //    {
+    //        Name = name ?? String.Empty;
+    //    }
 
-        public String Name { get; set; }
-    }
+    //    public String Name { get; set; }
+    //}
 
     public class ValueTrait : ParameterTrait
     {
@@ -76,17 +76,10 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public FieldValueTrait(String typeName, String fieldName, Parameter value)
+        public FieldValueTrait(String fieldName, Parameter value)
         {
-            TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName));
             FieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
             Value = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
-        public String TypeName
-        {
-            get;
-            set;
         }
 
         public String FieldName 
@@ -102,14 +95,65 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class IsNullTrait : ValueTrait<Boolean>
+    public class IndexValueTrait : ParameterTrait
+    {
+        public IndexValueTrait()
+        {
+        }
+
+        public IndexValueTrait(Int32 index, Parameter value)
+        {
+            Index = index;
+            Value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        public Int32 Index
+        {
+            get;
+            set;
+        }
+
+        public Parameter Value
+        {
+            get;
+            set;
+        }
+    }
+    
+    public class LengthTrait : ParameterTrait
+    {
+        public LengthTrait()
+        {
+
+        }
+
+        public LengthTrait(Int32 length)
+        {
+            Value.Value = length;
+        }
+
+        public Int32Parameter Value
+        {
+            get;
+            set;
+        }
+    }
+
+    public class IsNullTrait : ParameterTrait
     {
         public IsNullTrait()
         {
         }
 
-        public IsNullTrait(Boolean value) : base(value)
+        public IsNullTrait(Boolean isNull)
         {
+            Value.Value = isNull;
+        }
+
+        public BooleanParameter Value
+        {
+            get;
+            set;
         }
     }
 
@@ -119,17 +163,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public MethodResultTrait(String typeName, String methodName, Parameter value)
+        public MethodResultTrait(String methodName, Int32 callIndex, Parameter value)
         {
-            TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName));
             MethodName = methodName ?? throw new ArgumentNullException(nameof(methodName));
+            CallIndex = callIndex;
             Value = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
-        public String TypeName
-        {
-            get;
-            set;
         }
 
         public String MethodName
@@ -139,6 +177,12 @@ namespace dnWalker.Concolic.Parameters
         }
 
         public Parameter Value
+        {
+            get;
+            set;
+        }
+
+        public Int32 CallIndex
         {
             get;
             set;

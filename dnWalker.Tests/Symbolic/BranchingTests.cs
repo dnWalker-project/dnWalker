@@ -14,7 +14,7 @@ using Xunit;
 
 namespace dnWalker.Tests.Symbolic
 {
-    public class BranchingTests : SymbolicExamplesTestBase
+    public class BranchingTests : SymbolicExamplesTestBase2
     {
         public BranchingTests(Xunit.Abstractions.ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {

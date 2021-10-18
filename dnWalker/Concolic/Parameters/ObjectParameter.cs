@@ -29,6 +29,7 @@ namespace dnWalker.Concolic.Parameters
             Type = type;
         }
 
+        // from Instruction.cs
         private static Int32 GetFieldOffset(TypeDef type, String fieldName)
         {
             FieldDef fld = type.FindField(fieldName);
@@ -76,7 +77,29 @@ namespace dnWalker.Concolic.Parameters
             return retval;
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public Parameter GetField(String fieldName)
+        {
+            if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
+            {
+                return field.Value;
+            }
+            return null;
+        }
+
+        public void SetField(String fieldName, Parameter parameter)
+        {
+            if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
+            {
+                field.Value = parameter;
+            }
+            else
+            {
+                field = new FieldValueTrait(fieldName, parameter);
+            }
+            parameter.Name = ParameterName.ConstructField(Name, fieldName);
+        }
+
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             DynamicArea dynamicArea = cur.DynamicArea;
 
@@ -102,26 +125,12 @@ namespace dnWalker.Concolic.Parameters
 
                 Int32 fieldOffset = GetFieldOffset(type, fieldName);
 
-                IDataElement fieldDataElement = parameter.AsDataElement(cur);
+                IDataElement fieldDataElement = parameter.CreateDataElement(cur);
                 allocatedObject.Fields[fieldOffset] = fieldDataElement;
             }
 
             objectReference.SetParameter(this, cur);
             return objectReference;
-        }
-
-        public override void SetTraits(IDictionary<String, Object> data, ParameterStore parameterStore)
-        {
-            if (this.TryGetName(out String name))
-            {
-                // set everything we can from the "data"
-                foreach (KeyValuePair<String, Object> pair in data.Where(p => p.Key.StartsWith(name + "->")))
-                {
-
-                }
-
-                // 
-            }
         }
 
     }

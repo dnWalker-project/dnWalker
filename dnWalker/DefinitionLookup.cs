@@ -71,8 +71,6 @@ namespace MMC
     }
 
 
-    // TODO: create IDefinitionProvider interface & setup to use a special implementation
-
     /// <summary>
     /// This is a straightforward implementation of IDefinitionProvider.
     /// </summary>

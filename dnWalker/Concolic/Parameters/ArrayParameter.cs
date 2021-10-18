@@ -14,7 +14,7 @@ namespace dnWalker.Concolic.Parameters
 
     public class ArrayParameter : NullableParameter
     {
-        private const String LengthFieldName = "__LENGTH__";
+        public const String LengthParameterName = "#__LENGTH__";
 
         public ITypeDefOrRef ElementType
         {
@@ -23,9 +23,7 @@ namespace dnWalker.Concolic.Parameters
 
         public Parameter GetItemAt(Int32 index)
         {
-            String fieldName = index.ToString();
-
-            if (TryGetTrait<FieldValueTrait>(f => f.FieldName == fieldName, out FieldValueTrait field))
+            if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait field))
             {
                 return field.Value;
             }
@@ -34,15 +32,13 @@ namespace dnWalker.Concolic.Parameters
 
         public void SetItemAt(Int32 index, Parameter parameter)
         {
-            String fieldName = index.ToString();
-
-            if (TryGetTrait<FieldValueTrait>(f => f.FieldName == fieldName, out FieldValueTrait field))
+            if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait indexField))
             {
-                field.Value = parameter;
+                indexField.Value = parameter;
             }
             else
             {
-                AddTrait<FieldValueTrait>(new FieldValueTrait(ElementType.FullName, fieldName, parameter));
+                AddTrait<IndexValueTrait>(new IndexValueTrait(index, parameter));
             }
         }
 
@@ -50,42 +46,11 @@ namespace dnWalker.Concolic.Parameters
         {
             get
             {
-                if (TryGetTrait<FieldValueTrait>(t => t.FieldName == LengthFieldName, out FieldValueTrait lengthField) &&
-                    lengthField.Value.TryGetTrait<ValueTrait>(out ValueTrait lenghtValue))
+                if (TryGetTrait<LengthTrait>(out LengthTrait lengthField))
                 {
-                    if (lenghtValue.Value is Int32 length)
-                    {
-                        return length;
-                    }
-                    else
-                    {
-                        // throw some error?
-                    }
+                    return lengthField.Value.Value;
                 }
                 return null;
-            }
-            set
-            {
-                if (!value.HasValue)
-                {
-                    // remove current trait, if such exists
-                    if (TryGetTrait<FieldValueTrait>(t => t.FieldName == LengthFieldName, out FieldValueTrait lengthField))
-                    {
-                        Traits.Remove(lengthField);
-                    }
-                }
-                else
-                {
-                    // update or add a new trait
-                    if (TryGetTrait<FieldValueTrait>(t => t.FieldName == LengthFieldName, out FieldValueTrait lengthField))
-                    {
-                        lengthField.Value = new Int32Parameter(value.Value);
-                    }
-                    else
-                    {
-                        AddTrait(new FieldValueTrait(TypeNames.Int32TypeName, LengthFieldName, new Int32Parameter(value.Value)));
-                    }
-                }
             }
         }
 
@@ -100,7 +65,7 @@ namespace dnWalker.Concolic.Parameters
         }
 
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
 
             DynamicArea dynamicArea = cur.DynamicArea;
@@ -123,14 +88,14 @@ namespace dnWalker.Concolic.Parameters
 
             if (length > 0)
             {
-                foreach (FieldValueTrait field in Traits.OfType<FieldValueTrait>().Where(t => t.FieldName != LengthFieldName))
+                foreach (FieldValueTrait field in Traits.OfType<FieldValueTrait>().Where(t => t.FieldName != LengthParameterName))
                 {
                     String fieldName = field.FieldName;
                     Parameter parameter = field.Value;
 
                     if (Int32.TryParse(fieldName, out Int32 index) && index < length)
                     {
-                        IDataElement itemDataElement = parameter.AsDataElement(cur);
+                        IDataElement itemDataElement = parameter.CreateDataElement(cur);
                         allocatedArray.Fields[index] = itemDataElement;
                     }
                 }

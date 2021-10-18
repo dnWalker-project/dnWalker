@@ -11,9 +11,6 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic.Parameters
 {
-    //using MethodResultProvider = Func<ExplicitActiveState, IDataElement>;
-    //using MethodResolver =  Dictionary<String, Func<ExplicitActiveState, IDataElement>>;
-
     public class InterfaceParameter : NullableParameter
     {
         public ITypeDefOrRef Type
@@ -31,7 +28,29 @@ namespace dnWalker.Concolic.Parameters
             Type = type;
         }
 
-        public override IDataElement AsDataElement(ExplicitActiveState cur)
+        public Parameter GetMethod(String methodName, Int32 callIndex)
+        {
+            if (TryGetTrait<MethodResultTrait>(t => t.MethodName == methodName && t.CallIndex == callIndex, out MethodResultTrait method))
+            {
+                return method.Value;
+            }
+            return null;
+        }
+
+        public void SetMethod(String methodName, Int32 callIndex, Parameter parameter)
+        {
+            if (TryGetTrait<MethodResultTrait>(t => t.MethodName == methodName && t.CallIndex == callIndex, out MethodResultTrait method))
+            {
+                method.Value = parameter;
+            }
+            else
+            {
+                method = new MethodResultTrait(methodName, callIndex, parameter);
+            }
+            parameter.Name = ParameterName.ConstructField(Name, methodName);
+        }
+
+        public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             DynamicArea dynamicArea = cur.DynamicArea;
 
@@ -48,6 +67,7 @@ namespace dnWalker.Concolic.Parameters
             AllocatedObject allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
             allocatedInterface.ClearFields(cur);
 
+            // TODO: somehow create structure for resolving the method and using the callindex
 
             //MethodResolver resolver = new MethodResolver();
             //foreach(MethodResultTrait methodResult in Traits.OfType<MethodResultTrait>())
