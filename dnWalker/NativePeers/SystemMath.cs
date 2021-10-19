@@ -40,7 +40,7 @@ namespace dnWalker.NativePeers
                 var arg = (Float8)args[0];
                 var value = arg.Value;
                 var dataElement = new Float8(Math.Sqrt(value));
-
+                // TODO sqrt should also result in an artificial path condition segment - value >= 0 or value < 0
                 var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arg, "expression", out var expression);
                 if (symb)
                 {
