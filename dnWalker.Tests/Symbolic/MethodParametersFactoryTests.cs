@@ -19,7 +19,10 @@ namespace dnWalker.Tests.Symbolic
         public void ArgsTest()
         {
             Explore("Examples.Concolic.Simple.Branches.Branch",
-                null,
+                (cgf) =>
+                {
+                    cgf.MaxIterations = 100;
+                },
                 (explorer) =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();

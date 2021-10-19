@@ -35,6 +35,15 @@ namespace dnWalker.Concolic
 
         public event PathExploredHandler OnPathExplored;
 
+        private int _iterationCount;
+        public int IterationCount
+        {
+            get
+            {
+                return _iterationCount;
+            }
+        }
+
         public Traversal.PathStore PathStore { get; private set; }
 
         public void Run(string methodName, params IArg[] arguments)
@@ -58,12 +67,24 @@ namespace dnWalker.Concolic
 
             var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
+            // setup iteration management
+            int maxIterations = _config.MaxIterations;
+            _iterationCount = 0;
+
             while (true)
             {
                 SystemConsole.OutTextWriterRef = ObjectReference.Null;
 
                 try
                 {
+                    // check iteration
+                    if (maxIterations > 0 && _iterationCount >= maxIterations)
+                    {
+                        throw new MaxIterationsExceededException(maxIterations);
+                    }
+
+                    ++_iterationCount;
+
                     var parameters = new List<ParameterExpression>();
                     // initial state
                     // -------------
