@@ -140,7 +140,6 @@
     <Compile Include="Concolic\Explorer.cs" />
     <Compile Include="Concolic\ExplorationException.cs" />
     <Compile Include="Concolic\ExpressionExtensions.cs" />
-    <Compile Include="Concolic\Parameters\dnLibExtensions.cs" />
     <Compile Include="Concolic\Parameters\InterfaceParameter.cs" />
     <Compile Include="Concolic\Parameters\NullableParameter.cs" />
     <Compile Include="Concolic\Parameters\NumericParameters.cs" />
