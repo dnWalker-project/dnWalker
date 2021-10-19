@@ -16,7 +16,7 @@ namespace dnWalker.Concolic.Parameters
     {
         public const String LengthParameterName = "#__LENGTH__";
 
-        public ITypeDefOrRef ElementType
+        public TypeSig ElementType
         {
             get;
         }
@@ -54,12 +54,12 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public ArrayParameter(ITypeDefOrRef elementType) : base(elementType.FullName + "[]")
+        public ArrayParameter(TypeSig elementType) : base(elementType.FullName + "[]")
         {
             ElementType = elementType;
         }
 
-        public ArrayParameter(ITypeDefOrRef elementType, IEnumerable<ParameterTrait> traits) : base(elementType.FullName + "[]", traits)
+        public ArrayParameter(TypeSig elementType, IEnumerable<ParameterTrait> traits) : base(elementType.FullName + "[]", traits)
         {
             ElementType = elementType;
         }
@@ -81,7 +81,7 @@ namespace dnWalker.Concolic.Parameters
             Int32 length = Length ?? 0;
 
             Int32 location = dynamicArea.DeterminePlacement(false);
-            ObjectReference objectReference = dynamicArea.AllocateArray(location, ElementType, length);
+            ObjectReference objectReference = dynamicArea.AllocateArray(location, ElementType.ToTypeDefOrRef(), length);
 
             AllocatedArray allocatedArray = (AllocatedArray)dynamicArea.Allocations[objectReference];
             allocatedArray.ClearFields(cur);

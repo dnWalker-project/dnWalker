@@ -10,62 +10,97 @@ namespace dnWalker.Concolic.Parameters
 {
     public static class ParameterFactory
     {
-        public static Parameter CreateParameter(String name, ITypeDefOrRef parameterType)
+        public static Parameter CreateParameter(String name, TypeSig parameterType)
         {
             Parameter p = CreateParameter(parameterType);
             p.Name = name;
             return p;
         }
 
-        private static Parameter CreateParameter(ITypeDefOrRef parameterType)
+        private static Parameter CreateParameter(TypeSig parameterType)
         {
-            if (parameterType.IsPrimitive) return CreatePrimitiveValueParameter(parameterType);
-
-
-            if (parameterType.IsTypeDef)
+            // primitive, basic values 
+            if (parameterType.IsCorLibType && parameterType.IsPrimitive)
             {
-                TypeDef td = parameterType.ResolveTypeDefThrow();
+                return CreatePrimitiveValueParameter(parameterType);
+            }
+            // TODO we are working with value types - TODO
+            else if (parameterType.IsValueType)
+            {
+                ITypeDefOrRef td = parameterType.TryGetTypeDefOrRef();// .ResolveTypeDefThrow();
 
-                if (td.IsClass)
+                throw new NotSupportedException("Not yet supported custom value types...");
+            }
+            // Array of reference types
+            else if (parameterType.IsArray)
+            {
+                ArraySig arraySig = parameterType.ToArraySig();
+                return CreateArrayParamter(arraySig);
+            }
+            // SZArray of reference types
+            else if (parameterType.IsSZArray)
+            {
+                SZArraySig arraySig = parameterType.ToSZArraySig();
+                return CreateArrayParamter(arraySig);
+            }
+            // Array of value types
+            else if (parameterType.IsValueArray)
+            {
+                // https://github.com/0xd4d/dnlib/blob/8b143447a4dac36dfa02249f8a32136d19d049a4/src/DotNet/TypeSig.cs#L33  undocumented an should not be used...
+                throw new NotSupportedException("ValueArrays are not supported.");
+            }
+            // Class or Interface
+            else if (parameterType.IsClassSig)
+            {
+                ClassSig classSig = parameterType.ToClassSig();
+                TypeDef typeDef = classSig.TryGetTypeDefOrRef().ResolveTypeDefThrow();
+
+                if (typeDef.IsAbstract && typeDef.IsClass)
                 {
-                    return CreateObjectParameter(td);
+                    // TODO: return CreateAbstractObjectParamter(classSig);
+
+                    throw new NotSupportedException("Not yet supported abstract classes...");
                 }
-                else if (td.IsInterface)
+                else if (typeDef.IsClass)
                 {
-                    return CreateInterfaceParameter(td);
+                    return CreateObjectParameter(classSig);
                 }
-                // TODO: how to resolve it??
-                // else if (td.IsArray)
-                // {
-                // }
-                else if (td.IsValueType)
+                else if (typeDef.IsInterface)
                 {
-                    throw new NotSupportedException("Not yet supported custom value types...");
+                    return CreateInterfaceParameter(classSig);
                 }
                 else
                 {
-                    throw new Exception("Unexpected type, supports classes and interfaces");
+                    throw new Exception("Unexpected type");
                 }
             }
+
 
             throw new Exception("Could not resolve provided parameter type: " + parameterType.FullName);
         }
 
-        private static InterfaceParameter CreateInterfaceParameter(ITypeDefOrRef typeDefOrRef)
+        private static InterfaceParameter CreateInterfaceParameter(ClassSig type)
         {
-            return new InterfaceParameter(typeDefOrRef);
+            return new InterfaceParameter(type);
         }
 
-        private static ObjectParameter CreateObjectParameter(ITypeDefOrRef typeDefOrRef)
+        private static ObjectParameter CreateObjectParameter(ClassSig type)
         {
-            return new ObjectParameter(typeDefOrRef);
+            return new ObjectParameter(type);
         }
 
-        private static PrimitiveValueParameter CreatePrimitiveValueParameter(ITypeDefOrRef typeDefOrRef)
+        private static ArrayParameter CreateArrayParamter(ArraySigBase arrayType)
         {
-            if (typeDefOrRef.IsPrimitive)
+            TypeSig elementType = arrayType.Next;
+
+            return new ArrayParameter(elementType);
+        }
+
+        private static PrimitiveValueParameter CreatePrimitiveValueParameter(TypeSig type)
+        {
+            if (type.IsPrimitive)
             {
-                switch (typeDefOrRef.FullName)
+                switch (type.FullName)
                 {
                     //case TypeNames.StringTypeName: return new Int32Parameter();
                     //case TypeNames.ObjectTypeName: return new Int32Parameter();

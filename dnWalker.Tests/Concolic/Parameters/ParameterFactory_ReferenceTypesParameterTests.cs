@@ -38,17 +38,18 @@ namespace dnWalker.Tests.Concolic.Parameters
 
     public class ParameterFactory_ArrayParameterTests : dnlibTypeTestBase
     {
-        [Fact(Skip = "Dont know how to properly get array type and how to process it...")]
+        //[Fact(Skip = "Dont know how to properly get array type and how to process it...")]
+        [Fact]
         public void Test_ParameterFor_Array_Of_Interfaces_Is_ArrayParameter()
         {
-            ITypeDefOrRef type = GetType(typeof(IMyInterface[]));
+            TypeSig type = GetType(typeof(IMyInterface[]));
 
             Parameter p = ParameterFactory.CreateParameter("myArray", type);
 
             Assert.IsType<ArrayParameter>(p);
         }
 
-        [Fact(Skip = "Dont know how to properly get array type and how to process it...")]
+        [Fact]
         public void Test_ParameterFor_Array_Of_Objects_Is_ArrayParameter()
         {
             Parameter p = ParameterFactory.CreateParameter("myArray", GetType(typeof(MyClass[])));
@@ -56,7 +57,7 @@ namespace dnWalker.Tests.Concolic.Parameters
             Assert.IsType<ArrayParameter>(p);
         }
 
-        [Fact(Skip = "Dont know how to properly get array type and how to process it...")]
+        [Fact]
         public void Test_ParameterFor_Array_Of_Numbers_Is_ArrayParameter()
         {
             Parameter p = ParameterFactory.CreateParameter("myArray", GetType(typeof(Double[])));

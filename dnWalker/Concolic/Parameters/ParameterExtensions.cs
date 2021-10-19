@@ -27,7 +27,7 @@ namespace dnWalker.Concolic.Parameters
             {
                 dnlib.DotNet.Parameter methodParameter = method.Parameters[i];
 
-                Parameter parameter = ParameterFactory.CreateParameter(methodParameter.Name, methodParameter.Type.ToTypeDefOrRef());
+                Parameter parameter = ParameterFactory.CreateParameter(methodParameter.Name, methodParameter.Type);
                 store.AddParameter(parameter);
             }
 

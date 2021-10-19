@@ -13,17 +13,17 @@ namespace dnWalker.Concolic.Parameters
 {
     public class InterfaceParameter : NullableParameter
     {
-        public ITypeDefOrRef Type
+        public TypeSig Type
         {
             get;
         }
 
-        public InterfaceParameter(ITypeDefOrRef type) : base(type.FullName)
+        public InterfaceParameter(TypeSig type) : base(type.FullName)
         {
             Type = type;
         }
 
-        public InterfaceParameter(ITypeDefOrRef type, IEnumerable<ParameterTrait> traits) : base(type.FullName, traits)
+        public InterfaceParameter(TypeSig type, IEnumerable<ParameterTrait> traits) : base(type.FullName, traits)
         {
             Type = type;
         }
@@ -62,8 +62,10 @@ namespace dnWalker.Concolic.Parameters
                 return nullReference;
             }
 
+            TypeDef typeDef = Type.ToTypeDefOrRef().ResolveTypeDefThrow();
+
             Int32 location = dynamicArea.DeterminePlacement(false);
-            ObjectReference interfaceReference = dynamicArea.AllocateObject(location, Type);
+            ObjectReference interfaceReference = dynamicArea.AllocateObject(location, typeDef);
             AllocatedObject allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
             allocatedInterface.ClearFields(cur);
 

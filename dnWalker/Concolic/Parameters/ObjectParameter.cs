@@ -15,16 +15,16 @@ namespace dnWalker.Concolic.Parameters
 {
     public class ObjectParameter : NullableParameter
     {
-        public ITypeDefOrRef Type 
+        public TypeSig Type 
         {
             get;
         }
-        public ObjectParameter(ITypeDefOrRef type) : base(type.FullName)
+        public ObjectParameter(TypeSig type) : base(type.FullName)
         {
             Type = type;
         }
 
-        public ObjectParameter(ITypeDefOrRef type, IEnumerable<ParameterTrait> traits) : base(type.FullName, traits)
+        public ObjectParameter(TypeSig type, IEnumerable<ParameterTrait> traits) : base(type.FullName, traits)
         {
             Type = type;
         }
@@ -111,12 +111,14 @@ namespace dnWalker.Concolic.Parameters
                 return nullReference;
             }
 
+            TypeDef typeDef = Type.ToTypeDefOrRef().ResolveTypeDefThrow();
+
             Int32 location = dynamicArea.DeterminePlacement(false);
-            ObjectReference objectReference = dynamicArea.AllocateObject(location, Type);
+            ObjectReference objectReference = dynamicArea.AllocateObject(location, typeDef);
             AllocatedObject allocatedObject = (AllocatedObject)dynamicArea.Allocations[objectReference];
             allocatedObject.ClearFields(cur);
 
-            TypeDef type = Type.ResolveTypeDefThrow();
+            TypeDef type = typeDef;
 
             foreach (FieldValueTrait fieldValue in Traits.OfType<FieldValueTrait>())
             {

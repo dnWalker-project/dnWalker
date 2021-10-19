@@ -107,6 +107,7 @@
     <Compile Include="Concolic\Parameters\NumericParametersTests.cs" />
     <Compile Include="Concolic\Parameters\ParameterFactory_ReferenceTypesParameterTests.cs" />
     <Compile Include="Concolic\Parameters\ParameterFactory_NumericParameterTests.cs" />
+    <Compile Include="Concolic\Parameters\ParameterNamesTests.cs" />
     <Compile Include="Concolic\Parameters\ParameterTests.cs" />
     <Compile Include="Concolic\Parameters\TestTypes.cs" />
     <Compile Include="ExampleTests\CaptureOutputTests.cs" />

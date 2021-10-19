@@ -158,7 +158,7 @@ namespace dnWalker.Concolic.Parameters
                     TypeDef parameterType = GetType(objectParameter, cur);
 
                     // next parameter is not yet initialized => create it
-                    nextParameter = ParameterFactory.CreateParameter(nextParamterName, parameterType.FindField(accessor).FieldType.ToTypeDefOrRef());
+                    nextParameter = ParameterFactory.CreateParameter(nextParamterName, parameterType.FindField(accessor).FieldType);
 
                     objectParameter.SetField(accessor, nextParameter);
 
@@ -194,7 +194,7 @@ namespace dnWalker.Concolic.Parameters
                     TypeDef parameterType = GetType(interfaceParameter, cur);
 
                     String nextParameterName = ParameterName.ConstructMethod(interfaceParameter.Name, methodName, callIndex);
-                    nextParameter = ParameterFactory.CreateParameter(nextParameterName, parameterType.FindMethod(methodName).ReturnType.ToTypeDefOrRef());
+                    nextParameter = ParameterFactory.CreateParameter(nextParameterName, parameterType.FindMethod(methodName).ReturnType);
 
                     interfaceParameter.SetMethod(methodName, callIndex, nextParameter);
 

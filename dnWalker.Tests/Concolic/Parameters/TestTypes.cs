@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Tests.Concolic.Parameters
 {
+    public struct MyStruct
+    { 
+        public Int32 Value { get; set; }
+        public MyItem Item { get; set; }
+    }
+
+
     public class MyItem
     {
         public Int32 Id { get; set; }

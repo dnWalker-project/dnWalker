@@ -27,31 +27,39 @@ namespace dnWalker.Tests.Concolic.Parameters
                 .SelectMany(a => a.Modules));
         }
 
-        public static ITypeDefOrRef GetType(String typeName)
+        public static TypeSig GetType(String typeName)
         {
             if (typeName.EndsWith("[]"))
             {
                 return GetArrayType(typeName.Substring(0, typeName.Length - 2));
             }
 
-            ITypeDefOrRef type = _modules
+            TypeSig type = _modules
                 .SelectMany(m => m.Types)
-                .FirstOrDefault(t => t.ReflectionFullName == typeName);
+                .FirstOrDefault(t => t.ReflectionFullName == typeName)
+                .ToTypeSig();
 
             if (type == null) throw new Exception("Could not resolve type: " + typeName);
 
             return type;
         }
 
-        public static ITypeDefOrRef GetArrayType(String elementTypeName)
+        public static TypeSig GetArrayType(String elementTypeName)
         {
-            ITypeDefOrRef elementType = GetType(elementTypeName);
+            TypeSig elementType = GetType(elementTypeName);
 
-            ArraySig array = new ArraySig(elementType.ToTypeSig());
-            return array.ToTypeDefOrRef();
+            //ArraySig array = new ArraySig(elementType.ToTypeSig());
+            SZArraySig array = new SZArraySig(elementType);
+
+            if (array == null)
+            {
+                throw new Exception("ArraySig is a null!");
+            }
+
+            return array;
         }
 
-        public static ITypeDefOrRef GetType(Type type)
+        public static TypeSig GetType(Type type)
         {
             if (type.IsArray)
             {
@@ -61,9 +69,14 @@ namespace dnWalker.Tests.Concolic.Parameters
             return GetType(type.FullName);
         }
 
-        public static ITypeDefOrRef GetArrayType(Type elementType)
+        public static TypeSig GetArrayType(Type elementType)
         {
             return GetArrayType(elementType.FullName);
+        }
+
+        public static void SomeMethod()
+        {
+
         }
     }
 }
