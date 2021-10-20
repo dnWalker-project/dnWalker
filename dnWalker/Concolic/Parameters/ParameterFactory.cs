@@ -10,14 +10,14 @@ namespace dnWalker.Concolic.Parameters
 {
     public static class ParameterFactory
     {
-        public static Parameter CreateParameter(String name, TypeSig parameterType)
+        public static Parameter CreateParameter(TypeSig parameterType, String parameterName)
         {
-            Parameter p = CreateParameter(parameterType);
-            p.Name = name;
-            return p;
+            Parameter parameter = CreateParameter(parameterType);
+            parameter.Name = parameterName;
+            return parameter;
         }
 
-        private static Parameter CreateParameter(TypeSig parameterType)
+        public static Parameter CreateParameter(TypeSig parameterType)
         {
             // primitive, basic values 
             if (parameterType.IsCorLibType && parameterType.IsPrimitive)
@@ -81,19 +81,19 @@ namespace dnWalker.Concolic.Parameters
 
         private static InterfaceParameter CreateInterfaceParameter(ClassSig type)
         {
-            return new InterfaceParameter(type);
+            return new InterfaceParameter(type.FullName);
         }
 
         private static ObjectParameter CreateObjectParameter(ClassSig type)
         {
-            return new ObjectParameter(type);
+            return new ObjectParameter(type.FullName);
         }
 
         private static ArrayParameter CreateArrayParamter(ArraySigBase arrayType)
         {
             TypeSig elementType = arrayType.Next;
 
-            return new ArrayParameter(elementType);
+            return new ArrayParameter(elementType.FullName);
         }
 
         private static PrimitiveValueParameter CreatePrimitiveValueParameter(TypeSig type)

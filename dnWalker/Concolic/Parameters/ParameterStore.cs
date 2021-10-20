@@ -14,16 +14,18 @@ namespace dnWalker.Concolic.Parameters
     {
         private readonly IDictionary<String, Parameter> _parameters = new Dictionary<String, Parameter>();
 
-        public IDictionary<String, Parameter> Parameters
-        {
-            get 
-            {
-                return _parameters; 
-            }
-        }
+        //public IDictionary<String, Parameter> Parameters
+        //{
+        //    get 
+        //    {
+        //        return _parameters; 
+        //    }
+        //}
 
-        public TParameter AddParameter<TParameter>(TParameter parameter) where TParameter : Parameter
+        public Parameter AddParameter(Parameter parameter)
         {
+            if (!parameter.HasName()) throw new InvalidOperationException("Cannot add parameter without a name!");
+
             //_parameters.Add(parameter);
             String name = parameter.Name;
             if (_parameters.ContainsKey(name))
@@ -34,6 +36,16 @@ namespace dnWalker.Concolic.Parameters
             _parameters.Add(name, parameter);
 
             return parameter;
+        }
+
+        public Boolean TryGetParameter(String name, out Parameter parameter)
+        {
+            return _parameters.TryGetValue(name, out parameter);
+        }
+
+        public IEnumerable<Parameter> Parameters
+        {
+            get { return _parameters.Values; }
         }
 
         public void Clear()

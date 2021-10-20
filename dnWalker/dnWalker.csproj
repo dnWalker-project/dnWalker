@@ -141,8 +141,8 @@
     <Compile Include="Concolic\ExplorationException.cs" />
     <Compile Include="Concolic\ExpressionExtensions.cs" />
     <Compile Include="Concolic\Parameters\InterfaceParameter.cs" />
-    <Compile Include="Concolic\Parameters\NullableParameter.cs" />
-    <Compile Include="Concolic\Parameters\NumericParameters.cs" />
+    <Compile Include="Concolic\Parameters\ReferenceTypeParameter.cs" />
+    <Compile Include="Concolic\Parameters\PrimitiveValueParameters.cs" />
     <Compile Include="Concolic\Parameters\ObjectParameter.cs" />
     <Compile Include="Concolic\Parameters\ArrayParameter.cs" />
     <Compile Include="Concolic\Parameters\Parameter.cs" />

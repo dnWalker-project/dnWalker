@@ -18,59 +18,66 @@ namespace dnWalker.Concolic.Parameters
         protected PrimitiveValueParameter(String typeName) : base(typeName)
         {
         }
-
-        protected PrimitiveValueParameter(String typeName, IEnumerable<ParameterTrait> traits) : base(typeName, traits)
+        protected PrimitiveValueParameter(String typeName, String name) : base(typeName, name)
         {
         }
-
     }
 
     public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
     {
         protected PrimitiveValueParameter(String typeName) : base(typeName)
+        {
+        }
+
+        protected PrimitiveValueParameter(String typeName, String name) : base(typeName, name)
         { }
 
-        protected PrimitiveValueParameter(TValue value, String typeName) : base(typeName, new ParameterTrait[] { new ValueTrait<TValue>(value) })
-        { }
+        protected PrimitiveValueParameter(String typeName, String name, TValue value) : base(typeName, name)
+        {
+            Value = value;
+        }
+
 
         public TValue? Value
         {
-            get
-            {
-                if (TryGetTrait<ValueTrait<TValue>>(out ValueTrait<TValue> trait))
-                {
-                    // value was set
-                    return trait.Value;
-                }
-                else
-                {
-                    // dont care
-                    return null;
-                }
-            }
-            set
-            {
-                if (value.HasValue)
-                {
-                    // we want to explicitly set the value
-                    if (TryGetTrait<ValueTrait<TValue>>(out ValueTrait<TValue> trait))
-                    {
-                        trait.Value = value.Value;
-                    }
-                    else
-                    {
-                        AddTrait<ValueTrait<TValue>>(new ValueTrait<TValue>(value.Value));
-                    }
-                }
-                else
-                {
-                    // we want to clear the value
-                    if (TryGetTrait<ValueTrait<TValue>>(out ValueTrait<TValue> trait))
-                    {
-                        Traits.Remove(trait);
-                    }
-                }
-            }
+            get;
+            set;
+            //get
+            //{
+            //    if (TryGetTrait<ValueTrait<TValue>>(out ValueTrait<TValue> trait))
+            //    {
+            //        // value was set
+            //        return trait.Value;
+            //    }
+            //    else
+            //    {
+            //        // dont care
+            //        return null;
+            //    }
+            //}
+            //set
+            //{
+            //    if (value.HasValue)
+            //    {
+            //        // we want to explicitly set the value
+            //        if (TryGetTrait<ValueTrait<TValue>>(out ValueTrait<TValue> trait))
+            //        {
+            //            trait.Value = value.Value;
+            //        }
+            //        else
+            //        {
+            //            AddTrait<ValueTrait<TValue>>(new ValueTrait<TValue>(value.Value));
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // we want to clear the value
+            //        if (TryGetTrait<ValueTrait<TValue>>(out ValueTrait<TValue> trait))
+            //        {
+            //            Traits.Remove(trait);
+            //        }
+            //    }
+            //}
         }
 
         protected override Type GetFrameworkType()
@@ -80,9 +87,9 @@ namespace dnWalker.Concolic.Parameters
 
         public override String ToString()
         {
-            if (TryGetTrait<ValueTrait>(out ValueTrait valueTrait))
+            if (Value.HasValue)
             {
-                return $"Parameter: {Name}, Type: {TypeName}, Value: {valueTrait.Value}";
+                return $"Parameter: {Name}, Type: {TypeName}, Value: {Value.Value}";
             }
             else
             {
@@ -98,7 +105,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public BooleanParameter(Boolean value) : base(value, TypeNames.BooleanTypeName)
+        public BooleanParameter(String name) : base(TypeNames.BooleanTypeName, name)
+        {
+        }
+
+        public BooleanParameter(String name, Boolean value) : base(TypeNames.BooleanTypeName, name, value)
         {
         }
 
@@ -116,7 +127,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public CharParameter(Char value) : base(value, TypeNames.CharTypeName)
+        public CharParameter(String name) : base(TypeNames.CharTypeName, name)
+        {
+        }
+
+        public CharParameter(String name, Char value) : base(TypeNames.CharTypeName, name, value)
         {
         }
 
@@ -134,7 +149,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public ByteParameter(Byte value) : base(value, TypeNames.ByteTypeName)
+        public ByteParameter(String name) : base(TypeNames.ByteTypeName, name)
+        {
+        }
+
+        public ByteParameter(String name, Byte value) : base(TypeNames.ByteTypeName, name, value)
         {
         }
 
@@ -152,7 +171,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public SByteParameter(SByte value) : base(value, TypeNames.SByteTypeName)
+        public SByteParameter(String name) : base(TypeNames.SByteTypeName, name)
+        {
+        }
+
+        public SByteParameter(String name, SByte value) : base(TypeNames.SByteTypeName, name, value)
         {
         }
 
@@ -170,7 +193,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public Int16Parameter(Int16 value) : base(value, TypeNames.Int16TypeName)
+        public Int16Parameter(String name) : base(TypeNames.Int16TypeName, name)
+        {
+        }
+
+        public Int16Parameter(String name, Int16 value) : base(TypeNames.Int16TypeName, name, value)
         {
         }
 
@@ -188,7 +215,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public Int32Parameter(Int32 value) : base(value, TypeNames.Int32TypeName)
+        public Int32Parameter(String name) : base(TypeNames.Int32TypeName, name)
+        {
+        }
+
+        public Int32Parameter(String name, Int32 value) : base(TypeNames.Int32TypeName, name, value)
         {
         }
 
@@ -206,7 +237,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public Int64Parameter(Int64 value) : base(value, TypeNames.Int64TypeName)
+        public Int64Parameter(String name) : base(TypeNames.Int64TypeName, name)
+        {
+        }
+
+        public Int64Parameter(String name, Int64 value) : base(TypeNames.Int64TypeName, name, value)
         {
         }
 
@@ -224,7 +259,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public UInt16Parameter(UInt16 value) : base(value, TypeNames.UInt16TypeName)
+        public UInt16Parameter(String name) : base(TypeNames.UInt16TypeName, name)
+        {
+        }
+
+        public UInt16Parameter(String name, UInt16 value) : base(TypeNames.UInt16TypeName, name, value)
         {
         }
 
@@ -242,7 +281,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public UInt32Parameter(UInt32 value) : base(value, TypeNames.UInt32TypeName)
+        public UInt32Parameter(String name) : base(TypeNames.UInt32TypeName, name)
+        {
+        }
+
+        public UInt32Parameter(String name, UInt32 value) : base(TypeNames.UInt32TypeName, name, value)
         {
         }
 
@@ -260,7 +303,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public UInt64Parameter(UInt64 value) : base(value, TypeNames.UInt64TypeName)
+        public UInt64Parameter(String name) : base(TypeNames.UInt64TypeName, name)
+        {
+        }
+
+        public UInt64Parameter(String name, UInt64 value) : base(TypeNames.UInt64TypeName, name, value)
         {
         }
 
@@ -274,11 +321,15 @@ namespace dnWalker.Concolic.Parameters
 
     public class SingleParameter : PrimitiveValueParameter<Single>
     {
-        public SingleParameter() : base(TypeNames.ByteTypeName)
+        public SingleParameter() : base(TypeNames.SingleTypeName)
         {
         }
 
-        public SingleParameter(Single value) : base(value, TypeNames.SingleTypeName)
+        public SingleParameter(String name) : base(TypeNames.SingleTypeName, name)
+        {
+        }
+
+        public SingleParameter(String name, Single value) : base(TypeNames.SingleTypeName, name, value)
         {
         }
 
@@ -296,7 +347,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public DoubleParameter(Double value) : base(value, TypeNames.DoubleTypeName)
+        public DoubleParameter(String name) : base(TypeNames.DoubleTypeName, name)
+        {
+        }
+
+        public DoubleParameter(String name, Double value) : base(TypeNames.DoubleTypeName, name, value)
         {
         }
 

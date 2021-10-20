@@ -140,7 +140,7 @@ namespace dnWalker.Concolic
                     parameterStore.SetTraits(cur, data);
 
                     // 4. construct the arguments DataElementList
-                    DataElementList arguments = parameterStore.GetMethodParmaters(cur, entryPoint);
+                    DataElementList arguments = parameterStore.GetMethodParematers(cur, entryPoint);
 
                     MethodState mainState = new MethodState(entryPoint, arguments, cur);
 

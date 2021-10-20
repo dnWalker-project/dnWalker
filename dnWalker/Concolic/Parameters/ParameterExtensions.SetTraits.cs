@@ -33,7 +33,12 @@ namespace dnWalker.Concolic.Parameters
                 Object parameterValue = sortedData[i].Value;
                 String rootParameterName = ParameterName.GetRootName(parameterName);
 
-                SetTraits(store, store.Parameters[ParameterName.GetRootName(parameterName)], parameterName, parameterValue, cur);
+                if (!store.TryGetParameter(rootParameterName, out Parameter rootParameter))
+                {
+                    throw new Exception("Cannot find root parameter: " + rootParameterName);
+                }
+
+                SetTraits(store, rootParameter, parameterName, parameterValue, cur);
                 //index += SetTraits(store, store.Parameters[ParameterName.GetRootName(parameterName)], parameterName, parameterValue, cur);
             }
 
@@ -102,38 +107,42 @@ namespace dnWalker.Concolic.Parameters
 
         private static void SetLength(ParameterStore store, ArrayParameter arrayParameter, Object value) //, ExplicitActiveState cur)
         {
-            if (!arrayParameter.TryGetTrait<LengthTrait>(out LengthTrait lengthTrait))
-            {
-                // TODO: setup a special method??
-                String lengthParamterName = ParameterName.ConstructField(arrayParameter.Name, ArrayParameter.IsNullParameterName);
+            arrayParameter.Length = (Int32?)value;
 
-                // not yet specified => the parameter was not added to the store as well
-                Int32Parameter lengthParamter = new Int32Parameter();
-                lengthParamter.Name = lengthParamterName;
-                store.AddParameter(lengthParamter);
+            //if (!arrayParameter.TryGetTrait<LengthTrait>(out LengthTrait lengthTrait))
+            //{
+            //    // TODO: setup a special method??
+            //    String lengthParamterName = ParameterName.ConstructField(arrayParameter.Name, ArrayParameter.IsNullParameterName);
 
-                lengthTrait.Value = lengthParamter;
-            }
+            //    // not yet specified => the parameter was not added to the store as well
+            //    Int32Parameter lengthParamter = new Int32Parameter();
+            //    lengthParamter.Name = lengthParamterName;
+            //    store.AddParameter(lengthParamter);
 
-            SetValue(lengthTrait.Value, value);
+            //    lengthTrait.LengthParameter = lengthParamter;
+            //}
+
+            //SetValue(lengthTrait.LengthParameter, value);
         }
 
-        private static void SetIsNull(ParameterStore store, NullableParameter nullableParameter, Object value) //, ExplicitActiveState cur)
+        private static void SetIsNull(ParameterStore store, ReferenceTypeParameter referenceTypeParameter, Object value) //, ExplicitActiveState cur)
         {
-            if (!nullableParameter.TryGetTrait<IsNullTrait>(out IsNullTrait isNullTrait))
-            {
-                // TODO: setup a special method??
-                String isNullParamterName = ParameterName.ConstructField(nullableParameter.Name, NullableParameter.IsNullParameterName);
+            referenceTypeParameter.IsNull = (Boolean?)value;
 
-                // not yet specified => the parameter was not added to the store as well
-                BooleanParameter isNullParamter = new BooleanParameter();
-                isNullParamter.Name = isNullParamterName;
-                store.AddParameter(isNullParamter);
+            //if (!nullableParameter.TryGetTrait<IsNullTrait>(out IsNullTrait isNullTrait))
+            //{
+            //    // TODO: setup a special method??
+            //    String isNullParamterName = ParameterName.ConstructField(nullableParameter.Name, ReferenceTypeParameter.IsNullParameterName);
 
-                isNullTrait.Value = isNullParamter;
-            }
+            //    // not yet specified => the parameter was not added to the store as well
+            //    BooleanParameter isNullParamter = new BooleanParameter();
+            //    isNullParamter.Name = isNullParamterName;
+            //    store.AddParameter(isNullParamter);
 
-            SetValue(isNullTrait.Value, value);
+            //    isNullTrait.IsNullParameter = isNullParamter;
+            //}
+
+            //SetValue(isNullTrait.IsNullParameter, value);
         }
 
 
@@ -143,7 +152,7 @@ namespace dnWalker.Concolic.Parameters
             String accessor = ParameterName.GetAccessor(objectParameter.Name, fullParameterName);
 
             // IsNull
-            if (accessor == NullableParameter.IsNullParameterName)
+            if (accessor == ReferenceTypeParameter.IsNullParameterName)
             {
                 // we need to continue with the IsNull parameter
                 SetIsNull(store, objectParameter, (Boolean)parameterValue);
@@ -151,14 +160,15 @@ namespace dnWalker.Concolic.Parameters
             // is a Field
             else
             {
-                Parameter nextParameter = objectParameter.GetField(accessor);
-                if (nextParameter == null)
+                //Parameter nextParameter = objectParameter.GetField(accessor);
+                //if (nextParameter == null)
+                if (!objectParameter.TryGetField(accessor, out Parameter nextParameter)) // nextParameter == null)
                 {
                     String nextParamterName = ParameterName.ConstructField(objectParameter.Name, accessor);
                     TypeDef parameterType = GetType(objectParameter, cur);
 
                     // next parameter is not yet initialized => create it
-                    nextParameter = ParameterFactory.CreateParameter(nextParamterName, parameterType.FindField(accessor).FieldType);
+                    nextParameter = ParameterFactory.CreateParameter(parameterType.FindField(accessor).FieldType, nextParamterName);
 
                     objectParameter.SetField(accessor, nextParameter);
 
@@ -175,7 +185,7 @@ namespace dnWalker.Concolic.Parameters
             String accessor = ParameterName.GetAccessor(interfaceParameter.Name, fullParameterName);
 
             // IsNull
-            if (accessor == NullableParameter.IsNullParameterName)
+            if (accessor == ReferenceTypeParameter.IsNullParameterName)
             {
                 SetIsNull(store, interfaceParameter, parameterValue);
             }
@@ -188,15 +198,16 @@ namespace dnWalker.Concolic.Parameters
                 }
 
 
-                Parameter nextParameter = interfaceParameter.GetMethod(methodName, callIndex);
-                if (nextParameter == null)
+                //Parameter nextParameter = interfaceParameter.GetMethod(methodName, callIndex);
+                //if (nextParameter == null)
+                if (!interfaceParameter.TryGetMethodResult(methodName, callIndex, out Parameter nextParameter))
                 {
                     TypeDef parameterType = GetType(interfaceParameter, cur);
 
                     String nextParameterName = ParameterName.ConstructMethod(interfaceParameter.Name, methodName, callIndex);
-                    nextParameter = ParameterFactory.CreateParameter(nextParameterName, parameterType.FindMethod(methodName).ReturnType);
+                    nextParameter = ParameterFactory.CreateParameter(parameterType.FindMethod(methodName).ReturnType, nextParameterName);
 
-                    interfaceParameter.SetMethod(methodName, callIndex, nextParameter);
+                    interfaceParameter.SetMethodResult(methodName, callIndex, nextParameter);
 
                     store.AddParameter(nextParameter);
                 }
@@ -211,7 +222,7 @@ namespace dnWalker.Concolic.Parameters
             String accessor = ParameterName.GetAccessor(arrayParameter.Name, fullParameterName);
 
             // IsNull
-            if (accessor == NullableParameter.IsNullParameterName)
+            if (accessor == ReferenceTypeParameter.IsNullParameterName)
             {
                 SetIsNull(store, arrayParameter, parameterValue);
             }
@@ -228,11 +239,13 @@ namespace dnWalker.Concolic.Parameters
                     throw new Exception("Unexpected accessor - only index or length expected: " + accessor);
                 }
 
-                Parameter nextParameter = arrayParameter.GetItemAt(index);
-                if (nextParameter == null)
+                //Parameter nextParameter = arrayParameter.GetItemAt(index);
+                //if (nextParameter == null)
+                if (!arrayParameter.TryGetItemAt(index, out Parameter nextParameter))
                 {
                     String nextParameterName = ParameterName.ConstructIndex(arrayParameter.Name, index);
-                    nextParameter = ParameterFactory.CreateParameter(nextParameterName, arrayParameter.ElementType);
+
+                    nextParameter = ParameterFactory.CreateParameter(cur.DefinitionProvider.GetTypeDefinition(arrayParameter.ElementTypeName).ToTypeSig(), nextParameterName);
 
                     arrayParameter.SetItemAt(index, nextParameter);
 

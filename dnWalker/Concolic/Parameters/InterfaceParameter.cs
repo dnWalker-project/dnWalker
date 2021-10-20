@@ -11,43 +11,68 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic.Parameters
 {
-    public class InterfaceParameter : NullableParameter
+    public class InterfaceParameter : ReferenceTypeParameter
     {
-        public TypeSig Type
+        public InterfaceParameter(String typeName) : base(typeName)
         {
-            get;
         }
 
-        public InterfaceParameter(TypeSig type) : base(type.FullName)
+        public InterfaceParameter(String typeName, String name) : base(typeName, name)
         {
-            Type = type;
         }
 
-        public InterfaceParameter(TypeSig type, IEnumerable<ParameterTrait> traits) : base(type.FullName, traits)
-        {
-            Type = type;
-        }
+        private readonly Dictionary<String, Dictionary<Int32, Parameter>> _methodResults = new Dictionary<String, Dictionary<Int32, Parameter>>();
 
-        public Parameter GetMethod(String methodName, Int32 callIndex)
+        public Boolean TryGetMethodResult(String methodName, Int32 callIndex, out Parameter result)
         {
-            if (TryGetTrait<MethodResultTrait>(t => t.MethodName == methodName && t.CallIndex == callIndex, out MethodResultTrait method))
+            if (_methodResults.TryGetValue(methodName, out Dictionary<Int32, Parameter> results))
             {
-                return method.Value;
+                return results.TryGetValue(callIndex, out result);
             }
-            return null;
+            result = null;
+            return false;
+
+            //if (TryGetTrait<MethodResultTrait>(t => t.MethodName == methodName && t.CallIndex == callIndex, out MethodResultTrait method))
+            //{
+            //    return method.Value;
+            //}
+            //return null;
         }
 
-        public void SetMethod(String methodName, Int32 callIndex, Parameter parameter)
+        public void SetMethodResult(String methodName, Int32 callIndex, Parameter parameter)
         {
-            if (TryGetTrait<MethodResultTrait>(t => t.MethodName == methodName && t.CallIndex == callIndex, out MethodResultTrait method))
+            if (!_methodResults.TryGetValue(methodName, out Dictionary<Int32, Parameter> results))
             {
-                method.Value = parameter;
+                results = new Dictionary<int, Parameter>();
+                _methodResults[methodName] = results;
             }
-            else
+
+            results[callIndex] = parameter;
+
+            if (HasName()) parameter.Name = ParameterName.ConstructMethod(Name, methodName, callIndex);
+
+            //if (TryGetTrait<MethodResultTrait>(t => t.MethodName == methodName && t.CallIndex == callIndex, out MethodResultTrait method))
+            //{
+            //    method.Value = parameter;
+            //}
+            //else
+            //{
+            //    method = new MethodResultTrait(methodName, callIndex, parameter);
+            //}
+            //parameter.Name = ParameterName.ConstructField(Name, methodName);
+        }
+
+        protected override void OnNameChanged(String newName)
+        {
+            base.OnNameChanged(newName);
+
+            foreach (KeyValuePair<String, Dictionary<Int32, Parameter>> results in _methodResults)
             {
-                method = new MethodResultTrait(methodName, callIndex, parameter);
+                foreach (KeyValuePair<Int32, Parameter> result in results.Value)
+                {
+                    result.Value.Name = ParameterName.ConstructMethod(newName, results.Key, result.Key);
+                }
             }
-            parameter.Name = ParameterName.ConstructField(Name, methodName);
         }
 
         public override IDataElement CreateDataElement(ExplicitActiveState cur)
@@ -62,7 +87,7 @@ namespace dnWalker.Concolic.Parameters
                 return nullReference;
             }
 
-            TypeDef typeDef = Type.ToTypeDefOrRef().ResolveTypeDefThrow();
+            TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
 
             Int32 location = dynamicArea.DeterminePlacement(false);
             ObjectReference interfaceReference = dynamicArea.AllocateObject(location, typeDef);

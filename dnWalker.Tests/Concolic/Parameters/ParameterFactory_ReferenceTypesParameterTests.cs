@@ -19,7 +19,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_MyClass_Is_ObjectParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter("myClass", GetType(typeof(MyClass)));
+            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(MyClass)), "myClass");
 
             Assert.IsType<ObjectParameter>(p);
         }
@@ -30,7 +30,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_MyInterface_Is_ObjectParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter("myInterface", GetType(typeof(IMyInterface)));
+            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(IMyInterface)), "myInterface");
 
             Assert.IsType<InterfaceParameter>(p);
         }
@@ -44,7 +44,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         {
             TypeSig type = GetType(typeof(IMyInterface[]));
 
-            Parameter p = ParameterFactory.CreateParameter("myArray", type);
+            Parameter p = ParameterFactory.CreateParameter(type, "myArray");
 
             Assert.IsType<ArrayParameter>(p);
         }
@@ -52,7 +52,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Objects_Is_ArrayParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter("myArray", GetType(typeof(MyClass[])));
+            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(MyClass[])), "myArray");
 
             Assert.IsType<ArrayParameter>(p);
         }
@@ -60,7 +60,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Numbers_Is_ArrayParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter("myArray", GetType(typeof(Double[])));
+            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Double[])), "myArray");
 
             Assert.IsType<ArrayParameter>(p);
         }

@@ -12,58 +12,106 @@ using System.Threading.Tasks;
 namespace dnWalker.Concolic.Parameters
 {
 
-    public class ArrayParameter : NullableParameter
+    public class ArrayParameter : ReferenceTypeParameter
     {
         public const String LengthParameterName = "#__LENGTH__";
 
-        public TypeSig ElementType
+        private readonly Dictionary<Int32, Parameter> _items = new Dictionary<Int32, Parameter>();
+
+        protected override void OnNameChanged(String newName)
         {
-            get;
+            base.OnNameChanged(newName);
+
+            LengthParameter.Name = ParameterName.ConstructField(newName, LengthParameterName);
+
+            foreach (KeyValuePair<Int32, Parameter> pair in _items)
+            {
+                pair.Value.Name = ParameterName.ConstructIndex(newName, pair.Key);
+            }
         }
 
-        public Parameter GetItemAt(Int32 index)
+        public Boolean TryGetItemAt(Int32 index, out Parameter itemParameter)
         {
-            if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait field))
-            {
-                return field.Value;
-            }
-            return null;
+            //if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait field))
+            //{
+            //    return field.IndexValueParameter;
+            //}
+            //return null;
+            return _items.TryGetValue(index, out itemParameter);
         }
 
         public void SetItemAt(Int32 index, Parameter parameter)
         {
-            if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait indexField))
-            {
-                indexField.Value = parameter;
-            }
-            else
-            {
-                AddTrait<IndexValueTrait>(new IndexValueTrait(index, parameter));
-            }
+            if (HasName()) parameter.Name = ParameterName.ConstructIndex(Name, index);
+
+            _items[index] = parameter;
+
+            //if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait indexField))
+            //{
+            //    indexField.IndexValueParameter = parameter;
+            //}
+            //else
+            //{
+            //    AddTrait<IndexValueTrait>(new IndexValueTrait(index, parameter));
+            //}
+        }
+
+        public Int32Parameter LengthParameter
+        {
+            get;
         }
 
         public Int32? Length
         {
-            get
-            {
-                if (TryGetTrait<LengthTrait>(out LengthTrait lengthField))
-                {
-                    return lengthField.Value.Value;
-                }
-                return null;
-            }
+            get { return LengthParameter.Value; }
+            set { LengthParameter.Value = value; }
+            //get
+            //{
+            //    if (TryGetTrait<LengthTrait>(out LengthTrait lengthField))
+            //    {
+            //        return lengthField.LengthParameter.Value;
+            //    }
+            //    return null;
+            //}
+            //set
+            //{
+            //    // if value is null => we are clearing it
+            //    if (!value.HasValue)
+            //    {
+            //        if (TryGetTrait(out LengthTrait trait))
+            //        {
+            //            Traits.Remove(trait);
+            //        }
+            //    }
+            //    // update current trait or add a new one
+            //    else
+            //    {
+            //        if (TryGetTrait(out LengthTrait trait))
+            //        {
+            //            trait.LengthParameter.Value = value;
+            //        }
+            //        else
+            //        {
+            //            trait = new LengthTrait(value.Value);
+            //            AddTrait(trait);
+            //        }
+            //    }
+            //}
         }
 
-        public ArrayParameter(TypeSig elementType) : base(elementType.FullName + "[]")
+        public String ElementTypeName { get; }
+
+        public ArrayParameter(String elementTypeName) : base(elementTypeName + "[]")
         {
-            ElementType = elementType;
+            ElementTypeName = elementTypeName;
+            LengthParameter = new Int32Parameter();
         }
 
-        public ArrayParameter(TypeSig elementType, IEnumerable<ParameterTrait> traits) : base(elementType.FullName + "[]", traits)
+        public ArrayParameter(String elementTypeName, String name) : base(elementTypeName + "[]", name)
         {
-            ElementType = elementType;
+            ElementTypeName = elementTypeName;
+            LengthParameter = new Int32Parameter(ParameterName.ConstructField(name, LengthParameterName));
         }
-
 
         public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
@@ -81,24 +129,38 @@ namespace dnWalker.Concolic.Parameters
             Int32 length = Length ?? 0;
 
             Int32 location = dynamicArea.DeterminePlacement(false);
-            ObjectReference objectReference = dynamicArea.AllocateArray(location, ElementType.ToTypeDefOrRef(), length);
+
+            ITypeDefOrRef elementType = cur.DefinitionProvider.GetTypeDefinition(ElementTypeName);
+
+            ObjectReference objectReference = dynamicArea.AllocateArray(location, elementType, length);
 
             AllocatedArray allocatedArray = (AllocatedArray)dynamicArea.Allocations[objectReference];
             allocatedArray.ClearFields(cur);
 
             if (length > 0)
             {
-                foreach (FieldValueTrait field in Traits.OfType<FieldValueTrait>().Where(t => t.FieldName != LengthParameterName))
+                for (Int32 i = 0; i < length; ++i)
                 {
-                    String fieldName = field.FieldName;
-                    Parameter parameter = field.Value;
-
-                    if (Int32.TryParse(fieldName, out Int32 index) && index < length)
+                    if (!TryGetItemAt(i, out Parameter itemParameter))
                     {
-                        IDataElement itemDataElement = parameter.CreateDataElement(cur);
-                        allocatedArray.Fields[index] = itemDataElement;
+                        itemParameter = ParameterFactory.CreateParameter(elementType.ToTypeSig());
+                        SetItemAt(i, itemParameter);
                     }
+                    IDataElement itemDataElement = itemParameter.CreateDataElement(cur);
+                    allocatedArray.Fields[i] = itemDataElement;
                 }
+
+                //foreach (FieldValueTrait field in Traits.OfType<FieldValueTrait>().Where(t => t.FieldName != LengthParameterName))
+                //{
+                //    String fieldName = field.FieldName;
+                //    Parameter parameter = field.FieldValueParameter;
+
+                //    if (Int32.TryParse(fieldName, out Int32 index) && index < length)
+                //    {
+                //        IDataElement itemDataElement = parameter.CreateDataElement(cur);
+                //        allocatedArray.Fields[index] = itemDataElement;
+                //    }
+                //}
             }
 
             objectReference.SetParameter(this, cur);

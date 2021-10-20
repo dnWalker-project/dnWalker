@@ -14,7 +14,7 @@ namespace dnWalker.Concolic.Parameters
     {
         public static List<ParameterExpression> GetParametersAsExpressions(this ParameterStore parameterStore)
         {
-            return parameterStore.Parameters.Values
+            return parameterStore.Parameters
                 .Select(p => p.GetExpression())
                 .Where(e => e != null)
                 .ToList();
@@ -27,14 +27,14 @@ namespace dnWalker.Concolic.Parameters
             {
                 dnlib.DotNet.Parameter methodParameter = method.Parameters[i];
 
-                Parameter parameter = ParameterFactory.CreateParameter(methodParameter.Name, methodParameter.Type);
+                Parameter parameter = ParameterFactory.CreateParameter(methodParameter.Type, methodParameter.Name);
                 store.AddParameter(parameter);
             }
 
             return store;
         }
 
-        public static DataElementList GetMethodParmaters(this ParameterStore store, ExplicitActiveState cur, MethodDef method)
+        public static DataElementList GetMethodParematers(this ParameterStore store, ExplicitActiveState cur, MethodDef method)
         {
             Int32 count = method.Parameters.Count;
 
@@ -42,7 +42,15 @@ namespace dnWalker.Concolic.Parameters
 
             for (Int32 i = 0; i < count; ++i)
             {
-                arguments[i] = store.Parameters[method.Parameters[i].Name].CreateDataElement(cur);
+                if (store.TryGetParameter(method.Parameters[i].Name, out Parameter parameter))
+                {
+                    arguments[i] = parameter.CreateDataElement(cur);
+                }
+                else
+                {
+                    throw new Exception("Cannot initialize method parameters, missing parameter: " + method.Parameters[i].Name);
+                }
+
             }
 
             return arguments;

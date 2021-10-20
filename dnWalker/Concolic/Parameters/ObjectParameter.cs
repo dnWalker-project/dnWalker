@@ -13,21 +13,18 @@ using Expressions = System.Linq.Expressions;
 
 namespace dnWalker.Concolic.Parameters
 {
-    public class ObjectParameter : NullableParameter
+    public class ObjectParameter : ReferenceTypeParameter
     {
-        public TypeSig Type 
+        public ObjectParameter(String typeName) : base(typeName)
         {
-            get;
-        }
-        public ObjectParameter(TypeSig type) : base(type.FullName)
-        {
-            Type = type;
         }
 
-        public ObjectParameter(TypeSig type, IEnumerable<ParameterTrait> traits) : base(type.FullName, traits)
+        public ObjectParameter(String typeName, String name) : base(typeName, name)
         {
-            Type = type;
+
         }
+
+        private readonly Dictionary<String, Parameter> _fields = new Dictionary<String, Parameter>();
 
         // from Instruction.cs
         private static Int32 GetFieldOffset(TypeDef type, String fieldName)
@@ -77,31 +74,48 @@ namespace dnWalker.Concolic.Parameters
             return retval;
         }
 
-        public Parameter GetField(String fieldName)
+        public Boolean TryGetField(String fieldName, out Parameter fieldParameter)
         {
-            if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
-            {
-                return field.Value;
-            }
-            return null;
+            return _fields.TryGetValue(fieldName, out fieldParameter);
+
+            //if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
+            //{
+            //    return field.FieldValueParameter;
+            //}
+            //return null;
         }
 
         public void SetField(String fieldName, Parameter parameter)
         {
-            if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
+            _fields[fieldName] = parameter;
+            if (HasName()) parameter.Name = ParameterName.ConstructField(Name, fieldName);
+
+            //if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
+            //{
+            //    field.FieldValueParameter = parameter;
+            //}
+            //else
+            //{
+            //    field = new FieldValueTrait(fieldName, parameter);
+            //}
+            //parameter.Name = ParameterName.ConstructField(Name, fieldName);
+        }
+
+        protected override void OnNameChanged(String newName)
+        {
+            base.OnNameChanged(newName);
+
+            foreach (KeyValuePair<String, Parameter> pair in _fields)
             {
-                field.Value = parameter;
+                pair.Value.Name = ParameterName.ConstructField(newName, pair.Key);
             }
-            else
-            {
-                field = new FieldValueTrait(fieldName, parameter);
-            }
-            parameter.Name = ParameterName.ConstructField(Name, fieldName);
         }
 
         public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
             DynamicArea dynamicArea = cur.DynamicArea;
+
+            
 
             if (!IsNull.HasValue || IsNull.Value)
             {
@@ -111,25 +125,40 @@ namespace dnWalker.Concolic.Parameters
                 return nullReference;
             }
 
-            TypeDef typeDef = Type.ToTypeDefOrRef().ResolveTypeDefThrow();
+            TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
 
             Int32 location = dynamicArea.DeterminePlacement(false);
             ObjectReference objectReference = dynamicArea.AllocateObject(location, typeDef);
             AllocatedObject allocatedObject = (AllocatedObject)dynamicArea.Allocations[objectReference];
             allocatedObject.ClearFields(cur);
 
-            TypeDef type = typeDef;
 
-            foreach (FieldValueTrait fieldValue in Traits.OfType<FieldValueTrait>())
+            foreach ((TypeSig fieldType, String fieldName) in DefinitionProvider.InheritanceEnumerator(typeDef)
+                                                                                .SelectMany(td => td.ResolveTypeDef().Fields)
+                                                                                .Select(f => (f.FieldType, f.Name)))
             {
-                String fieldName = fieldValue.FieldName;
-                Parameter parameter = fieldValue.Value;
+                if (!TryGetField(fieldName, out Parameter fieldParameter))
+                {
+                    fieldParameter = ParameterFactory.CreateParameter(fieldType);
+                    SetField(fieldName, fieldParameter);
+                }
 
-                Int32 fieldOffset = GetFieldOffset(type, fieldName);
+                Int32 fieldOffset = GetFieldOffset(typeDef, fieldName);
 
-                IDataElement fieldDataElement = parameter.CreateDataElement(cur);
+                IDataElement fieldDataElement = fieldParameter.CreateDataElement(cur);
                 allocatedObject.Fields[fieldOffset] = fieldDataElement;
             }
+
+            //foreach (FieldValueTrait fieldValue in Traits.OfType<FieldValueTrait>())
+            //{
+            //    String fieldName = fieldValue.FieldName;
+            //    Parameter parameter = fieldValue.FieldValueParameter;
+
+            //    Int32 fieldOffset = GetFieldOffset(type, fieldName);
+
+            //    IDataElement fieldDataElement = parameter.CreateDataElement(cur);
+            //    allocatedObject.Fields[fieldOffset] = fieldDataElement;
+            //}
 
             objectReference.SetParameter(this, cur);
             return objectReference;

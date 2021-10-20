@@ -16,35 +16,67 @@ namespace dnWalker.Concolic.Parameters
 {
     public abstract class Parameter
     {
-        public String Name { get; set; }
+        private String _name;
+
+        public String Name
+        {
+            get { return _name; }
+            set
+            {
+                if (String.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
+
+                if (_name != value)
+                {
+                    _name = value;
+                    OnNameChanged(value);
+                }
+            }
+        }
+
+        public Boolean HasName()
+        {
+            return !String.IsNullOrWhiteSpace(_name);
+        }
+
         public String TypeName { get; }
 
-        public IList<ParameterTrait> Traits { get; }
+        //public IList<ParameterTrait> Traits { get; }
 
-        protected Parameter(String typeName) : this(typeName, Enumerable.Empty<ParameterTrait>())
-        { }
-
-        protected Parameter(String typeName, IEnumerable<ParameterTrait> traits)
+        protected virtual void OnNameChanged(String newName)
         {
-            Traits = new List<ParameterTrait>(traits);
+
+        }
+
+        protected Parameter(String typeName)
+        {
             TypeName = typeName;
         }
 
-        public Boolean TryGetTrait<TTrait>(out TTrait trait) where TTrait : ParameterTrait
+        protected Parameter(String typeName, String name)
         {
-            trait = Traits.OfType<TTrait>().FirstOrDefault();
-            return trait != null;
-        }
-        public Boolean TryGetTrait<TTrait>(Func<TTrait, Boolean> predicate, out TTrait trait) where TTrait : ParameterTrait
-        {
-            trait = Traits.OfType<TTrait>().FirstOrDefault(predicate);
-            return trait != null;
+            if (String.IsNullOrWhiteSpace(typeName)) throw new ArgumentNullException(nameof(typeName));
+            if (String.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
+
+            TypeName = typeName;
+            Name = name;
+            //Traits = new List<ParameterTrait>();
         }
 
-        public void AddTrait<TTrait>(TTrait newValue) where TTrait : ParameterTrait
-        {
-            Traits.Add(newValue);
-        }
+        //public Boolean TryGetTrait<TTrait>(out TTrait trait) where TTrait : ParameterTrait
+        //{
+        //    trait = Traits.OfType<TTrait>().FirstOrDefault();
+        //    return trait != null;
+        //}
+        //public Boolean TryGetTrait<TTrait>(Func<TTrait, Boolean> predicate, out TTrait trait) where TTrait : ParameterTrait
+        //{
+        //    trait = Traits.OfType<TTrait>().FirstOrDefault(predicate);
+        //    return trait != null;
+        //}
+
+        //public void AddTrait<TTrait>(TTrait newValue) where TTrait : ParameterTrait
+        //{
+        //    Traits.Add(newValue);
+        //}
 
 
         public abstract IDataElement CreateDataElement(ExplicitActiveState cur);
@@ -73,7 +105,7 @@ namespace dnWalker.Concolic.Parameters
 
         public override String ToString()
         {
-            return $"Parameter: {Name}, Type: {TypeName}, Traits: {Traits.Count}";
+            return $"Parameter: {Name}, Type: {TypeName}";
         }
 
 
