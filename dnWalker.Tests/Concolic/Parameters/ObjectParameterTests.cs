@@ -18,9 +18,9 @@ namespace dnWalker.Tests.Concolic.Parameters
 {
     public class ObjectParameterTests : ReferenceTypeParameterTests<ObjectParameter>
     {
-        protected override ObjectParameter CreateParameter()
+        protected override ObjectParameter Create(String name = "p")
         {
-            return new ObjectParameter(typeof(Object).FullName) { Name = "SomeObject" };
+            return new ObjectParameter(typeof(Object).FullName) { Name = name };
         }
 
         [Theory]

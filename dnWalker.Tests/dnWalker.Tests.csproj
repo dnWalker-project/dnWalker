@@ -103,9 +103,11 @@
     <Compile Include="Concolic\Features\Arrays\InputTests.cs" />
     <Compile Include="Concolic\Features\Math\InputTests.cs" />
     <Compile Include="Concolic\MethodInvoking\InterfaceMethodInvokingTests.cs" />
+    <Compile Include="Concolic\Parameters\ArrayParameterTests.cs" />
     <Compile Include="Concolic\Parameters\dnlibTypeTestBase.cs" />
+    <Compile Include="Concolic\Parameters\NumericParameterTests.cs" />
+    <Compile Include="Concolic\Parameters\PrimitiveValueParameterTests.cs" />
     <Compile Include="Concolic\Parameters\ReferenceTypeParameterTests.cs" />
-    <Compile Include="Concolic\Parameters\NumericParametersTests.cs" />
     <Compile Include="Concolic\Parameters\ObjectParameterTests.cs" />
     <Compile Include="Concolic\Parameters\ParameterFactory_ReferenceTypesParameterTests.cs" />
     <Compile Include="Concolic\Parameters\ParameterFactory_NumericParameterTests.cs" />

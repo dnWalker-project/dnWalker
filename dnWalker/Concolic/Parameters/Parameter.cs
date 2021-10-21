@@ -83,31 +83,34 @@ namespace dnWalker.Concolic.Parameters
 
 
 
-        protected abstract Type GetFrameworkType();
+        //protected abstract Type GetFrameworkType();
 
-        private ParameterExpression _expression = null;
+        //private ParameterExpression _expression = null;
 
-        public ParameterExpression GetExpression()
-        {
-            if (_expression != null)
-            {
-                return _expression;
-            }
+        //public ParameterExpression GetExpression()
+        //{
+        //    if (_expression != null)
+        //    {
+        //        return _expression;
+        //    }
 
-            Type frameworkType = GetFrameworkType();
-            if (frameworkType != null)
-            {
-                _expression = Expression.Parameter(frameworkType, Name);
-            }
-            return _expression;
-        }
+        //    Type frameworkType = GetFrameworkType();
+        //    if (frameworkType != null)
+        //    {
+        //        _expression = Expression.Parameter(frameworkType, Name);
+        //    }
+        //    return _expression;
+        //}
 
+        public abstract IEnumerable<ParameterExpression> GetParameterExpressions();
+        public abstract Boolean HasSingleExpression { get; }
+        public abstract ParameterExpression GetSingleParameterExpression();
 
         public override String ToString()
         {
             return $"Parameter: {Name}, Type: {TypeName}";
         }
 
-
+        public abstract Boolean TryGetChildParameter(String name, out Parameter childParameter);
     }
 }

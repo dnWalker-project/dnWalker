@@ -80,11 +80,6 @@ namespace dnWalker.Concolic.Parameters
             //}
         }
 
-        protected override Type GetFrameworkType()
-        {
-            return typeof(TValue);
-        }
-
         public override String ToString()
         {
             if (Value.HasValue)
@@ -96,6 +91,36 @@ namespace dnWalker.Concolic.Parameters
                 return $"Parameter: {Name}, Type: {TypeName}, Value: DEFAULT";
             }
             
+        }
+
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
+        {
+            childParameter = null;
+            return false;
+        }
+
+        private ParameterExpression _expression;
+
+        public override IEnumerable<ParameterExpression> GetParameterExpressions()
+        {
+            yield return GetSingleParameterExpression();
+        }
+
+        public override Boolean HasSingleExpression => true;
+        
+        public override ParameterExpression GetSingleParameterExpression()
+        {
+            if (_expression == null)
+            {
+                _expression = Expression.Parameter(typeof(TValue), Name);
+            }
+            return _expression;
+        }
+
+        protected override void OnNameChanged(String newName)
+        {
+            base.OnNameChanged(newName);
+            _expression = null;
         }
     }
 

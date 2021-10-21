@@ -40,10 +40,26 @@ namespace dnWalker.Concolic.Parameters
 
         public Boolean TryGetParameter(String name, out Parameter parameter)
         {
-            return _parameters.TryGetValue(name, out parameter);
+            // try to perform walk through the parameter forest
+            String rootParameterName = ParameterName.GetRootName(name);
+
+            if (rootParameterName == name)
+            {
+                return _parameters.TryGetValue(name, out parameter);
+            }
+            else if (_parameters.TryGetValue(rootParameterName, out Parameter rootParameter))
+            {
+                return rootParameter.TryGetChildParameter(name, out parameter);
+            }
+            else
+            {
+                parameter = null;
+                return false;
+            }
         }
 
-        public IEnumerable<Parameter> Parameters
+
+        public IEnumerable<Parameter> RootParameters
         {
             get { return _parameters.Values; }
         }

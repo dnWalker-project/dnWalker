@@ -1,5 +1,9 @@
 ﻿using dnlib.DotNet;
 
+using MMC;
+using MMC.InstructionExec;
+using MMC.State;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +15,45 @@ namespace dnWalker.Tests.Concolic.Parameters
     public abstract class dnlibTypeTestBase
     {
         private static readonly ModuleContext _context = ModuleDef.CreateModuleContext();
-        private static readonly List<ModuleDef> _modules = new List<ModuleDef>();
+        //private static readonly List<ModuleDef> _modules = new List<ModuleDef>();
+
+        private static readonly IConfig _config;// = new Config();
+        private static readonly Logger _logger;// = new Logger();
+
+        private static readonly IInstructionExecProvider _instructionExecProvider;
+        private static readonly DefinitionProvider _definitionProvider;
+
+        protected static ExplicitActiveState CreateState()
+        {
+
+            return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+        }
+
 
 
         static dnlibTypeTestBase()
         {
+            _config = new Config();
+            _logger = new Logger();
+            _instructionExecProvider = InstructionExecProvider.Get(_config, new dnWalker.Symbolic.Instructions.InstructionFactory());
+
+
+            //AssemblyLoader assemblyLoader = new AssemblyLoader();
+            //assemblyLoader.GetModuleDef(typeof(dnlibTypeTestBase).Module);
+
+
+
+
             ModuleDef mainModule = ModuleDefMD.Load(typeof(dnlibTypeTestBase).Module, _context);
 
-            _modules.Add(mainModule);
-
-            _modules.AddRange(mainModule
+            ModuleDef[] refModules = mainModule
                 .GetAssemblyRefs()
                 .Select(ar => _context.AssemblyResolver.Resolve(ar.Name, mainModule))
                 .Where(a => a != null)
-                .SelectMany(a => a.Modules));
+                .SelectMany(a => a.Modules)
+                .ToArray();
+
+            _definitionProvider = new DefinitionProvider(mainModule, refModules);
         }
 
         public static TypeSig GetType(String typeName)
@@ -34,10 +63,12 @@ namespace dnWalker.Tests.Concolic.Parameters
                 return GetArrayType(typeName.Substring(0, typeName.Length - 2));
             }
 
-            TypeSig type = _modules
-                .SelectMany(m => m.Types)
-                .FirstOrDefault(t => t.ReflectionFullName == typeName)
-                .ToTypeSig();
+            //TypeSig type = _modules
+            //    .SelectMany(m => m.Types)
+            //    .FirstOrDefault(t => t.ReflectionFullName == typeName)
+            //    .ToTypeSig();
+
+            TypeSig type = _definitionProvider.GetTypeDefinition(typeName).ToTypeSig();
 
             if (type == null) throw new Exception("Could not resolve type: " + typeName);
 
@@ -74,9 +105,5 @@ namespace dnWalker.Tests.Concolic.Parameters
             return GetArrayType(elementType.FullName);
         }
 
-        public static void SomeMethod()
-        {
-
-        }
     }
 }

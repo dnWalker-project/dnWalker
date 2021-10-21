@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 
 using Expressions = System.Linq.Expressions;
 
@@ -164,5 +165,26 @@ namespace dnWalker.Concolic.Parameters
             return objectReference;
         }
 
+        public override IEnumerable<ParameterExpression> GetParameterExpressions()
+        {
+            return base.GetParameterExpressions()
+                .Concat(_fields.Values.SelectMany(fieldParameter => fieldParameter.GetParameterExpressions()));
+        }
+
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
+        {
+            if (base.TryGetChildParameter(name, out childParameter)) return true;
+
+            String accessor = ParameterName.GetAccessor(Name, name);
+            if (TryGetField(accessor, out childParameter))
+            {
+                return true;
+            }
+            else
+            {
+                childParameter = null;
+                return false;
+            }
+        }
     }
 }

@@ -70,6 +70,11 @@ namespace MMC
         }
     }
 
+    public interface IDefinitionProvider
+    {
+        TypeDef GetTypeDefinition(String typeName);
+    }
+
 
     /// <summary>
     /// This is a straightforward implementation of IDefinitionProvider.
@@ -77,7 +82,7 @@ namespace MMC
     /// <remarks>
     /// Hashing is used to speed up the lookup process.
     /// </remarks>
-    public sealed class DefinitionProvider
+    public sealed class DefinitionProvider : IDefinitionProvider
     {
         private readonly object _lock = new object();
         private readonly ModuleDef[] m_referencedAssemblies;
@@ -591,9 +596,46 @@ namespace MMC
                 ["System.UIntPtr"] = UIntPtr.Size
             };
 
-            AssemblyDefinition = assemblyLoader.GetModule();
+                AssemblyDefinition = assemblyLoader.GetModule();
 
             m_referencedAssemblies = assemblyLoader.GetReferencedModules(AssemblyDefinition);
+
+            AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
+        }
+
+        internal DefinitionProvider(ModuleDef mainModule, ModuleDef[] referencedModules)
+        {
+            m_typeDefinitions = new Dictionary<string, TypeDef>();
+            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
+            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
+            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
+
+            /*
+			 * We need to know the sizes in order to perform
+			 * managed pointer arithmetica
+			 */
+            m_typeSizes = new Dictionary<string, int>
+            {
+                ["System.UInt16"] = sizeof(ushort),
+                ["System.UInt32"] = sizeof(uint),
+                ["System.UInt64"] = sizeof(ulong),
+                ["System.Int16"] = sizeof(short),
+                ["System.Int32"] = sizeof(int),
+                ["System.Int64"] = sizeof(long),
+                ["System.SByte"] = sizeof(sbyte),
+                ["System.Byte"] = sizeof(byte),
+                ["System.Boolean"] = sizeof(bool),
+                ["System.Char"] = sizeof(char),
+                ["System.Double"] = sizeof(double),
+                ["System.Decimal"] = sizeof(decimal),
+                ["System.Single"] = sizeof(float),
+                ["System.IntPtr"] = IntPtr.Size,
+                ["System.UIntPtr"] = UIntPtr.Size
+            };
+
+            AssemblyDefinition = mainModule;
+
+            m_referencedAssemblies = referencedModules;
 
             AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
         }

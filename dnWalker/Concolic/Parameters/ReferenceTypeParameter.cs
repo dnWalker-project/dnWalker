@@ -78,9 +78,28 @@ namespace dnWalker.Concolic.Parameters
             //}
         }
 
-        protected override Type GetFrameworkType()
+        public override IEnumerable<ParameterExpression> GetParameterExpressions()
         {
-            return null;
+            return IsNullParameter.GetParameterExpressions();
+        }
+
+        public override Boolean HasSingleExpression => false;
+
+        public override ParameterExpression GetSingleParameterExpression() => null;
+
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
+        {
+            String accessor = ParameterName.GetAccessor(Name, name);
+            if (accessor == IsNullParameterName)
+            {
+                childParameter = IsNullParameter;
+                return true;
+            }
+            else
+            {
+                childParameter = null;
+                return false;
+            }
         }
     }
 }

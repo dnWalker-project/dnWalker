@@ -134,10 +134,10 @@ namespace dnWalker.Concolic
                     parameterStore.Clear();
 
                     // 2. setup default values for the arguments
-                    parameterStore.InitializeDefaultMethodParameters(cur, entryPoint);
+                    parameterStore.InitializeDefaultMethodParameters(entryPoint);
 
                     // 3. set traits using the 'data' dictionary - either passed as argument or as solver output
-                    parameterStore.SetTraits(cur, data);
+                    parameterStore.SetTraits(cur.DefinitionProvider, data);
 
                     // 4. construct the arguments DataElementList
                     DataElementList arguments = parameterStore.GetMethodParematers(cur, entryPoint);

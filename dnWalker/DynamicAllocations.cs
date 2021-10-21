@@ -170,7 +170,9 @@ namespace MMC.State {
             return sb.ToString();
         }
 
-		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config.UseRefCounting, config.MemoisedGC) { }
+		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : this(typeDef, config.UseRefCounting, config.MemoisedGC) { }
+
+        public AllocatedObject(ITypeDefOrRef typeDef, bool useRefCounting, bool memoisedGC) : base(typeDef, useRefCounting, memoisedGC) { }
 	}
 
     /// VY thinks that eventually an array should not be a first-class citizen,
@@ -204,7 +206,11 @@ namespace MMC.State {
         {
             this.Fields = new DataElementList(length);
         }
-	}
+        public AllocatedArray(ITypeDefOrRef arrayType, int length, bool useRefCounting, bool memoisedGC) : base(arrayType, useRefCounting, memoisedGC)
+        {
+            this.Fields = new DataElementList(length);
+        }
+    }
 
     /// <summary>
     /// VY thinks that delegates should not be first class citizens
@@ -267,6 +273,12 @@ namespace MMC.State {
 			Object = obj;
 			Method = ptr;
 			m_isDirty = true;
-		}
-	}
+        }
+        public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, bool useRefCounting, bool memoisedGC) : base(DelegateTypeDef, useRefCounting, memoisedGC)
+        {
+            Object = obj;
+            Method = ptr;
+            m_isDirty = true;
+        }
+    }
 }

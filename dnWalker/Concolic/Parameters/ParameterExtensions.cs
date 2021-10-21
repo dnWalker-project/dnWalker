@@ -14,20 +14,25 @@ namespace dnWalker.Concolic.Parameters
     {
         public static List<ParameterExpression> GetParametersAsExpressions(this ParameterStore parameterStore)
         {
-            return parameterStore.Parameters
-                .Select(p => p.GetExpression())
+            return parameterStore.RootParameters
+                .SelectMany(p => p.GetParameterExpressions())
                 .Where(e => e != null)
                 .ToList();
         }
 
-
-        public static ParameterStore InitializeDefaultMethodParameters(this ParameterStore store, ExplicitActiveState cur, MethodDef method)
+        public static ParameterStore InitializeDefaultMethodParameters(this ParameterStore store, MethodDef method)
         {
-            for (Int32 i = 0; i < method.Parameters.Count(); ++i)
-            {
-                dnlib.DotNet.Parameter methodParameter = method.Parameters[i];
+            TypeSig[] parameterTypes = method.Parameters.Select(p => p.Type).ToArray();
+            String[] parameterNames = method.Parameters.Select(p => p.Name).ToArray();
 
-                Parameter parameter = ParameterFactory.CreateParameter(methodParameter.Type, methodParameter.Name);
+            return InitializeDefaultMethodParameters(store, parameterTypes, parameterNames);
+        }
+
+        public static ParameterStore InitializeDefaultMethodParameters(this ParameterStore store, TypeSig[] parameterTypes, String[] parameterNames)
+        {
+            for (Int32 i = 0; i < parameterTypes.Length; ++i)
+            {
+                Parameter parameter = ParameterFactory.CreateParameter(parameterTypes[i], parameterNames[i]);
                 store.AddParameter(parameter);
             }
 
@@ -36,19 +41,22 @@ namespace dnWalker.Concolic.Parameters
 
         public static DataElementList GetMethodParematers(this ParameterStore store, ExplicitActiveState cur, MethodDef method)
         {
-            Int32 count = method.Parameters.Count;
+            return GetMethodParematers(store, cur, method.Parameters.Select(p => p.Name).ToArray());
+        }
 
-            DataElementList arguments = cur.StorageFactory.CreateList(count);
+        public static DataElementList GetMethodParematers(this ParameterStore store, ExplicitActiveState cur, String[] parameterNames)
+        {
+            DataElementList arguments = cur.StorageFactory.CreateList(parameterNames.Length);
 
-            for (Int32 i = 0; i < count; ++i)
+            for (Int32 i = 0; i < parameterNames.Length; ++i)
             {
-                if (store.TryGetParameter(method.Parameters[i].Name, out Parameter parameter))
+                if (store.TryGetParameter(parameterNames[i], out Parameter parameter))
                 {
                     arguments[i] = parameter.CreateDataElement(cur);
                 }
                 else
                 {
-                    throw new Exception("Cannot initialize method parameters, missing parameter: " + method.Parameters[i].Name);
+                    throw new Exception("Cannot initialize method parameters, missing parameter: " + parameterNames[i]);
                 }
 
             }
@@ -57,14 +65,14 @@ namespace dnWalker.Concolic.Parameters
         }
 
 
-        private static TypeDef GetType(String typeName, ExplicitActiveState cur)
-        {
-            return cur.DefinitionProvider.GetTypeDefinition(typeName);
-        }
-        private static TypeDef GetType(Parameter parameter, ExplicitActiveState cur)
-        {
-            return GetType(parameter.TypeName, cur);
-        }
+        //private static TypeDef GetType(String typeName, ExplicitActiveState cur)
+        //{
+        //    return cur.DefinitionProvider.GetTypeDefinition(typeName);
+        //}
+        //private static TypeDef GetType(Parameter parameter, ExplicitActiveState cur)
+        //{
+        //    return GetType(parameter.TypeName, cur);
+        //}
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -47,14 +48,37 @@ namespace dnWalker
             return module;
         }
 
+        public ModuleDef GetModuleDef(Module module)
+        {
+            AssemblyResolver asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
+            asmResolver.EnableTypeDefCache = true;
+
+            ModuleDefMD moduleDef = ModuleDefMD.Load(module, _moduleContext);
+            moduleDef.Context = _moduleContext;
+
+            ((AssemblyResolver)moduleDef.Context.AssemblyResolver).AddToCache(moduleDef);
+
+            _module = moduleDef;
+            return moduleDef;
+        }
+
         public ModuleDef GetModule() => _module ?? throw new Exception("Module was not loaded");
 
         public ModuleDef[] GetReferencedModules(ModuleDef module)
         {
-            return module.GetAssemblyRefs()
-                .Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module))
-                .SelectMany(a => a.Modules)
-                .ToArray();
+            IEnumerable<AssemblyRef> refs = module.GetAssemblyRefs();
+
+            IEnumerable<AssemblyDef> refAssemblies = refs.Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module));
+
+            IEnumerable<ModuleDef> refModules = refAssemblies.SelectMany(a => a.Modules);
+
+            return refModules.ToArray();
+
+
+            //return module.GetAssemblyRefs()
+            //    .Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module))
+            //    .SelectMany(a => a.Modules)
+            //    .ToArray();
         }
 
         /*public AppDomain CreateAppDomain(ModuleDef module, string path)

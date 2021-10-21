@@ -23,13 +23,27 @@ namespace MMC.State {
 	using MMC.Util;
     using dnlib.DotNet;
     using System.Collections.Generic;
+    using System;
 
     // TODO:
     // At least make a note if a destructor exists. If it's trivial to execute
     // it, do it.
 
-    /// Class holding the heap of the VM.
-    public class DynamicArea :  ICleanable, IStorageVisitable {
+    public interface IDynamicArea
+	{
+		ObjectReference AllocateObject(Int32 location, ITypeDefOrRef type);
+		ObjectReference AllocateArray(Int32 location, ITypeDefOrRef elementType, Int32 length);
+
+		Int32 DeterminePlacement();
+
+		AllocationList Allocations { get; }
+
+		void DisposeLocation(Int32 location);
+		void DisposeAllocation(ObjectReference objectReference);
+	}
+
+	/// Class holding the heap of the VM.
+	public class DynamicArea : IDynamicArea,  ICleanable, IStorageVisitable {
 
 		/// Dynamic allocations, i.e. the heap.
 		AllocationList m_alloc;

@@ -6,6 +6,7 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -104,6 +105,28 @@ namespace dnWalker.Concolic.Parameters
 
             interfaceReference.SetParameter(this, cur);
             return interfaceReference;
+        }
+
+        public override IEnumerable<ParameterExpression> GetParameterExpressions()
+        {
+            return base.GetParameterExpressions()
+                .Concat(_methodResults.Values.SelectMany(call2Result => call2Result.Values.SelectMany(result => result.GetParameterExpressions())));
+        }
+
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
+        {
+            if (base.TryGetChildParameter(name, out childParameter)) return true;
+
+            String accessor = ParameterName.GetAccessor(Name, name);
+            if (ParameterName.TryParseMethodName(accessor, out String methodName, out Int32 callIndex) && TryGetMethodResult(methodName, callIndex, out childParameter))
+            {
+                return true;
+            }
+            else
+            {
+                childParameter = null;
+                return false;
+            }
         }
     }
 }
