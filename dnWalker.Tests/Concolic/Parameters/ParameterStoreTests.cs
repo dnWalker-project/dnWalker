@@ -1,6 +1,4 @@
-﻿using dnlib.DotNet;
-
-using dnWalker.Concolic.Parameters;
+﻿using dnWalker.Concolic.Parameters;
 
 using FluentAssertions;
 
@@ -12,8 +10,6 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Parameter = dnWalker.Concolic.Parameters.Parameter;
-
 namespace dnWalker.Tests.Concolic.Parameters
 {
 
@@ -22,7 +18,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Adding_NamelessParameter_Should_Throw()
         {
-            var store = new ParameterStore();
+            ParameterStore store = new ParameterStore();
             Parameter p = new Int32Parameter();
 
             Assert.Throws<InvalidOperationException>(() => store.AddParameter(p));
@@ -31,14 +27,14 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Can_Retrive_AddedParameter()
         {
-            const string name = "x";
+            const String name = "x";
 
-            var store = new ParameterStore();
+            ParameterStore store = new ParameterStore();
             Parameter p = new Int32Parameter(name);
 
             store.AddParameter(p);
 
-            store.TryGetParameter(name, out var p2).Should().BeTrue();
+            store.TryGetParameter(name, out Parameter p2).Should().BeTrue();
             p2.Should().BeSameAs(p);
         }
 
@@ -49,7 +45,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         }
 
         [Theory]
-        [InlineData(new [] { typeof(MyItem) }, new[] { "item" }, new[] { "item:#__IS_NULL__", "item:_id" }, new object[] { false, -5 })]
+        [InlineData(new[] { typeof(MyItem) }, new[] { "item" }, new[] { "item:#__IS_NULL__", "item:_id" }, new object[] { false, -5 })]
         public void Test_SetTraits(Type[] rootParameterTypes, string[] rootParameterNames, string[] traitNames, object[] traitValues)
         {
             var data = ConstructData(traitNames, traitValues);

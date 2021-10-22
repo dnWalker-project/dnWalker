@@ -101,8 +101,8 @@
     <Compile Include="Arg.cs" />
     <Compile Include="Concolic\ArgumentsCacheTests.cs" />
     <Compile Include="Concolic\Features\Arrays\InputTests.cs" />
-    <Compile Include="Concolic\Features\Math\InputTests.cs" />
     <Compile Include="Concolic\Features\Interfaces\InterfaceMethodInvokingTests.cs" />
+    <Compile Include="Concolic\Features\Math\InputTests.cs" />
     <Compile Include="Concolic\Features\Objects\ObjectSubstituteTests.cs" />
     <Compile Include="Concolic\Parameters\ArrayParameterTests.cs" />
     <Compile Include="Concolic\Parameters\dnlibTypeTestBase.cs" />

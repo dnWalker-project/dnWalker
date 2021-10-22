@@ -14,19 +14,19 @@ namespace dnWalker.Concolic.Parameters
 {
     public class InterfaceParameter : ReferenceTypeParameter
     {
-        public InterfaceParameter(string typeName) : base(typeName)
+        public InterfaceParameter(String typeName) : base(typeName)
         {
         }
 
-        public InterfaceParameter(string typeName, string name) : base(typeName, name)
+        public InterfaceParameter(String typeName, String name) : base(typeName, name)
         {
         }
 
-        private readonly Dictionary<string, Dictionary<int, Parameter>> _methodResults = new Dictionary<string, Dictionary<int, Parameter>>();
+        private readonly Dictionary<String, Dictionary<Int32, Parameter>> _methodResults = new Dictionary<String, Dictionary<Int32, Parameter>>();
 
-        public bool TryGetMethodResult(string methodName, int callIndex, out Parameter result)
+        public Boolean TryGetMethodResult(String methodName, Int32 callIndex, out Parameter result)
         {
-            if (_methodResults.TryGetValue(methodName, out var results))
+            if (_methodResults.TryGetValue(methodName, out Dictionary<Int32, Parameter> results))
             {
                 return results.TryGetValue(callIndex, out result);
             }
@@ -40,9 +40,9 @@ namespace dnWalker.Concolic.Parameters
             //return null;
         }
 
-        public void SetMethodResult(string methodName, int callIndex, Parameter parameter)
+        public void SetMethodResult(String methodName, Int32 callIndex, Parameter parameter)
         {
-            if (!_methodResults.TryGetValue(methodName, out var results))
+            if (!_methodResults.TryGetValue(methodName, out Dictionary<Int32, Parameter> results))
             {
                 results = new Dictionary<int, Parameter>();
                 _methodResults[methodName] = results;
@@ -63,36 +63,39 @@ namespace dnWalker.Concolic.Parameters
             //parameter.Name = ParameterName.ConstructField(Name, methodName);
         }
 
-        protected override void OnNameChanged(string newName)
+        protected override void OnNameChanged(String newName)
         {
             base.OnNameChanged(newName);
 
-            foreach (var results in _methodResults)
+            if (_methodResults != null)
             {
-                foreach (var result in results.Value)
+                foreach (KeyValuePair<String, Dictionary<Int32, Parameter>> results in _methodResults)
                 {
-                    result.Value.Name = ParameterName.ConstructMethod(newName, results.Key, result.Key);
+                    foreach (KeyValuePair<Int32, Parameter> result in results.Value)
+                    {
+                        result.Value.Name = ParameterName.ConstructMethod(newName, results.Key, result.Key);
+                    }
                 }
             }
         }
 
         public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
-            var dynamicArea = cur.DynamicArea;
+            DynamicArea dynamicArea = cur.DynamicArea;
 
             if (!IsNull.HasValue || IsNull.Value)
             {
                 // dont care or explicit null => return NullReference
-                var nullReference = new ObjectReference(0);
+                ObjectReference nullReference = new ObjectReference(0);
                 nullReference.SetParameter(this, cur);
                 return nullReference;
             }
 
-            var typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
+            TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
 
-            var location = dynamicArea.DeterminePlacement(false);
-            var interfaceReference = dynamicArea.AllocateObject(location, typeDef);
-            var allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
+            Int32 location = dynamicArea.DeterminePlacement(false);
+            ObjectReference interfaceReference = dynamicArea.AllocateObject(location, typeDef);
+            AllocatedObject allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
             allocatedInterface.ClearFields(cur);
 
             // TODO: somehow create structure for resolving the method and using the callindex
@@ -113,12 +116,12 @@ namespace dnWalker.Concolic.Parameters
                 .Concat(_methodResults.Values.SelectMany(call2Result => call2Result.Values.SelectMany(result => result.GetParameterExpressions())));
         }
 
-        public override bool TryGetChildParameter(string name, out Parameter childParameter)
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
         {
             if (base.TryGetChildParameter(name, out childParameter)) return true;
 
-            var accessor = ParameterName.GetAccessor(Name, name);
-            if (ParameterName.TryParseMethodName(accessor, out var methodName, out var callIndex) && TryGetMethodResult(methodName, callIndex, out childParameter))
+            String accessor = ParameterName.GetAccessor(Name, name);
+            if (ParameterName.TryParseMethodName(accessor, out String methodName, out Int32 callIndex) && TryGetMethodResult(methodName, callIndex, out childParameter))
             {
                 return true;
             }

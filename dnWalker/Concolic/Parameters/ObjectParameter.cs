@@ -16,30 +16,30 @@ namespace dnWalker.Concolic.Parameters
 {
     public class ObjectParameter : ReferenceTypeParameter
     {
-        public ObjectParameter(string typeName) : base(typeName)
+        public ObjectParameter(String typeName) : base(typeName)
         {
         }
 
-        public ObjectParameter(string typeName, string name) : base(typeName, name)
+        public ObjectParameter(String typeName, String name) : base(typeName, name)
         {
 
         }
 
-        private readonly Dictionary<string, Parameter> _fields = new Dictionary<string, Parameter>();
+        private readonly Dictionary<String, Parameter> _fields = new Dictionary<String, Parameter>();
 
         // from Instruction.cs
-        private static int GetFieldOffset(TypeDef type, string fieldName)
+        private static Int32 GetFieldOffset(TypeDef type, String fieldName)
         {
-            var fld = type.FindField(fieldName);
+            FieldDef fld = type.FindField(fieldName);
             if (!fld.HasLayoutInfo)
             {
                 fld = DefinitionProvider.GetFieldDefinition(fld);
             }
 
 
-            var typeOffset = 0;
-            var matched = false;
-            var retval = 0;
+            Int32 typeOffset = 0;
+            Boolean matched = false;
+            Int32 retval = 0;
 
             foreach (TypeDef typeDef in DefinitionProvider.InheritanceEnumerator(type))
             {
@@ -53,9 +53,9 @@ namespace dnWalker.Concolic.Parameters
                 if (typeDef.FullName.Equals(fld.DeclaringType.FullName) || matched)
                 {
                     if (fld.FieldOffset < typeDef.Fields.Count
-                        && typeDef.Fields[(int)fld.FieldOffset].Name.Equals(fld.Name))
+                        && typeDef.Fields[(Int32)fld.FieldOffset].Name.Equals(fld.Name))
                     {
-                        retval = (int)fld.FieldOffset;
+                        retval = (Int32)fld.FieldOffset;
                         break;
                     }
 
@@ -75,7 +75,7 @@ namespace dnWalker.Concolic.Parameters
             return retval;
         }
 
-        public bool TryGetField(string fieldName, out Parameter fieldParameter)
+        public Boolean TryGetField(String fieldName, out Parameter fieldParameter)
         {
             return _fields.TryGetValue(fieldName, out fieldParameter);
 
@@ -86,7 +86,7 @@ namespace dnWalker.Concolic.Parameters
             //return null;
         }
 
-        public void SetField(string fieldName, Parameter parameter)
+        public void SetField(String fieldName, Parameter parameter)
         {
             _fields[fieldName] = parameter;
             if (HasName()) parameter.Name = ParameterName.ConstructField(Name, fieldName);
@@ -102,13 +102,13 @@ namespace dnWalker.Concolic.Parameters
             //parameter.Name = ParameterName.ConstructField(Name, fieldName);
         }
 
-        protected override void OnNameChanged(string newName)
+        protected override void OnNameChanged(String newName)
         {
             base.OnNameChanged(newName);
 
             if (_fields != null)
-            { 
-                foreach (var pair in _fields)
+            {
+                foreach (KeyValuePair<String, Parameter> pair in _fields)
                 {
                     pair.Value.Name = ParameterName.ConstructField(newName, pair.Key);
                 }
@@ -117,40 +117,39 @@ namespace dnWalker.Concolic.Parameters
 
         public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
-            var dynamicArea = cur.DynamicArea;
+            DynamicArea dynamicArea = cur.DynamicArea;
 
             
 
             if (!IsNull.HasValue || IsNull.Value)
             {
                 // dont care or explicit null => return NullReference
-                var nullReference = new ObjectReference(0);
+                ObjectReference nullReference = new ObjectReference(0);
                 nullReference.SetParameter(this, cur);
                 return nullReference;
             }
 
-            var typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
+            TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
 
-            var location = dynamicArea.DeterminePlacement(false);
-            var objectReference = dynamicArea.AllocateObject(location, typeDef);
-            var allocatedObject = (AllocatedObject)dynamicArea.Allocations[objectReference];
+            Int32 location = dynamicArea.DeterminePlacement(false);
+            ObjectReference objectReference = dynamicArea.AllocateObject(location, typeDef);
+            AllocatedObject allocatedObject = (AllocatedObject)dynamicArea.Allocations[objectReference];
             allocatedObject.ClearFields(cur);
 
 
-            foreach ((var fieldType, string fieldName) in DefinitionProvider.InheritanceEnumerator(typeDef)
+            foreach ((TypeSig fieldType, String fieldName) in DefinitionProvider.InheritanceEnumerator(typeDef)
                                                                                 .SelectMany(td => td.ResolveTypeDef().Fields)
                                                                                 .Select(f => (f.FieldType, f.Name)))
             {
-                // if we the field was not specified by a parameter, we initialize it to default
-                if (!TryGetField(fieldName, out var fieldParameter))
+                if (!TryGetField(fieldName, out Parameter fieldParameter))
                 {
                     fieldParameter = ParameterFactory.CreateParameter(fieldType);
                     SetField(fieldName, fieldParameter);
                 }
 
-                var fieldOffset = GetFieldOffset(typeDef, fieldName);
+                Int32 fieldOffset = GetFieldOffset(typeDef, fieldName);
 
-                var fieldDataElement = fieldParameter.CreateDataElement(cur);
+                IDataElement fieldDataElement = fieldParameter.CreateDataElement(cur);
                 allocatedObject.Fields[fieldOffset] = fieldDataElement;
             }
 
@@ -175,11 +174,11 @@ namespace dnWalker.Concolic.Parameters
                 .Concat(_fields.Values.SelectMany(fieldParameter => fieldParameter.GetParameterExpressions()));
         }
 
-        public override bool TryGetChildParameter(string name, out Parameter childParameter)
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
         {
             if (base.TryGetChildParameter(name, out childParameter)) return true;
 
-            var accessor = ParameterName.GetAccessor(Name, name);
+            String accessor = ParameterName.GetAccessor(Name, name);
             if (TryGetField(accessor, out childParameter))
             {
                 return true;

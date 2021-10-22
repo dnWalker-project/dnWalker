@@ -108,6 +108,5 @@ namespace dnWalker.Tests.Concolic.Parameters
         {
             return GetArrayType(elementType.FullName);
         }
-
     }
 }

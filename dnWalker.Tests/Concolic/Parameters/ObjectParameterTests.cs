@@ -18,9 +18,9 @@ namespace dnWalker.Tests.Concolic.Parameters
 {
     public class ObjectParameterTests : ReferenceTypeParameterTests<ObjectParameter>
     {
-        protected override ObjectParameter Create(string name = "p")
+        protected override ObjectParameter Create(String name = "p")
         {
-            return new ObjectParameter(typeof(object).FullName) { Name = name };
+            return new ObjectParameter(typeof(Object).FullName) { Name = name };
         }
 
         [Theory]
@@ -28,9 +28,9 @@ namespace dnWalker.Tests.Concolic.Parameters
         [InlineData(typeof(MyItem))]
         public void Test_Type_Is_EquivalentTo_WrappedType(Type systemType)
         {
-            var dnLibType = GetType(systemType);
+            TypeSig dnLibType = GetType(systemType);
 
-            var objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
 
             objectParameter.TypeName.Should().BeEquivalentTo(dnLibType.FullName);
         }
@@ -41,11 +41,11 @@ namespace dnWalker.Tests.Concolic.Parameters
         [InlineData(typeof(MyItem))]
         public void UninitializedField_Should_Be_Null(Type systemType)
         {
-            var dnLibType = GetType(systemType);
+            TypeSig dnLibType = GetType(systemType);
 
-            var objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
 
-            objectParameter.TryGetField("field", out var fieldParameter).Should().BeFalse();
+            objectParameter.TryGetField("field", out Parameter fieldParameter).Should().BeFalse();
             fieldParameter.Should().BeNull();
         }
 
@@ -54,19 +54,20 @@ namespace dnWalker.Tests.Concolic.Parameters
         [InlineData(typeof(MyItem))]
         public void InitializedField_Should_Be_SameAs_FieldParameter(Type systemType)
         {
-            const string FieldName = "field";
+            const String FieldName = "field";
 
-            var dnLibType = GetType(systemType);
+            TypeSig dnLibType = GetType(systemType);
 
-            var objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
 
             Parameter fieldParameter = new BooleanParameter() { Value = false };
 
             objectParameter.SetField(FieldName, fieldParameter);
 
-            objectParameter.TryGetField("field", out var p).Should().BeTrue();
+            objectParameter.TryGetField("field", out Parameter p).Should().BeTrue();
             p.Should().BeSameAs(fieldParameter);
         }
+
 
         [Fact]
         public void SettingField_Should_SetName_Of_FieldParameter()

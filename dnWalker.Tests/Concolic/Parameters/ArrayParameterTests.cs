@@ -19,8 +19,6 @@ namespace dnWalker.Tests.Concolic.Parameters
             return new ArrayParameter("System.Int32", name);
         }
 
-
-
         [Fact]
         public void ChangingName_Changes_LengthParameter_Name()
         {

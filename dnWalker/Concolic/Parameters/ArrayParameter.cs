@@ -15,14 +15,12 @@ namespace dnWalker.Concolic.Parameters
 
     public class ArrayParameter : ReferenceTypeParameter
     {
-        public const string LengthParameterName = "#__LENGTH__";
+        public const String LengthParameterName = "#__LENGTH__";
 
-        private readonly Dictionary<int, Parameter> _items = new Dictionary<int, Parameter>();
+        private readonly Dictionary<Int32, Parameter> _items = new Dictionary<Int32, Parameter>();
 
-        protected override void OnNameChanged(string newName)
+        protected override void OnNameChanged(String newName)
         {
-            // can be invoked by the Parameter constructor => field are not yet initialized
-
             base.OnNameChanged(newName);
 
             if (LengthParameter != null)
@@ -32,14 +30,14 @@ namespace dnWalker.Concolic.Parameters
 
             if (_items != null)
             {
-                foreach (var pair in _items)
+                foreach (KeyValuePair<Int32, Parameter> pair in _items)
                 {
                     pair.Value.Name = ParameterName.ConstructIndex(newName, pair.Key);
                 }
             }
         }
 
-        public bool TryGetItemAt(int index, out Parameter itemParameter)
+        public Boolean TryGetItemAt(Int32 index, out Parameter itemParameter)
         {
             //if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait field))
             //{
@@ -49,7 +47,7 @@ namespace dnWalker.Concolic.Parameters
             return _items.TryGetValue(index, out itemParameter);
         }
 
-        public void SetItemAt(int index, Parameter parameter)
+        public void SetItemAt(Int32 index, Parameter parameter)
         {
             if (HasName()) parameter.Name = ParameterName.ConstructIndex(Name, index);
 
@@ -70,7 +68,7 @@ namespace dnWalker.Concolic.Parameters
             get;
         }
 
-        public int? Length
+        public Int32? Length
         {
             get { return LengthParameter.Value; }
             set { LengthParameter.Value = value; }
@@ -108,15 +106,15 @@ namespace dnWalker.Concolic.Parameters
             //}
         }
 
-        public string ElementTypeName { get; }
+        public String ElementTypeName { get; }
 
-        public ArrayParameter(string elementTypeName) : base(elementTypeName + "[]")
+        public ArrayParameter(String elementTypeName) : base(elementTypeName + "[]")
         {
             ElementTypeName = elementTypeName;
             LengthParameter = new Int32Parameter();
         }
 
-        public ArrayParameter(string elementTypeName, string name) : base(elementTypeName + "[]", name)
+        public ArrayParameter(String elementTypeName, String name) : base(elementTypeName + "[]", name)
         {
             ElementTypeName = elementTypeName;
             LengthParameter = new Int32Parameter(ParameterName.ConstructField(name, LengthParameterName));
@@ -125,38 +123,37 @@ namespace dnWalker.Concolic.Parameters
         public override IDataElement CreateDataElement(ExplicitActiveState cur)
         {
 
-            var dynamicArea = cur.DynamicArea;
+            DynamicArea dynamicArea = cur.DynamicArea;
             
             if (!IsNull.HasValue || IsNull.Value)
             {
                 // dont care or explicit null => return NullReference
-                var nullReference = new ObjectReference(0);
+                ObjectReference nullReference = new ObjectReference(0);
                 nullReference.SetParameter(this, cur);
                 return nullReference;
             }
 
-            var length = Length ?? 0;
+            Int32 length = Length ?? 0;
 
-            var location = dynamicArea.DeterminePlacement(false);
+            Int32 location = dynamicArea.DeterminePlacement(false);
 
             ITypeDefOrRef elementType = cur.DefinitionProvider.GetTypeDefinition(ElementTypeName);
-            var elementTypeSig = elementType.ToTypeSig();
 
-            var objectReference = dynamicArea.AllocateArray(location, elementType, length);
+            ObjectReference objectReference = dynamicArea.AllocateArray(location, elementType, length);
 
-            var allocatedArray = (AllocatedArray)dynamicArea.Allocations[objectReference];
+            AllocatedArray allocatedArray = (AllocatedArray)dynamicArea.Allocations[objectReference];
             allocatedArray.ClearFields(cur);
 
             if (length > 0)
             {
-                for (var i = 0; i < length; ++i)
+                for (Int32 i = 0; i < length; ++i)
                 {
-                    if (!TryGetItemAt(i, out var itemParameter))
+                    if (!TryGetItemAt(i, out Parameter itemParameter))
                     {
-                        itemParameter = ParameterFactory.CreateParameter(elementTypeSig);
+                        itemParameter = ParameterFactory.CreateParameter(elementType.ToTypeSig());
                         SetItemAt(i, itemParameter);
                     }
-                    var itemDataElement = itemParameter.CreateDataElement(cur);
+                    IDataElement itemDataElement = itemParameter.CreateDataElement(cur);
                     allocatedArray.Fields[i] = itemDataElement;
                 }
 
@@ -185,18 +182,18 @@ namespace dnWalker.Concolic.Parameters
         }
 
 
-        public override bool TryGetChildParameter(string name, out Parameter childParameter)
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
         {
             if (base.TryGetChildParameter(name, out childParameter)) return true;
 
 
-            var accessor = ParameterName.GetAccessor(Name, name);
+            String accessor = ParameterName.GetAccessor(Name, name);
             if (accessor == LengthParameterName)
             {
                 childParameter = LengthParameter;
                 return true;
             }
-            else if (Int32.TryParse(accessor, out var index) && TryGetItemAt(index, out childParameter))
+            else if (Int32.TryParse(accessor, out Int32 index) && TryGetItemAt(index, out childParameter))
             {
                 return true;
             }
@@ -206,14 +203,5 @@ namespace dnWalker.Concolic.Parameters
                 return false;
             }
         }
-
-        //public override String ToString()
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.AppendFormat("Name: {0}, ElementType: {1}, IsNull: {2}, Length: {3}", Name, ElementTypeName, IsNull, Length);
-            
-
-        //    return sb.ToString();
-        //}
     }
 }

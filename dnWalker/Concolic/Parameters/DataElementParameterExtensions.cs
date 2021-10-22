@@ -14,7 +14,7 @@ namespace dnWalker.Concolic.Parameters
 {
     public static class DataElementParameterExtensions
     {
-        public static bool TryGetParameter(this IDataElement dataElement, ExplicitActiveState cur, out Parameter parameter)
+        public static Boolean TryGetParameter(this IDataElement dataElement, ExplicitActiveState cur, out Parameter parameter)
         {
             return cur.PathStore.CurrentPath.TryGetObjectAttribute<Parameter>(dataElement, "parameter", out parameter);
         }
@@ -30,9 +30,9 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public static bool IsInterfaceParameter(this IDataElement dataElement, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
+        public static Boolean IsInterfaceParameter(this IDataElement objectReference, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
         {
-            if (TryGetParameter(dataElement, cur, out var p) && p is InterfaceParameter ip)
+            if (TryGetParameter(objectReference, cur, out Parameter p) && p is InterfaceParameter ip)
             {
                 interfaceParameter = ip;
                 return true;
@@ -91,7 +91,7 @@ namespace dnWalker.Concolic.Parameters
 
         public static bool IsObjectParameter(this IDataElement dataElement, ExplicitActiveState cur, out ObjectParameter objectParameter)
         {
-            if (TryGetParameter(dataElement, cur, out var p) && p is ObjectParameter op)
+            if (TryGetParameter(dataElement, cur, out Parameter p) && p is ObjectParameter op)
             {
                 objectParameter = op;
                 return true;

@@ -22,17 +22,17 @@ namespace dnWalker.Concolic.Parameters
 
         public static ParameterStore InitializeDefaultMethodParameters(this ParameterStore store, MethodDef method)
         {
-            var parameterTypes = method.Parameters.Select(p => p.Type).ToArray();
-            var parameterNames = method.Parameters.Select(p => p.Name).ToArray();
+            TypeSig[] parameterTypes = method.Parameters.Select(p => p.Type).ToArray();
+            String[] parameterNames = method.Parameters.Select(p => p.Name).ToArray();
 
             return InitializeRootParameters(store, parameterTypes, parameterNames);
         }
 
-        public static ParameterStore InitializeRootParameters(this ParameterStore store, TypeSig[] parameterTypes, string[] parameterNames)
+        public static ParameterStore InitializeRootParameters(this ParameterStore store, TypeSig[] parameterTypes, String[] parameterNames)
         {
-            for (var i = 0; i < parameterTypes.Length; ++i)
+            for (Int32 i = 0; i < parameterTypes.Length; ++i)
             {
-                var parameter = ParameterFactory.CreateParameter(parameterTypes[i], parameterNames[i]);
+                Parameter parameter = ParameterFactory.CreateParameter(parameterTypes[i], parameterNames[i]);
                 store.AddParameter(parameter);
             }
 
@@ -44,13 +44,13 @@ namespace dnWalker.Concolic.Parameters
             return GetMethodParematers(store, cur, method.Parameters.Select(p => p.Name).ToArray());
         }
 
-        public static DataElementList GetMethodParematers(this ParameterStore store, ExplicitActiveState cur, string[] parameterNames)
+        public static DataElementList GetMethodParematers(this ParameterStore store, ExplicitActiveState cur, String[] parameterNames)
         {
-            var arguments = cur.StorageFactory.CreateList(parameterNames.Length);
+            DataElementList arguments = cur.StorageFactory.CreateList(parameterNames.Length);
 
-            for (var i = 0; i < parameterNames.Length; ++i)
+            for (Int32 i = 0; i < parameterNames.Length; ++i)
             {
-                if (store.TryGetParameter(parameterNames[i], out var parameter))
+                if (store.TryGetParameter(parameterNames[i], out Parameter parameter))
                 {
                     arguments[i] = parameter.CreateDataElement(cur);
                 }

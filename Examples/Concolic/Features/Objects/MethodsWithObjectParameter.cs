@@ -14,7 +14,7 @@ namespace Examples.Concolic.Features.Objects
         {
             return _myField;
         }
-    
+
     }
 
 

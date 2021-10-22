@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.Z3", "dnWalker.Z3\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestGenerator", "dnWalker.TestGenerator\dnWalker.TestGenerator.csproj", "{A5E35335-A189-4A5A-AA28-4E3D75B8C55C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C08C4A04-F173-419B-9BC9-0E8910161952}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{093FB469-E98C-45FA-913E-4E2A68E14556}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection

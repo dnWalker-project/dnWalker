@@ -11,17 +11,17 @@ namespace dnWalker.Concolic.Parameters
 {
     public abstract class ReferenceTypeParameter : Parameter
     {
-        public const string IsNullParameterName = "#__IS_NULL__";
+        public const String IsNullParameterName = "#__IS_NULL__";
 
 
-        public ReferenceTypeParameter(string typeName) : base(typeName)
+        public ReferenceTypeParameter(String typeName) : base(typeName)
         {
             IsNullParameter = new BooleanParameter() { Value = true };
         }
 
-        public ReferenceTypeParameter(string typeName, string name) : base(typeName, name)
+        public ReferenceTypeParameter(String typeName, String name) : base(typeName, name)
         {
-            IsNullParameter = new BooleanParameter(ParameterName.ConstructField(name, IsNullParameterName), true);
+            IsNullParameter = new BooleanParameter(ParameterName.ConstructField(name, IsNullParameterName)) { Value = true };
         }
 
         public BooleanParameter IsNullParameter
@@ -29,18 +29,15 @@ namespace dnWalker.Concolic.Parameters
             get;
         }
 
-        protected override void OnNameChanged(string newName)
+        protected override void OnNameChanged(String newName)
         {
-            // can be invoked by the Parameter constructor => IsNullParameter is not yet initialized
-            // but will be invoked only if the constructor ReferenceTypeParameter(String,String) is invoked, e.g. IsNullParameter will be initialized with proper na,e
-
-            if (IsNullParameter != null) 
+            if (IsNullParameter != null)
             {
                 IsNullParameter.Name = ParameterName.ConstructField(newName, IsNullParameterName);
             }
         }
 
-        public bool? IsNull
+        public Boolean? IsNull
         {
             get
             {
@@ -89,13 +86,13 @@ namespace dnWalker.Concolic.Parameters
             return IsNullParameter.GetParameterExpressions();
         }
 
-        public override bool HasSingleExpression => false;
+        public override Boolean HasSingleExpression => false;
 
         public override ParameterExpression GetSingleParameterExpression() => null;
 
-        public override bool TryGetChildParameter(string name, out Parameter childParameter)
+        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
         {
-            var accessor = ParameterName.GetAccessor(Name, name);
+            String accessor = ParameterName.GetAccessor(Name, name);
             if (accessor == IsNullParameterName)
             {
                 childParameter = IsNullParameter;
