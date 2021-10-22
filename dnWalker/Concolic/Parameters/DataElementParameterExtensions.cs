@@ -14,7 +14,7 @@ namespace dnWalker.Concolic.Parameters
 {
     public static class DataElementParameterExtensions
     {
-        public static Boolean TryGetParameter(this IDataElement dataElement, ExplicitActiveState cur, out Parameter parameter)
+        public static bool TryGetParameter(this IDataElement dataElement, ExplicitActiveState cur, out Parameter parameter)
         {
             return cur.PathStore.CurrentPath.TryGetObjectAttribute<Parameter>(dataElement, "parameter", out parameter);
         }
@@ -30,9 +30,9 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public static Boolean IsInterfaceParameter(this ObjectReference objectReference, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
+        public static bool IsInterfaceParameter(this IDataElement dataElement, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
         {
-            if (TryGetParameter(objectReference, cur, out Parameter p) && p is InterfaceParameter ip)
+            if (TryGetParameter(dataElement, cur, out var p) && p is InterfaceParameter ip)
             {
                 interfaceParameter = ip;
                 return true;
@@ -43,9 +43,55 @@ namespace dnWalker.Concolic.Parameters
                 return false;
             }
         }
-        public static Boolean IsObjectParameter(this ObjectReference objectReference, ExplicitActiveState cur, out ObjectParameter objectParameter)
+
+        public static int GetCallCount(this IDataElement dataElement, string methodName, ExplicitActiveState cur)
         {
-            if (TryGetParameter(objectReference, cur, out Parameter p) && p is ObjectParameter op)
+            var callCount = 0;
+
+            if (!cur.PathStore.CurrentPath.TryGetObjectAttribute<Dictionary<string, int>>(dataElement, "call_counts", out var callCounts))
+            {
+                SetCallCount(dataElement, methodName, cur, callCount);
+                return callCount;
+            }
+
+            if (!callCounts.TryGetValue(methodName, out callCount))
+            {
+                callCount = 0;
+                callCounts[methodName] = callCount;
+            }
+
+            return callCount;
+        }
+
+        public static void SetCallCount(this IDataElement dataElement, string methodName, ExplicitActiveState cur, int callCount)
+        {
+            if (!cur.PathStore.CurrentPath.TryGetObjectAttribute<Dictionary<string, int>>(dataElement, "call_counts", out var callCounts))
+            {
+                callCounts = new Dictionary<string, int>();
+                cur.PathStore.CurrentPath.SetObjectAttribute(dataElement, "call_counts", callCounts);
+            }
+
+            callCounts[methodName] = callCount;
+        }
+
+        public static bool IsReferenceTypeParametery(this IDataElement dataElement, ExplicitActiveState cur, out ReferenceTypeParameter referenceTypeParameter)
+        {
+            if (TryGetParameter(dataElement, cur, out var p) && p is ReferenceTypeParameter rp)
+            {
+                referenceTypeParameter = rp;
+                return true;
+            }
+            else
+            {
+                referenceTypeParameter = null;
+                return false;
+            }
+        }
+
+
+        public static bool IsObjectParameter(this IDataElement dataElement, ExplicitActiveState cur, out ObjectParameter objectParameter)
+        {
+            if (TryGetParameter(dataElement, cur, out var p) && p is ObjectParameter op)
             {
                 objectParameter = op;
                 return true;
@@ -53,6 +99,20 @@ namespace dnWalker.Concolic.Parameters
             else
             {
                 objectParameter = null;
+                return false;
+            }
+        }
+
+        public static bool IsArrayParameter(this IDataElement dataElement, ExplicitActiveState cur, out ArrayParameter arrayParameter)
+        {
+            if (TryGetParameter(dataElement, cur, out var p) && p is ArrayParameter ap)
+            {
+                arrayParameter = ap;
+                return true;
+            }
+            else
+            {
+                arrayParameter = null;
                 return false;
             }
         }

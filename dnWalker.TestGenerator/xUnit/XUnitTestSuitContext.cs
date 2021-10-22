@@ -10,8 +10,8 @@ namespace dnWalker.TestGenerator.xUnit
 {
     public class XUnitTestSuitContext : ITestSuitContext
     {
-        private String _directory;
-        private String _projectDirectory;
+        private string _directory;
+        private string _projectDirectory;
 
         //private static CodeTypeDeclaration InitializeTestFixture(CodeCompileUnit codeCompileUnit, String ns, String fixtureName)
         //{
@@ -21,7 +21,7 @@ namespace dnWalker.TestGenerator.xUnit
         //}
 
 
-        public void CreateProject(String directory, String name)
+        public void CreateProject(string directory, string name)
         {
             _directory = directory;
             _projectDirectory = System.IO.Path.Combine(directory, name);
@@ -30,12 +30,12 @@ namespace dnWalker.TestGenerator.xUnit
         }
 
 
-        public void WriteAsTheory(String methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases)
+        public void WriteAsTheory(string methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases)
         {
             
         }
 
-        public void WriteAsFacts(String methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases)
+        public void WriteAsFacts(string methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases)
         {
 
         }

@@ -12,9 +12,9 @@ namespace dnWalker.TestGenerator
 {
     public class Program
     {
-        static void Main(String[] args)
+        static void Main(string[] args)
         {
-            ParserResult<Configuration> result = Parser.Default.ParseArguments<Configuration>(args);
+            var result = Parser.Default.ParseArguments<Configuration>(args);
 
             result.WithParsed(configuration =>
             {
@@ -22,7 +22,7 @@ namespace dnWalker.TestGenerator
             });
             result.WithNotParsed(errors =>
             {
-                foreach(Error e in errors)
+                foreach(var e in errors)
                 {
                     Console.WriteLine(e.ToString());
                 }
@@ -32,17 +32,17 @@ namespace dnWalker.TestGenerator
         public static void RunGenerator(Configuration configuration)
         {
             // setup dnWalker.Concolic.Explorer
-            Explorer explorer = Explorer.ForAssembly(configuration.AssemblyPath, new Z3.Solver());
+            var explorer = Explorer.ForAssembly(configuration.AssemblyPath, new Z3.Solver());
 
-            Dictionary<String, IReadOnlyList<ExplorationIterationData>> iterationData = new Dictionary<String, IReadOnlyList<ExplorationIterationData>>();
-            ITestSuitContext context = configuration.TestSuit.GetContext();
+            var iterationData = new Dictionary<string, IReadOnlyList<ExplorationIterationData>>();
+            var context = configuration.TestSuit.GetContext();
 
-            String assemblyName = System.IO.Path.GetFileNameWithoutExtension(configuration.AssemblyPath);
+            var assemblyName = System.IO.Path.GetFileNameWithoutExtension(configuration.AssemblyPath);
 
             context.CreateProject(configuration.OutputFolder, assemblyName + ".Tests");
 
             // run it for each requested method
-            foreach (String method in configuration.Methods)
+            foreach (var method in configuration.Methods)
             {
                 explorer.Run(method);
 

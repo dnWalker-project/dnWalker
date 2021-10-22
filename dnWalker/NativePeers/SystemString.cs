@@ -77,7 +77,7 @@ namespace dnWalker.NativePeers
             if (methodDef.FullName == "System.Void System.String::.ctor(System.Char[])")
             {
                 var arrayRef = (IReferenceType)args[1];
-                AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+                var theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
                 if (theArray.Fields.Length > 0)
                 {
                     // TODO improve

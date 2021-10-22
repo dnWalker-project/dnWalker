@@ -58,7 +58,7 @@ namespace MMC.Data {
 
         public DataElementList CreateSingleton(IDataElement elem)
         {
-            DataElementList retval = CreateList(1);
+            var retval = CreateList(1);
             retval[0] = elem;
             return retval;
         }

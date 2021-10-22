@@ -8,62 +8,62 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Tests.Concolic.Parameters
 {
-    public class BooleanParameterTest : PrimitiveValueParameterTests<BooleanParameter, Boolean>
+    public class BooleanParameterTest : PrimitiveValueParameterTests<BooleanParameter, bool>
     {
-        protected override BooleanParameter Create(String name = "p") => new BooleanParameter(name);
+        protected override BooleanParameter Create(string name = "p") => new BooleanParameter(name);
     }
     
-    public class CharParameterTest : PrimitiveValueParameterTests<CharParameter, Char>
+    public class CharParameterTest : PrimitiveValueParameterTests<CharParameter, char>
     {
-        protected override CharParameter Create(String name = "p") => new CharParameter(name);
+        protected override CharParameter Create(string name = "p") => new CharParameter(name);
     }
     
-    public class ByteParameterTest : PrimitiveValueParameterTests<ByteParameter, Byte>
+    public class ByteParameterTest : PrimitiveValueParameterTests<ByteParameter, byte>
     {
-        protected override ByteParameter Create(String name = "p") => new ByteParameter(name);
+        protected override ByteParameter Create(string name = "p") => new ByteParameter(name);
     }
     
-    public class SByteParameterTest : PrimitiveValueParameterTests<SByteParameter, SByte>
+    public class SByteParameterTest : PrimitiveValueParameterTests<SByteParameter, sbyte>
     {
-        protected override SByteParameter Create(String name = "p") => new SByteParameter(name);
+        protected override SByteParameter Create(string name = "p") => new SByteParameter(name);
     }
     
-    public class Int16ParameterTest : PrimitiveValueParameterTests<Int16Parameter, Int16>
+    public class Int16ParameterTest : PrimitiveValueParameterTests<Int16Parameter, short>
     {
-        protected override Int16Parameter Create(String name = "p") => new Int16Parameter(name);
+        protected override Int16Parameter Create(string name = "p") => new Int16Parameter(name);
     }
     
-    public class Int32ParameterTest : PrimitiveValueParameterTests<Int32Parameter, Int32>
+    public class Int32ParameterTest : PrimitiveValueParameterTests<Int32Parameter, int>
     {
-        protected override Int32Parameter Create(String name = "p") => new Int32Parameter(name);
+        protected override Int32Parameter Create(string name = "p") => new Int32Parameter(name);
     }
     
-    public class Int64ParameterTest : PrimitiveValueParameterTests<Int64Parameter, Int64>
+    public class Int64ParameterTest : PrimitiveValueParameterTests<Int64Parameter, long>
     {
-        protected override Int64Parameter Create(String name = "p") => new Int64Parameter(name);
+        protected override Int64Parameter Create(string name = "p") => new Int64Parameter(name);
     }
     
-    public class UInt16ParameterTest : PrimitiveValueParameterTests<UInt16Parameter, UInt16>
+    public class UInt16ParameterTest : PrimitiveValueParameterTests<UInt16Parameter, ushort>
     {
-        protected override UInt16Parameter Create(String name = "p") => new UInt16Parameter(name);
+        protected override UInt16Parameter Create(string name = "p") => new UInt16Parameter(name);
     }
     
-    public class UInt32ParameterTest : PrimitiveValueParameterTests<UInt32Parameter, UInt32>
+    public class UInt32ParameterTest : PrimitiveValueParameterTests<UInt32Parameter, uint>
     {
-        protected override UInt32Parameter Create(String name = "p") => new UInt32Parameter(name);
+        protected override UInt32Parameter Create(string name = "p") => new UInt32Parameter(name);
     }
     
-    public class UInt64ParameterTest : PrimitiveValueParameterTests<UInt64Parameter, UInt64>
+    public class UInt64ParameterTest : PrimitiveValueParameterTests<UInt64Parameter, ulong>
     {
-        protected override UInt64Parameter Create(String name = "p") => new UInt64Parameter(name);
+        protected override UInt64Parameter Create(string name = "p") => new UInt64Parameter(name);
     }
 
-    public class SingleParameterTest : PrimitiveValueParameterTests<SingleParameter, Single>
+    public class SingleParameterTest : PrimitiveValueParameterTests<SingleParameter, float>
     {
-        protected override SingleParameter Create(String name = "p") => new SingleParameter(name);
+        protected override SingleParameter Create(string name = "p") => new SingleParameter(name);
     }
-    public class DoubleParameterTest : PrimitiveValueParameterTests<DoubleParameter, Double>
+    public class DoubleParameterTest : PrimitiveValueParameterTests<DoubleParameter, double>
     {
-        protected override DoubleParameter Create(String name = "p") => new DoubleParameter(name);
+        protected override DoubleParameter Create(string name = "p") => new DoubleParameter(name);
     }
 }

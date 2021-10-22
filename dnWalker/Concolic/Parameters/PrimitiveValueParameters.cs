@@ -15,24 +15,24 @@ namespace dnWalker.Concolic.Parameters
 
     public abstract class PrimitiveValueParameter : Parameter
     {
-        protected PrimitiveValueParameter(String typeName) : base(typeName)
+        protected PrimitiveValueParameter(string typeName) : base(typeName)
         {
         }
-        protected PrimitiveValueParameter(String typeName, String name) : base(typeName, name)
+        protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
         {
         }
     }
 
     public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
     {
-        protected PrimitiveValueParameter(String typeName) : base(typeName)
+        protected PrimitiveValueParameter(string typeName) : base(typeName)
         {
         }
 
-        protected PrimitiveValueParameter(String typeName, String name) : base(typeName, name)
+        protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
         { }
 
-        protected PrimitiveValueParameter(String typeName, String name, TValue value) : base(typeName, name)
+        protected PrimitiveValueParameter(string typeName, string name, TValue value) : base(typeName, name)
         {
             Value = value;
         }
@@ -80,7 +80,7 @@ namespace dnWalker.Concolic.Parameters
             //}
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             if (Value.HasValue)
             {
@@ -93,7 +93,7 @@ namespace dnWalker.Concolic.Parameters
             
         }
 
-        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
+        public override bool TryGetChildParameter(string name, out Parameter childParameter)
         {
             childParameter = null;
             return false;
@@ -106,7 +106,7 @@ namespace dnWalker.Concolic.Parameters
             yield return GetSingleParameterExpression();
         }
 
-        public override Boolean HasSingleExpression => true;
+        public override bool HasSingleExpression => true;
         
         public override ParameterExpression GetSingleParameterExpression()
         {
@@ -117,24 +117,24 @@ namespace dnWalker.Concolic.Parameters
             return _expression;
         }
 
-        protected override void OnNameChanged(String newName)
+        protected override void OnNameChanged(string newName)
         {
             base.OnNameChanged(newName);
             _expression = null;
         }
     }
 
-    public class BooleanParameter : PrimitiveValueParameter<Boolean>
+    public class BooleanParameter : PrimitiveValueParameter<bool>
     {
         public BooleanParameter() : base(TypeNames.BooleanTypeName)
         {
         }
 
-        public BooleanParameter(String name) : base(TypeNames.BooleanTypeName, name)
+        public BooleanParameter(string name) : base(TypeNames.BooleanTypeName, name)
         {
         }
 
-        public BooleanParameter(String name, Boolean value) : base(TypeNames.BooleanTypeName, name, value)
+        public BooleanParameter(string name, bool value) : base(TypeNames.BooleanTypeName, name, value)
         {
         }
 
@@ -146,17 +146,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class CharParameter : PrimitiveValueParameter<Char>
+    public class CharParameter : PrimitiveValueParameter<char>
     {
         public CharParameter() : base(TypeNames.CharTypeName)
         {
         }
 
-        public CharParameter(String name) : base(TypeNames.CharTypeName, name)
+        public CharParameter(string name) : base(TypeNames.CharTypeName, name)
         {
         }
 
-        public CharParameter(String name, Char value) : base(TypeNames.CharTypeName, name, value)
+        public CharParameter(string name, char value) : base(TypeNames.CharTypeName, name, value)
         {
         }
 
@@ -168,17 +168,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class ByteParameter : PrimitiveValueParameter<Byte>
+    public class ByteParameter : PrimitiveValueParameter<byte>
     {
         public ByteParameter() : base(TypeNames.ByteTypeName)
         {
         }
 
-        public ByteParameter(String name) : base(TypeNames.ByteTypeName, name)
+        public ByteParameter(string name) : base(TypeNames.ByteTypeName, name)
         {
         }
 
-        public ByteParameter(String name, Byte value) : base(TypeNames.ByteTypeName, name, value)
+        public ByteParameter(string name, byte value) : base(TypeNames.ByteTypeName, name, value)
         {
         }
 
@@ -190,17 +190,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class SByteParameter : PrimitiveValueParameter<SByte>
+    public class SByteParameter : PrimitiveValueParameter<sbyte>
     {
         public SByteParameter() : base(TypeNames.SByteTypeName)
         {
         }
 
-        public SByteParameter(String name) : base(TypeNames.SByteTypeName, name)
+        public SByteParameter(string name) : base(TypeNames.SByteTypeName, name)
         {
         }
 
-        public SByteParameter(String name, SByte value) : base(TypeNames.SByteTypeName, name, value)
+        public SByteParameter(string name, sbyte value) : base(TypeNames.SByteTypeName, name, value)
         {
         }
 
@@ -212,17 +212,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class Int16Parameter : PrimitiveValueParameter<Int16>
+    public class Int16Parameter : PrimitiveValueParameter<short>
     {
         public Int16Parameter() : base(TypeNames.Int16TypeName)
         {
         }
 
-        public Int16Parameter(String name) : base(TypeNames.Int16TypeName, name)
+        public Int16Parameter(string name) : base(TypeNames.Int16TypeName, name)
         {
         }
 
-        public Int16Parameter(String name, Int16 value) : base(TypeNames.Int16TypeName, name, value)
+        public Int16Parameter(string name, short value) : base(TypeNames.Int16TypeName, name, value)
         {
         }
 
@@ -234,17 +234,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class Int32Parameter : PrimitiveValueParameter<Int32>
+    public class Int32Parameter : PrimitiveValueParameter<int>
     {
         public Int32Parameter() : base(TypeNames.Int32TypeName)
         {
         }
 
-        public Int32Parameter(String name) : base(TypeNames.Int32TypeName, name)
+        public Int32Parameter(string name) : base(TypeNames.Int32TypeName, name)
         {
         }
 
-        public Int32Parameter(String name, Int32 value) : base(TypeNames.Int32TypeName, name, value)
+        public Int32Parameter(string name, int value) : base(TypeNames.Int32TypeName, name, value)
         {
         }
 
@@ -256,17 +256,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class Int64Parameter : PrimitiveValueParameter<Int64>
+    public class Int64Parameter : PrimitiveValueParameter<long>
     {
         public Int64Parameter() : base(TypeNames.Int64TypeName)
         {
         }
 
-        public Int64Parameter(String name) : base(TypeNames.Int64TypeName, name)
+        public Int64Parameter(string name) : base(TypeNames.Int64TypeName, name)
         {
         }
 
-        public Int64Parameter(String name, Int64 value) : base(TypeNames.Int64TypeName, name, value)
+        public Int64Parameter(string name, long value) : base(TypeNames.Int64TypeName, name, value)
         {
         }
 
@@ -278,17 +278,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class UInt16Parameter : PrimitiveValueParameter<UInt16>
+    public class UInt16Parameter : PrimitiveValueParameter<ushort>
     {
         public UInt16Parameter() : base(TypeNames.UInt16TypeName)
         {
         }
 
-        public UInt16Parameter(String name) : base(TypeNames.UInt16TypeName, name)
+        public UInt16Parameter(string name) : base(TypeNames.UInt16TypeName, name)
         {
         }
 
-        public UInt16Parameter(String name, UInt16 value) : base(TypeNames.UInt16TypeName, name, value)
+        public UInt16Parameter(string name, ushort value) : base(TypeNames.UInt16TypeName, name, value)
         {
         }
 
@@ -300,17 +300,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class UInt32Parameter : PrimitiveValueParameter<UInt32>
+    public class UInt32Parameter : PrimitiveValueParameter<uint>
     {
         public UInt32Parameter() : base(TypeNames.UInt32TypeName)
         {
         }
 
-        public UInt32Parameter(String name) : base(TypeNames.UInt32TypeName, name)
+        public UInt32Parameter(string name) : base(TypeNames.UInt32TypeName, name)
         {
         }
 
-        public UInt32Parameter(String name, UInt32 value) : base(TypeNames.UInt32TypeName, name, value)
+        public UInt32Parameter(string name, uint value) : base(TypeNames.UInt32TypeName, name, value)
         {
         }
 
@@ -322,17 +322,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class UInt64Parameter : PrimitiveValueParameter<UInt64>
+    public class UInt64Parameter : PrimitiveValueParameter<ulong>
     {
         public UInt64Parameter() : base(TypeNames.UInt64TypeName)
         {
         }
 
-        public UInt64Parameter(String name) : base(TypeNames.UInt64TypeName, name)
+        public UInt64Parameter(string name) : base(TypeNames.UInt64TypeName, name)
         {
         }
 
-        public UInt64Parameter(String name, UInt64 value) : base(TypeNames.UInt64TypeName, name, value)
+        public UInt64Parameter(string name, ulong value) : base(TypeNames.UInt64TypeName, name, value)
         {
         }
 
@@ -344,17 +344,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class SingleParameter : PrimitiveValueParameter<Single>
+    public class SingleParameter : PrimitiveValueParameter<float>
     {
         public SingleParameter() : base(TypeNames.SingleTypeName)
         {
         }
 
-        public SingleParameter(String name) : base(TypeNames.SingleTypeName, name)
+        public SingleParameter(string name) : base(TypeNames.SingleTypeName, name)
         {
         }
 
-        public SingleParameter(String name, Single value) : base(TypeNames.SingleTypeName, name, value)
+        public SingleParameter(string name, float value) : base(TypeNames.SingleTypeName, name, value)
         {
         }
 
@@ -366,17 +366,17 @@ namespace dnWalker.Concolic.Parameters
         }
     }
 
-    public class DoubleParameter : PrimitiveValueParameter<Double>
+    public class DoubleParameter : PrimitiveValueParameter<double>
     {
         public DoubleParameter() : base(TypeNames.DoubleTypeName)
         {
         }
 
-        public DoubleParameter(String name) : base(TypeNames.DoubleTypeName, name)
+        public DoubleParameter(string name) : base(TypeNames.DoubleTypeName, name)
         {
         }
 
-        public DoubleParameter(String name, Double value) : base(TypeNames.DoubleTypeName, name, value)
+        public DoubleParameter(string name, double value) : base(TypeNames.DoubleTypeName, name, value)
         {
         }
 

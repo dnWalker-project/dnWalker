@@ -12,7 +12,7 @@ namespace dnWalker.Concolic.Parameters
 {
     public class ParameterStore
     {
-        private readonly IDictionary<String, Parameter> _parameters = new Dictionary<String, Parameter>();
+        private readonly IDictionary<string, Parameter> _parameters = new Dictionary<string, Parameter>();
 
         //public IDictionary<String, Parameter> Parameters
         //{
@@ -27,7 +27,7 @@ namespace dnWalker.Concolic.Parameters
             if (!parameter.HasName()) throw new InvalidOperationException("Cannot add parameter without a name!");
 
             //_parameters.Add(parameter);
-            String name = parameter.Name;
+            var name = parameter.Name;
             if (_parameters.ContainsKey(name))
             {
                 throw new InvalidOperationException("Parameter with this name is already specified.");
@@ -38,16 +38,16 @@ namespace dnWalker.Concolic.Parameters
             return parameter;
         }
 
-        public Boolean TryGetParameter(String name, out Parameter parameter)
+        public bool TryGetParameter(string name, out Parameter parameter)
         {
             // try to perform walk through the parameter forest
-            String rootParameterName = ParameterName.GetRootName(name);
+            var rootParameterName = ParameterName.GetRootName(name);
 
             if (rootParameterName == name)
             {
                 return _parameters.TryGetValue(name, out parameter);
             }
-            else if (_parameters.TryGetValue(rootParameterName, out Parameter rootParameter))
+            else if (_parameters.TryGetValue(rootParameterName, out var rootParameter))
             {
                 return rootParameter.TryGetChildParameter(name, out parameter);
             }
@@ -69,7 +69,7 @@ namespace dnWalker.Concolic.Parameters
             _parameters.Clear();
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return String.Join(Environment.NewLine, _parameters.Values);
         }

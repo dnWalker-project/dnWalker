@@ -113,9 +113,9 @@ namespace MMC
 
         public override string ToString()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new System.Text.StringBuilder();
 
-            long usedAfterGC = System.GC.GetTotalMemory(true) / 1024; // in Kb
+            var usedAfterGC = System.GC.GetTotalMemory(true) / 1024; // in Kb
 
             sb.Append("\n--------------------------------------\n");
             sb.AppendFormat("Time                  : {0} sec\n", m_elapsed.TotalSeconds);

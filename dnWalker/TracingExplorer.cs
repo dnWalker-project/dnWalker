@@ -52,24 +52,24 @@ namespace MMC
 		 */
         public override void PrintTransition()
         {
-            int currentThread = cur.ThreadPool.CurrentThreadId;
-            MethodState currentMethod = cur.CurrentMethod;
+            var currentThread = cur.ThreadPool.CurrentThreadId;
+            var currentMethod = cur.CurrentMethod;
             var instr = currentMethod.ProgramCounter;
-            bool isRet = instr.OpCode.Code == Code.Ret;
-            string operandString = instr.Operand == null ?
+            var isRet = instr.OpCode.Code == Code.Ret;
+            var operandString = instr.Operand == null ?
                 "" :
                 CILElementPrinter.FormatCILElement(instr.Operand);
 
-            int callstackSize = cur.CallStack.StackPointer - 1;
+            var callstackSize = cur.CallStack.StackPointer - 1;
 
-            bool sameMethod = currentMethod.Definition.ToString().Equals(prevMethod);
+            var sameMethod = currentMethod.Definition.ToString().Equals(prevMethod);
             prevMethod = currentMethod.Definition.ToString();
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendFormat("- thread: {0} ", currentThread);
             sb.Append(' ', callstackSize * 4);
 
-            string preString = sb.ToString();
+            var preString = sb.ToString();
 
             if (!sameMethod && instr.Offset > 0)
             {

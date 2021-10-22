@@ -39,7 +39,7 @@ namespace MMC.State {
 
 			get { return base[index]; }
 			set {
-				MethodState old_value = base[index];
+				var old_value = base[index];
 				if (old_value != value) {
 					m_isDirty = true;
 					if (old_value != null)
@@ -66,8 +66,8 @@ namespace MMC.State {
 		public DirtyList DirtyFrames {
 
 			get {
-				DirtyList retval = new DirtyList(m_stackptr);
-				for (int i = m_stackptr-1; i >= 0 && this[i].IsDirty(); --i)
+				var retval = new DirtyList(m_stackptr);
+				for (var i = m_stackptr-1; i >= 0 && this[i].IsDirty(); --i)
 					retval.SetDirty(i);
 				return retval;
 			}
@@ -80,7 +80,7 @@ namespace MMC.State {
 
 		public MethodState Pop() {
 			--m_stackptr;
-			MethodState retval = base[m_stackptr];
+			var retval = base[m_stackptr];
 			Debug.Assert(retval != null, "popped a null from the callstack!");
 			retval.Dispose();
 			m_isDirty = true;
@@ -99,7 +99,7 @@ namespace MMC.State {
 
 		public bool IsDirty() {
 
-			bool retval = m_isDirty;
+			var retval = m_isDirty;
 			if (!retval && m_stackptr > 0)
 				retval = base[m_stackptr-1].IsDirty();
 			return retval;
@@ -108,12 +108,12 @@ namespace MMC.State {
 		public void Clean() {
 
 			m_isDirty = false;
-			for (int i = m_stackptr-1; i >= 0 && this[i].IsDirty(); --i)
+			for (var i = m_stackptr-1; i >= 0 && this[i].IsDirty(); --i)
 				this[i].Clean();
 		}
 
 		public IEnumerator<MethodState> GetEnumerator() {
-			for (int i = m_stackptr - 1; i >= 0; i--)
+			for (var i = m_stackptr - 1; i >= 0; i--)
 				yield return this[i];
 		}
 

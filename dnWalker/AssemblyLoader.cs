@@ -18,10 +18,10 @@ namespace dnWalker
 
         public ModuleDef GetModuleDef(byte[] data)
         {
-            AssemblyResolver asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
+            var asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
             asmResolver.EnableTypeDefCache = true;
 
-            ModuleDefMD module = ModuleDefMD.Load(data, _moduleContext);
+            var module = ModuleDefMD.Load(data, _moduleContext);
             module.Context = _moduleContext;
 
             ((AssemblyResolver)module.Context.AssemblyResolver).AddToCache(module);
@@ -50,10 +50,10 @@ namespace dnWalker
 
         public ModuleDef GetModuleDef(Module module)
         {
-            AssemblyResolver asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
+            var asmResolver = (AssemblyResolver)_moduleContext.AssemblyResolver;
             asmResolver.EnableTypeDefCache = true;
 
-            ModuleDefMD moduleDef = ModuleDefMD.Load(module, _moduleContext);
+            var moduleDef = ModuleDefMD.Load(module, _moduleContext);
             moduleDef.Context = _moduleContext;
 
             ((AssemblyResolver)moduleDef.Context.AssemblyResolver).AddToCache(moduleDef);
@@ -66,11 +66,11 @@ namespace dnWalker
 
         public ModuleDef[] GetReferencedModules(ModuleDef module)
         {
-            IEnumerable<AssemblyRef> refs = module.GetAssemblyRefs();
+            var refs = module.GetAssemblyRefs();
 
-            IEnumerable<AssemblyDef> refAssemblies = refs.Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module));
+            var refAssemblies = refs.Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module));
 
-            IEnumerable<ModuleDef> refModules = refAssemblies.SelectMany(a => a.Modules);
+            var refModules = refAssemblies.SelectMany(a => a.Modules);
 
             return refModules.ToArray();
 

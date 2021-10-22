@@ -11,9 +11,9 @@ namespace dnWalker.TestGenerator
     /// </summary>
     public interface ITestSuitContext
     {
-        void CreateProject(String directory, String name);
+        void CreateProject(string directory, string name);
 
-        void WriteAsTheory(String methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases);
-        void WriteAsFacts(String methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases);
+        void WriteAsTheory(string methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases);
+        void WriteAsFacts(string methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases);
     }
 }

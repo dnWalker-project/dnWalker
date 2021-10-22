@@ -102,7 +102,8 @@
     <Compile Include="Concolic\ArgumentsCacheTests.cs" />
     <Compile Include="Concolic\Features\Arrays\InputTests.cs" />
     <Compile Include="Concolic\Features\Math\InputTests.cs" />
-    <Compile Include="Concolic\MethodInvoking\InterfaceMethodInvokingTests.cs" />
+    <Compile Include="Concolic\Features\Interfaces\InterfaceMethodInvokingTests.cs" />
+    <Compile Include="Concolic\Features\Objects\ObjectSubstituteTests.cs" />
     <Compile Include="Concolic\Parameters\ArrayParameterTests.cs" />
     <Compile Include="Concolic\Parameters\dnlibTypeTestBase.cs" />
     <Compile Include="Concolic\Parameters\NumericParameterTests.cs" />
@@ -124,7 +125,7 @@
     <Compile Include="ExampleTests\Simple\BranchesTests.cs" />
     <Compile Include="InterpreterTest.cs" />
     <Compile Include="Interpreter\IntepreterTests.cs" />
-    <Compile Include="Symbolic\ArrayTests.cs" />
+    <Compile Include="Concolic\Features\Arrays\ArrayTests.cs" />
     <Compile Include="Symbolic\BranchingTests.cs" />
     <Compile Include="Symbolic\MethodParametersFactoryTests.cs" />
     <Compile Include="Symbolic\SymbolicArgTest.cs" />

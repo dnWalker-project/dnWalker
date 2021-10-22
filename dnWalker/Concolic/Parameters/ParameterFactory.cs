@@ -10,9 +10,9 @@ namespace dnWalker.Concolic.Parameters
 {
     public static class ParameterFactory
     {
-        public static Parameter CreateParameter(TypeSig parameterType, String parameterName)
+        public static Parameter CreateParameter(TypeSig parameterType, string parameterName)
         {
-            Parameter parameter = CreateParameter(parameterType);
+            var parameter = CreateParameter(parameterType);
             parameter.Name = parameterName;
             return parameter;
         }
@@ -27,20 +27,20 @@ namespace dnWalker.Concolic.Parameters
             // TODO we are working with value types - TODO
             else if (parameterType.IsValueType)
             {
-                ITypeDefOrRef td = parameterType.TryGetTypeDefOrRef();// .ResolveTypeDefThrow();
+                var td = parameterType.TryGetTypeDefOrRef();// .ResolveTypeDefThrow();
 
                 throw new NotSupportedException("Not yet supported custom value types...");
             }
             // Array of reference types
             else if (parameterType.IsArray)
             {
-                ArraySig arraySig = parameterType.ToArraySig();
+                var arraySig = parameterType.ToArraySig();
                 return CreateArrayParamter(arraySig);
             }
             // SZArray of reference types
             else if (parameterType.IsSZArray)
             {
-                SZArraySig arraySig = parameterType.ToSZArraySig();
+                var arraySig = parameterType.ToSZArraySig();
                 return CreateArrayParamter(arraySig);
             }
             // Array of value types
@@ -52,8 +52,8 @@ namespace dnWalker.Concolic.Parameters
             // Class or Interface
             else if (parameterType.IsClassSig)
             {
-                ClassSig classSig = parameterType.ToClassSig();
-                TypeDef typeDef = classSig.TryGetTypeDefOrRef().ResolveTypeDefThrow();
+                var classSig = parameterType.ToClassSig();
+                var typeDef = classSig.TryGetTypeDefOrRef().ResolveTypeDefThrow();
 
                 if (typeDef.IsAbstract && typeDef.IsClass)
                 {
@@ -91,7 +91,7 @@ namespace dnWalker.Concolic.Parameters
 
         private static ArrayParameter CreateArrayParamter(ArraySigBase arrayType)
         {
-            TypeSig elementType = arrayType.Next;
+            var elementType = arrayType.Next;
 
             return new ArrayParameter(elementType.FullName);
         }

@@ -68,10 +68,10 @@
     <Compile Include="Concolic\Features\Arrays\Array.cs" />
     <Compile Include="Concolic\Features\Arrays\Input.cs" />
     <Compile Include="Concolic\Features\Math\Input.cs" />
-    <Compile Include="Concolic\MethodInvoking\InterfaceMethodInvoking.cs" />
-    <Compile Include="Concolic\MethodInvoking\TestClass.cs" />
+    <Compile Include="Concolic\Features\Interfaces\InterfaceMethodInvoking.cs" />
+    <Compile Include="Concolic\Features\Objects\MethodsWithObjectParameter.cs" />
     <Compile Include="Concolic\Protocol.cs" />
-    <Compile Include="Concolic\Simple\Arrays.cs" />
+    <Compile Include="Concolic\Features\Arrays\BranchingBasedOnArrayProperties.cs" />
     <Compile Include="DataRace.cs" />
     <Compile Include="Deadlock.cs" />
     <Compile Include="Concolic\Simple\Branches.cs" />

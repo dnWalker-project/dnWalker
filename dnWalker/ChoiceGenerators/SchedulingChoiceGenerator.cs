@@ -119,7 +119,7 @@ namespace dnWalker.ChoiceGenerators
         public Stack<int> GetErrorTrace()
         {
             var retval = new Stack<int>();
-            foreach (SchedulingData sd in m_dfs)
+            foreach (var sd in m_dfs)
             {
                 retval.Push(sd.LastAccess.ThreadId);
             }

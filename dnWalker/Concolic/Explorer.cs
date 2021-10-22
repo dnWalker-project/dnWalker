@@ -28,20 +28,20 @@ namespace dnWalker.Concolic
         private readonly ISolver _solver;
         private readonly DefinitionProvider _definitionProvider;
 
-        public static Explorer ForAssembly(String assemblyFilename, ISolver solver, Action<Config> setup = null, TextWriter loggerOutput = null)
+        public static Explorer ForAssembly(string assemblyFilename, ISolver solver, Action<Config> setup = null, TextWriter loggerOutput = null)
         {
-            AssemblyLoader assemblyLoader = new AssemblyLoader();
+            var assemblyLoader = new AssemblyLoader();
 
-            Byte[] data = File.ReadAllBytes(assemblyFilename);
+            var data = File.ReadAllBytes(assemblyFilename);
 
             _ = assemblyLoader.GetModuleDef(data);
 
             System.Reflection.Assembly.LoadFrom(assemblyFilename);
-            DefinitionProvider definitionProvider = DefinitionProvider.Create(assemblyLoader);
+            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
 
 
-            Config config = new Config();
-            Logger logger = new Logger(Logger.Default); // | LogPriority.Trace);
+            var config = new Config();
+            var logger = new Logger(Logger.Default); // | LogPriority.Trace);
 
             logger.AddOutput(new TextLoggerOutput(loggerOutput ?? Console.Out));
 
@@ -75,7 +75,7 @@ namespace dnWalker.Concolic
         {
             using (TextWriter writer = File.CreateText(filename))
             {
-                Echo.Core.Graphing.Serialization.Dot.DotWriter dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
+                var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
                 dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
                 dotWriter.NodeAdorner = new ControlFlowNodeAdorner<Instruction>();
                 dotWriter.EdgeAdorner = new ControlFlowEdgeAdorner<Instruction>();
@@ -88,34 +88,34 @@ namespace dnWalker.Concolic
             get { return _iterationData; }
         }
 
-        public void Run(String methodName)
+        public void Run(string methodName)
         {
-            MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
+            var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
             // generate IArg[] array for default values
-            IArg[] arguments = new IArg[entryPoint.Parameters.Count];
+            var arguments = new IArg[entryPoint.Parameters.Count];
 
             Run(methodName, arguments);
         }
 
         public void Run(string methodName, params IArg[] arguments)
         {
-            MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
+            var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
             WriteFlowGraph(entryPoint);
 
-            StateSpaceSetup stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
+            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
-            Traversal.PathStore pathStore = new Traversal.PathStore(entryPoint);
+            var pathStore = new Traversal.PathStore(entryPoint);
             PathStore = pathStore;
 
             //IDataElement[] args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
             // setup iteration management
-            int maxIterations = _config.MaxIterations;
+            var maxIterations = _config.MaxIterations;
             _iterationCount = 0;
 
-            IDictionary<String, Object> next = null;
+            IDictionary<string, object> next = null;
 
             _iterationData = new List<ExplorationIterationData>();
 
@@ -133,30 +133,30 @@ namespace dnWalker.Concolic
 
                     ++_iterationCount;
 
-                    List<ParameterExpression> parameters = new List<ParameterExpression>();
+                    var parameters = new List<ParameterExpression>();
                     // initial state
                     // -------------
-                    IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
-                    ExplicitActiveState cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
+                    var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
+                    var cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
                     cur.PathStore = pathStore;
 
-                    DataElementList dataElementList = cur.StorageFactory.CreateList(arguments.Length);
+                    var dataElementList = cur.StorageFactory.CreateList(arguments.Length);
 
                     //ParameterStore parameterStore = new ParameterStore(cur);
 
-                    Boolean useArgs = next == null;
-                    if (useArgs) next = new Dictionary<String, Object>();
-                    for (int i = 0; i < arguments.Length; i++)
+                    var useArgs = next == null;
+                    if (useArgs) next = new Dictionary<string, object>();
+                    for (var i = 0; i < arguments.Length; i++)
                     {
                         //IDataElement arg = args[i];
 
                         // either next is null => use arguments array
                         // OR next is not null => use entryPoint.Parameters array
 
-                        String argName = entryPoint.Parameters[i].Name;
+                        var argName = entryPoint.Parameters[i].Name;
                         IDataElement arg = null;
 
-                        if (!useArgs && next.TryGetValue(argName, out Object value))
+                        if (!useArgs && next.TryGetValue(argName, out var value))
                         {
                             // we have an explicit desired value from the solver
                             arg = _definitionProvider.CreateDataElement(value);
@@ -171,24 +171,24 @@ namespace dnWalker.Concolic
                         // we add parameter in the parameter list for every element
                         if (arg is ArrayOf arrayOf)
                         {
-                            Type elementType = arrayOf.Inner.GetType().GetElementType();
+                            var elementType = arrayOf.Inner.GetType().GetElementType();
 
                             // first we construct an array and initialize its items
                             // then we add the expressions for each item <PARAM_NAME>[i]...
-                            Int32 placement = cur.DynamicArea.DeterminePlacement(false);
-                            ObjectReference arrayRef = cur.DynamicArea.AllocateArray(placement, arrayOf.ElementType, arrayOf.Length);
+                            var placement = cur.DynamicArea.DeterminePlacement(false);
+                            var arrayRef = cur.DynamicArea.AllocateArray(placement, arrayOf.ElementType, arrayOf.Length);
                             dataElementList[i] = arrayRef;
 
                             // add array.Length parameter
                             //ParameterExpression arrayLengthParameterExpression = Expression.Parameter(typeof(int), argName + "->Length");
 
-                            AllocatedArray allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+                            var allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
 
-                            for (int j = 0; j < arrayOf.Inner.Length; j++)
+                            for (var j = 0; j < arrayOf.Inner.Length; j++)
                             {
-                                String elementName = argName + "[" + j + "]";
+                                var elementName = argName + "[" + j + "]";
 
-                                IDataElement item = _definitionProvider.CreateDataElement(arrayOf.Inner.GetValue(j));
+                                var item = _definitionProvider.CreateDataElement(arrayOf.Inner.GetValue(j));
 
                                 allocatedArray.Fields[j] = item;
 
@@ -198,7 +198,7 @@ namespace dnWalker.Concolic
                                 //item.SetExpression(itemParameterExpression, cur);
                             }
 
-                            ParameterExpression arrayParameterExpression = Expression.Parameter(arrayOf.Inner.GetType(), entryPoint.Parameters[i].Name);
+                            var arrayParameterExpression = Expression.Parameter(arrayOf.Inner.GetType(), entryPoint.Parameters[i].Name);
                             parameters.Add(arrayParameterExpression);
 
                             arrayRef.SetExpression(arrayParameterExpression, cur);
@@ -209,26 +209,26 @@ namespace dnWalker.Concolic
                         {
                             dataElementList[i] = interfaceProxy;
 
-                            IDictionary<String, Func<IDataElement>> methodsResolvers = new Dictionary<String, Func<IDataElement>>();
+                            IDictionary<string, Func<IDataElement>> methodsResolvers = new Dictionary<string, Func<IDataElement>>();
 
                             // for each method create a parameter expression <PARAM_NAME>.<METHOD_NAME>
                             // TODO: handle, should the result of the method be something different than a number or a string
-                            foreach(dnlib.DotNet.MethodDef method in interfaceProxy.WrappedType.Methods)
+                            foreach(var method in interfaceProxy.WrappedType.Methods)
                             {
-                                String returnName = argName + "->" + method.FullName;
+                                var returnName = argName + "->" + method.FullName;
 
-                                Type returnType = GetBaseTypeFromName(method.ReturnType.FullName);
+                                var returnType = GetBaseTypeFromName(method.ReturnType.FullName);
                                 if (returnType == null) throw new Exception("Not supported return type, only numbers and strings are supported: " + method.ReturnType.FullName);
 
-                                ParameterExpression methodResultParameterExpression = Expression.Parameter(returnType, returnName);
+                                var methodResultParameterExpression = Expression.Parameter(returnType, returnName);
                                 parameters.Add(methodResultParameterExpression);
 
-                                if (next != null && next.TryGetValue(returnName, out Object desiredResult))
+                                if (next != null && next.TryGetValue(returnName, out var desiredResult))
                                 {
                                     // we have a desired value specified => use it
                                     methodsResolvers[method.FullName] = () =>
                                     {
-                                        IDataElement dataElement = _definitionProvider.CreateDataElement(next[returnName]);
+                                        var dataElement = _definitionProvider.CreateDataElement(next[returnName]);
                                         dataElement.SetExpression(methodResultParameterExpression, cur);
                                         return dataElement;
                                     };
@@ -238,7 +238,7 @@ namespace dnWalker.Concolic
                                     // no value is specified => use default
                                     methodsResolvers[method.FullName] = () =>
                                     {
-                                        IDataElement dataElement = GetDefaultDataElement(returnType, _definitionProvider);
+                                        var dataElement = GetDefaultDataElement(returnType, _definitionProvider);
                                         dataElement.SetExpression(methodResultParameterExpression, cur);
                                         return dataElement;
                                     };
@@ -256,12 +256,12 @@ namespace dnWalker.Concolic
                         // now it should be base types only
                         else
                         {
-                            Type paramType = GetBaseTypeFromName(entryPoint.Parameters[i].Type.FullName);
+                            var paramType = GetBaseTypeFromName(entryPoint.Parameters[i].Type.FullName);
                             if (paramType == null) throw new Exception("Not supported param type, only arrays, interfaces, numbers and strings are supported: " + entryPoint.Parameters[i].Type.FullName);
 
                             dataElementList[i] = arg;
 
-                            ParameterExpression argParameterExpression = Expression.Parameter(paramType, argName);
+                            var argParameterExpression = Expression.Parameter(paramType, argName);
                             parameters.Add(argParameterExpression);
 
                             dataElementList[i].SetExpression(argParameterExpression, cur);
@@ -282,7 +282,7 @@ namespace dnWalker.Concolic
                     }
                     
 
-                    MethodState mainState = new MethodState(
+                    var mainState = new MethodState(
                         entryPoint,
                         dataElementList,
                         cur);
@@ -294,14 +294,14 @@ namespace dnWalker.Concolic
                     //var cur = stateSpaceSetup.CreateInitialState(entryPoint, args);
                     cur.CurrentThread.InstructionExecuted += pathStore.OnInstructionExecuted;
 
-                    SimpleStatistics statistics = new SimpleStatistics();
+                    var statistics = new SimpleStatistics();
 
-                    MMC.Explorer explorer = new MMC.Explorer(cur, statistics, _logger, _config, PathStore);
+                    var explorer = new MMC.Explorer(cur, statistics, _logger, _config, PathStore);
                     explorer.InstructionExecuted += pathStore.OnInstructionExecuted;
 
                     explorer.Run();
 
-                    dnWalker.Traversal.Path path = PathStore.CurrentPath;
+                    var path = PathStore.CurrentPath;
 
                     System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", dataElementList.Select(a => a.ToString()))}");
 
@@ -402,7 +402,7 @@ namespace dnWalker.Concolic
 
         private static IDataElement GetDefaultDataElement(Type type, DefinitionProvider definitionProvider)
         {
-            Object defaultValue = type.IsValueType ? Activator.CreateInstance(type) : null;
+            var defaultValue = type.IsValueType ? Activator.CreateInstance(type) : null;
             return definitionProvider.CreateDataElement(defaultValue);
         }
     }

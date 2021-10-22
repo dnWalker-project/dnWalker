@@ -45,8 +45,8 @@ namespace MMC.Util
         public int CompareTo(object other)
         {
 
-            CILLocation o = (CILLocation)other;
-            int retval = CILMethodDefinitionComparer.CompareMethodDefinitions(m_meth, o.Method);
+            var o = (CILLocation)other;
+            var retval = CILMethodDefinitionComparer.CompareMethodDefinitions(m_meth, o.Method);
             if (retval == 0)
                 retval = CILInstructionComparer.CompareInstructions(m_instr, o.Instruction);
             return retval;
@@ -56,7 +56,7 @@ namespace MMC.Util
         public override int GetHashCode()
         {
 
-            int retval = CILElementHashCodeProvider.CalcCILHashCode(m_instr);
+            var retval = CILElementHashCodeProvider.CalcCILHashCode(m_instr);
             retval ^= MMC.HashMasks.MASK2;
             retval += CILElementHashCodeProvider.CalcCILHashCode(m_meth);
             return retval;
@@ -87,7 +87,7 @@ namespace MMC.Util
         public static int CompareInstructions(Instruction a, Instruction b)
         {
 
-            int retval = 0;
+            var retval = 0;
             if (a != b)
             {
                 retval = (int)(a.Offset - b.Offset);
@@ -114,7 +114,7 @@ namespace MMC.Util
         public static int CompareMethodDefinitions(MethodDefinition a, MethodDefinition b)
         {
 
-            int retval = 0;
+            var retval = 0;
             if (a != b)
             {
                 retval = string.Compare(a.Name, b.Name);
@@ -164,7 +164,7 @@ namespace MMC.Util
         public int Compare(object a, object b)
         {
 
-            int retval = 1;
+            var retval = 1;
             if (a.GetType() != b.GetType())
             {
                 // When comparing apples to oranges issue a warning. Not very
@@ -216,7 +216,7 @@ namespace MMC.Util
         public static int CalcCILHashCode(object o)
         {
 
-            int retval = 0;
+            var retval = 0;
             if (o is Instruction)
             {
                 //retval = CalcInstructionHashCode(o as Instruction);
@@ -242,7 +242,7 @@ namespace MMC.Util
 
         public static int CalcInstructionHashCode(Instruction instr)
         {
-            int retval = 1;
+            var retval = 1;
             retval += (int)instr.Offset;
             retval ^= HashMasks.MASK1;
             retval += instr.OpCode.Value;
@@ -254,7 +254,7 @@ namespace MMC.Util
         public static int CalcMethodDefinitionHashCode(MethodDefinition meth)
         {
 
-            int retval = 13;
+            var retval = 13;
             retval += meth.Name.GetHashCode();
             retval ^= MMC.HashMasks.MASK3;
             Debug.Assert(meth.DeclaringType != null, "method definition " +
@@ -292,11 +292,11 @@ namespace MMC.Util
             }
             else if (o is MethodDef m)
             {
-                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                var sb = new System.Text.StringBuilder();
                 sb.AppendFormat("{0}::{1}(",
                         (m.DeclaringType != null ? m.DeclaringType.Name.String : "null"),
                         m.Name);
-                for (int i = 0; i < m.Parameters.Count; ++i)
+                for (var i = 0; i < m.Parameters.Count; ++i)
                 {
                     if (i > 0)
                         sb.Append(", ");
@@ -315,7 +315,7 @@ namespace MMC.Util
             }
             else if (o is Instruction)
             {
-                Instruction i = o as Instruction;
+                var i = o as Instruction;
                 //retval = string.Format("[{0:D4}]{1}", i.Offset, i.OpCode.Name);
                 retval = string.Format("{0:D4}", i.Offset);
             }

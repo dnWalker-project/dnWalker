@@ -19,7 +19,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_MyClass_Is_ObjectParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(MyClass)), "myClass");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(MyClass)), "myClass");
 
             Assert.IsType<ObjectParameter>(p);
         }
@@ -30,7 +30,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_MyInterface_Is_ObjectParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(IMyInterface)), "myInterface");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(IMyInterface)), "myInterface");
 
             Assert.IsType<InterfaceParameter>(p);
         }
@@ -42,9 +42,9 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Interfaces_Is_ArrayParameter()
         {
-            TypeSig type = GetType(typeof(IMyInterface[]));
+            var type = GetType(typeof(IMyInterface[]));
 
-            Parameter p = ParameterFactory.CreateParameter(type, "myArray");
+            var p = ParameterFactory.CreateParameter(type, "myArray");
 
             Assert.IsType<ArrayParameter>(p);
         }
@@ -52,7 +52,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Objects_Is_ArrayParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(MyClass[])), "myArray");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(MyClass[])), "myArray");
 
             Assert.IsType<ArrayParameter>(p);
         }
@@ -60,7 +60,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Numbers_Is_ArrayParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Double[])), "myArray");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(double[])), "myArray");
 
             Assert.IsType<ArrayParameter>(p);
         }

@@ -37,7 +37,7 @@ namespace Examples
 
         public static int MethodWithCatchAndFinally(int x, int y)
         {
-            int z = 0;
+            var z = 0;
             try
             {
                 z = x / y;

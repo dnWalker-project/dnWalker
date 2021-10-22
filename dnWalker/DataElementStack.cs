@@ -94,7 +94,7 @@ namespace MMC.Data {
 
 			m_isDirty = true;
 
-			IDataElement popped = m_elements[--m_stackptr];
+			var popped = m_elements[--m_stackptr];
 
 			ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, popped, cur);
 
@@ -141,11 +141,11 @@ namespace MMC.Data {
 
         public override bool Equals(object other)
         {
-            DataElementStack o = other as DataElementStack;
-            bool equal = o != null
+            var o = other as DataElementStack;
+            var equal = o != null
                 && o.Capacity == Capacity
                 && o.StackPointer == StackPointer;
-            for (int i = 0; equal && i < m_stackptr; ++i)
+            for (var i = 0; equal && i < m_stackptr; ++i)
             {
                 equal = o[i].Equals(m_elements[i]);
             }
@@ -168,7 +168,7 @@ namespace MMC.Data {
 			m_stackptr = copy.StackPointer;
 			m_isDirty = true;
 			m_isReadonly = false;
-            for (int i = 0; i < m_stackptr; ++i)
+            for (var i = 0; i < m_stackptr; ++i)
             {
                 m_elements[i] = copy[i];
             }

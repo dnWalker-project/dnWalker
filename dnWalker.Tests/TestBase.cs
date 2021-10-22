@@ -109,7 +109,7 @@ namespace dnWalker.Tests
         {
             object res2;
             Exception ex2 = null;
-            var modelCheckerResult = Test(methodName, out Exception modelCheckerException, args);
+            var modelCheckerResult = Test(methodName, out var modelCheckerException, args);
 
             var methodInfo = Utils.GetMethodInfo(methodName);
             try

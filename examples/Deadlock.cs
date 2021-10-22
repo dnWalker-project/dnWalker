@@ -31,8 +31,8 @@ class Deadlock
 
     public static void Go()
     {
-        PossibleDeadlock dl = new PossibleDeadlock();
-        Thread t1 = new Thread(new ThreadStart(dl.Get12)); t1.Start();
-        Thread t2 = new Thread(new ThreadStart(dl.Get21)); t2.Start();
+        var dl = new PossibleDeadlock();
+        var t1 = new Thread(new ThreadStart(dl.Get12)); t1.Start();
+        var t2 = new Thread(new ThreadStart(dl.Get21)); t2.Start();
     }
 }

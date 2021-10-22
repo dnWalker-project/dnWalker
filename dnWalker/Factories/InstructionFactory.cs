@@ -29,11 +29,11 @@ namespace dnWalker.Factories
         public virtual InstructionExecBase CreateInstructionExec(Instruction instr)
         {
             // TODO add cache for faster resolution
-            string[] tokens = instr.OpCode.Name.Split(new char[] { '.' });
+            var tokens = instr.OpCode.Name.Split(new char[] { '.' });
 
             // Before doing anything else, check if we have an implementing class for this type of instruction.
-            string name = "MMC.InstructionExec." + (string.Join("_", tokens)).ToUpper();
-            Type t = Type.GetType(name);
+            var name = "MMC.InstructionExec." + (string.Join("_", tokens)).ToUpper();
+            var t = Type.GetType(name);
             if (t == null)
             {
                 name = "MMC.InstructionExec." + tokens[0].ToUpper();
@@ -50,16 +50,16 @@ namespace dnWalker.Factories
 
         protected InstructionExecBase CreateInstructionExec(Type type, string[] tokens, Instruction instr)
         { 
-            InstructionExecAttributes attr = InstructionExecAttributes.None;
+            var attr = InstructionExecAttributes.None;
             object operand = null;
 
             // Check for possible implicit operand (always digit or m1/M1).
-            string lastToken = tokens[tokens.Length - 1];
+            var lastToken = tokens[tokens.Length - 1];
             if (instr.OpCode.OperandType == OperandType.InlineNone)
             {
                 if (lastToken.Length == 1)
                 {
-                    char c = lastToken[0];
+                    var c = lastToken[0];
                     if (c >= '0' && c <= '9')
                     {
                         operand = new Int4(c - '0');
@@ -73,7 +73,7 @@ namespace dnWalker.Factories
             }
 
             // Check if we should use regard the stack elements as unsigned.
-            for (int i = 1; i < tokens.Length; ++i)
+            for (var i = 1; i < tokens.Length; ++i)
             {
                 if (tokens[i] == "un")
                 {

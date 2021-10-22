@@ -110,7 +110,7 @@ namespace MMC.State
 
         public override bool Equals(object obj)
         {
-            MemoryLocation other = (MemoryLocation)obj;
+            var other = (MemoryLocation)obj;
             return m_type == other.m_type && m_location == other.m_location && m_offset == other.m_offset;
         }
 
@@ -122,7 +122,7 @@ namespace MMC.State
             }
             else if (m_type == 1)
             {
-                AllocatedClass iac = cur.StaticArea.Classes[m_location];
+                var iac = cur.StaticArea.Classes[m_location];
                 var type = iac.Type;
                 return "[" + type.DeclaringType.Name + "." + m_offset + "]";
             }
@@ -180,7 +180,7 @@ namespace MMC.State
 
         public int Dequeue()
         {
-            int retval = Working.Dequeue();
+            var retval = Working.Dequeue();
             Done.Enqueue(retval);
             return retval;
         }
@@ -195,7 +195,7 @@ namespace MMC.State
 		 * TODO: make a new ToString() */
         public override string ToString()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new System.Text.StringBuilder();
 
             sb.AppendFormat("Backtrack ID:       {0}\t", ID);
             //            sb.AppendFormat("Last chosen thread: {0}\t", this.m_lastChosenThread);

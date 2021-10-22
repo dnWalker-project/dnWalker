@@ -11,13 +11,13 @@ namespace dnWalker.TestGenerator
     public class Configuration
     {
         [Option(shortName: 'a', longName: "assembly", Required = true)]
-        public String AssemblyPath { get; set; }
+        public string AssemblyPath { get; set; }
 
         [Option(shortName: 'm', longName: "methods", Required = false)]
-        public IEnumerable<String> Methods { get; set; }
+        public IEnumerable<string> Methods { get; set; }
 
         [Option(shortName: 'o', longName: "output", Required = false, Default = "/GeneratedTests")]
-        public String OutputFolder { get; set; }
+        public string OutputFolder { get; set; }
 
         [Option(shortName: 's', longName: "suit", Required = false, Default = TestSuit.xUnit)]
         public TestSuit TestSuit { get; set; }

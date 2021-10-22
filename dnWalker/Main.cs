@@ -144,7 +144,7 @@ namespace MMC
         {
             //if (Config.Instance.Verbose)
             {
-                string to_write = (values.Length > 0 ? string.Format(msg, values) : msg);
+                var to_write = (values.Length > 0 ? string.Format(msg, values) : msg);
                 System.Console.WriteLine(to_write);
             }
         }
@@ -203,14 +203,14 @@ namespace MMC
         public IConfig GetConfigFromCommandLine(string[] args)
         {
             var config = new Config();
-            for (int i = 0; i < args.Length; ++i)
+            for (var i = 0; i < args.Length; ++i)
             {
                 if (args[i][0] != '-' || args[i].Length <= 1)
                 {
                     Fatal("malformed argument: " + args[i]);
                 }
-                char[] flags = args[i].ToCharArray();
-                for (int f = 1; f < flags.Length; ++f)
+                var flags = args[i].ToCharArray();
+                for (var f = 1; f < flags.Length; ++f)
                 {
                     switch (flags[f])
                     {
@@ -348,8 +348,8 @@ namespace MMC
 
         static string[] FetchTillNextArgument(string[] args, int offset)
         {
-            ArrayList toReturn = new ArrayList();
-            for (int i = offset; i < args.Length; ++i)
+            var toReturn = new ArrayList();
+            for (var i = offset; i < args.Length; ++i)
             {
                 if (args[i][0] == '-')
                     break;
@@ -363,7 +363,7 @@ namespace MMC
         static void PrintCommandLineUsage()
         {
 
-            string help_text = @"The following command line parameters are REQUIRED:
+            var help_text = @"The following command line parameters are REQUIRED:
   -a  Assembly to check.
 
 The following command line parameters are optional:
@@ -413,7 +413,7 @@ Disabling/enabling features:
         public static void PrintConfig(IConfig config, Logger logger)
         {
             var configType = typeof(IConfig);
-            foreach (FieldInfo fld in configType.GetFields())
+            foreach (var fld in configType.GetFields())
             {
                 logger.Notice(string.Format("Config.{0,-25} = {1,-25}", fld.Name, fld.GetValue(config)));
             }
@@ -448,7 +448,7 @@ Disabling/enabling features:
             var logger = new Logger(config.LogFilter);
             _logger = logger;
 
-            string dotFile = config.AssemblyToCheckFileName + ".dot";
+            var dotFile = config.AssemblyToCheckFileName + ".dot";
             File.Delete(dotFile);
             DotWriter.Begin(TryOpen(dotFile));
 
@@ -472,7 +472,7 @@ Disabling/enabling features:
             var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
             var statistics = new SimpleStatistics();            
 
-            Explorer ex = new Explorer(
+            var ex = new Explorer(
                 cur,
                 statistics,
                 logger,
@@ -482,14 +482,14 @@ Disabling/enabling features:
             try
             {
                 statistics.Start();
-                bool noErrors = ex.Run();
+                var noErrors = ex.Run();
 
                 if (!noErrors && config.StopOnError && config.TraceOnError)
                 {
                     cur.Reset();
                     cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
 
-                    string traceFile = config.AssemblyToCheckFileName + ".trace";
+                    var traceFile = config.AssemblyToCheckFileName + ".trace";
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 

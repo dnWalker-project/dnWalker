@@ -17,46 +17,46 @@ namespace dnWalker.Tests.Concolic.Parameters
         where TValue : struct
         where TParameter : PrimitiveValueParameter<TValue>
     {
-        protected abstract TParameter Create(String name = "p");
+        protected abstract TParameter Create(string name = "p");
 
         [Fact]
         public void Before_SettingeValue_ValueIs_Null()
         {
-            TParameter p = Create("p");
+            var p = Create("p");
             p.Value.Should().BeNull();
         }
 
         [Fact]
         public void GetParameterExpressions_Returns_Single_ParameterExpression()
         {
-            TParameter p = Create("p");
+            var p = Create("p");
 
-            List<ParameterExpression> exprs = p.GetParameterExpressions().ToList();
+            var exprs = p.GetParameterExpressions().ToList();
             exprs.Should().HaveCount(1);
         }
 
         [Fact]
         public void PrimitiveValueParameter_Has_SingleExpression()
         {
-            TParameter p = Create("p");
+            var p = Create("p");
             p.HasSingleExpression.Should().BeTrue();
         }
 
         [Fact]
         public void ParamterExpression_Has_Correct_Name()
         {
-            TParameter p = Create("p");
+            var p = Create("p");
 
-            ParameterExpression expr = p.GetSingleParameterExpression();
+            var expr = p.GetSingleParameterExpression();
             expr.Name.Should().Be("p");
         }
 
         [Fact]
         public void ParamterExpression_Has_Correct_Type()
         {
-            TParameter p = Create("p");
+            var p = Create("p");
 
-            ParameterExpression expr = p.GetSingleParameterExpression();
+            var expr = p.GetSingleParameterExpression();
             expr.Type.Should().Be(typeof(TValue));
         }
     }

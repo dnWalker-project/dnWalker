@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace dnWalker.Tests.Symbolic
+namespace dnWalker.Tests.Concolic.Features.Arrays
 {
-    public class ArrayTests : SymbolicExamplesTestBase
+    public class ArrayTests : SymbolicExamplesTestBase2
     {
         public ArrayTests(Xunit.Abstractions.ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         { }
@@ -22,10 +22,10 @@ namespace dnWalker.Tests.Symbolic
         [Trait("Category", "Concolic")]
         public void Branching_BasedOn_ArrayLength_ShouldEnd_Within_2_Iterations()
         {
-            Explore("Examples.Concolic.Simple.Arrays.BranchBasedOnArrayLength",
+            Explore("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayLength",
                 (cgf) =>
                 {
-                    cgf.MaxIterations = 2;
+                    cgf.MaxIterations = 10;
                 },
                 (explorer) =>
                 {
@@ -37,16 +37,15 @@ namespace dnWalker.Tests.Symbolic
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(2);
-                },
-                SymbolicArgs.Arg("array", new Int32[] { 1, 5, 10, 15 }));
+                    paths.Count().Should().Be(3);
+                });
         }
 
         [Fact]
         [Trait("Category", "Concolic")]
         public void Test_Branching_Based_On_ArrayLength_And_Static_Index()
         {
-            Explore("Examples.Concolic.Simple.Arrays.BranchBasedOnArrayElementAtStaticIndex",
+            Explore("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayElementAtStaticIndex",
                 (cgf) =>
                 {
                     cgf.MaxIterations = 10;
@@ -61,16 +60,15 @@ namespace dnWalker.Tests.Symbolic
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(2);
-                },
-                SymbolicArgs.Arg("array", new Int32[] { 1, 5, 10 }));
+                    paths.Count().Should().Be(4);
+                });
         }
 
         [Fact]
         [Trait("Category", "Concolic")]
         public void Test_Branching_Based_On_ArrayLength_And_Dynamic_Index()
         {
-            Explore("Examples.Concolic.Simple.Arrays.BranchBasedOnArrayElementAtDynamicIndex",
+            Explore("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayElementAtDynamicIndex",
                 (cgf) =>
                 {
                     cgf.MaxIterations = 10;
@@ -86,9 +84,7 @@ namespace dnWalker.Tests.Symbolic
                     }
 
                     paths.Count().Should().Be(2);
-                },
-                SymbolicArgs.Arg("array", new Int32[] { 1, 5, 10 }),
-                SymbolicArgs.Arg("index", 2));
+                });
         }
     }
 }

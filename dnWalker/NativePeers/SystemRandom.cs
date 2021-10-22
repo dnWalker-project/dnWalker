@@ -68,7 +68,7 @@ namespace dnWalker.NativePeers
 
         public override bool TryConstruct(MethodDef methodDef, DataElementList args, ExplicitActiveState cur)
         {
-            ObjectReference objectRef = cur.DynamicArea.AllocateObject(
+            var objectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false),
                 methodDef.DeclaringType);
             cur.EvalStack.Push(objectRef);

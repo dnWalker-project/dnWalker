@@ -49,13 +49,13 @@ namespace MMC
 
         public override bool Equals(object obj)
         {
-            VirtualMethodDefinition other = (VirtualMethodDefinition)obj;
+            var other = (VirtualMethodDefinition)obj;
 
-            bool equals = other.Method.Name.Equals(Method.Name) &&
+            var equals = other.Method.Name.Equals(Method.Name) &&
                 other.Reference.Equals(Reference) &&
                 other.Method.Parameters.Count == Method.Parameters.Count;
 
-            for (int i = 0; equals && i < other.Method.Parameters.Count; ++i)
+            for (var i = 0; equals && i < other.Method.Parameters.Count; ++i)
             {
                 equals = other.Method.Parameters[i].Type.TypeName ==
                    Method.Parameters[i].Type.TypeName;
@@ -72,7 +72,7 @@ namespace MMC
 
     public interface IDefinitionProvider
     {
-        TypeDef GetTypeDefinition(String typeName);
+        TypeDef GetTypeDefinition(string typeName);
     }
 
 
@@ -101,7 +101,7 @@ namespace MMC
 
         public int SizeOf(string type)
         {
-            if (m_typeSizes.TryGetValue(type, out Int32 result))
+            if (m_typeSizes.TryGetValue(type, out var result))
             {
                 return result;
             }
@@ -114,10 +114,10 @@ namespace MMC
         /// </summary>
         public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(ITypeDefOrRef m_typeDef)
         {
-            ITypeDefOrRef currentType = m_typeDef;
+            var currentType = m_typeDef;
             do
             {
-                TypeDef currentTypeDef = GetTypeDefinition(currentType);
+                var currentTypeDef = GetTypeDefinition(currentType);
                 if (currentTypeDef == null)
                 {
                     break;
@@ -129,7 +129,7 @@ namespace MMC
 
         public bool IsSubtype(ITypeDefOrRef supertype, ITypeDefOrRef subtype)
         {
-            foreach (ITypeDefOrRef typeRef in InheritanceEnumerator(supertype))
+            foreach (var typeRef in InheritanceEnumerator(supertype))
             {
                 if (typeRef.FullName.Equals(subtype.FullName))
                     return true;
@@ -150,7 +150,7 @@ namespace MMC
         {
             lock (_lock)
             {
-                if (m_typeDefinitions.TryGetValue(name, out TypeDef retval))
+                if (m_typeDefinitions.TryGetValue(name, out var retval))
                 {
                     return retval;
                 }
@@ -181,7 +181,7 @@ namespace MMC
             //var data = File.ReadAllBytes(GetType().Assembly.Modules);
             return GetType().Assembly.Modules.Select(m =>
             {
-                ModuleDefMD moduleDef = ModuleDefMD.Load(m);
+                var moduleDef = ModuleDefMD.Load(m);
                 return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
             }).FirstOrDefault();
         }
@@ -204,7 +204,7 @@ namespace MMC
 
         internal TypeDef GetTypeDefinition(TypeSig typeSig)
         {
-            TypeDef typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
+            var typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
             if (typeDef == null)
             {
                 typeDef = GetTypeDefinition(typeSig.FullName);
@@ -252,8 +252,8 @@ namespace MMC
         /// <seealso cref="GetTypeDefinition(string, AssemblyDefinition)"/>
         public TypeDef GetTypeDefinition(string name)
         {
-            TypeDef retval = SearchType(name, AssemblyDefinition);
-            foreach (ModuleDef refA in m_referencedAssemblies)
+            var retval = SearchType(name, AssemblyDefinition);
+            foreach (var refA in m_referencedAssemblies)
             {
                 retval = SearchType(name, refA);
                 if (retval != null)
@@ -272,15 +272,15 @@ namespace MMC
 
         public MethodDefinition GetMethodDefinition(string methodName)
         {
-            if (m_methodDefinitionsByReference.TryGetValue(methodName, out MethodDefinition retval))
+            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
             {
                 return retval;
             }
 
-            Int32 lastDot = methodName.LastIndexOf(".");
-            String methodTypeName = methodName.Substring(0, lastDot);
+            var lastDot = methodName.LastIndexOf(".");
+            var methodTypeName = methodName.Substring(0, lastDot);
 
-            TypeDef typeDef = GetTypeDefinition(methodTypeName);
+            var typeDef = GetTypeDefinition(methodTypeName);
             retval = typeDef.FindMethod(new UTF8String(methodName.Substring(lastDot + 1)));
 
             return retval;
@@ -297,24 +297,24 @@ namespace MMC
                 throw new NotSupportedException($"ObjectReference expected, {dataElement?.GetType().FullName} found.");
             }
 
-            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
-            ITypeDefOrRef superType = ao.Type;
-            VirtualMethodDefinition vmdef = new VirtualMethodDefinition(methRef, objRef);
+            var ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+            var superType = ao.Type;
+            var vmdef = new VirtualMethodDefinition(methRef, objRef);
 
-            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out MethodDefinition retval))
+            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out var retval))
             {
                 return retval;
             }
 
-            foreach (ITypeDefOrRef typeRef in InheritanceEnumerator(superType))
+            foreach (var typeRef in InheritanceEnumerator(superType))
             {
-                TypeDef typeDef = GetTypeDefinition(typeRef);
+                var typeDef = GetTypeDefinition(typeRef);
 
-                foreach (MethodDefinition curr in typeDef.Methods)
+                foreach (var curr in typeDef.Methods)
                 {
                     if (curr.Body != null && curr.Body.Instructions.Count > 0)
                     {
-                        VirtualMethodDefinition vmdefCurr = new VirtualMethodDefinition(curr, objRef);
+                        var vmdefCurr = new VirtualMethodDefinition(curr, objRef);
 
                         if (vmdefCurr.Equals(vmdef))
                         {
@@ -350,16 +350,16 @@ namespace MMC
         /// <returns>A definition for the method to look for, or null if none was found.</returns>
         public MethodDefinition SearchMethod(string name, TypeDef typeDef)
         {
-            string methodName = typeDef + "::" + name;
+            var methodName = typeDef + "::" + name;
 
-            if (m_methodDefinitionsByReference.TryGetValue(methodName, out MethodDefinition retval))
+            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
             {
                 return retval;
             }
 
             if (name == ".cctor")
             {
-                MethodDefinition cctor = typeDef.FindStaticConstructor();
+                var cctor = typeDef.FindStaticConstructor();
                 if (cctor != null)
                 {
                     m_methodDefinitionsByReference.Add(methodName, cctor);
@@ -377,11 +377,11 @@ namespace MMC
                 return null;
             }
 
-            FieldDefinition fieldDefinition = fieldRef.ResolveFieldDef();
+            var fieldDefinition = fieldRef.ResolveFieldDef();
             if (!fieldDefinition.FieldOffset.HasValue)
             {
-                IList<FieldDefinition> fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
-                for (Int32 i = 0; i < fields.Count; i++)
+                var fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
+                for (var i = 0; i < fields.Count; i++)
                 {
                     if (fields[i] == fieldDefinition)
                     {
@@ -403,18 +403,18 @@ namespace MMC
         /// <returns>Definition of the field to look for, or null if none was found.</returns>
         public FieldDefinition GetFieldDefinition(string declTypeName, string fieldName)
         {
-            string key = declTypeName + "::" + fieldName;
-            if (!m_fieldDefinitions.TryGetValue(key, out FieldDefinition retval))
+            var key = declTypeName + "::" + fieldName;
+            if (!m_fieldDefinitions.TryGetValue(key, out var retval))
             {
-                TypeDef declType = GetTypeDefinition(declTypeName);
+                var declType = GetTypeDefinition(declTypeName);
                 if (declType == null)
                 {
                     throw new System.Exception($"Declaring type {declTypeName} not found");
                 }
                 else
                 {
-                    bool equal = false;
-                    int i = 0;
+                    var equal = false;
+                    var i = 0;
                     for (; !equal && i < declType.Fields.Count; ++i)
                     {
                         equal = declType.Fields[i].Name == fieldName;
@@ -447,8 +447,8 @@ namespace MMC
         /// <returns>The number of non-static fields.</returns>
         public int GetNonStaticFieldCount(TypeDef typeDef)
         {
-            int count = 0;
-            foreach (FieldDefinition fld in typeDef.Fields)
+            var count = 0;
+            foreach (var fld in typeDef.Fields)
             {
                 if (!fld.IsStatic)
                 {
@@ -466,7 +466,7 @@ namespace MMC
 
         public IDataElement GetParameterNullOrDefaultValue(Parameter parameter)
         {
-            MethodDefinition methodDef = parameter.Method;
+            var methodDef = parameter.Method;
             if (parameter.IsHiddenThisParameter)
             {
                 return ObjectReference.Null;
@@ -481,7 +481,7 @@ namespace MMC
         /// </summary>
         public static IDataElement GetNullValue(ITypeDefOrRef typeRef)
         {
-            TypeSig typeSig = typeRef.ToTypeSig();
+            var typeSig = typeRef.ToTypeSig();
             if (!typeSig.IsPrimitive)
             {
                 return ObjectReference.Null;
@@ -539,10 +539,10 @@ namespace MMC
 
         public bool TryGetTypeHandle(ITypeDefOrRef typeRef, out RuntimeTypeHandle typeHandle)
         {
-            CorLibTypeSig corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
+            var corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
             if (corLibType != null)
             {
-                TypeSig typeSig = typeRef.ToTypeSig();
+                var typeSig = typeRef.ToTypeSig();
                 if (corLibType == AssemblyDefinition.CorLibTypes.String)
                 {
                     typeHandle = typeof(string).TypeHandle;
@@ -647,10 +647,10 @@ namespace MMC
                 return ObjectReference.Null;
             }
 
-            Type type = value.GetType();
+            var type = value.GetType();
             if (type.IsArray)
             {
-                Array array = value as Array;
+                var array = value as Array;
                 return new ArrayOf(array, GetTypeDefinition(type.GetElementType().FullName));
             }
 
@@ -680,9 +680,9 @@ namespace MMC
                     }
 
                     // TODO: handle reference & complex types...
-                    String typeName = type.FullName;
+                    var typeName = type.FullName;
 
-                    TypeDef typeDef = this.GetTypeDefinition(typeName);
+                    var typeDef = this.GetTypeDefinition(typeName);
 
                     if (typeDef.IsInterface)
                     {

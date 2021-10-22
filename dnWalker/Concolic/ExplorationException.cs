@@ -13,11 +13,11 @@ namespace dnWalker.Concolic
         {
         }
 
-        public ExplorationException(String message) : base(message)
+        public ExplorationException(string message) : base(message)
         {
         }
 
-        public ExplorationException(String message, Exception innerException) : base(message, innerException)
+        public ExplorationException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
@@ -40,7 +40,7 @@ namespace dnWalker.Concolic
         //{
         //}
 
-        public MaxIterationsExceededException(Int32 iterationCount) : base("Max iterations exceeded (" + iterationCount + ")")
+        public MaxIterationsExceededException(int iterationCount) : base("Max iterations exceeded (" + iterationCount + ")")
         {
         }
 

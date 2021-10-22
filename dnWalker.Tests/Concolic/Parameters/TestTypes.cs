@@ -7,26 +7,93 @@ using System.Threading.Tasks;
 namespace dnWalker.Tests.Concolic.Parameters
 {
     public struct MyStruct
-    { 
-        public Int32 Value { get; set; }
-        public MyItem Item { get; set; }
+    {
+        private int _value;
+        private MyItem _item;
+
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+
+            set
+            {
+                _value = value;
+            }
+        }
+
+        public MyItem Item
+        {
+            get
+            {
+                return _item;
+            }
+
+            set
+            {
+                _item = value;
+            }
+        }
     }
 
 
     public class MyItem
     {
-        public Int32 Id { get; set; }
+        private int _id;
+
+        public int Id
+        {
+            get
+            {
+                return _id;
+            }
+
+            set
+            {
+                _id = value;
+            }
+        }
     }
 
     public class MyClass
     {
-        public Double Value { get; set; }
-        public MyItem Item { get; set; }
+        private double _value;
+        private MyItem _item;
+
+        public double Value
+        {
+            get
+            {
+                return _value;
+            }
+
+            set
+            {
+                _value = value;
+            }
+        }
+
+        public MyItem Item
+        {
+            get
+            {
+                return _item;
+            }
+
+            set
+            {
+                _item = value;
+            }
+        }
     }
 
     public interface IMyInterface
     {
-        Int32 Count { get; }
-        Double SetValue(Int32 index);
+        int Count { get; }
+        double SetValue(int index);
+
+        MyClass GetMyClass();
     }
 }

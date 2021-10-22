@@ -18,7 +18,7 @@ namespace dnWalker.DataElements
     public struct InterfaceProxy : IDataElement
     {
         private readonly TypeDef _proxyType;
-        private readonly Int32 _hashCode;
+        private readonly int _hashCode;
 
         public InterfaceProxy(TypeDef proxyType)
         {
@@ -27,17 +27,17 @@ namespace dnWalker.DataElements
             _hashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
 
-        public Boolean Equals(IDataElement other)
+        public bool Equals(IDataElement other)
         {
             return (other is InterfaceProxy proxy) && proxy._hashCode == _hashCode;
         }
 
-        public Boolean ToBool()
+        public bool ToBool()
         {
             return false;
         }
 
-        public String WrapperName
+        public string WrapperName
         {
             get
             {
@@ -45,7 +45,7 @@ namespace dnWalker.DataElements
             }
         }
 
-        public Int32 HashCode
+        public int HashCode
         {
             get
             {
@@ -53,7 +53,7 @@ namespace dnWalker.DataElements
             }
         }
 
-        public Int32 CompareTo(Object obj)
+        public int CompareTo(object obj)
         {
             if (obj is InterfaceProxy proxy)
             {
@@ -70,28 +70,28 @@ namespace dnWalker.DataElements
             }
         }
 
-        public void SetMethodResolvers(ExplicitActiveState cur, IDictionary<String, Func<IDataElement>> resolvers)
+        public void SetMethodResolvers(ExplicitActiveState cur, IDictionary<string, Func<IDataElement>> resolvers)
         {
             cur.PathStore.CurrentPath.SetObjectAttribute(this, "method_resolvers", resolvers);
         }
-        public Boolean TryGetMethodResolvers(ExplicitActiveState cur, out IDictionary<String, Func<IDataElement>> resolvers)
+        public bool TryGetMethodResolvers(ExplicitActiveState cur, out IDictionary<string, Func<IDataElement>> resolvers)
         {
             return cur.PathStore.CurrentPath.TryGetObjectAttribute(this, "method_resolvers", out resolvers);
         }
 
-        public Boolean TryResolveMethod(MethodDef method, ExplicitActiveState cur, out IDataElement result)
+        public bool TryResolveMethod(MethodDef method, ExplicitActiveState cur, out IDataElement result)
         {
             return TryResolveMethod(method, cur, new DataElementList(0), out result);
         }
-        public Boolean TryResolveMethod(MethodDef method, ExplicitActiveState cur, DataElementList args, out IDataElement result)
+        public bool TryResolveMethod(MethodDef method, ExplicitActiveState cur, DataElementList args, out IDataElement result)
         {
             if (_proxyType.Methods.Contains(method))
             {
-                String methodName = method.FullName;
+                var methodName = method.FullName;
 
-                if (TryGetMethodResolvers(cur, out IDictionary<String, Func<IDataElement>> resolvers))
+                if (TryGetMethodResolvers(cur, out var resolvers))
                 {
-                    if (resolvers.TryGetValue(methodName, out Func<IDataElement> resultFactory))
+                    if (resolvers.TryGetValue(methodName, out var resultFactory))
                     {
                         result = resultFactory();
 
@@ -110,7 +110,7 @@ namespace dnWalker.DataElements
             return false;
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return "InterfaceProxy for " + _proxyType.FullName;
         }

@@ -88,7 +88,7 @@ namespace MMC.State
                     return;
                 }
 
-                AllocatedObject exceptionObj = cur.DynamicArea.Allocations[_exceptionReference] as AllocatedObject;
+                var exceptionObj = cur.DynamicArea.Allocations[_exceptionReference] as AllocatedObject;
                 var messageField = cur.DefinitionProvider.GetFieldDefinition(typeof(System.Exception).FullName, "_message");
                 UnhandledException = new System.Exception($"An exception of type {exceptionObj.Type.FullName} has been thrown " +
                     $"with message '{exceptionObj.Fields[(int)messageField.FieldOffset].ToString()}");
@@ -123,7 +123,7 @@ namespace MMC.State
 
                 if (state_field_offset != LockManager.NoThread)
                 {
-                    AllocatedObject theThreadObject =
+                    var theThreadObject =
                         (AllocatedObject)cur.DynamicArea.Allocations[ThreadObject];
                     Debug.Assert(theThreadObject != null,
                         "Thread object should not be null when setting state (even to Stopped).");
@@ -209,7 +209,7 @@ namespace MMC.State
         {
             // This is okay for checking whether the thread state is dirty,
             // but note lower frames may be dirty as well.
-            MethodState top = CurrentMethod;
+            var top = CurrentMethod;
             return m_isDirty || CallStack.IsDirty() || (top != null && top.IsDirty());
         }
 
@@ -228,14 +228,14 @@ namespace MMC.State
 
         public override string ToString()
         {
-            int currentWaitFor = WaitingFor;
+            var currentWaitFor = WaitingFor;
 
-            for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++)
+            for (var i = 0; i < cur.DynamicArea.Allocations.Length; i++)
             {
-                DynamicAllocation ida = cur.DynamicArea.Allocations[i];
+                var ida = cur.DynamicArea.Allocations[i];
                 if (ida != null && ida.Locked)
                 {
-                    Lock l = ida.Lock;
+                    var l = ida.Lock;
                     if (l.ReadyQueue.Contains(Id) || l.WaitQueue.Contains(Id))
                     {
                         currentWaitFor = l.Owner;
@@ -250,7 +250,7 @@ namespace MMC.State
                 m_state,
                 currentWaitFor != LockManager.NoThread ? " waiting for " + currentWaitFor : "",
                 IsDirty() ? "dirty" : "clean");
-            for (int j = 0; j < CallStack.StackPointer; ++j)
+            for (var j = 0; j < CallStack.StackPointer; ++j)
             {
                 sb.AppendFormat("    {0}\n", CallStack[j].ToString());
             }
@@ -281,7 +281,7 @@ namespace MMC.State
             StatefulDynamicPOR m_dpor,
             out bool threadTerm)
         {
-            ThreadState thread = this;
+            var thread = this;
 
             cur.ThreadPool.CurrentThreadId = thread.Id;
 
@@ -292,7 +292,7 @@ namespace MMC.State
             }
 
             InstructionExecBase currentInstrExec = null;
-            MethodState currentMethod = thread.CurrentMethod;
+            var currentMethod = thread.CurrentMethod;
             if (currentMethod != null)
             {
                 currentInstrExec = instructionExecProvider.GetExecFor(currentMethod.ProgramCounter);
@@ -354,7 +354,7 @@ namespace MMC.State
                     && !currentInstrExec.IsMultiThreadSafe(cur)
                     && cur.ThreadPool.RunnableThreadCount == 1)
                 {
-                    MemoryLocation ml = cur.NextAccess(thread);
+                    var ml = cur.NextAccess(thread);
                     m_dpor.ExpandSelectedSet(new MemoryAccess(ml, thread.Id));
                 }
             } while (canForward);

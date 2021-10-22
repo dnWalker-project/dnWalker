@@ -51,7 +51,7 @@ namespace MMC.State {
             get
             {
                 // Add all changed threads to m_dirty and return the list.
-                for (int thread_id = 0; thread_id < Threads.Length; ++thread_id)
+                for (var thread_id = 0; thread_id < Threads.Length; ++thread_id)
                 {
                     if (Threads[thread_id] != null && Threads[thread_id].IsDirty())
                     {
@@ -64,8 +64,8 @@ namespace MMC.State {
 
 		public bool IsDirty() {
 
-			bool retval = m_dirty.Count > 0;
-			for (int thread_id = 0; !retval && thread_id < Threads.Length; ++thread_id)
+			var retval = m_dirty.Count > 0;
+			for (var thread_id = 0; !retval && thread_id < Threads.Length; ++thread_id)
 				retval = Threads[thread_id] != null && Threads[thread_id].IsDirty();
 			return retval;
 		}
@@ -101,8 +101,8 @@ namespace MMC.State {
 
 		public int FindOwningThread(IDataElement e) 
         {
-			int retval = LockManager.NoThread;
-			for (int i = 0; retval == LockManager.NoThread && i < Threads.Length; ++i) 
+			var retval = LockManager.NoThread;
+			for (var i = 0; retval == LockManager.NoThread && i < Threads.Length; ++i) 
             {
                 // For now, only look in thread object field. It would be nice to
                 // have a more advanced implementation that looks into the call stacks,
@@ -122,8 +122,8 @@ namespace MMC.State {
 
 		public int NewThread(ExplicitActiveState cur, MethodState entry, ObjectReference threadObj)
         {
-			int thread_id = Threads.Length;
-            ThreadState newThread = new ThreadState(cur, threadObj, thread_id);
+			var thread_id = Threads.Length;
+            var newThread = new ThreadState(cur, threadObj, thread_id);
 			Threads.Add(newThread);
 			newThread.CallStack.Push(entry);
 			_logger.Debug("spawned new thread with id {0}", thread_id);
@@ -153,9 +153,9 @@ namespace MMC.State {
 
         public void JoinThreads(int blocking_thread, int to_terminate) {
 
-			ThreadState to_block = Threads[blocking_thread];
+			var to_block = Threads[blocking_thread];
 			Debug.Assert(to_block != null, "Thread to be blocked is null!?");
-			ThreadState to_term = Threads[to_terminate];
+			var to_term = Threads[to_terminate];
 			Debug.Assert(to_term != null, "Thread to be blocked is null!?");
 
 			// This would be an MMC error: the thread to be blocked does a Join
@@ -185,8 +185,8 @@ namespace MMC.State {
 
 			// Perform early deadlock detection by cycle detection in the
 			// "waiting-for" graph.
-			int current = begin_thread;
-			BitArray seen = new BitArray(Threads.Length, false);
+			var current = begin_thread;
+			var seen = new BitArray(Threads.Length, false);
 			while (current != LockManager.NoThread && !seen[current]) {
 				Debug.Assert(Threads[current] != null, 
 						"some thread is waiting for some a null thread at offset "+current+".");
@@ -233,7 +233,7 @@ namespace MMC.State {
 			if (thread_id < 0 && thread_id >= Threads.Length)
 				throw new System.ArgumentException("thread ID not within bounds of thread list");
 
-			ThreadState bokje = Threads[thread_id];
+			var bokje = Threads[thread_id];
 			if (bokje != null) {
 				//bokje.Dispose(); 
 				Threads[thread_id] = null;
@@ -243,7 +243,7 @@ namespace MMC.State {
 
 		public void SetThreadUpperBound(int first_to_die) 
         {
-            for (int i = first_to_die; i < Threads.Length; ++i)
+            for (var i = first_to_die; i < Threads.Length; ++i)
             {
                 DeleteThread(i);
             }
@@ -260,7 +260,7 @@ namespace MMC.State {
 
 		public override string ToString() 
         {
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
             foreach (var thread in Threads)
             {
 				if (thread != null) 

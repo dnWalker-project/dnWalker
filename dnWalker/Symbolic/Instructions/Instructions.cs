@@ -30,6 +30,7 @@ namespace dnWalker.Symbolic.Instructions
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using FieldDefinition = dnlib.DotNet.FieldDef;
     using ParameterDefinition = dnlib.DotNet.Parameter;
+    using Parameter = dnWalker.Concolic.Parameters.Parameter;
     using MMC.ICall;
     using dnWalker;
     using ThreadState = MMC.State.ThreadState;
@@ -39,6 +40,7 @@ namespace dnWalker.Symbolic.Instructions
     using MMC;
     using dnWalker.ChoiceGenerators;
     using dnWalker.DataElements;
+    using dnWalker.Concolic.Parameters;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -122,8 +124,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
             return CompareOperands(a, b) == 0 ?
                 new JumpReturnValue((Instruction)Operand) :
                 nextRetval;
@@ -140,8 +142,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
             return CompareOperands(a, b) >= 0 ?
                 new JumpReturnValue((Instruction)Operand) :
                 nextRetval;
@@ -158,8 +160,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
             return CompareOperands(a, b) > 0 ?
                 new JumpReturnValue((Instruction)Operand) :
                 nextRetval;
@@ -176,8 +178,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
 
             return CompareOperands(a, b) <= 0 ?
                 new JumpReturnValue((Instruction)Operand) :
@@ -195,8 +197,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
             return CompareOperands(a, b) < 0 ?
                 new JumpReturnValue((Instruction)Operand) :
                 nextRetval;
@@ -213,8 +215,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
             return CompareOperands(a, b) != 0 ?
                 new JumpReturnValue((Instruction)Operand) :
                 nextRetval;
@@ -245,10 +247,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = cur.EvalStack.Pop();
-            Boolean value = a.ToBool();
-            Instruction operand = (Instruction)Operand;
-            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
+            var a = cur.EvalStack.Pop();
+            var value = a.ToBool();
+            var operand = (Instruction)Operand;
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
             if (symb)
             {
                 cur.PathStore.AddPathConstraint(
@@ -271,10 +273,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = cur.EvalStack.Pop();
-            Boolean value = a.ToBool();
-            Instruction operand = (Instruction)Operand;
-            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
+            var a = cur.EvalStack.Pop();
+            var value = a.ToBool();
+            var operand = (Instruction)Operand;
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
             if (symb)
             {
                 cur.PathStore.AddPathConstraint(
@@ -297,8 +299,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = cur.EvalStack.Pop();
-            Instruction[] targets = Operand as Instruction[];
+            var a = cur.EvalStack.Pop();
+            var targets = Operand as Instruction[];
             if (targets.Length == 0)
             {
                 return nextRetval;
@@ -306,7 +308,7 @@ namespace dnWalker.Symbolic.Instructions
 
             try
             {
-                Int32 index = (int)Convert.ChangeType(a, typeof(int));
+                var index = (int)Convert.ChangeType(a, typeof(int));
                 return index >= 0 && index < targets.Length ?
                     new JumpReturnValue(targets[index]) :
                     nextRetval;
@@ -386,8 +388,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
-            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            var b = (IIntegerElement)cur.EvalStack.Pop();
+            var a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.And(b));
             return nextRetval;
         }
@@ -404,7 +406,7 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            var a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Not());
             return nextRetval;
         }
@@ -423,8 +425,8 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
-            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            var b = (IIntegerElement)cur.EvalStack.Pop();
+            var a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Or(b));
             return nextRetval;
         }
@@ -443,8 +445,8 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            IIntegerElement b = (IIntegerElement)cur.EvalStack.Pop();
-            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            var b = (IIntegerElement)cur.EvalStack.Pop();
+            var a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Xor(b));
             return nextRetval;
         }
@@ -462,9 +464,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement value = cur.EvalStack.Pop();
-            int shiftBy = (int)Convert.ChangeType(value, typeof(int));
-            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            var value = cur.EvalStack.Pop();
+            var shiftBy = (int)Convert.ChangeType(value, typeof(int));
+            var a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shl(shiftBy));
             return nextRetval;
         }
@@ -480,9 +482,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement value = cur.EvalStack.Pop();
-            int shiftBy = (int)Convert.ChangeType(value, typeof(int));
-            IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
+            var value = cur.EvalStack.Pop();
+            var shiftBy = (int)Convert.ChangeType(value, typeof(int));
+            var a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shr(shiftBy));
             return nextRetval;
         }
@@ -500,10 +502,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement value = cur.EvalStack.Pop();
-            int shiftBy = (int)Convert.ChangeType(value, typeof(int));
-            ISignedIntegerElement a = (ISignedIntegerElement)cur.EvalStack.Pop();
-            IIntegerElement u = (IIntegerElement)a.ToUnsigned();
+            var value = cur.EvalStack.Pop();
+            var shiftBy = (int)Convert.ChangeType(value, typeof(int));
+            var a = (ISignedIntegerElement)cur.EvalStack.Pop();
+            var u = (IIntegerElement)a.ToUnsigned();
             cur.EvalStack.Push(u.Shr(shiftBy));
             return nextRetval;
         }
@@ -604,7 +606,7 @@ namespace dnWalker.Symbolic.Instructions
             // good here (it doesn't deal with the shorter forms).
             // See format in ECMA spec
 
-            string[] tokens = Instruction.OpCode.Name.Split(new char[] { '.' });
+            var tokens = Instruction.OpCode.Name.Split(new char[] { '.' });
             INumericElement toPush = null;
 
             // (Signed) others (formatted as described above)
@@ -665,7 +667,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            MethodDefinition method = Operand as MethodDefinition;
+            var method = Operand as MethodDefinition;
             cur.EvalStack.Push(new MethodPointer(method));
             return nextRetval;
         }
@@ -680,10 +682,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement or = cur.EvalStack.Pop();
-            MethodDefinition method = Operand as MethodDefinition;
+            var or = cur.EvalStack.Pop();
+            var method = Operand as MethodDefinition;
 
-            MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
+            var toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
             cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
@@ -699,7 +701,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement pop = cur.EvalStack.Pop();
+            var pop = cur.EvalStack.Pop();
             if (pop is IManagedPointer mmp)
             {
                 cur.EvalStack.Push(mmp.Value);
@@ -711,19 +713,19 @@ namespace dnWalker.Symbolic.Instructions
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
-            IDataElement reference = cur.EvalStack.Peek();
+            var reference = cur.EvalStack.Peek();
             return !(reference is ObjectFieldPointer || reference is StaticFieldPointer);
         }
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
 
-            IDataElement reference = cur.EvalStack.Peek();
+            var reference = cur.EvalStack.Peek();
 
             if (reference is ObjectFieldPointer)
             {
-                ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
-                AllocatedObject theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
+                var ofp = (ObjectFieldPointer)reference;
+                var theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
 
                 return theObject.ThreadShared;
             }
@@ -737,16 +739,16 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            IDataElement reference = thread.CurrentMethod.EvalStack.Peek();
+            var reference = thread.CurrentMethod.EvalStack.Peek();
 
             if (reference is ObjectFieldPointer)
             {
-                ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
+                var ofp = (ObjectFieldPointer)reference;
                 return ofp.MemoryLocation;
             }
             else if (reference is StaticFieldPointer)
             {
-                StaticFieldPointer sfp = (StaticFieldPointer)reference;
+                var sfp = (StaticFieldPointer)reference;
                 return sfp.MemoryLocation;
             }
 
@@ -830,7 +832,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            int index = ((Local)Operand).Index;
+            var index = ((Local)Operand).Index;
             cur.EvalStack.Push(new LocalVariablePointer(cur.CurrentMethod, index));
             return nextRetval;
         }
@@ -887,15 +889,15 @@ namespace dnWalker.Symbolic.Instructions
         /// it's okay to access the static fields).</returns>
         public bool LoadClass(TypeDefinition type, ExplicitActiveState cur)
         {
-            int me = cur.ThreadPool.CurrentThreadId;
+            var me = cur.ThreadPool.CurrentThreadId;
 
-            bool allow_access = true;
+            var allow_access = true;
 
-            AllocatedClass cls = cur.StaticArea.GetClass(type);
+            var cls = cur.StaticArea.GetClass(type);
             if (!cls.Initialized)
             {
                 cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
-                MethodDefinition cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
+                var cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
                 if (cctorDef == null)
                 {
                     // Trivial case, no initializtion needed.
@@ -906,7 +908,7 @@ namespace dnWalker.Symbolic.Instructions
                     cur.Logger.Debug("no thread is currently initializing the public class");
                     // We are the ones who have to do the initialization.
                     cls.InitializingThread = me;
-                    MethodState cctorState = new MethodState(
+                    var cctorState = new MethodState(
                         cctorDef,
                         cur.StorageFactory.CreateList(0),
                         cur);
@@ -918,15 +920,15 @@ namespace dnWalker.Symbolic.Instructions
                 }
                 else
                 {
-                    ThreadPool tp = cur.ThreadPool;
-                    int wait_for = cls.InitializingThread;
+                    var tp = cur.ThreadPool;
+                    var wait_for = cls.InitializingThread;
                     cur.Logger.Debug("thread {0} is currently initializing the public class", wait_for);
 
-                    bool wait_safe = wait_for != me;
+                    var wait_safe = wait_for != me;
                     if (wait_safe)
                     {
                         // Make sure we're not introducing a deadlock by waiting here.
-                        BitArray seen = new BitArray(tp.Threads.Length, false);
+                        var seen = new BitArray(tp.Threads.Length, false);
                         while (wait_safe && wait_for != LockManager.NoThread && !seen[wait_for])
                         {
                             seen[wait_for] = true;
@@ -956,8 +958,8 @@ namespace dnWalker.Symbolic.Instructions
         public void CctorDoneCallBack(MethodState ms)
         {
             ms.Cur.Logger.Debug("completed running cctor. public class initialized");
-            TypeDefinition type = GetTypeDefinition();
-            ExplicitActiveState cur = ms.Cur;
+            var type = GetTypeDefinition();
+            var cur = ms.Cur;
             /*
 			 * It is possible that during state decollapsion, that 
 			 * this callback is called when the initialising thread 
@@ -967,7 +969,7 @@ namespace dnWalker.Symbolic.Instructions
 			 */
             if (cur.StaticArea.ClassLoaded(type))
             {
-                AllocatedClass cls = cur.StaticArea.GetClass(type);
+                var cls = cur.StaticArea.GetClass(type);
                 cls.Initialized = true;
                 cls.InitializingThread = LockManager.NoThread;
                 cls.AwakenWaitingThreads(cur);
@@ -976,7 +978,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public FieldDefinition GetFieldDefinition()
         {
-            FieldDefinition fld = Operand as FieldDefinition;
+            var fld = Operand as FieldDefinition;
             // Lookup layout information if it's not available.
             if (!fld.HasLayoutInfo)
             {
@@ -1006,10 +1008,10 @@ namespace dnWalker.Symbolic.Instructions
                 return m_offset;
             }
 
-            FieldDefinition fld = GetFieldDefinition();
-            int typeOffset = 0;
-            bool matched = false;
-            int retval = 0;
+            var fld = GetFieldDefinition();
+            var typeOffset = 0;
+            var matched = false;
+            var retval = 0;
 
             foreach (TypeDefinition typeDef in DefinitionProvider.InheritanceEnumerator(superType))
             {
@@ -1069,7 +1071,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            Int4 length = (Int4)cur.EvalStack.Pop();
+            var length = (Int4)cur.EvalStack.Pop();
 
             if (length.Value < 0)
             {
@@ -1098,8 +1100,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IReferenceType objRef = (IReferenceType)cur.EvalStack.Pop();
-            ITypeDefOrRef toCastToType = (ITypeDefOrRef)Operand;
+            var objRef = (IReferenceType)cur.EvalStack.Pop();
+            var toCastToType = (ITypeDefOrRef)Operand;
             if (objRef.Equals(ObjectReference.Null))
             {
                 cur.EvalStack.Push(objRef);
@@ -1108,7 +1110,7 @@ namespace dnWalker.Symbolic.Instructions
 
             if (objRef is ConstantString s)
             {
-                TypeDefinition st = cur.DefinitionProvider.GetTypeDefinition("System.String");
+                var st = cur.DefinitionProvider.GetTypeDefinition("System.String");
                 if (cur.DefinitionProvider.IsSubtype(st, toCastToType))
                 {
                     cur.EvalStack.Push(objRef);
@@ -1124,7 +1126,7 @@ namespace dnWalker.Symbolic.Instructions
             /*
              * TODO: make this work for arrays! See ECMA spec on this
              */
-            AllocatedObject ao = cur.DynamicArea.Allocations[(int)objRef.Location] as AllocatedObject;
+            var ao = cur.DynamicArea.Allocations[(int)objRef.Location] as AllocatedObject;
             if (cur.DefinitionProvider.IsSubtype(ao.Type, toCastToType))
             {
                 cur.EvalStack.Push(objRef);
@@ -1169,8 +1171,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            Int4 idx = (Int4)cur.EvalStack.Pop();
-            ObjectReference objRef = (ObjectReference)cur.EvalStack.Pop();
+            var idx = (Int4)cur.EvalStack.Pop();
+            var objRef = (ObjectReference)cur.EvalStack.Pop();
             cur.EvalStack.Push(new ObjectFieldPointer(cur, objRef, idx.Value));
             return nextRetval;
         }
@@ -1200,20 +1202,20 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement ida = cur.EvalStack.Peek();
-            Int4 idx = (Int4)cur.EvalStack.Pop();
-            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
+            var ida = cur.EvalStack.Peek();
+            var idx = (Int4)cur.EvalStack.Pop();
+            var arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
-            IIEReturnValue retval = nextRetval;
-            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            var retval = nextRetval;
+            var theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (theArray == null)
             {
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            Boolean isSymbolicArray = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out Expression arrayExpression);
-            Boolean isSymbolicIndex = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(idx, "expression", out Expression indexExpression);
+            var isSymbolicArray = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var arrayExpression);
+            var isSymbolicIndex = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(idx, "expression", out var indexExpression);
 
             if (isSymbolicIndex)
             {
@@ -1225,10 +1227,10 @@ namespace dnWalker.Symbolic.Instructions
                  * (ii) the index is greater than the length of the array; 
                  * or (iii) the index is in bounds and we are loading an element.
                  */
-                IntChoiceFromValueSet cg = new IntChoiceFromValueSet(1, 3);
+                var cg = new IntChoiceFromValueSet(1, 3);
                 if (cur.ChoiceGenerator is IntChoiceFromValueSet choiceFromValueSet)
                 {
-                    Traversal.Path path = choiceFromValueSet.Path;
+                    var path = choiceFromValueSet.Path;
                     switch (choiceFromValueSet.GetNextChoice())
                     {
                         case 1: // index < 0
@@ -1251,7 +1253,7 @@ namespace dnWalker.Symbolic.Instructions
 
             if (CheckBounds(theArray, idx))
             {
-                IDataElement elementAt = theArray.Fields[idx.Value];
+                var elementAt = theArray.Fields[idx.Value];
                 cur.EvalStack.Push(elementAt);
                 if (isSymbolicArray)
                 {
@@ -1280,21 +1282,21 @@ namespace dnWalker.Symbolic.Instructions
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            int length = cur.EvalStack.Length;
+            var length = cur.EvalStack.Length;
 
-            ObjectReference arrayRef = (ObjectReference)cur.EvalStack[length - 2];
-            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            var arrayRef = (ObjectReference)cur.EvalStack[length - 2];
+            var theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
             return theArray.ThreadShared;
 
         }
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            DataElementStack des = thread.CurrentMethod.EvalStack;
-            int length = des.Length;
+            var des = thread.CurrentMethod.EvalStack;
+            var length = des.Length;
 
-            Int4 idx = (Int4)des.Peek();
-            ObjectReference arrayRef = (ObjectReference)des[length - 2];
+            var idx = (Int4)des.Peek();
+            var arrayRef = (ObjectReference)des[length - 2];
 
             return new MemoryLocation(idx.Value, arrayRef, cur);
         }
@@ -1310,12 +1312,12 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement val = cur.EvalStack.Pop();
-            Int4 idx = (Int4)cur.EvalStack.Pop();
-            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
+            var val = cur.EvalStack.Pop();
+            var idx = (Int4)cur.EvalStack.Pop();
+            var arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
-            IIEReturnValue retval = nextRetval;
-            AllocatedArray theArray =
+            var retval = nextRetval;
+            var theArray =
                 cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (theArray == null)
@@ -1346,20 +1348,20 @@ namespace dnWalker.Symbolic.Instructions
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            int length = cur.EvalStack.Length;
+            var length = cur.EvalStack.Length;
 
-            ObjectReference arrayRef = (ObjectReference)cur.EvalStack[length - 3];
-            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            var arrayRef = (ObjectReference)cur.EvalStack[length - 3];
+            var theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
             return theArray.ThreadShared;
         }
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            DataElementStack des = thread.CurrentMethod.EvalStack;
-            int length = des.Length;
+            var des = thread.CurrentMethod.EvalStack;
+            var length = des.Length;
 
-            Int4 idx = (Int4)des[length - 2];
-            ObjectReference arrayRef = (ObjectReference)des[length - 3];
+            var idx = (Int4)des[length - 2];
+            var arrayRef = (ObjectReference)des[length - 3];
 
             return new MemoryLocation(idx.Value, arrayRef, cur);
         }
@@ -1376,27 +1378,41 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IReferenceType arrayRef = (IReferenceType)cur.EvalStack.Pop();
-            AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+            var arrayRef = (IReferenceType)cur.EvalStack.Pop();
+            var theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
 
             if (theArray == null)
             {
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            UnsignedInt4 length = new UnsignedInt4((uint)theArray.Fields.Length);
-            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out Expression expression);
-            if (symb)
-            {
-                length.SetExpression(
-                    Expression.MakeMemberAccess(
-                        expression, 
-                        typeof(Array).GetProperty("Length")
-                    ), cur);
-            }
 
-            cur.EvalStack.Push(length);
-            return nextRetval;
+            if (arrayRef.IsArrayParameter(cur, out var arrayParameter))
+            {
+                var length = arrayParameter.LengthParameter.CreateDataElement(cur);
+
+                // TODO: somehow make sure that the length is greater than 0 OR use UInt32 & change dnWalker.Z3 to support 
+                // cur.PathStore.CurrentPath.AddPathConstraint(Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, arrayParameter.LengthParameter.GetSingleParameterExpression(), Expression.Constant(0)));
+
+                cur.EvalStack.Push(length);
+                return nextRetval;
+            }
+            else
+            {
+                var length = new UnsignedInt4((uint)theArray.Fields.Length);
+                var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
+                if (symb)
+                {
+                    length.SetExpression(
+                        Expression.MakeMemberAccess(
+                            expression,
+                            typeof(Array).GetProperty("Length")
+                        ), cur);
+                }
+
+                cur.EvalStack.Push(length);
+                return nextRetval;
+            }
         }
     }
 
@@ -1419,13 +1435,13 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement value = cur.EvalStack.Pop();
-            ITypeDefOrRef typeDef = Operand as ITypeDefOrRef;
+            var value = cur.EvalStack.Pop();
+            var typeDef = Operand as ITypeDefOrRef;
 
             switch (value)
             {
                 case ConstantString constantString:
-                    TypeDefinition st = cur.DefinitionProvider.GetTypeDefinition("System.String");
+                    var st = cur.DefinitionProvider.GetTypeDefinition("System.String");
                     if (cur.DefinitionProvider.IsSubtype(st, typeDef))
                     {
                         cur.EvalStack.Push(value);
@@ -1442,7 +1458,7 @@ namespace dnWalker.Symbolic.Instructions
                         return nextRetval;
                     }
 
-                    DynamicAllocation obj = cur.DynamicArea.Allocations[reference];
+                    var obj = cur.DynamicArea.Allocations[reference];
                     if (cur.DefinitionProvider.IsSubtype(obj.Type, typeDef))
                     {
                         cur.EvalStack.Push(reference);
@@ -1473,7 +1489,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement dataElement = cur.EvalStack.Pop();
+            var dataElement = cur.EvalStack.Pop();
             if (dataElement is LocalVariablePointer localVariablePointer)
             {
                 dataElement = localVariablePointer.Value;
@@ -1482,8 +1498,8 @@ namespace dnWalker.Symbolic.Instructions
             switch (dataElement)
             {
                 case ObjectReference objRef:
-                    AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
-                    int offset = GetFieldOffset(ao.Type);
+                    var ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+                    var offset = GetFieldOffset(ao.Type);
                     cur.EvalStack.Push(new ObjectFieldPointer(cur, objRef, offset));
                     return nextRetval;
             }
@@ -1517,7 +1533,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement reference = cur.EvalStack.Pop();
+            var reference = cur.EvalStack.Pop();
 
             AllocatedObject theObject;
 
@@ -1542,7 +1558,7 @@ namespace dnWalker.Symbolic.Instructions
             }
             else
             {
-                int offset = GetFieldOffset(theObject.Type);
+                var offset = GetFieldOffset(theObject.Type);
                 // FieldDefinition fld = GetFieldDefinition();
                 cur.EvalStack.Push(theObject.Fields[offset]);
             }
@@ -1557,11 +1573,11 @@ namespace dnWalker.Symbolic.Instructions
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            IDataElement reference = cur.EvalStack.Peek();
+            var reference = cur.EvalStack.Peek();
 
             AllocatedObject theObject = null;
 
-            FieldDefinition fieldDef = GetFieldDefinition();
+            var fieldDef = GetFieldDefinition();
             if (fieldDef.IsInitOnly)
             {
                 return false;
@@ -1587,7 +1603,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            IDataElement refVal = thread.CurrentMethod.EvalStack.Peek();
+            var refVal = thread.CurrentMethod.EvalStack.Peek();
             if (refVal is LocalVariablePointer localVariablePointer)
             {
                 refVal = localVariablePointer.Value;
@@ -1596,8 +1612,8 @@ namespace dnWalker.Symbolic.Instructions
             switch (refVal)
             {
                 case ObjectReference or:
-                    AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
-                    int offset = GetFieldOffset(ao.Type);
+                    var ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
+                    var offset = GetFieldOffset(ao.Type);
                     return new MemoryLocation(offset, or, cur);
             }
 
@@ -1627,8 +1643,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement val = cur.EvalStack.Pop();
-            IDataElement toChange = cur.EvalStack.Pop();
+            var val = cur.EvalStack.Pop();
+            var toChange = cur.EvalStack.Pop();
             //FieldDefinition fld = GetFieldDefinition();
 
             if (toChange is LocalVariablePointer lvp)
@@ -1640,9 +1656,9 @@ namespace dnWalker.Symbolic.Instructions
             if (toChange is ObjectReference objectReference)
             {
                 // Change a field of an object.
-                AllocatedObject theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
+                var theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
-                int offset = GetFieldOffset(theObject.Type);
+                var offset = GetFieldOffset(theObject.Type);
                 cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
 
                 // Can be the case that an object reference was written, thereby changing the object graph
@@ -1663,18 +1679,18 @@ namespace dnWalker.Symbolic.Instructions
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            FieldDefinition fieldDef = GetFieldDefinition();
+            var fieldDef = GetFieldDefinition();
             if (fieldDef.IsInitOnly)
             {
                 return false;
             }
 
-            int length = cur.EvalStack.Length;
-            IDataElement toChange = cur.EvalStack[length - 2];
+            var length = cur.EvalStack.Length;
+            var toChange = cur.EvalStack[length - 2];
 
             if (toChange is ObjectReference)
             {
-                AllocatedObject theObject = cur.DynamicArea.Allocations[(ObjectReference)toChange] as AllocatedObject;
+                var theObject = cur.DynamicArea.Allocations[(ObjectReference)toChange] as AllocatedObject;
                 return theObject.ThreadShared;
             }
 
@@ -1683,17 +1699,17 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            DataElementStack des = thread.CurrentMethod.EvalStack;
+            var des = thread.CurrentMethod.EvalStack;
 
-            int length = des.Length;
-            IDataElement toChange = des[length - 2];
+            var length = des.Length;
+            var toChange = des[length - 2];
 
             if (toChange is ObjectReference)
             {
-                ObjectReference or = (ObjectReference)toChange;
+                var or = (ObjectReference)toChange;
                 //FieldDefinition fld = GetFieldDefinition();
-                AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
-                int offset = GetFieldOffset(ao.Type);
+                var ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
+                var offset = GetFieldOffset(ao.Type);
                 return new MemoryLocation(offset, or, cur);
             }
 
@@ -1711,10 +1727,10 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // Operand is a type definition of the wrapper type to use.
-            ObjectReference wrappedRef = cur.DynamicArea.AllocateObject(
+            var wrappedRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(),
                 Operand as ITypeDefOrRef);
-            AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
+            var wrapped = (AllocatedObject)cur.DynamicArea.Allocations[wrappedRef];
             if (wrapped.Type.IsValueType)
             {
                 wrapped.Fields[wrapped.ValueFieldOffset] = cur.EvalStack.Pop();
@@ -1739,10 +1755,10 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // Operand is a type definition of the wrapper type to use.
-            IReferenceType reference = (IReferenceType)cur.EvalStack.Pop();
+            var reference = (IReferenceType)cur.EvalStack.Pop();
             if (reference is ObjectReference objRef)
             {
-                AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[objRef];
+                var wrapped = (AllocatedObject)cur.DynamicArea.Allocations[objRef];
                 // Maybe a clone isn't even really needed here, the object pushed on the
                 // stack will probably not live very long and the field will probably not
                 // be updated while it's on the stack.
@@ -1775,13 +1791,13 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IIEReturnValue retval = nincRetval;
-            FieldDefinition fld = GetFieldDefinition();
-            TypeDefinition declType = GetTypeDefinition();
+            var retval = nincRetval;
+            var fld = GetFieldDefinition();
+            var declType = GetTypeDefinition();
 
             if (LoadClass(declType, cur))
             {
-                AllocatedClass ac = cur.StaticArea.GetClass(declType);
+                var ac = cur.StaticArea.GetClass(declType);
                 cur.EvalStack.Push(ac.Fields[(int)fld.FieldOffset]);
                 retval = nextRetval;
             }
@@ -1802,8 +1818,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            FieldDefinition fld = GetFieldDefinition();
-            TypeDefinition declType = GetTypeDefinition();
+            var fld = GetFieldDefinition();
+            var declType = GetTypeDefinition();
 
             return new MemoryLocation((int)fld.FieldOffset, declType, cur);
         }
@@ -1819,9 +1835,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IIEReturnValue retval = nincRetval;
-            FieldDefinition fld = GetFieldDefinition();
-            TypeDefinition declType = GetTypeDefinition();
+            var retval = nincRetval;
+            var fld = GetFieldDefinition();
+            var declType = GetTypeDefinition();
 
             if (LoadClass(declType, cur))
             {
@@ -1859,15 +1875,15 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IIEReturnValue retval = nincRetval;
-            FieldDefinition fld = GetFieldDefinition();
-            TypeDefinition declType = GetTypeDefinition();
+            var retval = nincRetval;
+            var fld = GetFieldDefinition();
+            var declType = GetTypeDefinition();
 
             if (LoadClass(declType, cur))
             {
-                IDataElement val = cur.EvalStack.Pop();
+                var val = cur.EvalStack.Pop();
 
-                AllocatedClass ac = cur.StaticArea.GetClass(declType);
+                var ac = cur.StaticArea.GetClass(declType);
                 ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, ac.Fields[(int)fld.FieldOffset], cur);
 
                 ObjectEscapePOR.UpdateReachability(true, ac.Fields[(int)fld.FieldOffset], val, cur);
@@ -1898,8 +1914,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            FieldDefinition fld = GetFieldDefinition();
-            TypeDefinition declType = GetTypeDefinition();
+            var fld = GetFieldDefinition();
+            var declType = GetTypeDefinition();
 
             return new MemoryLocation((int)fld.FieldOffset, declType, cur);
         }
@@ -1917,7 +1933,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IIEReturnValue retval = nincRetval;
+            var retval = nincRetval;
             switch (Operand)
             {
                 case TypeDefinition typeDef:
@@ -1962,8 +1978,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
 
             IAddElement left;
             INumericElement right;
@@ -2016,8 +2032,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
 
             IAddElement left;
             INumericElement right;
@@ -2049,11 +2065,11 @@ namespace dnWalker.Symbolic.Instructions
             switch (left)
             {
                 case Int4 i4:
-                    UnsignedInt4 res4 = (UnsignedInt4)i4.ToUnsignedInt4(false).Add(right.ToUnsignedInt4(false), CheckOverflow);
+                    var res4 = (UnsignedInt4)i4.ToUnsignedInt4(false).Add(right.ToUnsignedInt4(false), CheckOverflow);
                     cur.EvalStack.Push(res4.ToInt4(false));
                     return nextRetval;
                 case Int8 i8:
-                    UnsignedInt8 res8 = (UnsignedInt8)i8.ToUnsignedInt8(false).Add(right.ToUnsignedInt8(false), CheckOverflow);
+                    var res8 = (UnsignedInt8)i8.ToUnsignedInt8(false).Add(right.ToUnsignedInt8(false), CheckOverflow);
                     cur.EvalStack.Push(res8.ToInt8(false));
                     return nextRetval;
             }
@@ -2090,8 +2106,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            INumericElement b = (INumericElement)cur.EvalStack.Pop();
-            INumericElement a = (INumericElement)cur.EvalStack.Pop();
+            var b = (INumericElement)cur.EvalStack.Pop();
+            var a = (INumericElement)cur.EvalStack.Pop();
 
             if (Unsigned)
             {
@@ -2127,8 +2143,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            INumericElement b = (INumericElement)cur.EvalStack.Pop();
-            INumericElement a = (INumericElement)cur.EvalStack.Pop();
+            var b = (INumericElement)cur.EvalStack.Pop();
+            var a = (INumericElement)cur.EvalStack.Pop();
 
             if (Unsigned)
             {
@@ -2136,17 +2152,17 @@ namespace dnWalker.Symbolic.Instructions
                 b = ((ISignedIntegerElement)b).ToUnsigned();
             }
 
-            Boolean symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression exprA);
-            Boolean symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out Expression exprB);
+            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
+            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
             try
             {
-                INumericElement newValue = a.Mul(b, CheckOverflow);
+                var newValue = a.Mul(b, CheckOverflow);
 
-                Boolean isSymbolic = symbA || symbB;
+                var isSymbolic = symbA || symbB;
                 if (isSymbolic)
                 {
-                    BinaryExpression expression = Expression.MakeBinary(ExpressionType.Multiply,
+                    var expression = Expression.MakeBinary(ExpressionType.Multiply,
                         exprA ?? a.AsExpression(),
                         exprB ?? b.AsExpression());
 
@@ -2173,8 +2189,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            INumericElement b = (INumericElement)cur.EvalStack.Pop();
-            INumericElement a = (INumericElement)cur.EvalStack.Pop();
+            var b = (INumericElement)cur.EvalStack.Pop();
+            var a = (INumericElement)cur.EvalStack.Pop();
 
             if (Unsigned)
             {
@@ -2208,11 +2224,11 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = cur.EvalStack.Pop();
-            IDataElement b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
 
-            ISubElement left = (ISubElement)b;
-            INumericElement right = (INumericElement)a;
+            var left = (ISubElement)b;
+            var right = (INumericElement)a;
 
             if (Unsigned)
             {
@@ -2245,18 +2261,18 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement a = cur.EvalStack.Pop();
-            IDataElement b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
 
-            ISubElement left = (ISubElement)b;
-            INumericElement right = (INumericElement)a;
+            var left = (ISubElement)b;
+            var right = (INumericElement)a;
 
             left = ((ISignedIntegerElement)left).ToUnsigned();
             right = ((ISignedIntegerElement)right).ToUnsigned();
 
             try
             {
-                ISubElement sub = left.Sub(right, CheckOverflow);
+                var sub = left.Sub(right, CheckOverflow);
                 switch (sub)
                 {
                     case UnsignedInt4 ui4:
@@ -2292,12 +2308,12 @@ namespace dnWalker.Symbolic.Instructions
             //cur.EvalStack.Push(a.Neg());
             //return nextRetval;
 
-            ISignedNumericElement oldValue = (ISignedNumericElement)cur.EvalStack.Pop();
-            ISignedNumericElement newValue = oldValue.Neg();
+            var oldValue = (ISignedNumericElement)cur.EvalStack.Pop();
+            var newValue = oldValue.Neg();
             cur.EvalStack.Push(newValue);
 
 
-            if (oldValue.TryGetExpression(cur, out Expression oldExpression))
+            if (oldValue.TryGetExpression(cur, out var oldExpression))
             {
                 Expression newExpression = Expression.Negate(oldExpression);
 
@@ -2341,27 +2357,70 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
 
-            //var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
-            //var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
+            // TODO: redo in a little bit better way
+            // check whether it is not b == null or a == null
+            if (b.IsReferenceTypeParametery(cur, out var bRefTypeP) && a.Equals(ObjectReference.Null))
+            {
+                // b == null
+                var bIsNullParameter = bRefTypeP.IsNullParameter;
 
-            bool symbA = a.TryGetExpression(cur, out Expression exprA);
-            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+                var bIsNull = bIsNullParameter.CreateDataElement(cur);
+                var ceq = bIsNull.ToBool();
 
-            Boolean isSymbolic = symbA || symbB;
+                var result = new Int4(ceq ? 1 : 0);
+
+                if (!bIsNull.TryGetExpression(cur, out var bIsNullExpr))
+                {
+                    throw new Exception("Unexpected state, parameter IDataElement must have an expression!");
+                }
+
+                Expression resultExpr = Expression.MakeBinary(ceq ? ExpressionType.Equal : ExpressionType.NotEqual, bIsNullExpr, Expression.Constant(true));
+                result.SetExpression(resultExpr, cur);
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+            }
+            else if (a.IsReferenceTypeParametery(cur, out var aRefTypeP) && b.Equals(ObjectReference.Null))
+            {
+                // a == null
+                var aIsNullParameter = aRefTypeP.IsNullParameter;
+
+                var aIsNull = aIsNullParameter.CreateDataElement(cur);
+                var ceq = aIsNull.ToBool();
+
+                var result = new Int4(ceq ? 1 : 0);
+
+                if (!aIsNull.TryGetExpression(cur, out var aIsNullExpr))
+                {
+                    throw new Exception("Unexpected state, parameter IDataElement must have an expression!");
+                }
+
+                Expression resultExpr = Expression.MakeBinary(ceq ? ExpressionType.Equal : ExpressionType.NotEqual, aIsNullExpr, Expression.Constant(true));
+                result.SetExpression(resultExpr, cur);
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+            }
+
+
+            var symbA = a.TryGetExpression(cur, out var exprA);
+            var symbB = b.TryGetExpression(cur, out var exprB);
+
+            var isSymbolic = symbA || symbB;
             if (!isSymbolic)
             {
                 cur.EvalStack.Push(CompareOperands(a, b) == 0 ? new Int4(1) : new Int4(0));
                 return nextRetval;
             }
 
-            Boolean ceqValue = CompareOperands(a, b) == 0;
+            var ceqValue = CompareOperands(a, b) == 0;
 
             Expression expression = null;
 
-            Expression left = exprA ?? a.AsExpression();
+            var left = exprA ?? a.AsExpression();
             if (symbA && !symbB && left.Type == typeof(bool))
             {
                 if (left.Type == typeof(bool) && !ceqValue)
@@ -2377,7 +2436,7 @@ namespace dnWalker.Symbolic.Instructions
             else
             {
                 left = exprA ?? a.AsExpression();
-                Expression right = exprB ?? b.AsExpression();
+                var right = exprB ?? b.AsExpression();
                 if (right.Type != left.Type)
                 {
                     right = Expression.Convert(right, left.Type);
@@ -2387,7 +2446,7 @@ namespace dnWalker.Symbolic.Instructions
                     right);
             }
 
-            Int4 newValue = new Int4(ceqValue ? 1 : 0);
+            var newValue = new Int4(ceqValue ? 1 : 0);
             //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
             newValue.SetExpression(expression, cur);
             cur.EvalStack.Push(newValue);
@@ -2404,22 +2463,22 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
 
             //var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
             //var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
-            bool symbA = a.TryGetExpression(cur, out Expression exprA);
-            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+            var symbA = a.TryGetExpression(cur, out var exprA);
+            var symbB = b.TryGetExpression(cur, out var exprB);
 
-            Boolean cgtValue = CompareOperands(a, b) > 0;
-            Int4 newValue = new Int4(cgtValue ? 1 : 0);
+            var cgtValue = CompareOperands(a, b) > 0;
+            var newValue = new Int4(cgtValue ? 1 : 0);
 
-            Boolean isSymbolic = symbA || symbB;
+            var isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                BinaryExpression expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
+                var expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
                     exprA ?? a.AsExpression(),
                     exprB ?? b.AsExpression());
 
@@ -2440,22 +2499,22 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
+            var b = cur.EvalStack.Pop();
+            var a = cur.EvalStack.Pop();
 
             //Boolean symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression exprA);
             //Boolean symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out Expression exprB);
 
-            bool symbA = a.TryGetExpression(cur, out Expression exprA);
-            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+            var symbA = a.TryGetExpression(cur, out var exprA);
+            var symbB = b.TryGetExpression(cur, out var exprB);
 
-            Boolean cltValue = CompareOperands(a, b) < 0;
-            Int4 newValue = new Int4(cltValue ? 1 : 0);
+            var cltValue = CompareOperands(a, b) < 0;
+            var newValue = new Int4(cltValue ? 1 : 0);
 
-            Boolean isSymbolic = symbA || symbB;
+            var isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                BinaryExpression expression = Expression.MakeBinary(cltValue ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual,
+                var expression = Expression.MakeBinary(cltValue ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual,
                     exprA ?? a.AsExpression(),
                     exprB ?? b.AsExpression());
 
@@ -2491,7 +2550,7 @@ namespace dnWalker.Symbolic.Instructions
             /*
 			 * leave only the exception reference on the stack
 			 */
-            IDataElement exceptionRef = cur.EvalStack.Pop();
+            var exceptionRef = cur.EvalStack.Pop();
             cur.EvalStack.PopAll();
 
             // signals all exception related instructions that an exception has been thrown
@@ -2531,7 +2590,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            Int4 val = (Int4)cur.EvalStack.Pop();
+            var val = (Int4)cur.EvalStack.Pop();
             cur.CallStack.Pop(); // pop off the methodstate made for only filtering
 
             if (val.Value == 0)
@@ -2559,7 +2618,7 @@ namespace dnWalker.Symbolic.Instructions
         {
             IIEReturnValue retval;
             ExceptionHandler eh;
-            MethodState current = cur.CurrentMethod;
+            var current = cur.CurrentMethod;
 
             if (ObjectReference.Null.Equals(cur.CurrentThread.ExceptionReference))
             {
@@ -2645,11 +2704,11 @@ namespace dnWalker.Symbolic.Instructions
         /// <seealso cref="IntCallManager"/>
         protected bool HandleEmptyMethod(ExplicitActiveState cur, DataElementList args)
         {
-            bool handled = false;
+            var handled = false;
             DynamicAllocation thisObject = null;
             if (args.Length > 0 && args[0] is ObjectReference)
                 thisObject = cur.DynamicArea.Allocations[(ObjectReference)args[0]];
-            MethodDefinition methDef = Method;
+            var methDef = Method;
 
             // Determine the type of call and simulate the behaviour.
             if ((methDef.Attributes & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl)
@@ -2675,13 +2734,13 @@ namespace dnWalker.Symbolic.Instructions
                 cur.Logger.Log(LogPriority.Call, "invoke: call is a synchronous delegate call");
                 // Create caller block, shifting parameters so delegate is dropped
                 // from argument list.
-                DataElementList calleePars = cur.StorageFactory.CreateList(args.Length - 1);
-                for (int i = 0; i < calleePars.Length; ++i)
+                var calleePars = cur.StorageFactory.CreateList(args.Length - 1);
+                for (var i = 0; i < calleePars.Length; ++i)
                     calleePars[i] = args[i + 1];
-                MethodDefinition toCall =
+                var toCall =
                     ((AllocatedDelegate)thisObject).Method.Value;
                 // Create frame for the indirectly called method.
-                MethodState calleeState = new MethodState(toCall, calleePars, cur);
+                var calleeState = new MethodState(toCall, calleePars, cur);
                 cur.CallStack.Push(calleeState);
                 return true;
             }
@@ -2714,10 +2773,10 @@ namespace dnWalker.Symbolic.Instructions
         /// <returns>True iff the call was handled by this method.</returns>
         protected bool HandleAssertCall(DataElementList args, ExplicitActiveState cur, out bool violated)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
+            var methDef = Operand as MethodDefinition;
             string name = methDef.Name;
-            string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
-            bool assert = name == "Assert" && decl == "System.Diagnostics.Debug";
+            var decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
+            var assert = name == "Assert" && decl == "System.Diagnostics.Debug";
             violated = false;
 
             if (assert)
@@ -2751,10 +2810,10 @@ namespace dnWalker.Symbolic.Instructions
         /// <returns>True iff the call to be made is to be filtered out.</returns>
         protected bool FilterCall(ExplicitActiveState cur)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
+            var methDef = Operand as MethodDefinition;
             string name = methDef.Name;
-            string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
-            bool filtered =
+            var decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
+            var filtered =
                 //(name == "WriteLine" && decl == "System.Console")
                 //|| 
                 name == "StartupSetApartmentStateInternal";
@@ -2773,9 +2832,9 @@ namespace dnWalker.Symbolic.Instructions
         /// <returns>A list containing the arguments.</returns>
         protected DataElementList CreateArgumentList(ExplicitActiveState cur)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
-            int size = methDef.ParamDefs.Count + (methDef.HasThis ? 1 : 0);
-            DataElementList retval = cur.StorageFactory.CreateList(size);
+            var methDef = Operand as MethodDefinition;
+            var size = methDef.ParamDefs.Count + (methDef.HasThis ? 1 : 0);
+            var retval = cur.StorageFactory.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
@@ -2786,9 +2845,9 @@ namespace dnWalker.Symbolic.Instructions
 
         protected DataElementList CopyArgumentList(ExplicitActiveState cur, ThreadState thread)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
-            int size = methDef.Parameters.Count;// + (methDef.HasThis ? 1 : 0);
-            DataElementList retval = cur.StorageFactory.CreateList(size);
+            var methDef = Operand as MethodDefinition;
+            var size = methDef.Parameters.Count;// + (methDef.HasThis ? 1 : 0);
+            var retval = cur.StorageFactory.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (--size; size >= 0; --size)
@@ -2799,7 +2858,7 @@ namespace dnWalker.Symbolic.Instructions
             /*
 			 * Restore the eval stack
 			 */
-            for (int i = 0; i < retval.Length; i++)
+            for (var i = 0; i < retval.Length; i++)
             {
                 thread.CurrentMethod.EvalStack.Push(retval[i]);
             }
@@ -2819,8 +2878,8 @@ namespace dnWalker.Symbolic.Instructions
         /// <returns>True iff the call is safe.</returns>
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
-            bool safe = true;
-            MethodDefinition methDef = Operand as MethodDefinition;
+            var safe = true;
+            var methDef = Operand as MethodDefinition;
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
                 safe = IntCallManager.icm.IsMultiThreadSafe(methDef.Name);
@@ -2831,10 +2890,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
+            var methDef = Operand as MethodDefinition;
             if ((methDef.ImplAttributes & MethodImplAttributes.InternalCall) != 0)
             {
-                DataElementList args = CopyArgumentList(cur, cur.ThreadPool.CurrentThread);
+                var args = CopyArgumentList(cur, cur.ThreadPool.CurrentThread);
                 return IntCallManager.icm.IsDependent(methDef, args);
             }
             else
@@ -2845,14 +2904,14 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
-            DataElementList args = CopyArgumentList(cur, thread);
+            var methDef = Operand as MethodDefinition;
+            var args = CopyArgumentList(cur, thread);
             return MMC.ICall.IntCallManager.icm.HandleICallAccessed(methDef, args, thread.Id);
         }
 
         public override string ToString()
         {
-            MethodDefinition method = Method;
+            var method = Method;
             return base.ToString() + " " + method;
         }
     }
@@ -2869,10 +2928,10 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
 
-            MethodState oldState = cur.CallStack.Pop();
+            var oldState = cur.CallStack.Pop();
 
-            MethodDefinition methDef = Operand as MethodDefinition;
-            MethodState newState = new MethodState(methDef, oldState.Arguments, cur);
+            var methDef = Operand as MethodDefinition;
+            var newState = new MethodState(methDef, oldState.Arguments, cur);
             cur.CallStack.Push(newState);
 
             return nincRetval;
@@ -2894,21 +2953,21 @@ namespace dnWalker.Symbolic.Instructions
         /// <returns></returns>
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            MethodDefinition methDef = Operand as MethodDefinition;
+            var methDef = Operand as MethodDefinition;
 
             // This pops the arguments of the stack. Even if we don't execute
             // the method. This is a good thing.
-            DataElementList args = CreateArgumentList(cur);
-            IIEReturnValue retval = nextRetval;
+            var args = CreateArgumentList(cur);
+            var retval = nextRetval;
 
             // Skip certain calls.
             bool violated;
             if (!HandleAssertCall(args, cur, out violated) && !FilterCall(cur))
             {
-                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
+                var bypass = NativePeer.Get(methDef.DeclaringType);
                 if (bypass != null)
                 {
-                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
+                    if (bypass.TryGetValue(methDef, args, cur, out var returnValue))
                     {
                         return returnValue;
                     }
@@ -2938,7 +2997,7 @@ namespace dnWalker.Symbolic.Instructions
                     // from this call (as a up-casted Instruction instance,
                     // yuck). This is BAD idea since it requires nasty hacks
                     // (to update the PC) to get right and is poorly readable.
-                    MethodState called = new MethodState(methDef, args, cur);
+                    var called = new MethodState(methDef, args, cur);
                     this.CheckTailCall();
                     cur.CallStack.Push(called);
                 }
@@ -2975,15 +3034,15 @@ namespace dnWalker.Symbolic.Instructions
         {
             // See MMC.InstructionExec.CALL.Execute(...) for comments.
 
-            MethodPointer methPtr = (MethodPointer)cur.EvalStack.Pop();
-            MethodDefinition methDef = methPtr.Value;
+            var methPtr = (MethodPointer)cur.EvalStack.Pop();
+            var methDef = methPtr.Value;
 
-            DataElementList args = CreateArgumentList(cur);
+            var args = CreateArgumentList(cur);
 
             if (!FilterCall(cur))
             {
                 // Assumption: CALLI targets have a body.
-                MethodState called = new MethodState(methDef, args, cur);
+                var called = new MethodState(methDef, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
             }
@@ -3012,12 +3071,12 @@ namespace dnWalker.Symbolic.Instructions
             // Virtual calls use the run-time type of an object to determine
             // the location of the method to be called. It always requires
             // a this pointer, but we use the CreateArgumentList.
-            MethodDefinition methDef = Operand as MethodDefinition;
-            DataElementList args = CreateArgumentList(cur);
+            var methDef = Operand as MethodDefinition;
+            var args = CreateArgumentList(cur);
 
             if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
             {
-                Int32 threadId = cur.ThreadPool.FindOwningThread(args[0]);
+                var threadId = cur.ThreadPool.FindOwningThread(args[0]);
                 if (threadId == LockManager.NoThread)
                 {
                     throw new NotSupportedException("Owning thread not found.");
@@ -3029,10 +3088,10 @@ namespace dnWalker.Symbolic.Instructions
             // Skip certain calls.
             if (!FilterCall(cur))
             {
-                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
+                var bypass = NativePeer.Get(methDef.DeclaringType);
                 if (bypass != null)
                 {
-                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
+                    if (bypass.TryGetValue(methDef, args, cur, out var returnValue))
                     {
                         return returnValue;
                     }
@@ -3070,18 +3129,42 @@ namespace dnWalker.Symbolic.Instructions
 				}*/
 
                 // Check whether we work with an interface proxy
-                IDataElement instance = args[0];
+                var instance = args[0];
 
-                if (args[0] is InterfaceProxy proxy)
+                //if (args[0] is InterfaceProxy proxy)
+                //{
+                //    if (proxy.TryResolveMethod(methDef, cur, out IDataElement result))
+                //    {
+                //        cur.EvalStack.Push(result);
+                //    }
+                //    else
+                //    {
+                //        throw new Exception("This proxy cannot resolve supplied method!");
+                //    }
+
+                //    return nextRetval;
+                //}
+
+                if (instance.IsInterfaceParameter(cur, out var interfaceParameter))
                 {
-                    if (proxy.TryResolveMethod(methDef, cur, out IDataElement result))
+                    // get the current call count
+                    string methodName = methDef.Name;
+                    var callCount = instance.GetCallCount(methodName, cur);
+
+                    // increase the call count by 1 and try to get the result parameter, if none exists => create default
+                    callCount++;
+                    instance.SetCallCount(methodName, cur, callCount);
+
+                    if (!interfaceParameter.TryGetMethodResult(methodName, callCount, out var resultParameter))
                     {
-                        cur.EvalStack.Push(result);
+                        // initialize it to default value and add the parameter...
+                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType);
+                        interfaceParameter.SetMethodResult(methodName, callCount, resultParameter);
                     }
-                    else
-                    {
-                        throw new Exception("This proxy cannot resolve supplied method!");
-                    }
+
+                    // get the IDataElement and push it onto the stack
+                    var result = resultParameter.CreateDataElement(cur);
+                    cur.EvalStack.Push(result);
 
                     return nextRetval;
                 }
@@ -3089,7 +3172,7 @@ namespace dnWalker.Symbolic.Instructions
 
                 // Search inheritance tree for most derived implementation.
                 MethodDefinition toCall = null;
-                ITypeDefOrRef constrained = cur.CurrentMethod.Constrained;
+                var constrained = cur.CurrentMethod.Constrained;
                 if (cur.CurrentMethod.IsPrefixed
                     && constrained?.IsValueType == true
                     && methDef.DeclaringType == constrained)
@@ -3108,7 +3191,7 @@ namespace dnWalker.Symbolic.Instructions
                 // e.g. creating new MethodState and pushing it to the callstack
                 // we want to "generate" result using current path data and push it onto the stack
 
-                MethodState called = new MethodState(toCall, args, cur);
+                var called = new MethodState(toCall, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
 
@@ -3143,17 +3226,17 @@ namespace dnWalker.Symbolic.Instructions
             // Basically the same as a normal call, except first we need
             // to create a new object, and pass it as argument 0 (the
             // rest of the arguments are on the stack, last on top)
-            MethodDefinition methDef = Operand as MethodDefinition;
+            var methDef = Operand as MethodDefinition;
 
             // Note that this loop condition is "i > 0", not "i >= 0". This is because
             // we need to fill in args[0] (i.e. the this pointer) ourselves.
-            DataElementList args = cur.StorageFactory.CreateList(methDef.ParamDefs.Count + 1);
-            for (int i = args.Length - 1; i > 0; --i)
+            var args = cur.StorageFactory.CreateList(methDef.ParamDefs.Count + 1);
+            for (var i = args.Length - 1; i > 0; --i)
             {
                 args[i] = cur.EvalStack.Pop();
             }
 
-            NativePeer nativePeer = NativePeer.Get(methDef.DeclaringType);
+            var nativePeer = NativePeer.Get(methDef.DeclaringType);
             if (Method.IsConstructor 
                 && nativePeer != null
                 && nativePeer.TryConstruct(methDef, args, cur))
@@ -3204,7 +3287,7 @@ namespace dnWalker.Symbolic.Instructions
                 // Constructor calls should leave object reference on the stack.
                 cur.EvalStack.Push(args[0]);
                 // Call the constructor.
-                MethodState called = new MethodState(methDef, args, cur);
+                var called = new MethodState(methDef, args, cur);
                 cur.CallStack.Push(called);
             }
 
@@ -3240,10 +3323,10 @@ namespace dnWalker.Symbolic.Instructions
             // NOTE: Popping has a side-effect! If reference counting is enabled,
             // it calls the Dispose() method on the method state, which, in turn,
             // calls Dispose() on all members (like locals and argument lists).
-            MethodState callee = cur.CallStack.Pop();
+            var callee = cur.CallStack.Pop();
             if (cur.CallStack.StackPointer >= /* was > before */ 0 && callee.EvalStack.StackPointer > 0)
             {
-                IDataElement retValue = callee.EvalStack.Pop();
+                var retValue = callee.EvalStack.Pop();
                 cur.CurrentThread.RetValue = retValue;
                 cur.EvalStack?.Push(retValue);
             }
@@ -3290,7 +3373,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IRealElement ida = (IRealElement)cur.EvalStack.Pop();
+            var ida = (IRealElement)cur.EvalStack.Pop();
 
             if (ida.IsFinite())
             {
@@ -3324,11 +3407,11 @@ namespace dnWalker.Symbolic.Instructions
             // good here (it doesn't deal with the shorter forms).
             // Format of conv.* instructions are as follows:
             // conv.[iru][1248], where not all combinations are legal.
-            string[] tokens = Instruction.OpCode.Name.Split(new char[] { '.' });
+            var tokens = Instruction.OpCode.Name.Split(new char[] { '.' });
             IDataElement toPush = null;
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
 
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             // put aside the ovf part in the instruction
             if (CheckOverflow)
@@ -3443,7 +3526,7 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(e, cur);
             }
 
-            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
+            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
             if (symb)
             {
                 toPush.SetExpression(expression, cur);
@@ -3467,9 +3550,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3505,9 +3588,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3537,9 +3620,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3569,9 +3652,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3581,7 +3664,7 @@ namespace dnWalker.Symbolic.Instructions
                         cur.EvalStack.Push(i4.ToUnsignedInt4(false).ToInt8(false)); // todo why?
                         return nextRetval;
                     default:
-                        Int8 unsigned = a.ToUnsignedInt8(true).ToInt8(false);//.Value;
+                        var unsigned = a.ToUnsignedInt8(true).ToInt8(false);//.Value;
                         cur.EvalStack.Push(unsigned);// new Int8((long)unsigned));
                         return nextRetval;
                 }
@@ -3609,15 +3692,15 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
                 if (a is Int4 i4)
                 {
-                    UIntPtr uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
+                    var uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
                     cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
                 }
                 /*else if (a is Int8 i8)
@@ -3627,7 +3710,7 @@ namespace dnWalker.Symbolic.Instructions
                 }*/
                 else
                 {
-                    UInt64 unsigned = a.ToUnsignedInt8(false).Value;
+                    var unsigned = a.ToUnsignedInt8(false).Value;
                     cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
                 }
                 return nextRetval;
@@ -3655,13 +3738,13 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
-                UInt32 unsigned = a.ToUnsignedInt4(false).Value;
+                var unsigned = a.ToUnsignedInt4(false).Value;
                 cur.EvalStack.Push(new UnsignedInt4(checked(unsigned)));
                 return nextRetval;
             }
@@ -3688,20 +3771,20 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
                 if (a is Int4 i4)
                 {
-                    UnsignedInt8 value = a.ToUnsignedInt4(false).ToUnsignedInt8(false);
+                    var value = a.ToUnsignedInt4(false).ToUnsignedInt8(false);
                     cur.EvalStack.Push(value);
                 }
                 else
                 {
-                    UInt64 unsigned = a.ToUnsignedInt8(false).Value;
+                    var unsigned = a.ToUnsignedInt8(false).Value;
                     cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
                 }
                 return nextRetval;
@@ -3729,9 +3812,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3773,9 +3856,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3817,9 +3900,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3852,9 +3935,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3890,9 +3973,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3928,9 +4011,9 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement popped = cur.EvalStack.Pop();
+            var popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            var a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
@@ -3981,13 +4064,13 @@ namespace dnWalker.Symbolic.Instructions
                 index--;
             }
 
-            IDataElement ide = cur.EvalStack.Pop();
+            var ide = cur.EvalStack.Pop();
 
             /*
 			 * For heap analysis, TODO this should be done in a much cleaner fashion... */
             if (ide is ObjectReference)
             {
-                IDataElement oldIde = cur.CurrentMethod.Arguments[index];
+                var oldIde = cur.CurrentMethod.Arguments[index];
                 ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde, cur);
                 ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, (ObjectReference)ide, cur);
 
@@ -4015,12 +4098,12 @@ namespace dnWalker.Symbolic.Instructions
             else
                 index = ((Local)Operand).Index;
 
-            IDataElement ide = cur.EvalStack.Pop();
+            var ide = cur.EvalStack.Pop();
 
             // For heap analysis, TODO this should be done in a much cleaner fashion ...
             if (ide is ObjectReference objRef)
             {
-                IDataElement oldIde = cur.CurrentMethod.Locals[index];
+                var oldIde = cur.CurrentMethod.Locals[index];
                 ThreadObjectWatcher.Decrement(cur.ThreadPool.CurrentThreadId, (ObjectReference)oldIde, cur);
                 ThreadObjectWatcher.Increment(cur.ThreadPool.CurrentThreadId, objRef, cur);
                 //if (!oldIde.Equals(ObjectReference.Null))
@@ -4110,28 +4193,28 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement val = cur.EvalStack.Pop();
-            IManagedPointer mmp = cur.EvalStack.Pop() as IManagedPointer;
+            var val = cur.EvalStack.Pop();
+            var mmp = cur.EvalStack.Pop() as IManagedPointer;
             mmp.Value = val;
             return nextRetval;
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
-            int length = cur.EvalStack.Length;
-            IDataElement reference = cur.EvalStack[length - 2];
+            var length = cur.EvalStack.Length;
+            var reference = cur.EvalStack[length - 2];
             return !(reference is ObjectFieldPointer || reference is StaticFieldPointer);
         }
 
         public override bool IsDependent(ExplicitActiveState cur)
         {
-            int length = cur.EvalStack.Length;
-            IDataElement reference = cur.EvalStack[length - 2];
+            var length = cur.EvalStack.Length;
+            var reference = cur.EvalStack[length - 2];
 
             if (reference is ObjectFieldPointer)
             {
-                ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
-                AllocatedObject theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
+                var ofp = (ObjectFieldPointer)reference;
+                var theObject = (AllocatedObject)cur.DynamicArea.Allocations[ofp.MemoryLocation.Location];
 
                 return theObject.ThreadShared;
             }
@@ -4147,17 +4230,17 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            int length = thread.CurrentMethod.EvalStack.Length;
-            IDataElement reference = thread.CurrentMethod.EvalStack[length - 2];
+            var length = thread.CurrentMethod.EvalStack.Length;
+            var reference = thread.CurrentMethod.EvalStack[length - 2];
 
             if (reference is ObjectFieldPointer)
             {
-                ObjectFieldPointer ofp = (ObjectFieldPointer)reference;
+                var ofp = (ObjectFieldPointer)reference;
                 return ofp.MemoryLocation;
             }
             else if (reference is StaticFieldPointer)
             {
-                StaticFieldPointer sfp = (StaticFieldPointer)reference;
+                var sfp = (StaticFieldPointer)reference;
                 return sfp.MemoryLocation;
             }
 
@@ -4178,10 +4261,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            IDataElement reference = cur.EvalStack.Pop();
+            var reference = cur.EvalStack.Pop();
             if (reference is LocalVariablePointer localVariablePointer)
             {
-                ITypeDefOrRef typeTok = (ITypeDefOrRef)Operand;
+                var typeTok = (ITypeDefOrRef)Operand;
                 localVariablePointer.Value = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(), typeTok);
                 return nextRetval;
             }
@@ -4246,7 +4329,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            ITypeDefOrRef type = (ITypeDefOrRef)Operand;
+            var type = (ITypeDefOrRef)Operand;
             if (type.IsValueType)
             {
                 cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));
@@ -4279,8 +4362,8 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // The two object references are popped from the stack; 
-            IDataElement ref2 = cur.EvalStack.Pop();
-            IDataElement ref1 = cur.EvalStack.Pop();
+            var ref2 = cur.EvalStack.Pop();
+            var ref1 = cur.EvalStack.Pop();
 
             // the value type at the address of the source object is copied to the address of the destination object.
             if (ref2 is MethodMemberPointer mmp2 && ref1 is MethodMemberPointer mmp1)

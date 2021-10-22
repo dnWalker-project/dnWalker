@@ -13,21 +13,21 @@ namespace dnWalker.Concolic
             private readonly Dictionary<IArg, ArgumentsCacheLayer> _items = new Dictionary<IArg, ArgumentsCacheLayer>();
             private readonly int _depth;
 
-            public ArgumentsCacheLayer(Int32 depth)
+            public ArgumentsCacheLayer(int depth)
             {
                 _depth = depth;
             }
 
             public bool TryAdd(IArg[] args, int index)
             {
-                IArg currentArg = args[index];
+                var currentArg = args[index];
                 if (args.Length - 1 == index && _items.ContainsKey(currentArg))
                 {
                     // we are trying to add the last one and it is already in the layer => return false
                     return false;
                 }
 
-                if (!_items.TryGetValue(currentArg, out ArgumentsCacheLayer nextLayer))
+                if (!_items.TryGetValue(currentArg, out var nextLayer))
                 {
                     nextLayer = new ArgumentsCacheLayer(_depth + 1);
                     _items[currentArg] = nextLayer;
@@ -44,7 +44,7 @@ namespace dnWalker.Concolic
                     return _items.Remove(args[index]);
                 }
 
-                if (_items.TryGetValue(args[index], out ArgumentsCacheLayer nextLayer))
+                if (_items.TryGetValue(args[index], out var nextLayer))
                 {
                     return nextLayer.Remove(args, index + 1);
                 }
@@ -60,7 +60,7 @@ namespace dnWalker.Concolic
                     return _items.ContainsKey(args[index]);
                 }
 
-                if (_items.TryGetValue(args[index], out ArgumentsCacheLayer nextLayer))
+                if (_items.TryGetValue(args[index], out var nextLayer))
                 {
                     return nextLayer.Contains(args, index + 1);
                 }
@@ -76,7 +76,7 @@ namespace dnWalker.Concolic
         private readonly int _depth;
         private readonly ArgumentsCacheLayer _baseLayer = new ArgumentsCacheLayer(0);
 
-        public Int32 Depth
+        public int Depth
         {
             get
             {
@@ -84,7 +84,7 @@ namespace dnWalker.Concolic
             }
         }
 
-        public ArgumentsCache(Int32 depth)
+        public ArgumentsCache(int depth)
         {
             _depth = depth;
         }

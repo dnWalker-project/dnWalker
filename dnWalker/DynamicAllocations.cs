@@ -50,8 +50,8 @@ namespace MMC.State {
         {
             get
             {
-                bool found = false;
-                int i = 0;
+                var found = false;
+                var i = 0;
 
                 var typeDef = DefinitionProvider.GetTypeDefinition(Type);
 
@@ -119,7 +119,7 @@ namespace MMC.State {
             //int typeOffset = 0;
 
             //foreach (var typeDef in cur.DefinitionProvider.InheritanceEnumerator(m_typeDef)) {
-            for (int i = 0; i < fields.Count; i++)
+            for (var i = 0; i < fields.Count; i++)
             {
                 //int fieldsOffset = typeOffset + i;
                 var type = cur.DefinitionProvider.GetTypeDefinition(fields[i].FieldType);
@@ -147,12 +147,12 @@ namespace MMC.State {
                 sb.AppendFormat("locked by: {0}, ", Lock.ToString());
             }
 
-            int typeOffset = 0;
+            var typeOffset = 0;
             foreach (var t in DefinitionProvider.InheritanceEnumerator(Type))
             {
                 var typeDef = t.ResolveTypeDef();
                 sb.AppendFormat("{0}:{{", typeDef.Name);
-                for (int i = 0; i < typeDef.Fields.Count; ++i)
+                for (var i = 0; i < typeDef.Fields.Count; ++i)
                 {
                     if (!typeDef.Fields[i].IsStatic)
                     {
@@ -185,8 +185,8 @@ namespace MMC.State {
 
         public override void ClearFields(ExplicitActiveState cur)
         {
-            IDataElement nullVal = DefinitionProvider.GetNullValue(Type);
-            for (int i = 0; i < Fields.Length; i++)
+            var nullVal = DefinitionProvider.GetNullValue(Type);
+            for (var i = 0; i < Fields.Length; i++)
                 Fields[i] = nullVal;
         }
 

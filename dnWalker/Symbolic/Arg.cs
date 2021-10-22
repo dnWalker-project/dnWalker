@@ -26,7 +26,7 @@ namespace dnWalker.Symbolic
 
     public class DefaultValueArg : IArg
     {
-        public String TypeName { get; set; }
+        public string TypeName { get; set; }
 
         public IDataElement AsDataElement(DefinitionProvider definitionProvider)
         {
@@ -44,10 +44,10 @@ namespace dnWalker.Symbolic
 
     public class InterfaceArg : IArg
     {
-        private readonly String _name;
-        private readonly String _interfaceName;
+        private readonly string _name;
+        private readonly string _interfaceName;
 
-        public InterfaceArg(String name, String interfaceName)
+        public InterfaceArg(string name, string interfaceName)
         {
             _name = name;
             _interfaceName = interfaceName;
@@ -55,7 +55,7 @@ namespace dnWalker.Symbolic
 
         public IDataElement AsDataElement(DefinitionProvider definitionProvider)
         {
-            TypeDef type = definitionProvider.GetTypeDefinition(_interfaceName);
+            var type = definitionProvider.GetTypeDefinition(_interfaceName);
             return new InterfaceProxy(type);
         }
     }
@@ -76,17 +76,17 @@ namespace dnWalker.Symbolic
             return definitionProvider.CreateDataElement(_value);//, Expression.Parameter(typeof(T), _name));
         }
 
-        public override System.Boolean Equals(System.Object obj)
+        public override bool Equals(object obj)
         {
             return obj is SymbolicArg<T> arg &&
                    _name == arg._name &&
                    EqualityComparer<T>.Default.Equals(_value, arg._value);
         }
 
-        public override System.Int32 GetHashCode()
+        public override int GetHashCode()
         {
-            System.Int32 hashCode = 179903332;
-            hashCode = hashCode * -1521134295 + EqualityComparer<System.String>.Default.GetHashCode(_name);
+            var hashCode = 179903332;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_name);
             hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(_value);
             return hashCode;
         }

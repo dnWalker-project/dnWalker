@@ -36,15 +36,15 @@ namespace MMC.Util {
 
 		public int Compare(object a, object b) {
 
-			int[] ll = (int[])a;
-			int[] kk = (int[])b;
+			var ll = (int[])a;
+			var kk = (int[])b;
 			return CompareIntArrays(ll, kk);
 		}
 
 		public static int CompareIntArrays(int[] ll, int[] kk) {
 
-			int retval = ll.Length - kk.Length;
-			for (int i = 0; retval == 0 && i < ll.Length; i++)
+			var retval = ll.Length - kk.Length;
+			for (var i = 0; retval == 0 && i < ll.Length; i++)
 				retval = ll[i] - kk[i];
 			return retval;
 		}
@@ -98,10 +98,10 @@ namespace MMC.Util {
 
 		public static int[] GrowArray(int[] arr, int min_length) {
 
-			int newlength = (arr.Length > 0 ? arr.Length : 1);
+			var newlength = (arr.Length > 0 ? arr.Length : 1);
 			while (newlength <= min_length)
 				newlength *= 2;
-			int[] retval = new int[newlength];
+			var retval = new int[newlength];
 			System.Array.Copy(arr, 0, retval, 0, arr.Length);
 			//FillFrom(retval, arr.Length, new_val);
 			return retval;

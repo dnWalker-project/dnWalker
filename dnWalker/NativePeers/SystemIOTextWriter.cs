@@ -23,8 +23,8 @@ namespace dnWalker.NativePeers
             switch (methodDef.Name)
             {
                 case "WriteLine" when methodDef.Parameters.Count == 2:
-                    AllocatedObject theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
-                    int offset = 0;// GetFieldOffset(theObject.Type);
+                    var theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
+                    var offset = 0;// GetFieldOffset(theObject.Type);
                     var eol = new ConstantString(Environment.NewLine);
                     var values = new[] { args[1], eol };
                     if (!theObject.Fields[offset].Equals(ObjectReference.Null))

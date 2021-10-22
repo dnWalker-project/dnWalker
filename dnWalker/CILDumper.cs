@@ -59,8 +59,8 @@ namespace MMC {
 		/// <param name="values">Values for {0}, {1}, etc.</param>
 		public void Print(string str, params object[] values) {
 
-			StringBuilder sb = new StringBuilder();
-			for (int i=m_indent; i > 0; --i)
+			var sb = new StringBuilder();
+			for (var i=m_indent; i > 0; --i)
 				sb.Append("  ");
 			sb.AppendFormat(str, values);
 			o.WriteLine(sb.ToString());
@@ -76,7 +76,7 @@ namespace MMC {
 
 			++m_indent;
 
-			string operandstr = "";
+			var operandstr = "";
 			if (instr.Operand != null) {
 				if (instr.Operand is Instruction)
 					operandstr = ((Instruction)instr.Operand).Offset.ToString("D4");
@@ -124,7 +124,7 @@ namespace MMC {
 
 			Print("instructions (total {0}):", meth.Body.Instructions.Count);
 			++m_indent;
-			foreach (Instruction instr in meth.Body.Instructions)
+			foreach (var instr in meth.Body.Instructions)
 				PrintInstruction(instr);
 			--m_indent;
 
@@ -145,7 +145,7 @@ namespace MMC {
 		/// \sa PrintMethod
 		public void PrintType(TypeDefinition type) {
 
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 
 			foreach (var iface in type.Interfaces)
 				sb.AppendFormat("{0}{1}", 
@@ -193,7 +193,7 @@ namespace MMC {
 			
 			Print("types (total {0})", mod.Types.Count);
 			++m_indent;
-			foreach (TypeDefinition type in mod.Types)
+			foreach (var type in mod.Types)
 				PrintType(type);
 			--m_indent;
 

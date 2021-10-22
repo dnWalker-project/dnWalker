@@ -143,15 +143,15 @@ namespace MMC.InstructionExec
         {
             var cur = current.Cur;
 
-            ObjectReference exceptionRef = cur.CurrentThread.ExceptionReference;
-            AllocatedObject exceptionObj = cur.DynamicArea.Allocations[exceptionRef] as AllocatedObject;
+            var exceptionRef = cur.CurrentThread.ExceptionReference;
+            var exceptionObj = cur.DynamicArea.Allocations[exceptionRef] as AllocatedObject;
 
             Instruction retval = null;
 
-            foreach (MethodState method in cur.CallStack)
+            foreach (var method in cur.CallStack)
             {
                 method.EvalStack.PopAll();
-                ExceptionHandler eh = method.NextFilterOrCatchHandler(method.ProgramCounter, exceptionObj.Type);
+                var eh = method.NextFilterOrCatchHandler(method.ProgramCounter, exceptionObj.Type);
 
                 if (eh != null)
                 {
@@ -178,7 +178,7 @@ namespace MMC.InstructionExec
 						 * and collapsing problems. In a sense, the fact that filter 
 						 * handling is active is encoded this by MMC.
 						 */
-                        MethodState clone = method.DeepCopy();
+                        var clone = method.DeepCopy();
                         clone.ProgramCounter = eh.FilterStart;
                         cur.CallStack.Push(clone);
                         break;
@@ -222,7 +222,7 @@ namespace MMC.InstructionExec
 			 * this is set to current.ProgramCounter, in case not finaliser is found, we wish
 			 * to immediately jump to the exception handler
 			 */
-            Instruction retval = current.ProgramCounter;
+            var retval = current.ProgramCounter;
 
             /*
 			 * An empty evalstack indicates that the exception could not
@@ -231,7 +231,7 @@ namespace MMC.InstructionExec
 			 */
             while (!cur.CallStack.IsEmpty() && cur.EvalStack.IsEmpty() && eh == null)
             {
-                MethodState method = cur.CallStack.Pop();
+                var method = cur.CallStack.Pop();
 
                 eh = method.NextFinallyOrFaultHandler(method.ProgramCounter);
 

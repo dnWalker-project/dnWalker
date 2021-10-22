@@ -123,7 +123,7 @@ namespace MMC.Data
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
-            int op = other.ToInt4(checkOverflow).Value;
+            var op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Int4(checked(Value + op));
@@ -140,14 +140,14 @@ namespace MMC.Data
         public INumericElement Div(INumericElement other)
         {
 
-            int op = other.ToInt4(false).Value;
+            var op = other.ToInt4(false).Value;
             return new Int4(Value / op);
         }
 
         public INumericElement Mul(INumericElement other, bool checkOverflow)
         {
 
-            int op = other.ToInt4(checkOverflow).Value;
+            var op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Int4(checked(Value * op));
@@ -159,7 +159,7 @@ namespace MMC.Data
         public INumericElement Rem(INumericElement other)
         {
 
-            int op = other.ToInt4(false).Value;
+            var op = other.ToInt4(false).Value;
             return new Int4(Value % op);
         }
 
@@ -172,7 +172,7 @@ namespace MMC.Data
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
 
-            int op = other.ToInt4(checkOverflow).Value;
+            var op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Int4(checked(Value - op));
@@ -183,7 +183,7 @@ namespace MMC.Data
         public IIntegerElement And(IIntegerElement other)
         {
 
-            int op = other.ToInt4(false).Value;
+            var op = other.ToInt4(false).Value;
             return new Int4(Value & op);
         }
 
@@ -196,14 +196,14 @@ namespace MMC.Data
         public IIntegerElement Or(IIntegerElement other)
         {
 
-            int op = other.ToInt4(false).Value;
+            var op = other.ToInt4(false).Value;
             return new Int4(Value | op);
         }
 
         public IIntegerElement Xor(IIntegerElement other)
         {
 
-            int op = other.ToInt4(false).Value;
+            var op = other.ToInt4(false).Value;
             return new Int4(Value ^ op);
         }
 
@@ -405,7 +405,7 @@ namespace MMC.Data
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
-            int op = other.ToInt4(checkOverflow).Value;
+            var op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new IntPtr4(checked(Value + op));
@@ -452,7 +452,7 @@ namespace MMC.Data
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
-            int op = other.ToInt4(checkOverflow).Value;
+            var op = other.ToInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new IntPtr4(checked(Value - op));
@@ -966,7 +966,7 @@ namespace MMC.Data
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
 
-            uint op = other.ToUnsignedInt4(checkOverflow).Value;
+            var op = other.ToUnsignedInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new UnsignedInt4(checked(m_value + op));
@@ -977,14 +977,14 @@ namespace MMC.Data
         public INumericElement Div(INumericElement other)
         {
 
-            uint op = other.ToUnsignedInt4(false).Value;
+            var op = other.ToUnsignedInt4(false).Value;
             return new UnsignedInt4(m_value / op);
         }
 
         public INumericElement Mul(INumericElement other, bool checkOverflow)
         {
 
-            uint op = other.ToUnsignedInt4(checkOverflow).Value;
+            var op = other.ToUnsignedInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new UnsignedInt4(checked(m_value * op));
@@ -995,14 +995,14 @@ namespace MMC.Data
         public INumericElement Rem(INumericElement other)
         {
 
-            uint op = other.ToUnsignedInt4(false).Value;
+            var op = other.ToUnsignedInt4(false).Value;
             return new UnsignedInt4(m_value % op);
         }
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
 
-            uint op = other.ToUnsignedInt4(checkOverflow).Value;
+            var op = other.ToUnsignedInt4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new UnsignedInt4(checked(m_value - op));
@@ -1013,7 +1013,7 @@ namespace MMC.Data
         public IIntegerElement And(IIntegerElement other)
         {
 
-            uint op = other.ToUnsignedInt4(false).Value;
+            var op = other.ToUnsignedInt4(false).Value;
             return new UnsignedInt4(m_value & op);
         }
 
@@ -1026,14 +1026,14 @@ namespace MMC.Data
         public IIntegerElement Or(IIntegerElement other)
         {
 
-            uint op = other.ToUnsignedInt4(false).Value;
+            var op = other.ToUnsignedInt4(false).Value;
             return new UnsignedInt4(m_value | op);
         }
 
         public IIntegerElement Xor(IIntegerElement other)
         {
 
-            uint op = other.ToUnsignedInt4(false).Value;
+            var op = other.ToUnsignedInt4(false).Value;
             return new UnsignedInt4(m_value ^ op);
         }
 
@@ -1240,7 +1240,7 @@ namespace MMC.Data
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
 
-            long op = other.ToInt8(checkOverflow).Value;
+            var op = other.ToInt8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Int8(checked(m_value + op));
@@ -1251,14 +1251,14 @@ namespace MMC.Data
         public INumericElement Div(INumericElement other)
         {
 
-            long op = other.ToInt8(false).Value;
+            var op = other.ToInt8(false).Value;
             return new Int8(m_value / op);
         }
 
         public INumericElement Mul(INumericElement other, bool checkOverflow)
         {
 
-            long op = other.ToInt8(checkOverflow).Value;
+            var op = other.ToInt8(checkOverflow).Value;
             if (checkOverflow)
                 return new Int8(checked(m_value * op));
             else
@@ -1269,14 +1269,14 @@ namespace MMC.Data
         public INumericElement Rem(INumericElement other)
         {
 
-            long op = other.ToInt8(false).Value;
+            var op = other.ToInt8(false).Value;
             return new Int8(m_value % op);
         }
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
 
-            long op = other.ToInt8(checkOverflow).Value;
+            var op = other.ToInt8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Int8(checked(m_value - op));
@@ -1293,7 +1293,7 @@ namespace MMC.Data
         public IIntegerElement And(IIntegerElement other)
         {
 
-            long op = other.ToInt8(false).Value;
+            var op = other.ToInt8(false).Value;
             return new Int8(m_value & op);
         }
 
@@ -1306,14 +1306,14 @@ namespace MMC.Data
         public IIntegerElement Or(IIntegerElement other)
         {
 
-            long op = other.ToInt8(false).Value;
+            var op = other.ToInt8(false).Value;
             return new Int8(m_value | op);
         }
 
         public IIntegerElement Xor(IIntegerElement other)
         {
 
-            long op = other.ToInt8(false).Value;
+            var op = other.ToInt8(false).Value;
             return new Int8(m_value ^ op);
         }
 
@@ -1507,7 +1507,7 @@ namespace MMC.Data
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
 
-            ulong op = other.ToUnsignedInt8(checkOverflow).Value;
+            var op = other.ToUnsignedInt8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new UnsignedInt8(checked(m_value + op));
@@ -1519,14 +1519,14 @@ namespace MMC.Data
         public INumericElement Div(INumericElement other)
         {
 
-            ulong op = other.ToUnsignedInt8(false).Value;
+            var op = other.ToUnsignedInt8(false).Value;
             return new UnsignedInt8(m_value / op);
         }
 
         public INumericElement Mul(INumericElement other, bool checkOverflow)
         {
 
-            ulong op = other.ToUnsignedInt8(checkOverflow).Value;
+            var op = other.ToUnsignedInt8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new UnsignedInt8(checked(m_value * op));
@@ -1537,14 +1537,14 @@ namespace MMC.Data
         public INumericElement Rem(INumericElement other)
         {
 
-            ulong op = other.ToUnsignedInt8(false).Value;
+            var op = other.ToUnsignedInt8(false).Value;
             return new UnsignedInt8(m_value % op);
         }
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
 
-            ulong op = other.ToUnsignedInt8(checkOverflow).Value;
+            var op = other.ToUnsignedInt8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new UnsignedInt8(checked(m_value - op));
@@ -1555,7 +1555,7 @@ namespace MMC.Data
         public IIntegerElement And(IIntegerElement other)
         {
 
-            ulong op = other.ToUnsignedInt8(false).Value;
+            var op = other.ToUnsignedInt8(false).Value;
             return new UnsignedInt8(m_value & op);
         }
 
@@ -1568,14 +1568,14 @@ namespace MMC.Data
         public IIntegerElement Or(IIntegerElement other)
         {
 
-            ulong op = other.ToUnsignedInt8(false).Value;
+            var op = other.ToUnsignedInt8(false).Value;
             return new UnsignedInt8(m_value | op);
         }
 
         public IIntegerElement Xor(IIntegerElement other)
         {
 
-            ulong op = other.ToUnsignedInt8(false).Value;
+            var op = other.ToUnsignedInt8(false).Value;
             return new UnsignedInt8(m_value ^ op);
         }
 
@@ -1771,7 +1771,7 @@ namespace MMC.Data
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
 
-            float op = other.ToFloat4(checkOverflow).Value;
+            var op = other.ToFloat4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Float4(checked(m_value + op));
@@ -1782,7 +1782,7 @@ namespace MMC.Data
         public INumericElement Div(INumericElement other)
         {
 
-            float op = other.ToFloat4(false).Value;
+            var op = other.ToFloat4(false).Value;
             return new Float4(m_value / op);
         }
 
@@ -1794,7 +1794,7 @@ namespace MMC.Data
         public INumericElement Mul(INumericElement other, bool checkOverflow)
         {
 
-            float op = other.ToFloat4(checkOverflow).Value;
+            var op = other.ToFloat4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Float4(checked(m_value * op));
@@ -1805,14 +1805,14 @@ namespace MMC.Data
         public INumericElement Rem(INumericElement other)
         {
 
-            float op = other.ToFloat4(false).Value;
+            var op = other.ToFloat4(false).Value;
             return new Float4(m_value % op);
         }
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
 
-            float op = other.ToFloat4(checkOverflow).Value;
+            var op = other.ToFloat4(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Float4(checked(m_value - op));
@@ -2015,7 +2015,7 @@ namespace MMC.Data
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
-            double op = other.ToFloat8(checkOverflow).Value;
+            var op = other.ToFloat8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Float8(checked(Value + op));
@@ -2025,13 +2025,13 @@ namespace MMC.Data
 
         public INumericElement Div(INumericElement other)
         {
-            double op = other.ToFloat8(false).Value;
+            var op = other.ToFloat8(false).Value;
             return new Float8(Value / op);
         }
 
         public INumericElement Mul(INumericElement other, bool checkOverflow)
         {
-            double op = other.ToFloat8(checkOverflow).Value;
+            var op = other.ToFloat8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Float8(checked(Value * op));
@@ -2041,13 +2041,13 @@ namespace MMC.Data
 
         public INumericElement Rem(INumericElement other)
         {
-            double op = other.ToFloat8(false).Value;
+            var op = other.ToFloat8(false).Value;
             return new Float8(Value % op);
         }
 
         public ISubElement Sub(INumericElement other, bool checkOverflow)
         {
-            double op = other.ToFloat8(checkOverflow).Value;
+            var op = other.ToFloat8(checkOverflow).Value;
 
             if (checkOverflow)
                 return new Float8(checked(Value - op));
@@ -2764,11 +2764,11 @@ namespace MMC.Data
 
         public override bool Equals(IDataElement obj)
         {
-            bool retval = false;
+            var retval = false;
 
             if (obj is LocalVariablePointer)
             {
-                LocalVariablePointer lv = obj as LocalVariablePointer;
+                var lv = obj as LocalVariablePointer;
                 retval = lv.m_index == this.m_index && lv.m_method.Equals(this.m_method);
             }
 
@@ -2794,11 +2794,11 @@ namespace MMC.Data
 
         public override bool Equals(IDataElement obj)
         {
-            bool retval = false;
+            var retval = false;
 
             if (obj is ArgumentPointer)
             {
-                ArgumentPointer lv = obj as ArgumentPointer;
+                var lv = obj as ArgumentPointer;
                 retval = lv.m_index == this.m_index && lv.m_method.Equals(this.m_method);
             }
 
@@ -2843,12 +2843,12 @@ namespace MMC.Data
         {
             get
             {
-                AllocatedObject ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
+                var ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
                 return ao.Fields[m_index];
             }
             set
             {
-                AllocatedObject ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
+                var ao = cur.DynamicArea.Allocations[m_objectRef] as AllocatedObject;
                 ObjectEscapePOR.UpdateReachability(true, ao.Fields[m_index], value, cur);
                 ao.Fields[m_index] = value;
             }
@@ -2863,11 +2863,11 @@ namespace MMC.Data
 
         public bool Equals(IDataElement other)
         {
-            bool retval = false;
+            var retval = false;
 
             if (other is ObjectFieldPointer)
             {
-                ObjectFieldPointer otherP = other as ObjectFieldPointer;
+                var otherP = other as ObjectFieldPointer;
                 retval = m_objectRef.Equals(otherP.m_objectRef) && m_index == otherP.m_index;
             }
 
@@ -2963,7 +2963,7 @@ namespace MMC.Data
 
         public IAddElement Add(INumericElement a, bool checkOverflow)
         {
-            AllocatedClass ac = cur.StaticArea.GetClass(m_type);
+            var ac = cur.StaticArea.GetClass(m_type);
             /*
 			 * Note: the offset added to this pointer is in the amount of bytes.
 			 * The offset is dependent on the size of the datatype of the fields.
@@ -2982,8 +2982,8 @@ namespace MMC.Data
 			 * 
 			 * BTW, we only do (and allow) this to pass a few more Microsoft's IL_BVT tests :)
 			 */
-            int i = 0;
-            int byteOffset = a.ToInt4(false).Value;
+            var i = 0;
+            var byteOffset = a.ToInt4(false).Value;
 
             var typeDef = DefinitionProvider.GetTypeDefinition(ac.Type);
             foreach (var fld in typeDef.Fields)
@@ -3019,12 +3019,12 @@ namespace MMC.Data
         {
             get
             {
-                AllocatedClass ac = cur.StaticArea.GetClass(m_type);
+                var ac = cur.StaticArea.GetClass(m_type);
                 return ac.Fields[m_index];
             }
             set
             {
-                AllocatedClass ac = cur.StaticArea.GetClass(m_type);
+                var ac = cur.StaticArea.GetClass(m_type);
                 ObjectEscapePOR.UpdateReachability(true, ac.Fields[m_index], value, cur);
                 ac.Fields[m_index] = value;
             }
@@ -3041,11 +3041,11 @@ namespace MMC.Data
 
         public bool Equals(IDataElement other)
         {
-            bool retval = false;
+            var retval = false;
 
             if (other is StaticFieldPointer)
             {
-                StaticFieldPointer otherP = other as StaticFieldPointer;
+                var otherP = other as StaticFieldPointer;
                 retval = m_type.FullName.Equals(otherP.m_type.FullName) && m_index == otherP.m_index;
             }
 
@@ -3081,7 +3081,7 @@ namespace MMC.Data
 
         public int CompareTo(object other)
         {
-            TypePointer o = (TypePointer)other;
+            var o = (TypePointer)other;
             return Type.Name.CompareTo(o.Type.Name);
         }
 

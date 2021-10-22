@@ -31,14 +31,14 @@ namespace MMC.State {
 
     public interface IDynamicArea
 	{
-		ObjectReference AllocateObject(Int32 location, ITypeDefOrRef type);
-		ObjectReference AllocateArray(Int32 location, ITypeDefOrRef elementType, Int32 length);
+		ObjectReference AllocateObject(int location, ITypeDefOrRef type);
+		ObjectReference AllocateArray(int location, ITypeDefOrRef elementType, int length);
 
-		Int32 DeterminePlacement();
+        int DeterminePlacement();
 
 		AllocationList Allocations { get; }
 
-		void DisposeLocation(Int32 location);
+		void DisposeLocation(int location);
 		void DisposeAllocation(ObjectReference objectReference);
 	}
 
@@ -59,14 +59,14 @@ namespace MMC.State {
 
         public override string ToString() {
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 
-			string fmt = "{1} Alloc({2} ({3}) -> {4}\n";
+			var fmt = "{1} Alloc({2} ({3}) -> {4}\n";
 			// Leave out the "(refcount)" part if we don't use reference counting.
 			/*if (!Config.UseRefCounting)
 				fmt = "{1} Alloc({2}) -> {4}\n";*/
 
-			for (int loc = 0; loc < m_alloc.Length; ++loc)
+			for (var loc = 0; loc < m_alloc.Length; ++loc)
 				if (m_alloc[loc] != null) {
 					sb.AppendFormat(fmt,
 							loc,
@@ -92,9 +92,9 @@ namespace MMC.State {
 		/// <returns>True iff the heap is dirty.</returns>
 		public bool IsDirty() {
 
-			bool retval = m_alloc.IsDirty();
+			var retval = m_alloc.IsDirty();
 			DynamicAllocation alloc;
-			for (int i = 0; !retval && i < m_alloc.Length; ++i) {
+			for (var i = 0; !retval && i < m_alloc.Length; ++i) {
 				alloc = m_alloc[i];
 				retval = alloc != null && alloc.IsDirty();
 			}
@@ -112,8 +112,8 @@ namespace MMC.State {
 			/*
 			 * We don't check for dirtyness, just clean is it
 			 * faster anyways */
-			for (int i = 0; i < m_alloc.Length; ++i) {
-				DynamicAllocation alloc = m_alloc[i];
+			for (var i = 0; i < m_alloc.Length; ++i) {
+				var alloc = m_alloc[i];
 				if (alloc != null)
 					alloc.Clean();
 			}
@@ -130,11 +130,11 @@ namespace MMC.State {
 
 			get {
 
-				DirtyList retval = m_alloc.DirtyLocations;
+				var retval = m_alloc.DirtyLocations;
 
 				DynamicAllocation alloc;
 
-				for (int i = 0; i < m_alloc.Length; ++i) {
+				for (var i = 0; i < m_alloc.Length; ++i) {
 					// Skip elements whose location is dirty.
 
 					alloc = m_alloc[i];
@@ -167,7 +167,7 @@ namespace MMC.State {
         {
             if (objRef.Location > 0)
             {
-                DynamicAllocation alloc = m_alloc[objRef];
+                var alloc = m_alloc[objRef];
                 Debug.Assert(alloc != null, "(Un)pinning non-existent allocation " + objRef + ".");
                 if (pin)
                 {
@@ -218,7 +218,7 @@ namespace MMC.State {
         /// <returns>A reference to the newly created object.</returns>
         public ObjectReference AllocateObject(int loc, ITypeDefOrRef typeDef)
         {
-			AllocatedObject newObj = new AllocatedObject(typeDef, _cur.Configuration);
+			var newObj = new AllocatedObject(typeDef, _cur.Configuration);
 			newObj.ClearFields(_cur);
 			m_alloc[loc] = newObj;
 			return new ObjectReference(loc + 1, typeDef.FullName);
@@ -242,7 +242,7 @@ namespace MMC.State {
         /// <returns>A reference to the newly created array.</returns>
         public ObjectReference AllocateArray(int loc, ITypeDefOrRef typeDef, int length)
         {
-			AllocatedArray newArr = new AllocatedArray(typeDef, length, _cur.Configuration);
+			var newArr = new AllocatedArray(typeDef, length, _cur.Configuration);
 			newArr.ClearFields(_cur);
 			m_alloc[loc] = newArr;
 			return new ObjectReference(loc + 1, typeDef.FullName);
@@ -258,7 +258,7 @@ namespace MMC.State {
 		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr)
         {
 			m_alloc[loc] = new AllocatedDelegate(obj, ptr, _cur.Configuration);
-			ObjectReference newDelRef = new ObjectReference(loc + 1);
+			var newDelRef = new ObjectReference(loc + 1);
 			_cur.ParentWatcher.AddParentToChild(newDelRef, obj, _cur.Configuration.MemoisedGC);
 			return newDelRef;
 		}
@@ -271,7 +271,7 @@ namespace MMC.State {
         {
             if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
             {
-                DynamicAllocation alloc = Allocations[obj];
+                var alloc = Allocations[obj];
                 Debug.Assert(alloc != null, "allocation of to change ref.count is null");
                 alloc.RefCount++;
             }
@@ -286,7 +286,7 @@ namespace MMC.State {
         {
             if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
             {
-                DynamicAllocation alloc = Allocations[obj];
+                var alloc = Allocations[obj];
                 Debug.Assert(alloc != null, "allocation of to change ref.count is null");
                 alloc.RefCount--;
                 if (alloc.RefCount == 0)

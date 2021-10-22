@@ -29,6 +29,10 @@ namespace dnWalker.Tests.Concolic.Parameters
             return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
         }
 
+        protected static DefinitionProvider DefinitionProvider
+        {
+            get { return _definitionProvider; }
+        }
 
 
         static dnlibTypeTestBase()
@@ -46,7 +50,7 @@ namespace dnWalker.Tests.Concolic.Parameters
 
             ModuleDef mainModule = ModuleDefMD.Load(typeof(dnlibTypeTestBase).Module, _context);
 
-            ModuleDef[] refModules = mainModule
+            var refModules = mainModule
                 .GetAssemblyRefs()
                 .Select(ar => _context.AssemblyResolver.Resolve(ar.Name, mainModule))
                 .Where(a => a != null)
@@ -56,7 +60,7 @@ namespace dnWalker.Tests.Concolic.Parameters
             _definitionProvider = new DefinitionProvider(mainModule, refModules);
         }
 
-        public static TypeSig GetType(String typeName)
+        public static TypeSig GetType(string typeName)
         {
             if (typeName.EndsWith("[]"))
             {
@@ -68,19 +72,19 @@ namespace dnWalker.Tests.Concolic.Parameters
             //    .FirstOrDefault(t => t.ReflectionFullName == typeName)
             //    .ToTypeSig();
 
-            TypeSig type = _definitionProvider.GetTypeDefinition(typeName).ToTypeSig();
+            var type = _definitionProvider.GetTypeDefinition(typeName).ToTypeSig();
 
             if (type == null) throw new Exception("Could not resolve type: " + typeName);
 
             return type;
         }
 
-        public static TypeSig GetArrayType(String elementTypeName)
+        public static TypeSig GetArrayType(string elementTypeName)
         {
-            TypeSig elementType = GetType(elementTypeName);
+            var elementType = GetType(elementTypeName);
 
             //ArraySig array = new ArraySig(elementType.ToTypeSig());
-            SZArraySig array = new SZArraySig(elementType);
+            var array = new SZArraySig(elementType);
 
             if (array == null)
             {

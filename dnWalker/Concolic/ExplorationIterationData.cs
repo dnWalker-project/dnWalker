@@ -16,7 +16,7 @@ namespace dnWalker.Concolic
         //    InputValues = inputValues ?? throw new ArgumentNullException(nameof(inputValues));
         //}
 
-        public String PathConstraint
+        public string PathConstraint
         {
             get;
         }

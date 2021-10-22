@@ -77,7 +77,7 @@ namespace MMC
         {
             var config = _config;
 
-            IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(
+            var instructionExecProvider = InstructionExecProvider.Get(
                 config,
                 new dnWalker.Symbolic.Instructions.InstructionFactory()); // TODO enable dynamic switch
 
@@ -92,15 +92,15 @@ namespace MMC
             DataElementList dataElementList;
             if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
             {
-                ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
+                var runArgsRef = cur.DynamicArea.AllocateArray(
                     cur.DynamicArea.DeterminePlacement(false),
                     cur.DefinitionProvider.GetTypeDefinition("System.String"),
                     arguments.Length);
 
                 if (config.RunTimeParameters.Length > 0)
                 {
-                    AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
-                    for (int i = 0; i < config.RunTimeParameters.Length; ++i)
+                    var runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
+                    for (var i = 0; i < config.RunTimeParameters.Length; ++i)
                     {
                         runArgs.Fields[i] = arguments[i];
                     }
@@ -111,7 +111,7 @@ namespace MMC
             else
             {
                 dataElementList = cur.StorageFactory.CreateList(arguments.Length);
-                for (int i = 0; i < arguments.Length; i++)
+                for (var i = 0; i < arguments.Length; i++)
                 {
                     dataElementList[i] = arguments[i];
                 }
@@ -123,7 +123,7 @@ namespace MMC
                 }
             }
 
-            MethodState mainState = new MethodState(
+            var mainState = new MethodState(
                 entryPoint,
                 dataElementList,
                 cur);
@@ -155,18 +155,18 @@ namespace MMC
             //   names are different for some reason.
 
             // 1
-            MethodPointer mainMethodPtr = new MethodPointer(mainDefinition);
-            ObjectReference mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
+            var mainMethodPtr = new MethodPointer(mainDefinition);
+            var mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
                 cur.DynamicArea.DeterminePlacement(false),
                 ObjectReference.Null,
                 mainMethodPtr);
 
             // 2
-            ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
+            var threadObjectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false),
                 cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));
 
-            AllocatedObject threadObject =
+            var threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
 
             // 2b
@@ -178,7 +178,7 @@ namespace MMC
             if (synch_lockField != null)
             {
                 // Simply skip if not found.
-                ObjectReference newObjectRef = cur.DynamicArea.AllocateObject(
+                var newObjectRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(false),
                     cur.DefinitionProvider.GetTypeDefinition("System.Object"));
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;

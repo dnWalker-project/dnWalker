@@ -15,7 +15,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Boolean_Is_BooleanParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Boolean)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(bool)), "x");
 
             Assert.IsType<BooleanParameter>(p);
         }
@@ -23,7 +23,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Char_Is_CharParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Char)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(char)), "x");
 
             Assert.IsType<CharParameter>(p);
         }
@@ -31,7 +31,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Byte_Is_ByteParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Byte)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(byte)), "x");
 
             Assert.IsType<ByteParameter>(p);
         }
@@ -39,7 +39,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_SByte_Is_SByteParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(SByte)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(sbyte)), "x");
 
             Assert.IsType<SByteParameter>(p);
         }
@@ -47,7 +47,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Int16_Is_Int16Parameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Int16)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(short)), "x");
 
             Assert.IsType<Int16Parameter>(p);
         }
@@ -55,7 +55,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Int32_Is_Int32Parameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Int32)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(int)), "x");
 
             Assert.IsType<Int32Parameter>(p);
         }
@@ -63,7 +63,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Int64_Is_Int64Parameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Int64)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(long)), "x");
 
             Assert.IsType<Int64Parameter>(p);
         }
@@ -71,7 +71,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_UInt16_Is_UInt16Parameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(UInt16)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(ushort)), "x");
 
             Assert.IsType<UInt16Parameter>(p);
         }
@@ -79,7 +79,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_UInt32_Is_UInt32Parameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(UInt32)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(uint)), "x");
 
             Assert.IsType<UInt32Parameter>(p);
         }
@@ -87,7 +87,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_UInt64_Is_UInt64Parameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(UInt64)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(ulong)), "x");
 
             Assert.IsType<UInt64Parameter>(p);
         }
@@ -95,7 +95,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Single_Is_SingleParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Single)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(float)), "x");
 
             Assert.IsType<SingleParameter>(p);
         }
@@ -103,7 +103,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void Test_ParameterFor_Double_Is_DoubleParameter()
         {
-            Parameter p = ParameterFactory.CreateParameter(GetType(typeof(Double)), "x");
+            var p = ParameterFactory.CreateParameter(GetType(typeof(double)), "x");
 
             Assert.IsType<DoubleParameter>(p);
         }

@@ -138,14 +138,14 @@ namespace MMC.ICall {
 		/// Call the ICH associated with the specified method.
 		public bool HandleICall(MethodDefinition methDef, DataElementList args) {
 
-			ICH handler = m_ich[methDef.Name] as ICH;
+			var handler = m_ich[methDef.Name] as ICH;
 			if (handler != null)
 				handler(methDef, args);
 			return handler != null;
 		}
 
 		public MemoryLocation HandleICallAccessed(MethodDefinition methDef, DataElementList args, int threadId) {
-			ICH_Access handler = m_ichAccessed[methDef.Name] as ICH_Access;
+			var handler = m_ichAccessed[methDef.Name] as ICH_Access;
 			if (handler != null)
 				return handler(methDef, args, threadId);
 			else
@@ -161,7 +161,7 @@ namespace MMC.ICall {
 		}
 
 		public bool IsDependent(MethodDefinition methDef, DataElementList args) {
-			ICH_Dependent handler = m_ichDependent[methDef.Name] as ICH_Dependent;
+			var handler = m_ichDependent[methDef.Name] as ICH_Dependent;
 			if (handler != null)
 				return handler(methDef, args);
 			else
@@ -182,18 +182,18 @@ namespace MMC.ICall {
 
 		public static void FastCopy(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-            ObjectReference source = (ObjectReference)args[0];
-			int destIdx = ((INumericElement)args[1]).ToInt4(false).Value;
-			ObjectReference dest = (ObjectReference)args[2];
-			int sourceIdx = ((INumericElement)args[3]).ToInt4(false).Value;
-			int length = ((INumericElement)args[4]).ToInt4(false).Value;
+            var source = (ObjectReference)args[0];
+			var destIdx = ((INumericElement)args[1]).ToInt4(false).Value;
+			var dest = (ObjectReference)args[2];
+			var sourceIdx = ((INumericElement)args[3]).ToInt4(false).Value;
+			var length = ((INumericElement)args[4]).ToInt4(false).Value;
 
-			AllocatedArray sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
-			AllocatedArray destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
+			var sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
+			var destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
 
             cur.ParentWatcher.RemoveParentFromAllChilds(dest, cur);
 
-            for (int i = 0; i < length; i++, destIdx++, sourceIdx++)
+            for (var i = 0; i < length; i++, destIdx++, sourceIdx++)
             {
                 destArr.Fields[destIdx] = sourceArr.Fields[sourceIdx];
             }
@@ -204,11 +204,11 @@ namespace MMC.ICall {
 		}
 
 		public static bool FastCopy_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur) {
-            ObjectReference source = (ObjectReference)args[0];
-			ObjectReference dest = (ObjectReference)args[2];
+            var source = (ObjectReference)args[0];
+			var dest = (ObjectReference)args[2];
 
-			AllocatedArray sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
-			AllocatedArray destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
+			var sourceArr = cur.DynamicArea.Allocations[source] as AllocatedArray;
+			var destArr = cur.DynamicArea.Allocations[dest] as AllocatedArray;
 
 			return sourceArr.ThreadShared || destArr.ThreadShared;
 		}
@@ -317,7 +317,7 @@ namespace MMC.ICall {
 		/// </summary>
 		public static void InternalCodePage(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			LocalVariablePointer code_page = (LocalVariablePointer)args[0];
+			var code_page = (LocalVariablePointer)args[0];
 			code_page.Value = new Int4(System.Text.Encoding.Default.CodePage);
 			cur.EvalStack.Push(new ConstantString(System.Text.Encoding.Default.EncodingName));
 		}
@@ -351,7 +351,7 @@ namespace MMC.ICall {
         /// <param name="args"></param>
         public static void Thread_internal(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-            ObjectReference threadObjectRef = cur.DynamicArea.AllocateObject(
+            var threadObjectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false),
                 methDef.DeclaringType);
             //AllocatedObject threadObject = cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
@@ -359,19 +359,19 @@ namespace MMC.ICall {
             // First, create a new thread. The first argument is the this pointer
             // to the thread object. The second argument is a reference to the
             // threadstart delegate, but we don't need to call it.
-            AllocatedDelegate del = (AllocatedDelegate)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
+            var del = (AllocatedDelegate)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
 
 			// TODO: This does not deal with delegates that take additional
 			// parameters (such as a state). It can probably be popped off the
 			// stack, but not certain, so skipping for now.
-			DataElementList delPars = cur.StorageFactory.CreateList(0);
+			var delPars = cur.StorageFactory.CreateList(0);
 			if (del.Method.Value.HasThis)
             {
 				delPars = cur.StorageFactory.CreateList(1);
 				delPars[0] = del.Object;
 			}
 
-            MethodState newThreadState = new MethodState(del.Method.Value, delPars, cur);
+            var newThreadState = new MethodState(del.Method.Value, delPars, cur);
 
             /*int newThreadId = */cur.ThreadPool.NewThread(cur, newThreadState, threadObjectRef);// (ObjectReference)args[0]);
 
@@ -380,8 +380,8 @@ namespace MMC.ICall {
 		}
 
 		public static bool Thread_internal_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur) {
-			AllocatedDelegate del = (AllocatedDelegate)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
-			AllocatedObject ao = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[0]];
+			var del = (AllocatedDelegate)cur.DynamicArea.Allocations[(ObjectReference)args[1]];
+			var ao = (AllocatedObject)cur.DynamicArea.Allocations[(ObjectReference)args[0]];
 
 			return del.ThreadShared || ao.ThreadShared;
 		}
@@ -416,8 +416,8 @@ namespace MMC.ICall {
 
 		public static bool Join_internal_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			ThreadState tstate = cur.ThreadPool.Threads[cur.ThreadPool.FindOwningThread(args[0])];
-			AllocatedObject ao = (AllocatedObject)cur.DynamicArea.Allocations[tstate.ThreadObject];
+			var tstate = cur.ThreadPool.Threads[cur.ThreadPool.FindOwningThread(args[0])];
+			var ao = (AllocatedObject)cur.DynamicArea.Allocations[tstate.ThreadObject];
 
 			return ao.ThreadShared;
 		}
@@ -458,8 +458,8 @@ namespace MMC.ICall {
         // private extern static void Monitor_exit(object obj)
         public static void Exit(DataElementList args, ExplicitActiveState cur)
         {
-            LockManager lm = cur.DynamicArea.LockManager;
-            ObjectReference obj = (ObjectReference)args[0];
+            var lm = cur.DynamicArea.LockManager;
+            var obj = (ObjectReference)args[0];
 
             // This thread must own the lock on the object.
             if (cur.me != lm.GetLock(obj).Owner)
@@ -478,15 +478,15 @@ namespace MMC.ICall {
 
 		public static bool Monitor_IsDependent(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			ObjectReference obj = (ObjectReference)args[0];
+			var obj = (ObjectReference)args[0];
 			return cur.DynamicArea.Allocations[obj].ThreadShared;
 		}
 
 		// private extern static void Monitor_pulse(object obj);
 		public static void Monitor_pulse(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			LockManager lm = cur.DynamicArea.LockManager;
-			ObjectReference obj = (ObjectReference)args[0];
+			var lm = cur.DynamicArea.LockManager;
+			var obj = (ObjectReference)args[0];
 
 			if (cur.me != lm.GetLock(obj).Owner)
                 cur.Logger.Warning(
@@ -499,8 +499,8 @@ namespace MMC.ICall {
 		// private extern static void Monitor_pulse_all(object obj);
 		public static void Monitor_pulse_all(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			LockManager lm = cur.DynamicArea.LockManager;
-			ObjectReference obj = (ObjectReference)args[0];
+			var lm = cur.DynamicArea.LockManager;
+			var obj = (ObjectReference)args[0];
 
 			if (cur.me != lm.GetLock(obj).Owner)
                 cur.Logger.Warning(
@@ -513,8 +513,8 @@ namespace MMC.ICall {
 		// private extern static bool Monitor_test_synchronised(object obj);
 		public static void Monitor_test_synchronised(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			LockManager lm = cur.DynamicArea.LockManager;
-			bool locked = lm.IsLocked((ObjectReference)args[0]);
+			var lm = cur.DynamicArea.LockManager;
+			var locked = lm.IsLocked((ObjectReference)args[0]);
 			cur.EvalStack.Push((locked ? new Int4(1) : new Int4(0)));
 		}
 
@@ -523,15 +523,15 @@ namespace MMC.ICall {
 		// ms  = timeout
 		public static void Monitor_try_enter(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur)
         {
-			LockManager lm = cur.DynamicArea.LockManager;
-			ObjectReference obj = (ObjectReference)args[0];
+			var lm = cur.DynamicArea.LockManager;
+			var obj = (ObjectReference)args[0];
 			// IDataElement ms = args[1]; // todo: don't block forever if ms > 0 && ms < \infty
 
-			bool acquired = lm.Acquire(obj, cur.me);
+			var acquired = lm.Acquire(obj, cur.me);
 			if (!acquired) {
 				// Not acquired, but ms is non-zero, which we will interpret as infinity,
 				// so add this thread to the wait queue.
-				Lock lock_we_want = lm.GetLock(obj);
+				var lock_we_want = lm.GetLock(obj);
 				lock_we_want.ReadyQueue.Enqueue(cur.me);
 				//				cur.CurrentThread.WaitFor(lock_we_want.Owner);
 				cur.CurrentThread.WaitFor(LockManager.NoThread);
@@ -546,16 +546,16 @@ namespace MMC.ICall {
 
         public static IDataElement Enter(DataElementList args, ExplicitActiveState cur)
         {
-            LockManager lm = cur.DynamicArea.LockManager;
-            ObjectReference obj = (ObjectReference)args[0];
+            var lm = cur.DynamicArea.LockManager;
+            var obj = (ObjectReference)args[0];
             // IDataElement ms = args[1]; // todo: don't block forever if ms > 0 && ms < \infty
 
-            bool acquired = lm.Acquire(obj, cur.me);
+            var acquired = lm.Acquire(obj, cur.me);
             if (!acquired)
             {
                 // Not acquired, but ms is non-zero, which we will interpret as infinity,
                 // so add this thread to the wait queue.
-                Lock lock_we_want = lm.GetLock(obj);
+                var lock_we_want = lm.GetLock(obj);
                 lock_we_want.ReadyQueue.Enqueue(cur.me);
                 //				cur.CurrentThread.WaitFor(lock_we_want.Owner);
                 cur.CurrentThread.WaitFor(LockManager.NoThread);
@@ -570,10 +570,10 @@ namespace MMC.ICall {
 
         public static MemoryLocation Monitor_try_enter_Accessed(MethodDefinition methDef, DataElementList args, int threadId, ExplicitActiveState cur)
         {
-            LockManager lm = cur.DynamicArea.LockManager;
-            ObjectReference obj = (ObjectReference)args[0];
+            var lm = cur.DynamicArea.LockManager;
+            var obj = (ObjectReference)args[0];
 
-            bool acquirable = lm.IsAcquireable(obj, threadId);
+            var acquirable = lm.IsAcquireable(obj, threadId);
 
             if (acquirable)
             {
@@ -591,8 +591,8 @@ namespace MMC.ICall {
 		// can mean the difference between a deadlock and a 'normal' timeout.
 		public static void Monitor_wait(MethodDefinition methDef, DataElementList args, ExplicitActiveState cur) {
 
-			LockManager lm = cur.DynamicArea.LockManager;
-			ObjectReference obj = (ObjectReference)args[0];
+			var lm = cur.DynamicArea.LockManager;
+			var obj = (ObjectReference)args[0];
 
 			if (cur.me != lm.GetLock(obj).Owner)
                 cur.Logger.Warning(

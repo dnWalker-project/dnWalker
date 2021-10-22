@@ -13,26 +13,33 @@ namespace dnWalker.Concolic.Parameters
 {
     public static partial class ParameterExtensions
     {
-        public static ParameterStore SetTraits(this ParameterStore store, IDefinitionProvider definitionProvider, IDictionary<String, Object> data)
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="definitionProvider"></param>
+        /// <param name="data">Output from the solver</param>
+        /// <returns></returns>
+        public static ParameterStore SetTraits(this ParameterStore store, IDefinitionProvider definitionProvider, IDictionary<string, object> data)
         {
-            KeyValuePair<String, Object>[] sortedData = new SortedDictionary<String, Object>(data).ToArray();
+            var sortedData = new SortedDictionary<string, object>(data).ToArray();
 
             // sortedData should be in order:
-            // PARAM_NAME_1:SUB_FIELD_1:SUB_FIELD_1.2
-            // PARAM_NAME_1:SUB_FIELD_2
-            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.1
-            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.2
+            // PARAM_NAME_1:SUB_FIELD_1:SUB_FIELD_1.2 = 5
+            // PARAM_NAME_1:SUB_FIELD_2 = true
+            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.1 = false
+            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.2 = 5
             // PARAM_NAME_4
             // PARAM_NAME_5:SUB_FIELD_5
             // ...
 
             // go through the list of sortedData recursively - each pass will advance the index
 
-            for (Int32 i = 0; i < sortedData.Length; ++i)
+            for (var i = 0; i < sortedData.Length; ++i)
             {
-                String parameterName = sortedData[i].Key;
-                Object parameterValue = sortedData[i].Value;
-                String rootParameterName = ParameterName.GetRootName(parameterName);
+                var parameterName = sortedData[i].Key;
+                var parameterValue = sortedData[i].Value;
+                var rootParameterName = ParameterName.GetRootName(parameterName);
 
                 if (parameterValue == null)
                 {
@@ -40,7 +47,7 @@ namespace dnWalker.Concolic.Parameters
                     continue;
                 }
 
-                if (!store.TryGetParameter(rootParameterName, out Parameter rootParameter))
+                if (!store.TryGetParameter(rootParameterName, out var rootParameter))
                 {
                     throw new Exception("Cannot find root parameter: " + rootParameterName);
                 }
@@ -53,7 +60,7 @@ namespace dnWalker.Concolic.Parameters
         }
 
 
-        private static void SetTraits(ParameterStore store, Parameter parameter, String fullParameterName, Object parameterValue, IDefinitionProvider definitionProvider)
+        private static void SetTraits(ParameterStore store, Parameter parameter, string fullParameterName, object parameterValue, IDefinitionProvider definitionProvider)
         {
             if (fullParameterName == parameter.Name)
             {
@@ -91,30 +98,30 @@ namespace dnWalker.Concolic.Parameters
         }
 
 
-        private static void SetValue(PrimitiveValueParameter primitiveValueParameter, Object value)
+        private static void SetValue(PrimitiveValueParameter primitiveValueParameter, object value)
         {
             switch (primitiveValueParameter)
             {
-                case BooleanParameter booleanParameter: booleanParameter.Value = (Boolean)value; break;
-                case CharParameter charParameter: charParameter.Value = (Char)value; break;
-                case ByteParameter byteParameter: byteParameter.Value = (Byte)value; break;
-                case SByteParameter sbyteParameter: sbyteParameter.Value = (SByte)value; break;
-                case Int16Parameter int16Parameter: int16Parameter.Value = (Int16)value; break;
-                case Int32Parameter int32Parameter: int32Parameter.Value = (Int32)value; break;
-                case Int64Parameter int64Parameter: int64Parameter.Value = (Int64)value; break;
-                case UInt16Parameter uint16Parameter: uint16Parameter.Value = (UInt16)value; break;
-                case UInt32Parameter uint32Parameter: uint32Parameter.Value = (UInt32)value; break;
-                case UInt64Parameter uint64Parameter: uint64Parameter.Value = (UInt64)value; break;
-                case SingleParameter singleParameter: singleParameter.Value = (Single)value; break;
-                case DoubleParameter doubleParameter: doubleParameter.Value = (Double)value; break;
+                case BooleanParameter booleanParameter: booleanParameter.Value = (bool)value; break;
+                case CharParameter charParameter: charParameter.Value = (char)value; break;
+                case ByteParameter byteParameter: byteParameter.Value = (byte)value; break;
+                case SByteParameter sbyteParameter: sbyteParameter.Value = (sbyte)value; break;
+                case Int16Parameter int16Parameter: int16Parameter.Value = (short)value; break;
+                case Int32Parameter int32Parameter: int32Parameter.Value = (int)value; break;
+                case Int64Parameter int64Parameter: int64Parameter.Value = (long)value; break;
+                case UInt16Parameter uint16Parameter: uint16Parameter.Value = (ushort)value; break;
+                case UInt32Parameter uint32Parameter: uint32Parameter.Value = (uint)value; break;
+                case UInt64Parameter uint64Parameter: uint64Parameter.Value = (ulong)value; break;
+                case SingleParameter singleParameter: singleParameter.Value = (float)value; break;
+                case DoubleParameter doubleParameter: doubleParameter.Value = (double)value; break;
                 default:
                     throw new ArgumentException("Unexpected parameter type: " + primitiveValueParameter.GetType().FullName);
             }
         }
 
-        private static void SetLength(ParameterStore store, ArrayParameter arrayParameter, Object value) //, ExplicitActiveState cur)
+        private static void SetLength(ParameterStore store, ArrayParameter arrayParameter, object value) //, ExplicitActiveState cur)
         {
-            arrayParameter.Length = (Int32?)value;
+            arrayParameter.Length = (int?)value;
 
             //if (!arrayParameter.TryGetTrait<LengthTrait>(out LengthTrait lengthTrait))
             //{
@@ -132,9 +139,9 @@ namespace dnWalker.Concolic.Parameters
             //SetValue(lengthTrait.LengthParameter, value);
         }
 
-        private static void SetIsNull(ParameterStore store, ReferenceTypeParameter referenceTypeParameter, Object value) //, ExplicitActiveState cur)
+        private static void SetIsNull(ParameterStore store, ReferenceTypeParameter referenceTypeParameter, object value) //, ExplicitActiveState cur)
         {
-            referenceTypeParameter.IsNull = (Boolean?)value;
+            referenceTypeParameter.IsNull = (bool?)value;
 
             //if (!nullableParameter.TryGetTrait<IsNullTrait>(out IsNullTrait isNullTrait))
             //{
@@ -153,33 +160,33 @@ namespace dnWalker.Concolic.Parameters
         }
 
 
-        private static void SetTraitsForObject(ParameterStore store, ObjectParameter objectParameter, String fullParameterName, Object parameterValue, IDefinitionProvider definitionProvider)
+        private static void SetTraitsForObject(ParameterStore store, ObjectParameter objectParameter, string fullParameterName, object parameterValue, IDefinitionProvider definitionProvider)
         {
             // try to find the next parameter in the store (e.g. parameter.Name:FIELD_NAME
-            String accessor = ParameterName.GetAccessor(objectParameter.Name, fullParameterName);
+            var accessor = ParameterName.GetAccessor(objectParameter.Name, fullParameterName);
 
             // IsNull
             if (accessor == ReferenceTypeParameter.IsNullParameterName)
             {
                 // we need to continue with the IsNull parameter
-                SetIsNull(store, objectParameter, (Boolean)parameterValue);
+                SetIsNull(store, objectParameter, (bool)parameterValue);
             }
             // is a Field
             else
             {
                 //Parameter nextParameter = objectParameter.GetField(accessor);
                 //if (nextParameter == null)
-                if (!objectParameter.TryGetField(accessor, out Parameter nextParameter)) // nextParameter == null)
+                if (!objectParameter.TryGetField(accessor, out var nextParameter)) // nextParameter == null)
                 {
-                    String nextParamterName = ParameterName.ConstructField(objectParameter.Name, accessor);
-                    TypeDef parameterType = definitionProvider.GetTypeDefinition(objectParameter.TypeName);  //GetType(objectParameter, cur);
+                    var nextParamterName = ParameterName.ConstructField(objectParameter.Name, accessor);
+                    var parameterType = definitionProvider.GetTypeDefinition(objectParameter.TypeName);  //GetType(objectParameter, cur);
 
                     // next parameter is not yet initialized => create it
                     nextParameter = ParameterFactory.CreateParameter(parameterType.FindField(accessor).FieldType, nextParamterName);
 
                     objectParameter.SetField(accessor, nextParameter);
 
-                    store.AddParameter(nextParameter);
+                    //store.AddParameter(nextParameter);
                 }
 
                 // try to set the value for the next parameter
@@ -187,9 +194,9 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        private static void SetTraitsForInterface(ParameterStore store, InterfaceParameter interfaceParameter, String fullParameterName, Object parameterValue, IDefinitionProvider definitionProvider)
+        private static void SetTraitsForInterface(ParameterStore store, InterfaceParameter interfaceParameter, string fullParameterName, object parameterValue, IDefinitionProvider definitionProvider)
         {
-            String accessor = ParameterName.GetAccessor(interfaceParameter.Name, fullParameterName);
+            var accessor = ParameterName.GetAccessor(interfaceParameter.Name, fullParameterName);
 
             // IsNull
             if (accessor == ReferenceTypeParameter.IsNullParameterName)
@@ -199,7 +206,7 @@ namespace dnWalker.Concolic.Parameters
             // method result
             else
             {
-                if (!ParameterName.TryParseMethodName(accessor, out String methodName, out Int32 callIndex))
+                if (!ParameterName.TryParseMethodName(accessor, out var methodName, out var callIndex))
                 {
                     throw new Exception("Invalid parameter name for method result.");
                 }
@@ -207,16 +214,16 @@ namespace dnWalker.Concolic.Parameters
 
                 //Parameter nextParameter = interfaceParameter.GetMethod(methodName, callIndex);
                 //if (nextParameter == null)
-                if (!interfaceParameter.TryGetMethodResult(methodName, callIndex, out Parameter nextParameter))
+                if (!interfaceParameter.TryGetMethodResult(methodName, callIndex, out var nextParameter))
                 {
-                    TypeDef parameterType = definitionProvider.GetTypeDefinition(interfaceParameter.TypeName);
+                    var parameterType = definitionProvider.GetTypeDefinition(interfaceParameter.TypeName);
 
-                    String nextParameterName = ParameterName.ConstructMethod(interfaceParameter.Name, methodName, callIndex);
+                    var nextParameterName = ParameterName.ConstructMethod(interfaceParameter.Name, methodName, callIndex);
                     nextParameter = ParameterFactory.CreateParameter(parameterType.FindMethod(methodName).ReturnType, nextParameterName);
 
                     interfaceParameter.SetMethodResult(methodName, callIndex, nextParameter);
 
-                    store.AddParameter(nextParameter);
+                    //store.AddParameter(nextParameter);
                 }
 
                 // try to set the value for the next parameter
@@ -224,9 +231,9 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        private static void SetTraitsForArray(ParameterStore store, ArrayParameter arrayParameter, String fullParameterName, Object parameterValue, IDefinitionProvider definitionProvider)
+        private static void SetTraitsForArray(ParameterStore store, ArrayParameter arrayParameter, string fullParameterName, object parameterValue, IDefinitionProvider definitionProvider)
         {
-            String accessor = ParameterName.GetAccessor(arrayParameter.Name, fullParameterName);
+            var accessor = ParameterName.GetAccessor(arrayParameter.Name, fullParameterName);
 
             // IsNull
             if (accessor == ReferenceTypeParameter.IsNullParameterName)
@@ -241,24 +248,24 @@ namespace dnWalker.Concolic.Parameters
             // item
             else
             {
-                if (!Int32.TryParse(accessor, out Int32 index))
+                if (!Int32.TryParse(accessor, out var index))
                 {
                     throw new Exception("Unexpected accessor - only index or length expected: " + accessor);
                 }
 
                 //Parameter nextParameter = arrayParameter.GetItemAt(index);
                 //if (nextParameter == null)
-                if (!arrayParameter.TryGetItemAt(index, out Parameter nextParameter))
+                if (!arrayParameter.TryGetItemAt(index, out var nextParameter))
                 {
-                    TypeDef elementType = definitionProvider.GetTypeDefinition(arrayParameter.ElementTypeName);
+                    var elementType = definitionProvider.GetTypeDefinition(arrayParameter.ElementTypeName);
 
-                    String nextParameterName = ParameterName.ConstructIndex(arrayParameter.Name, index);
+                    var nextParameterName = ParameterName.ConstructIndex(arrayParameter.Name, index);
 
                     nextParameter = ParameterFactory.CreateParameter(elementType.ToTypeSig(), nextParameterName);
 
                     arrayParameter.SetItemAt(index, nextParameter);
 
-                    store.AddParameter(nextParameter);
+                    //store.AddParameter(nextParameter);
                 }
 
                 SetTraits(store, nextParameter, fullParameterName, parameterValue, definitionProvider);

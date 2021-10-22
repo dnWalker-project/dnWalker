@@ -38,7 +38,7 @@ namespace MMC.State
         /// <returns>True iff a thread owns the lock on this allocation.</returns>
         public bool IsLocked(ObjectReference obj)
         {
-            DynamicAllocation alloc = cur.DynamicArea.Allocations[obj];
+            var alloc = cur.DynamicArea.Allocations[obj];
             Debug.Assert(alloc != null, "Checking lock on null allocation.");
             return alloc.Locked;
         }
@@ -52,7 +52,7 @@ namespace MMC.State
         /// <returns>The associated lock (possibly new).</returns>
         public Lock GetLock(ObjectReference obj)
         {
-            DynamicAllocation alloc = cur.DynamicArea.Allocations[obj];
+            var alloc = cur.DynamicArea.Allocations[obj];
             Debug.Assert(alloc != null, "Getting lock on null allocation.");
             return alloc.Lock;
         }
@@ -68,8 +68,8 @@ namespace MMC.State
         /// <returns>True iff the lock was succesfully acquired.</returns>
         public bool Acquire(ObjectReference obj, int thread_id)
         {
-            Lock l = GetLock(obj);
-            bool retval = l.Owner == thread_id || l.Owner == NoThread;
+            var l = GetLock(obj);
+            var retval = l.Owner == thread_id || l.Owner == NoThread;
             if (retval)
             {
                 l.Owner = thread_id;
@@ -80,7 +80,7 @@ namespace MMC.State
 
         public bool IsAcquireable(ObjectReference obj, int thread_id)
         {
-            Lock l = GetLock(obj);
+            var l = GetLock(obj);
             return l.Owner == thread_id || l.Owner == NoThread;
         }
 
@@ -93,12 +93,12 @@ namespace MMC.State
         /// <param name="all">Notify all waiting threads if true. Just one otherwise.</param>
         public void Pulse(ObjectReference obj, bool all)
         {
-            Lock l = GetLock(obj);
+            var l = GetLock(obj);
             if (l.HasWaitQueue())
             {
-                Queue<int> waitQueue = l.WaitQueue;
-                Queue<int> readyQueue = l.ReadyQueue;
-                int max = (all ? waitQueue.Count : 1);
+                var waitQueue = l.WaitQueue;
+                var readyQueue = l.ReadyQueue;
+                var max = (all ? waitQueue.Count : 1);
                 while (max-- > 0 && waitQueue.Count > 0)
                 {
                     readyQueue.Enqueue(waitQueue.Dequeue());
@@ -116,7 +116,7 @@ namespace MMC.State
         /// <param name="obj">Reference to the allocation.</param>
         public void Release(ObjectReference obj)
         {
-            Lock l = GetLock(obj);
+            var l = GetLock(obj);
             l.Count--;
             // If lock is fully released...
             if (l.Count == 0)

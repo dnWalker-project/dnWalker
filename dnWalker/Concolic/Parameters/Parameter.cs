@@ -16,9 +16,9 @@ namespace dnWalker.Concolic.Parameters
 {
     public abstract class Parameter
     {
-        private String _name;
+        private string _name;
 
-        public String Name
+        public string Name
         {
             get { return _name; }
             set
@@ -33,26 +33,26 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public Boolean HasName()
+        public bool HasName()
         {
             return !String.IsNullOrWhiteSpace(_name);
         }
 
-        public String TypeName { get; }
+        public string TypeName { get; }
 
         //public IList<ParameterTrait> Traits { get; }
 
-        protected virtual void OnNameChanged(String newName)
+        protected virtual void OnNameChanged(string newName)
         {
 
         }
 
-        protected Parameter(String typeName)
+        protected Parameter(string typeName)
         {
             TypeName = typeName;
         }
 
-        protected Parameter(String typeName, String name)
+        protected Parameter(string typeName, string name)
         {
             if (String.IsNullOrWhiteSpace(typeName)) throw new ArgumentNullException(nameof(typeName));
             if (String.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
@@ -103,14 +103,14 @@ namespace dnWalker.Concolic.Parameters
         //}
 
         public abstract IEnumerable<ParameterExpression> GetParameterExpressions();
-        public abstract Boolean HasSingleExpression { get; }
+        public abstract bool HasSingleExpression { get; }
         public abstract ParameterExpression GetSingleParameterExpression();
 
-        public override String ToString()
+        public override string ToString()
         {
             return $"Parameter: {Name}, Type: {TypeName}";
         }
 
-        public abstract Boolean TryGetChildParameter(String name, out Parameter childParameter);
+        public abstract bool TryGetChildParameter(string name, out Parameter childParameter);
     }
 }
