@@ -16,12 +16,12 @@ namespace dnWalker.Concolic.Parameters
 
         public ReferenceTypeParameter(String typeName) : base(typeName)
         {
-            IsNullParameter = new BooleanParameter();
+            IsNullParameter = new BooleanParameter() { Value = true };
         }
 
         public ReferenceTypeParameter(String typeName, String name) : base(typeName, name)
         {
-            IsNullParameter = new BooleanParameter(ParameterName.ConstructField(name, IsNullParameterName));
+            IsNullParameter = new BooleanParameter(ParameterName.ConstructField(name, IsNullParameterName)) { Value = true };
         }
 
         public BooleanParameter IsNullParameter

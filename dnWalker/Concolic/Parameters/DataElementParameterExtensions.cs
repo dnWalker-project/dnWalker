@@ -30,7 +30,7 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public static Boolean IsInterfaceParameter(this ObjectReference objectReference, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
+        public static Boolean IsInterfaceParameter(this IDataElement objectReference, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)
         {
             if (TryGetParameter(objectReference, cur, out Parameter p) && p is InterfaceParameter ip)
             {

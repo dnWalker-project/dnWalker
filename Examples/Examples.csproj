@@ -68,6 +68,7 @@
     <Compile Include="Concolic\Features\Arrays\Array.cs" />
     <Compile Include="Concolic\Features\Arrays\BranchingBasedOnArrayProperties.cs" />
     <Compile Include="Concolic\Features\Arrays\Input.cs" />
+    <Compile Include="Concolic\Features\Interfaces\InterfaceMethodInvoking.cs" />
     <Compile Include="Concolic\Features\Math\Input.cs" />
     <Compile Include="Concolic\Features\Objects\MethodsWithObjectParameter.cs" />
     <Compile Include="Concolic\Protocol.cs" />

@@ -37,8 +37,11 @@ namespace dnWalker.Symbolic.Instructions
     using MMC.InstructionExec;
     using System.Linq.Expressions;
     using MMC;
+
     using dnWalker.ChoiceGenerators;
     using dnWalker.DataElements;
+    using dnWalker.Concolic.Parameters;
+    using Parameter = dnWalker.Concolic.Parameters.Parameter;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -1384,19 +1387,32 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            UnsignedInt4 length = new UnsignedInt4((uint)theArray.Fields.Length);
-            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out Expression expression);
-            if (symb)
+            if (arrayRef.IsArrayParameter(cur, out var arrayParameter))
             {
-                length.SetExpression(
-                    Expression.MakeMemberAccess(
-                        expression, 
-                        typeof(Array).GetProperty("Length")
-                    ), cur);
-            }
+                var length = arrayParameter.LengthParameter.CreateDataElement(cur);
 
-            cur.EvalStack.Push(length);
-            return nextRetval;
+                // TODO: somehow make sure that the length is greater than 0 OR use UInt32 & change dnWalker.Z3 to support 
+                // cur.PathStore.CurrentPath.AddPathConstraint(Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, arrayParameter.LengthParameter.GetSingleParameterExpression(), Expression.Constant(0)));
+
+                cur.EvalStack.Push(length);
+                return nextRetval;
+            }
+            else
+            {
+                var length = new UnsignedInt4((uint)theArray.Fields.Length);
+                var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
+                if (symb)
+                {
+                    length.SetExpression(
+                        Expression.MakeMemberAccess(
+                            expression,
+                            typeof(Array).GetProperty("Length")
+                        ), cur);
+                }
+
+                cur.EvalStack.Push(length);
+                return nextRetval;
+            }
         }
     }
 
@@ -2344,6 +2360,53 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
+            // TODO: redo in a little bit better way
+            // check whether it is not b == null or a == null
+            if (b.IsReferenceTypeParametery(cur, out var bRefTypeP) && a.Equals(ObjectReference.Null))
+            {
+                // b == null
+                var bIsNullParameter = bRefTypeP.IsNullParameter;
+
+                var bIsNull = bIsNullParameter.CreateDataElement(cur);
+                var ceq = bIsNull.ToBool();
+
+                var result = new Int4(ceq ? 1 : 0);
+
+                if (!bIsNull.TryGetExpression(cur, out var bIsNullExpr))
+                {
+                    throw new Exception("Unexpected state, parameter IDataElement must have an expression!");
+                }
+
+                Expression resultExpr = Expression.MakeBinary(ceq ? ExpressionType.Equal : ExpressionType.NotEqual, bIsNullExpr, Expression.Constant(true));
+                result.SetExpression(resultExpr, cur);
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+            }
+            else if (a.IsReferenceTypeParametery(cur, out var aRefTypeP) && b.Equals(ObjectReference.Null))
+            {
+                // a == null
+                var aIsNullParameter = aRefTypeP.IsNullParameter;
+
+                var aIsNull = aIsNullParameter.CreateDataElement(cur);
+                var ceq = aIsNull.ToBool();
+
+                var result = new Int4(ceq ? 1 : 0);
+
+                if (!aIsNull.TryGetExpression(cur, out var aIsNullExpr))
+                {
+                    throw new Exception("Unexpected state, parameter IDataElement must have an expression!");
+                }
+
+                Expression resultExpr = Expression.MakeBinary(ceq ? ExpressionType.Equal : ExpressionType.NotEqual, aIsNullExpr, Expression.Constant(true));
+                result.SetExpression(resultExpr, cur);
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+            }
+
+
+
             //var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
             //var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
@@ -3072,16 +3135,40 @@ namespace dnWalker.Symbolic.Instructions
                 // Check whether we work with an interface proxy
                 IDataElement instance = args[0];
 
-                if (args[0] is InterfaceProxy proxy)
+                //if (args[0] is InterfaceProxy proxy)
+                //{
+                //    if (proxy.TryResolveMethod(methDef, cur, out IDataElement result))
+                //    {
+                //        cur.EvalStack.Push(result);
+                //    }
+                //    else
+                //    {
+                //        throw new Exception("This proxy cannot resolve supplied method!");
+                //    }
+
+                //    return nextRetval;
+                //}
+
+                if (instance.IsInterfaceParameter(cur, out var interfaceParameter))
                 {
-                    if (proxy.TryResolveMethod(methDef, cur, out IDataElement result))
+                    // get the current call count
+                    string methodName = methDef.Name;
+                    var callCount = instance.GetCallCount(methodName, cur);
+
+                    // increase the call count by 1 and try to get the result parameter, if none exists => create default
+                    callCount++;
+                    instance.SetCallCount(methodName, cur, callCount);
+
+                    if (!interfaceParameter.TryGetMethodResult(methodName, callCount, out var resultParameter))
                     {
-                        cur.EvalStack.Push(result);
+                        // initialize it to default value and add the parameter...
+                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType);
+                        interfaceParameter.SetMethodResult(methodName, callCount, resultParameter);
                     }
-                    else
-                    {
-                        throw new Exception("This proxy cannot resolve supplied method!");
-                    }
+
+                    // get the IDataElement and push it onto the stack
+                    var result = resultParameter.CreateDataElement(cur);
+                    cur.EvalStack.Push(result);
 
                     return nextRetval;
                 }

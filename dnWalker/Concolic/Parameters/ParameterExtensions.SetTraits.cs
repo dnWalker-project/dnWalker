@@ -186,7 +186,7 @@ namespace dnWalker.Concolic.Parameters
 
                     objectParameter.SetField(accessor, nextParameter);
 
-                    store.AddParameter(nextParameter);
+                    //store.AddParameter(nextParameter);
                 }
 
                 // try to set the value for the next parameter
@@ -223,7 +223,7 @@ namespace dnWalker.Concolic.Parameters
 
                     interfaceParameter.SetMethodResult(methodName, callIndex, nextParameter);
 
-                    store.AddParameter(nextParameter);
+                    //store.AddParameter(nextParameter);
                 }
 
                 // try to set the value for the next parameter
@@ -265,7 +265,7 @@ namespace dnWalker.Concolic.Parameters
 
                     arrayParameter.SetItemAt(index, nextParameter);
 
-                    store.AddParameter(nextParameter);
+                    //store.AddParameter(nextParameter);
                 }
 
                 SetTraits(store, nextParameter, fullParameterName, parameterValue, definitionProvider);
