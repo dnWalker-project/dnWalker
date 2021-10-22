@@ -104,6 +104,9 @@ namespace dnWalker.Tests.Concolic.Parameters
         {
             return GetArrayType(elementType.FullName);
         }
-
+        protected static DefinitionProvider DefinitionProvider
+        {
+            get { return _definitionProvider; }
+        }
     }
 }

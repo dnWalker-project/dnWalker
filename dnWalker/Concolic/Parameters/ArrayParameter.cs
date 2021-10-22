@@ -23,11 +23,17 @@ namespace dnWalker.Concolic.Parameters
         {
             base.OnNameChanged(newName);
 
-            LengthParameter.Name = ParameterName.ConstructField(newName, LengthParameterName);
-
-            foreach (KeyValuePair<Int32, Parameter> pair in _items)
+            if (LengthParameter != null)
             {
-                pair.Value.Name = ParameterName.ConstructIndex(newName, pair.Key);
+                LengthParameter.Name = ParameterName.ConstructField(newName, LengthParameterName);
+            }
+
+            if (_items != null)
+            {
+                foreach (KeyValuePair<Int32, Parameter> pair in _items)
+                {
+                    pair.Value.Name = ParameterName.ConstructIndex(newName, pair.Key);
+                }
             }
         }
 

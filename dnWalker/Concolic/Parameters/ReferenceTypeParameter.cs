@@ -31,7 +31,10 @@ namespace dnWalker.Concolic.Parameters
 
         protected override void OnNameChanged(String newName)
         {
-            IsNullParameter.Name = ParameterName.ConstructField(newName, IsNullParameterName);
+            if (IsNullParameter != null)
+            {
+                IsNullParameter.Name = ParameterName.ConstructField(newName, IsNullParameterName);
+            }
         }
 
         public Boolean? IsNull

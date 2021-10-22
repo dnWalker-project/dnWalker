@@ -12,16 +12,23 @@ using System.Threading.Tasks;
 namespace dnWalker.Concolic.Parameters
 {
     public static partial class ParameterExtensions
-    {
-        public static ParameterStore SetTraits(this ParameterStore store, IDefinitionProvider definitionProvider, IDictionary<String, Object> data)
+    {        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="definitionProvider"></param>
+        /// <param name="data">Output from the solver</param>
+        /// <returns></returns>
+        public static ParameterStore SetTraits(this ParameterStore store, IDefinitionProvider definitionProvider, IDictionary<string, object> data)
         {
             KeyValuePair<String, Object>[] sortedData = new SortedDictionary<String, Object>(data).ToArray();
 
             // sortedData should be in order:
-            // PARAM_NAME_1:SUB_FIELD_1:SUB_FIELD_1.2
-            // PARAM_NAME_1:SUB_FIELD_2
-            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.1
-            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.2
+            // PARAM_NAME_1:SUB_FIELD_1:SUB_FIELD_1.2 = 5
+            // PARAM_NAME_1:SUB_FIELD_2 = true
+            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.1 = false
+            // PARAM_NAME_3:SUB_FIELD_3:SUB_FIELD_3.1SUB_FIELD_3.1.1:SUB_FIELD_3.1.2 = 5
             // PARAM_NAME_4
             // PARAM_NAME_5:SUB_FIELD_5
             // ...

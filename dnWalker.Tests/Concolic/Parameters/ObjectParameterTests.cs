@@ -67,5 +67,32 @@ namespace dnWalker.Tests.Concolic.Parameters
             objectParameter.TryGetField("field", out Parameter p).Should().BeTrue();
             p.Should().BeSameAs(fieldParameter);
         }
+
+
+        [Fact]
+        public void SettingField_Should_SetName_Of_FieldParameter()
+        {
+            var objectParameter = new ObjectParameter(GetType(typeof(MyClass)).FullName, "SomeObject");
+
+            Parameter fieldParameter = new DoubleParameter();
+
+            objectParameter.SetField("value", fieldParameter);
+
+            fieldParameter.Name.Should().Be(ParameterName.ConstructField("SomeObject", "value"));
+        }
+
+        [Fact]
+        public void ChangingName_Should_ChangeName_Of_FieldParmaters()
+        {
+            var objectParameter = new ObjectParameter(GetType(typeof(MyClass)).FullName, "SomeObject");
+
+            Parameter fieldParameter = new DoubleParameter();
+
+            objectParameter.SetField("value", fieldParameter);
+
+            objectParameter.Name = "AnotherObject";
+
+            fieldParameter.Name.Should().Be(ParameterName.ConstructField("AnotherObject", "value"));
+        }
     }
 }

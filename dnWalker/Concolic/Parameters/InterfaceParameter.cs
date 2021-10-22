@@ -67,11 +67,14 @@ namespace dnWalker.Concolic.Parameters
         {
             base.OnNameChanged(newName);
 
-            foreach (KeyValuePair<String, Dictionary<Int32, Parameter>> results in _methodResults)
+            if (_methodResults != null)
             {
-                foreach (KeyValuePair<Int32, Parameter> result in results.Value)
+                foreach (KeyValuePair<String, Dictionary<Int32, Parameter>> results in _methodResults)
                 {
-                    result.Value.Name = ParameterName.ConstructMethod(newName, results.Key, result.Key);
+                    foreach (KeyValuePair<Int32, Parameter> result in results.Value)
+                    {
+                        result.Value.Name = ParameterName.ConstructMethod(newName, results.Key, result.Key);
+                    }
                 }
             }
         }

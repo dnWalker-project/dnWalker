@@ -106,9 +106,12 @@ namespace dnWalker.Concolic.Parameters
         {
             base.OnNameChanged(newName);
 
-            foreach (KeyValuePair<String, Parameter> pair in _fields)
+            if (_fields != null)
             {
-                pair.Value.Name = ParameterName.ConstructField(newName, pair.Key);
+                foreach (KeyValuePair<String, Parameter> pair in _fields)
+                {
+                    pair.Value.Name = ParameterName.ConstructField(newName, pair.Key);
+                }
             }
         }
 

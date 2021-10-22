@@ -1,5 +1,4 @@
-﻿using dnWalker.Symbolic;
-using dnWalker.Tests.ExampleTests;
+﻿using dnWalker.Tests.ExampleTests;
 
 using FluentAssertions;
 
@@ -12,18 +11,18 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace dnWalker.Tests.Concolic.MethodInvoking
+namespace dnWalker.Tests.Concolic.Features.Objects
 {
-    public class InterfaceMethodInvokingTests : SymbolicExamplesTestBase
+    public class ObjectSubstituteTests : SymbolicExamplesTestBase2
     {
-        public InterfaceMethodInvokingTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        public ObjectSubstituteTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
         }
 
         [Fact]
-        public void Test_UsingIntefaceProxy_For_PureMethods()
+        public void Test_UsingObjectParamterSubstitute_For_FieldAccess()
         {
-            Explore("Examples.Concolic.MethodInvoking.InterfaceMethodInvoking.BranchingBasedOnPureValueProvider",
+            Explore("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.InvokeMethodWithFieldAccess",
                 (cfg) =>
                 {
                     cfg.MaxIterations = 10;
@@ -38,10 +37,8 @@ namespace dnWalker.Tests.Concolic.MethodInvoking
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(2);
-                },
-                //SymbolicArgs.Arg<Object>("x", null)
-                new InterfaceArg("valueProvider", "Examples.Concolic.MethodInvoking.IPureValueProvider"));
+                    paths.Count().Should().Be(3);
+                });
         }
     }
 }

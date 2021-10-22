@@ -25,10 +25,10 @@ namespace dnWalker.Concolic.Parameters
             TypeSig[] parameterTypes = method.Parameters.Select(p => p.Type).ToArray();
             String[] parameterNames = method.Parameters.Select(p => p.Name).ToArray();
 
-            return InitializeDefaultMethodParameters(store, parameterTypes, parameterNames);
+            return InitializeRootParameters(store, parameterTypes, parameterNames);
         }
 
-        public static ParameterStore InitializeDefaultMethodParameters(this ParameterStore store, TypeSig[] parameterTypes, String[] parameterNames)
+        public static ParameterStore InitializeRootParameters(this ParameterStore store, TypeSig[] parameterTypes, String[] parameterNames)
         {
             for (Int32 i = 0; i < parameterTypes.Length; ++i)
             {
