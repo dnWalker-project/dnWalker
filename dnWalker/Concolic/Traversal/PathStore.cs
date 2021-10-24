@@ -104,11 +104,11 @@ namespace dnWalker.Concolic.Traversal
                 {
                     flipped = true;
                 }
-                //else
-                //{
-                //    // flipping is not needed for this constraint - all the possibilities are done already => we can throw it away?
-                //    continue;
-                //}
+                else
+                {
+                    // flipping is not needed for this constraint - all the possibilities are done already => we can throw it away?
+                    continue;
+                }
 
                 pc.Insert(0, expression);
             }

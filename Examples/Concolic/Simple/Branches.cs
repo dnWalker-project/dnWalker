@@ -89,5 +89,80 @@ namespace Examples.Concolic.Simple
                 Console.Out.WriteLine("x>=y>=0");
             }
         }
+
+
+
+        public static void Branch_Equals(int x)
+        {
+            if (x == 5)
+            {
+                Console.Out.WriteLine("x == 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("x != 5");
+            }
+        }
+
+
+        public static void Branch_NotEquals(int x)
+        {
+            if (x != 5)
+            {
+                Console.Out.WriteLine("x != 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("x == 5");
+            }
+        }
+
+        public static void Branch_GreaterThan(int x)
+        {
+            if (x > 5)
+            {
+                Console.Out.WriteLine("x > 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("x <= 5");
+            }
+        }
+
+        public static void Branch_GreaterThanOrEquals(int x)
+        {
+            if (x >= 5)
+            {
+                Console.Out.WriteLine("x >= 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("x < 5");
+            }
+        }
+
+        public static void Branch_LowerThan(int x)
+        {
+            if (x < 5)
+            {
+                Console.Out.WriteLine("x < 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("x >= 5");
+            }
+        }
+
+        public static void Branch_LowerThanOrEquals(int x)
+        {
+            if (x <= 5)
+            {
+                Console.Out.WriteLine("x <= 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("x > 5");
+            }
+        }
     }
 }

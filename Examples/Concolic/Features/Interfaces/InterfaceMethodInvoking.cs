@@ -42,11 +42,6 @@ namespace Examples.Concolic.Features.Interfaces
             {
                 Console.Out.WriteLine("valueProvider.GetIntValue() > 5");
             }
-
-            if (valueProvider.GetIntValue() < 2)
-            {
-
-            }
         }
         public static void BranchingBasedOnUnpureValueProvider(INotPureValueProvider valueProvider, int p)
         {
@@ -78,16 +73,25 @@ namespace Examples.Concolic.Features.Interfaces
                 return;
             }
 
-            var value1 = valueProvider.GetDoubleValue();
-            var value2 = valueProvider.GetDoubleValue();
+            var value1 = valueProvider.GetIntValue();
+            var value2 = valueProvider.GetIntValue();
 
-            if (value1 >= value2)
+            if (value1 <= 3)
             {
-                Console.Out.WriteLine("value1 >= value2");
+                Console.Out.WriteLine("value1 <= 3");
             }
             else
             {
-                Console.Out.WriteLine("value1 < value2");
+                Console.Out.WriteLine("value1 > 3");
+            }
+
+            if (value2 >= 10)
+            {
+                Console.Out.WriteLine("value2 >= 10");
+            }
+            else
+            {
+                Console.Out.WriteLine("value2 < 10");
             }
         }
     }

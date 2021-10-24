@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using dnWalker.Traversal;
 using MMC;
@@ -76,6 +77,19 @@ namespace dnWalker.Tests.ExampleTests
 
             var explorer = new dnWalker.Concolic.Explorer2(_definitionProvider, _config, _logger, new Z3.Solver());
             explorer.Run(methodName);//, args);
+
+            finished(explorer);
+        }
+        protected void Explore(
+            string methodName,
+            Action<IConfig> before,
+            Action<dnWalker.Concolic.Explorer2> finished,
+            IDictionary<string, object> traits)
+        {
+            before?.Invoke(_config);
+
+            var explorer = new dnWalker.Concolic.Explorer2(_definitionProvider, _config, _logger, new Z3.Solver());
+            explorer.Run(methodName, traits);
 
             finished(explorer);
         }
