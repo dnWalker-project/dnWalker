@@ -120,5 +120,54 @@ namespace dnWalker.Tests.Symbolic
                     SymbolicArgs.Arg("z", 6));
             });
         }
+
+        [Fact]
+        public void Test_Branch_Equals()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+        }
+
+        [Fact]
+        public void Test_Branch_NotEquals()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+        }
+
+        [Fact]
+        public void Test_Branch_GreaterThan()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+        }
+
+        [Fact]
+        public void Test_Branch_GreaterThanOrEquals()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+        }
+
+        [Fact]
+        public void Test_Branch_LowerThan()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+        }
+
+        [Fact]
+        public void Test_Branch_LowerThanOrEquals()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] =  6 });
+        }
     }
 }
