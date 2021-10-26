@@ -260,7 +260,6 @@ namespace dnWalker.Symbolic.Instructions
                 // BRTRUE => we jump
                 if (symb)
                 {
-                    // try to invert the expression
                     cur.PathStore.AddPathConstraint(expression, operand, cur);
                 }
                 retVal = new JumpReturnValue(operand);
@@ -270,6 +269,8 @@ namespace dnWalker.Symbolic.Instructions
                 if (symb)
                 {
                     // try to invert the expression
+                    expression = Expression.Not(expression);
+                    a.SetExpression(expression, cur);
                     cur.PathStore.AddPathConstraint(expression, null, cur);
                 }
 
@@ -315,9 +316,9 @@ namespace dnWalker.Symbolic.Instructions
                 // BRFALSE => we jump
                 if (symb)
                 {
-                    // try to invert the expression - NOT WORKING => will fix half of comparisons but break the other half
-                    //expression = Expression.Not(expression);
-                    //a.SetExpression(expression, cur);
+                    // try to invert the expression
+                    expression = Expression.Not(expression);
+                    a.SetExpression(expression, cur);
                     cur.PathStore.AddPathConstraint(expression, operand, cur);
                 }
                 retVal = new JumpReturnValue(operand);
@@ -326,7 +327,6 @@ namespace dnWalker.Symbolic.Instructions
             {
                 if (symb)
                 {
-                    // try to invert the expression
                     cur.PathStore.AddPathConstraint(expression, null, cur);
                 }
 
@@ -2484,10 +2484,19 @@ namespace dnWalker.Symbolic.Instructions
             Expression expression = null;
 
             Expression left = exprA ?? a.AsExpression();
-            if (symbA && !symbB && left.Type == typeof(bool)) // we are comparing a symbolic boolean expression to a constant (maybe 0 for inverting it)
+            if (symbA && !symbB && left.Type == typeof(bool)) // we are comparing a symbolic boolean expression to false thus negating it
             {
-                //expression = ceqValue ? left : Expression.Not(left);//.Simplify();
-                expression = left; // no negation needed, already taken care of during the CLT, CGT, or previous CEQ
+                if (b.ToBool())
+                {
+                    // comparing to TRUE - should not happen...
+                    expression = left;
+                }
+                else
+                {
+                    // comparing to FALSE => negation
+                    expression = Expression.Not(left);
+                }
+                //expression = ceqValue ? Expression.Not(left) : left;//.Simplify();
             }
             else
             {
@@ -2497,7 +2506,8 @@ namespace dnWalker.Symbolic.Instructions
                 {
                     right = Expression.Convert(right, left.Type);
                 }
-                expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual, left, right);
+                expression = Expression.MakeBinary(ExpressionType.Equal, left, right);
+                //expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual, left, right);
             }
 
 
@@ -2558,9 +2568,10 @@ namespace dnWalker.Symbolic.Instructions
             Boolean isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                BinaryExpression expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
-                    exprA ?? a.AsExpression(),
-                    exprB ?? b.AsExpression());
+                BinaryExpression expression = Expression.MakeBinary(ExpressionType.GreaterThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                //BinaryExpression expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
+                //    exprA ?? a.AsExpression(),
+                //    exprB ?? b.AsExpression());
 
                 //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
                 newValue.SetExpression(expression, cur);
@@ -2594,9 +2605,10 @@ namespace dnWalker.Symbolic.Instructions
             Boolean isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                BinaryExpression expression = Expression.MakeBinary(cltValue ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual,
-                    exprA ?? a.AsExpression(),
-                    exprB ?? b.AsExpression());
+                BinaryExpression expression = Expression.MakeBinary(ExpressionType.LessThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                //BinaryExpression expression = Expression.MakeBinary(cltValue ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual,
+                //   exprA ?? a.AsExpression(),
+                //   exprB ?? b.AsExpression());
 
                 //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
                 newValue.SetExpression(expression, cur);
