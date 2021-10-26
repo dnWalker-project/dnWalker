@@ -121,53 +121,108 @@ namespace dnWalker.Tests.Symbolic
             });
         }
 
+        // comparing variable "x" against 5
+
         [Fact]
-        public void Test_Branch_Equals()
+        public void Test_Branch_Equals_TruePathFirst()
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 5 });
+        }
+        [Fact]
+        public void Test_Branch_Equals_FalsePathFirst()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 4 });
         }
 
         [Fact]
-        public void Test_Branch_NotEquals()
+        public void Test_Branch_NotEquals_TruePathFirst()
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 4 });
+        }
+        [Fact]
+        public void Test_Branch_NotEquals_FalsePathFirst()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 5 });
         }
 
         [Fact]
-        public void Test_Branch_GreaterThan()
+        public void Test_Branch_GreaterThan_TruePathFirst()
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 7 });
+        }
+        [Fact]
+        public void Test_Branch_GreaterThan_FalsePathFirst()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 4 });
         }
 
         [Fact]
-        public void Test_Branch_GreaterThanOrEquals() // this throws MaxIterationExceeded
+        public void Test_Branch_GreaterThanOrEquals_TruePathFirst() // this throws MaxIterationExceeded
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 7 });
+        }
+        [Fact]
+        public void Test_Branch_GreaterThanOrEquals_FalsePathFirst() // this throws MaxIterationExceeded
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 4 });
         }
 
         [Fact]
-        public void Test_Branch_LowerThan()
+        public void Test_Branch_LowerThan_TruePathFirst()
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2));
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 4 });
+        }
+        [Fact]
+        public void Test_Branch_LowerThan_FalsePathFirst()
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 7 });
         }
 
         [Fact]
-        public void Test_Branch_LowerThanOrEquals() // this throws MaxIterationExceeded
+        public void Test_Branch_LowerThanOrEquals_TruePathFirst() // this throws MaxIterationExceeded
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
                 cfg => cfg.MaxIterations = 5,
                 explorer => explorer.PathStore.Paths.Count().Should().Be(2),
-                new Dictionary<string, object> { ["x"] =  6 });
+                new Dictionary<string, object> { ["x"] =  4 });
+        }
+        [Fact]
+        public void Test_Branch_LowerThanOrEquals_FalsePathFirst() // this throws MaxIterationExceeded
+        {
+            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
+                cfg => cfg.MaxIterations = 5,
+                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                new Dictionary<string, object> { ["x"] = 7 });
         }
     }
 }
