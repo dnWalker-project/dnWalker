@@ -2484,17 +2484,10 @@ namespace dnWalker.Symbolic.Instructions
             Expression expression = null;
 
             Expression left = exprA ?? a.AsExpression();
-            if (symbA && !symbB && left.Type == typeof(bool))
+            if (symbA && !symbB && left.Type == typeof(bool)) // we are comparing a symbolic boolean expression to a constant (maybe 0 for inverting it)
             {
-                if (left.Type == typeof(bool) && !ceqValue)
-                {
-                    expression = Expression.Not(left);
-                }
-
-                if (left.Type == typeof(bool) && ceqValue)
-                {
-                    expression = left;
-                }
+                //expression = ceqValue ? left : Expression.Not(left);//.Simplify();
+                expression = left; // no negation needed, already taken care of during the CLT, CGT, or previous CEQ
             }
             else
             {
@@ -2504,10 +2497,34 @@ namespace dnWalker.Symbolic.Instructions
                 {
                     right = Expression.Convert(right, left.Type);
                 }
-                expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual,
-                    left,
-                    right);
+                expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual, left, right);
             }
+
+
+            //if (symbA && !symbB && left.Type == typeof(bool))
+            //{
+            //    if (left.Type == typeof(bool) && !ceqValue)
+            //    {
+            //        expression = Expression.Not(left);
+            //    }
+
+            //    if (left.Type == typeof(bool) && ceqValue)
+            //    {
+            //        expression = left;
+            //    }
+            //}
+            //else
+            //{
+            //    left = exprA ?? a.AsExpression();
+            //    Expression right = exprB ?? b.AsExpression();
+            //    if (right.Type != left.Type)
+            //    {
+            //        right = Expression.Convert(right, left.Type);
+            //    }
+            //    expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual,
+            //        left,
+            //        right);
+            //}
 
             Int4 newValue = new Int4(ceqValue ? 1 : 0);
             //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
