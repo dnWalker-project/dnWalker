@@ -252,15 +252,43 @@ namespace dnWalker.Symbolic.Instructions
             Boolean value = a.ToBool();
             Instruction operand = (Instruction)Operand;
             Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
-            if (symb)
+
+            IIEReturnValue retVal = null;
+
+            if (value)
             {
-                cur.PathStore.AddPathConstraint(
-                    expression,
-                    value ? operand : null, // fall-through
-                    cur);
+                // BRTRUE => we jump
+                if (symb)
+                {
+                    // try to invert the expression
+                    cur.PathStore.AddPathConstraint(expression, operand, cur);
+                }
+                retVal = new JumpReturnValue(operand);
+            }
+            else
+            {
+                if (symb)
+                {
+                    // try to invert the expression
+                    cur.PathStore.AddPathConstraint(expression, null, cur);
+                }
+
+                retVal = nextRetval;
             }
 
-            return value ? new JumpReturnValue(operand) : nextRetval;
+            return retVal;
+
+            //if (symb)
+            //{
+            //    // TODO: add some kind of inverting in case of JUMP / NOT JUMP
+
+            //    cur.PathStore.AddPathConstraint(
+            //        expression,
+            //        value ? operand : null, // fall-through
+            //        cur);
+            //}
+
+            //return value ? new JumpReturnValue(operand) : nextRetval;
         }
     }
 
@@ -278,15 +306,46 @@ namespace dnWalker.Symbolic.Instructions
             Boolean value = a.ToBool();
             Instruction operand = (Instruction)Operand;
             Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
-            if (symb)
+
+
+            IIEReturnValue retVal = null;
+
+            if (!value)
             {
-                cur.PathStore.AddPathConstraint(
-                    expression,
-                    !value ? operand : null, // fall-through
-                    cur);
+                // BRFALSE => we jump
+                if (symb)
+                {
+                    // try to invert the expression - NOT WORKING => will fix half of comparisons but break the other half
+                    //expression = Expression.Not(expression);
+                    //a.SetExpression(expression, cur);
+                    cur.PathStore.AddPathConstraint(expression, operand, cur);
+                }
+                retVal = new JumpReturnValue(operand);
+            }
+            else
+            {
+                if (symb)
+                {
+                    // try to invert the expression
+                    cur.PathStore.AddPathConstraint(expression, null, cur);
+                }
+
+                retVal = nextRetval;
             }
 
-            return !value ? new JumpReturnValue(operand) : nextRetval;
+            return retVal;
+
+
+            //if (symb)
+            //{
+            //    // TODO: add some kind of inverting in case of JUMP / NOT JUMP
+            //    cur.PathStore.AddPathConstraint(
+            //        expression,
+            //        !value ? operand : null, // fall-through
+            //        cur);
+            //}
+
+            //return !value ? new JumpReturnValue(operand) : nextRetval;
         }
     }
 

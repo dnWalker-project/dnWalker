@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.Concolic.Traversal;
 using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
 
@@ -128,7 +129,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x == 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x != 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 5 });
         }
         [Fact]
@@ -136,7 +150,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x != 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x == 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 4 });
         }
 
@@ -145,7 +172,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x != 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("Not((x != 5))"); // receiving Not((x == 5)
+                },
                 new Dictionary<string, object> { ["x"] = 4 });
         }
         [Fact]
@@ -153,7 +193,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("Not((x != 5))");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x != 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 5 });
         }
 
@@ -162,7 +215,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x > 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x <= 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 7 });
         }
         [Fact]
@@ -170,7 +236,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x <= 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x > 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 4 });
         }
 
@@ -179,7 +258,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x >= 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x < 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 7 });
         }
         [Fact]
@@ -187,7 +279,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x < 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("Not((x < 5))"); //(x => 5)
+                },
                 new Dictionary<string, object> { ["x"] = 4 });
         }
 
@@ -196,7 +301,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x < 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x >= 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 4 });
         }
         [Fact]
@@ -204,7 +322,21 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x >= 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x < 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 7 });
         }
 
@@ -213,7 +345,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x <= 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x > 5)");
+                },
                 new Dictionary<string, object> { ["x"] =  4 });
         }
         [Fact]
@@ -221,7 +366,20 @@ namespace dnWalker.Tests.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer => explorer.PathStore.Paths.Count().Should().Be(2),
+                explorer =>
+                {
+                    PathStore pathStore = explorer.PathStore;
+
+                    pathStore.Paths.Count().Should().Be(2);
+
+                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+                    pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+                    pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+
+                    //pathConstraints[0].Should().BeEquivalentTo("(x > 5)");
+                    //pathConstraints[1].Should().BeEquivalentTo("(x <= 5)");
+                },
                 new Dictionary<string, object> { ["x"] = 7 });
         }
     }
