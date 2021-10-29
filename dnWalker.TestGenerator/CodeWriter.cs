@@ -39,7 +39,6 @@ namespace dnWalker.TestGenerator
             }
         }
 
-
         private readonly TextWriter _output;
         private readonly bool _disposeOnClose;
 
@@ -102,16 +101,41 @@ namespace dnWalker.TestGenerator
             WriteStatement("using " + namespaceName);
         }
 
+        public void WriteVariableDeclaration(string variableType, string variableName)
+        {
+            WriteStatement($"{variableType} {variableName}");
+        }
         public void WriteVariableDeclaration(string variableType, string variableName, string initialValue)
         {
-            if (initialValue != null)
-            {
-                WriteStatement($"{variableType} {variableName} = {initialValue}");
-            }
-            else
-            {
-                WriteStatement($"{variableType} {variableName}");
-            }
+            WriteStatement($"{variableType} {variableName} = {initialValue}");
+        }
+
+        public void WriteMethodInvocation(string methodName, params string[] args)
+        {
+            string statement = $"{methodName}({string.Join(", ", args)})";
+            WriteStatement(statement);
+        }
+
+        public void WriteMethodInvocation(string resultVariableName, string methodName, params string[] args)
+        {
+            string statement =  $"{resultVariableName} = {methodName}({string.Join(", ", args)})";
+            WriteStatement(statement);
+        }
+
+        public void WriteMethodInvocation(string resultVariableType, string resultVariableName, string methodName, params string[] args)
+        {
+            string statement = $"{resultVariableType} {resultVariableName} = {methodName}({string.Join(", ", args)})";
+            WriteStatement(statement);
+        }
+
+        public void WriteEmptyLine()
+        {
+            _output.WriteLine();
+        }
+
+        public void WriteComment(string comment)
+        {
+            WriteLine("// " + comment);
         }
 
         public IDisposable BeginClass(MemberModifiers modifiers, string className, params string[] inheritingTypes)
@@ -141,6 +165,12 @@ namespace dnWalker.TestGenerator
         {
             IEnumerable<String> paramDeclarations = Enumerable.Range(0, argumentTypes.Length).Select(i => $"{argumentTypes[i]} {argumentNames[i]}");
             WriteLine($"public {returnType ?? "void"} {methodName}({String.Join(", ", paramDeclarations)})");
+            return BeginCodeBlock();
+        }
+
+        public IDisposable BeginNamespace(string namespaceName)
+        {
+            WriteLine("namespace " + namespaceName);
             return BeginCodeBlock();
         }
 

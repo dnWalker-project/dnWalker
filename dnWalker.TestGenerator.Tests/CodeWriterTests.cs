@@ -70,7 +70,7 @@ namespace dnWalker.TestGenerator.Tests
             StringWriter writer = new StringWriter();
 
             CodeWriter codeWriter = new CodeWriter(writer);
-            codeWriter.WriteVariableDeclaration(variableType, variableName, null);
+            codeWriter.WriteVariableDeclaration(variableType, variableName);
 
             writer.ToString().Should().Be(CodeTexts.Declare_X_WithoutInitialValue);
         }

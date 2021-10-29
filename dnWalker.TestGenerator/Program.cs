@@ -1,12 +1,11 @@
 ﻿using CommandLine;
 
-using dnWalker.Concolic;
+using dnWalker.TestGenerator.Parameters;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-
-using Explorer = dnWalker.Concolic.Explorer;
 
 namespace dnWalker.TestGenerator
 {
@@ -14,45 +13,20 @@ namespace dnWalker.TestGenerator
     {
         static void Main(string[] args)
         {
-            var result = Parser.Default.ParseArguments<Configuration>(args);
+            Console.WriteLine("dnWalker.TestGenerator");
 
-            result.WithParsed(configuration =>
+            TestData testData = new TestData();
+            testData.MethodName = "Examples.Concolic.Simple.Branches.SingleBranching";
+            testData.Result = new Int32Parameter("expectedResult", 0);
+            testData.MethodArguments.Add(new Int32Parameter("x", 5));
+
+            using (StreamWriter writer = new StreamWriter("test.cs"))
             {
-                RunGenerator(configuration);
-            });
-            result.WithNotParsed(errors =>
-            {
-                foreach(var e in errors)
-                {
-                    Console.WriteLine(e.ToString());
-                }
-            });
-        }
+                CodeWriter codeWriter = new CodeWriter(writer);
 
-        public static void RunGenerator(Configuration configuration)
-        {
-            // setup dnWalker.Concolic.Explorer
-            var explorer = Explorer.ForAssembly(configuration.AssemblyPath, new Z3.Solver());
-
-            var iterationData = new Dictionary<string, IReadOnlyList<ExplorationIterationData>>();
-            var context = configuration.TestSuit.GetContext();
-
-            var assemblyName = System.IO.Path.GetFileNameWithoutExtension(configuration.AssemblyPath);
-
-            context.CreateProject(configuration.OutputFolder, assemblyName + ".Tests");
-
-            // run it for each requested method
-            foreach (var method in configuration.Methods)
-            {
-                explorer.Run(method);
-
-                iterationData[method] = explorer.IterationData;
-
-                context.WriteAsFacts(method, explorer.IterationData);
+                ITestSuitContext testSuitContext = new xUnit.XUnitTestSuitContext();
+                testSuitContext.WriteTest(codeWriter, testData);
             }
-
-
-            
         }
 
     }

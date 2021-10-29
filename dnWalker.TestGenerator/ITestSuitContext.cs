@@ -11,9 +11,13 @@ namespace dnWalker.TestGenerator
     /// </summary>
     public interface ITestSuitContext
     {
-        void CreateProject(string directory, string name);
+        /// <summary>
+        /// Creates and sets up a new .csproj file.
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="directory"></param>
+        void CreateProject(string projectName, string? directory = null);
 
-        void WriteAsTheory(string methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases);
-        void WriteAsFacts(string methodName, IReadOnlyList<dnWalker.Concolic.ExplorationIterationData> cases);
+        void WriteTest(CodeWriter codeWriter, TestData testData);
     }
 }

@@ -11,9 +11,4 @@
     <PackageReference Include="System.CodeDom" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj" />
-    <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
-  </ItemGroup>
-
 </Project>
