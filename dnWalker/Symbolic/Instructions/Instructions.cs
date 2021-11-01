@@ -127,13 +127,29 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) == 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) == 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.Equal : ExpressionType.NotEqual, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) == 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
-    // Branch on equal.
+    // Branch on greater or equal.
     public class BGE : BranchInstructionExec
     {
         public BGE(Instruction instr, object operand, InstructionExecAttributes atr)
@@ -145,9 +161,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) >= 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) >= 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.GreaterThanOrEqual : ExpressionType.LessThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) >= 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -163,9 +195,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) > 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) > 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) > 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -181,6 +229,21 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
+            bool value = CompareOperands(a, b) <= 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.LessThanOrEqual : ExpressionType.GreaterThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
 
             return CompareOperands(a, b) <= 0 ?
                 new JumpReturnValue((Instruction)Operand) :
@@ -200,9 +263,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) < 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) < 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) < 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -218,9 +297,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) != 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) != 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.NotEqual : ExpressionType.Equal, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) != 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
