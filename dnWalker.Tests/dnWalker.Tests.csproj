@@ -62,11 +62,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dnlib, Version=3.3.4.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
-      <HintPath>..\packages\dnlib.3.3.4\lib\net45\dnlib.dll</HintPath>
+    <Reference Include="dnlib, Version=3.3.5.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
+      <HintPath>..\packages\dnlib.3.3.5\lib\net45\dnlib.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions, Version=6.1.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.6.1.0\lib\netstandard2.0\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=6.2.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.6.2.0\lib\netstandard2.0\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -100,6 +100,7 @@
     <Compile Include="AbstractTestBase.cs" />
     <Compile Include="Arg.cs" />
     <Compile Include="Concolic\ArgumentsCacheTests.cs" />
+    <Compile Include="Concolic\DataExport\XmlExplorationExporterTest.cs" />
     <Compile Include="Concolic\Features\Arrays\InputTests.cs" />
     <Compile Include="Concolic\Features\Interfaces\InterfaceMethodInvokingTests.cs" />
     <Compile Include="Concolic\Features\Math\InputTests.cs" />
