@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.Parameters;
+﻿using dnWalker.Parameters;
+using dnWalker.TestGenerator.Parameters;
 
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace dnWalker.TestGenerator.xUnit
                         if (testData.Result != null)
                         {
                             codeWriter.WriteComment("Initialize expected method result");
-                            testData.Result.Initialize(codeWriter);
+                            testData.Result.WriteInitialization(codeWriter);
                         }
 
                         codeWriter.WriteEmptyLine();

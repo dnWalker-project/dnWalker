@@ -19,7 +19,7 @@ namespace dnWalker.Parameters
         }
     }
 
-    public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
+    public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter, IEquatable<PrimitiveValueParameter<TValue>> where TValue : struct
     {
         protected PrimitiveValueParameter(string typeName) : base(typeName)
         {
@@ -81,6 +81,34 @@ namespace dnWalker.Parameters
         {
             base.OnNameChanged(newName);
             _expression = null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as PrimitiveValueParameter<TValue>);
+        }
+
+        public bool Equals(PrimitiveValueParameter<TValue> other)
+        {
+            return other != null &&
+                   Name == other.Name &&
+                   TypeName == other.TypeName &&
+                   EqualityComparer<TValue?>.Default.Equals(Value, other.Value);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, TypeName, Value);
+        }
+
+        public static bool operator ==(PrimitiveValueParameter<TValue> left, PrimitiveValueParameter<TValue> right)
+        {
+            return EqualityComparer<PrimitiveValueParameter<TValue>>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(PrimitiveValueParameter<TValue> left, PrimitiveValueParameter<TValue> right)
+        {
+            return !(left == right);
         }
     }
 

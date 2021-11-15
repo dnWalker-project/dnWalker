@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-
-    public class ArrayParameter : ReferenceTypeParameter
+    public class ArrayParameter : ReferenceTypeParameter, IEquatable<ArrayParameter>
     {
         public const String LengthParameterName = "#__LENGTH__";
 
@@ -72,38 +71,6 @@ namespace dnWalker.Parameters
         {
             get { return LengthParameter.Value; }
             set { LengthParameter.Value = value; }
-            //get
-            //{
-            //    if (TryGetTrait<LengthTrait>(out LengthTrait lengthField))
-            //    {
-            //        return lengthField.LengthParameter.Value;
-            //    }
-            //    return null;
-            //}
-            //set
-            //{
-            //    // if value is null => we are clearing it
-            //    if (!value.HasValue)
-            //    {
-            //        if (TryGetTrait(out LengthTrait trait))
-            //        {
-            //            Traits.Remove(trait);
-            //        }
-            //    }
-            //    // update current trait or add a new one
-            //    else
-            //    {
-            //        if (TryGetTrait(out LengthTrait trait))
-            //        {
-            //            trait.LengthParameter.Value = value;
-            //        }
-            //        else
-            //        {
-            //            trait = new LengthTrait(value.Value);
-            //            AddTrait(trait);
-            //        }
-            //    }
-            //}
         }
 
         public String ElementTypeName { get; }
@@ -148,6 +115,39 @@ namespace dnWalker.Parameters
                 childParameter = null;
                 return false;
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ArrayParameter);
+        }
+
+        public bool Equals(ArrayParameter other)
+        {
+            bool isNull = IsNull.HasValue ? IsNull.Value : true;
+            
+            return other != null &&
+                   Name == other.Name &&
+                   IsNull == other.IsNull &&
+                   Length == other.Length &&
+                   ElementTypeName == other.ElementTypeName &&
+                   (isNull || _items.Count == other._items.Count) &&
+                   (isNull || _items.All(p => other._items.TryGetValue(p.Key, out Parameter otherItem) && Equals(p.Value, otherItem)));
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, IsNull, _items, Length, ElementTypeName);
+        }
+
+        public static bool operator ==(ArrayParameter left, ArrayParameter right)
+        {
+            return EqualityComparer<ArrayParameter>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(ArrayParameter left, ArrayParameter right)
+        {
+            return !(left == right);
         }
     }
 }

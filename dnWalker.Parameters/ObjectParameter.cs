@@ -8,7 +8,7 @@ using Expressions = System.Linq.Expressions;
 
 namespace dnWalker.Parameters
 {
-    public class ObjectParameter : ReferenceTypeParameter
+    public class ObjectParameter : ReferenceTypeParameter, IEquatable<ObjectParameter>
     {
         public ObjectParameter(String typeName) : base(typeName)
         {
@@ -87,5 +87,39 @@ namespace dnWalker.Parameters
                 return false;
             }
         }
+
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ObjectParameter);
+        }
+
+        public bool Equals(ObjectParameter other)
+        {
+            bool isNull = IsNull.HasValue ? IsNull.Value : true;
+
+            return other != null &&
+                   Name == other.Name &&
+                   IsNull == other.IsNull &&
+                   TypeName == other.TypeName &&
+                   (isNull || _fields.Count == other._fields.Count) &&
+                   (isNull || _fields.All(p => other._fields.TryGetValue(p.Key, out Parameter otherField) && Equals(p.Value, otherField)));
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, TypeName, IsNull, _fields);
+        }
+
+        public static bool operator ==(ObjectParameter left, ObjectParameter right)
+        {
+            return EqualityComparer<ObjectParameter>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(ObjectParameter left, ObjectParameter right)
+        {
+            return !(left == right);
+        }
+
     }
 }

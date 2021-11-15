@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class InterfaceParameter : ReferenceTypeParameter
+    public class InterfaceParameter : ReferenceTypeParameter, IEquatable<InterfaceParameter>
     {
         public InterfaceParameter(String typeName) : base(typeName)
         {
@@ -99,6 +99,39 @@ namespace dnWalker.Parameters
                 childParameter = null;
                 return false;
             }
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as InterfaceParameter);
+        }
+
+        public bool Equals(InterfaceParameter other)
+        {
+            bool isNull = IsNull.HasValue ? IsNull.Value : true;
+
+            return other != null &&
+                   Name == other.Name &&
+                   IsNull == other.IsNull &&
+                   TypeName == other.TypeName &&
+                   (isNull || _methodResults.Count == other._methodResults.Count) &&
+                   (isNull || _methodResults.All(p => other._methodResults.TryGetValue(p.Key, out Dictionary<int, Parameter> otherResults) && p.Value.Count == otherResults.Count && p.Value.All(r => otherResults.TryGetValue(r.Key, out Parameter otherResult) && Equals(otherResult, r.Value))));
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, TypeName, IsNull, _methodResults);
+        }
+
+        public static bool operator ==(InterfaceParameter left, InterfaceParameter right)
+        {
+            return EqualityComparer<InterfaceParameter>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(InterfaceParameter left, InterfaceParameter right)
+        {
+            return !(left == right);
         }
     }
 }

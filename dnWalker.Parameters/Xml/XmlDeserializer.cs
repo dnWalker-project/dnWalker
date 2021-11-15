@@ -37,7 +37,7 @@ namespace dnWalker.Parameters.Xml
 
             switch(parameteryKind)
             {
-                case "PrimitiveValueParameter": 
+                case "PrimitiveValue": 
                     switch(xml.Attribute("Type").Value)
                     {
                         case TypeNames.BooleanTypeName: return ToBooleanParameter(xml);
@@ -56,13 +56,13 @@ namespace dnWalker.Parameters.Xml
                             throw new NotSupportedException("Unexpected primitive value parameter type: " + xml.Attribute("Type").Value);
                     }
 
-                case "ObjectParameter":
+                case "Object":
                     return ToObjectParameter(xml);
 
-                case "InterfaceParameter":
+                case "Interface":
                     return ToInterfaceParameter(xml);
 
-                case "ArrayParameter":
+                case "Array":
                     return ToArrayParameter(xml);
 
                 default:
@@ -74,7 +74,7 @@ namespace dnWalker.Parameters.Xml
         {
             string typeName = xml.Attribute("Type")?.Value ?? throw new Exception("Object parameter XML must contain 'Type' attribute.");
             string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool isNull = bool.Parse(xml.Attribute("IsNunll")?.Value ?? throw new Exception("Object parameter XML must contain 'IsNull' attribute."));
+            bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Object parameter XML must contain 'IsNull' attribute."));
 
             ObjectParameter o = new ObjectParameter(typeName, name)
             {
@@ -96,7 +96,7 @@ namespace dnWalker.Parameters.Xml
         {
             string typeName = xml.Attribute("Type")?.Value ?? throw new Exception("Interface parameter XML must contain 'Type' attribute.");
             string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool isNull = bool.Parse(xml.Attribute("IsNunll")?.Value ?? throw new Exception("Interface parameter XML must contain 'IsNull' attribute."));
+            bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Interface parameter XML must contain 'IsNull' attribute."));
 
             InterfaceParameter i = new InterfaceParameter(typeName, name)
             {
@@ -122,7 +122,7 @@ namespace dnWalker.Parameters.Xml
         {
             string elementTypeName = xml.Attribute("ElementType")?.Value ?? throw new Exception("Array parameter XML must contain 'ElementType' attribute.");
             string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool isNull = bool.Parse(xml.Attribute("IsNunll")?.Value ?? throw new Exception("Array parameter XML must contain 'IsNull' attribute."));
+            bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Array parameter XML must contain 'IsNull' attribute."));
             int length = int.Parse(xml.Attribute("Length")?.Value ?? throw new Exception("Array parameter XML must contain 'Length' attribute."));
 
             ArrayParameter a = new ArrayParameter(elementTypeName, name)
@@ -152,7 +152,9 @@ namespace dnWalker.Parameters.Xml
         public static CharParameter ToCharParameter(this XElement xml)
         {
             string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            char value = char.Parse(xml.Value);
+
+            char value = Convert.ToChar(Convert.ToInt32(xml.Value.Substring(2), 16));
+
             return new CharParameter(name, value);
         }
 
@@ -215,14 +217,40 @@ namespace dnWalker.Parameters.Xml
         public static SingleParameter ToSingleParameter(this XElement xml)
         {
             string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            float value = float.Parse(xml.Value);
+
+            string strValue = xml.Value;
+
+            float value;
+            switch (strValue)
+            {
+                case "NAN": value = float.NaN; break;
+                case "INF": value = float.PositiveInfinity; break;
+                case "-INF": value = float.NegativeInfinity; break;
+
+
+                default: value = float.Parse(strValue); break;
+            }
+
             return new SingleParameter(name, value);
         }
 
         public static DoubleParameter ToDoubleParameter(this XElement xml)
         {
             string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            double value = double.Parse(xml.Value);
+
+            string strValue = xml.Value;
+
+            double value;
+            switch (strValue)
+            {
+                case "NAN": value = double.NaN; break;
+                case "INF": value = double.PositiveInfinity; break;
+                case "-INF": value = double.NegativeInfinity; break;
+
+
+                default: value = double.Parse(strValue); break;
+            }
+
             return new DoubleParameter(name, value);
         }
     }
