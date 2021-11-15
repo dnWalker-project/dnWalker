@@ -141,27 +141,27 @@
     <Compile Include="Concolic\Coverage.cs" />
     <Compile Include="Concolic\ExplorationEvents.cs" />
     <Compile Include="Concolic\Explorer2.cs" />
+    <Compile Include="Concolic\Parameters\ArrayParameter.cs" />
     <Compile Include="Concolic\Parameters\DataElementParameterExtensions.cs" />
     <Compile Include="Concolic\ExplorationIterationData.cs" />
     <Compile Include="Concolic\Explorer.cs" />
     <Compile Include="Concolic\ExplorationException.cs" />
     <Compile Include="Concolic\ExpressionExtensions.cs" />
     <Compile Include="Concolic\Parameters\InterfaceParameter.cs" />
-    <Compile Include="Concolic\Parameters\ReferenceTypeParameter.cs" />
-    <Compile Include="Concolic\Parameters\PrimitiveValueParameters.cs" />
     <Compile Include="Concolic\Parameters\ObjectParameter.cs" />
-    <Compile Include="Concolic\Parameters\ArrayParameter.cs" />
     <Compile Include="Concolic\Parameters\Parameter.cs" />
     <Compile Include="Concolic\Parameters\ParameterFactory.cs" />
-    <Compile Include="Concolic\Parameters\ParameterName.cs" />
     <Compile Include="Concolic\Parameters\ParameterExtensions.SetTraits.cs" />
-    <Compile Include="Concolic\Parameters\ParameterStore.cs" />
     <Compile Include="Concolic\Parameters\ParameterExtensions.cs" />
+    <Compile Include="Concolic\Parameters\ParameterName.cs" />
+    <Compile Include="Concolic\Parameters\ParameterStore.cs" />
     <Compile Include="Concolic\Parameters\ParameterTrait.cs" />
+    <Compile Include="Concolic\Parameters\PrimitiveValueParameters.cs" />
+    <Compile Include="Concolic\Parameters\ReferenceTypeParameter.cs" />
+    <Compile Include="Concolic\Parameters\TypeNames.cs" />
     <Compile Include="Concolic\Strategies\ConstraintSolving\FlipItStrategy.cs" />
     <Compile Include="Concolic\Traversal\MethodExplorer.cs" />
     <Compile Include="Concolic\Traversal\PathStore.cs" />
-    <Compile Include="Concolic\Parameters\TypeNames.cs" />
     <Compile Include="Concolic\XmlExplorationExporter.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataElement.cs" />
@@ -252,6 +252,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Concolic\Parameters\ParameterExtensions.Expressions.cs" />
     <None Include="Makefile" />
     <None Include="packages.config" />
     <None Include="README.md" />

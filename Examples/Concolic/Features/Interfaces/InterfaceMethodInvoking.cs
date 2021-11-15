@@ -42,11 +42,6 @@ namespace Examples.Concolic.Features.Interfaces
             {
                 Console.Out.WriteLine("valueProvider.GetIntValue() > 5");
             }
-
-            if (valueProvider.GetIntValue() < 2)
-            {
-
-            }
         }
         public static void BranchingBasedOnUnpureValueProvider(INotPureValueProvider valueProvider, int p)
         {

@@ -77,6 +77,7 @@ namespace MMC
     {
         public bool ExportIterationInfo { get; set; }
         public string ExplorationInfoOutputFile { get; set; }
+        public string FlowGraphFile { get; set; }
 
 
         public int MaxIterations { get; set; }

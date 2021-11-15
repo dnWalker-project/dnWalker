@@ -41,7 +41,7 @@ namespace dnWalker.TestGenerator.xUnit
                         codeWriter.WriteComment("Initialize method arguments");
                         foreach (Parameter p in testData.MethodArguments)
                         {
-                            p.Initialize(codeWriter);
+                            p.WriteInitialization(codeWriter);
                         }
 
                         codeWriter.WriteEmptyLine();

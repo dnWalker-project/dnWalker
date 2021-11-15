@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.Parameters;
+﻿using dnWalker.Parameters;
+using dnWalker.TestGenerator.Parameters;
 
 using System;
 using System.Collections.Generic;

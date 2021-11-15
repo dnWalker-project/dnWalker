@@ -76,6 +76,7 @@ namespace dnWalker.Tests.ExampleTests
             Action<dnWalker.Concolic.Explorer2> finished,
             params IArg[] args)
         {
+            _config.FlowGraphFile = this.GetType().Namespace + "." + this.GetType().Name + "FlowGraph" + ".dot";
             before?.Invoke(_config);
 
             var explorer = new dnWalker.Concolic.Explorer2(_definitionProvider, _config, _logger, new Z3.Solver());

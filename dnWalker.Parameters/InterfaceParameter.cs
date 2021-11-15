@@ -1,16 +1,11 @@
-﻿//using dnlib.DotNet;
-
-//using MMC.Data;
-//using MMC.State;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.Concolic.Parameters
+namespace dnWalker.Parameters
 {
     public class InterfaceParameter : ReferenceTypeParameter
     {
@@ -83,37 +78,6 @@ namespace dnWalker.Concolic.Parameters
                 }
             }
         }
-
-        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        //{
-        //    DynamicArea dynamicArea = cur.DynamicArea;
-
-        //    if (!IsNull.HasValue || IsNull.Value)
-        //    {
-        //        // dont care or explicit null => return NullReference
-        //        ObjectReference nullReference = new ObjectReference(0);
-        //        nullReference.SetParameter(this, cur);
-        //        return nullReference;
-        //    }
-
-        //    TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
-
-        //    Int32 location = dynamicArea.DeterminePlacement(false);
-        //    ObjectReference interfaceReference = dynamicArea.AllocateObject(location, typeDef);
-        //    AllocatedObject allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
-        //    allocatedInterface.ClearFields(cur);
-
-        //    // TODO: somehow create structure for resolving the method and using the callindex
-
-        //    //MethodResolver resolver = new MethodResolver();
-        //    //foreach(MethodResultTrait methodResult in Traits.OfType<MethodResultTrait>())
-        //    //{
-        //    //    resolver[methodResult.MethodName] = new MethodResultProvider(s => methodResult.Value.AsDataElement(s));
-        //    //}
-
-        //    interfaceReference.SetParameter(this, cur);
-        //    return interfaceReference;
-        //}
 
         public override IEnumerable<ParameterExpression> GetParameterExpressions()
         {

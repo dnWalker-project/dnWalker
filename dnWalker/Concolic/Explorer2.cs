@@ -126,7 +126,7 @@ namespace dnWalker.Concolic
             // get the tested method
             var  entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
-            WriteFlowGraph(entryPoint);
+            WriteFlowGraph(entryPoint, _config.FlowGraphFile);
 
             // setup iteration global objects
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
@@ -140,7 +140,7 @@ namespace dnWalker.Concolic
                 data = new Dictionary<string, object>();
             }
 
-            OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint.Module.Assembly.FullName, entryPoint.Name, _solver?.GetType().FullName));
+            OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint.Module.Assembly.FullName, entryPoint.FullName, entryPoint.IsStatic, _solver?.GetType().FullName));
 
             // run iteration
             while (true)

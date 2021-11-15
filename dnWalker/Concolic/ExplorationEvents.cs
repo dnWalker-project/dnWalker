@@ -12,10 +12,11 @@ namespace dnWalker.Concolic
 {
     public class ExplorationStartedEventArgs : EventArgs
     {
-        public ExplorationStartedEventArgs(string assemblyFileName, string assemblyName, string methodName, string solver)
+        public ExplorationStartedEventArgs(string assemblyFileName, string assemblyName, string methodName, bool isStatic, string solver)
         {
             AssemblyName = assemblyName;
             MethodName = methodName;
+            IsStatic = isStatic;
             Solver = solver;
             AssemblyFileName = assemblyFileName;
         }
@@ -23,6 +24,7 @@ namespace dnWalker.Concolic
         public string AssemblyFileName { get; }
         public string AssemblyName { get; }
         public string MethodName { get; }
+        public bool IsStatic { get; }
         public string Solver { get; }
     }
     public class ExplorationFinishedEventArgs : EventArgs

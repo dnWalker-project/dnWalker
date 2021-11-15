@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -22,12 +23,14 @@ namespace dnWalker.Tests.Concolic.DataExport
         [Fact]
         public void NoBranching_ShouldEnd_Within_1_Iteration()
         {
+            const string outputFile = "test.xml";
+
             Explore("Examples.Concolic.Simple.Branches.NoBranching",
                 (cfg) =>
                 {
                     cfg.MaxIterations = 1;
                     cfg.AssemblyToCheckFileName = AssemblyFile;
-                    cfg.ExplorationInfoOutputFile = "test.xml";
+                    cfg.ExplorationInfoOutputFile = outputFile;
                     cfg.ExportIterationInfo = true;
                 },
                 (explorer) =>
@@ -41,6 +44,8 @@ namespace dnWalker.Tests.Concolic.DataExport
                     }
 
                     paths.Count().Should().Be(1);
+
+                    XElement exportXml = XElement.Load(outputFile);
                 });
         }
     }

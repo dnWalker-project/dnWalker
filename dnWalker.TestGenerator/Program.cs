@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 
+using dnWalker.Parameters;
 using dnWalker.TestGenerator.Parameters;
 
 using System;
@@ -14,6 +15,10 @@ namespace dnWalker.TestGenerator
         static void Main(string[] args)
         {
             Console.WriteLine("dnWalker.TestGenerator");
+
+            // parse args and setup configuration
+
+            // run the test generator 
 
             TestData testData = new TestData();
             testData.MethodName = "Examples.Concolic.Simple.Branches.SingleBranching";

@@ -1,18 +1,11 @@
-﻿
-using MMC;
-using MMC.Data;
-using MMC.State;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-using Expressions = System.Linq.Expressions;
-
-namespace dnWalker.Concolic.Parameters
+namespace dnWalker.Parameters
 {
     public abstract class Parameter
     {
@@ -40,6 +33,7 @@ namespace dnWalker.Concolic.Parameters
 
         public string TypeName { get; }
 
+        //public IList<ParameterTrait> Traits { get; }
 
         protected virtual void OnNameChanged(string newName)
         {
@@ -58,10 +52,9 @@ namespace dnWalker.Concolic.Parameters
 
             TypeName = typeName;
             Name = name;
+            //Traits = new List<ParameterTrait>();
         }
 
-
-        // TODO: make these methods as extension methods - so switch to shared parameter lib is easier
         public abstract IEnumerable<ParameterExpression> GetParameterExpressions();
         public abstract bool HasSingleExpression { get; }
         public abstract ParameterExpression GetSingleParameterExpression();
