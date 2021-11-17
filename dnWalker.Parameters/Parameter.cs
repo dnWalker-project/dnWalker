@@ -65,5 +65,7 @@ namespace dnWalker.Parameters
         }
 
         public abstract bool TryGetChildParameter(string name, out Parameter childParameter);
+
+        public abstract IEnumerable<Parameter> GetChildrenParameters();
     }
 }

@@ -117,6 +117,12 @@ namespace dnWalker.Parameters
             }
         }
 
+        public override IEnumerable<Parameter> GetChildrenParameters()
+        {
+            return _items.Values.Append(IsNullParameter).Append(LengthParameter);
+        }
+
+
         public override bool Equals(object obj)
         {
             return Equals(obj as ArrayParameter);

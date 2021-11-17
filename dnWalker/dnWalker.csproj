@@ -155,7 +155,6 @@
     <Compile Include="Concolic\Parameters\ParameterExtensions.cs" />
     <Compile Include="Concolic\Parameters\ParameterName.cs" />
     <Compile Include="Concolic\Parameters\ParameterStore.cs" />
-    <Compile Include="Concolic\Parameters\ParameterTrait.cs" />
     <Compile Include="Concolic\Parameters\PrimitiveValueParameters.cs" />
     <Compile Include="Concolic\Parameters\ReferenceTypeParameter.cs" />
     <Compile Include="Concolic\Parameters\TypeNames.cs" />

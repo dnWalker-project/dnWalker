@@ -101,6 +101,11 @@ namespace dnWalker.Parameters
             }
         }
 
+        public override IEnumerable<Parameter> GetChildrenParameters()
+        {
+            return _methodResults.SelectMany(r => r.Value.Values).Append(IsNullParameter);
+        }
+
 
         public override bool Equals(object obj)
         {

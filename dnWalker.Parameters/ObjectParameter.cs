@@ -88,6 +88,10 @@ namespace dnWalker.Parameters
             }
         }
 
+        public override IEnumerable<Parameter> GetChildrenParameters()
+        {
+            return _fields.Values.Append(IsNullParameter);
+        }
 
         public override bool Equals(object obj)
         {

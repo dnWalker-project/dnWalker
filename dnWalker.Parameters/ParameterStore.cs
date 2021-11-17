@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -57,6 +58,11 @@ namespace dnWalker.Parameters
             get { return _parameters.Values; }
         }
 
+        public IEnumerable<Parameter> GetAllParameters()
+        {
+            return _parameters.Values.Flatten(p => p.GetChildrenParameters());
+        }
+
         public void Clear()
         {
             _parameters.Clear();
@@ -67,5 +73,13 @@ namespace dnWalker.Parameters
             return String.Join(Environment.NewLine, _parameters.Values);
         }
 
+    }
+
+    public static class LinqExt
+    {
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> sources, Func<T, IEnumerable<T>> selector)
+        {
+            return sources.Concat(sources.SelectMany(s => selector(s).Flatten(selector)));
+        }
     }
 }

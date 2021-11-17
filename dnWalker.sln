@@ -24,13 +24,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{093FB469-E98C-45FA-913E-4E2A68E14556}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		build-examples.bat = build-examples.bat
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestGenerator.Tests", "dnWalker.TestGenerator.Tests\dnWalker.TestGenerator.Tests.csproj", "{30F13F7D-4856-40F2-9475-4E86AD2C16A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.Parameters", "dnWalker.Parameters\dnWalker.Parameters.csproj", "{7B0245BF-5ED0-45BF-8B13-6D12E8C4969E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.Parameters", "dnWalker.Parameters\dnWalker.Parameters.csproj", "{7B0245BF-5ED0-45BF-8B13-6D12E8C4969E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.Parameters.Tests", "dnWalker.Parameters.Tests\dnWalker.Parameters.Tests.csproj", "{8E9BF933-9738-4D3B-84F8-4F4D0ABFA3CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.Parameters.Tests", "dnWalker.Parameters.Tests\dnWalker.Parameters.Tests.csproj", "{8E9BF933-9738-4D3B-84F8-4F4D0ABFA3CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestGenerator.SUT", "dnWalker.TestGenerator.SUT\dnWalker.TestGenerator.SUT.csproj", "{43329849-E466-41D8-A42B-0BC5D12CC6D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +153,18 @@ Global
 		{8E9BF933-9738-4D3B-84F8-4F4D0ABFA3CD}.Release|x64.Build.0 = Release|Any CPU
 		{8E9BF933-9738-4D3B-84F8-4F4D0ABFA3CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{8E9BF933-9738-4D3B-84F8-4F4D0ABFA3CD}.Release|x86.Build.0 = Release|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Debug|x64.Build.0 = Debug|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Debug|x86.Build.0 = Debug|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Release|x64.Build.0 = Release|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{43329849-E466-41D8-A42B-0BC5D12CC6D2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

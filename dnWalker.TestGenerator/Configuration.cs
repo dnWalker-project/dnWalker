@@ -19,7 +19,7 @@ namespace dnWalker.TestGenerator
         [Option(shortName: 'o', longName: "output", Required = false, Default = "/GeneratedTests")]
         public string OutputFolder { get; set; }
 
-        [Option(shortName: 's', longName: "suit", Required = false, Default = TestSuit.xUnit)]
-        public TestSuit TestSuit { get; set; }
+        //[Option(shortName: 's', longName: "suit", Required = false, Default = TestSuit.xUnit)]
+        //public TestSuit TestSuit { get; set; }
     }
 }

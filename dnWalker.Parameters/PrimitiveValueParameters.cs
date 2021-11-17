@@ -59,6 +59,11 @@ namespace dnWalker.Parameters
             return false;
         }
 
+        public override IEnumerable<Parameter> GetChildrenParameters()
+        {
+            return Enumerable.Empty<Parameter>();
+        }
+
         private ParameterExpression _expression;
 
         public override IEnumerable<ParameterExpression> GetParameterExpressions()

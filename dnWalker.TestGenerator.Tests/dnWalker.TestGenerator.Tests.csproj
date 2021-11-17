@@ -30,12 +30,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CodeTexts.resx</DependentUpon>
     </Compile>
+    <Compile Update="Explorations\ExplorationXML.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExplorationXML.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="CodeTexts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CodeTexts.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Explorations\ExplorationXML.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExplorationXML.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
