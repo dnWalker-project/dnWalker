@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.SUT.Instance
+namespace Examples.TestGeneration.Instance
 {
     public class PrimitiveArgs
     {

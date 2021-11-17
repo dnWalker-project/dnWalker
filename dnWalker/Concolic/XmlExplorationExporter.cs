@@ -226,7 +226,7 @@ namespace dnWalker.Concolic
             _currentExplorationElement = new XElement("Exploration");
             _currentExplorationElement.SetAttributeValue("AssemblyName", e.AssemblyName);
             _currentExplorationElement.SetAttributeValue("AssemblyFileName", e.AssemblyFileName);
-            _currentExplorationElement.SetAttributeValue("MethodName", e.MethodName);
+            _currentExplorationElement.SetAttributeValue("MethodNameSignature", e.MethodName);
             _currentExplorationElement.SetAttributeValue("IsStatic", e.IsStatic);
             _currentExplorationElement.SetAttributeValue("Solver", e.Solver);
 
@@ -250,7 +250,7 @@ namespace dnWalker.Concolic
             _currentIterationElement = new XElement("Iteration");
             _currentIterationElement.SetAttributeValue("Number", e.IterationNmber);
 
-            _currentIterationElement.Add(new XElement("InputParameters", e.InputParameters.ToXml()));
+            _currentIterationElement.Add(e.InputParameters.ToXml());
 
 
             _currentExplorationElement.Add(_currentIterationElement);

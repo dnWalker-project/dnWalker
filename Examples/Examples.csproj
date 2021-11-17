@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaptureOutput.cs" />
+    <Compile Include="TestGeneration\ClassReferencingAnotherClass.cs" />
     <Compile Include="Concolic\Features\Arrays\Array.cs" />
     <Compile Include="Concolic\Features\Arrays\BranchingBasedOnArrayProperties.cs" />
     <Compile Include="Concolic\Features\Arrays\Input.cs" />
@@ -82,6 +83,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rand.cs" />
+    <Compile Include="TestGeneration\ClassWithManyFields.cs" />
+    <Compile Include="TestGeneration\Instance\ObjectAndPrimitiveArgs.cs" />
+    <Compile Include="TestGeneration\Instance\ObjectArgs.cs" />
+    <Compile Include="TestGeneration\Instance\PrimitiveArgs.cs" />
+    <Compile Include="TestGeneration\Static\ComplexArgs.cs" />
+    <Compile Include="TestGeneration\Static\PrimitiveArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

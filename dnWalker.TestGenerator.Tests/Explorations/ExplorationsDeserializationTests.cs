@@ -24,7 +24,7 @@ namespace dnWalker.TestGenerator.Tests.Explorations
             ExplorationData.FromXml(XElement.Parse(xml)).Should().Match<ExplorationData>(e => 
                             e.AssemblyName == assemblyName && 
                             e.AssemblyFileName == e.AssemblyFileName && 
-                            e.FullMethodName == methodName && 
+                            e.MethodSignature == methodName && 
                             e.IsStatic == isStatic && 
                             e.Iterations != null && 
                             e.Iterations.Length == 0);
@@ -49,7 +49,7 @@ namespace dnWalker.TestGenerator.Tests.Explorations
             ExplorationIterationData.FromXml(XElement.Parse(xml)).Should().Match<ExplorationIterationData>(i => 
                             i.IterationNumber == number && 
                             i.PathConstraint == Expression.GreaterThan(Expression.Parameter(typeof(double), pName), Expression.Constant(pValue - 1)).ToString() && 
-                            i.InputParameters.TryGetParameter(pName, out p) &&
+                            i.Parameters.TryGetParameter(pName, out p) &&
                             ((DoubleParameter)p).Value == pValue);
 
         }

@@ -25,12 +25,24 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Update="XUnit\XUnitTestProjectTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XUnitTestProjectTemplate.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ExplorationData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="XUnit\XUnitTestClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
+    </None>
+    <None Update="XUnit\XUnitTestProjectTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

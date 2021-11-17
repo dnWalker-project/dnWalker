@@ -20,7 +20,7 @@ namespace dnWalker.TestGenerator
             ExplorationData ed = new ExplorationData();
             ed._assemblyName = xml.Attribute("AssemblyName")?.Value ?? throw new Exception("Exploration data XML must contain 'AssemblyName' attribute.");
             ed._assemblyFileName = xml.Attribute("AssemblyFileName")?.Value ?? throw new Exception("Exploration data XML must contain '_assemblyFileName' attribute.");
-            ed._fullMethodName = xml.Attribute("MethodName")?.Value ?? throw new Exception("Exploration data XML must contain 'MethodName' attribute.");
+            ed._methodSignature = xml.Attribute("MethodSignature")?.Value ?? throw new Exception("Exploration data XML must contain 'MethodName' attribute.");
             ed._isStatic = bool.Parse(xml.Attribute("IsStatic")?.Value ?? throw new Exception("Exploration data XML must contain 'IsStatic' attribute."));
 
             ed._iterations = xml.Elements("Iteration").Select(xe => ExplorationIterationData.FromXml(xe)).ToArray();
@@ -32,7 +32,7 @@ namespace dnWalker.TestGenerator
         private ExplorationIterationData[] _iterations = Array.Empty<ExplorationIterationData>();
         private string? _assemblyName;
         private string? _assemblyFileName;
-        private string? _fullMethodName;
+        private string? _methodSignature;
         private bool _isStatic;
 
         private ExplorationData()
@@ -42,7 +42,7 @@ namespace dnWalker.TestGenerator
             _iterations = iterations ?? throw new ArgumentNullException(nameof(iterations));
             _assemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
             _assemblyFileName = assemblyFilePath ?? throw new ArgumentNullException(nameof(assemblyFilePath));
-            _fullMethodName = fullMethodName ?? throw new ArgumentNullException(nameof(fullMethodName));
+            _methodSignature = fullMethodName ?? throw new ArgumentNullException(nameof(fullMethodName));
             _isStatic = isStatic;
         }
 
@@ -67,11 +67,11 @@ namespace dnWalker.TestGenerator
             }
         }
 
-        public string FullMethodName
+        public string MethodSignature
         {
             get
             {
-                return _fullMethodName ?? throw new InvalidOperationException("Not initialized instance.");
+                return _methodSignature ?? throw new InvalidOperationException("Not initialized instance.");
             }
         }
 
@@ -96,7 +96,8 @@ namespace dnWalker.TestGenerator
             eid._iterationNumber = int.Parse(xml.Attribute("Number")?.Value ?? throw new Exception("Exploration iteration XML must have a 'Number' attribute."));
             eid._pathConstraint = xml.Attribute("PathConstraint")?.Value ?? string.Empty;
 
-            eid._inputParameters = xml.Element("InputParameters")?.Element("ParameterStore")?.ToParameterStore() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/InputParamters/ParameterStore' element.");
+            eid._parameters = xml.Element("ParameterStore")?.ToParameterStore() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/InputParamters/ParameterStore' element.");
+            //eid._resultParameters = xml.Element("ResultParameters")?.Element("ParameterStore")?.ToParameterStore() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/ResultParameters/ParameterStore' element.");
 
 
             // TODO: when implemented, uncomment...
@@ -108,13 +109,13 @@ namespace dnWalker.TestGenerator
             return eid;
         }
 
-        private ParameterStore? _inputParameters = null;
+        private ParameterStore? _parameters = null;
+        //private ParameterStore? _resultParameters = null;
 
         private int _iterationNumber = 0;
 
         // TODO: not yet exporting
         private Exception? _exception = null;
-        private object? _result = null;
         private string _stdOutput = string.Empty;
         private string _errOutput = string.Empty;
         private string _pathConstraint = string.Empty;
@@ -122,20 +123,25 @@ namespace dnWalker.TestGenerator
         private ExplorationIterationData()
         { }
 
-        internal ExplorationIterationData(ParameterStore inputParameters, int iterationNumber, Exception? exception, object? result, string stdOutput, string errOutput)
+        //internal ExplorationIterationData(ParameterStore inputParameters, ParameterStore resultParameters, int iterationNumber, Exception? exception, string stdOutput, string errOutput)
+        internal ExplorationIterationData(ParameterStore inputParameters, int iterationNumber, Exception? exception, string stdOutput, string errOutput)
         {
-            _inputParameters = inputParameters ?? throw new ArgumentNullException(nameof(inputParameters));
+            _parameters = inputParameters ?? throw new ArgumentNullException(nameof(inputParameters));
+            //_resultParameters = resultParameters ?? throw new ArgumentNullException(nameof(resultParameters));
             _iterationNumber = iterationNumber;
             _exception = exception;
-            _result = result;
             _stdOutput = stdOutput ?? throw new ArgumentNullException(nameof(stdOutput));
             _errOutput = errOutput ?? throw new ArgumentNullException(nameof(errOutput));
         }
 
-        public ParameterStore InputParameters 
+        public ParameterStore Parameters 
         {
-            get { return _inputParameters ?? throw new InvalidOperationException("Not initialized instance."); }
+            get { return _parameters ?? throw new InvalidOperationException("Not initialized instance."); }
         }
+        //public ParameterStore ResultParameters
+        //{
+        //    get { return _resultParameters ?? throw new InvalidOperationException("Not initialized instance."); }
+        //}
 
         public int IterationNumber
         {
@@ -150,14 +156,6 @@ namespace dnWalker.TestGenerator
             get
             {
                 return _exception;
-            }
-        }
-
-        public object? Result
-        {
-            get
-            {
-                return _result;
             }
         }
 

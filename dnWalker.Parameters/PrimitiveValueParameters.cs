@@ -17,6 +17,8 @@ namespace dnWalker.Parameters
         protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
         {
         }
+
+        public abstract object GetValue();
     }
 
     public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter, IEquatable<PrimitiveValueParameter<TValue>> where TValue : struct
@@ -33,6 +35,11 @@ namespace dnWalker.Parameters
             Value = value;
         }
 
+        public override object GetValue()
+        {
+            if (Value.HasValue) return Value.Value;
+            else return null;
+        }
 
         public TValue? Value
         {

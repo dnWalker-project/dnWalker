@@ -11,6 +11,9 @@ namespace dnWalker.Parameters
     {
         private readonly IDictionary<string, Parameter> _parameters = new Dictionary<string, Parameter>();
 
+        public const string ThisParameterName = "#__THIS__";
+        public const string ResultParameterName = "#__RESULT__";
+
         public Parameter AddParameter(Parameter parameter)
         {
             if (!parameter.HasName()) throw new InvalidOperationException("Cannot add parameter without a name!");

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TestGenerator.Reflection;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,16 +11,42 @@ namespace dnWalker.TestGenerator
 {
     public class TestGeneratorContext
     {
-        public TestGeneratorContext(Assembly assembly, ExplorationData explorationData, ExplorationIterationData iterationData)
+        //public TestGeneratorContext(Assembly assembly, ExplorationData explorationData, ExplorationIterationData iterationData)
+        //{
+        //    SUTAssembly = assembly;
+        //    ExplorationData = explorationData;
+        //    IterationData = iterationData;
+        //}
+
+        public TestGeneratorContext(Assembly assembly, ExplorationData explorationData)
         {
             SUTAssembly = assembly;
             ExplorationData = explorationData;
-            IterationData = iterationData;
+
+            _sutMethodSignature = MethodSignature.FromString(explorationData.MethodSignature);
         }
+
+        private readonly MethodSignature _sutMethodSignature;
 
         public Assembly SUTAssembly 
         {
             get; 
+        }
+
+        public Type SUTType
+        {
+            get
+            {
+                return _sutMethodSignature.DeclaringType;
+            }
+        }
+
+        public MethodInfo SUTMethod
+        {
+            get
+            {
+                return _sutMethodSignature.MethodInfo;
+            }
         }
 
         public ExplorationData ExplorationData
@@ -26,9 +54,20 @@ namespace dnWalker.TestGenerator
             get;
         }
 
-        public ExplorationIterationData IterationData
+        public string TestNamespaceName
         {
-            get;
+            get
+            {
+                return SUTType.Namespace + ".Tests";
+            }
+        }
+
+        public string TestClassName
+        {
+            get
+            {
+                return SUTType.Name + "_Tests_" + SUTMethod.Name;
+            }
         }
     }
 }
