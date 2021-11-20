@@ -141,6 +141,7 @@
     <Compile Include="Concolic\Coverage.cs" />
     <Compile Include="Concolic\ExplorationEvents.cs" />
     <Compile Include="Concolic\Explorer2.cs" />
+    <Compile Include="Concolic\IExplorationExtension.cs" />
     <Compile Include="Concolic\Parameters\ArrayParameter.cs" />
     <Compile Include="Concolic\Parameters\DataElementParameterExtensions.cs" />
     <Compile Include="Concolic\ExplorationIterationData.cs" />

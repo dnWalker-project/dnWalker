@@ -17,6 +17,7 @@ namespace dnWalker.Parameters
         {
             base.OnNameChanged(newName);
 
+            // update names of Length parameter and item parameters
             if (LengthParameter != null)
             {
                 LengthParameter.Name = ParameterName.ConstructField(newName, LengthParameterName);

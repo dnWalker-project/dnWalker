@@ -34,7 +34,7 @@ namespace dnWalker.Concolic
         private PathStore _pathStore;
         private ParameterStore _inputParameters;
 
-        private readonly IExplorationExporter _explorationExporter;
+        private readonly IExplorationExtension _explorationExporter;
 
         public Explorer2(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
@@ -46,7 +46,7 @@ namespace dnWalker.Concolic
             if (config.ExportIterationInfo)
             {
                 _explorationExporter = new XmlExplorationExporter(config.ExplorationInfoOutputFile ?? "exploration_info.xml");
-                _explorationExporter.HookUp(this);
+                _explorationExporter.Register(this);
             }
         }
 

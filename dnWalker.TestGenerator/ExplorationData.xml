@@ -7,17 +7,17 @@
                  IsStatic="true"
                  Solver="dnWalker.Z3.Solver"
                  Failed="false">
-        <Iteration Number="1">
-            <ParameterStore>
+        <Iteration IterationNumber="1">
+            <Parameters>
                 <PrimitiveValue Type="System.Int32" Name="x">0</PrimitiveValue>
                 <PrimitiveValue Type="System.Boolean" Name="#__RESULT__">false</PrimitiveValue>
-            </ParameterStore>
+            </Parameters>
         </Iteration>
-        <Iteration Number="2">
-            <ParameterStore>
+        <Iteration IterationNumber="2">
+            <Parameters>
                 <PrimitiveValue Type="System.Int32" Name="x">6</PrimitiveValue>
                 <PrimitiveValue Type="System.Boolean" Name="#__RESULT__">true</PrimitiveValue>
-            </ParameterStore>
+            </Parameters>
         </Iteration>
     </Exploration>
     
@@ -30,20 +30,20 @@
                  Failed="false">
         <!-- the argument should be null in this case => we know nothing about it -->
         <!-- and it should throw NullReferenceException - TODO: properly export these information && to the exception thrown assertions within the template -->
-        <Iteration Number="1">
-            <ParameterStore/>
+        <Iteration IterationNumber="1">
+            <Parameters/>
         </Iteration>
 
-        <Iteration Number="2">
-            <ParameterStore>
+        <Iteration IterationNumber="2">
+            <Parameters>
                 <Object Type="Examples.TestGeneration.ClassWithManyFields" Name="instance" IsNull="false"/>
                 <PrimitiveValue Type="System.Int32" Name="#__RESULT__">0</PrimitiveValue>
-            </ParameterStore>
+            </Parameters>
         </Iteration>
         
         <!-- we will specify a few fields -->
-        <Iteration Number="3">
-            <ParameterStore>
+        <Iteration IterationNumber="3">
+            <Parameters>
                 <Object Type="Examples.TestGeneration.ClassWithManyFields" Name="instance" IsNull="false">
                     <Field Name="I1">
                         <PrimitiveValue Type="System.Int32" Name="instance:I1">5</PrimitiveValue>
@@ -53,7 +53,7 @@
                     </Field>
                 </Object>
                 <PrimitiveValue Type="System.Int32" Name="#__RESULT__">13</PrimitiveValue>
-            </ParameterStore>
+            </Parameters>
         </Iteration>
     </Exploration>
 
@@ -68,8 +68,8 @@
         <!-- just one iteration for testing purposes -->
         <!-- arg is not 0, IntegerField1 is -5, IntegerField2 is 10, ManyFields field is not null -->
         <!-- TODO: somehow handle AliasParameters -->
-        <Iteration Number="2">
-            <ParameterStore>
+        <Iteration IterationNumber="2">
+            <Parameters>
                 <Object Type="Examples.TestGeneration.ClassReferencingAnotherClass" Name="myObject" IsNull="false">
                     <Field Name="IntegerField1">
                         <PrimitiveValue Type="System.Int32" Name="myObject:IntegerField1">-5</PrimitiveValue>
@@ -92,7 +92,7 @@
                         <PrimitiveValue Type="System.Double" Name="myObject:ManyFields:D3">0.128</PrimitiveValue>
                     </Field>
                 </Object>
-            </ParameterStore>
+            </Parameters>
         </Iteration>
     </Exploration>
 </Explorations>

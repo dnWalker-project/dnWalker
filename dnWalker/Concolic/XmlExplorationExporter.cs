@@ -9,10 +9,6 @@ using System.Xml.Linq;
 
 namespace dnWalker.Concolic
 {
-    public interface IExplorationExporter
-    {
-        void HookUp(Explorer2 explorer);
-    }
 
     // TODO: reference the class lib dnWalker.Parameters => change target framework from .net framework to .net5 or .net6
 
@@ -177,7 +173,7 @@ namespace dnWalker.Concolic
     }
 
 
-    public class XmlExplorationExporter : IExplorationExporter, IDisposable
+    public class XmlExplorationExporter : IExplorationExtension, IDisposable
     {
         private Explorer2 _explorer;
         private readonly string _file;
@@ -194,7 +190,7 @@ namespace dnWalker.Concolic
             _rootElement = new XElement("Explorations");
         }
 
-        public void HookUp(Explorer2 explorer)
+        public void Register(Explorer2 explorer)
         {
             _explorer = explorer;
             _explorer.ExplorationStarted += OnExplorationStarted;
