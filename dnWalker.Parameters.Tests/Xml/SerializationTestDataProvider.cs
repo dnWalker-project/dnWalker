@@ -9,13 +9,19 @@ namespace dnWalker.Parameters.Tests.Xml
 {
     public static class SerializationTestDataProvider
     {
+        private const string ObjectParameter_IsNull = "<Object Type=\"MyNamespace.MyClass\" Name=\"My:Namespace:My:Class\" IsNull=\"true\" />";
+        private const string ObjectParameter_NotNull_NoFields = "<Object Type=\"MyNamespace.MyClass\" Name=\"My:Namespace:My:Class\" IsNull=\"false\" />";
+        private const string ObjectParameter_NotNull_PrimitiveFields_ComplexField = "<Object Type=\"MyNamespace.MyClass\" Name=\"My:Namespace:My:Class\" IsNull=\"false\">\r\n  <Field Name=\"My_Field\">\r\n    <PrimitiveValue Type=\"System.Int32\" Name=\"My:Namespace:My:Class:My_Field\">-5</PrimitiveValue>\r\n  </Field>\r\n  <Field Name=\"My_ComplexField\">\r\n    <Object Type=\"MyNamespace.AnotherClass\" Name=\"My:Namespace:My:Class:My_ComplexField\" IsNull=\"false\" />\r\n  </Field>\r\n</Object>";
+        private const string ObjectParameter_NotNull_PrimitiveFields = "<Object Type=\"MyNamespace.MyClass\" Name=\"My:Namespace:My:Class\" IsNull=\"false\">\r\n  <Field Name=\"My_Field\">\r\n    <PrimitiveValue Type=\"System.Int32\" Name=\"My:Namespace:My:Class:My_Field\">-5</PrimitiveValue>\r\n  </Field>\r\n</Object>";
+        private const string PrimitiveValueFormat = "<PrimitiveValue Type=\"{0}\" Name=\"{1}\">{2}</PrimitiveValue>";
+
         public class PrimitiveValueParameterProvider : IEnumerable<object[]>
         {
             public static IEnumerable<object[]> GeneratePrimitiveValueParameters()
             {
                 string GenerateExpectedXml(string fulltypename, string paramName, object value)
                 {
-                    return string.Format(XmlTexts.PrimitiveValueFormat, fulltypename, paramName, value.ToString());
+                    return string.Format(PrimitiveValueFormat, fulltypename, paramName, value.ToString());
                 }
 
                 Parameter parameter;
@@ -221,27 +227,27 @@ namespace dnWalker.Parameters.Tests.Xml
                 // IsNull == true && no fields
                 {
                     parameter = new ObjectParameter(Type, Name) { IsNull = true };
-                    yield return new object[] { parameter, XmlTexts.ObjectParameter_IsNull };
+                    yield return new object[] { parameter, ObjectParameter_IsNull };
                 }
 
                 // IsNull == true && some fields
                 {
                     parameter = new ObjectParameter(Type, Name) { IsNull = true };
                     parameter.SetField("My_Field", new Int32Parameter() { Value = -5 });
-                    yield return new object[] { parameter, XmlTexts.ObjectParameter_IsNull };
+                    yield return new object[] { parameter, ObjectParameter_IsNull };
                 }
 
                 // IsNull == false && no fields
                 {
                     parameter = new ObjectParameter(Type, Name) { IsNull = false };
-                    yield return new object[] { parameter, XmlTexts.ObjectParameter_NotNull_NoFields };
+                    yield return new object[] { parameter, ObjectParameter_NotNull_NoFields };
                 }
 
                 // IsNull == false && some fields
                 {
                     parameter = new ObjectParameter(Type, Name) { IsNull = false };
                     parameter.SetField("My_Field", new Int32Parameter() { Value = -5 });
-                    yield return new object[] { parameter, XmlTexts.ObjectParameter_NotNull_SomeFields };
+                    yield return new object[] { parameter, ObjectParameter_NotNull_PrimitiveFields };
                 }
 
                 // IsNull == false && primitive field && complex field
@@ -252,7 +258,7 @@ namespace dnWalker.Parameters.Tests.Xml
                     ObjectParameter complexFieldValue = new ObjectParameter("MyNamespace.AnotherClass") { IsNull = false };
 
                     parameter.SetField("My_ComplexField", complexFieldValue);
-                    yield return new object[] { parameter, XmlTexts.ObjectParameter_NotNull_SomeFiObjectParameter_NotNull_PrimitiveFields_ComplexField };
+                    yield return new object[] { parameter, ObjectParameter_NotNull_PrimitiveFields_ComplexField };
                 }
             }
 

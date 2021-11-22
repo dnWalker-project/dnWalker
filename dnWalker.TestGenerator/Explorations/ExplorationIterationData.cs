@@ -11,24 +11,9 @@ namespace dnWalker.TestGenerator
     /// </summary>
     public class ExplorationIterationData
     {
-        public static ExplorationIterationData FromXml(XElement xml)
+        internal ExplorationIterationData(ParameterStore parameterStore, int iterationNumber, string pathConstraint, Exception? exception, string stdandardOutput, string errorOutput)
         {
-            ExplorationIterationData iterationData = new ExplorationIterationData
-                (
-                    xml.Element(nameof(Parameters))?.ToParameterStore() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/Parameters' element."),
-                    int.Parse(xml.Attribute(nameof(IterationNumber))?.Value ?? throw new Exception("Exploration iteration XML must have a 'IterationNumber' attribute.")),
-                    xml.Attribute(nameof(PathConstraint))?.Value ?? string.Empty,
-                    null, // create exception from the XML if there is one
-                    xml.Element(nameof(StandardOutput))?.Value ?? string.Empty,
-                    xml.Element(nameof(ErrorOutput))?.Value ?? string.Empty
-                );
-
-            return iterationData;
-        }
-
-        internal ExplorationIterationData(ParameterStore parameters, int iterationNumber, string pathConstraint, Exception? exception, string stdandardOutput, string errorOutput)
-        {
-            Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            ParameterStore = parameterStore ?? throw new ArgumentNullException(nameof(parameterStore));
             PathConstraint = pathConstraint;
             IterationNumber = iterationNumber;
             Exception = exception;
@@ -36,7 +21,7 @@ namespace dnWalker.TestGenerator
             ErrorOutput = errorOutput ?? throw new ArgumentNullException(nameof(errorOutput));
         }
 
-        public ParameterStore Parameters 
+        public ParameterStore ParameterStore 
         {
             get;
         }
