@@ -98,7 +98,7 @@ private void WriteObjectInitializationMethods()
 
     foreach (ExplorationIterationData iterationData in TestData.ExplorationData.Iterations)
     {
-        foreach (ObjectParameter objectParameter in iterationData.Parameters.GetAllParameters().OfType<ObjectParameter>())
+        foreach (ObjectParameter objectParameter in iterationData.ParameterStore.GetAllParameters().OfType<ObjectParameter>())
         {
             foreach (string fieldName in objectParameter.GetKnownFields().Select(p => p.Key))
             {
@@ -459,7 +459,7 @@ this.Write("()\r\n        {\r\n            // TODO: initialize environment (stat
 
     MethodInfo sutMethod = TestData.SUTMethod;
     Type sutType = TestData.SUTType;
-    ParameterStore parameters = iterationData.Parameters;
+    ParameterStore parameters = iterationData.ParameterStore;
 
     foreach (ParameterInfo pi in sutMethod.GetParameters())
     {

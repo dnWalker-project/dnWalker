@@ -35,10 +35,12 @@ namespace dnWalker.Parameters
 
         //public IList<ParameterTrait> Traits { get; }
 
+        /// <summary>
+        /// Invoked when the parameter name changes. When overridden, updates names of child parameters.
+        /// </summary>
+        /// <param name="newName"></param>
         protected virtual void OnNameChanged(string newName)
-        {
-
-        }
+        { }
 
         protected Parameter(string typeName)
         {

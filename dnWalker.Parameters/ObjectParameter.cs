@@ -53,6 +53,10 @@ namespace dnWalker.Parameters
             //parameter.Name = ParameterName.ConstructField(Name, fieldName);
         }
 
+        /// <summary>
+        /// Invoked when the parameter name changes. Updates names of the <see cref="ReferenceTypeParameter.IsNullParameter"/> and fields parameters.
+        /// </summary>
+        /// <param name="newName"></param>
         protected override void OnNameChanged(String newName)
         {
             base.OnNameChanged(newName);

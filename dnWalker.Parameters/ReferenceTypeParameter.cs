@@ -29,6 +29,10 @@ namespace dnWalker.Parameters
             get;
         }
 
+        /// <summary>
+        /// Invoked when the parameter name changes. Updates the <see cref="ReferenceTypeParameter.IsNullParameter"/>
+        /// </summary>
+        /// <param name="newName"></param>
         protected override void OnNameChanged(String newName)
         {
             if (IsNullParameter != null)

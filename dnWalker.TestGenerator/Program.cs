@@ -1,7 +1,7 @@
 ﻿using CommandLine;
 
 using dnWalker.Parameters;
-using dnWalker.TestGenerator.Parameters;
+using dnWalker.TestGenerator.Explorations.Xml;
 using dnWalker.TestGenerator.Reflection;
 using dnWalker.TestGenerator.XUnit;
 
@@ -35,7 +35,7 @@ namespace dnWalker.TestGenerator
         {
             if (!File.Exists(args.ExplorationDataFileName)) throw new FileNotFoundException("ExplorationData file was not found!");
 
-            IEnumerable<ExplorationData> explorations = XElement.Load(args.ExplorationDataFileName!).Elements("Exploration").Select(ExplorationData.FromXml);
+            IEnumerable<ExplorationData> explorations = XElement.Load(args.ExplorationDataFileName!).Elements("Exploration").Select(xe => xe.ToExplorationData());
 
             foreach (ExplorationData explorationData in explorations)
             {

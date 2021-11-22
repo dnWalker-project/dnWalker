@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Parameters\**" />
+    <EmbeddedResource Remove="Parameters\**" />
+    <None Remove="Parameters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
   </ItemGroup>
@@ -44,10 +50,6 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Parameters\" />
   </ItemGroup>
 
 </Project>

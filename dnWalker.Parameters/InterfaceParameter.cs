@@ -63,6 +63,10 @@ namespace dnWalker.Parameters
             return _methodResults;
         }
 
+        /// <summary>
+        /// Invoked when the parameter name changes. Updates names of the <see cref="ReferenceTypeParameter.IsNullParameter"/> and method results parameters.
+        /// </summary>
+        /// <param name="newName"></param>
         protected override void OnNameChanged(String newName)
         {
             base.OnNameChanged(newName);

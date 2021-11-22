@@ -13,6 +13,10 @@ namespace dnWalker.Parameters
 
         private readonly Dictionary<Int32, Parameter> _items = new Dictionary<Int32, Parameter>();
 
+        /// <summary>
+        /// Invoked when the parameter name changes. Updates names of the <see cref="ReferenceTypeParameter.IsNullParameter"/>, <see cref="ArrayParameter.LengthParameter"/> and items parameters.
+        /// </summary>
+        /// <param name="newName"></param>
         protected override void OnNameChanged(String newName)
         {
             base.OnNameChanged(newName);

@@ -13,6 +13,11 @@ namespace dnWalker.TestGenerator.XUnit
         private readonly TextWriter _output;
         private readonly bool _leaveOpen;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XUnitTestClassWriter"/>.
+        /// </summary>
+        /// <param name="output">Specifies the output for the code.</param>
+        /// <param name="leaveOpen">Indicates whether the <paramref name="output"/> should be left open or disposed with this instance.</param>
         public XUnitTestClassWriter(TextWriter output, bool leaveOpen = false)
         {
             _output = output;

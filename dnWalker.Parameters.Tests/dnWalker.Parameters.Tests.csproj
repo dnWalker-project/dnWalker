@@ -24,19 +24,4 @@
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Xml\XmlTexts.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XmlTexts.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Xml\XmlTexts.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>XmlTexts.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>
