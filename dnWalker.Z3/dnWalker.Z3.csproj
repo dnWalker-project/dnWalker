@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnWalker\dnWalker.csproj">
-      <Project>{7434cf07-14ca-4df7-b03d-36c3ad0a67eb}</Project>
+      <Project>{9b77a96e-26c0-48cd-8e26-9ea2f9306b3e}</Project>
       <Name>dnWalker</Name>
     </ProjectReference>
     <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj">

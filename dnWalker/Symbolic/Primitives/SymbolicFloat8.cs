@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Symbolic.Primitives
 {
-    public struct Float8 : /*ISignedNumericElement, IRealElement, */IConvertible, ISymbolic
+    public struct Float8 : /*ISignedNumericElement, IRealElement, */IConvertible, ISymbolic, ISignedNumericElement
     {
         public static Float8 Zero = new Float8(0);
 
