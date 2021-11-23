@@ -39,7 +39,7 @@ namespace dnWalker.Tests.Concolic.Features.Interfaces
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(3);
+                    paths.Count().Should().Be(4);
                 });
         }
 

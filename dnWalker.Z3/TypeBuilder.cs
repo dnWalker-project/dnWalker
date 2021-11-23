@@ -35,7 +35,9 @@ namespace dnWalker.Z3
 
         private TypeBuilder CreateClass()
         {
-            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(this._asemblyName, AssemblyBuilderAccess.Run);
+            //var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(this._asemblyName, AssemblyBuilderAccess.Run);
+            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(this._asemblyName, AssemblyBuilderAccess.Run);
+
             var moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
             var typeBuilder = moduleBuilder.DefineType(_asemblyName.FullName, 
                 TypeAttributes.Public |

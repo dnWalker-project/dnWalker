@@ -20,11 +20,11 @@ namespace dnWalker.Tests.Concolic.Parameters
 
         
         [Fact]
-        public void UnitializedReferenceTypeParameter_IsNull_Should_Be_Null()
+        public void UnitializedReferenceTypeParameter_IsNull_Should_Be_True()
         {
             var parameter = Create("p");
 
-            parameter.IsNull.Should().BeNull();
+            parameter.IsNull.Should().BeTrue();
         }
 
         [Fact]

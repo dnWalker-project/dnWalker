@@ -637,7 +637,7 @@ namespace MMC
 
             m_referencedAssemblies = referencedModules;
 
-            AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
+            //AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
         }
 
         public IDataElement CreateDataElement(object value)

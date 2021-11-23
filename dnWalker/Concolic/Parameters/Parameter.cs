@@ -40,7 +40,6 @@ namespace dnWalker.Concolic.Parameters
 
         public string TypeName { get; }
 
-        //public IList<ParameterTrait> Traits { get; }
 
         protected virtual void OnNameChanged(string newName)
         {
@@ -59,49 +58,10 @@ namespace dnWalker.Concolic.Parameters
 
             TypeName = typeName;
             Name = name;
-            //Traits = new List<ParameterTrait>();
         }
 
-        //public Boolean TryGetTrait<TTrait>(out TTrait trait) where TTrait : ParameterTrait
-        //{
-        //    trait = Traits.OfType<TTrait>().FirstOrDefault();
-        //    return trait != null;
-        //}
-        //public Boolean TryGetTrait<TTrait>(Func<TTrait, Boolean> predicate, out TTrait trait) where TTrait : ParameterTrait
-        //{
-        //    trait = Traits.OfType<TTrait>().FirstOrDefault(predicate);
-        //    return trait != null;
-        //}
 
-        //public void AddTrait<TTrait>(TTrait newValue) where TTrait : ParameterTrait
-        //{
-        //    Traits.Add(newValue);
-        //}
-
-
-        public abstract IDataElement CreateDataElement(ExplicitActiveState cur);
-
-
-
-        //protected abstract Type GetFrameworkType();
-
-        //private ParameterExpression _expression = null;
-
-        //public ParameterExpression GetExpression()
-        //{
-        //    if (_expression != null)
-        //    {
-        //        return _expression;
-        //    }
-
-        //    Type frameworkType = GetFrameworkType();
-        //    if (frameworkType != null)
-        //    {
-        //        _expression = Expression.Parameter(frameworkType, Name);
-        //    }
-        //    return _expression;
-        //}
-
+        // TODO: make these methods as extension methods - so switch to shared parameter lib is easier
         public abstract IEnumerable<ParameterExpression> GetParameterExpressions();
         public abstract bool HasSingleExpression { get; }
         public abstract ParameterExpression GetSingleParameterExpression();

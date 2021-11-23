@@ -1,5 +1,5 @@
-﻿using MMC.Data;
-using MMC.State;
+﻿//using MMC.Data;
+//using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-using Expressions = System.Linq.Expressions;
+//using Expressions = System.Linq.Expressions;
 
 namespace dnWalker.Concolic.Parameters
 {
@@ -138,12 +138,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int4((Value.HasValue && Value.Value) ? 1 : 0 );
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int4((Value.HasValue && Value.Value) ? 1 : 0 );
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class CharParameter : PrimitiveValueParameter<char>
@@ -160,12 +160,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class ByteParameter : PrimitiveValueParameter<byte>
@@ -182,12 +182,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class SByteParameter : PrimitiveValueParameter<sbyte>
@@ -204,12 +204,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class Int16Parameter : PrimitiveValueParameter<short>
@@ -226,12 +226,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class Int32Parameter : PrimitiveValueParameter<int>
@@ -248,12 +248,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int4(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class Int64Parameter : PrimitiveValueParameter<long>
@@ -270,12 +270,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Int8(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Int8(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class UInt16Parameter : PrimitiveValueParameter<ushort>
@@ -292,12 +292,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new UnsignedInt4(Value.HasValue ? Value.Value : 0U);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new UnsignedInt4(Value.HasValue ? Value.Value : 0U);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class UInt32Parameter : PrimitiveValueParameter<uint>
@@ -314,12 +314,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new UnsignedInt4(Value.HasValue ? Value.Value : 0U);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new UnsignedInt4(Value.HasValue ? Value.Value : 0U);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class UInt64Parameter : PrimitiveValueParameter<ulong>
@@ -336,12 +336,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new UnsignedInt8(Value.HasValue ? Value.Value : 0);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new UnsignedInt8(Value.HasValue ? Value.Value : 0);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class SingleParameter : PrimitiveValueParameter<float>
@@ -358,12 +358,12 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Float4(Value.HasValue ? Value.Value : 0.0f);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Float4(Value.HasValue ? Value.Value : 0.0f);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 
     public class DoubleParameter : PrimitiveValueParameter<double>
@@ -380,11 +380,11 @@ namespace dnWalker.Concolic.Parameters
         {
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            IDataElement element = new Float8(Value.HasValue ? Value.Value : 0.0d);
-            element.SetParameter(this, cur);
-            return element;
-        }
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    IDataElement element = new Float8(Value.HasValue ? Value.Value : 0.0d);
+        //    element.SetParameter(this, cur);
+        //    return element;
+        //}
     }
 }

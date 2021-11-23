@@ -75,6 +75,11 @@ namespace MMC
     /// </summary>
     public class Config : IConfig
     {
+        public bool ExportIterationInfo { get; set; }
+        public string ExplorationInfoOutputFile { get; set; }
+        public string FlowGraphFile { get; set; }
+
+
         public int MaxIterations { get; set; }
         public string AssemblyToCheckFileName { get; set; }
         public string[] RunTimeParameters { get; set; } = new string[] { };
