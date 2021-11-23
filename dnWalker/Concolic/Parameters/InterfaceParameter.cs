@@ -1,7 +1,7 @@
-﻿using dnlib.DotNet;
+﻿//using dnlib.DotNet;
 
-using MMC.Data;
-using MMC.State;
+//using MMC.Data;
+//using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -63,6 +63,11 @@ namespace dnWalker.Concolic.Parameters
             //parameter.Name = ParameterName.ConstructField(Name, methodName);
         }
 
+        public IEnumerable<KeyValuePair<String, Dictionary<Int32, Parameter>>> GetKnownMethodResults()
+        {
+            return _methodResults;
+        }
+
         protected override void OnNameChanged(String newName)
         {
             base.OnNameChanged(newName);
@@ -79,36 +84,36 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
-            DynamicArea dynamicArea = cur.DynamicArea;
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
+        //    DynamicArea dynamicArea = cur.DynamicArea;
 
-            if (!IsNull.HasValue || IsNull.Value)
-            {
-                // dont care or explicit null => return NullReference
-                ObjectReference nullReference = new ObjectReference(0);
-                nullReference.SetParameter(this, cur);
-                return nullReference;
-            }
+        //    if (!IsNull.HasValue || IsNull.Value)
+        //    {
+        //        // dont care or explicit null => return NullReference
+        //        ObjectReference nullReference = new ObjectReference(0);
+        //        nullReference.SetParameter(this, cur);
+        //        return nullReference;
+        //    }
 
-            TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
+        //    TypeDef typeDef = cur.DefinitionProvider.GetTypeDefinition(TypeName);
 
-            Int32 location = dynamicArea.DeterminePlacement(false);
-            ObjectReference interfaceReference = dynamicArea.AllocateObject(location, typeDef);
-            AllocatedObject allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
-            allocatedInterface.ClearFields(cur);
+        //    Int32 location = dynamicArea.DeterminePlacement(false);
+        //    ObjectReference interfaceReference = dynamicArea.AllocateObject(location, typeDef);
+        //    AllocatedObject allocatedInterface = (AllocatedObject)dynamicArea.Allocations[interfaceReference];
+        //    allocatedInterface.ClearFields(cur);
 
-            // TODO: somehow create structure for resolving the method and using the callindex
+        //    // TODO: somehow create structure for resolving the method and using the callindex
 
-            //MethodResolver resolver = new MethodResolver();
-            //foreach(MethodResultTrait methodResult in Traits.OfType<MethodResultTrait>())
-            //{
-            //    resolver[methodResult.MethodName] = new MethodResultProvider(s => methodResult.Value.AsDataElement(s));
-            //}
+        //    //MethodResolver resolver = new MethodResolver();
+        //    //foreach(MethodResultTrait methodResult in Traits.OfType<MethodResultTrait>())
+        //    //{
+        //    //    resolver[methodResult.MethodName] = new MethodResultProvider(s => methodResult.Value.AsDataElement(s));
+        //    //}
 
-            interfaceReference.SetParameter(this, cur);
-            return interfaceReference;
-        }
+        //    interfaceReference.SetParameter(this, cur);
+        //    return interfaceReference;
+        //}
 
         public override IEnumerable<ParameterExpression> GetParameterExpressions()
         {

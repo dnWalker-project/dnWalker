@@ -63,6 +63,11 @@ namespace dnWalker.Concolic.Parameters
             //}
         }
 
+        public IEnumerable<KeyValuePair<Int32, Parameter>> GetKnownItems()
+        {
+            return _items;
+        }
+
         public Int32Parameter LengthParameter
         {
             get;
@@ -120,59 +125,59 @@ namespace dnWalker.Concolic.Parameters
             LengthParameter = new Int32Parameter(ParameterName.ConstructField(name, LengthParameterName));
         }
 
-        public override IDataElement CreateDataElement(ExplicitActiveState cur)
-        {
+        //public override IDataElement CreateDataElement(ExplicitActiveState cur)
+        //{
 
-            DynamicArea dynamicArea = cur.DynamicArea;
+        //    DynamicArea dynamicArea = cur.DynamicArea;
             
-            if (!IsNull.HasValue || IsNull.Value)
-            {
-                // dont care or explicit null => return NullReference
-                ObjectReference nullReference = new ObjectReference(0);
-                nullReference.SetParameter(this, cur);
-                return nullReference;
-            }
+        //    if (!IsNull.HasValue || IsNull.Value)
+        //    {
+        //        // dont care or explicit null => return NullReference
+        //        ObjectReference nullReference = new ObjectReference(0);
+        //        nullReference.SetParameter(this, cur);
+        //        return nullReference;
+        //    }
 
-            Int32 length = Length ?? 0;
+        //    Int32 length = Length ?? 0;
 
-            Int32 location = dynamicArea.DeterminePlacement(false);
+        //    Int32 location = dynamicArea.DeterminePlacement(false);
 
-            ITypeDefOrRef elementType = cur.DefinitionProvider.GetTypeDefinition(ElementTypeName);
+        //    ITypeDefOrRef elementType = cur.DefinitionProvider.GetTypeDefinition(ElementTypeName);
 
-            ObjectReference objectReference = dynamicArea.AllocateArray(location, elementType, length);
+        //    ObjectReference objectReference = dynamicArea.AllocateArray(location, elementType, length);
 
-            AllocatedArray allocatedArray = (AllocatedArray)dynamicArea.Allocations[objectReference];
-            allocatedArray.ClearFields(cur);
+        //    AllocatedArray allocatedArray = (AllocatedArray)dynamicArea.Allocations[objectReference];
+        //    allocatedArray.ClearFields(cur);
 
-            if (length > 0)
-            {
-                for (Int32 i = 0; i < length; ++i)
-                {
-                    if (!TryGetItemAt(i, out Parameter itemParameter))
-                    {
-                        itemParameter = ParameterFactory.CreateParameter(elementType.ToTypeSig());
-                        SetItemAt(i, itemParameter);
-                    }
-                    IDataElement itemDataElement = itemParameter.CreateDataElement(cur);
-                    allocatedArray.Fields[i] = itemDataElement;
-                }
+        //    if (length > 0)
+        //    {
+        //        for (Int32 i = 0; i < length; ++i)
+        //        {
+        //            if (!TryGetItemAt(i, out Parameter itemParameter))
+        //            {
+        //                itemParameter = ParameterFactory.CreateParameter(elementType.ToTypeSig());
+        //                SetItemAt(i, itemParameter);
+        //            }
+        //            IDataElement itemDataElement = itemParameter.CreateDataElement(cur);
+        //            allocatedArray.Fields[i] = itemDataElement;
+        //        }
 
-                //foreach (FieldValueTrait field in Traits.OfType<FieldValueTrait>().Where(t => t.FieldName != LengthParameterName))
-                //{
-                //    String fieldName = field.FieldName;
-                //    Parameter parameter = field.FieldValueParameter;
+        //        //foreach (FieldValueTrait field in Traits.OfType<FieldValueTrait>().Where(t => t.FieldName != LengthParameterName))
+        //        //{
+        //        //    String fieldName = field.FieldName;
+        //        //    Parameter parameter = field.FieldValueParameter;
 
-                //    if (Int32.TryParse(fieldName, out Int32 index) && index < length)
-                //    {
-                //        IDataElement itemDataElement = parameter.CreateDataElement(cur);
-                //        allocatedArray.Fields[index] = itemDataElement;
-                //    }
-                //}
-            }
+        //        //    if (Int32.TryParse(fieldName, out Int32 index) && index < length)
+        //        //    {
+        //        //        IDataElement itemDataElement = parameter.CreateDataElement(cur);
+        //        //        allocatedArray.Fields[index] = itemDataElement;
+        //        //    }
+        //        //}
+        //    }
 
-            objectReference.SetParameter(this, cur);
-            return objectReference;
-        }
+        //    objectReference.SetParameter(this, cur);
+        //    return objectReference;
+        //}
 
         public override IEnumerable<ParameterExpression> GetParameterExpressions()
         {

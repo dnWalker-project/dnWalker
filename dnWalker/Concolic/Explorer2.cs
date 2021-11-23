@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic
 {
-    public class Explorer2
+    public class Explorer2 : IDisposable
     {
         private readonly Config _config;
         private readonly Logger _logger;
@@ -32,6 +32,9 @@ namespace dnWalker.Concolic
 
         private int _currentIteration;
         private PathStore _pathStore;
+        private ParameterStore _inputParameters;
+
+        private readonly IExplorationExtension _explorationExporter;
 
         public Explorer2(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
@@ -39,29 +42,14 @@ namespace dnWalker.Concolic
             _config = config;
             _logger = logger;
             _solver = solver;
-        }
-        public static Explorer2 ForAssembly(string assemblyFilename, ISolver solver, Action<Config> setup = null, TextWriter loggerOutput = null)
-        {
-            var assemblyLoader = new AssemblyLoader();
 
-            var data = File.ReadAllBytes(assemblyFilename);
-
-            _ = assemblyLoader.GetModuleDef(data);
-
-            System.Reflection.Assembly.LoadFrom(assemblyFilename);
-            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
-
-
-            var config = new Config();
-            var logger = new Logger(Logger.Default); // | LogPriority.Trace);
-
-            logger.AddOutput(new TextLoggerOutput(loggerOutput ?? Console.Out));
-
-            return new Explorer2(definitionProvider, config, logger, solver);
+            if (config.ExportIterationInfo)
+            {
+                _explorationExporter = new XmlExplorationExporter(config.ExplorationInfoOutputFile ?? "exploration_info.xml");
+                _explorationExporter.Register(this);
+            }
         }
 
-
-        public event PathExploredHandler OnPathExplored;
 
         private static void WriteFlowGraph(dnlib.DotNet.MethodDef method, string filename = @"c:\temp\dot.dot")
         {
@@ -80,9 +68,45 @@ namespace dnWalker.Concolic
         {
             get { return _pathStore; }
         }
+        public ParameterStore InputParameters
+        {
+            get { return _inputParameters; }
+        }
         public int IterationCount
         {
             get { return _currentIteration; }
+        }
+
+        // setting event to an empty delegate will optimize invocation - no need to check for null...
+        public event PathExploredHandler PathExplored = delegate { };
+        public event EventHandler<ExplorationStartedEventArgs> ExplorationStarted = delegate { };
+        public event EventHandler<ExplorationFinishedEventArgs> ExplorationFinished = delegate { };
+        public event EventHandler<ExplorationFailedEventArgs> ExplorationFailed = delegate { };
+        public event EventHandler<IterationStartedEventArgs> IterationStarted = delegate { };
+        public event EventHandler<IterationFinishedEventArgs> IterationFinished = delegate { };
+
+        protected virtual void OnPathExplored(dnWalker.Traversal.Path path)
+        {
+            PathExplored(path);
+        }
+
+        protected virtual void OnExplorationStarted(ExplorationStartedEventArgs e)
+        {
+            ExplorationStarted(this, e);
+        }
+        protected virtual void OnExplorationFailed(ExplorationFailedEventArgs e)
+        {
+            ExplorationFailed(this, e);
+        }
+
+        protected virtual void OnIterationStarted(IterationStartedEventArgs e)
+        {
+            IterationStarted(this, e);
+        }
+
+        protected virtual void OnIterationFinished(IterationFinishedEventArgs e)
+        {
+            IterationFinished(this, e);
         }
 
         public void Run(string methodName, IDictionary<string, object> data = null)
@@ -102,7 +126,7 @@ namespace dnWalker.Concolic
             // get the tested method
             var  entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
-            WriteFlowGraph(entryPoint);
+            WriteFlowGraph(entryPoint, _config.FlowGraphFile);
 
             // setup iteration global objects
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
@@ -111,11 +135,12 @@ namespace dnWalker.Concolic
 
             var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
                 
-            var parameterStore = new ParameterStore();
             if (data == null)
             {
                 data = new Dictionary<string, object>();
             }
+
+            OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint.Module.Assembly.FullName, entryPoint.FullName, entryPoint.IsStatic, _solver?.GetType().FullName));
 
             // run iteration
             while (true)
@@ -131,16 +156,16 @@ namespace dnWalker.Concolic
                     cur.PathStore = _pathStore;
 
                     // 1. clear parameterStore
-                    parameterStore.Clear();
+                    _inputParameters = new ParameterStore();
 
                     // 2. setup default values for the arguments
-                    parameterStore.InitializeDefaultMethodParameters(entryPoint);
+                    _inputParameters.InitializeDefaultMethodParameters(entryPoint);
 
                     // 3. set traits using the 'data' dictionary - either passed as argument or as solver output
-                    parameterStore.SetTraits(cur.DefinitionProvider, data);
+                    _inputParameters.SetTraits(cur.DefinitionProvider, data);
 
                     // 4. construct the arguments DataElementList
-                    var arguments = parameterStore.GetMethodParematers(cur, entryPoint);
+                    var arguments = _inputParameters.GetMethodParematers(cur, entryPoint);
 
                     var mainState = new MethodState(entryPoint, arguments, cur);
 
@@ -158,21 +183,24 @@ namespace dnWalker.Concolic
                     //_logger.Log(LogPriority.Message, "Starting exploration, parameters: {0}", parameterStore.ToString());
                     _logger.Log(LogPriority.Message, "Starting exploration, data: ");
                     foreach (var p in data) _logger.Log(LogPriority.Message, "{0} = {1}", p.Key, p.Value);
-                    
-                    explorer.InstructionExecuted += _pathStore.OnInstructionExecuted;
 
+                    OnIterationStarted(new IterationStartedEventArgs(_currentIteration, _inputParameters));
+
+                    explorer.InstructionExecuted += _pathStore.OnInstructionExecuted;
                     explorer.Run();
 
                     explorer.InstructionExecuted -= _pathStore.OnInstructionExecuted;
 
                     var path = _pathStore.CurrentPath;
-                    OnPathExplored?.Invoke(path);
+                    PathExplored?.Invoke(path);
 
                     _logger.Log(LogPriority.Message, "Explored path: {0}", path.PathConstraintString);
 
 
-                    var exprs = parameterStore.GetParametersAsExpressions();
+                    var exprs = _inputParameters.GetParametersAsExpressions();
                     data = PathStore.GetNextInputValues(_solver, exprs);
+
+                    OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, null, path));
 
                     if (data == null)
                     {
@@ -184,10 +212,16 @@ namespace dnWalker.Concolic
                 catch (Exception e)
                 {
                     _logger.Log(LogPriority.Fatal, e.Message);
+                    OnExplorationFailed(new ExplorationFailedEventArgs(e));
                     throw;
                 }
 
             }
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }

@@ -1,12 +1,16 @@
 ﻿using CommandLine;
 
-using dnWalker.Concolic;
+using dnWalker.Parameters;
+using dnWalker.TestGenerator.Explorations.Xml;
+using dnWalker.TestGenerator.Reflection;
+using dnWalker.TestGenerator.XUnit;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-
-using Explorer = dnWalker.Concolic.Explorer;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace dnWalker.TestGenerator
 {
@@ -14,46 +18,45 @@ namespace dnWalker.TestGenerator
     {
         static void Main(string[] args)
         {
-            var result = Parser.Default.ParseArguments<Configuration>(args);
+            Console.WriteLine("dnWalker.TestGenerator");
 
-            result.WithParsed(configuration =>
-            {
-                RunGenerator(configuration);
-            });
-            result.WithNotParsed(errors =>
-            {
-                foreach(var e in errors)
+            CommandLine.Parser.Default.ParseArguments<CommandLineArguments>(args)
+                .WithParsed(RunTestGenerator)
+                .WithNotParsed(errors =>
                 {
-                    Console.WriteLine(e.ToString());
-                }
-            });
+                    foreach (Error e in errors)
+                    {
+                        Console.WriteLine(e);
+                    }
+                });
         }
 
-        public static void RunGenerator(Configuration configuration)
+        private static void RunTestGenerator(CommandLineArguments args)
         {
-            // setup dnWalker.Concolic.Explorer
-            var explorer = Explorer.ForAssembly(configuration.AssemblyPath, new Z3.Solver());
+            if (!File.Exists(args.ExplorationDataFileName)) throw new FileNotFoundException("ExplorationData file was not found!");
 
-            var iterationData = new Dictionary<string, IReadOnlyList<ExplorationIterationData>>();
-            var context = configuration.TestSuit.GetContext();
+            IEnumerable<ExplorationData> explorations = XElement.Load(args.ExplorationDataFileName!).Elements("Exploration").Select(xe => xe.ToExplorationData());
 
-            var assemblyName = System.IO.Path.GetFileNameWithoutExtension(configuration.AssemblyPath);
-
-            context.CreateProject(configuration.OutputFolder, assemblyName + ".Tests");
-
-            // run it for each requested method
-            foreach (var method in configuration.Methods)
+            foreach (ExplorationData explorationData in explorations)
             {
-                explorer.Run(method);
 
-                iterationData[method] = explorer.IterationData;
+                Assembly sutAssembly = Assembly.LoadFrom(explorationData.AssemblyFileName);
 
-                context.WriteAsFacts(method, explorer.IterationData);
+                TestGeneratorContext testData = new TestGeneratorContext(sutAssembly, explorationData);
+
+                string? outputDirectory = Path.GetDirectoryName(args.OutputFileName);
+                if (!string.IsNullOrWhiteSpace(outputDirectory))
+                {
+                    Directory.CreateDirectory(outputDirectory);
+                }
+
+                string outputFile = $"{sutAssembly.GetName().Name}_{testData.SUTType.FullName!.Replace('.', '_')}_{testData.SUTMethod.Name}.Tests.cs";
+
+                using (XUnitTestClassWriter testWriter = new XUnitTestClassWriter(new StreamWriter(outputFile)))
+                {
+                    testWriter.Write(testData);
+                }
             }
-
-
-            
         }
-
     }
 }
