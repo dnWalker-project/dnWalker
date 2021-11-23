@@ -35,6 +35,12 @@ namespace dnWalker.Z3
                         });
                         //environment.Add(parameter, context.MkArrayConst(parameter.Name, context.IntSort, context.IntSort));
                         break;
+
+                    case TypeCode.Int64:
+                    case TypeCode.UInt16:
+                    case TypeCode.UInt32:
+                    case TypeCode.UInt64:
+                        // TODO: cast them to Int32 & add constraint - parameter >= 0
                     default:
                         throw new NotSupportedException($"Parameter type {parameterType.Name} of {parameter.Name} is not supported.");
                 }

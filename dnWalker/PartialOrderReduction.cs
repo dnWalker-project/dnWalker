@@ -52,7 +52,7 @@ namespace MMC
             if (sd.LastAccess.IsThreadLocal)
                 return;
 
-            MemoryLocation ml = sd.LastAccess.MemoryLocation;
+            var ml = sd.LastAccess.MemoryLocation;
             Stack<SchedulingData> list;
 
             if (!m_lasttrans.Find(ml, out list))
@@ -69,12 +69,12 @@ namespace MMC
             if (sd.LastAccess.IsThreadLocal)
                 return;
 
-            MemoryLocation ml = sd.LastAccess.MemoryLocation;
+            var ml = sd.LastAccess.MemoryLocation;
             Stack<SchedulingData> list;
 
             if (m_lasttrans.Find(ml, out list))
             {
-                SchedulingData poppedSD = list.Pop();
+                var poppedSD = list.Pop();
                 System.Diagnostics.Debug.Assert(poppedSD == sd, "The SD's are different, should not be possible.");
             }
         }
@@ -109,7 +109,7 @@ namespace MMC
                     fromSD.State.SII = fromSD.SII;
             }
 
-            SchedulingData toSD = stack.Peek();
+            var toSD = stack.Peek();
             (toSD.SII as SimplifiedSII).Merge(fromSD.SII, toSD.LastAccess);
 
             mapper.Remove(toSD);
@@ -128,9 +128,9 @@ namespace MMC
             }
 
             // Check all enabled transitions for dependency with transitions on the DFS stack
-            foreach (int threadId in sd.Enabled)
+            foreach (var threadId in sd.Enabled)
             {
-                MemoryLocation ml = cur.NextAccess(threadId);
+                var ml = cur.NextAccess(threadId);
                 ExpandSelectedSet(new MemoryAccess(ml, threadId));
             }
 
@@ -146,12 +146,12 @@ namespace MMC
             /* C3 proviso */
             if (collapsed.OnStack)
             {
-                foreach (int enabled in collapsed.SchedulingData.Enabled)
+                foreach (var enabled in collapsed.SchedulingData.Enabled)
                     collapsed.SchedulingData.Enqueue(enabled);
             }
 
             /// Check dependency with transitions in the SII
-            foreach (MemoryAccess ma in sd.SII)
+            foreach (var ma in sd.SII)
                 ExpandSelectedSet(ma);
         }
 
@@ -160,7 +160,7 @@ namespace MMC
             if (next.IsThreadLocal)
                 return;
 
-            SchedulingData sd = mapper.Get(next.MemoryLocation);
+            var sd = mapper.Get(next.MemoryLocation);
 
             if (sd != null)
             {
@@ -170,7 +170,7 @@ namespace MMC
                 }
                 else
                 {
-                    foreach (int enabledThread in sd.Enabled)
+                    foreach (var enabledThread in sd.Enabled)
                         sd.Enqueue(enabledThread);
                 }
             }
@@ -185,7 +185,7 @@ namespace MMC
         /// 1. An objectreference is written to object o
         /// 2. o is threadshared, and the o' referenced by
         /// the objectreference is not
-        public static void UpdateReachability(Boolean parentIsShared, IDataElement oldRef, IDataElement newRef, ExplicitActiveState cur)
+        public static void UpdateReachability(bool parentIsShared, IDataElement oldRef, IDataElement newRef, ExplicitActiveState cur)
         {
             if (!cur.Configuration.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
             {
@@ -198,7 +198,7 @@ namespace MMC
             {
                 if (!((ObjectReference)newRef).Equals(ObjectReference.Null))
                 {
-                    DynamicAllocation da = cur.DynamicArea.Allocations[(ObjectReference)newRef];
+                    var da = cur.DynamicArea.Allocations[(ObjectReference)newRef];
 
                     if (!da.ThreadShared)
                     {
@@ -240,8 +240,8 @@ namespace MMC
                 explorer.DoSharingAnalysis = false;
             }
 
-            int oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
-            int retval = -1;
+            var oldCurrentThreadId = cur.ThreadPool.CurrentThreadId;
+            var retval = -1;
 
 			foreach (var thread in cur.ThreadPool.RunnableThreads)
             {				
@@ -278,11 +278,11 @@ namespace MMC
             /* clean this up, because this is an ugly hack */
 
             ISparseElement old = null;
-            AllocationList alloc = cur.DynamicArea.Allocations;
+            var alloc = cur.DynamicArea.Allocations;
 
-            for (int i = 0; i < alloc.Length; i++)
+            for (var i = 0; i < alloc.Length; i++)
             {
-                DynamicAllocation da = cur.DynamicArea.Allocations[i];
+                var da = cur.DynamicArea.Allocations[i];
 
                 if (da != null && da.ThreadShared)
                     old = new SparseElement(i, 0, old);
@@ -295,8 +295,8 @@ namespace MMC
         {
             if (m_dfscount > stack.Count)
             {
-                AllocationList malloc = cur.DynamicArea.Allocations;
-                for (ISparseElement d = sd.AllocAtttributes; d != null; d = d.Next)
+                var malloc = cur.DynamicArea.Allocations;
+                for (var d = sd.AllocAtttributes; d != null; d = d.Next)
                 {
                     malloc[d.Index].HeapAttribute = AllocatedObject.SHARED;
                 }

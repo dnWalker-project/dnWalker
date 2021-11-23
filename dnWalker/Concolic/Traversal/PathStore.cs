@@ -43,7 +43,9 @@ namespace dnWalker.Concolic.Traversal
             if (expressionToSolve == null)
             {
                 return null;
-            }            
+            }
+
+
 
             var next = solver.Solve(expressionToSolve, parameters);
             if (next == null)
@@ -71,6 +73,8 @@ namespace dnWalker.Concolic.Traversal
             }
 
             _expressions.Add(expressionToSolve);
+
+            
 
             return next;
         }
@@ -165,7 +169,7 @@ namespace dnWalker.Concolic.Traversal
         [DebuggerStepThrough]
         private MethodExplorer GetMethodExplorer(CILLocation location)
         {
-            MethodDef method = location.Method;
+            var method = location.Method;
             if (!_methodExlorers.TryGetValue(method, out var explorer))
             {
                 explorer = new MethodExplorer(method);

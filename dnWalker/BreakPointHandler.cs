@@ -59,7 +59,7 @@ namespace MMC {
 
         BreakPoint MakeBreakPoint(string threadId, string methodFullName, string offset)
         {
-            BreakPoint bp = new BreakPoint();
+            var bp = new BreakPoint();
             bp.MethodDefinition = null;
             try
             {
@@ -67,9 +67,9 @@ namespace MMC {
                 bp.Thread = Int32.Parse(threadId);
                 bp.Offset = Int32.Parse(offset);
                 // Generate class and method names.
-                int breakAt = methodFullName.LastIndexOf('.');
-                string typeName = methodFullName.Substring(0, breakAt);
-                string methodName = methodFullName.Substring(breakAt + 1);
+                var breakAt = methodFullName.LastIndexOf('.');
+                var typeName = methodFullName.Substring(0, breakAt);
+                var methodName = methodFullName.Substring(breakAt + 1);
                 var declType = cur.DefinitionProvider.GetTypeDefinition(typeName);
                 if (declType != null)
                 {
@@ -89,7 +89,7 @@ namespace MMC {
 
 		internal bool SetBreakPoint(string threadId, string methodFullName, string offset) {
 
-			BreakPoint bp = MakeBreakPoint(threadId, methodFullName, offset);
+			var bp = MakeBreakPoint(threadId, methodFullName, offset);
 			return (bp.MethodDefinition != null) && AddBreakPoint(bp);
 		}
 
@@ -100,8 +100,8 @@ namespace MMC {
 
 		bool AddBreakPoint(BreakPoint bp) {
 
-			bool found = false;
-			for (int i = 0; !found && i < m_breakpoints.Count; ++i)
+			var found = false;
+			for (var i = 0; !found && i < m_breakpoints.Count; ++i)
 				found = bp.Equals(m_breakpoints[i]);
 			if (!found)
 				m_breakpoints.Add(bp);
@@ -111,7 +111,7 @@ namespace MMC {
 
 		internal bool RemoveBreakPoint(string threadId, string methodName, string offset) {
 
-			BreakPoint bp = MakeBreakPoint(threadId, methodName, offset);
+			var bp = MakeBreakPoint(threadId, methodName, offset);
 			return DeleteBreakPoint(bp);
 		}
 
@@ -122,7 +122,7 @@ namespace MMC {
 
 		public bool RemoveBreakPoint(int n) {
 
-			bool retval = n >= 0 && n < m_breakpoints.Count;
+			var retval = n >= 0 && n < m_breakpoints.Count;
 			if (retval)
 				m_breakpoints.RemoveAt(n);
 			return retval;
@@ -131,7 +131,7 @@ namespace MMC {
 		bool DeleteBreakPoint(BreakPoint bp) {
 
 			int i;
-			bool found = false;
+			var found = false;
 			for (i = 0; !found && i < m_breakpoints.Count; ++i)
 				found = m_breakpoints[i].Equals(bp);
 			if (found)
@@ -142,11 +142,11 @@ namespace MMC {
 
 		public bool IsBreakPoint() {
 
-			bool retval = false;
+			var retval = false;
 			BreakPoint bp;
 
 			bp = MakeBreakPoint();
-			for (int i = 0; !retval && i < m_breakpoints.Count; ++i)
+			for (var i = 0; !retval && i < m_breakpoints.Count; ++i)
 				retval = bp.Equals(m_breakpoints[i]);
 
 			return retval;
@@ -156,12 +156,12 @@ namespace MMC {
 
 			BreakPoint bp;
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			if (m_breakpoints.Count == 0)
 				sb.Append("No breakpoints set.");
 			else {
 				sb.Append("Breakpoints:\n");
-				for (int i = 0; i < m_breakpoints.Count; ++i) {
+				for (var i = 0; i < m_breakpoints.Count; ++i) {
 					bp = (BreakPoint)m_breakpoints[i];
 					sb.AppendFormat("   {0}: {1}", i, bp.ToString());
 				}
@@ -192,7 +192,7 @@ namespace MMC {
 
 			public override bool Equals(object other) {
 
-				BreakPoint o = (BreakPoint)other;
+				var o = (BreakPoint)other;
 				return o.Thread == Thread &&
 				   o.Offset == Offset &&
 				   o.MethodDefinition == MethodDefinition;

@@ -63,9 +63,9 @@ namespace MMC.Util {
 			// Yes, I know this method could use less locals. But let the
 			// compiler/VES figure this out. "The competent programmer [...]
 			// avoids clever tricks like the plague." -- Edsger Dijkstra.
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			int to = from + length;
-			for (int i=from; i < to; ++i) {
+			var sb = new System.Text.StringBuilder();
+			var to = from + length;
+			for (var i=from; i < to; ++i) {
 				if (sb.Length > 0)
 					sb.Append(", ");
 				if (filter(data, i))

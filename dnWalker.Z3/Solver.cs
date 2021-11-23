@@ -21,11 +21,10 @@ namespace dnWalker.Z3
                     parameters.Select(p => p.Name).ToArray(),
                     parameters.Select(p => p.Type).ToArray());
 
-                Type TP = myclass.GetType();
+                var TP = myclass.GetType();
 
                 var context = Activator.CreateInstance(TP);
 
-                // co dela tenhle cyklus? nijak neovlivnuje veci mimo
                 foreach (var param in parameters)
                 {
                     var getDefaultValue =

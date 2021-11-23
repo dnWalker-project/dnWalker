@@ -27,7 +27,7 @@ namespace MMC.Collections {
 
 		public WrappedIntArray(WrappedIntArray wia, int length)
 			: this(length) {
-			int traversalSize = System.Math.Min(length, wia.Length);
+			var traversalSize = System.Math.Min(length, wia.Length);
 			System.Array.Copy(wia.m_arr, m_arr, traversalSize);
 		}
 
@@ -50,8 +50,8 @@ namespace MMC.Collections {
 		}
 
 		public override bool Equals(object obj) {
-			WrappedIntArray other = obj as WrappedIntArray;
-			bool retval = MMC.Util.IntArrayHashHelper.CompareIntArrays(m_arr, other.m_arr) == 0;
+			var other = obj as WrappedIntArray;
+			var retval = MMC.Util.IntArrayHashHelper.CompareIntArrays(m_arr, other.m_arr) == 0;
 			return retval;
 		}
 

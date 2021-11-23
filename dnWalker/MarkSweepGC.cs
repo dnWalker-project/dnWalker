@@ -35,16 +35,16 @@ namespace MMC.State
         {
             todo.Clear();
             // reset the flags
-            AllocationList m_alloc = cur.DynamicArea.Allocations;
-            for (int i = 0; i < m_alloc.Length; ++i)
+            var m_alloc = cur.DynamicArea.Allocations;
+            for (var i = 0; i < m_alloc.Length; ++i)
             {
-                DynamicAllocation ida = m_alloc[i];
+                var ida = m_alloc[i];
                 if (ida != null)
                     ida.HeapAttribute = AllocatedObject.UNMARKED;
             }
 
             // Mark all pinned down allocations.
-            foreach (ObjectReference pinnedObjRef in cur.DynamicArea.PinnedAllocations)
+            foreach (var pinnedObjRef in cur.DynamicArea.PinnedAllocations)
             {
                 Mark(cur, pinnedObjRef, 0);
             }
@@ -52,13 +52,13 @@ namespace MMC.State
             // Mark all thread objects and referenced allocations in all method states.
             ThreadState t_cur;
             MethodState m_cur;
-            for (int t_id = 0; t_id < cur.ThreadPool.Threads.Length; ++t_id)
+            for (var t_id = 0; t_id < cur.ThreadPool.Threads.Length; ++t_id)
             {
                 t_cur = cur.ThreadPool.Threads[t_id];
                 // The thread object is no longer marked, since it's pinned down.
                 if (t_cur != null && t_cur.IsAlive)
                 {
-                    for (int m_id = 0; m_id < t_cur.CallStack.StackPointer; ++m_id)
+                    for (var m_id = 0; m_id < t_cur.CallStack.StackPointer; ++m_id)
                     {
                         m_cur = t_cur.CallStack[m_id];
                         MarkContainer(cur, m_cur.Arguments, m_cur.Arguments.Length, t_id);
@@ -71,8 +71,8 @@ namespace MMC.State
             // Mark referenced allocations in the static area.
             foreach (int lcls in cur.StaticArea.LoadedClasses)
             {
-                AllocatedClass ac = cur.StaticArea.Classes[lcls];
-                for (int f_id = 0; f_id < ac.Fields.Length; ++f_id)
+                var ac = cur.StaticArea.Classes[lcls];
+                for (var f_id = 0; f_id < ac.Fields.Length; ++f_id)
                 {
                     if (ac.Fields[f_id] is ObjectReference)
                         Mark(cur, (ObjectReference)ac.Fields[f_id], AllocatedObject.SHARED);
@@ -103,12 +103,12 @@ namespace MMC.State
 
                 if (to_visit is AllocatedDelegate)
                 {
-                    AllocatedDelegate ad = to_visit as AllocatedDelegate;
+                    var ad = to_visit as AllocatedDelegate;
                     Mark(cur, ad.Object, ad.HeapAttribute);
                 }
                 else if (to_visit is AllocatedObject)
                 {
-                    AllocatedObject ao = to_visit as AllocatedObject;
+                    var ao = to_visit as AllocatedObject;
                     MarkContainer(cur, ao.Fields, ao.Fields.Length, ao.HeapAttribute);
                 }
             }
@@ -116,11 +116,11 @@ namespace MMC.State
 
         void Mark(ExplicitActiveState cur, ObjectReference o, int tid)
         {
-            int loc = (int)o.Location - 1;
+            var loc = (int)o.Location - 1;
             // Watch out for null references, and references to unallocated space.
             if (loc >= 0)
             {
-                DynamicAllocation alloc = cur.DynamicArea.Allocations[loc];
+                var alloc = cur.DynamicArea.Allocations[loc];
                 // If not yet seen, we need to examine this one further when marking
                 // allocations recursively. 
                 if (alloc != null)
@@ -141,19 +141,19 @@ namespace MMC.State
 
         void MarkContainer(ExplicitActiveState cur, IDataElementContainer dec, int length, int tid)
         {
-            for (int i = 0; i < length; ++i)
+            for (var i = 0; i < length; ++i)
                 if (dec[i] is ObjectReference)
                     Mark(cur, (ObjectReference)dec[i], tid);
         }
 
         public int Sweep(ExplicitActiveState cur)
         {
-            int retval = 0;
+            var retval = 0;
             // var cur = cur;
-            AllocationList m_alloc = cur.DynamicArea.Allocations;
-            for (int i = 0; i < m_alloc.Length; ++i)
+            var m_alloc = cur.DynamicArea.Allocations;
+            for (var i = 0; i < m_alloc.Length; ++i)
             {
-                DynamicAllocation ida = m_alloc[i];
+                var ida = m_alloc[i];
                 if (ida != null)
                 {
                     // If marked, unmark (for next run), else delete.

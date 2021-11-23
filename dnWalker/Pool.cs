@@ -45,13 +45,13 @@ namespace MMC.Data {
 				return CollectionConstants.NotSet;
 			// ---------------------------------------------------------------
 
-			int retval = m_intToElem.Count;
+			var retval = m_intToElem.Count;
 
 			if (!m_elemToInt.Find(ref o)) {
-				T toStore = o;
+				var toStore = o;
 
 				if (o is IStorable) {
-					IStorable copy = ((IStorable)o).StorageCopy();
+					var copy = ((IStorable)o).StorageCopy();
 					copy.ReadOnly = true;
 					toStore = (T)copy;
 				}
@@ -86,7 +86,7 @@ namespace MMC.Data {
 				retval = m_intToElem[i];
 
 			if (retval is IStorable) {
-				IStorable copy = ((IStorable)retval).StorageCopy();
+				var copy = ((IStorable)retval).StorageCopy();
 				copy.ReadOnly = false;
 				retval = (T)copy;
 			} 
@@ -126,7 +126,7 @@ namespace MMC.Data {
 				return CollectionConstants.NotSet;
 			// ---------------------------------------------------------------
 
-			int retval = m_intToElem.Count;
+			var retval = m_intToElem.Count;
 
 			if (!m_elemToInt.FindOrAdd(ref o, ref retval)) 
 				m_intToElem.Add(o);			
@@ -186,15 +186,15 @@ namespace MMC.Data {
 			// ---------------------------------------------------------------
 
 			int retval;
-			object wrapped = m_elemToInt[o];
+			var wrapped = m_elemToInt[o];
 			if (wrapped == null) {
 				// Make a copy of the object to store if it implements the
 				// Clone() method. Else, assume it's either an immutable
 				// object, or the caller knows the difference between passing
 				// by value and by reference. :-)
-				object key = o;
+				var key = o;
 				if (m_clone && (o is IStorable)) {
-					IStorable copy = ((IStorable)o).StorageCopy();
+					var copy = ((IStorable)o).StorageCopy();
 					copy.ReadOnly = true;
 					key = copy;
 				} else if (m_clone && (o is System.ICloneable)) {
@@ -221,7 +221,7 @@ namespace MMC.Data {
 			if (i >= 0 && i < m_intToElem.Count)
 				retval = m_intToElem[i];
 			if (m_clone && retval is IStorable) {
-				IStorable copy = ((IStorable)retval).StorageCopy();
+				var copy = ((IStorable)retval).StorageCopy();
 				copy.ReadOnly = false;
 				retval = copy;
 			} else if (m_clone && (retval is System.ICloneable)) {
@@ -232,8 +232,8 @@ namespace MMC.Data {
 
 		public override string ToString() {
 
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < m_intToElem.Count; ++i)
+			var sb = new StringBuilder();
+			for (var i = 0; i < m_intToElem.Count; ++i)
 				sb.AppendFormat("\t{0} -> {1}\n", i,
 						(m_tsc != null ? m_tsc.ToString(m_intToElem[i]) : m_intToElem[i].ToString()));
 			if (sb.Length == 0)

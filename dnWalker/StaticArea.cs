@@ -75,7 +75,7 @@ namespace MMC.State {
 		/// <returns>True iff the class exists and is loaded.</returns>
 		public bool ClassLoaded(TypeDefinition typeDef) {
 
-			object loc = m_typeToLocation[typeDef];
+			var loc = m_typeToLocation[typeDef];
 			return (loc != null && m_classes[(int)loc].Loaded);
 		}
 
@@ -87,11 +87,11 @@ namespace MMC.State {
 		/// <returns>The location.</returns>
 		public int GetClassLocation(TypeDefinition typeDef) {
 
-			object retval = m_typeToLocation[typeDef];
+			var retval = m_typeToLocation[typeDef];
 			if (retval == null) {
 				retval = m_typeToLocation.Count;
 				m_typeToLocation[typeDef] = retval;
-				AllocatedClass new_class = new AllocatedClass(typeDef, _cur);
+				var new_class = new AllocatedClass(typeDef, _cur);
 				m_classes[(int)retval] = new_class;
 			}
 			return (int)retval;
@@ -116,7 +116,7 @@ namespace MMC.State {
         /// <returns>The class.</returns>
         public AllocatedClass GetClass(int location)
         {
-            AllocatedClass retval = m_classes[location];
+            var retval = m_classes[location];
             if (!retval.Loaded)
             {
                 _cur.Logger.Debug("loading class {0} at location {1}",
@@ -143,7 +143,7 @@ namespace MMC.State {
 
 		public override string ToString() {
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			foreach (int lcls in LoadedClasses)
 				sb.Append(m_classes[lcls].ToString()+"\n");
 			return sb.ToString();
@@ -151,8 +151,8 @@ namespace MMC.State {
 
 		public bool IsDirty() {
 
-			bool retval = false;
-			for (int i=0; !retval && i < m_classes.Length; ++i)
+			var retval = false;
+			for (var i=0; !retval && i < m_classes.Length; ++i)
 				retval = m_classes[i] != null &&
 				   m_classes[i].Loaded && m_classes[i].IsDirty();
 			return retval;
@@ -162,7 +162,7 @@ namespace MMC.State {
 		public DirtyList DirtyClasses {
 
 			get {
-				DirtyList retval = new DirtyList();
+				var retval = new DirtyList();
 				foreach (int lcls in LoadedClasses) {
 					if (m_classes[lcls].IsDirty())
 						retval.SetDirty(lcls);
@@ -211,7 +211,7 @@ namespace MMC.State {
 
 				public bool MoveNext() {
 
-					bool retval = false;
+					var retval = false;
 					for (++m_cur; !retval && m_cur < m_sa.Classes.Length; ++m_cur)
 						retval = m_sa.Classes[m_cur] != null && m_sa.Classes[m_cur].Loaded;
 					if (retval)

@@ -36,7 +36,7 @@ namespace MMC.State
     {
         int IEqualityComparer<AllocationSignature>.GetHashCode(AllocationSignature alsig)
         {
-            int hashvalue = -1;
+            var hashvalue = -1;
             hashvalue += (int)alsig.Instruction.Offset;
             hashvalue ^= HashMasks.MASK1;
             hashvalue += alsig.Method.Name.GetHashCode();
@@ -55,7 +55,7 @@ namespace MMC.State
 
         public int Compare(AllocationSignature aa, AllocationSignature bb)
         {
-            int cmp = aa.ThreadId - bb.ThreadId;
+            var cmp = aa.ThreadId - bb.ThreadId;
             if (cmp != 0)
                 cmp = aa.Occurence - bb.Occurence;
             else if (cmp != 0)

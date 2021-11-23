@@ -43,8 +43,8 @@ namespace MMC.Collections {
 		public static int GetHashCodeDataElementContainer(IDataElementContainer val, int length) {
 			// Jenkins' LOOKUP3 hash  (May 2006), gracefully copied from JPF
 			uint a = 0x510fb60d;
-			uint b = 0xa4cb30d9 + ((uint)length);
-			uint c = 0x9e3779b9;
+			var b = 0xa4cb30d9 + ((uint)length);
+			var c = 0x9e3779b9;
 
 			int i;
 			for (i = 0; i < length - 2; i += 3) {
@@ -101,10 +101,10 @@ namespace MMC.Collections {
 		public static int GetHashCodeEnumerable(IEnumerable ie, int length) {
 			// Jenkins' LOOKUP3 hash  (May 2006), gracefully copied from JPF
 			uint a = 0x510fb60d;
-			uint b = 0xa4cb30d9 + ((uint)length);
-			uint c = 0x9e3779b9;
+			var b = 0xa4cb30d9 + ((uint)length);
+			var c = 0x9e3779b9;
 
-			IEnumerator enumerator = ie.GetEnumerator();
+			var enumerator = ie.GetEnumerator();
 			enumerator.MoveNext();
 
 			int i;
@@ -167,8 +167,8 @@ namespace MMC.Collections {
 
 			// Jenkins' LOOKUP3 hash  (May 2006), gracefully copied from JPF
 			uint a = 0x510fb60d;
-			uint b = 0xa4cb30d9 + ((uint)val.Length);
-			uint c = 0x9e3779b9;
+			var b = 0xa4cb30d9 + ((uint)val.Length);
+			var c = 0x9e3779b9;
 
 			int i;
 			for (i = 0; i < val.Length - 2; i += 3) {

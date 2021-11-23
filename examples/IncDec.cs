@@ -35,22 +35,22 @@ public class IncDec
 
     public static void One()
     {
-        IncDec incdec = new IncDec(30);
-        Thread inc = new Thread(new ThreadStart(incdec.Inc));
-        Thread dec = new Thread(new ThreadStart(incdec.Dec));
-        Thread mon = new Thread(new ThreadStart(incdec.Mon));
+        var incdec = new IncDec(30);
+        var inc = new Thread(new ThreadStart(incdec.Inc));
+        var dec = new Thread(new ThreadStart(incdec.Dec));
+        var mon = new Thread(new ThreadStart(incdec.Mon));
         inc.Start(); dec.Start(); mon.Start();
     }
 
     public static int Two()
     {
-        IncDec incdec = new IncDec(30);
+        var incdec = new IncDec(30);
         return incdec.Value;
     }
 
     public static int Three(int value)
     {
-        IncDec incdec = new IncDec(value);
+        var incdec = new IncDec(value);
         return incdec.Value * 12;
     }
 }

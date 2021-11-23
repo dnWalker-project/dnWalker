@@ -65,7 +65,7 @@ namespace MMC.State {
 		}
 
 		public int GetInt(IInitData id) {
-			int i = m_idPool.GetInt(id);
+			var i = m_idPool.GetInt(id);
 			return i;
 		}
 
@@ -137,7 +137,7 @@ namespace MMC.State {
 		 * TODO: fix this tostring code */
 		public override string ToString() {
 
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 //			sb.AppendFormat("Elements pool:\n{0}\n", m_elementPool.ToString());
 //			sb.AppendFormat("Container pool:\n{0}\n", m_decPool.ToString());
 //			sb.AppendFormat("List pool:\n{0}\n", m_listPool.ToString());
@@ -150,9 +150,9 @@ namespace MMC.State {
 		public PoolData() {					
 			
 
-			CILElementHashCodeProvider cilhcp = new CILElementHashCodeProvider();
-			CILElementComparer cilcmp = new CILElementComparer();
-			CILElementPrinter cilprn = new CILElementPrinter();
+			var cilhcp = new CILElementHashCodeProvider();
+			var cilcmp = new CILElementComparer();
+			var cilprn = new CILElementPrinter();
 			m_oPool = new Pool(cilhcp, cilcmp, cilprn, false);
 
 			m_objectSIIPool = new FastPool<ObjectSII>(14);

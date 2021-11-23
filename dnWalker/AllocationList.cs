@@ -122,7 +122,7 @@ namespace MMC.State
             /// <returns>True if a new object has been found, false otherwise (end of iteration).</returns>
             public bool MoveNext()
             {
-				bool retval = false;
+				var retval = false;
 				for (++m_cur; !retval && m_cur < m_al.Length; ++m_cur)
 					retval = m_al[m_cur] != null;
 				if (retval)

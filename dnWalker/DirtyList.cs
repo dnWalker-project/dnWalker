@@ -53,9 +53,9 @@ namespace MMC.Util {
 
 		public override string ToString() {
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			sb.Append("{");
-			foreach (int i in this) {
+			foreach (var i in this) {
 				if (sb.Length > 1)
 					sb.Append(", ");
 				sb.Append(i);

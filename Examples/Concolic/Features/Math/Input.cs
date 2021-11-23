@@ -17,7 +17,7 @@ namespace Examples.Concolic.Features.Math
     {
         public static void foo(double d)
         {
-            double f = System.Math.Ceiling(d);
+            var f = System.Math.Ceiling(d);
             if (f == 10)
                 Console.Out.WriteLine("Math.ceil(" + d + ") == 10");
             else
@@ -26,7 +26,7 @@ namespace Examples.Concolic.Features.Math
 
         public static void bar(double d1, double d2)
         {
-            double s = 2.2.ToRadians();
+            var s = 2.2.ToRadians();
             if (d1 > d2)
             {
                 if (System.Math.Sqrt(d1) * s >= 0)
@@ -40,10 +40,10 @@ namespace Examples.Concolic.Features.Math
             }
         }
 
-        public static void main(String[] args)
+        public static void main(string[] args)
         {
             Console.Out.WriteLine("-------- In main!");
-            Input inst = new Input();
+            var inst = new Input();
             try
             {
                 Input.foo(3.14159);

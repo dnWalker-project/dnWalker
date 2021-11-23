@@ -29,7 +29,7 @@ namespace MMC.Test
 
         public string Execute(string cmd, string args, string workingDirectory, out int retval)
         {
-            using (Process p = new Process())
+            using (var p = new Process())
             {
                 p.StartInfo.FileName = cmd;
                 p.StartInfo.Arguments = args;
@@ -42,7 +42,7 @@ namespace MMC.Test
                 p.StartInfo.RedirectStandardError = true;
                 p.Start();
 
-                string output = p.StandardError.ReadToEnd();
+                var output = p.StandardError.ReadToEnd();
                 output += p.StandardOutput.ReadToEnd();
 
                 p.WaitForExit();
@@ -55,8 +55,8 @@ namespace MMC.Test
 
         public string Basename(string filename)
         {
-            int dot = filename.LastIndexOf(".");
-            string basename = filename.Substring(0, dot);
+            var dot = filename.LastIndexOf(".");
+            var basename = filename.Substring(0, dot);
             return basename;
         }
 
@@ -65,7 +65,7 @@ namespace MMC.Test
         {
             int retval;
 
-            string basename = Basename(filename);
+            var basename = Basename(filename);
 
             if (File.Exists(basename + ".exe"))
             {
@@ -73,9 +73,9 @@ namespace MMC.Test
             }
 
             //filename = "\"" + filename + "\"";
-            string output = this.Execute(compiler, args + " " + filename, Path.GetDirectoryName(filename), out retval);
+            var output = this.Execute(compiler, args + " " + filename, Path.GetDirectoryName(filename), out retval);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendFormat("** COMPILE [{0}] {1} {2} {3} RETURNS {4}\n{5}",
                 DateTime.UtcNow.ToLongDateString() + " " + DateTime.UtcNow.ToLongTimeString(),
                 compiler,
@@ -95,9 +95,9 @@ namespace MMC.Test
             int retval;
 
             filename = "\"" + filename + "\"";
-            string output = this.Execute("mono", "mmc.exe -V -s -a " + filename, Path.GetDirectoryName(filename), out retval);
+            var output = this.Execute("mono", "mmc.exe -V -s -a " + filename, Path.GetDirectoryName(filename), out retval);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendFormat("** TEST [{0} {1}] {2} RETURNS {3}\n{4}",
                 DateTime.UtcNow.ToLongDateString(),
                 DateTime.UtcNow.ToLongTimeString(),
@@ -116,13 +116,13 @@ namespace MMC.Test
 
         public List<string> GetFilesRecursively(string root, string criterium)
         {
-            DirectoryInfo di = new DirectoryInfo(root);
-            List<string> retval = new List<string>();
+            var di = new DirectoryInfo(root);
+            var retval = new List<string>();
 
-            foreach (FileInfo file in di.GetFiles(criterium))
+            foreach (var file in di.GetFiles(criterium))
                 retval.Add(file.FullName);
 
-            foreach (DirectoryInfo din in di.GetDirectories())
+            foreach (var din in di.GetDirectories())
                 retval.AddRange(this.GetFilesRecursively(din.FullName, criterium));
 
             return retval;
@@ -132,21 +132,21 @@ namespace MMC.Test
         public void RunTests(string root, string criterium, string compiler, string flags)
         {
             /* process testfiles */
-            List<string> files = GetFilesRecursively(root, criterium);
-            StringBuilder sb = new StringBuilder();
+            var files = GetFilesRecursively(root, criterium);
+            var sb = new StringBuilder();
             sb.AppendFormat("Found {0} files using criterium {1}, stand by while processing",
                 files.Count,
                 criterium);
             Console.WriteLine(sb.ToString());
-            for (int i = 0; i < files.Count; i++)
+            for (var i = 0; i < files.Count; i++)
             {
-                string file = files[i];
+                var file = files[i];
 
                 /* compile */
                 Compile(compiler, flags, file);
 
                 /* run test */
-                string basename = Basename(file);
+                var basename = Basename(file);
                 RunTest(basename + ".exe");
 
                 // some feedback to the user
@@ -175,7 +175,7 @@ namespace MMC.Test
 
 
             /* Print stats */
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendFormat(
 @"
 Test statistics:
@@ -207,8 +207,8 @@ See {2} for logs",
 
         public static void Main(string[] args)
         {
-            string logfile = "";
-            string root = "";
+            var logfile = "";
+            var root = "";
 
             /* parse args */
             if (args.Length == 2)
@@ -223,7 +223,7 @@ See {2} for logs",
             }
 
             /* init data structs */
-            TestDriver driver = new TestDriver(root, logfile);
+            var driver = new TestDriver(root, logfile);
         }
     }
 }

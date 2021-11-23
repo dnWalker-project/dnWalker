@@ -1,252 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7434CF07-14CA-4DF7-B03D-36C3AD0A67EB}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>dnWalker</RootNamespace>
-    <AssemblyName>dnWalker</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
     <StartupObject>MMC.MonoModelChecker</StartupObject>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="C5, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\C5.3.0.0-beta\lib\netstandard2.0\C5.dll</HintPath>
-    </Reference>
-    <Reference Include="dnlib, Version=3.3.4.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
-      <HintPath>..\packages\dnlib.3.3.4\lib\net45\dnlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Echo.ControlFlow, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <PackageReference Include="C5" Version="2.5.3" />
+    <PackageReference Include="dnlib" Version="3.3.5" />
+    <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.13" />
+    <PackageReference Include="QuikGraph" Version="2.3.0" />
+    <PackageReference Include="QuikGraph.Graphviz" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Echo.ControlFlow">
       <HintPath>..\lib\Echo\Echo.ControlFlow.dll</HintPath>
     </Reference>
-    <Reference Include="Echo.Core, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Echo.Core">
       <HintPath>..\lib\Echo\Echo.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Echo.DataFlow, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Echo.DataFlow">
       <HintPath>..\lib\Echo\Echo.DataFlow.dll</HintPath>
     </Reference>
-    <Reference Include="Echo.Platforms.Dnlib, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Echo.Platforms.Dnlib">
       <HintPath>..\lib\Echo\Echo.Platforms.Dnlib.dll</HintPath>
     </Reference>
-    <Reference Include="FSharp.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FSharp.Core.6.0.0\lib\netstandard2.0\FSharp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Linq.Expression.Optimizer, Version=1.0.6.0, Culture=neutral, PublicKeyToken=34b6af2337893e15, processorArchitecture=MSIL">
-      <HintPath>..\packages\Linq.Expression.Optimizer.1.0.13\lib\net45\Linq.Expression.Optimizer.dll</HintPath>
-    </Reference>
-    <Reference Include="QuikGraph, Version=2.3.0.0, Culture=neutral, PublicKeyToken=46bd58b0789759cb, processorArchitecture=MSIL">
-      <HintPath>..\packages\QuikGraph.2.3.0\lib\net45\QuikGraph.dll</HintPath>
-    </Reference>
-    <Reference Include="QuikGraph.Graphviz, Version=2.3.1.0, Culture=neutral, PublicKeyToken=46bd58b0789759cb, processorArchitecture=MSIL">
-      <HintPath>..\packages\QuikGraph.Graphviz.2.3.1\lib\net40\QuikGraph.Graphviz.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AbstractAllocations.cs" />
-    <Compile Include="ActiveState.cs" />
-    <Compile Include="AllocationList.cs" />
-    <Compile Include="AllocationSignature.cs" />
-    <Compile Include="Arg.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="AssemblyLoader.cs" />
-    <Compile Include="BreakPointHandler.cs" />
-    <Compile Include="CallStack.cs" />
-    <Compile Include="ChangingIntVector.cs" />
-    <Compile Include="ChoiceGenerators\DefaultChoiceStrategy.cs" />
-    <Compile Include="ChoiceGenerators\IChoiceStrategy.cs" />
-    <Compile Include="ChoiceGenerators\IntChoiceFromValueSet.cs" />
-    <Compile Include="ChoiceGenerators\IChoiceGenerator.cs" />
-    <Compile Include="ChoiceGenerators\SchedulingChoiceGenerator.cs" />
-    <Compile Include="CILDumper.cs" />
-    <Compile Include="CILUtils.cs" />
-    <Compile Include="CollapsedState.cs" />
-    <Compile Include="Collapser.cs" />
-    <Compile Include="Concolic\ArgumentsCache.cs" />
-    <Compile Include="Concolic\Coverage.cs" />
-    <Compile Include="Concolic\Explorer.cs" />
-    <Compile Include="Concolic\ExplorerException.cs" />
-    <Compile Include="Concolic\ExpressionExtensions.cs" />
-    <Compile Include="Concolic\Strategies\ConstraintSolving\FlipItStrategy.cs" />
-    <Compile Include="Concolic\Traversal\MethodExplorer.cs" />
-    <Compile Include="Concolic\Traversal\PathStore.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="DataElement.cs" />
-    <Compile Include="DataElementList.cs" />
-    <Compile Include="DataElementStack.cs" />
-    <Compile Include="DataElements\ReturnValue.cs" />
-    <Compile Include="DefinitionLookup.cs" />
-    <Compile Include="DirtyList.cs" />
-    <Compile Include="DotWriter.cs" />
-    <Compile Include="DynamicAllocations.cs" />
-    <Compile Include="DynamicArea.cs" />
-    <Compile Include="DynamicBitArray.cs" />
-    <Compile Include="ExplorationLogger.cs" />
-    <Compile Include="Explorer.cs" />
-    <Compile Include="Factories\InstructionFactory.cs" />
-    <Compile Include="FastHashtable.cs" />
-    <Compile Include="GarbageCollection.cs" />
-    <Compile Include="Graphs\ControlFlow\ControlFlowGraph.cs" />
-    <Compile Include="HashFunctions.cs" />
-    <Compile Include="IEReturnValue.cs" />
-    <Compile Include="InstructionBase.cs" />
-    <Compile Include="InstructionExecCache.cs" />
-    <Compile Include="Instructions.cs" />
-    <Compile Include="IntArray.cs" />
-    <Compile Include="IntArrayUtil.cs" />
-    <Compile Include="InteractiveExplorer.cs" />
-    <Compile Include="InternalCalls.cs" />
-    <Compile Include="ISolver.cs" />
-    <Compile Include="ListToString.cs" />
-    <Compile Include="Lock.cs" />
-    <Compile Include="LockManager.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="MarkSweepGC.cs" />
-    <Compile Include="MemoisedGC.cs" />
-    <Compile Include="NativePeer.cs" />
-    <Compile Include="MethodState.cs" />
-    <Compile Include="MMCExceptions.cs" />
-    <Compile Include="NativePeers\SystemConsole.cs" />
-    <Compile Include="NativePeers\SystemEnvironment.cs" />
-    <Compile Include="NativePeers\SystemIOTextWriter.cs" />
-    <Compile Include="NativePeers\SystemMath.cs" />
-    <Compile Include="NativePeers\SystemRandom.cs" />
-    <Compile Include="NativePeers\SystemThreadingMonitor.cs" />
-    <Compile Include="NativePeers\SystemString.cs" />
-    <Compile Include="NativePeers\SystemFloat.cs" />
-    <Compile Include="NativePeers\SystemDouble.cs" />
-    <Compile Include="NativePeers\SystemRuntimeMethodHandle.cs" />
-    <Compile Include="NativePeers\SystemRuntimeFieldHandle.cs" />
-    <Compile Include="NativePeers\SystemRuntimeTypeHandle.cs" />
-    <Compile Include="NativePeers\SystemThreadingThread.cs" />
-    <Compile Include="PartialOrderReduction.cs" />
-    <Compile Include="PlacementMapping.cs" />
-    <Compile Include="Pool.cs" />
-    <Compile Include="PoolData.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SchedulingData.cs" />
-    <Compile Include="Setup.cs" />
-    <Compile Include="SII.cs" />
-    <Compile Include="SparseArray.cs" />
-    <Compile Include="SparseReferenceList.cs" />
-    <Compile Include="StateCollapser.cs" />
-    <Compile Include="StateDecollapser.cs" />
-    <Compile Include="StateStorage.cs" />
-    <Compile Include="StaticAllocations.cs" />
-    <Compile Include="StaticArea.cs" />
-    <Compile Include="Statistics.cs" />
-    <Compile Include="Storable.cs" />
-    <Compile Include="StorageFactory.cs" />
-    <Compile Include="StorageVisitor.cs" />
-    <Compile Include="Symbolic\AllocationExtensions.cs" />
-    <Compile Include="Symbolic\Arg.cs" />
-    <Compile Include="Symbolic\DataElementExtensions.cs" />
-    <Compile Include="Symbolic\Instructions\BranchInstruction.cs" />
-    <Compile Include="Symbolic\Instructions\CompareInstruction.cs" />
-    <Compile Include="Symbolic\Instructions\InstructionFactory.cs" />
-    <Compile Include="Symbolic\Instructions\Instructions.cs" />
-    <Compile Include="TestDriver.cs" />
-    <Compile Include="ThreadPool.cs" />
-    <Compile Include="ThreadState.cs" />
-    <Compile Include="TracingExplorer.cs" />
-    <Compile Include="Traversal\Path.cs" />
-    <Compile Include="Traversal\PathStore.cs" />
-    <Compile Include="Traversal\Segment.cs" />
-    <Compile Include="ValueComparer.cs" />
-    <Compile Include="VirtualMachineDefaults.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Makefile" />
-    <None Include="packages.config" />
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LICENSE.txt" />
-    <Content Include="Mono.Cecil.dll" />
-    <Content Include="README.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Symbolic\Primitives\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj">
-      <Project>{5e7dd7ed-9ac0-4095-ab6b-a6bf21fe5b7f}</Project>
-      <Name>Z3.LinqBinding</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

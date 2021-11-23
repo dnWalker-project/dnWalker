@@ -54,9 +54,9 @@ namespace MMC
         public static bool TryParseLogFilter(string format, out LogPriority newLogFilter)
         {
             newLogFilter = LogPriority.None;
-            char[] fmtChars = format.ToCharArray();
+            var fmtChars = format.ToCharArray();
 
-            int i = 0;
+            var i = 0;
             if (fmtChars[0] == '+')
             {
                 newLogFilter = Default;
@@ -212,7 +212,7 @@ namespace MMC
         
         public void Log(LogPriority lp, string msg)
         {
-            System.DateTime now = System.DateTime.Now;
+            var now = System.DateTime.Now;
             m_sink.WriteLine("{0:D2}:{1:D2}:{4:D2} [{2,12}] {3}", now.Hour, now.Minute, lp, msg, now.Second);
         }
 

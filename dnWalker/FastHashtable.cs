@@ -97,11 +97,11 @@ namespace MMC.Collections {
 		}*/
 
 		public bool Remove(K key) {
-			int hashcode = key.GetHashCode();
-			int index = hashcode & m_mask;
+			var hashcode = key.GetHashCode();
+			var index = hashcode & m_mask;
 			Bucket bprev = null;
 
-			for (Bucket b = m_buckets[index]; b != null; bprev = b, b = b.next)
+			for (var b = m_buckets[index]; b != null; bprev = b, b = b.next)
 				if (b.hashcode == hashcode && b.key.Equals(key)) {
 					// remove bucket or remove the chain
 					if (bprev == null)
@@ -126,10 +126,10 @@ namespace MMC.Collections {
         }
 
         public bool Find(ref K o) {
-			int hashcode = o.GetHashCode();
-			int index = hashcode & m_mask;
+			var hashcode = o.GetHashCode();
+			var index = hashcode & m_mask;
 
-			for (Bucket b = m_buckets[index]; b != null; b = b.next)
+			for (var b = m_buckets[index]; b != null; b = b.next)
 				if (b.hashcode == hashcode && b.key.Equals(o)) {
 					o = b.key;
 					return true;
@@ -139,10 +139,10 @@ namespace MMC.Collections {
 		}
 
 		public bool Find(K o, out V v) {
-			int hashcode = o.GetHashCode();
-			int index = hashcode & m_mask;
+			var hashcode = o.GetHashCode();
+			var index = hashcode & m_mask;
 
-			for (Bucket b = m_buckets[index]; b != null; b = b.next)
+			for (var b = m_buckets[index]; b != null; b = b.next)
 				if (b.hashcode == hashcode && b.key.Equals(o)) {
 					o = b.key;
 					v = b.val;
@@ -160,10 +160,10 @@ namespace MMC.Collections {
 		///
 		/// Should only be used icw Find
 		public void UncheckedAdd(K key, V val) {
-			int hashcode = key.GetHashCode();
-			int index = hashcode & m_mask;
+			var hashcode = key.GetHashCode();
+			var index = hashcode & m_mask;
 
-			Bucket front = new Bucket();
+			var front = new Bucket();
 			front.key = key;
 			front.val = val;
 			front.hashcode = hashcode;
@@ -173,17 +173,17 @@ namespace MMC.Collections {
 		}
 
 		public bool FindOrAdd(ref K key, ref V val) {
-			int hashcode = key.GetHashCode();
-			int index = hashcode & m_mask;
+			var hashcode = key.GetHashCode();
+			var index = hashcode & m_mask;
 
-			for (Bucket b = m_buckets[index]; b != null; b = b.next)
+			for (var b = m_buckets[index]; b != null; b = b.next)
 				if (b.hashcode == hashcode && b.key.Equals(key)) {
 					key = b.key;
 					val = b.val;
 					return true;
 				}
 
-			Bucket front = new Bucket();
+			var front = new Bucket();
 			front.key = key;
 			front.val = val;
 			front.hashcode = hashcode;
@@ -194,12 +194,12 @@ namespace MMC.Collections {
 		}
 
 		public string CalculateDistribution() {
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 
-			for (int i = 0; i < m_buckets.Length; i++) {
+			for (var i = 0; i < m_buckets.Length; i++) {
 				if (m_buckets[i] != null)
 					sb.AppendFormat("{0}: ", i);
-				for (Bucket b = m_buckets[i]; b != null; b = b.next)
+				for (var b = m_buckets[i]; b != null; b = b.next)
 					sb.Append("*");
 				if (m_buckets[i] != null)
 					sb.AppendLine();

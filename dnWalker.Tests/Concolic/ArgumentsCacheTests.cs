@@ -17,10 +17,26 @@ namespace dnWalker.Tests.Concolic
     [Trait("Category", "Functionality")]
     public class ArgumentsCacheTests
     {
+        private const string ArgNames = "abcdefghijklmnopqrstuvwxyz";
+
+        private static IArg[] ConstructArgs(params object[] values)
+        {
+            var cnt = values.Length;
+
+            if (cnt > ArgNames.Length) throw new Exception("Too many arguments, only up to: " + ArgNames.Length + " received: " + cnt);
+
+            var args = new IArg[cnt];
+            for (var i = 0; i < cnt; ++i)
+            {
+                args[i] = SymbolicArgs.Arg(ArgNames[i].ToString(), values[i]);
+            }
+            return args;
+        }
+
         [Fact]
         public void WhenTryingToAddNull_Throws()
         {
-            ArgumentsCache cache = new ArgumentsCache(3);
+            var cache = new ArgumentsCache(3);
 
             IArg[] nullArgs = null;
 
@@ -30,9 +46,9 @@ namespace dnWalker.Tests.Concolic
         [Fact]
         public void WhenTryingToAddDifferntArgsNumber_Throws()
         {
-            ArgumentsCache threeArgsCache = new ArgumentsCache(3);
+            var threeArgsCache = new ArgumentsCache(3);
 
-            IArg[] fourArgs = new IArg[4];
+            var fourArgs = new IArg[4];
 
             Assert.Throws<ArgumentException>(() => threeArgsCache.TryAdd(fourArgs));
         }
@@ -40,32 +56,26 @@ namespace dnWalker.Tests.Concolic
         [Fact]
         public void AddingArgsToEmptyCache_Returns_True()
         {
-            ArgumentsCache threeArgsCache = new ArgumentsCache(3);
+            var threeArgsCache = new ArgumentsCache(3);
 
-            IArg[] threeArgs = new IArg[]
-            {
-                SymbolicArgs.Arg("x", 5),
-                SymbolicArgs.Arg("y", 4),
-                SymbolicArgs.Arg("z", 3)
-            };
+            var threeArgs = ConstructArgs(5, 4, 3);
 
             threeArgsCache.TryAdd(threeArgs).Should().BeTrue();
         }
 
 
-        [Fact]
-        public void AddingSameArgsToCache_Returns_False()
+        [Theory]
+        [InlineData(new object[] { 5, 4, 3})]
+        public void AddingSameArgsToCache_Returns_False(params object[] args)
         {
-            ArgumentsCache threeArgsCache = new ArgumentsCache(3);
+            var threeArgsCache = new ArgumentsCache(3);
 
-            IArg[] threeArgs = new IArg[]
-            {
-                SymbolicArgs.Arg("x", 5),
-                SymbolicArgs.Arg("y", 4),
-                SymbolicArgs.Arg("z", 3)
-            };
+            var threeArgs = ConstructArgs(args);
 
             threeArgsCache.TryAdd(threeArgs);//.Should().BeTrue();
+
+            threeArgs = ConstructArgs(args);
+
             threeArgsCache.TryAdd(threeArgs).Should().BeFalse();
         }
 
@@ -73,18 +83,99 @@ namespace dnWalker.Tests.Concolic
         [InlineData(new object[] { 1, 2.5, "hello world" }, new object[] { 1, 2.5, "hi world"})]
         public void AddingSimiliarArgsToCache_Returns_True(object[] args1, object[] args2)
         {
-            ArgumentsCache threeArgsCache = new ArgumentsCache(3);
+            var threeArgsCache = new ArgumentsCache(3);
 
-            IArg[] threeArgs = new IArg[3];
-            threeArgs[0] = SymbolicArgs.Arg("x", args1[0]);
-            threeArgs[1] = SymbolicArgs.Arg("y", args1[1]);
-            threeArgs[2] = SymbolicArgs.Arg("z", args1[2]);
+            var threeArgs = ConstructArgs(args1);
             threeArgsCache.TryAdd(threeArgs);
 
-            threeArgs[0] = SymbolicArgs.Arg("x", args2[0]);
-            threeArgs[1] = SymbolicArgs.Arg("y", args2[1]);
-            threeArgs[2] = SymbolicArgs.Arg("z", args2[2]);
+            threeArgs = ConstructArgs(args2);
             threeArgsCache.TryAdd(threeArgs).Should().BeTrue();
         }
+
+        [Theory]
+        [InlineData(new object[] { 1, 2.5, "hello world" })]
+        [InlineData(new object[] { 1, 2.5, "hi world" })]
+        public void RemovingFromEmptyCache_Returns_False(params object[] argsArray)
+        {
+            var threeArgsCache = new ArgumentsCache(3);
+            var threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.Remove(threeArgs).Should().BeFalse();
+        }
+
+
+        [Theory]
+        [InlineData(new object[] { 1, 2.5, "hello world" })]
+        [InlineData(new object[] { 1, 2.5, "hi world" })]
+        public void RemovingArgsWhichAreInTheCache_Returns_True(params object[] argsArray)
+        {
+            var threeArgsCache = new ArgumentsCache(3);
+            var threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.TryAdd(threeArgs);
+
+            threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.Remove(threeArgs).Should().BeTrue();
+        }
+
+
+
+        [Theory]
+        [InlineData(new object[] { 1, 2.5, "hello world" })]
+        [InlineData(new object[] { 1, 2.5, "hi world" })]
+        public void RemovingRemovedArgs_Returns_False(params object[] argsArray)
+        {
+            var threeArgsCache = new ArgumentsCache(3);
+            var threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.TryAdd(threeArgs);
+
+            threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.Remove(threeArgs);
+            threeArgsCache.Remove(threeArgs).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(new object[] { 1, 2.5, "hello world" })]
+        public void Contains_OnEmptyCache_Returns_False(params object[] argsArray)
+        {
+            var threeArgsCache = new ArgumentsCache(3);
+            var threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.Contains(threeArgs).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(new object[] { 1, 2.5, "hello world" })]
+        public void After_TryAdd_Contains_Returns_True(params object[] argsArray)
+        {
+            var threeArgsCache = new ArgumentsCache(3);
+            var threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.TryAdd(threeArgs);
+
+            threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.Contains(threeArgs).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(new object[] { 1, 2.5, "hello world" })]
+        public void After_Remove_Contains_Returns_False(params object[] argsArray)
+        {
+            var threeArgsCache = new ArgumentsCache(3);
+            var threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.TryAdd(threeArgs);
+
+            threeArgs = ConstructArgs(argsArray);
+
+            threeArgsCache.Remove(threeArgs);
+
+            threeArgsCache.Contains(threeArgs).Should().BeFalse();
+        }
+
     }
 }

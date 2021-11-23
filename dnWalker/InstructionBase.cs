@@ -99,7 +99,7 @@ namespace MMC.InstructionExec
         {
             var exceptionType = cur.DefinitionProvider.GetTypeDefinition(ex.GetType().FullName);
 
-            ObjectReference exceptionRef = cur.DynamicArea.AllocateObject(
+            var exceptionRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(),
                 exceptionType);
 

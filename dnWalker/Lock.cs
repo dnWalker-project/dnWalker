@@ -131,7 +131,7 @@ namespace MMC.State
 
 		public override int GetHashCode() {
 
-			int retval = m_owner;
+			var retval = m_owner;
 			retval ^= HashMasks.MASK2;
 			retval += m_count;
 
@@ -148,24 +148,24 @@ namespace MMC.State
 
 		public override bool Equals(object other) {
 
-			Lock o = other as Lock;
-			bool equal = o != null &&
+			var o = other as Lock;
+			var equal = o != null &&
 				o.Owner == Owner &&
 				o.Count == Count &&
 				o.HasReadyQueue() == HasReadyQueue() &&
 				o.HasWaitQueue() == HasWaitQueue();
 			if (equal && HasReadyQueue()) {
-				int[] o1 = ReadyQueue.ToArray();
-				int[] o2 = o.ReadyQueue.ToArray();
+				var o1 = ReadyQueue.ToArray();
+				var o2 = o.ReadyQueue.ToArray();
 				equal = o1.Length == o2.Length;
-				for (int i = 0; equal && i < o1.Length; ++i)
+				for (var i = 0; equal && i < o1.Length; ++i)
 					equal = o1[i] == o2[i];
 			}
 			if (equal && HasWaitQueue()) {
-				int[] o1 = WaitQueue.ToArray();
-				int[] o2 = o.WaitQueue.ToArray();
+				var o1 = WaitQueue.ToArray();
+				var o2 = o.WaitQueue.ToArray();
 				equal = o1.Length == o2.Length;
-				for (int i = 0; equal && i < o1.Length; ++i)
+				for (var i = 0; equal && i < o1.Length; ++i)
 					equal = o1[i] == o2[i];
 			}
 			return equal;
@@ -186,8 +186,8 @@ namespace MMC.State
 		/// <returns>A clone.</returns>
 		public IStorable StorageCopy() {
 
-			Queue<int> rdy = (HasReadyQueue() ? new Queue<int>(ReadyQueue) : null);
-			Queue<int> wait = (HasWaitQueue() ? new Queue<int>(WaitQueue) : null);
+			var rdy = (HasReadyQueue() ? new Queue<int>(ReadyQueue) : null);
+			var wait = (HasWaitQueue() ? new Queue<int>(WaitQueue) : null);
 
 			return new Lock(m_owner, m_count, rdy, wait);
 		}

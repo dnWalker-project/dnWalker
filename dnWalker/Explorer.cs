@@ -142,7 +142,7 @@ namespace MMC
             StateConstructed += new StateEventHandler(el.LogNewState);
             StateRevisited += new StateEventHandler(el.LogRevisitState);
             Backtracked += new BacktrackEventHandler(el.LogBacktrack);
-            BacktrackEventHandler dummy = new BacktrackEventHandler(el.LogBacktrackDummy);
+            var dummy = new BacktrackEventHandler(el.LogBacktrackDummy);
             BacktrackStart += dummy;
             BacktrackStop += dummy;
             Deadlocked += new DeadlockEventHandler(el.LogDeadlock);
@@ -275,9 +275,9 @@ namespace MMC
 
         public bool Run()
         {
-            bool logAssert = false;
-            bool logDeadlock = false;
-            bool noErrors = false;
+            var logAssert = false;
+            var logDeadlock = false;
+            var noErrors = false;
 
             Statistics.Start();
             m_continue = true;
@@ -291,7 +291,7 @@ namespace MMC
 
             do
             {
-                if (!SetExecutingThread(out ThreadState thread))
+                if (!SetExecutingThread(out var thread))
                 {
                     break; // no thread was selected 
                 }
@@ -366,21 +366,21 @@ namespace MMC
         {
             if (m_measureMemory)
             {
-                long memUsed = GC.GetTotalMemory(false);
+                var memUsed = GC.GetTotalMemory(false);
                 Statistics.MeasureMemory(memUsed);
 
                 /// If ex post facto transition merging is enabled...
                 if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > Config.OptimizeStorageAtMegabyte)
                 {
-                    int count = m_atomicStates.Count;
+                    var count = m_atomicStates.Count;
 
-                    foreach (CollapsedState cs in m_atomicStates)
+                    foreach (var cs in m_atomicStates)
                     {
                         m_stateStorage.Remove(cs);
                     }
                     m_atomicStates.Clear();
 
-                    long memAfter = GC.GetTotalMemory(true);
+                    var memAfter = GC.GetTotalMemory(true);
 
                     Logger.Notice("Optimized hashtable from " + memUsed / 1024 / 1024 + " Mb to " + memAfter / 1024 / 1024 + " Mb by removing " + count + " states");
                     memUsed = memAfter;
@@ -455,13 +455,13 @@ namespace MMC
 		 */
 		public void PrintTransition(ThreadState thread) 
         {
-			MethodState currentMethod = thread.CurrentMethod;
-			Instruction instr = currentMethod.ProgramCounter;
-			string operandString = instr.Operand == null ?
+			var currentMethod = thread.CurrentMethod;
+			var instr = currentMethod.ProgramCounter;
+			var operandString = instr.Operand == null ?
 				"" :
 				CILElementPrinter.FormatCILElement(instr.Operand);
 
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 
 			sb.AppendFormat("- thread: {0} ", thread.Id);
 
@@ -495,9 +495,9 @@ namespace MMC
 
 		public bool CheckDeadlock()
         {
-			bool allStopped = true;
+			var allStopped = true;
 			if (cur.ThreadPool.RunnableThreadCount == 0)
-				for (int i = 0; allStopped && i < cur.ThreadPool.Threads.Length; ++i)
+				for (var i = 0; allStopped && i < cur.ThreadPool.Threads.Length; ++i)
 					allStopped = cur.ThreadPool.Threads[i].State == System.Threading.ThreadState.Stopped;
 
 			return !allStopped;
@@ -508,10 +508,10 @@ namespace MMC
         {
             get
             {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < cur.DynamicArea.Allocations.Length; i++)
+                var sb = new StringBuilder();
+                for (var i = 0; i < cur.DynamicArea.Allocations.Length; i++)
                 {
-                    DynamicAllocation ida = cur.DynamicArea.Allocations[i];
+                    var ida = cur.DynamicArea.Allocations[i];
                     if (ida != null)
                     {
                         sb.AppendFormat("{0} FirstThread={1} ThreadShared={2}\n", i + 1, ida.HeapAttribute, ida.ThreadShared);

@@ -42,11 +42,11 @@ namespace MMC.State
 
         public MethodState DeepCopy()
         {
-            DataElementList copiedArgs = Arguments.StorageCopy() as DataElementList;
-            DataElementList copiedLocals = Locals.StorageCopy() as DataElementList;
-            DataElementStack copiedStack = EvalStack.StorageCopy() as DataElementStack;
+            var copiedArgs = Arguments.StorageCopy() as DataElementList;
+            var copiedLocals = Locals.StorageCopy() as DataElementList;
+            var copiedStack = EvalStack.StorageCopy() as DataElementStack;
 
-            MethodState copy = new MethodState(Definition, copiedArgs, copiedLocals, copiedStack, cur);
+            var copy = new MethodState(Definition, copiedArgs, copiedLocals, copiedStack, cur);
             copy.OnDispose = this.OnDispose.Clone() as MethodStateCallback;
             return copy;
         }
@@ -99,7 +99,7 @@ namespace MMC.State
         public ExceptionHandler NextFilterOrCatchHandler(Instruction instr, ITypeDefOrRef exceptionType)
         {
             ExceptionHandler retval = null;
-            foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
+            foreach (var eh in Definition.Body.ExceptionHandlers)
             {
                 if ((eh.HandlerType == ExceptionHandlerType.Filter ||
                         (eh.HandlerType == ExceptionHandlerType.Catch && cur.DefinitionProvider.IsSubtype(exceptionType, eh.CatchType)))
@@ -119,7 +119,7 @@ namespace MMC.State
         {
 
             ExceptionHandler retval = null;
-            foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
+            foreach (var eh in Definition.Body.ExceptionHandlers)
             {
                 if ((eh.HandlerType == ExceptionHandlerType.Finally || eh.HandlerType == ExceptionHandlerType.Fault)
                             && eh.TryStart.Offset <= instr.Offset && instr.Offset < eh.TryEnd.Offset)
@@ -138,7 +138,7 @@ namespace MMC.State
         {
 
             ExceptionHandler retval = null;
-            foreach (ExceptionHandler eh in Definition.Body.ExceptionHandlers)
+            foreach (var eh in Definition.Body.ExceptionHandlers)
             {
                 if (eh.HandlerType == ExceptionHandlerType.Finally
                         && eh.TryStart.Offset <= instr.Offset && instr.Offset < eh.TryEnd.Offset)
@@ -201,7 +201,7 @@ namespace MMC.State
         public override int GetHashCode()
         {
 
-            int retval = Definition.GetHashCode();
+            var retval = Definition.GetHashCode();
             retval ^= HashMasks.MASK2;
             retval += Locals.GetHashCode();
             retval ^= HashMasks.MASK3;
@@ -221,10 +221,10 @@ namespace MMC.State
         public static int Compare(object a, object b)
         {
 
-            MethodState msa = a as MethodState;
-            MethodState msb = b as MethodState;
+            var msa = a as MethodState;
+            var msb = b as MethodState;
 
-            int retval = msa.PCOffset - msb.PCOffset;
+            var retval = msa.PCOffset - msb.PCOffset;
 
             if (retval == 0)
                 retval = (msa.m_isExceptionSource == msb.m_isExceptionSource) ? 0 : 1;
@@ -235,10 +235,10 @@ namespace MMC.State
             if (retval == 0)
                 retval = msa.EvalStack.StackPointer - msb.EvalStack.StackPointer;
 
-            for (int i = 0; retval == 0 && i < msa.Arguments.Length; ++i)
+            for (var i = 0; retval == 0 && i < msa.Arguments.Length; ++i)
                 retval = msa.Arguments[i].GetHashCode() - msb.Arguments[i].GetHashCode();
 
-            for (int i = 0; retval == 0 && i < msa.Locals.Length; ++i)
+            for (var i = 0; retval == 0 && i < msa.Locals.Length; ++i)
                 retval = msa.Locals[i].GetHashCode() - msb.Locals[i].GetHashCode();
 
             return retval;
@@ -266,7 +266,7 @@ namespace MMC.State
             if (Locals == null)
             {
                 Locals = cur.StorageFactory.CreateList(Definition.Body.Variables.Count);
-                for (int i = 0; i < Locals.Length; ++i)
+                for (var i = 0; i < Locals.Length; ++i)
                 {
                     Locals[i] = DefinitionProvider.GetNullValue(Definition.Body.Variables[i].Type);
                 }

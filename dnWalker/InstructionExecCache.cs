@@ -116,7 +116,7 @@ namespace MMC.InstructionExec
         /// <returns>An IE for the given instruction.</returns>
         public InstructionExecBase GetExecFor(Instruction instr)
         {
-            if (!m_instrExecCache.Find(instr, out InstructionExecBase retval))
+            if (!m_instrExecCache.Find(instr, out var retval))
             {
                 retval = _instructionFactory.CreateInstructionExec(instr);
                 m_instrExecCache.UncheckedAdd(instr, retval);

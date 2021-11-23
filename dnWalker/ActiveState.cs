@@ -289,8 +289,8 @@ namespace MMC.State
                 Delta = collapsedCurrent.GetDelta()
             };
 
-            int id = m_stateStorage.Count + 1;
-            bool seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
+            var id = m_stateStorage.Count + 1;
+            var seenState = m_stateStorage.FindOrAdd(ref collapsedCurrent, ref id);
 
             /*
 			 * Note: the collapsedCurrent stored in the hashtable can be

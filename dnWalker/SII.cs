@@ -65,7 +65,7 @@ namespace MMC
 				if (index >= m_fields.Length) 
 					m_fields = IntArray.GrowArray(m_fields, index);
 				
-				int oldVal = m_fields[index];
+				var oldVal = m_fields[index];
 				m_fields[index] = value;
 				sum = sum - oldVal + value;
 			}
@@ -73,7 +73,7 @@ namespace MMC
 
 		public override bool Equals(object obj) {
 			if (obj != null) {
-				ObjectSII otherOsii = obj as ObjectSII;
+				var otherOsii = obj as ObjectSII;
 
 				if ((sum | otherOsii.sum) == 0)
 					/*
@@ -83,7 +83,7 @@ namespace MMC
 					 */
 					return true;
 				else {
-					bool equal = sum == otherOsii.sum;
+					var equal = sum == otherOsii.sum;
 
 					int[] smallest;
 					int[] biggest;
@@ -96,10 +96,10 @@ namespace MMC
 						smallest = otherOsii.m_fields;
 					}
 
-					for (int i = 0; equal && i < smallest.Length; i++)
+					for (var i = 0; equal && i < smallest.Length; i++)
 						equal = smallest[i] == biggest[i];
 
-					for (int i = smallest.Length; equal && i < biggest.Length; i++)
+					for (var i = smallest.Length; equal && i < biggest.Length; i++)
 						equal = biggest[i] == 0;
 
 					return equal;
@@ -133,13 +133,13 @@ namespace MMC
 
             m_list = new ISparseElement[sii.m_accesses.Length];
 
-            for (int k = 0; k < sii.m_accesses.Length; k++)
+            for (var k = 0; k < sii.m_accesses.Length; k++)
             {
-                ObjectSII[] currOther = sii.m_accesses[k];
-                ISparseElement curr = m_list[k];
-                for (int i = 0; i < currOther.Length; i++)
+                var currOther = sii.m_accesses[k];
+                var curr = m_list[k];
+                for (var i = 0; i < currOther.Length; i++)
                 {
-                    ObjectSII otherOsii = currOther[i];
+                    var otherOsii = currOther[i];
                     if (otherOsii != null)
                         curr = new SparseElement(i, poolData.GetInt(otherOsii), curr);
                 }
@@ -152,22 +152,22 @@ namespace MMC
 
         public IEnumerator<MemoryAccess> GetEnumerator()
         {
-            for (int i = 0; i < m_list.Length; i++)
+            for (var i = 0; i < m_list.Length; i++)
             {
-                for (ISparseElement curr = m_list[i]; curr != null; curr = curr.Next)
+                for (var curr = m_list[i]; curr != null; curr = curr.Next)
                 {
-                    ObjectSII osii = poolData.GetObjectSII(curr.DeltaVal);
-                    for (int k = 0; k < osii.Length; k++)
+                    var osii = poolData.GetObjectSII(curr.DeltaVal);
+                    for (var k = 0; k < osii.Length; k++)
                     {
-                        int threadset = osii[k];
+                        var threadset = osii[k];
                         if (threadset != 0)
                         {
-                            for (int threadId = 0; threadId < 32; threadId++)
+                            for (var threadId = 0; threadId < 32; threadId++)
                             {
-                                int mask = (1 << threadId);
+                                var mask = (1 << threadId);
                                 if ((threadset & mask) == mask)
                                 {
-                                    MemoryLocation hml = new MemoryLocation(i, curr.Index, k, cur);
+                                    var hml = new MemoryLocation(i, curr.Index, k, cur);
                                     yield return new MemoryAccess(hml, threadId);
                                 }
                             }
@@ -205,7 +205,7 @@ namespace MMC
 		/// </summary>
 		private int GetOffsetSize(int type, int loc) {
 			if (type == 0) {
-				DynamicAllocation da = cur.DynamicArea.Allocations[loc];
+				var da = cur.DynamicArea.Allocations[loc];
 				return (da as Allocation).InnerSize;
 			} else if (type == 2) {
 				return 1;
@@ -215,7 +215,7 @@ namespace MMC
 		}
 
 		private ObjectSII GetOrCreate(int type, int loc) {
-			ObjectSII retval = m_accesses[type][loc];
+			var retval = m_accesses[type][loc];
 
 			if (retval == null) {
 				retval = new ObjectSII(GetOffsetSize(type, loc)); // clone it 
@@ -229,15 +229,15 @@ namespace MMC
 		///
 		/// This method should be moved to ActiveState class
 		private bool Exists(MemoryAccess ma) {
-			int type = ma.MemoryLocation.Type;
-			int loc = ma.MemoryLocation.Location;
-			int offset = ma.MemoryLocation.Offset;
+			var type = ma.MemoryLocation.Type;
+			var loc = ma.MemoryLocation.Location;
+			var offset = ma.MemoryLocation.Offset;
 
 			if (type == 0) {
-				DynamicAllocation da = cur.DynamicArea.Allocations[loc];
+				var da = cur.DynamicArea.Allocations[loc];
 				return da != null;
 			} else if (type == 2) {
-				DynamicAllocation da = cur.DynamicArea.Allocations[loc];
+				var da = cur.DynamicArea.Allocations[loc];
 				return da != null;
 			} else {
 				return true;
@@ -247,9 +247,9 @@ namespace MMC
 
 		/// Merges a memory access with this SII
 		private void Merge(MemoryAccess ma) {
-			int type = ma.MemoryLocation.Type;
-			int loc = ma.MemoryLocation.Location;
-			int offset = ma.MemoryLocation.Offset;
+			var type = ma.MemoryLocation.Type;
+			var loc = ma.MemoryLocation.Location;
+			var offset = ma.MemoryLocation.Offset;
 
 			/*
 			 * The access is outside the current memory range,
@@ -261,7 +261,7 @@ namespace MMC
 			if (loc >= m_accesses[type].Length || !Exists(ma))
 				return;
 
-			ObjectSII osii = GetOrCreate(type, loc);
+			var osii = GetOrCreate(type, loc);
 			osii[offset] |= (1 << ma.ThreadId);
 		}
 
@@ -269,7 +269,7 @@ namespace MMC
 		///
 		/// More on this in VY's thesis
 		public void Merge(ISII other, MemoryAccess orAccess) {
-			foreach (MemoryAccess ma in other) {
+			foreach (var ma in other) {
 				if (!ma.MemoryLocation.Equals(orAccess.MemoryLocation)) 
 					this.Merge(ma);
 			}
@@ -283,20 +283,20 @@ namespace MMC
 		 * Oh well, the following could be programmed nicer, but this works 
 		 */
 		public IEnumerator<MemoryAccess> GetEnumerator() {
-			for (int i = 0; i < m_accesses.Length; i++) {
-				ObjectSII[] curr = m_accesses[i];
+			for (var i = 0; i < m_accesses.Length; i++) {
+				var curr = m_accesses[i];
 
-				for (int j = 0; j < curr.Length; j++) {
-					ObjectSII osii = curr[j];
+				for (var j = 0; j < curr.Length; j++) {
+					var osii = curr[j];
 
 					if (osii != null) {
-						for (int k = 0; k < osii.Length; k++) {
-							int threadset = osii[k];
+						for (var k = 0; k < osii.Length; k++) {
+							var threadset = osii[k];
 							if (threadset != 0) {
-								for (int threadId = 0; threadId < 32; threadId++) {
-									int mask = (1 << threadId);
+								for (var threadId = 0; threadId < 32; threadId++) {
+									var mask = (1 << threadId);
 									if ((threadset & mask) == mask) {
-										MemoryLocation hml = new MemoryLocation(i, j, k, cur);
+										var hml = new MemoryLocation(i, j, k, cur);
 										yield return new MemoryAccess(hml, threadId);
 									}
 								}
@@ -308,8 +308,8 @@ namespace MMC
 		}
 
 		public override string ToString() {
-			String result = "";
-			foreach (MemoryAccess ma in this) {
+			var result = "";
+			foreach (var ma in this) {
 				result += String.Format("{0}, <{1}, {2}, {3}>\n", ma.ThreadId, ma.MemoryLocation.Type, ma.MemoryLocation.Location, ma.MemoryLocation.Offset);
 			}
 

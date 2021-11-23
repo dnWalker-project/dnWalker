@@ -58,12 +58,12 @@ namespace MMC.State
             if (o.Equals(ObjectReference.Null))
                 return;
 
-            int index = (int)o.Location + 1;
+            var index = (int)o.Location + 1;
 
             if (index >= m_referenceCounters.Length)
                 m_referenceCounters = IntArray.GrowArray(m_referenceCounters, index * 2);
 
-            int val = m_referenceCounters[index];
+            var val = m_referenceCounters[index];
 
             if (val == 0)
             {
@@ -79,8 +79,8 @@ namespace MMC.State
             if (o.Equals(ObjectReference.Null))
                 return;
 
-            int index = (int)o.Location + 1;
-            int val = m_referenceCounters[index];
+            var index = (int)o.Location + 1;
+            var val = m_referenceCounters[index];
 
             if (val == 1)
             {
@@ -104,8 +104,8 @@ namespace MMC.State
 
         public int Compare(ObjectReference a, ObjectReference b)
         {
-            DynamicAllocation left = cur.DynamicArea.Allocations[a];
-            DynamicAllocation right = cur.DynamicArea.Allocations[b];
+            var left = cur.DynamicArea.Allocations[a];
+            var right = cur.DynamicArea.Allocations[b];
 
             return left.Key - right.Key;
         }
@@ -140,7 +140,7 @@ namespace MMC.State
 
             public ObjectReference FindAndDeleteMin()
             {
-                ObjectReference ida = m_pqueue.DeleteMin();
+                var ida = m_pqueue.DeleteMin();
                 m_handleDict.Remove(ida);
                 return ida;
             }
@@ -186,15 +186,15 @@ namespace MMC.State
         {
             RunMark(cur);
 
-            AllocationList m_alloc = cur.DynamicArea.Allocations;
+            var m_alloc = cur.DynamicArea.Allocations;
 
             /// Sweep phase
-            for (int i = 0; i < m_alloc.Length; i++)
+            for (var i = 0; i < m_alloc.Length; i++)
             {
-                DynamicAllocation alloc = m_alloc[i];
+                var alloc = m_alloc[i];
                 if (alloc != null && alloc.Depth == int.MaxValue && !alloc.Pinned)
                 {
-                    ObjectReference toDelete = new ObjectReference(i + 1);
+                    var toDelete = new ObjectReference(i + 1);
                     cur.ParentWatcher.RemoveParentFromAllChilds(toDelete, cur);
                     cur.ParentWatcher[i + 1].ClearDirty();
                     cur.DynamicArea.DisposeLocation(i);
@@ -205,14 +205,14 @@ namespace MMC.State
         /* line 1 */
         public void RunMark(ExplicitActiveState cur)
         {
-            AllocationList m_alloc = cur.DynamicArea.Allocations;
-            for (int i = 0; i < m_alloc.Length; i++)
+            var m_alloc = cur.DynamicArea.Allocations;
+            for (var i = 0; i < m_alloc.Length; i++)
             {
-                DynamicAllocation alloc = m_alloc[i];
+                var alloc = m_alloc[i];
 
                 if (alloc != null)
                 {
-                    ObjectReferenceBag parents = cur.ParentWatcher[i + 1];
+                    var parents = cur.ParentWatcher[i + 1];
                     if (parents.IsDirty || parents.IsEmpty)
                     {
                         AddModified(i, cur);
@@ -225,8 +225,8 @@ namespace MMC.State
             while (!heap.IsEmpty())
             {
                 // line 9
-                ObjectReference reference = heap.FindAndDeleteMin();
-                DynamicAllocation u = cur.DynamicArea.Allocations[reference];
+                var reference = heap.FindAndDeleteMin();
+                var u = cur.DynamicArea.Allocations[reference];
 
                 // line 10
                 if (u.Rhs < u.Depth)
@@ -246,7 +246,7 @@ namespace MMC.State
 
         private void AddModified(int i, ExplicitActiveState cur)
         {
-            DynamicAllocation ida = cur.DynamicArea.Allocations[i];
+            var ida = cur.DynamicArea.Allocations[i];
 
             ida.Rhs = DetermineDepth(i + 1, cur);    // line 3
             if (ida.Rhs != ida.Depth)           // line 4
@@ -257,9 +257,9 @@ namespace MMC.State
 
         public override void VisitAllocatedArray(AllocatedArray aa, ExplicitActiveState cur)
         {
-            for (int i = 0; i < aa.Fields.Length; i++)
+            for (var i = 0; i < aa.Fields.Length; i++)
             {
-                IDataElement ide = aa.Fields[i];
+                var ide = aa.Fields[i];
                 if (ide is ObjectReference)
                     ProcessChild((ObjectReference)ide, cur);
             }
@@ -272,9 +272,9 @@ namespace MMC.State
 
         public override void VisitAllocatedObject(AllocatedObject ao, ExplicitActiveState cur)
         {
-            for (int i = 0; i < ao.Fields.Length; i++)
+            for (var i = 0; i < ao.Fields.Length; i++)
             {
-                IDataElement ide = ao.Fields[i];
+                var ide = ao.Fields[i];
                 if (ide is ObjectReference objectReference)
                 {
                     ProcessChild(objectReference, cur);
@@ -289,7 +289,7 @@ namespace MMC.State
                 return;
             }
 
-            DynamicAllocation ida = cur.DynamicArea.Allocations[reference];
+            var ida = cur.DynamicArea.Allocations[reference];
 
             // line 14-18 && 24-28
             ida.Rhs = DetermineDepth((int)reference.Location, cur);
@@ -302,9 +302,9 @@ namespace MMC.State
 
         private int DetermineDepth(int i, ExplicitActiveState cur)
         {
-            int retval = int.MaxValue - 1; // ensure no overflow
+            var retval = int.MaxValue - 1; // ensure no overflow
 
-            foreach (ObjectReference parent in cur.ParentWatcher[i])
+            foreach (var parent in cur.ParentWatcher[i])
             {
                 retval = Math.Min(cur.ParentWatcher.GetDynamicAllocation(parent, cur).Depth, retval);
             }
@@ -328,7 +328,7 @@ namespace MMC.State
         {
             if (cur.Configuration.MemoisedGC)
             {
-                for (int i = 0; i < ids.Length; i++)
+                for (var i = 0; i < ids.Length; i++)
                     Decrement(threadId, ids[i], cur);
             }
         }
@@ -337,7 +337,7 @@ namespace MMC.State
         {
             if (cur.Configuration.MemoisedGC)
             {
-                for (int i = 0; i < ids.Length; i++)
+                for (var i = 0; i < ids.Length; i++)
                     Increment(threadId, ids[i], cur);
             }
         }
@@ -348,10 +348,10 @@ namespace MMC.State
             {
                 /* precondition: oldList.Length is equal to newList.Length */
 
-                for (int i = 0; i < oldList.Length && i < newList.Length; i++)
+                for (var i = 0; i < oldList.Length && i < newList.Length; i++)
                 {
-                    IDataElement oldElem = oldList[i];
-                    IDataElement newElem = newList[i];
+                    var oldElem = oldList[i];
+                    var newElem = newList[i];
                     cur.ParentWatcher.UpdateParentOfDifferentChild(cur.ParentWatcher.RootObjectReference, oldElem, newElem, cur);
                 }
             }
@@ -486,7 +486,7 @@ namespace MMC.State
             var memoisedGC = cur.Configuration.MemoisedGC;
             if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
             {
-                ObjectReference reference = (ObjectReference)childRef;
+                var reference = (ObjectReference)childRef;
                 this[(int)reference.Location].Decrement(parentRef);
             }
         }
@@ -495,7 +495,7 @@ namespace MMC.State
         {
             if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
             {
-                ObjectReference reference = (ObjectReference)childRef;
+                var reference = (ObjectReference)childRef;
                 this[(int)reference.Location].Decrement(parentRef);
             }
         }
@@ -530,7 +530,7 @@ namespace MMC.State
         {
             if (cur.Configuration.MemoisedGC)
             {
-                DynamicAllocation alloc = cur.DynamicArea.Allocations[parentRef];
+                var alloc = cur.DynamicArea.Allocations[parentRef];
                 if (alloc == null)
                 {
                     return;
@@ -540,13 +540,13 @@ namespace MMC.State
                 {
                     case AllocationType.Object:
                     case AllocationType.Array:
-                        AllocatedObject parent = alloc as AllocatedObject;
-                        DataElementList childs = parent.Fields;
-                        for (int i = 0; i < childs.Length; i++)
+                        var parent = alloc as AllocatedObject;
+                        var childs = parent.Fields;
+                        for (var i = 0; i < childs.Length; i++)
                             updater(parentRef, childs[i], cur);
                         break;
                     case AllocationType.Delegate:
-                        AllocatedDelegate allocDelegate = alloc as AllocatedDelegate;
+                        var allocDelegate = alloc as AllocatedDelegate;
                         updater(parentRef, allocDelegate.Object, cur);
                         break;
                 }
@@ -558,7 +558,7 @@ namespace MMC.State
             var memoisedGC = cur.Configuration.MemoisedGC;
             if (memoisedGC && list != null)
             {
-                for (int i = 0; i < list.Length; i++)
+                for (var i = 0; i < list.Length; i++)
                 {
                     updater(parentRef, list[i], cur);
                 }

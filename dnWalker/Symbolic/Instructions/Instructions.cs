@@ -37,7 +37,11 @@ namespace dnWalker.Symbolic.Instructions
     using MMC.InstructionExec;
     using System.Linq.Expressions;
     using MMC;
+
     using dnWalker.ChoiceGenerators;
+    using dnWalker.DataElements;
+    using dnWalker.Concolic.Parameters;
+    using Parameter = dnWalker.Concolic.Parameters.Parameter;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -123,13 +127,29 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) == 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) == 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.Equal : ExpressionType.NotEqual, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) == 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
-    // Branch on equal.
+    // Branch on greater or equal.
     public class BGE : BranchInstructionExec
     {
         public BGE(Instruction instr, object operand, InstructionExecAttributes atr)
@@ -141,9 +161,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) >= 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) >= 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.GreaterThanOrEqual : ExpressionType.LessThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) >= 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -159,9 +195,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) > 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) > 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) > 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -177,6 +229,21 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
+            bool value = CompareOperands(a, b) <= 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.LessThanOrEqual : ExpressionType.GreaterThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
 
             return CompareOperands(a, b) <= 0 ?
                 new JumpReturnValue((Instruction)Operand) :
@@ -196,9 +263,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) < 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) < 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) < 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -214,9 +297,25 @@ namespace dnWalker.Symbolic.Instructions
         {
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
-            return CompareOperands(a, b) != 0 ?
-                new JumpReturnValue((Instruction)Operand) :
-                nextRetval;
+            bool value = CompareOperands(a, b) != 0;
+
+            Instruction operand = (Instruction)Operand;
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            bool isSymbolic = symbA || symbB;
+            if (isSymbolic)
+            {
+                Expression expr = Expression.MakeBinary(value ? ExpressionType.NotEqual : ExpressionType.Equal, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                cur.PathStore.CurrentPath.AddPathConstraint(expr, value ? operand : null, cur);
+            }
+
+            return value ? new JumpReturnValue(operand) : nextRetval;
+
+            //return CompareOperands(a, b) != 0 ?
+            //    new JumpReturnValue((Instruction)Operand) :
+            //    nextRetval;
         }
     }
 
@@ -244,19 +343,48 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var a = cur.EvalStack.Pop();
-            var value = a.ToBool();
-            var operand = (Instruction)Operand;
-            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
-            if (symb)
+            IDataElement a = cur.EvalStack.Pop();
+            Boolean value = a.ToBool();
+            Instruction operand = (Instruction)Operand;
+            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
+
+            IIEReturnValue retVal = null;
+
+            if (value)
             {
-                cur.PathStore.AddPathConstraint(
-                    expression,
-                    value ? operand : null, // fall-through
-                    cur);
+                // BRTRUE => we jump
+                if (symb)
+                {
+                    cur.PathStore.AddPathConstraint(expression, operand, cur);
+                }
+                retVal = new JumpReturnValue(operand);
+            }
+            else
+            {
+                if (symb)
+                {
+                    // try to invert the expression
+                    expression = Expression.Not(expression);
+                    a.SetExpression(expression, cur);
+                    cur.PathStore.AddPathConstraint(expression, null, cur);
+                }
+
+                retVal = nextRetval;
             }
 
-            return value ? new JumpReturnValue(operand) : nextRetval;
+            return retVal;
+
+            //if (symb)
+            //{
+            //    // TODO: add some kind of inverting in case of JUMP / NOT JUMP
+
+            //    cur.PathStore.AddPathConstraint(
+            //        expression,
+            //        value ? operand : null, // fall-through
+            //        cur);
+            //}
+
+            //return value ? new JumpReturnValue(operand) : nextRetval;
         }
     }
 
@@ -270,19 +398,49 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var a = cur.EvalStack.Pop();
-            var value = a.ToBool();
-            var operand = (Instruction)Operand;
-            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
-            if (symb)
+            IDataElement a = cur.EvalStack.Pop();
+            Boolean value = a.ToBool();
+            Instruction operand = (Instruction)Operand;
+            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
+
+
+            IIEReturnValue retVal = null;
+
+            if (!value)
             {
-                cur.PathStore.AddPathConstraint(
-                    expression,
-                    !value ? operand : null, // fall-through
-                    cur);
+                // BRFALSE => we jump
+                if (symb)
+                {
+                    // try to invert the expression
+                    expression = Expression.Not(expression);
+                    a.SetExpression(expression, cur);
+                    cur.PathStore.AddPathConstraint(expression, operand, cur);
+                }
+                retVal = new JumpReturnValue(operand);
+            }
+            else
+            {
+                if (symb)
+                {
+                    cur.PathStore.AddPathConstraint(expression, null, cur);
+                }
+
+                retVal = nextRetval;
             }
 
-            return !value ? new JumpReturnValue(operand) : nextRetval;
+            return retVal;
+
+
+            //if (symb)
+            //{
+            //    // TODO: add some kind of inverting in case of JUMP / NOT JUMP
+            //    cur.PathStore.AddPathConstraint(
+            //        expression,
+            //        !value ? operand : null, // fall-through
+            //        cur);
+            //}
+
+            //return !value ? new JumpReturnValue(operand) : nextRetval;
         }
     }
 
@@ -296,7 +454,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var a = cur.EvalStack.Pop();
+            IDataElement a = cur.EvalStack.Pop();
             Instruction[] targets = Operand as Instruction[];
             if (targets.Length == 0)
             {
@@ -305,7 +463,7 @@ namespace dnWalker.Symbolic.Instructions
 
             try
             {
-                var index = (int)Convert.ChangeType(a, typeof(int));
+                Int32 index = (int)Convert.ChangeType(a, typeof(int));
                 return index >= 0 && index < targets.Length ?
                     new JumpReturnValue(targets[index]) :
                     nextRetval;
@@ -461,7 +619,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var value = cur.EvalStack.Pop();
+            IDataElement value = cur.EvalStack.Pop();
             int shiftBy = (int)Convert.ChangeType(value, typeof(int));
             IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shl(shiftBy));
@@ -479,7 +637,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var value = cur.EvalStack.Pop();
+            IDataElement value = cur.EvalStack.Pop();
             int shiftBy = (int)Convert.ChangeType(value, typeof(int));
             IIntegerElement a = (IIntegerElement)cur.EvalStack.Pop();
             cur.EvalStack.Push(a.Shr(shiftBy));
@@ -499,10 +657,10 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var value = cur.EvalStack.Pop();
+            IDataElement value = cur.EvalStack.Pop();
             int shiftBy = (int)Convert.ChangeType(value, typeof(int));
-            var a = (ISignedIntegerElement)cur.EvalStack.Pop();
-            var u = (IIntegerElement)a.ToUnsigned();
+            ISignedIntegerElement a = (ISignedIntegerElement)cur.EvalStack.Pop();
+            IIntegerElement u = (IIntegerElement)a.ToUnsigned();
             cur.EvalStack.Push(u.Shr(shiftBy));
             return nextRetval;
         }
@@ -679,7 +837,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var or = cur.EvalStack.Pop();
+            IDataElement or = cur.EvalStack.Pop();
             MethodDefinition method = Operand as MethodDefinition;
 
             MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
@@ -698,7 +856,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var pop = cur.EvalStack.Pop();
+            IDataElement pop = cur.EvalStack.Pop();
             if (pop is IManagedPointer mmp)
             {
                 cur.EvalStack.Push(mmp.Value);
@@ -956,7 +1114,7 @@ namespace dnWalker.Symbolic.Instructions
         {
             ms.Cur.Logger.Debug("completed running cctor. public class initialized");
             TypeDefinition type = GetTypeDefinition();
-            var cur = ms.Cur;
+            ExplicitActiveState cur = ms.Cur;
             /*
 			 * It is possible that during state decollapsion, that 
 			 * this callback is called when the initialising thread 
@@ -1098,7 +1256,7 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             IReferenceType objRef = (IReferenceType)cur.EvalStack.Pop();
-            var toCastToType = (ITypeDefOrRef)Operand;
+            ITypeDefOrRef toCastToType = (ITypeDefOrRef)Operand;
             if (objRef.Equals(ObjectReference.Null))
             {
                 cur.EvalStack.Push(objRef);
@@ -1107,7 +1265,7 @@ namespace dnWalker.Symbolic.Instructions
 
             if (objRef is ConstantString s)
             {
-                var st = cur.DefinitionProvider.GetTypeDefinition("System.String");
+                TypeDefinition st = cur.DefinitionProvider.GetTypeDefinition("System.String");
                 if (cur.DefinitionProvider.IsSubtype(st, toCastToType))
                 {
                     cur.EvalStack.Push(objRef);
@@ -1211,8 +1369,8 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            var isSymbolicArray = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var arrayExpression);
-            var isSymbolicIndex = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(idx, "expression", out var indexExpression);
+            Boolean isSymbolicArray = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out Expression arrayExpression);
+            Boolean isSymbolicIndex = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(idx, "expression", out Expression indexExpression);
 
             if (isSymbolicIndex)
             {
@@ -1224,10 +1382,10 @@ namespace dnWalker.Symbolic.Instructions
                  * (ii) the index is greater than the length of the array; 
                  * or (iii) the index is in bounds and we are loading an element.
                  */
-                var cg = new IntChoiceFromValueSet(1, 3);
+                IntChoiceFromValueSet cg = new IntChoiceFromValueSet(1, 3);
                 if (cur.ChoiceGenerator is IntChoiceFromValueSet choiceFromValueSet)
                 {
-                    var path = choiceFromValueSet.Path;
+                    Traversal.Path path = choiceFromValueSet.Path;
                     switch (choiceFromValueSet.GetNextChoice())
                     {
                         case 1: // index < 0
@@ -1250,7 +1408,7 @@ namespace dnWalker.Symbolic.Instructions
 
             if (CheckBounds(theArray, idx))
             {
-                var elementAt = theArray.Fields[idx.Value];
+                IDataElement elementAt = theArray.Fields[idx.Value];
                 cur.EvalStack.Push(elementAt);
                 if (isSymbolicArray)
                 {
@@ -1375,7 +1533,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var arrayRef = (IReferenceType)cur.EvalStack.Pop();
+            IReferenceType arrayRef = (IReferenceType)cur.EvalStack.Pop();
             AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
 
             if (theArray == null)
@@ -1383,19 +1541,32 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            var length = new UnsignedInt4((uint)theArray.Fields.Length);
-            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
-            if (symb)
+            if (arrayRef.IsArrayParameter(cur, out var arrayParameter))
             {
-                length.SetExpression(
-                    Expression.MakeMemberAccess(
-                        expression, 
-                        typeof(Array).GetProperty("Length")
-                    ), cur);
-            }
+                var length = arrayParameter.LengthParameter.CreateDataElement(cur);
 
-            cur.EvalStack.Push(length);
-            return nextRetval;
+                // TODO: somehow make sure that the length is greater than 0 OR use UInt32 & change dnWalker.Z3 to support 
+                // cur.PathStore.CurrentPath.AddPathConstraint(Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, arrayParameter.LengthParameter.GetSingleParameterExpression(), Expression.Constant(0)));
+
+                cur.EvalStack.Push(length);
+                return nextRetval;
+            }
+            else
+            {
+                var length = new UnsignedInt4((uint)theArray.Fields.Length);
+                var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arrayRef, "expression", out var expression);
+                if (symb)
+                {
+                    length.SetExpression(
+                        Expression.MakeMemberAccess(
+                            expression,
+                            typeof(Array).GetProperty("Length")
+                        ), cur);
+                }
+
+                cur.EvalStack.Push(length);
+                return nextRetval;
+            }
         }
     }
 
@@ -1418,13 +1589,13 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var value = cur.EvalStack.Pop();
-            var typeDef = Operand as ITypeDefOrRef;
+            IDataElement value = cur.EvalStack.Pop();
+            ITypeDefOrRef typeDef = Operand as ITypeDefOrRef;
 
             switch (value)
             {
                 case ConstantString constantString:
-                    var st = cur.DefinitionProvider.GetTypeDefinition("System.String");
+                    TypeDefinition st = cur.DefinitionProvider.GetTypeDefinition("System.String");
                     if (cur.DefinitionProvider.IsSubtype(st, typeDef))
                     {
                         cur.EvalStack.Push(value);
@@ -1560,7 +1731,7 @@ namespace dnWalker.Symbolic.Instructions
 
             AllocatedObject theObject = null;
 
-            var fieldDef = GetFieldDefinition();
+            FieldDefinition fieldDef = GetFieldDefinition();
             if (fieldDef.IsInitOnly)
             {
                 return false;
@@ -1738,7 +1909,7 @@ namespace dnWalker.Symbolic.Instructions
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // Operand is a type definition of the wrapper type to use.
-            var reference = (IReferenceType)cur.EvalStack.Pop();
+            IReferenceType reference = (IReferenceType)cur.EvalStack.Pop();
             if (reference is ObjectReference objRef)
             {
                 AllocatedObject wrapped = (AllocatedObject)cur.DynamicArea.Allocations[objRef];
@@ -1776,7 +1947,7 @@ namespace dnWalker.Symbolic.Instructions
         {
             IIEReturnValue retval = nincRetval;
             FieldDefinition fld = GetFieldDefinition();
-            var declType = GetTypeDefinition();
+            TypeDefinition declType = GetTypeDefinition();
 
             if (LoadClass(declType, cur))
             {
@@ -1801,8 +1972,8 @@ namespace dnWalker.Symbolic.Instructions
 
         public override MemoryLocation Accessed(ThreadState thread, ExplicitActiveState cur)
         {
-            var fld = GetFieldDefinition();
-            var declType = GetTypeDefinition();
+            FieldDefinition fld = GetFieldDefinition();
+            TypeDefinition declType = GetTypeDefinition();
 
             return new MemoryLocation((int)fld.FieldOffset, declType, cur);
         }
@@ -2048,11 +2219,11 @@ namespace dnWalker.Symbolic.Instructions
             switch (left)
             {
                 case Int4 i4:
-                    var res4 = (UnsignedInt4)i4.ToUnsignedInt4(false).Add(right.ToUnsignedInt4(false), CheckOverflow);
+                    UnsignedInt4 res4 = (UnsignedInt4)i4.ToUnsignedInt4(false).Add(right.ToUnsignedInt4(false), CheckOverflow);
                     cur.EvalStack.Push(res4.ToInt4(false));
                     return nextRetval;
                 case Int8 i8:
-                    var res8 = (UnsignedInt8)i8.ToUnsignedInt8(false).Add(right.ToUnsignedInt8(false), CheckOverflow);
+                    UnsignedInt8 res8 = (UnsignedInt8)i8.ToUnsignedInt8(false).Add(right.ToUnsignedInt8(false), CheckOverflow);
                     cur.EvalStack.Push(res8.ToInt8(false));
                     return nextRetval;
             }
@@ -2135,17 +2306,17 @@ namespace dnWalker.Symbolic.Instructions
                 b = ((ISignedIntegerElement)b).ToUnsigned();
             }
 
-            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
-            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
+            Boolean symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression exprA);
+            Boolean symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out Expression exprB);
 
             try
             {
-                var newValue = a.Mul(b, CheckOverflow);
+                INumericElement newValue = a.Mul(b, CheckOverflow);
 
-                var isSymbolic = symbA || symbB;
+                Boolean isSymbolic = symbA || symbB;
                 if (isSymbolic)
                 {
-                    var expression = Expression.MakeBinary(ExpressionType.Multiply,
+                    BinaryExpression expression = Expression.MakeBinary(ExpressionType.Multiply,
                         exprA ?? a.AsExpression(),
                         exprB ?? b.AsExpression());
 
@@ -2255,7 +2426,7 @@ namespace dnWalker.Symbolic.Instructions
 
             try
             {
-                var sub = left.Sub(right, CheckOverflow);
+                ISubElement sub = left.Sub(right, CheckOverflow);
                 switch (sub)
                 {
                     case UnsignedInt4 ui4:
@@ -2294,13 +2465,14 @@ namespace dnWalker.Symbolic.Instructions
             ISignedNumericElement oldValue = (ISignedNumericElement)cur.EvalStack.Pop();
             ISignedNumericElement newValue = oldValue.Neg();
             cur.EvalStack.Push(newValue);
-            
-            bool isSymbolic = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(oldValue, "expression", out Expression oldExpression);
-            if (isSymbolic)
+
+
+            if (oldValue.TryGetExpression(cur, out Expression oldExpression))
             {
                 Expression newExpression = Expression.Negate(oldExpression);
 
-                cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", newExpression);
+                newValue.SetExpression(newExpression, cur);
+                //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", newExpression);
             }
 
             return nextRetval;
@@ -2342,48 +2514,126 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
-            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
+            // TODO: redo in a little bit better way
+            // check whether it is not b == null or a == null
+            if (b.IsReferenceTypeParametery(cur, out var bRefTypeP) && a.Equals(ObjectReference.Null))
+            {
+                // b == null
+                var bIsNullParameter = bRefTypeP.IsNullParameter;
 
-            var isSymbolic = symbA || symbB;
+                var bIsNull = bIsNullParameter.CreateDataElement(cur);
+                var ceq = bIsNull.ToBool();
+
+                var result = new Int4(ceq ? 1 : 0);
+
+                if (!bIsNull.TryGetExpression(cur, out var bIsNullExpr))
+                {
+                    throw new Exception("Unexpected state, parameter IDataElement must have an expression!");
+                }
+
+                Expression resultExpr = Expression.MakeBinary(ceq ? ExpressionType.Equal : ExpressionType.NotEqual, bIsNullExpr, Expression.Constant(true));
+                result.SetExpression(resultExpr, cur);
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+            }
+            else if (a.IsReferenceTypeParametery(cur, out var aRefTypeP) && b.Equals(ObjectReference.Null))
+            {
+                // a == null
+                var aIsNullParameter = aRefTypeP.IsNullParameter;
+
+                var aIsNull = aIsNullParameter.CreateDataElement(cur);
+                var ceq = aIsNull.ToBool();
+
+                var result = new Int4(ceq ? 1 : 0);
+
+                if (!aIsNull.TryGetExpression(cur, out var aIsNullExpr))
+                {
+                    throw new Exception("Unexpected state, parameter IDataElement must have an expression!");
+                }
+
+                Expression resultExpr = Expression.MakeBinary(ceq ? ExpressionType.Equal : ExpressionType.NotEqual, aIsNullExpr, Expression.Constant(true));
+                result.SetExpression(resultExpr, cur);
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+            }
+
+
+
+            //var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
+            //var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
+
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
+
+            Boolean isSymbolic = symbA || symbB;
             if (!isSymbolic)
             {
                 cur.EvalStack.Push(CompareOperands(a, b) == 0 ? new Int4(1) : new Int4(0));
                 return nextRetval;
             }
 
-            var ceqValue = CompareOperands(a, b) == 0;
+            Boolean ceqValue = CompareOperands(a, b) == 0;
 
             Expression expression = null;
 
-            var left = exprA ?? a.AsExpression();
-            if (symbA && !symbB && left.Type == typeof(bool))
+            Expression left = exprA ?? a.AsExpression();
+            if (symbA && !symbB && left.Type == typeof(bool)) // we are comparing a symbolic boolean expression to false thus negating it
             {
-                if (left.Type == typeof(bool) && !ceqValue)
+                if (b.ToBool())
                 {
-                    expression = Expression.Not(left);
-                }
-
-                if (left.Type == typeof(bool) && ceqValue)
-                {
+                    // comparing to TRUE - should not happen...
                     expression = left;
                 }
+                else
+                {
+                    // comparing to FALSE => negation
+                    expression = Expression.Not(left);
+                }
+                //expression = ceqValue ? Expression.Not(left) : left;//.Simplify();
             }
             else
             {
                 left = exprA ?? a.AsExpression();
-                var right = exprB ?? b.AsExpression();
+                Expression right = exprB ?? b.AsExpression();
                 if (right.Type != left.Type)
                 {
                     right = Expression.Convert(right, left.Type);
                 }
-                expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual,
-                    left,
-                    right);
+                expression = Expression.MakeBinary(ExpressionType.Equal, left, right);
+                //expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual, left, right);
             }
 
-            var newValue = new Int4(ceqValue ? 1 : 0);
-            cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+
+            //if (symbA && !symbB && left.Type == typeof(bool))
+            //{
+            //    if (left.Type == typeof(bool) && !ceqValue)
+            //    {
+            //        expression = Expression.Not(left);
+            //    }
+
+            //    if (left.Type == typeof(bool) && ceqValue)
+            //    {
+            //        expression = left;
+            //    }
+            //}
+            //else
+            //{
+            //    left = exprA ?? a.AsExpression();
+            //    Expression right = exprB ?? b.AsExpression();
+            //    if (right.Type != left.Type)
+            //    {
+            //        right = Expression.Convert(right, left.Type);
+            //    }
+            //    expression = Expression.MakeBinary(ceqValue ? ExpressionType.Equal : ExpressionType.NotEqual,
+            //        left,
+            //        right);
+            //}
+
+            Int4 newValue = new Int4(ceqValue ? 1 : 0);
+            //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+            newValue.SetExpression(expression, cur);
             cur.EvalStack.Push(newValue);
             return nextRetval;
         }
@@ -2401,20 +2651,25 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
-            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
+            //var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
+            //var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
 
-            var cgtValue = CompareOperands(a, b) > 0;
-            var newValue = new Int4(cgtValue ? 1 : 0);
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
 
-            var isSymbolic = symbA || symbB;
+            Boolean cgtValue = CompareOperands(a, b) > 0;
+            Int4 newValue = new Int4(cgtValue ? 1 : 0);
+
+            Boolean isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                var expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
-                    exprA ?? a.AsExpression(),
-                    exprB ?? b.AsExpression());
+                BinaryExpression expression = Expression.MakeBinary(ExpressionType.GreaterThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                //BinaryExpression expression = Expression.MakeBinary(cgtValue ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual,
+                //    exprA ?? a.AsExpression(),
+                //    exprB ?? b.AsExpression());
 
-                cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+                //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+                newValue.SetExpression(expression, cur);
             }
             cur.EvalStack.Push(newValue);
             return nextRetval;
@@ -2433,20 +2688,25 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            var symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var exprA);
-            var symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out var exprB);
+            //Boolean symbA = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression exprA);
+            //Boolean symbB = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(b, "expression", out Expression exprB);
 
-            var cltValue = CompareOperands(a, b) < 0;
-            var newValue = new Int4(cltValue ? 1 : 0);
+            bool symbA = a.TryGetExpression(cur, out Expression exprA);
+            bool symbB = b.TryGetExpression(cur, out Expression exprB);
 
-            var isSymbolic = symbA || symbB;
+            Boolean cltValue = CompareOperands(a, b) < 0;
+            Int4 newValue = new Int4(cltValue ? 1 : 0);
+
+            Boolean isSymbolic = symbA || symbB;
             if (isSymbolic)
             {
-                var expression = Expression.MakeBinary(cltValue ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual,
-                    exprA ?? a.AsExpression(),
-                    exprB ?? b.AsExpression());
+                BinaryExpression expression = Expression.MakeBinary(ExpressionType.LessThan, exprA ?? a.AsExpression(), exprB ?? b.AsExpression());
+                //BinaryExpression expression = Expression.MakeBinary(cltValue ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual,
+                //   exprA ?? a.AsExpression(),
+                //   exprB ?? b.AsExpression());
 
-                cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+                //cur.PathStore.CurrentPath.SetObjectAttribute(newValue, "expression", expression);
+                newValue.SetExpression(expression, cur);
             }
 
             cur.EvalStack.Push(newValue);//, expression));
@@ -2838,7 +3098,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override string ToString()
         {
-            var method = Method;
+            MethodDefinition method = Method;
             return base.ToString() + " " + method;
         }
     }
@@ -2891,10 +3151,10 @@ namespace dnWalker.Symbolic.Instructions
             bool violated;
             if (!HandleAssertCall(args, cur, out violated) && !FilterCall(cur))
             {
-                var bypass = NativePeer.Get(methDef.DeclaringType);
+                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
                 if (bypass != null)
                 {
-                    if (bypass.TryGetValue(methDef, args, cur, out var returnValue))
+                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
                     {
                         return returnValue;
                     }
@@ -3003,7 +3263,7 @@ namespace dnWalker.Symbolic.Instructions
 
             if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
             {
-                var threadId = cur.ThreadPool.FindOwningThread(args[0]);
+                Int32 threadId = cur.ThreadPool.FindOwningThread(args[0]);
                 if (threadId == LockManager.NoThread)
                 {
                     throw new NotSupportedException("Owning thread not found.");
@@ -3015,10 +3275,10 @@ namespace dnWalker.Symbolic.Instructions
             // Skip certain calls.
             if (!FilterCall(cur))
             {
-                var bypass = NativePeer.Get(methDef.DeclaringType);
+                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
                 if (bypass != null)
                 {
-                    if (bypass.TryGetValue(methDef, args, cur, out var returnValue))
+                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
                     {
                         return returnValue;
                     }
@@ -3054,9 +3314,52 @@ namespace dnWalker.Symbolic.Instructions
 					Debug.Assert(theObject.Type != null, "No type set for object.");
 					type = theObject.Type;
 				}*/
-                // Search inheritence tree for most derived implementation.
+
+                // Check whether we work with an interface proxy
+                IDataElement instance = args[0];
+
+                //if (args[0] is InterfaceProxy proxy)
+                //{
+                //    if (proxy.TryResolveMethod(methDef, cur, out IDataElement result))
+                //    {
+                //        cur.EvalStack.Push(result);
+                //    }
+                //    else
+                //    {
+                //        throw new Exception("This proxy cannot resolve supplied method!");
+                //    }
+
+                //    return nextRetval;
+                //}
+
+                if (instance.IsInterfaceParameter(cur, out var interfaceParameter))
+                {
+                    // get the current call count
+                    string methodName = methDef.Name;
+                    var callCount = instance.GetCallCount(methodName, cur);
+
+                    // increase the call count by 1 and try to get the result parameter, if none exists => create default
+                    callCount++;
+                    instance.SetCallCount(methodName, cur, callCount);
+
+                    if (!interfaceParameter.TryGetMethodResult(methodName, callCount, out var resultParameter))
+                    {
+                        // initialize it to default value and add the parameter...
+                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType);
+                        interfaceParameter.SetMethodResult(methodName, callCount, resultParameter);
+                    }
+
+                    // get the IDataElement and push it onto the stack
+                    var result = resultParameter.CreateDataElement(cur);
+                    cur.EvalStack.Push(result);
+
+                    return nextRetval;
+                }
+
+
+                // Search inheritance tree for most derived implementation.
                 MethodDefinition toCall = null;
-                var constrained = cur.CurrentMethod.Constrained;
+                ITypeDefOrRef constrained = cur.CurrentMethod.Constrained;
                 if (cur.CurrentMethod.IsPrefixed
                     && constrained?.IsValueType == true
                     && methDef.DeclaringType == constrained)
@@ -3071,9 +3374,15 @@ namespace dnWalker.Symbolic.Instructions
                 cur.CurrentMethod.IsPrefixed = false;
                 cur.CurrentMethod.Constrained = null;
 
+                // instead of invoking the method
+                // e.g. creating new MethodState and pushing it to the callstack
+                // we want to "generate" result using current path data and push it onto the stack
+
                 MethodState called = new MethodState(toCall, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
+
+
                 //cur.Logger.Log(LogPriority.Call, "{0}: found most derived definition in type {1}",
                 //		methDef.Name, type.Name);		
 
@@ -3114,7 +3423,7 @@ namespace dnWalker.Symbolic.Instructions
                 args[i] = cur.EvalStack.Pop();
             }
 
-            var nativePeer = NativePeer.Get(methDef.DeclaringType);
+            NativePeer nativePeer = NativePeer.Get(methDef.DeclaringType);
             if (Method.IsConstructor 
                 && nativePeer != null
                 && nativePeer.TryConstruct(methDef, args, cur))
@@ -3204,7 +3513,7 @@ namespace dnWalker.Symbolic.Instructions
             MethodState callee = cur.CallStack.Pop();
             if (cur.CallStack.StackPointer >= /* was > before */ 0 && callee.EvalStack.StackPointer > 0)
             {
-                var retValue = callee.EvalStack.Pop();
+                IDataElement retValue = callee.EvalStack.Pop();
                 cur.CurrentThread.RetValue = retValue;
                 cur.EvalStack?.Push(retValue);
             }
@@ -3404,7 +3713,7 @@ namespace dnWalker.Symbolic.Instructions
                 return ThrowException(e, cur);
             }
 
-            var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out var expression);
+            Boolean symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(a, "expression", out Expression expression);
             if (symb)
             {
                 toPush.SetExpression(expression, cur);
@@ -3542,7 +3851,7 @@ namespace dnWalker.Symbolic.Instructions
                         cur.EvalStack.Push(i4.ToUnsignedInt4(false).ToInt8(false)); // todo why?
                         return nextRetval;
                     default:
-                        var unsigned = a.ToUnsignedInt8(true).ToInt8(false);//.Value;
+                        Int8 unsigned = a.ToUnsignedInt8(true).ToInt8(false);//.Value;
                         cur.EvalStack.Push(unsigned);// new Int8((long)unsigned));
                         return nextRetval;
                 }
@@ -3578,7 +3887,7 @@ namespace dnWalker.Symbolic.Instructions
             {
                 if (a is Int4 i4)
                 {
-                    var uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
+                    UIntPtr uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
                     cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
                 }
                 /*else if (a is Int8 i8)
@@ -3588,7 +3897,7 @@ namespace dnWalker.Symbolic.Instructions
                 }*/
                 else
                 {
-                    var unsigned = a.ToUnsignedInt8(false).Value;
+                    UInt64 unsigned = a.ToUnsignedInt8(false).Value;
                     cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
                 }
                 return nextRetval;
@@ -3622,7 +3931,7 @@ namespace dnWalker.Symbolic.Instructions
 
             try
             {
-                var unsigned = a.ToUnsignedInt4(false).Value;
+                UInt32 unsigned = a.ToUnsignedInt4(false).Value;
                 cur.EvalStack.Push(new UnsignedInt4(checked(unsigned)));
                 return nextRetval;
             }
@@ -3657,12 +3966,12 @@ namespace dnWalker.Symbolic.Instructions
             {
                 if (a is Int4 i4)
                 {
-                    var value = a.ToUnsignedInt4(false).ToUnsignedInt8(false);
+                    UnsignedInt8 value = a.ToUnsignedInt4(false).ToUnsignedInt8(false);
                     cur.EvalStack.Push(value);
                 }
                 else
                 {
-                    var unsigned = a.ToUnsignedInt8(false).Value;
+                    UInt64 unsigned = a.ToUnsignedInt8(false).Value;
                     cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
                 }
                 return nextRetval;
@@ -4142,7 +4451,7 @@ namespace dnWalker.Symbolic.Instructions
             IDataElement reference = cur.EvalStack.Pop();
             if (reference is LocalVariablePointer localVariablePointer)
             {
-                var typeTok = (ITypeDefOrRef)Operand;
+                ITypeDefOrRef typeTok = (ITypeDefOrRef)Operand;
                 localVariablePointer.Value = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(), typeTok);
                 return nextRetval;
             }
@@ -4207,7 +4516,7 @@ namespace dnWalker.Symbolic.Instructions
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            var type = (ITypeDefOrRef)Operand;
+            ITypeDefOrRef type = (ITypeDefOrRef)Operand;
             if (type.IsValueType)
             {
                 cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));

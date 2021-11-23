@@ -37,7 +37,7 @@ namespace MMC.Data
                 Debug.Assert(!m_isReadonly, "Changing read-only data element list.");
                 m_isDirty |= m_elements[index] != value;
 
-                IDataElement oldVal = m_elements[index];
+                var oldVal = m_elements[index];
                 m_elements[index] = value;
             }
         }
@@ -73,7 +73,7 @@ namespace MMC.Data
 
         public virtual IStorable StorageCopy()
         {
-            IDataElement[] retval_elements = new IDataElement[m_elements.Length];
+            var retval_elements = new IDataElement[m_elements.Length];
             System.Array.Copy(m_elements, retval_elements, retval_elements.Length);
             return new DataElementList(retval_elements);
         }
@@ -90,9 +90,9 @@ namespace MMC.Data
 
         public override bool Equals(object other)
         {
-            DataElementList o = other as DataElementList;
-            bool equal = o != null && Length == o.Length;
-            for (int i = 0; equal && i < m_elements.Length; ++i)
+            var o = other as DataElementList;
+            var equal = o != null && Length == o.Length;
+            for (var i = 0; equal && i < m_elements.Length; ++i)
             {
                 equal = o[i].Equals(m_elements[i]);
             }

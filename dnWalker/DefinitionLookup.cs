@@ -29,6 +29,7 @@ namespace MMC
     using dnWalker;
     using System.IO;
     using dnWalker.NativePeers;
+    using dnWalker.DataElements;
 
     /// <summary>
     /// This definition is used for quick storage of methodreferences.
@@ -48,13 +49,13 @@ namespace MMC
 
         public override bool Equals(object obj)
         {
-            VirtualMethodDefinition other = (VirtualMethodDefinition)obj;
+            var other = (VirtualMethodDefinition)obj;
 
-            bool equals = other.Method.Name.Equals(Method.Name) &&
+            var equals = other.Method.Name.Equals(Method.Name) &&
                 other.Reference.Equals(Reference) &&
                 other.Method.Parameters.Count == Method.Parameters.Count;
 
-            for (int i = 0; equals && i < other.Method.Parameters.Count; ++i)
+            for (var i = 0; equals && i < other.Method.Parameters.Count; ++i)
             {
                 equals = other.Method.Parameters[i].Type.TypeName ==
                    Method.Parameters[i].Type.TypeName;
@@ -69,13 +70,19 @@ namespace MMC
         }
     }
 
+    public interface IDefinitionProvider
+    {
+        TypeDef GetTypeDefinition(string typeName);
+    }
+
+
     /// <summary>
-    /// This is a straitforward implementation of IDefinitionProvider.
+    /// This is a straightforward implementation of IDefinitionProvider.
     /// </summary>
     /// <remarks>
     /// Hashing is used to speed up the lookup process.
     /// </remarks>
-    public sealed class DefinitionProvider
+    public sealed class DefinitionProvider : IDefinitionProvider
     {
         private readonly object _lock = new object();
         private readonly ModuleDef[] m_referencedAssemblies;
@@ -107,7 +114,7 @@ namespace MMC
         /// </summary>
         public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(ITypeDefOrRef m_typeDef)
         {
-            ITypeDefOrRef currentType = m_typeDef;
+            var currentType = m_typeDef;
             do
             {
                 var currentTypeDef = GetTypeDefinition(currentType);
@@ -143,7 +150,7 @@ namespace MMC
         {
             lock (_lock)
             {
-                if (m_typeDefinitions.TryGetValue(name, out TypeDef retval))
+                if (m_typeDefinitions.TryGetValue(name, out var retval))
                 {
                     return retval;
                 }
@@ -273,7 +280,7 @@ namespace MMC
             var lastDot = methodName.LastIndexOf(".");
             var methodTypeName = methodName.Substring(0, lastDot);
 
-            TypeDef typeDef = GetTypeDefinition(methodTypeName);
+            var typeDef = GetTypeDefinition(methodTypeName);
             retval = typeDef.FindMethod(new UTF8String(methodName.Substring(lastDot + 1)));
 
             return retval;
@@ -290,9 +297,9 @@ namespace MMC
                 throw new NotSupportedException($"ObjectReference expected, {dataElement?.GetType().FullName} found.");
             }
 
-            AllocatedObject ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+            var ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
             var superType = ao.Type;
-            VirtualMethodDefinition vmdef = new VirtualMethodDefinition(methRef, objRef);
+            var vmdef = new VirtualMethodDefinition(methRef, objRef);
 
             if (m_virtualMethodDefinitions.TryGetValue(vmdef, out var retval))
             {
@@ -303,11 +310,11 @@ namespace MMC
             {
                 var typeDef = GetTypeDefinition(typeRef);
 
-                foreach (MethodDefinition curr in typeDef.Methods)
+                foreach (var curr in typeDef.Methods)
                 {
                     if (curr.Body != null && curr.Body.Instructions.Count > 0)
                     {
-                        VirtualMethodDefinition vmdefCurr = new VirtualMethodDefinition(curr, objRef);
+                        var vmdefCurr = new VirtualMethodDefinition(curr, objRef);
 
                         if (vmdefCurr.Equals(vmdef))
                         {
@@ -343,7 +350,7 @@ namespace MMC
         /// <returns>A definition for the method to look for, or null if none was found.</returns>
         public MethodDefinition SearchMethod(string name, TypeDef typeDef)
         {
-            string methodName = typeDef + "::" + name;
+            var methodName = typeDef + "::" + name;
 
             if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
             {
@@ -396,18 +403,18 @@ namespace MMC
         /// <returns>Definition of the field to look for, or null if none was found.</returns>
         public FieldDefinition GetFieldDefinition(string declTypeName, string fieldName)
         {
-            string key = declTypeName + "::" + fieldName;
-            if (!m_fieldDefinitions.TryGetValue(key, out FieldDefinition retval))
+            var key = declTypeName + "::" + fieldName;
+            if (!m_fieldDefinitions.TryGetValue(key, out var retval))
             {
-                TypeDef declType = GetTypeDefinition(declTypeName);
+                var declType = GetTypeDefinition(declTypeName);
                 if (declType == null)
                 {
                     throw new System.Exception($"Declaring type {declTypeName} not found");
                 }
                 else
                 {
-                    bool equal = false;
-                    int i = 0;
+                    var equal = false;
+                    var i = 0;
                     for (; !equal && i < declType.Fields.Count; ++i)
                     {
                         equal = declType.Fields[i].Name == fieldName;
@@ -440,8 +447,8 @@ namespace MMC
         /// <returns>The number of non-static fields.</returns>
         public int GetNonStaticFieldCount(TypeDef typeDef)
         {
-            int count = 0;
-            foreach (FieldDefinition fld in typeDef.Fields)
+            var count = 0;
+            foreach (var fld in typeDef.Fields)
             {
                 if (!fld.IsStatic)
                 {
@@ -589,11 +596,48 @@ namespace MMC
                 ["System.UIntPtr"] = UIntPtr.Size
             };
 
-            AssemblyDefinition = assemblyLoader.GetModule();
+                AssemblyDefinition = assemblyLoader.GetModule();
 
             m_referencedAssemblies = assemblyLoader.GetReferencedModules(AssemblyDefinition);
 
             AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
+        }
+
+        internal DefinitionProvider(ModuleDef mainModule, ModuleDef[] referencedModules)
+        {
+            m_typeDefinitions = new Dictionary<string, TypeDef>();
+            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
+            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
+            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
+
+            /*
+			 * We need to know the sizes in order to perform
+			 * managed pointer arithmetica
+			 */
+            m_typeSizes = new Dictionary<string, int>
+            {
+                ["System.UInt16"] = sizeof(ushort),
+                ["System.UInt32"] = sizeof(uint),
+                ["System.UInt64"] = sizeof(ulong),
+                ["System.Int16"] = sizeof(short),
+                ["System.Int32"] = sizeof(int),
+                ["System.Int64"] = sizeof(long),
+                ["System.SByte"] = sizeof(sbyte),
+                ["System.Byte"] = sizeof(byte),
+                ["System.Boolean"] = sizeof(bool),
+                ["System.Char"] = sizeof(char),
+                ["System.Double"] = sizeof(double),
+                ["System.Decimal"] = sizeof(decimal),
+                ["System.Single"] = sizeof(float),
+                ["System.IntPtr"] = IntPtr.Size,
+                ["System.UIntPtr"] = UIntPtr.Size
+            };
+
+            AssemblyDefinition = mainModule;
+
+            m_referencedAssemblies = referencedModules;
+
+            //AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
         }
 
         public IDataElement CreateDataElement(object value)
@@ -612,18 +656,18 @@ namespace MMC
 
             switch (Type.GetTypeCode(type))
             {
-                case TypeCode.Boolean: return new Int4((bool)value ? 1 : 0);
-                case TypeCode.Char: return new Int4((char)value);
-                case TypeCode.SByte: return new Int4((sbyte)value);
-                case TypeCode.Byte: return new Int4((byte)value);
-                case TypeCode.Int16: return new Int4((short)value);
-                case TypeCode.UInt16: return new UnsignedInt4((ushort)value);
-                case TypeCode.Int32: return new Int4((int)value);
-                case TypeCode.UInt32: return new UnsignedInt4((uint)value);
-                case TypeCode.Int64: return new Int8((long)value);
-                case TypeCode.UInt64: return new UnsignedInt8((ulong)value);
-                case TypeCode.Single: return new Float4((float)value);
-                case TypeCode.Double: return new Float8((double)value);
+                case TypeCode.Boolean: return new Int4((Boolean)value ? 1 : 0);
+                case TypeCode.Char: return new Int4((Char)value);
+                case TypeCode.SByte: return new Int4((SByte)value);
+                case TypeCode.Byte: return new Int4((Byte)value);
+                case TypeCode.Int16: return new Int4((Int16)value);
+                case TypeCode.UInt16: return new UnsignedInt4((UInt16)value);
+                case TypeCode.Int32: return new Int4((Int32)value);
+                case TypeCode.UInt32: return new UnsignedInt4((UInt32)value);
+                case TypeCode.Int64: return new Int8((Int64)value);
+                case TypeCode.UInt64: return new UnsignedInt8((UInt64)value);
+                case TypeCode.Single: return new Float4((Single)value);
+                case TypeCode.Double: return new Float8((Double)value);
                 case TypeCode.String: return new ConstantString(value.ToString());
                 default:
                     if (value is IntPtr ip)
@@ -634,7 +678,19 @@ namespace MMC
                     {
                         return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
                     }
-                    throw new NotSupportedException("CreateDataElement for " + value.GetType());
+
+                    // TODO: handle reference & complex types...
+                    var typeName = type.FullName;
+
+                    var typeDef = this.GetTypeDefinition(typeName);
+
+                    if (typeDef.IsInterface)
+                    {
+                        return new InterfaceProxy(typeDef);
+                    }
+
+                    //throw new NotSupportedException("CreateDataElement for " + value.GetType());
+                    return ObjectReference.Null;
             }
         }
     }

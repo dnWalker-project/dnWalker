@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "dnWalker.TestGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "--exploration-data ExplorationData.xml"
+    }
+  }
+}

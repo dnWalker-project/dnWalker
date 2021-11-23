@@ -58,7 +58,7 @@ namespace MMC.State
             get { return m_initData.Loaded; }
             set
             {
-                bool prev = m_initData.Loaded;
+                var prev = m_initData.Loaded;
                 m_isDirty |= (!prev && value) || (prev && !value);
 
                 // If we're unloading this class, we need to do a little more
@@ -81,7 +81,7 @@ namespace MMC.State
             get { return m_initData.Initialized; }
             set
             {
-                bool prev = m_initData.Initialized;
+                var prev = m_initData.Initialized;
                 m_isDirty |= (!prev && value) || (prev && !value);
                 m_initData.Initialized = value;
             }
@@ -104,7 +104,7 @@ namespace MMC.State
             get { return m_initData; }
             set
             {
-                InitDataContainer initData = value as InitDataContainer;
+                var initData = value as InitDataContainer;
                 if (initData == null)
                 {
                     throw new System.Exception(string.Format(/*))
@@ -122,7 +122,7 @@ namespace MMC.State
 
         public void AwakenWaitingThreads(ExplicitActiveState cur)
         {
-            foreach (int sleepy_thread in m_initData.WaitingThreads)
+            foreach (var sleepy_thread in m_initData.WaitingThreads)
                 cur.ThreadPool.Threads[sleepy_thread].Awaken(cur.Logger);
 
             if (!m_initData.WaitingThreads.IsEmpty)
@@ -166,14 +166,14 @@ namespace MMC.State
 
         public override string ToString()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder("c:");
+            var sb = new System.Text.StringBuilder("c:");
             sb.AppendFormat("{0} {1}", Type.Name, m_initData.ToString());
 
-            TypeDefinition typeDef = DefinitionProvider.GetTypeDefinition(Type);
+            var typeDef = DefinitionProvider.GetTypeDefinition(Type);
 
-            bool printed_a_field = false;
+            var printed_a_field = false;
             sb.Append(" flds: {");
-            for (int i = 0; i < m_fields.Length; ++i)
+            for (var i = 0; i < m_fields.Length; ++i)
             {
                 if (typeDef.Fields[i].IsStatic)
                 {
@@ -197,8 +197,8 @@ namespace MMC.State
         public void ClearFields()
         {
             m_staticFieldCount = 0;
-            TypeDefinition typeDef = DefinitionProvider.GetTypeDefinition(Type);
-            for (int i = 0; i < m_fields.Length; ++i)
+            var typeDef = DefinitionProvider.GetTypeDefinition(Type);
+            for (var i = 0; i < m_fields.Length; ++i)
             {
                 m_fields[i] = DefinitionProvider.GetNullValue(typeDef.Fields[i].FieldType);
                 if (typeDef.Fields[i].IsStatic)
@@ -237,7 +237,7 @@ namespace MMC.State
                 get { return (m_state & LoadedFlag) != 0; }
                 set
                 {
-                    int old_mstate = m_state;
+                    var old_mstate = m_state;
                     if (value)
                         m_state |= LoadedFlag;
                     else
@@ -251,7 +251,7 @@ namespace MMC.State
                 get { return (m_state & InitializedFlag) != 0; }
                 set
                 {
-                    int old_mstate = m_state;
+                    var old_mstate = m_state;
                     if (value)
                         m_state |= InitializedFlag;
                     else
@@ -288,7 +288,7 @@ namespace MMC.State
 
             public IStorable StorageCopy()
             {
-                InitDataContainer retval = new InitDataContainer();
+                var retval = new InitDataContainer();
                 retval.Loaded = Loaded;
                 retval.Initialized = Initialized;
                 retval.WaitingThreads.AddAll(WaitingThreads);
@@ -298,7 +298,7 @@ namespace MMC.State
 
             public override int GetHashCode()
             {
-                int retval = (m_state ^ HashMasks.MASK1) + m_initTrd;
+                var retval = (m_state ^ HashMasks.MASK1) + m_initTrd;
                 retval ^= HashMasks.MASK2;
                 if (m_waitingThreads.Count > 0)
                     retval += ArrayIntHasher.GetHashCodeIntArray(m_waitingThreads.ToArray());
@@ -307,8 +307,8 @@ namespace MMC.State
 
             public override bool Equals(object other)
             {
-                InitDataContainer o = other as InitDataContainer;
-                bool equal = o != null && o.Initialized == Initialized &&
+                var o = other as InitDataContainer;
+                var equal = o != null && o.Initialized == Initialized &&
                     o.Loaded == Loaded && o.InitializingThread == InitializingThread &&
                     o.WaitingThreads.Count == WaitingThreads.Count;
                 if (equal && WaitingThreads.Count > 0)
@@ -320,7 +320,7 @@ namespace MMC.State
 
             public override string ToString()
             {
-                System.Text.StringBuilder sb = new System.Text.StringBuilder("c:");
+                var sb = new System.Text.StringBuilder("c:");
                 sb.AppendFormat("{0}{1}[i:{2} w:{3}]",
                     Loaded ? "L" : "-",
                     Initialized ? "I" : "-",

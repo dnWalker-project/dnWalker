@@ -17,7 +17,7 @@ namespace dnWalker.NativePeers
                     // if (lockTaken) { ThrowLockTakenException(); }
                     // ReliableEnter(obj, ref lockTaken);
                     var lockTaken = args[1];
-                    IManagedPointer ptr = lockTaken as IManagedPointer;
+                    var ptr = lockTaken as IManagedPointer;
                     if (ptr != null)
                     {
                         lockTaken = ptr.Value;

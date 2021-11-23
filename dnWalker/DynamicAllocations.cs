@@ -50,8 +50,8 @@ namespace MMC.State {
         {
             get
             {
-                bool found = false;
-                int i = 0;
+                var found = false;
+                var i = 0;
 
                 var typeDef = DefinitionProvider.GetTypeDefinition(Type);
 
@@ -119,7 +119,7 @@ namespace MMC.State {
             //int typeOffset = 0;
 
             //foreach (var typeDef in cur.DefinitionProvider.InheritanceEnumerator(m_typeDef)) {
-            for (int i = 0; i < fields.Count; i++)
+            for (var i = 0; i < fields.Count; i++)
             {
                 //int fieldsOffset = typeOffset + i;
                 var type = cur.DefinitionProvider.GetTypeDefinition(fields[i].FieldType);
@@ -147,12 +147,12 @@ namespace MMC.State {
                 sb.AppendFormat("locked by: {0}, ", Lock.ToString());
             }
 
-            int typeOffset = 0;
+            var typeOffset = 0;
             foreach (var t in DefinitionProvider.InheritanceEnumerator(Type))
             {
                 var typeDef = t.ResolveTypeDef();
                 sb.AppendFormat("{0}:{{", typeDef.Name);
-                for (int i = 0; i < typeDef.Fields.Count; ++i)
+                for (var i = 0; i < typeDef.Fields.Count; ++i)
                 {
                     if (!typeDef.Fields[i].IsStatic)
                     {
@@ -170,7 +170,9 @@ namespace MMC.State {
             return sb.ToString();
         }
 
-		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : base(typeDef, config.UseRefCounting, config.MemoisedGC) { }
+		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : this(typeDef, config.UseRefCounting, config.MemoisedGC) { }
+
+        public AllocatedObject(ITypeDefOrRef typeDef, bool useRefCounting, bool memoisedGC) : base(typeDef, useRefCounting, memoisedGC) { }
 	}
 
     /// VY thinks that eventually an array should not be a first-class citizen,
@@ -183,8 +185,8 @@ namespace MMC.State {
 
         public override void ClearFields(ExplicitActiveState cur)
         {
-            IDataElement nullVal = DefinitionProvider.GetNullValue(Type);
-            for (int i = 0; i < Fields.Length; i++)
+            var nullVal = DefinitionProvider.GetNullValue(Type);
+            for (var i = 0; i < Fields.Length; i++)
                 Fields[i] = nullVal;
         }
 
@@ -204,7 +206,11 @@ namespace MMC.State {
         {
             this.Fields = new DataElementList(length);
         }
-	}
+        public AllocatedArray(ITypeDefOrRef arrayType, int length, bool useRefCounting, bool memoisedGC) : base(arrayType, useRefCounting, memoisedGC)
+        {
+            this.Fields = new DataElementList(length);
+        }
+    }
 
     /// <summary>
     /// VY thinks that delegates should not be first class citizens
@@ -267,6 +273,12 @@ namespace MMC.State {
 			Object = obj;
 			Method = ptr;
 			m_isDirty = true;
-		}
-	}
+        }
+        public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, bool useRefCounting, bool memoisedGC) : base(DelegateTypeDef, useRefCounting, memoisedGC)
+        {
+            Object = obj;
+            Method = ptr;
+            m_isDirty = true;
+        }
+    }
 }

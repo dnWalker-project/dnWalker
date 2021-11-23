@@ -34,7 +34,7 @@ namespace MMC.Collections {
 
 			set {
 				if (index >= m_data.Length) {
-					T[] newArr = new T[index * 2];
+					var newArr = new T[index * 2];
 					System.Array.Copy(m_data, newArr, index);
 					m_data = newArr;
 				}
@@ -64,8 +64,8 @@ namespace MMC.Collections {
 		/// <returns>A string representation of the list.</returns>
 		public override string ToString() {
 
-			StringBuilder sb = new StringBuilder("{");
-			for (int i = 0; i < Length; ++i) {
+			var sb = new StringBuilder("{");
+			for (var i = 0; i < Length; ++i) {
 				if (this[i] != null) {
 					if (sb.Length > 1)
 						sb.Append(", ");
@@ -107,7 +107,7 @@ namespace MMC.Collections {
 			m_data = new T[col.Count];
 			m_length = col.Count;
 
-			foreach (T key in col)
+			foreach (var key in col)
 				Add(key);
 		}
 

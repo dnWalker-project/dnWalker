@@ -10,7 +10,7 @@ namespace Examples.Concolic.Features.Arrays
     {
         public static int comp(int i, int[] arr)
         {
-            int a = arr[i];
+            var a = arr[i];
             return 1 / a;
         }
 

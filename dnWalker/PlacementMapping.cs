@@ -55,7 +55,7 @@ namespace MMC.State {
 		// TODO use better hashing
 		public override int GetHashCode() {
 
-			int retval = ThreadId;
+			var retval = ThreadId;
 			retval ^= MMC.HashMasks.MASK1;
 			retval += LineNumber.GetHashCode();
 			retval ^= MMC.HashMasks.MASK4;
@@ -65,7 +65,7 @@ namespace MMC.State {
 
 		public override bool Equals(object other) {
 
-			PlacementMappingKey o = (PlacementMappingKey)other;
+			var o = (PlacementMappingKey)other;
 			return o.ThreadId == ThreadId && 
 				o.Occurence == Occurence &&
 				o.LineNumber.Equals(LineNumber);
@@ -104,9 +104,9 @@ namespace MMC.State {
 		/// \sa PlacementMappingKey
 		public int GetLocation(ExplicitActiveState cur) {
 
-			int retval = -1;
+			var retval = -1;
 
-			PlacementMappingKey key = new PlacementMappingKey();
+			var key = new PlacementMappingKey();
 			key.LineNumber = cur.CurrentLocation;
 			key.ThreadId = cur.ThreadPool.CurrentThreadId;
 			key.Occurence = 0;
@@ -114,7 +114,7 @@ namespace MMC.State {
 
 			while (retval == -1) {
 //				MonoModelChecker.Message("trying key {0}", key.ToString());
-				object wrapped = m_map[key];
+				var wrapped = m_map[key];
 				if (wrapped == null) {
 					// Empty mapping. Store and return.
 					retval = cur.DynamicArea.FreeSlot();

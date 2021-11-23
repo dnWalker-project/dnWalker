@@ -99,9 +99,9 @@ namespace MMC.State
 
         private void CollapseDynamicArea(ExplicitActiveState cur)
         {
-            foreach (int da in cur.DynamicArea.DirtyAllocations)
+            foreach (var da in cur.DynamicArea.DirtyAllocations)
             {
-                DynamicAllocation alloc = cur.DynamicArea.Allocations[da];
+                var alloc = cur.DynamicArea.Allocations[da];
                 if (alloc != null)
                 {
                     m_curstate.Allocations[da] = CollapseAllocation(alloc);
@@ -147,7 +147,7 @@ namespace MMC.State
 
         private WrappedIntArray CollapseObject(AllocatedObject ao)
         {
-            WrappedIntArray col = new WrappedIntArray(ObjectPartsOffsets.Count);
+            var col = new WrappedIntArray(ObjectPartsOffsets.Count);
             col[ObjectPartsOffsets.AllocationType] = (int)AllocationType.Object;
             col[ObjectPartsOffsets.Definition] = m_pool.GetInt(ao.Type);
             col[ObjectPartsOffsets.Fields] = m_pool.GetInt(ao.Fields);
@@ -156,7 +156,7 @@ namespace MMC.State
 
         private WrappedIntArray CollapseDelegate(AllocatedDelegate ad)
         {
-            WrappedIntArray col = new WrappedIntArray(DelegatePartsOffsets.Count);
+            var col = new WrappedIntArray(DelegatePartsOffsets.Count);
             col[DelegatePartsOffsets.AllocationType] = (int)AllocationType.Delegate;
             col[DelegatePartsOffsets.Object] = m_pool.GetInt(ad.Object);
             col[DelegatePartsOffsets.MethodPointer] = m_pool.GetInt(ad.Method);
@@ -165,9 +165,9 @@ namespace MMC.State
 
         private void CollapseStaticArea(ExplicitActiveState cur)
         {
-            foreach (int dirty_class in cur.StaticArea.DirtyClasses)
+            foreach (var dirty_class in cur.StaticArea.DirtyClasses)
             {
-                AllocatedClass ac = cur.StaticArea.Classes[dirty_class];
+                var ac = cur.StaticArea.Classes[dirty_class];
                 m_curstate.Classes[dirty_class] = CollapseClass(ac);
             }
         }
@@ -175,7 +175,7 @@ namespace MMC.State
         private int CollapseClass(AllocatedClass ac)
         {
 
-            WrappedIntArray row = new WrappedIntArray(ClassPartsOffsets.Count);
+            var row = new WrappedIntArray(ClassPartsOffsets.Count);
             row[ClassPartsOffsets.InitData] = m_pool.GetInt(ac.InitData);
             row[ClassPartsOffsets.Fields] = m_pool.GetInt(ac.Fields);
 
@@ -189,13 +189,13 @@ namespace MMC.State
 
         private void CollapseThreads(ExplicitActiveState cur)
         {
-            foreach (int thread_id in cur.ThreadPool.DirtyThreads)
+            foreach (var thread_id in cur.ThreadPool.DirtyThreads)
             {
                 // MonoModelChecker.Message("thread {0} is dirty.", thread_id);
-                ThreadState trd = cur.ThreadPool.Threads[thread_id];
+                var trd = cur.ThreadPool.Threads[thread_id];
                 if (trd != null)
                 {
-                    WrappedIntArray collapsed_trd = (thread_id < m_curstate.Threads.Length ?
+                    var collapsed_trd = (thread_id < m_curstate.Threads.Length ?
                             m_pool.GetList(m_curstate.Threads[thread_id]) : null);
 
                     collapsed_trd = (collapsed_trd == null) ?
@@ -225,10 +225,10 @@ namespace MMC.State
         {
             // MonoModelChecker.Message("called CollapseCallStacks()...");
             // If available, get the previous call stack from the pool.
-            WrappedIntArray cs = GetOldList(pool_index, stack.StackPointer);
+            var cs = GetOldList(pool_index, stack.StackPointer);
 
             // Collapse dirty frames.
-            foreach (int frame in stack.DirtyFrames)
+            foreach (var frame in stack.DirtyFrames)
             {
                 //				MonoModelChecker.Message("frame {0} is dirty.", frame);
                 cs[frame] = CollapseMethod(stack[frame], cs[frame]);
@@ -240,8 +240,8 @@ namespace MMC.State
         private int CollapseMethod(MethodState method, int pool_index)
         {
             // First, attempt to get the old values for this method.
-            WrappedIntArray cm = m_pool.GetList(pool_index);
-            int def = m_pool.GetInt(method.Definition);
+            var cm = m_pool.GetList(pool_index);
+            var def = m_pool.GetInt(method.Definition);
 
             // Check if we found something sensible. Otherwise start anew.
 
@@ -284,7 +284,7 @@ namespace MMC.State
 
         private WrappedIntArray GetOldList(int pool_index, int intended_length)
         {
-            WrappedIntArray retval = m_pool.GetList(pool_index);
+            var retval = m_pool.GetList(pool_index);
 
             if (retval != null)
             {

@@ -20,7 +20,7 @@ namespace Examples.Concolic
             if (sequence < 0) return;
 
             System.Console.Out.WriteLine("expect = " + expect);
-            int prevExpect = expect;
+            var prevExpect = expect;
             if (expect > 0)
                 prevExpect--;
 

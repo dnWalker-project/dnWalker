@@ -107,7 +107,7 @@ namespace MMC.State {
 
 		public override string ToString()
         {
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			sb.AppendFormat("allocations   : {0}\nclasses       : {1}\nthreads       : {2}\n",
 				m_alloc.ToString(), m_class.ToString(), m_trds.ToString());
 			return sb.ToString();
@@ -115,7 +115,7 @@ namespace MMC.State {
 
 		public override bool Equals(object other)
         {
-			CollapsedState o = other as CollapsedState;
+			var o = other as CollapsedState;
 			return m_trds.Equals(o.Threads) &&
 				m_alloc.Equals(o.Allocations) &&
 				m_class.Equals(o.Classes);

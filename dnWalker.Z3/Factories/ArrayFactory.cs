@@ -15,7 +15,7 @@ namespace dnWalker.Z3.Factories
             {
                 var array = Array.CreateInstance(elementType, length);
                 var value = (char)((IntNum)expression.Args[0]).Int;
-                for (int i = 0; i < length; i++)
+                for (var i = 0; i < length; i++)
                 {
                     array.SetValue(value, i);
                 }

@@ -16,9 +16,9 @@ class DataRace
 {
     public static void Go()
     {
-        Cell cell = new Cell();
-        Thread t1 = new Thread(new ThreadStart(cell.Add3));
-        Thread t2 = new Thread(new ThreadStart(cell.Mul3));
+        var cell = new Cell();
+        var t1 = new Thread(new ThreadStart(cell.Add3));
+        var t2 = new Thread(new ThreadStart(cell.Mul3));
         t1.Start(); t2.Start();
         // Assertion below should catch all possible values of cell.Get().
         Debug.Assert(cell.Get() == 1 || cell.Get() == 3 ||

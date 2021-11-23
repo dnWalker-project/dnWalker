@@ -13,13 +13,13 @@ namespace Examples.Concolic.Features.Arrays
     {
         static public int m1(char[] c, int n)
         {
-            String str = new String(c);
+            var str = new string(c);
             Console.Out.WriteLine("Parameters - " + str + " " + n);
-            int state = 0;
+            var state = 0;
             //    if(c == null || c.length == 0)  {
             //      return -1;
             //    }
-            for (int i = 0; i < c.Length; i++)
+            for (var i = 0; i < c.Length; i++)
             {
                 if (c[i] == '[') state = 1;
                 else if (state == 1 & c[i] == '{') state = 2;
@@ -39,7 +39,7 @@ namespace Examples.Concolic.Features.Arrays
 
         static public void m2(int i, char[] c)
         {
-            String str = new String(c);
+            var str = new string(c);
             Console.Out.WriteLine("In TestMe2. Parameters = " + str + " " + i);
             if (i == 0)
             {
@@ -111,12 +111,12 @@ namespace Examples.Concolic.Features.Arrays
                 System.Diagnostics.Debug.Assert(false);
         }
 
-        public static void main(String[] args)
+        public static void main(string[] args)
         {
             Console.Out.WriteLine("-------- In main!");
             char[] c = { 'a', 'b', '{', '}', 'c', 'd' };
             m1(c, 0);
-            Input uber = new Input();
+            var uber = new Input();
             double[] d = { 1.0, 2, 3, 4, 5, 6, 7, 8 };
 
             m2(10, c);

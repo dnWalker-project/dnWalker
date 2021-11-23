@@ -1,4 +1,7 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+
+using dnWalker.DataElements;
 using dnWalker.NativePeers;
 using dnWalker.Symbolic;
 using dnWalker.Traversal;
@@ -25,6 +28,26 @@ namespace dnWalker.Concolic
         private readonly ISolver _solver;
         private readonly DefinitionProvider _definitionProvider;
 
+        public static Explorer ForAssembly(string assemblyFilename, ISolver solver, Action<Config> setup = null, TextWriter loggerOutput = null)
+        {
+            var assemblyLoader = new AssemblyLoader();
+
+            var data = File.ReadAllBytes(assemblyFilename);
+
+            _ = assemblyLoader.GetModuleDef(data);
+
+            System.Reflection.Assembly.LoadFrom(assemblyFilename);
+            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
+
+
+            var config = new Config();
+            var logger = new Logger(Logger.Default); // | LogPriority.Trace);
+
+            logger.AddOutput(new TextLoggerOutput(loggerOutput ?? Console.Out));
+
+            return new Explorer(definitionProvider, config, logger, solver);
+        }
+
         public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
             _config = config;
@@ -36,6 +59,8 @@ namespace dnWalker.Concolic
         public event PathExploredHandler OnPathExplored;
 
         private int _iterationCount;
+        private List<ExplorationIterationData> _iterationData;
+
         public int IterationCount
         {
             get
@@ -46,30 +71,53 @@ namespace dnWalker.Concolic
 
         public Traversal.PathStore PathStore { get; private set; }
 
-        public void Run(string methodName, params IArg[] arguments)
+        private static void WriteFlowGraph(dnlib.DotNet.MethodDef method, string filename = @"c:\temp\dot.dot")
         {
-            var entryPoint = _definitionProvider.GetMethodDefinition(methodName)
-                ?? throw new NullReferenceException($"Method {methodName} not found");
-
-            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
-            
-            var pathStore = new Traversal.PathStore(entryPoint);
-            PathStore = pathStore;            
-
-            using (TextWriter writer = File.CreateText(@"c:\temp\dot.dot"))
+            using (TextWriter writer = File.CreateText(filename))
             {
                 var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
                 dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
                 dotWriter.NodeAdorner = new ControlFlowNodeAdorner<Instruction>();
                 dotWriter.EdgeAdorner = new ControlFlowEdgeAdorner<Instruction>();
-                dotWriter.Write(entryPoint.ConstructStaticFlowGraph());
+                dotWriter.Write(method.ConstructStaticFlowGraph());
             }
+        }
 
-            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
+        public IReadOnlyList<ExplorationIterationData> IterationData
+        {
+            get { return _iterationData; }
+        }
+
+        public void Run(string methodName)
+        {
+            var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
+
+            // generate IArg[] array for default values
+            var arguments = new IArg[entryPoint.Parameters.Count];
+
+            Run(methodName, arguments);
+        }
+
+        public void Run(string methodName, params IArg[] arguments)
+        {
+            var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
+
+            WriteFlowGraph(entryPoint);
+
+            var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
+
+            var pathStore = new Traversal.PathStore(entryPoint);
+            PathStore = pathStore;
+
+            //IDataElement[] args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
 
             // setup iteration management
-            int maxIterations = _config.MaxIterations;
+            var maxIterations = _config.MaxIterations;
             _iterationCount = 0;
+
+            IDictionary<string, object> next = null;
+
+            _iterationData = new List<ExplorationIterationData>();
 
             while (true)
             {
@@ -92,89 +140,149 @@ namespace dnWalker.Concolic
                     var cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
                     cur.PathStore = pathStore;
 
-                    DataElementList dataElementList;
+                    var dataElementList = cur.StorageFactory.CreateList(arguments.Length);
 
-                    /*foreach (var allocation in args.OfType<IReferenceType>())
+                    //ParameterStore parameterStore = new ParameterStore(cur);
+
+                    var useArgs = next == null;
+                    if (useArgs) next = new Dictionary<string, object>();
+                    for (var i = 0; i < arguments.Length; i++)
                     {
-                        //if (cur.
-                    }*/
+                        //IDataElement arg = args[i];
 
-                    if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type.FullName == "System.String[]") // TODO
-                    {
-                        throw new NotImplementedException("Obsolete");/*
-                        ObjectReference runArgsRef = cur.DynamicArea.AllocateArray(
-                            cur.DynamicArea.DeterminePlacement(false),
-                            cur.DefinitionProvider.GetTypeDefinition("System.String"),
-                            arguments.Length);
+                        // either next is null => use arguments array
+                        // OR next is not null => use entryPoint.Parameters array
 
-                        if (_config.RunTimeParameters.Length > 0)
+                        var argName = entryPoint.Parameters[i].Name;
+                        IDataElement arg = null;
+
+                        if (!useArgs && next.TryGetValue(argName, out var value))
                         {
-                            AllocatedArray runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
-                            for (int i = 0; i < _config.RunTimeParameters.Length; ++i)
-                            {
-                                runArgs.Fields[i] = args[i];
-                            }
+                            // we have an explicit desired value from the solver
+                            arg = _definitionProvider.CreateDataElement(value);
+                        }
+                        else
+                        {
+                            // we do not have an explicit desired value from the solver => use the value provided by outside                            
+                            arg = arguments[i] != null ? arguments[i].AsDataElement(_definitionProvider) : _definitionProvider.GetParameterNullOrDefaultValue(entryPoint.Parameters[i]);
                         }
 
-                        dataElementList = cur.StorageFactory.CreateSingleton(runArgsRef);*/
-                    }
-                    else
-                    {
-                        dataElementList = cur.StorageFactory.CreateList(arguments.Length);
-                        for (int i = 0; i < arguments.Length; i++)
+                        // we use ArrayOf whenever we are working with an array of items
+                        // we add parameter in the parameter list for every element
+                        if (arg is ArrayOf arrayOf)
                         {
-                            var arg = args[i];
+                            var elementType = arrayOf.Inner.GetType().GetElementType();
+
+                            // first we construct an array and initialize its items
+                            // then we add the expressions for each item <PARAM_NAME>[i]...
+                            var placement = cur.DynamicArea.DeterminePlacement(false);
+                            var arrayRef = cur.DynamicArea.AllocateArray(placement, arrayOf.ElementType, arrayOf.Length);
+                            dataElementList[i] = arrayRef;
+
+                            // add array.Length parameter
+                            //ParameterExpression arrayLengthParameterExpression = Expression.Parameter(typeof(int), argName + "->Length");
+
+                            var allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+
+                            for (var j = 0; j < arrayOf.Inner.Length; j++)
+                            {
+                                var elementName = argName + "[" + j + "]";
+
+                                var item = _definitionProvider.CreateDataElement(arrayOf.Inner.GetValue(j));
+
+                                allocatedArray.Fields[j] = item;
+
+                                //ParameterExpression itemParameterExpression = Expression.Parameter(elementType, elementName);
+                                //parameters.Add(itemParameterExpression);
+
+                                //item.SetExpression(itemParameterExpression, cur);
+                            }
+
+                            var arrayParameterExpression = Expression.Parameter(arrayOf.Inner.GetType(), entryPoint.Parameters[i].Name);
+                            parameters.Add(arrayParameterExpression);
+
+                            arrayRef.SetExpression(arrayParameterExpression, cur);
+                        }
+
+                        // we use InterfaceProxy to inject custom values whenever its methods are requested
+                        else if (arg is InterfaceProxy interfaceProxy)
+                        {
+                            dataElementList[i] = interfaceProxy;
+
+                            IDictionary<string, Func<IDataElement>> methodsResolvers = new Dictionary<string, Func<IDataElement>>();
+
+                            // for each method create a parameter expression <PARAM_NAME>.<METHOD_NAME>
+                            // TODO: handle, should the result of the method be something different than a number or a string
+                            foreach(var method in interfaceProxy.WrappedType.Methods)
+                            {
+                                var returnName = argName + "->" + method.FullName;
+
+                                var returnType = GetBaseTypeFromName(method.ReturnType.FullName);
+                                if (returnType == null) throw new Exception("Not supported return type, only numbers and strings are supported: " + method.ReturnType.FullName);
+
+                                var methodResultParameterExpression = Expression.Parameter(returnType, returnName);
+                                parameters.Add(methodResultParameterExpression);
+
+                                if (next != null && next.TryGetValue(returnName, out var desiredResult))
+                                {
+                                    // we have a desired value specified => use it
+                                    methodsResolvers[method.FullName] = () =>
+                                    {
+                                        var dataElement = _definitionProvider.CreateDataElement(next[returnName]);
+                                        dataElement.SetExpression(methodResultParameterExpression, cur);
+                                        return dataElement;
+                                    };
+                                }
+                                else
+                                {
+                                    // no value is specified => use default
+                                    methodsResolvers[method.FullName] = () =>
+                                    {
+                                        var dataElement = GetDefaultDataElement(returnType, _definitionProvider);
+                                        dataElement.SetExpression(methodResultParameterExpression, cur);
+                                        return dataElement;
+                                    };
+                                }
+                            }
+
+                            interfaceProxy.SetMethodResolvers(cur, methodsResolvers);
+
+                            // cur.PathStore.CurrentPath.SetObjectAttribute<IDictionary<String, Func<IDataElement>>>(arg, "method_results", results);
+                        }
+                        // TODO: add ClassProxy?
+                        // we use ClassProxy to inject custom values whenever its methods or fields are requested
+                        // else if (arg is ClassProxy classProxy) { }
+
+                        // now it should be base types only
+                        else
+                        {
+                            var paramType = GetBaseTypeFromName(entryPoint.Parameters[i].Type.FullName);
+                            if (paramType == null) throw new Exception("Not supported param type, only arrays, interfaces, numbers and strings are supported: " + entryPoint.Parameters[i].Type.FullName);
+
                             dataElementList[i] = arg;
 
-                            Type paramType = typeof(int);
+                            var argParameterExpression = Expression.Parameter(paramType, argName);
+                            parameters.Add(argParameterExpression);
 
-                            if (arg is ArrayOf arrayOf)
-                            {
-                                var placement = cur.DynamicArea.DeterminePlacement(false);
-                                ObjectReference arrayRef = cur.DynamicArea.AllocateArray(
-                                    placement,
-                                    arrayOf.ElementType,
-                                    arrayOf.Length);
-
-                                AllocatedArray allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
-
-                                for (int j = 0; j < arrayOf.Inner.Length; j++)
-                                {
-                                    allocatedArray.Fields[j] = _definitionProvider.CreateDataElement(arrayOf.Inner.GetValue(j));
-                                }
-
-                                dataElementList[i] = arrayRef;
-                                // todo
-                                paramType = arrayOf.Inner.GetType();
-                                //dataElementList = cur.StorageFactory.CreateSingleton(arrayRef);
-                            }
-                            else
-                            {
-                                // TODO
-                                switch (entryPoint.Parameters[i].Type.FullName)
-                                {
-                                    case "System.Double":
-                                        paramType = typeof(double);
-                                        break;
-                                }
-                            }
-
-                            var parameter = Expression.Parameter(
-                                paramType,
-                                entryPoint.Parameters[i].Name);
-                            parameters.Add(parameter);
-
-                            dataElementList[i].SetExpression(parameter, cur);
+                            dataElementList[i].SetExpression(argParameterExpression, cur);
                         }
 
-                        //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
-                        if (arguments.Length != entryPoint.Parameters.Count)
-                        {
-                            throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);
-                        }
+                        //ParameterExpression parameter = Expression.Parameter(
+                        //    paramType,
+                        //    entryPoint.Parameters[i].Name);
+                        //parameters.Add(parameter);
+
+                        //dataElementList[i].SetExpression(parameter, cur);
                     }
 
-                    MethodState mainState = new MethodState(
+                    //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
+                    if (arguments.Length != entryPoint.Parameters.Count)
+                    {
+                        throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);
+                    }
+                    
+
+                    var mainState = new MethodState(
                         entryPoint,
                         dataElementList,
                         cur);
@@ -195,9 +303,47 @@ namespace dnWalker.Concolic
 
                     var path = PathStore.CurrentPath;
 
-                    System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", args.Select(a => a.ToString()))}");
+                    System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", dataElementList.Select(a => a.ToString()))}");
 
-                    var next = PathStore.GetNextInputValues(_solver, parameters);
+                    //Dictionary<String, ParameterInfo> usedArgs = new Dictionary<String, ParameterInfo>();
+                    //for (Int32 i = 0; i < entryPoint.Parameters.Count; ++i)
+                    //{
+                    //    String paramName = entryPoint.Parameters[i].Name;
+                    //    String typeName = entryPoint.Parameters[i].Type.FullName;
+                    //    TypeDef type = _definitionProvider.GetTypeDefinition(typeName);
+
+                    //    if (type.IsInterface)
+                    //    {
+                    //        usedArgs[paramName] = ParameterInfo.FromInterface(paramName, typeName, next);
+                    //    }
+                    //    else
+                    //    {
+                    //        switch (typeName)
+                    //        {
+                    //            case "System.Boolean": usedArgs[paramName] = ParameterInfo.FromValue(paramName, dataElementList[i].ToBool()); break;
+                    //            case "System.Char": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Char)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.SByte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (SByte)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Byte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Byte)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Int16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int16)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.UInt16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt16)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Int32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Int4)dataElementList[i]).Value); break;
+                    //            case "System.UInt32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt32)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Int64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int64)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.UInt64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt64)((Int4)dataElementList[i]).Value); break;
+                    //            case "System.Single": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float4)dataElementList[i]).Value); break;
+                    //            case "System.Double": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float8)dataElementList[i]).Value); break;
+                    //            case "System.String": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((ConstantString)dataElementList[i]).Value); break;
+
+                    //            default:
+                    //                throw new Exception("Unexpected TYPE");
+                    //        }
+                    //    }
+                    //}
+                    //ExplorationIterationData iterationData = new ExplorationIterationData(path.PathConstraintString, usedArgs);
+
+                    //_iterationData.Add(iterationData);
+
+                    next = PathStore.GetNextInputValues(_solver, parameters);
 
                     OnPathExplored?.Invoke(path);
 
@@ -206,10 +352,11 @@ namespace dnWalker.Concolic
                         break;
                     }
 
-                    args = entryPoint.Parameters.Select(p => new { p.Name, Value = next[p.Name] })
-                        .Select(v =>
-                        _definitionProvider.CreateDataElement(v.Value))
-                        .ToArray();
+                    // no need to do this
+                    //args = entryPoint.Parameters
+                    //    .Select(p => new { p.Name, Value = next[p.Name] })
+                    //    .Select(v => _definitionProvider.CreateDataElement(v.Value))
+                    //    .ToArray();
 
                     PathStore.ResetPath();
                 }
@@ -219,6 +366,44 @@ namespace dnWalker.Concolic
                     throw;
                 }
             }
+        }
+
+        //private static Type GetFrameworkType(ArrayOf arrayOf)
+        //{
+        //    return arrayOf.Inner.GetType();
+        //}
+
+        private static Type GetBaseTypeFromName(String fullName)
+        {
+            switch (fullName)
+            {
+                case "System.Int32": return typeof(Int32);
+                case "System.UInt16": return typeof(UInt16);
+                case "System.UInt32": return typeof(UInt32);
+                case "System.UInt64": return typeof(UInt64);
+                case "System.Int16": return typeof(Int16);
+                case "System.Int64": return typeof(Int64);
+                case "System.SByte": return typeof(SByte);
+                case "System.Byte": return typeof(Byte);
+                case "System.Boolean": return typeof(Boolean);
+                case "System.Char": return typeof(Char);
+                case "System.Double": return typeof(Double);
+                case "System.Decimal": return typeof(Decimal);
+                case "System.Single": return typeof(Single);
+                case "System.IntPtr": return typeof(IntPtr);
+                case "System.UIntPtr": return typeof(UIntPtr);
+
+
+                default:
+                    return null;
+                    // throw new ArgumentException("Unexpected type: " + fullName);
+            }
+        }
+
+        private static IDataElement GetDefaultDataElement(Type type, DefinitionProvider definitionProvider)
+        {
+            var defaultValue = type.IsValueType ? Activator.CreateInstance(type) : null;
+            return definitionProvider.CreateDataElement(defaultValue);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace MMC.Util
                 if (value != not_set && index >= m_currVals.Length)
                     m_currVals = IntArray.GrowArray(m_currVals, index);
 
-                int oldVal = m_currVals[index];
+                var oldVal = m_currVals[index];
 
                 // TODO may increase memory consumption
                 //if (oldVal == value)
@@ -73,7 +73,7 @@ namespace MMC.Util
         /// <returns>Old values overwritten with new values.</returns>
         public ChangingIntVector WriteBack()
         {
-            int[] retval = new int[m_currVals.Length];
+            var retval = new int[m_currVals.Length];
             System.Array.Copy(m_currVals, retval, m_currVals.Length);
             return new ChangingIntVector(retval);
         }
@@ -95,18 +95,18 @@ namespace MMC.Util
         public override bool Equals(object other)
         {
 
-            ChangingIntVector o = other as ChangingIntVector;
-            bool equal = true;
+            var o = other as ChangingIntVector;
+            var equal = true;
 
             // First, check the common part.
             int i;
-            int min_length = System.Math.Min(this.Length, o.Length);
+            var min_length = System.Math.Min(this.Length, o.Length);
             for (i = 0; equal && i < min_length; ++i)
                 equal = this[i] == o[i]; // deleted values are catched in indexer.
 
             // Check the largest list for the rest: it should only contain
             // not_set and/or deleted values.
-            ChangingIntVector largest_list = (this.Length > o.Length ? this : o);
+            var largest_list = (this.Length > o.Length ? this : o);
             for (; equal && i < largest_list.Length; ++i)
                 equal = largest_list[i] == not_set;
 
@@ -132,9 +132,9 @@ namespace MMC.Util
         public override string ToString()
         {
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new System.Text.StringBuilder();
             int val;
-            for (int i = 0; i < this.Length; ++i)
+            for (var i = 0; i < this.Length; ++i)
             {
                 val = this[i];
                 if (val != not_set)
