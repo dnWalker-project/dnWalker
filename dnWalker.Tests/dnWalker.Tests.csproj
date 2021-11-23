@@ -127,6 +127,7 @@
     <Compile Include="InterpreterTest.cs" />
     <Compile Include="Interpreter\IntepreterTests.cs" />
     <Compile Include="Concolic\Features\Arrays\ArrayTests.cs" />
+    <Compile Include="Symbolic\BranchingTests_Release.cs" />
     <Compile Include="Symbolic\BranchingTests.cs" />
     <Compile Include="Symbolic\MethodParametersFactoryTests.cs" />
     <Compile Include="Symbolic\SymbolicArgTest.cs" />
