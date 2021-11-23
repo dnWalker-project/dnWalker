@@ -1,4 +1,4 @@
-# MoonWalker - Makefile
+﻿# MoonWalker - Makefile
 # (C) 2008, University of Twente - Formal Methods and Tools group
 # This makefile has only been tested on Mac OS X 10.4.11.
 
