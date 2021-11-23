@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
     <PackageReference Include="dnlib" Version="3.3.5" />
+    <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.13" />
     <PackageReference Include="QuikGraph" Version="2.3.0" />
     <PackageReference Include="QuikGraph.Graphviz" Version="2.3.1" />
   </ItemGroup>
