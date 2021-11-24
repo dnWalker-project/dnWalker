@@ -1,6 +1,4 @@
-﻿using dnWalker.Concolic.Parameters;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +8,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace dnWalker.Tests.Concolic.Parameters
+namespace dnWalker.Parameters.Tests
 {
     public class ArrayParameterTests : ReferenceTypeParameterTests<ArrayParameter>
     {
@@ -26,7 +24,7 @@ namespace dnWalker.Tests.Concolic.Parameters
 
             parameter.Name = "new_name";
 
-            parameter.LengthParameter.Name.Should().BeEquivalentTo(ParameterName.ConstructField("new_name", ArrayParameter.LengthParameterName));
+            parameter.LengthParameter.Name.Should().BeEquivalentTo(ParameterNameUtils.ConstructField("new_name", ArrayParameter.LengthParameterName));
         }
     }
 }

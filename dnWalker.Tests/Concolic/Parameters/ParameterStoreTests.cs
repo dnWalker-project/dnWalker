@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic.Parameters;
+using dnWalker.Parameters;
 
 using FluentAssertions;
 

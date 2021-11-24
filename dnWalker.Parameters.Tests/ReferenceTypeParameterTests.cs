@@ -1,24 +1,20 @@
-﻿using dnWalker.Concolic.Parameters;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 using Xunit;
 
-namespace dnWalker.Tests.Concolic.Parameters
+namespace dnWalker.Parameters.Tests
 {
-    public abstract class ReferenceTypeParameterTests<TParameter> : dnlibTypeTestBase
+    public abstract class ReferenceTypeParameterTests<TParameter>
         where TParameter : ReferenceTypeParameter
     {
         protected abstract TParameter Create(string name = "p");
 
-        
         [Fact]
         public void UnitializedReferenceTypeParameter_IsNull_Should_Be_True()
         {
@@ -42,7 +38,7 @@ namespace dnWalker.Tests.Concolic.Parameters
 
             var exprs = parameter.GetParameterExpressions().ToList();
 
-            Assert.Contains(exprs, pe => pe.Name == ParameterName.ConstructField("p", ReferenceTypeParameter.IsNullParameterName));
+            Assert.Contains(exprs, pe => pe.Name == ParameterNameUtils.ConstructField("p", ReferenceTypeParameter.IsNullParameterName));
         }
 
         [Fact]
@@ -52,7 +48,9 @@ namespace dnWalker.Tests.Concolic.Parameters
 
             parameter.Name = "new_name";
 
-            parameter.IsNullParameter.Name.Should().BeEquivalentTo(ParameterName.ConstructField("new_name", ReferenceTypeParameter.IsNullParameterName));
+            parameter.IsNullParameter.Name.Should().BeEquivalentTo(ParameterNameUtils.ConstructField("new_name", ReferenceTypeParameter.IsNullParameterName));
         }
+
+
     }
 }

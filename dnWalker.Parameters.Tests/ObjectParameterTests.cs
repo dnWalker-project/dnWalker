@@ -1,8 +1,4 @@
-﻿using dnlib.DotNet;
-
-using dnWalker.Concolic.Parameters;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using System;
 using System.Collections.Generic;
@@ -12,9 +8,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Parameter = dnWalker.Concolic.Parameters.Parameter;
-
-namespace dnWalker.Tests.Concolic.Parameters
+namespace dnWalker.Parameters.Tests
 {
     public class ObjectParameterTests : ReferenceTypeParameterTests<ObjectParameter>
     {
@@ -28,11 +22,9 @@ namespace dnWalker.Tests.Concolic.Parameters
         [InlineData(typeof(MyItem))]
         public void Test_Type_Is_EquivalentTo_WrappedType(Type systemType)
         {
-            TypeSig dnLibType = GetType(systemType);
+            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName) { Name = "SomeObject" };
 
-            ObjectParameter objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
-
-            objectParameter.TypeName.Should().BeEquivalentTo(dnLibType.FullName);
+            objectParameter.TypeName.Should().BeEquivalentTo(systemType.FullName);
         }
 
 
@@ -41,9 +33,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         [InlineData(typeof(MyItem))]
         public void UninitializedField_Should_Be_Null(Type systemType)
         {
-            TypeSig dnLibType = GetType(systemType);
-
-            ObjectParameter objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName) { Name = "SomeObject" };
 
             objectParameter.TryGetField("field", out Parameter fieldParameter).Should().BeFalse();
             fieldParameter.Should().BeNull();
@@ -56,9 +46,7 @@ namespace dnWalker.Tests.Concolic.Parameters
         {
             const String FieldName = "field";
 
-            TypeSig dnLibType = GetType(systemType);
-
-            ObjectParameter objectParameter = new ObjectParameter(dnLibType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName) { Name = "SomeObject" };
 
             Parameter fieldParameter = new BooleanParameter() { Value = false };
 
@@ -72,19 +60,19 @@ namespace dnWalker.Tests.Concolic.Parameters
         [Fact]
         public void SettingField_Should_SetName_Of_FieldParameter()
         {
-            var objectParameter = new ObjectParameter(GetType(typeof(MyClass)).FullName, "SomeObject");
+            var objectParameter = new ObjectParameter(typeof(MyClass).FullName, "SomeObject");
 
             Parameter fieldParameter = new DoubleParameter();
 
             objectParameter.SetField("value", fieldParameter);
 
-            fieldParameter.Name.Should().Be(ParameterName.ConstructField("SomeObject", "value"));
+            fieldParameter.Name.Should().Be(ParameterNameUtils.ConstructField("SomeObject", "value"));
         }
 
         [Fact]
         public void ChangingName_Should_ChangeName_Of_FieldParmaters()
         {
-            var objectParameter = new ObjectParameter(GetType(typeof(MyClass)).FullName, "SomeObject");
+            var objectParameter = new ObjectParameter(typeof(MyClass).FullName, "SomeObject");
 
             Parameter fieldParameter = new DoubleParameter();
 
@@ -92,7 +80,7 @@ namespace dnWalker.Tests.Concolic.Parameters
 
             objectParameter.Name = "AnotherObject";
 
-            fieldParameter.Name.Should().Be(ParameterName.ConstructField("AnotherObject", "value"));
+            fieldParameter.Name.Should().Be(ParameterNameUtils.ConstructField("AnotherObject", "value"));
         }
     }
 }

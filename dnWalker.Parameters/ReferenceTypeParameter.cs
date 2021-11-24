@@ -11,102 +11,34 @@ namespace dnWalker.Parameters
 {
     public abstract class ReferenceTypeParameter : Parameter
     {
-        public const String IsNullParameterName = "#__IS_NULL__";
+        public static readonly string IsNullName = "#__IsNUll__";
 
-
-        public ReferenceTypeParameter(String typeName) : base(typeName)
+        protected ReferenceTypeParameter(string typeName, string localName) : base(typeName, localName)
         {
-            IsNullParameter = new BooleanParameter() { Value = true };
+            _isNullParameter = new BooleanParameter(IsNullName, this);
         }
 
-        public ReferenceTypeParameter(String typeName, String name) : base(typeName, name)
+        protected ReferenceTypeParameter(string typeName, string localName, Parameter? owner) : base(typeName, localName, owner)
         {
-            IsNullParameter = new BooleanParameter(ParameterName.ConstructField(name, IsNullParameterName)) { Value = true };
+            _isNullParameter = new BooleanParameter(IsNullName, this);
+        }
+
+        private readonly BooleanParameter _isNullParameter;
+
+        public override IEnumerable<Parameter> GetOwnedParameters()
+        {
+            yield return _isNullParameter;
         }
 
         public BooleanParameter IsNullParameter
         {
-            get;
+            get { return _isNullParameter; }
         }
 
-        /// <summary>
-        /// Invoked when the parameter name changes. Updates the <see cref="ReferenceTypeParameter.IsNullParameter"/>
-        /// </summary>
-        /// <param name="newName"></param>
-        protected override void OnNameChanged(String newName)
+        public bool IsNull
         {
-            if (IsNullParameter != null)
-            {
-                IsNullParameter.Name = ParameterName.ConstructField(newName, IsNullParameterName);
-            }
-        }
-
-        public Boolean? IsNull
-        {
-            get
-            {
-                return IsNullParameter.Value;
-            }
-            set
-            {
-                IsNullParameter.Value = value;
-            }
-            //get
-            //{
-            //    if (TryGetTrait<IsNullTrait>(out IsNullTrait isNullField))
-            //    {
-            //        return isNullField.IsNullParameter.Value;
-            //    }
-            //    return null;
-            //}
-            //set
-            //{
-            //    // if value is null => we are clearing it
-            //    if (!value.HasValue)
-            //    {
-            //        if (TryGetTrait(out IsNullTrait trait))
-            //        {
-            //            Traits.Remove(trait);
-            //        }
-            //    }
-            //    // update current trait or add a new one
-            //    else
-            //    {
-            //        if (TryGetTrait(out IsNullTrait trait))
-            //        {
-            //            trait.IsNullParameter.Value = value;
-            //        }
-            //        else
-            //        {
-            //            trait = new IsNullTrait(value.Value);
-            //            AddTrait(trait);
-            //        }
-            //    }
-            //}
-        }
-
-        public override IEnumerable<ParameterExpression> GetParameterExpressions()
-        {
-            return IsNullParameter.GetParameterExpressions();
-        }
-
-        public override Boolean HasSingleExpression => false;
-
-        public override ParameterExpression GetSingleParameterExpression() => null;
-
-        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
-        {
-            String accessor = ParameterName.GetAccessor(Name, name);
-            if (accessor == IsNullParameterName)
-            {
-                childParameter = IsNullParameter;
-                return true;
-            }
-            else
-            {
-                childParameter = null;
-                return false;
-            }
+            get { return _isNullParameter.Value ?? true; }
+            set { _isNullParameter.Value = value; }
         }
     }
 }

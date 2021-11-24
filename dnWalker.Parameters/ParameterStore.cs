@@ -38,7 +38,7 @@ namespace dnWalker.Parameters
         public bool TryGetParameter(string name, out Parameter parameter)
         {
             // try to perform walk through the parameter forest
-            var rootParameterName = ParameterName.GetRootName(name);
+            var rootParameterName = ParameterNameUtils.GetRootName(name);
 
             if (rootParameterName == name)
             {

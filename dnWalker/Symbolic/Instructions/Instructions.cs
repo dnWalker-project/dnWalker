@@ -41,7 +41,7 @@ namespace dnWalker.Symbolic.Instructions
     using dnWalker.ChoiceGenerators;
     using dnWalker.DataElements;
     using dnWalker.Concolic.Parameters;
-    using Parameter = dnWalker.Concolic.Parameters.Parameter;
+    using Parameter = dnWalker.Parameters.Parameter;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 

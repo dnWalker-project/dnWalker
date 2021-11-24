@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -7,158 +8,112 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class ArrayParameter : ReferenceTypeParameter, IEquatable<ArrayParameter>
+    public class ArrayParameter : ReferenceTypeParameter
     {
-        public const String LengthParameterName = "#__LENGTH__";
+        public static readonly string LengthName = "#__Length__";
 
-        private readonly Dictionary<Int32, Parameter> _items = new Dictionary<Int32, Parameter>();
+        private string _elementTypeName;
+        private static readonly Parameter?[] EmptyArray = new Parameter?[0];
 
-        /// <summary>
-        /// Invoked when the parameter name changes. Updates names of the <see cref="ReferenceTypeParameter.IsNullParameter"/>, <see cref="ArrayParameter.LengthParameter"/> and items parameters.
-        /// </summary>
-        /// <param name="newName"></param>
-        protected override void OnNameChanged(String newName)
+        public ArrayParameter(string elementTypeName, string localName) : base(elementTypeName + "[]", localName)
         {
-            base.OnNameChanged(newName);
+            _elementTypeName = elementTypeName;
+            _lengthParameter = new Int32Parameter(LengthName, this);
+        }
 
-            // update names of Length parameter and item parameters
-            if (LengthParameter != null)
-            {
-                LengthParameter.Name = ParameterName.ConstructField(newName, LengthParameterName);
-            }
+        public ArrayParameter(string elementTypeName, string localName, Parameter? owner) : base(elementTypeName + "[]", localName, owner)
+        {
+            _elementTypeName= elementTypeName;
+            _lengthParameter = new Int32Parameter(LengthName, this);
+        }
 
-            if (_items != null)
+        public string ElementTypeName
+        {
+            get { return _elementTypeName; }
+        }
+
+        private readonly Int32Parameter _lengthParameter;
+
+        public int Length
+        {
+            get { return _lengthParameter.Value ?? 0; }
+            set 
             {
-                foreach (KeyValuePair<Int32, Parameter> pair in _items)
+                int length = Length;
+                // we are downsizing => do nothing;
+                if (length > value)
                 {
-                    pair.Value.Name = ParameterName.ConstructIndex(newName, pair.Key);
+                    length = value;
+                    return;
                 }
+
+                Resize(value);
             }
-        }
-
-        public Boolean TryGetItemAt(Int32 index, out Parameter itemParameter)
-        {
-            //if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait field))
-            //{
-            //    return field.IndexValueParameter;
-            //}
-            //return null;
-            return _items.TryGetValue(index, out itemParameter);
-        }
-
-        public void SetItemAt(Int32 index, Parameter parameter)
-        {
-            if (HasName()) parameter.Name = ParameterName.ConstructIndex(Name, index);
-
-            _items[index] = parameter;
-
-            //if (TryGetTrait<IndexValueTrait>(t => t.Index == index, out IndexValueTrait indexField))
-            //{
-            //    indexField.IndexValueParameter = parameter;
-            //}
-            //else
-            //{
-            //    AddTrait<IndexValueTrait>(new IndexValueTrait(index, parameter));
-            //}
-        }
-
-        public IEnumerable<KeyValuePair<Int32, Parameter>> GetKnownItems()
-        {
-            return _items;
         }
 
         public Int32Parameter LengthParameter
         {
-            get;
+            get { return _lengthParameter; }
         }
 
-        public Int32? Length
+        private void Resize(int newLength)
         {
-            get { return LengthParameter.Value; }
-            set { LengthParameter.Value = value; }
+            // round up to next power of 2 or something?
+            Parameter[] newItems = new Parameter[newLength];
+
+            int length = Length;
+
+            Array.Copy(_items, newItems, length);
+
+            _items = newItems;
+
+            _lengthParameter.Value = newLength;
         }
 
-        public String ElementTypeName { get; }
+        private Parameter?[] _items = EmptyArray;
 
-        public ArrayParameter(String elementTypeName) : base(elementTypeName + "[]")
+        public void SetItem(int index, Parameter? item)
         {
-            ElementTypeName = elementTypeName;
-            LengthParameter = new Int32Parameter();
-        }
-
-        public ArrayParameter(String elementTypeName, String name) : base(elementTypeName + "[]", name)
-        {
-            ElementTypeName = elementTypeName;
-            LengthParameter = new Int32Parameter(ParameterName.ConstructField(name, LengthParameterName));
-        }
-
-        public override IEnumerable<ParameterExpression> GetParameterExpressions()
-        {
-            return base.GetParameterExpressions()
-                .Concat(LengthParameter.GetParameterExpressions())
-                .Concat(_items.Values.SelectMany(itemParameter => itemParameter.GetParameterExpressions()));
-        }
-
-
-        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
-        {
-            if (base.TryGetChildParameter(name, out childParameter)) return true;
-
-
-            String accessor = ParameterName.GetAccessor(Name, name);
-            if (accessor == LengthParameterName)
+            if (item == null)
             {
-                childParameter = LengthParameter;
-                return true;
+                ClearItem(index);
             }
-            else if (Int32.TryParse(accessor, out Int32 index) && TryGetItemAt(index, out childParameter))
+
+            if (index > Length)
             {
-                return true;
+                Resize(index + 1);
             }
-            else
+        }
+
+        private void ClearItem(int index)
+        {
+            if (index < Length)
             {
-                childParameter = null;
+                Parameter? item = _items[index];
+                if (item != null)
+                {
+                    _items[index] = null;
+                    item.Owner = null;
+                }
+            }
+        }
+
+        public bool TryGetItem(int index, [NotNullWhen(true)]out Parameter? item)
+        {
+            if (index >= Length)
+            {
+                item = null;
                 return false;
             }
+
+            item = _items[index];
+            return item != null;
         }
 
-        public override IEnumerable<Parameter> GetChildrenParameters()
-        {
-            return _items.Values.Append(IsNullParameter).Append(LengthParameter);
-        }
 
-
-        public override bool Equals(object obj)
+        public override IEnumerable<Parameter> GetOwnedParameters()
         {
-            return Equals(obj as ArrayParameter);
-        }
-
-        public bool Equals(ArrayParameter other)
-        {
-            bool isNull = IsNull.HasValue ? IsNull.Value : true;
-            
-            return other != null &&
-                   Name == other.Name &&
-                   IsNull == other.IsNull &&
-                   Length == other.Length &&
-                   ElementTypeName == other.ElementTypeName &&
-                   (isNull || _items.Count == other._items.Count) &&
-                   (isNull || _items.All(p => other._items.TryGetValue(p.Key, out Parameter otherItem) && Equals(p.Value, otherItem)));
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name, IsNull, _items, Length, ElementTypeName);
-        }
-
-        public static bool operator ==(ArrayParameter left, ArrayParameter right)
-        {
-            return EqualityComparer<ArrayParameter>.Default.Equals(left, right);
-        }
-
-        public static bool operator !=(ArrayParameter left, ArrayParameter right)
-        {
-            return !(left == right);
+            return ((IEnumerable<Parameter>)_items.Where(item => item != null)).Append(IsNullParameter).Append(LengthParameter);
         }
     }
 }

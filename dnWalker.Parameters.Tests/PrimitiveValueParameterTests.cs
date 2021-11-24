@@ -1,17 +1,14 @@
-﻿using dnWalker.Concolic.Parameters;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 using Xunit;
 
-namespace dnWalker.Tests.Concolic.Parameters
+namespace dnWalker.Parameters.Tests
 {
     public abstract class PrimitiveValueParameterTests<TParameter, TValue>
         where TValue : struct

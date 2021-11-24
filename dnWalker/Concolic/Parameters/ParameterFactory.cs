@@ -1,10 +1,15 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Parameters;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
+using Parameter = dnWalker.Parameters.Parameter;
 
 namespace dnWalker.Concolic.Parameters
 {
@@ -46,7 +51,7 @@ namespace dnWalker.Concolic.Parameters
             // Array of value types
             else if (parameterType.IsValueArray)
             {
-                // https://github.com/0xd4d/dnlib/blob/8b143447a4dac36dfa02249f8a32136d19d049a4/src/DotNet/TypeSig.cs#L33  undocumented an should not be used...
+                // https://github.com/0xd4d/dnlib/blob/8b143447a4dac36dfa02249f8a32136d19d049a4/src/DotNet/TypeSig.cs#L33  undocumented and should not be used...
                 throw new NotSupportedException("ValueArrays are not supported.");
             }
             // Class or Interface

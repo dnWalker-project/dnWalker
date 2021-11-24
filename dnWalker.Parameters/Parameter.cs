@@ -9,65 +9,55 @@ namespace dnWalker.Parameters
 {
     public abstract class Parameter
     {
-        private string _name;
+        private readonly string _typeName;
+        private readonly string _localName;
+        private Parameter? _owner;
 
-        public string Name
+        public string LocalName
         {
-            get { return _name; }
-            set
-            {
-                if (String.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
-
-                if (_name != value)
-                {
-                    _name = value;
-                    OnNameChanged(value);
-                }
-            }
+            get { return _localName; }
         }
 
-        public bool HasName()
+        public string GetFullName()
         {
-            return !String.IsNullOrWhiteSpace(_name);
+            return _owner == null ? _localName : $"{_owner.GetFullName()}{ParameterNameUtils.Delimiter}{_localName}";
         }
 
-        public string TypeName { get; }
+        public Parameter? Owner
+        {
+            get { return _owner; }
+            set { _owner = value; }
+        }
 
-        //public IList<ParameterTrait> Traits { get; }
+        public abstract IEnumerable<Parameter> GetOwnedParameters();
 
-        /// <summary>
-        /// Invoked when the parameter name changes. When overridden, updates names of child parameters.
-        /// </summary>
-        /// <param name="newName"></param>
-        protected virtual void OnNameChanged(string newName)
+        protected Parameter(string typeName, string localName) : this(typeName, localName, null)
         { }
 
-        protected Parameter(string typeName)
+        protected Parameter(string typeName, string localName, Parameter? owner)
         {
-            TypeName = typeName;
+            if (string.IsNullOrEmpty(typeName))
+            {
+                throw new ArgumentNullException(nameof(typeName));
+            }
+            if (string.IsNullOrEmpty(localName))
+            {
+                throw new ArgumentNullException(nameof(localName));
+            }
+
+            _typeName = typeName;
+            _localName = localName;
+            _owner = owner;
         }
 
-        protected Parameter(string typeName, string name)
+        public string TypeName
         {
-            if (String.IsNullOrWhiteSpace(typeName)) throw new ArgumentNullException(nameof(typeName));
-            if (String.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
-
-            TypeName = typeName;
-            Name = name;
-            //Traits = new List<ParameterTrait>();
+            get { return _typeName; }
         }
-
-        public abstract IEnumerable<ParameterExpression> GetParameterExpressions();
-        public abstract bool HasSingleExpression { get; }
-        public abstract ParameterExpression GetSingleParameterExpression();
 
         public override string ToString()
         {
-            return $"Parameter: {Name}, Type: {TypeName}";
+            return $"Parameter: {LocalName}, Type: {TypeName}";
         }
-
-        public abstract bool TryGetChildParameter(string name, out Parameter childParameter);
-
-        public abstract IEnumerable<Parameter> GetChildrenParameters();
     }
 }

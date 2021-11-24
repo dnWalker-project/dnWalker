@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Parameters;
+
 using MMC;
 using MMC.Data;
 using MMC.State;
@@ -9,6 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+
+using Parameter = dnWalker.Parameters.Parameter;
 
 namespace dnWalker.Concolic.Parameters
 {

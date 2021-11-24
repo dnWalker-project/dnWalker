@@ -6,122 +6,116 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public static class ParameterName
+    public abstract class ParameterName : IEquatable<ParameterName>
     {
         public static readonly string Delimiter = ":";
-        public static readonly string CallIndexDelimiter = "|";
+        public static readonly string CallNumberDelimitier = "|";
 
-        public static string GetAccessor(string baseName, string fullName)
+        public ParameterName? OwnerName { get; }
+
+        protected ParameterName(ParameterName? owner)
         {
-            if (baseName == null) throw new ArgumentNullException(nameof(baseName));
-            if (fullName == null) throw new ArgumentNullException(nameof(fullName));
-
-            if (!fullName.StartsWith(baseName)) throw new ArgumentException("baseName must be beginning of the fullName");
-
-            // baseName: ROOT_OBJECT:SUB_OBJECT_1:...:SUB_OBJECT_N
-            // fullName: ROOT_OBJECT:SUB_OBJECT_1:...:SUB_OBJECT_N:FIELD:SUB_SUB_OBJECT_1:SUB_SUB_OBJECT_2:...
-
-            var delimiters = new string[] { Delimiter };
-
-            string restOfFullName;
-
-            if (baseName.Length == 0)
-            {
-                restOfFullName = fullName;
-            }
-            else
-            {
-                restOfFullName = fullName.Substring(baseName.Length);
-                if (!restOfFullName.StartsWith(Delimiter) && baseName.Length > 0)
-                {
-                    throw new ArgumentException("baseName must be beginning of the fullName");
-                }
-                restOfFullName = restOfFullName.Substring(Delimiter.Length);
-            }
-
-            var idx = restOfFullName.IndexOf(Delimiter, Delimiter.Length);
-
-            if (idx < 0)
-            {
-                // no new delimiter
-                return restOfFullName;
-            }
-            else
-            {
-                return restOfFullName.Substring(0, idx);
-            }
-
-
-            //Int32 fieldNameStartIndex = baseName.Length;
-            //Int32 filedNameEndIndex = fullName.IndexOf(Delimiter, fieldNameStartIndex + 1);
-
-            //if (fieldNameStartIndex > 0) fieldNameStartIndex += Delimiter.Length;
-
-            //return fullName.Substring(fieldNameStartIndex, filedNameEndIndex - fieldNameStartIndex);
+            OwnerName = owner;
         }
 
-        //public static String GetMethod(String baseName, String fullName)
-        //{
-        //    return GetAccessor(baseName, fullName);
-        //}
-
-        public static string ConstructField(string baseName, string fieldName)
+        public bool IsRoot
         {
-            if (String.IsNullOrWhiteSpace(baseName)) throw new ArgumentNullException(nameof(baseName));
-            if (String.IsNullOrWhiteSpace(fieldName)) throw new ArgumentNullException(nameof(fieldName));
-
-            return baseName + Delimiter + fieldName;
+            get { return OwnerName != null; }
         }
 
-        public static string ConstructMethod(string baseName, string methodName, int callIndex)
+        public static ParameterName[] CreateParameterNames(string fullName)
         {
-            if (String.IsNullOrWhiteSpace(baseName)) throw new ArgumentNullException(nameof(baseName));
-            if (String.IsNullOrWhiteSpace(methodName)) throw new ArgumentNullException(nameof(methodName));
-            if (callIndex < 1) throw new ArgumentException("CallIndex must be a positive value.", nameof(callIndex));
+            string[] parts = fullName.Split(Delimiter);
 
-            return ConstructField(baseName, methodName) + CallIndexDelimiter + callIndex.ToString();
-        }
+            ParameterName[] parameterNames = new ParameterName[parts.Length];
 
-        public static string ConstructIndex(string baseName, int index)
-        {
-            if (String.IsNullOrWhiteSpace(baseName)) throw new ArgumentNullException(nameof(baseName));
+            parameterNames[0] = new RootParameterName(parts[0]);
 
-            return ConstructField(baseName, index.ToString());
-        }
-
-        public static string GetRootName(string fullName)
-        {
-            if (String.IsNullOrWhiteSpace(fullName)) throw new ArgumentNullException(nameof(fullName));
-
-            var index = fullName.IndexOf(Delimiter);
-            if (index < 0)
+            for (int i = 0; i < parts.Length; ++i)
             {
-                return fullName;
+
             }
 
-            return fullName.Substring(0, index);
+            return parameterNames;
         }
 
-        public static bool TryParseMethodName(string methodNameWithCallIndex, out string methodName, out int callIndex)
+        public static ParameterName CreateField(ParameterName owner, string field)
         {
-            if (String.IsNullOrWhiteSpace(methodNameWithCallIndex) ||
-                methodNameWithCallIndex.Contains(Delimiter))
-            {
-                methodName = null;
-                callIndex = 0;
-                return false;
-            }
 
-            var i = methodNameWithCallIndex.IndexOf(CallIndexDelimiter);
-            if (i > 0 && Int32.TryParse(methodNameWithCallIndex.Substring(i + 1), out callIndex))
-            {
-                methodName = methodNameWithCallIndex.Substring(0, i);
-                return true;
-            }
+        }
 
-            methodName = null;// methodNameWithCallIndex.Substring(0, i);
-            callIndex = -1;
-            return false;
+        public static ParameterName CreateMethodResult(ParameterName owner, string methodName, int callNumber)
+        {
+
+        }
+
+        public static ParameterName CreateArrayItem(ParameterName owner, int index)
+        {
+
+        }
+
+        public abstract bool Equals(ParameterName? other);
+    }
+
+    public class RootParameterName : ParameterName
+    {
+        private readonly string _name;
+
+        public RootParameterName(string name) : base(null)
+        {
+            _name = name;
+        }
+
+        public override bool Equals(ParameterName? other)
+        {
+            return other is RootParameterName otherRoot && otherRoot._name == _name;
+        }
+    }
+
+    public class FieldParameterName : ParameterName
+    {
+        private readonly string _field;
+
+        public FieldParameterName(ParameterName owner, string field) : base(owner)
+        {
+            _field = field;
+        }
+
+        public override bool Equals(ParameterName? other)
+        {
+            return other is FieldParameterName otherField && otherField._field == _field;
+        }
+    }
+
+    public class MethodResultParameterName : ParameterName
+    {
+        private readonly string _methodName;
+        private readonly int _callNumber;
+
+        public MethodResultParameterName(ParameterName owner, string methodName, int callNumber) : base(owner)
+        {
+            _methodName = methodName;
+            _callNumber = callNumber;
+        }
+
+        public override bool Equals(ParameterName? other)
+        {
+            return other is MethodResultParameterName otherMethodResult && otherMethodResult._methodName == _methodName && otherMethodResult._callNumber == _callNumber;
+        }
+    }
+
+    public class ArrayItemParameterName : ParameterName
+    {
+        private readonly int _index;
+
+        public ArrayItemParameterName(ParameterName owner, int index) : base(owner)
+        {
+            _index = index;
+        }
+
+        public override bool Equals(ParameterName? other)
+        {
+            return other is ArrayItemParameterName otherArrayItem && otherArrayItem._index == _index;
         }
     }
 }
