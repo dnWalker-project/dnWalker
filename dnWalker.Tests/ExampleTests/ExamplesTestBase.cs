@@ -73,13 +73,13 @@ namespace dnWalker.Tests.ExampleTests
         protected void Explore(
             string methodName,
             Action<Config> before,
-            Action<dnWalker.Concolic.Explorer2> finished,
+            Action<dnWalker.Concolic.Explorer> finished,
             params IArg[] args)
         {
             _config.FlowGraphFile = this.GetType().Namespace + "." + this.GetType().Name + "FlowGraph" + ".dot";
             before?.Invoke(_config);
 
-            var explorer = new dnWalker.Concolic.Explorer2(_definitionProvider, _config, _logger, new Z3.Solver());
+            var explorer = new dnWalker.Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
             explorer.Run(methodName);//, args);
 
             finished(explorer);
