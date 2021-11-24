@@ -49,7 +49,7 @@ namespace dnWalker.Concolic
 
         private readonly IExplorationExtension _explorationExporter;
 
-        private readonly List<IExplorationExtension> _extensions;
+        private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
 
         public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
@@ -57,12 +57,6 @@ namespace dnWalker.Concolic
             _config = config;
             _logger = logger;
             _solver = solver;
-
-            if (config.ExportIterationInfo)
-            {
-                _explorationExporter = new XmlExplorationExporter(config.ExplorationInfoOutputFile ?? "exploration_info.xml");
-                _explorationExporter.Register(this);
-            }
         }
 
 

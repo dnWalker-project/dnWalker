@@ -6,21 +6,61 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+
+using Xunit.Abstractions;
 
 namespace dnWalker.Tests
 {
-    public abstract class TestBase
+    public abstract class TestBase : IDisposable
     {
+        private class Converter : TextWriter
+        {
+            private readonly ITestOutputHelper _output;
+
+            public Converter(ITestOutputHelper output)
+            {
+                _output = output;
+            }
+
+            public override Encoding Encoding
+            {
+                get { return Encoding.UTF8; }
+            }
+
+            public override void WriteLine(string message)
+            {
+                _output.WriteLine(message);
+            }
+
+            public override void WriteLine(string format, params object[] args)
+            {
+                _output.WriteLine(format, args);
+            }
+        }
+
+
         protected readonly Config _config;
-        private readonly DefinitionProvider _definitionProvider;
+        protected readonly DefinitionProvider _definitionProvider;
         public Logger _logger { get; }
 
-        protected TestBase(DefinitionProvider definitionProvider)
+        private TextWriter _originalConsoleOut;
+        protected TestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider)
         {
+            var converter = new Converter(testOutputHelper);
+            _originalConsoleOut = Console.Out;
+            Console.SetOut(converter);
+
+
             _config = new Config();
             _logger = new Logger(Logger.Default | LogPriority.Trace);
             _logger.AddOutput(new TestLoggerOutput());
             _definitionProvider = definitionProvider;
+        }
+
+        public void Dispose()
+        {
+            Console.SetOut(_originalConsoleOut);
         }
 
         public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
@@ -57,7 +97,7 @@ namespace dnWalker.Tests
             return state.CurrentThread.RetValue;
         }
 
-        protected void Explore(
+        protected void ExploreModelChecker(
             string methodName, 
             Action<IConfig> before,
             Action<Exception, SimpleStatistics> finished, 
@@ -82,7 +122,7 @@ namespace dnWalker.Tests
             finished(explorer.GetUnhandledException(), statistics);
         }
 
-        protected void Explore(
+        protected void ExploreModelChecker(
             string methodName,
             Action<IConfig> before,
             Action<Explorer> finished,

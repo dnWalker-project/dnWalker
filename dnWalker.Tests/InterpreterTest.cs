@@ -26,6 +26,7 @@ using dnWalker.Tests;
 using MMC;
 using System;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 {
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         protected static Lazy<DefinitionProvider> Lazy =
             new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
 
-        public InterpreterTest() : base(Lazy.Value)
+        public InterpreterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {
             _config.StateStorageSize = 5;
         }

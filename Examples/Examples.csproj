@@ -2,9 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+		<OutputType>exe</OutputType>
+		<StartupObject>Examples.Program</StartupObject>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Properties\" />
-    </ItemGroup>
 </Project>

@@ -25,4 +25,8 @@
         <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Concolic\DataExport\" />
+    </ItemGroup>
+
 </Project>
