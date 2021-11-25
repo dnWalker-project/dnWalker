@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -45,8 +46,19 @@ namespace dnWalker.Parameters
         public Parameter? Parent
         {
             get { return _parent; }
-            set { _parent = value; }
+            set 
+            {
+                _parent = value; 
+                _fullName = null;
+            }
         }
+
+        public bool IsRoot
+        {
+            get { return _parent == null; }
+        }
+
+        public abstract Boolean TryGetChild(ParameterName parameterName, [NotNullWhen(true)]out Parameter? parameter);
 
         public abstract IEnumerable<Parameter> GetChildren();
 

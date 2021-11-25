@@ -39,68 +39,24 @@ namespace dnWalker.Parameters
 
             parameter = _rootParameters[name.RootName];
 
+            if (parameter == null) return false;
+
             foreach(ParameterName currentName in name.TraversFromRoot().Skip(1)) // we want to skip the root 
             {
-                if (!TryGetNextParameter(currentName.LocalName, parameter, out parameter))
+                if (parameter.TryGetChild(currentName, out parameter))
                 {
                     return false;
                 }
             }
 
-            return TryGetNextParameter(name.LocalName, parameter, out parameter);
+            return true;
+            //return TryGetNextParameter(name, parameter, out parameter);
         }
 
         public bool TryGetRootParameter(ParameterName name, [NotNullWhen(true)] out Parameter? parameter)
         {
             return _rootParameters.TryGetValue(name.RootName, out parameter);
         }
-
-        private bool TryGetNextParameter(string localName, Parameter currentParameter, [NotNullWhen(true)] out Parameter? parameter)
-        {
-            switch (currentParameter)
-            {
-                case ObjectParameter op:
-                    if (localName == ReferenceTypeParameter.IsNullName)
-                    {
-                        parameter = op.IsNullParameter;
-                        return true;
-                    }
-                    else
-                    {
-                        return op.TryGetField(localName, out parameter);
-                    }
-
-                case InterfaceParameter ip:
-                    if (localName == ReferenceTypeParameter.IsNullName)
-                    {
-                        parameter = ip.IsNullParameter;
-                        return true;
-                    }
-                    else
-                    {
-                        string[] p = localName.Split(ParameterNameUtils.CallIndexDelimiter);
-                        if (p.Length == 2 && int.TryParse(p[1], out int callNumber))
-                        {
-                            return ip.TryGetMethodResult(p[0], callNumber, out parameter);
-                        }
-                        parameter = null;
-                        return false;
-                    }
-
-                case ArrayParameter ap:
-                    if (int.TryParse(localName, out int index))
-                    {
-                        return ap.TryGetItem(index, out parameter);
-                    }
-                    parameter = null;
-                    return false;
-
-                default:
-                    parameter = null;
-                    return false;
-            }
-        }
-
 
         public IEnumerable<Parameter> RootParameters
         {

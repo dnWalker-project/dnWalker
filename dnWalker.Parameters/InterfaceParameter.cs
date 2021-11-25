@@ -27,7 +27,8 @@ namespace dnWalker.Parameters
 
         public IEnumerable<KeyValuePair<(string, int), Parameter>> GetKnownMethodResults()
         {
-            return _methodResults.SelectMany(ps => ps.Value.Select(pi => KeyValuePair.Create((ps.Key, pi.Key), pi.Value)));
+            return IsNull ? Enumerable.Empty<KeyValuePair<(string, int), Parameter>>() :
+                _methodResults.SelectMany(ps => ps.Value.Select(pi => KeyValuePair.Create((ps.Key, pi.Key), pi.Value)));
         }
 
         public bool TryGetMethodResult(string methodName, int callNumber, [NotNullWhen(true)]out Parameter? result)
@@ -106,6 +107,20 @@ namespace dnWalker.Parameters
             }
 
             _methodResults.Remove(methodName);
+        }
+
+        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
+        {
+            if (base.TryGetChild(parameterName, out parameter))
+            {
+                return true;
+            }
+
+            if (parameterName.TryGetMethodResult(out string? methdoName, out int index))
+            {
+                return TryGetMethodResult(methdoName, index, out parameter);
+            }
+            return false;
         }
     }
 }

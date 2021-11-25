@@ -15,20 +15,40 @@ namespace dnWalker.Parameters.Tests.Xml
 {
     public class XmlDeserializerTests
     {
+        private static bool AreEquivalent(PrimitiveValueParameter? p1, PrimitiveValueParameter? p2)
+        {
+            if (p1 != null && p2 != null)
+            {
+                return Equals(p1.GetType(), p2.GetType()) &&
+                    p1.FullName == p2.FullName &&
+                    Equals(p1.GetValue(), p2.GetValue());
+            }
+            else
+            {
+                return Equals(p1, p2);
+            }
+        }
 
         [Theory]
         [ClassData(typeof(SerializationTestDataProvider.PrimitiveValueParameterProvider))]
-        public void Test_PrimitiveValueParameterDeserialization(Parameter expectedParameter, string xml)
+        public void Test_PrimitiveValueParameterDeserialization(PrimitiveValueParameter expectedParameter, string xml)
         {
-            XElement.Parse(xml).ToParameter().Should().Be(expectedParameter);
+            AreEquivalent(XElement.Parse(xml).ToParameter() as PrimitiveValueParameter, expectedParameter).Should().BeTrue();
         }
 
 
         [Theory]
         [ClassData(typeof(SerializationTestDataProvider.ObjectParameterProvider))]
-        public void Test_ObjectParameterDeserialization(Parameter expectedParameter, string xml)
+        public void Test_ObjectParameterDeserialization(ObjectParameter expected, string xml)
         {
-            XElement.Parse(xml).ToParameter().Should().Be(expectedParameter);
+            ObjectParameter? actual = XElement.Parse(xml).ToParameter() as ObjectParameter;
+
+            actual.Should().NotBeNull();
+
+            actual!.FullName.Should().Be(expected.FullName);
+            actual.GetKnownFields().Count().Should().Be(expected.GetKnownFields().Count());
+
+
         }
     }
 }

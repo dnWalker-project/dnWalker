@@ -112,7 +112,8 @@ namespace dnWalker.Parameters
 
         public IEnumerable<KeyValuePair<int, Parameter>> GetKnownItems()
         {
-            return Enumerable
+            return IsNull ? Enumerable.Empty<KeyValuePair<int, Parameter>>() : 
+                Enumerable
                 .Range(0, Length)
                 .Select(i => (i, _items[i]))
                 .Where(t => t.Item2 != null)
@@ -122,6 +123,21 @@ namespace dnWalker.Parameters
         public override IEnumerable<Parameter> GetChildren()
         {
             return ((IEnumerable<Parameter>)_items.Where(item => item != null)).Append(IsNullParameter).Append(LengthParameter);
+        }
+
+
+        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
+        {
+            if (base.TryGetChild(parameterName, out parameter))
+            {
+                return true;
+            }
+
+            if (parameterName.TryGetIndex(out int index))
+            {
+                return TryGetItem(index, out parameter);
+            }
+            return false;
         }
     }
 }

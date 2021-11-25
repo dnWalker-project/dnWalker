@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -15,12 +16,12 @@ namespace dnWalker.Parameters
 
         protected ReferenceTypeParameter(string typeName, string localName) : base(typeName, localName)
         {
-            _isNullParameter = new BooleanParameter(IsNullName, this);
+            _isNullParameter = new BooleanParameter(IsNullName, true, this);
         }
 
         protected ReferenceTypeParameter(string typeName, string localName, Parameter parent) : base(typeName, localName, parent)
         {
-            _isNullParameter = new BooleanParameter(IsNullName, this);
+            _isNullParameter = new BooleanParameter(IsNullName, true, this);
         }
 
         private readonly BooleanParameter _isNullParameter;
@@ -34,6 +35,18 @@ namespace dnWalker.Parameters
         {
             get { return _isNullParameter.Value; }
             set { _isNullParameter.Value = value; }
+        }
+
+        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
+        {
+            if (parameterName.TryGetField(out string? field) && field == IsNullName)
+            {
+                parameter = IsNullParameter;
+                return true;
+            }
+
+            parameter = null;
+            return false;
         }
     }
 }

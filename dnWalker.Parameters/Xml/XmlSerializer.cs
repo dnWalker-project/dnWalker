@@ -13,21 +13,21 @@ namespace dnWalker.Parameters.Xml
         {
             switch (parameter)
             {
-                case BooleanParameter p: return ToXml(p);
-                case CharParameter p: return ToXml(p);
-                case ByteParameter p: return ToXml(p);
-                case SByteParameter p: return ToXml(p);
-                case Int16Parameter p: return ToXml(p);
-                case Int32Parameter p: return ToXml(p);
-                case Int64Parameter p: return ToXml(p);
-                case UInt16Parameter p: return ToXml(p);
-                case UInt32Parameter p: return ToXml(p);
-                case UInt64Parameter p: return ToXml(p);
-                case SingleParameter p: return ToXml(p);
-                case DoubleParameter p: return ToXml(p);
-                case ObjectParameter p: return ToXml(p);
-                case InterfaceParameter p: return ToXml(p);
-                case ArrayParameter p: return ToXml(p);
+                case BooleanParameter p: return p.ToXml();
+                case CharParameter p: return p.ToXml();
+                case ByteParameter p: return p.ToXml();
+                case SByteParameter p: return p.ToXml();
+                case Int16Parameter p: return p.ToXml();
+                case Int32Parameter p: return p.ToXml();
+                case Int64Parameter p: return p.ToXml();
+                case UInt16Parameter p: return p.ToXml();
+                case UInt32Parameter p: return p.ToXml();
+                case UInt64Parameter p: return p.ToXml();
+                case SingleParameter p: return p.ToXml();
+                case DoubleParameter p: return p.ToXml();
+                case ObjectParameter p: return p.ToXml();
+                case InterfaceParameter p: return p.ToXml();
+                case ArrayParameter p: return p.ToXml();
                 default:
                     throw new NotSupportedException();
             }
@@ -93,7 +93,7 @@ namespace dnWalker.Parameters.Xml
     
         public static XElement ToXml(this ParameterStore store)
         {
-            XElement storeXml = new XElement("ParameterStore", store.RootParameters.Select(p => ToXml(p)));
+            XElement storeXml = new XElement("ParameterStore", store.RootParameters.Select(p => p.ToXml()));
             return storeXml;
         }
     }

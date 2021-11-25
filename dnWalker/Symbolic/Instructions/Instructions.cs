@@ -3345,7 +3345,7 @@ namespace dnWalker.Symbolic.Instructions
                     if (!interfaceParameter.TryGetMethodResult(methodName, callCount, out var resultParameter))
                     {
                         // initialize it to default value and add the parameter...
-                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType, $"{methodName}{dnWalker.Parameters.ParameterNameUtils.CallIndexDelimiter}{callCount}");
+                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType, $"{methodName}{dnWalker.Parameters.ParameterName.CallIndexDelimiter}{callCount}");
                         interfaceParameter.SetMethodResult(methodName, callCount, resultParameter);
                     }
 

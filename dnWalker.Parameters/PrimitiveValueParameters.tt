@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace dnWalker.Parameters
@@ -25,17 +26,23 @@ namespace dnWalker.Parameters
         {
             return Enumerable.Empty<Parameter>();
         }
+
+        public sealed override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)]out Parameter? parameter)
+        {
+            parameter = null;
+            return false;
+        }
     }
 
     public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
     {
-        protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
+        protected PrimitiveValueParameter(string typeName, string localName) : base(typeName, localName)
         { }
 
         protected PrimitiveValueParameter(string typeName, string localName, Parameter owner) : base(typeName, localName, owner)
         { }
 
-        protected PrimitiveValueParameter(string typeName, string name, TValue value) : base(typeName, name)
+        protected PrimitiveValueParameter(string typeName, string localName, TValue value) : base(typeName, localName)
         {
             Value = value;
         }
@@ -102,14 +109,13 @@ namespace dnWalker.Parameters
   #>
     public class <#= type #>Parameter : PrimitiveValueParameter<<#= type #>>
     {
-        public <#= type #>Parameter(string name) : base(TypeNames.<#= type #>TypeName, name)
-        {
-        }
+        public <#= type #>Parameter(string localName) : base(TypeNames.<#= type #>TypeName, localName)
+        { }
 
         public <#= type #>Parameter(string localName, Parameter parent): base(TypeNames.<#= type #>TypeName, localName, parent)
         { }
 
-        public <#= type #>Parameter(string name, <#= alias #> value) : base(TypeNames.<#= type #>TypeName, name)
+        public <#= type #>Parameter(string localName, <#= alias #> value) : base(TypeNames.<#= type #>TypeName, localName)
         {
             Value = value;
         }

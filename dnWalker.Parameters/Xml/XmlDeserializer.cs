@@ -53,7 +53,7 @@ namespace dnWalker.Parameters.Xml
                         case TypeNames.SingleTypeName: return ToSingleParameter(xml);
                         case TypeNames.DoubleTypeName: return ToDoubleParameter(xml);
                         default:
-                            throw new NotSupportedException("Unexpected primitive value parameter type: " + xml.Attribute("Type").Value);
+                            throw new NotSupportedException("Unexpected primitive value parameter type: " + xml.Attribute("Type")?.Value);
                     }
 
                 case "Object":
@@ -81,12 +81,15 @@ namespace dnWalker.Parameters.Xml
                 IsNull = isNull
             };
 
-            foreach(XElement fieldElement in xml.Elements("Field"))
+            if (!isNull)
             {
-                string fieldName = fieldElement.Attribute("Name").Value ?? throw new Exception("Object field XMl must contain 'Name' attribute.");
-                Parameter fieldValue = fieldElement.Elements().First().ToParameter();
+                foreach (XElement fieldElement in xml.Elements("Field"))
+                {
+                    string fieldName = fieldElement.Attribute("Name")?.Value ?? throw new Exception("Object field XMl must contain 'Name' attribute.");
+                    Parameter fieldValue = fieldElement.Elements().First().ToParameter();
 
-                o.SetField(fieldName, fieldValue);
+                    o.SetField(fieldName, fieldValue);
+                }
             }
 
             return o;
@@ -103,18 +106,20 @@ namespace dnWalker.Parameters.Xml
                 IsNull = isNull
             };
 
-            foreach (XElement methodResultElement in xml.Elements("MethodResult"))
-            {
-                string methodName = methodResultElement.Attribute("Name")?.Value ?? throw new Exception("Interface MethodResult XML must contain 'Name' attribute.");
-                foreach (XElement callResultEelement in methodResultElement.Elements("Call"))
+            if (!isNull)
+            { 
+                foreach (XElement methodResultElement in xml.Elements("MethodResult"))
                 {
-                    int callNumber = int.Parse(callResultEelement.Attribute("CallNumber")?.Value ?? throw new Exception("Interface CallResult XML must contain 'CallNumber' attribute."));
-                    Parameter callResult = callResultEelement.Elements().First().ToParameter();
+                    string methodName = methodResultElement.Attribute("Name")?.Value ?? throw new Exception("Interface MethodResult XML must contain 'Name' attribute.");
+                    foreach (XElement callResultEelement in methodResultElement.Elements("Call"))
+                    {
+                        int callNumber = int.Parse(callResultEelement.Attribute("CallNumber")?.Value ?? throw new Exception("Interface CallResult XML must contain 'CallNumber' attribute."));
+                        Parameter callResult = callResultEelement.Elements().First().ToParameter();
 
-                    i.SetMethodResult(methodName, callNumber, callResult);
+                        i.SetMethodResult(methodName, callNumber, callResult);
+                    }
                 }
             }
-
             return i;
         }
 
@@ -131,14 +136,16 @@ namespace dnWalker.Parameters.Xml
                 Length = length
             };
 
-            foreach (XElement itemElement in xml.Elements("Item"))
+            if (!isNull)
             {
-                int itemIndex = int.Parse(itemElement.Attribute("Index").Value ?? throw new Exception("Array item XMl must contain 'Index' attribute."));
-                Parameter item = itemElement.Elements().First().ToParameter();
+                foreach (XElement itemElement in xml.Elements("Item"))
+                {
+                    int itemIndex = int.Parse(itemElement.Attribute("Index")?.Value ?? throw new Exception("Array item XMl must contain 'Index' attribute."));
+                    Parameter item = itemElement.Elements().First().ToParameter();
 
-                a.SetItem(itemIndex, item);
+                    a.SetItem(itemIndex, item);
+                }
             }
-
             return a;
         }
 

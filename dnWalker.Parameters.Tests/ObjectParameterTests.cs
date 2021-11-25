@@ -14,59 +14,72 @@ namespace dnWalker.Parameters.Tests
     {
         protected override ObjectParameter Create(String name = "p")
         {
-            return new ObjectParameter(typeof(Object).FullName, name);
+            return new ObjectParameter("MyNamespace.MyClass", name);
         }
 
         [Theory]
-        [InlineData(typeof(MyClass))]
-        [InlineData(typeof(MyItem))]
-        public void Test_Type_Is_EquivalentTo_WrappedType(Type systemType)
+        [InlineData("MyNamespace.MyClass")]
+        public void TypeName_ShouldBeEqual_ToTheConstructorParameter(string typeName)
         {
-            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
 
-            objectParameter.TypeName.Should().BeEquivalentTo(systemType.FullName);
+            objectParameter.TypeName.Should().BeEquivalentTo(typeName);
         }
 
 
         [Theory]
-        [InlineData(typeof(MyClass))]
-        [InlineData(typeof(MyItem))]
-        public void UninitializedField_Should_Be_Null(Type systemType)
+        [InlineData("MyNamespace.MyClass")]
+        public void UninitializedField_Should_Be_Null(string typeName)
         {
-            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
 
-            objectParameter.TryGetField("field", out Parameter fieldParameter).Should().BeFalse();
+            objectParameter.TryGetField("field", out Parameter? fieldParameter).Should().BeFalse();
             fieldParameter.Should().BeNull();
         }
 
         [Theory]
-        [InlineData(typeof(MyClass))]
-        [InlineData(typeof(MyItem))]
-        public void InitializedField_Should_Be_SameAs_FieldParameter(Type systemType)
+        [InlineData("MyNamespace.MyClass")]
+        public void InitializedField_Should_Be_SameAs_FieldParameter(string typeName)
         {
-            const String FieldName = "field";
+            const string fieldName = "field";
 
-            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
 
-            Parameter fieldParameter = new BooleanParameter(FieldName, false );
+            Parameter fieldParameter = new BooleanParameter(fieldName, false );
 
-            objectParameter.SetField(FieldName, fieldParameter);
+            objectParameter.SetField(fieldName, fieldParameter);
 
-            objectParameter.TryGetField("field", out Parameter p).Should().BeTrue();
+            objectParameter.TryGetField(fieldName, out Parameter? p).Should().BeTrue();
             p.Should().BeSameAs(fieldParameter);
         }
 
-
-        [Fact]
-        public void SettingField_Should_SetName_Of_FieldParameter()
+        [Theory]
+        [InlineData("MyNamespace.MyClass")]
+        public void SettingField_WillSetParent_OfTheFieldParameter(string typeName)
         {
-            var objectParameter = new ObjectParameter(typeof(MyClass).FullName, "SomeObject");
+            const String FieldName = "field";
+
+            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
+
+            Parameter fieldParameter = new BooleanParameter(FieldName, false);
+
+            objectParameter.SetField(FieldName, fieldParameter);
+
+            fieldParameter.Parent.Should().BeSameAs(objectParameter);
+        }
+
+
+        [Theory]
+        [InlineData("MyNamespace.MyClass")]
+        public void SettingField_Should_SetName_Of_FieldParameter(string typeName)
+        {
+            var objectParameter = new ObjectParameter(typeName, "SomeObject");
 
             Parameter fieldParameter = new DoubleParameter("value", 0);
 
             objectParameter.SetField("value", fieldParameter);
 
-            fieldParameter.FullName.ToString().Should().Be(ParameterNameUtils.ConstructField("SomeObject", "value"));
+            fieldParameter.FullName.ToString().Should().Be($"SomeObject{ParameterName.Delimiter}value");
         }
     }
 }

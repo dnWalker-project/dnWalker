@@ -10,17 +10,24 @@ using Xunit;
 
 namespace dnWalker.Parameters.Tests
 {
-    public abstract class ReferenceTypeParameterTests<TParameter>
+    public abstract class ReferenceTypeParameterTests<TParameter> : ParameterTests<TParameter>
         where TParameter : ReferenceTypeParameter
     {
-        protected abstract TParameter Create(string name = "p");
 
         [Fact]
         public void UnitializedReferenceTypeParameter_IsNull_Should_Be_True()
         {
-            var parameter = Create("p");
+            TParameter parameter = Create("p");
 
             parameter.IsNull.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsNullParameter_IsNotNull()
+        {
+            TParameter parameter = Create("p");
+
+            parameter.IsNullParameter.Should().NotBeNull();
         }
 
     }

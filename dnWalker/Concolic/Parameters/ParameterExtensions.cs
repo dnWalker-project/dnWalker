@@ -49,7 +49,7 @@ namespace dnWalker.Concolic.Parameters
 
             for (Int32 i = 0; i < parameterNames.Length; ++i)
             {
-                if (store.TryGetRootParameter(new ParameterName(parameterNames[i]), out Parameter parameter))
+                if (store.TryGetRootParameter(parameterNames[i], out Parameter parameter))
                 {
                     arguments[i] = parameter.AsDataElement(cur);
                 }

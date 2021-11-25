@@ -11,6 +11,9 @@ namespace dnWalker.Parameters
 {
     public readonly struct ParameterName : IEquatable<ParameterName>
     {
+        public const char Delimiter = ':';
+        public const char CallIndexDelimiter = '|';
+
         private readonly string[]? _accessors;
         private readonly int _index;
 
@@ -25,9 +28,7 @@ namespace dnWalker.Parameters
         {
             get
             {
-                if (IsEmpty) return string.Empty;
-
-                return string.Join(ParameterNameUtils.Delimiter, _accessors!.Take(_index + 1));
+                return ToString()!;
             }
         }
 
@@ -124,7 +125,7 @@ namespace dnWalker.Parameters
             Debug.Assert(!string.IsNullOrWhiteSpace(localName));
 
             if (int.TryParse(localName, out int _) ||
-                localName.Contains(ParameterNameUtils.CallIndexDelimiter))
+                localName.Contains(CallIndexDelimiter))
             {
                 field = null;
                 return false;
@@ -151,7 +152,7 @@ namespace dnWalker.Parameters
                 throw new ArgumentException($"'{nameof(field)}' cannot be an integer.", nameof(field));
             }
 
-            if (field.Contains(ParameterNameUtils.CallIndexDelimiter))
+            if (field.Contains(CallIndexDelimiter))
             {
                 throw new ArgumentException($"'{nameof(field)}' cannot be a method result accessor.", nameof(field));
             }
@@ -200,7 +201,7 @@ namespace dnWalker.Parameters
             }
 
             string localName = LocalName;
-            int delim = localName.IndexOf(ParameterNameUtils.CallIndexDelimiter);
+            int delim = localName.IndexOf(CallIndexDelimiter);
             if (delim == -1 || delim == 0) // no | or at the first character => empty method name!!
             {
                 callNumber = -1;
@@ -234,7 +235,7 @@ namespace dnWalker.Parameters
                 throw new ArgumentException($"'{nameof(methodName)}' cannot be null or whitespace.", nameof(methodName));
             }
 
-            return WithAccessor($"{methodName}{ParameterNameUtils.CallIndexDelimiter}{callNumber}");
+            return WithAccessor($"{methodName}{CallIndexDelimiter}{callNumber}");
         }
 
         public ParameterName WithAccessor(string accessor)
@@ -278,7 +279,7 @@ namespace dnWalker.Parameters
 
         private ParameterName(string fullName)
         {
-            _accessors = fullName.Split(ParameterNameUtils.Delimiter);
+            _accessors = fullName.Split(Delimiter);
             _index = _accessors.Length - 1;
         }
 
@@ -300,6 +301,13 @@ namespace dnWalker.Parameters
         public static implicit operator string?(ParameterName parameterName)
         {
             return parameterName.ToString();
+        }
+
+        public override string ToString()
+        {
+            if (IsEmpty) return string.Empty;
+
+            return string.Join(Delimiter, _accessors!.Take(_index + 1));
         }
 
         #region Equality & HashCode

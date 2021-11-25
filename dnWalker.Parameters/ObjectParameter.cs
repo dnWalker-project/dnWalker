@@ -28,7 +28,7 @@ namespace dnWalker.Parameters
 
         public IEnumerable<KeyValuePair<string, Parameter>> GetKnownFields()
         {
-            return _fields.AsEnumerable();
+            return IsNull ? Enumerable.Empty<KeyValuePair<string, Parameter>>() : _fields.AsEnumerable();
         }
 
         public void SetField(string fieldName, Parameter? fieldValue)
@@ -43,6 +43,8 @@ namespace dnWalker.Parameters
                 ClearField(fieldName);
                 return;
             }
+
+            _fields[fieldName] = fieldValue;
 
             fieldValue.Parent = this;
         }
@@ -59,6 +61,20 @@ namespace dnWalker.Parameters
         public bool TryGetField(string fieldName, [NotNullWhen(true)]out Parameter? fieldValue)
         {
             return _fields.TryGetValue(fieldName, out fieldValue);
+        }
+
+        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
+        {
+            if (base.TryGetChild(parameterName, out parameter))
+            {
+                return true;
+            }
+
+            if (parameterName.TryGetField(out string? fieldName))
+            {
+                return TryGetField(fieldName, out parameter);
+            }
+            return false;
         }
     }
 }

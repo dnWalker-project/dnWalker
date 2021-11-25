@@ -16,11 +16,11 @@ using Xunit;
 
 namespace dnWalker.Parameters.Tests
 {
-    public abstract class PrimitiveValueParameterTests<TParameter, TValue>
+    public abstract class PrimitiveValueParameterTests<TParameter, TValue> : ParameterTests<TParameter>
         where TValue : struct
         where TParameter : PrimitiveValueParameter<TValue>
     {
-        protected abstract TParameter Create(string name = "p");
+
     }
 
 <#

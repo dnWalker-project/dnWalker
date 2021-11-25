@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters.Tests
 {
-    internal class ParameterStoreTests
+    public class ParameterStoreTests
     {
     }
 }

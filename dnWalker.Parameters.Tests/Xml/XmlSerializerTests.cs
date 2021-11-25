@@ -15,6 +15,7 @@ namespace dnWalker.Parameters.Tests.Xml
 {
     public class XmlSerializerTests
     {
+
         [Theory]
         [ClassData(typeof(SerializationTestDataProvider.PrimitiveValueParameterProvider))]
         public void Test_PrimitiveValueParameterSerialization(Parameter parameter, string expectedXml)
@@ -27,7 +28,8 @@ namespace dnWalker.Parameters.Tests.Xml
         [ClassData(typeof(SerializationTestDataProvider.ObjectParameterProvider))]
         public void Test_ObjectParameterSerialization(Parameter parameter, string expectedXml)
         {
-            parameter.ToXml().ToString().Should().Be(expectedXml);
+            string xml = parameter.ToXml().ToString();
+            xml.Should().Be(expectedXml);
         }
     }
 }
