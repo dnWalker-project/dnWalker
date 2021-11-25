@@ -29,7 +29,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Interfaces
                 {
                     cfg.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
@@ -52,7 +52,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Interfaces
                 {
                     cfg.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;

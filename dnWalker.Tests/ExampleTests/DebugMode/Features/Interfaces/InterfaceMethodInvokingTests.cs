@@ -25,11 +25,11 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
         public void Test_UsingIntefaceProxy_For_PureMethods()
         {
             Explore("Examples.Concolic.Features.Interfaces.InterfaceMethodInvoking.BranchingBasedOnPureValueProvider",
-                (cfg) =>
+                initializeConfig: cfg =>
                 {
                     cfg.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
@@ -39,7 +39,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(4);
+                    paths.Count().Should().Be(3);
                 });
         }
 
@@ -48,11 +48,11 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
         public void Test_MethodIvokedMultipleTimes()
         {
             Explore("Examples.Concolic.Features.Interfaces.InterfaceMethodInvoking.MethodInvokedMultipleTimes",
-                (cfg) =>
+                initializeConfig: cfg =>
                 {
                     cfg.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;

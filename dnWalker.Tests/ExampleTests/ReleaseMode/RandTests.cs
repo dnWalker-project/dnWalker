@@ -25,7 +25,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
                     c.MaxIterations = 1;
                     c.SetCustomSetting("evaluateRandom", true);
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     var paths = explorer.PathStore.Paths;
                     paths.Should().HaveCount(6);

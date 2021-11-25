@@ -26,7 +26,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void CaptureOutputTest1()
         {
-            ExploreModelChecker("Examples.Branches.Branch",
+            ExploreModelChecker("Examples.Concolic.Simple.Branches.Branch",
                 null,
                 finished: explorer =>
                 {
@@ -187,7 +187,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         {
             Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
                 cfg => cfg.MaxIterations = 5,
-                explorer =>
+                finished: explorer =>
                 {
                     PathStore pathStore = explorer.PathStore;
 

@@ -26,7 +26,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
                 {
                     cgf.MaxIterations = 100;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
@@ -59,7 +59,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch",
                 null,
-                (explorer) =>
+                finished: explorer =>
                 {
                     explorer.PathStore.Coverage.Edges.Should().Be(1d);
                 },
@@ -76,7 +76,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
         {
             Explore("Examples.Concolic.Simple.Branches.Branch",
                 null,
-                (explorer) =>
+                finished: explorer =>
                 {
                     explorer.PathStore.Coverage.Nodes.Should().Be(1d);
                 },

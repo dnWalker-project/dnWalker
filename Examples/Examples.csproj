@@ -6,4 +6,8 @@
 		<StartupObject>Examples.Program</StartupObject>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Remove="App.Config" />
+    </ItemGroup>
+
 </Project>

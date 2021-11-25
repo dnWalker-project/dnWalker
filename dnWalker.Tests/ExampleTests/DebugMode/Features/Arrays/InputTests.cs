@@ -22,7 +22,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
         {
             Explore("Examples.Concolic.Features.Arrays.Input.m1",
                 null,
-                (explorer) =>
+                finished: explorer =>
                 {
                     var paths = explorer.PathStore.Paths;
 
@@ -44,7 +44,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
         {
             Explore("Examples.Concolic.Features.Arrays.Array.comp",
                 null,
-                (explorer) =>
+                finished: explorer =>
                 {
                     var paths = explorer.PathStore.Paths;
 

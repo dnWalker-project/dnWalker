@@ -27,7 +27,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                 {
                     cgf.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
@@ -50,7 +50,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                 {
                     cgf.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
@@ -60,7 +60,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(4);
+                    paths.Count().Should().Be(3);
                 });
         }
 
@@ -73,7 +73,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                 {
                     cgf.MaxIterations = 10;
                 },
-                (explorer) =>
+                finished: explorer =>
                 {
                     //explorer.GetUnhandledException().Should().BeNull();
                     var paths = explorer.PathStore.Paths;
@@ -83,7 +83,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                         System.Console.Out.WriteLine(p.GetPathInfo());
                     }
 
-                    paths.Count().Should().Be(2);
+                    paths.Count().Should().Be(3);
                 });
         }
     }
