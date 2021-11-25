@@ -65,7 +65,7 @@ namespace dnWalker.Parameters
 
         public bool TryGetNext(out ParameterName parameterName)
         {
-            if (IsEmpty && IsLeafName)
+            if (IsEmpty || IsLeafName)
             {
                 parameterName = Empty;
                 return false;
@@ -77,7 +77,7 @@ namespace dnWalker.Parameters
 
         public bool TryGetPrevious(out ParameterName parameterName)
         {
-            if (IsEmpty && IsRootName)
+            if (IsEmpty || IsRootName)
             {
                 parameterName = Empty;
                 return false;
@@ -111,52 +111,52 @@ namespace dnWalker.Parameters
             return true;
         }
 
-        public bool TryGetFieldName([NotNullWhen(true)]string? fieldName)
+        public bool TryGetField([NotNullWhen(true)] out string? field)
         {
             if (IsEmpty)
             {
-                fieldName = null;
+                field = null;
                 return false; 
             }
 
             // check if local name is not an index or method result
             string localName = LocalName;
-            Debug.Assert(string.IsNullOrEmpty(localName));
+            Debug.Assert(!string.IsNullOrWhiteSpace(localName));
 
             if (int.TryParse(localName, out int _) ||
                 localName.Contains(ParameterNameUtils.CallIndexDelimiter))
             {
-                fieldName = null;
+                field = null;
                 return false;
             }
 
-            fieldName = localName;
+            field = localName;
             return true;
         }
 
-        public ParameterName WithField(string fieldName)
+        public ParameterName WithField(string field)
         {
             if (IsEmpty)
             {
                 throw new InvalidOperationException("Cannot work with an empty parameter name");
             }
 
-            if (string.IsNullOrWhiteSpace(fieldName))
+            if (string.IsNullOrWhiteSpace(field))
             {
-                throw new ArgumentException($"'{nameof(fieldName)}' cannot be null or whitespace.", nameof(fieldName));
+                throw new ArgumentException($"'{nameof(field)}' cannot be null or whitespace.", nameof(field));
             }
 
-            if (int.TryParse(fieldName, out int _))
+            if (int.TryParse(field, out int _))
             {
-                throw new ArgumentException($"'{nameof(fieldName)}' cannot be an integer.", nameof(fieldName));
+                throw new ArgumentException($"'{nameof(field)}' cannot be an integer.", nameof(field));
             }
 
-            if (fieldName.Contains(ParameterNameUtils.CallIndexDelimiter))
+            if (field.Contains(ParameterNameUtils.CallIndexDelimiter))
             {
-                throw new ArgumentException($"'{nameof(fieldName)}' cannot be a method result accessor.", nameof(fieldName));
+                throw new ArgumentException($"'{nameof(field)}' cannot be a method result accessor.", nameof(field));
             }
 
-            return WithAccessor(fieldName);
+            return WithAccessor(field);
         }
 
 
@@ -177,22 +177,22 @@ namespace dnWalker.Parameters
 
         public ParameterName WithIndex(int index)
         {
-            if (!IsEmpty)
+            if (IsEmpty)
             {
                 throw new InvalidOperationException("Cannot work with an empty parameter name");
             }
 
             if (index < 0)
             {
-                throw new ArgumentException("index must be nonnegative integer", nameof(index));
+                throw new ArgumentOutOfRangeException("index must be nonnegative integer", nameof(index));
             }
 
             return WithAccessor(index.ToString());
         }
 
-        public bool TryGetMethodResultInfo(out int callNumber, [NotNullWhen(true)] out string? methodName)
+        public bool TryGetMethodResult([NotNullWhen(true)] out string? methodName, out int callNumber)
         {
-            if (!IsEmpty)
+            if (IsEmpty)
             {
                 callNumber = -1;
                 methodName = null;
@@ -208,7 +208,7 @@ namespace dnWalker.Parameters
                 return false;
             }
 
-            if (!int.TryParse(localName.Substring(delim + 1), out callNumber) && callNumber >= 0)
+            if (int.TryParse(localName.Substring(delim + 1), out callNumber) && callNumber >= 0)
             {
                 methodName = localName.Substring(0, delim);
                 return true;
@@ -217,9 +217,9 @@ namespace dnWalker.Parameters
             return false;
         }
 
-        public ParameterName WithMethodResult(int callNumber, string methodName)
+        public ParameterName WithMethodResult(string methodName, int callNumber)
         {
-            if (!IsEmpty)
+            if (IsEmpty)
             {
                 throw new InvalidOperationException("Cannot work with an empty parameter name");
             }
@@ -239,28 +239,28 @@ namespace dnWalker.Parameters
 
         public ParameterName WithAccessor(string accessor)
         {
-            if (!IsEmpty)
+            if (IsEmpty)
             {
                 throw new InvalidOperationException("Cannot work with an empty parameter name");
             }
 
             int newIndex = _index + 1;
 
-            if (_accessors![newIndex] == accessor)
+            if (_accessors!.Length > newIndex && _accessors![newIndex] == accessor)
             {
                 return new ParameterName(_accessors, newIndex);
             }
             else
             {
                 string[] accessors = new string[newIndex + 1];
-                Array.Copy(_accessors!, 0, accessors, 0, _index);
+                Array.Copy(_accessors!, 0, accessors, 0, newIndex);
                 accessors[newIndex] = accessor;
 
                 return new ParameterName(accessors, newIndex);
             }
         }
 
-        public ParameterName(string[] accessors, int index)
+        private ParameterName(string[] accessors, int index)
         {
             if (accessors == null || accessors.Length == 0)
             {
@@ -276,7 +276,7 @@ namespace dnWalker.Parameters
             _index = index; ;
         }
 
-        public ParameterName(string fullName)
+        private ParameterName(string fullName)
         {
             _accessors = fullName.Split(ParameterNameUtils.Delimiter);
             _index = _accessors.Length - 1;
@@ -292,12 +292,12 @@ namespace dnWalker.Parameters
         }
 
 
-        public static implicit operator ParameterName(string fullName)
+        public static implicit operator ParameterName(string? fullName)
         {
-            return new ParameterName(fullName);
+            return string.IsNullOrWhiteSpace(fullName) ? Empty : new ParameterName(fullName);
         }
 
-        public static implicit operator string(ParameterName parameterName)
+        public static implicit operator string?(ParameterName parameterName)
         {
             return parameterName.ToString();
         }
@@ -365,6 +365,7 @@ namespace dnWalker.Parameters
         {
             private readonly int _maxIndex;
             private ParameterName _current;
+            private readonly ParameterName _source;
 
             public FromRootParameterNameTraversal(ParameterName parameterName)
             {
@@ -374,8 +375,10 @@ namespace dnWalker.Parameters
                 }
 
                 _maxIndex = parameterName._index;
+                _source = parameterName;
+                _current = Empty;
 
-                parameterName.TryGetRoot(out _current);
+                //parameterName.TryGetRoot(out _current);
             }
 
             public IEnumerator<ParameterName> GetEnumerator()
@@ -398,7 +401,14 @@ namespace dnWalker.Parameters
 
             public bool MoveNext()
             {
-                return _current.TryGetNext(out _current) && _current._index <= _maxIndex;
+                if (_current.IsEmpty)
+                {
+                    return _source.TryGetRoot(out _current) && _current._index <= _maxIndex;
+                }
+                else
+                {
+                    return _current.TryGetNext(out _current) && _current._index <= _maxIndex;
+                }
             }
 
             public void Reset()
@@ -422,6 +432,7 @@ namespace dnWalker.Parameters
         private struct ToRootParameterNameTraversal : IEnumerable<ParameterName>, IEnumerator<ParameterName>
         {
             private ParameterName _current;
+            private readonly ParameterName _source;
 
             public ToRootParameterNameTraversal(ParameterName parameterName)
             {
@@ -430,7 +441,8 @@ namespace dnWalker.Parameters
                     throw new InvalidOperationException("Cannot travers over empty parameter nane");
                 }
 
-                parameterName.TryGetRoot(out _current);
+                _source = parameterName;
+                _current = Empty;
             }
 
             public IEnumerator<ParameterName> GetEnumerator()
@@ -453,7 +465,15 @@ namespace dnWalker.Parameters
 
             public bool MoveNext()
             {
-                return _current.TryGetPrevious(out _current);
+                if (_current.IsEmpty)
+                {
+                    _current = _source;
+                    return true;
+                }
+                else
+                {
+                    return _current.TryGetPrevious(out _current);
+                }
             }
 
             public void Reset()

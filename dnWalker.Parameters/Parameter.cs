@@ -30,7 +30,7 @@ namespace dnWalker.Parameters
                     if (_parent == null)
                     {
                         // create a new root parameter name
-                        _fullName = new ParameterName(_localName);
+                        _fullName = _localName;
                     }
                     else
                     {
