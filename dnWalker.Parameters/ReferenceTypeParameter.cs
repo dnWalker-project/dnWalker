@@ -18,17 +18,12 @@ namespace dnWalker.Parameters
             _isNullParameter = new BooleanParameter(IsNullName, this);
         }
 
-        protected ReferenceTypeParameter(string typeName, string localName, Parameter? owner) : base(typeName, localName, owner)
+        protected ReferenceTypeParameter(string typeName, string localName, Parameter parent) : base(typeName, localName, parent)
         {
             _isNullParameter = new BooleanParameter(IsNullName, this);
         }
 
         private readonly BooleanParameter _isNullParameter;
-
-        public override IEnumerable<Parameter> GetOwnedParameters()
-        {
-            yield return _isNullParameter;
-        }
 
         public BooleanParameter IsNullParameter
         {
@@ -37,7 +32,7 @@ namespace dnWalker.Parameters
 
         public bool IsNull
         {
-            get { return _isNullParameter.Value ?? true; }
+            get { return _isNullParameter.Value; }
             set { _isNullParameter.Value = value; }
         }
     }

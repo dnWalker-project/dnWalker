@@ -20,9 +20,9 @@ namespace dnWalker.Tests.Concolic.Parameters
         public void Adding_NamelessParameter_Should_Throw()
         {
             ParameterStore store = new ParameterStore();
-            Parameter p = new Int32Parameter();
+            Parameter p = new Int32Parameter("p");
 
-            Assert.Throws<InvalidOperationException>(() => store.AddParameter(p));
+            Assert.Throws<InvalidOperationException>(() => store.AddRootParameter(p));
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace dnWalker.Tests.Concolic.Parameters
             ParameterStore store = new ParameterStore();
             Parameter p = new Int32Parameter(name);
 
-            store.AddParameter(p);
+            store.AddRootParameter(p);
 
             store.TryGetParameter(name, out Parameter p2).Should().BeTrue();
             p2.Should().BeSameAs(p);
@@ -133,7 +133,7 @@ namespace dnWalker.Tests.Concolic.Parameters
             p.Should().BeOfType<ArrayParameter>();
 
             var ap = (ArrayParameter)p;
-            ap.TryGetItemAt(index, out var itemP).Should().BeTrue();
+            ap.TryGetItem(index, out var itemP).Should().BeTrue();
             itemP.Should().BeOfType<Int32Parameter>();
 
             var ip = (Int32Parameter)itemP;

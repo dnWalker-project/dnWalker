@@ -13,85 +13,39 @@ namespace dnWalker.Concolic.Parameters
 {
     public static partial class ParameterExtensions
     {
-        private static readonly ConditionalWeakTable<Parameter, ParameterExpression> _expresions = new ConditionalWeakTable<Parameter,ParameterExpression>();
+        private static readonly ConditionalWeakTable<PrimitiveValueParameter, ParameterExpression> _expresions = new ConditionalWeakTable<PrimitiveValueParameter, ParameterExpression>();
 
-        private static void CacheExpression(Parameter parameter, ParameterExpression expression)
+        private static ParameterExpression CreateExpression(PrimitiveValueParameter primitiveValueParameter)
         {
-            _expresions.AddOrUpdate(parameter, expression);
-        }
-
-        private static bool TryGetExpression(Parameter parameter, [NotNullWhen(true)] out ParameterExpression? expression)
-        {
-            return _expresions.TryGetValue(parameter, out expression);
-        }
-
-        private static ParameterExpression CreateExpression<TValue>(PrimitiveValueParameter<TValue> parameter) where TValue : struct
-        {
-            ParameterExpression pe = Expression.Parameter(typeof(TValue), parameter.GetFullName());
-            return pe;
-        }
-
-        public static IEnumerable<ParameterExpression> GetExpressions<TValue>(this PrimitiveValueParameter<TValue> parameter) where TValue : struct
-        {
-            if (TryGetExpression(parameter, out ParameterExpression expression))
+            switch (primitiveValueParameter)
             {
-                yield return expression;
-            }
-
-            else
-            {
-                expression = CreateExpression<TValue>(parameter);
-                CacheExpression(parameter, expression);
-                yield return expression;
-            }
-        }
-
-        public static IEnumerable<ParameterExpression> GetExpressions(this ObjectParameter parameter)
-        {
-            return parameter.GetOwnedParameters().SelectMany(p => p.GetExpressions());
-        }
-
-        public static IEnumerable<ParameterExpression> GetExpressions(this InterfaceParameter parameter)
-        {
-            return parameter.GetOwnedParameters().SelectMany(p => p.GetExpressions());
-        }
-
-        public static IEnumerable<ParameterExpression> GetExpressions(this ArrayParameter parameter)
-        {
-            return parameter.GetOwnedParameters().SelectMany(p => p.GetExpressions());
-        }
-
-        public static IEnumerable<ParameterExpression> GetExpressions(this Parameter parameter)
-        {
-            switch (parameter)
-            {
-                case BooleanParameter p: return GetExpressions(p);
-                case CharParameter p: return GetExpressions(p);
-                case ByteParameter p: return GetExpressions(p);
-                case SByteParameter p: return GetExpressions(p);
-                case Int16Parameter p: return GetExpressions(p);
-                case Int32Parameter p: return GetExpressions(p);
-                case Int64Parameter p: return GetExpressions(p);
-                case UInt16Parameter p: return GetExpressions(p);
-                case UInt32Parameter p: return GetExpressions(p);
-                case UInt64Parameter p: return GetExpressions(p);
-                case SingleParameter p: return GetExpressions(p);
-                case DoubleParameter p: return GetExpressions(p);
-
-                case ObjectParameter p: return GetExpressions(p);
-                case InterfaceParameter p: return GetExpressions(p);
-                case ArrayParameter p: return GetExpressions(p);
+                case BooleanParameter p: return Expression.Parameter(typeof(Boolean), p.FullName.ToString());
+                case CharParameter p: return Expression.Parameter(typeof(Char), p.FullName.ToString());
+                case ByteParameter p: return Expression.Parameter(typeof(Byte), p.FullName.ToString());
+                case SByteParameter p: return Expression.Parameter(typeof(SByte), p.FullName.ToString());
+                case Int16Parameter p: return Expression.Parameter(typeof(Int16), p.FullName.ToString());
+                case Int32Parameter p: return Expression.Parameter(typeof(Int32), p.FullName.ToString());
+                case Int64Parameter p: return Expression.Parameter(typeof(Int64), p.FullName.ToString());
+                case UInt16Parameter p: return Expression.Parameter(typeof(UInt16), p.FullName.ToString());
+                case UInt32Parameter p: return Expression.Parameter(typeof(UInt32), p.FullName.ToString());
+                case UInt64Parameter p: return Expression.Parameter(typeof(UInt64), p.FullName.ToString());
+                case SingleParameter p: return Expression.Parameter(typeof(Single), p.FullName.ToString());
+                case DoubleParameter p: return Expression.Parameter(typeof(Double), p.FullName.ToString());
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        public static List<ParameterExpression> GetExpressionsForUsedParameters(this ParameterStore store)
+        public static ParameterExpression AsExpression(this PrimitiveValueParameter primitiveValueParameter)
         {
+            if (_expresions.TryGetValue(primitiveValueParameter, out ParameterExpression expression))
+            {
+                return expression;
+            }
 
-            // traverse all parameters in the parameter store
-            // include only those which are actually used, e.g. their IDataElement was created...
-            return store.GetUsedParameters().Select(p => p.)
+            expression = CreateExpression(primitiveValueParameter);
+            _expresions.AddOrUpdate(primitiveValueParameter, expression);
+            return expression;
         }
     }
 }

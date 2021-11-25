@@ -17,14 +17,5 @@ namespace dnWalker.Parameters.Tests
             return new ArrayParameter("System.Int32", name);
         }
 
-        [Fact]
-        public void ChangingName_Changes_LengthParameter_Name()
-        {
-            var parameter = new ArrayParameter("System.Int32", "p");
-
-            parameter.Name = "new_name";
-
-            parameter.LengthParameter.Name.Should().BeEquivalentTo(ParameterNameUtils.ConstructField("new_name", ArrayParameter.LengthParameterName));
-        }
     }
 }

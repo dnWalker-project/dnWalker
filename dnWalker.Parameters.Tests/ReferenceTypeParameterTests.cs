@@ -23,34 +23,5 @@ namespace dnWalker.Parameters.Tests
             parameter.IsNull.Should().BeTrue();
         }
 
-        [Fact]
-        public void ReferenceTypeParameter_Has_AtLeast_One_ParameterExpression()
-        {
-            var parameter = Create("p");
-
-            parameter.GetParameterExpressions().Should().HaveCountGreaterOrEqualTo(1);
-        }
-
-        [Fact]
-        public void ReferenceTypeParameter_Has_IsNullParameterExpression()
-        {
-            var parameter = Create("p");
-
-            var exprs = parameter.GetParameterExpressions().ToList();
-
-            Assert.Contains(exprs, pe => pe.Name == ParameterNameUtils.ConstructField("p", ReferenceTypeParameter.IsNullParameterName));
-        }
-
-        [Fact]
-        public void ChangingName_Changes_IsNullParameter_Name()
-        {
-            var parameter = Create("p");
-
-            parameter.Name = "new_name";
-
-            parameter.IsNullParameter.Name.Should().BeEquivalentTo(ParameterNameUtils.ConstructField("new_name", ReferenceTypeParameter.IsNullParameterName));
-        }
-
-
     }
 }

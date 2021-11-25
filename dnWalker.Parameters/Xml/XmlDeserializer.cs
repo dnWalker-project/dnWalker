@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace dnWalker.Parameters.Xml
 {
-    public static class XmlDeserializer
+    public static partial class XmlDeserializer
     {
         public static ParameterStore ToParameterStore(this XElement xml)
         {
@@ -25,7 +25,7 @@ namespace dnWalker.Parameters.Xml
 
             foreach(XElement rootParamterXml in xml.Elements())
             {
-                store.AddParameter(rootParamterXml.ToParameter());
+                store.AddRootParameter(rootParamterXml.ToParameter());
             }
 
             return store;
@@ -38,14 +38,14 @@ namespace dnWalker.Parameters.Xml
             switch(parameteryKind)
             {
                 case "PrimitiveValue": 
-                    switch(xml.Attribute("Type").Value)
+                    switch(xml.Attribute("Type")?.Value ?? throw new Exception("PrimitiveValueParameter XML must contain 'Type' attribute."))
                     {
                         case TypeNames.BooleanTypeName: return ToBooleanParameter(xml);
                         case TypeNames.CharTypeName: return ToCharParameter(xml);
                         case TypeNames.ByteTypeName: return ToByteParameter(xml);
                         case TypeNames.SByteTypeName: return ToSByteParameter(xml);
                         case TypeNames.Int16TypeName: return ToInt16Parameter(xml);
-                        case TypeNames.Int32TypeName: return ToInt32Parameterer(xml);
+                        case TypeNames.Int32TypeName: return ToInt32Parameter(xml);
                         case TypeNames.Int64TypeName: return ToInt64Parameter(xml);
                         case TypeNames.UInt16TypeName: return ToUInt16Parameter(xml);
                         case TypeNames.UInt32TypeName: return ToUInt32Parameter(xml);
@@ -136,122 +136,11 @@ namespace dnWalker.Parameters.Xml
                 int itemIndex = int.Parse(itemElement.Attribute("Index").Value ?? throw new Exception("Array item XMl must contain 'Index' attribute."));
                 Parameter item = itemElement.Elements().First().ToParameter();
 
-                a.SetItemAt(itemIndex, item);
+                a.SetItem(itemIndex, item);
             }
 
             return a;
         }
 
-        public static BooleanParameter ToBooleanParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool value = bool.Parse(xml.Value);
-            return new BooleanParameter(name, value);
-        }
-
-        public static CharParameter ToCharParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            char value = Convert.ToChar(Convert.ToInt32(xml.Value.Substring(2), 16));
-
-            return new CharParameter(name, value);
-        }
-
-        public static ByteParameter ToByteParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            byte value = byte.Parse(xml.Value);
-            return new ByteParameter(name, value);
-        }
-
-        public static SByteParameter ToSByteParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            sbyte value = sbyte.Parse(xml.Value);
-            return new SByteParameter(name, value);
-        }
-
-        public static Int16Parameter ToInt16Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            short value = short.Parse(xml.Value);
-            return new Int16Parameter(name, value);
-        }
-
-        public static Int32Parameter ToInt32Parameterer(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            int value = int.Parse(xml.Value);
-            return new Int32Parameter(name, value);
-        }
-
-        public static Int64Parameter ToInt64Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            long value = long.Parse(xml.Value);
-            return new Int64Parameter(name, value);
-        }
-
-        public static UInt16Parameter ToUInt16Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            ushort value = ushort.Parse(xml.Value);
-            return new UInt16Parameter(name, value);
-        }
-
-        public static UInt32Parameter ToUInt32Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            uint value = uint.Parse(xml.Value);
-            return new UInt32Parameter(name, value);
-        }
-
-        public static UInt64Parameter ToUInt64Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            ulong value = ulong.Parse(xml.Value);
-            return new UInt64Parameter(name, value);
-        }
-
-        public static SingleParameter ToSingleParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
-
-            float value;
-            switch (strValue)
-            {
-                case "NAN": value = float.NaN; break;
-                case "INF": value = float.PositiveInfinity; break;
-                case "-INF": value = float.NegativeInfinity; break;
-
-
-                default: value = float.Parse(strValue); break;
-            }
-
-            return new SingleParameter(name, value);
-        }
-
-        public static DoubleParameter ToDoubleParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
-
-            double value;
-            switch (strValue)
-            {
-                case "NAN": value = double.NaN; break;
-                case "INF": value = double.PositiveInfinity; break;
-                case "-INF": value = double.NegativeInfinity; break;
-
-
-                default: value = double.Parse(strValue); break;
-            }
-
-            return new DoubleParameter(name, value);
-        }
     }
 }

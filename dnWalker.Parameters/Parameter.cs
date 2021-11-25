@@ -11,43 +11,72 @@ namespace dnWalker.Parameters
     {
         private readonly string _typeName;
         private readonly string _localName;
-        private Parameter? _owner;
+        private Parameter? _parent;
+
+        private ParameterName? _fullName;
 
         public string LocalName
         {
             get { return _localName; }
         }
 
-        public string GetFullName()
+        public ParameterName FullName
         {
-            return _owner == null ? _localName : $"{_owner.GetFullName()}{ParameterNameUtils.Delimiter}{_localName}";
+            get
+            {
+                //return _parent == null ? _localName : $"{_parent.GetFullName()}{ParameterNameUtils.Delimiter}{_localName}";
+                if (!_fullName.HasValue)
+                {
+                    if (_parent == null)
+                    {
+                        // create a new root parameter name
+                        _fullName = new ParameterName(_localName);
+                    }
+                    else
+                    {
+                        _fullName = _parent.FullName.WithAccessor(_localName);
+                    }
+                }
+
+                return _fullName.Value;
+            }
         }
 
-        public Parameter? Owner
+        public Parameter? Parent
         {
-            get { return _owner; }
-            set { _owner = value; }
+            get { return _parent; }
+            set { _parent = value; }
         }
 
-        public abstract IEnumerable<Parameter> GetOwnedParameters();
+        public abstract IEnumerable<Parameter> GetChildren();
 
-        protected Parameter(string typeName, string localName) : this(typeName, localName, null)
-        { }
+        protected Parameter(string typeName, string localName)
+        {
+            if (string.IsNullOrWhiteSpace(typeName))
+            {
+                throw new ArgumentException($"'{nameof(typeName)}' cannot be null or whitespace.", nameof(typeName));
+            }
 
-        protected Parameter(string typeName, string localName, Parameter? owner)
+            if (string.IsNullOrWhiteSpace(localName))
+            {
+                throw new ArgumentException($"'{nameof(localName)}' cannot be null or whitespace.", nameof(localName));
+            }
+
+            _typeName = typeName;
+            _localName = localName;
+            _fullName = null;
+        }
+
+        protected Parameter(string typeName, string localName, Parameter owner)
         {
             if (string.IsNullOrEmpty(typeName))
             {
                 throw new ArgumentNullException(nameof(typeName));
             }
-            if (string.IsNullOrEmpty(localName))
-            {
-                throw new ArgumentNullException(nameof(localName));
-            }
 
             _typeName = typeName;
             _localName = localName;
-            _owner = owner;
+            _parent = owner ?? throw new ArgumentNullException(nameof(owner));
         }
 
         public string TypeName
@@ -60,4 +89,5 @@ namespace dnWalker.Parameters
             return $"Parameter: {LocalName}, Type: {TypeName}";
         }
     }
+
 }

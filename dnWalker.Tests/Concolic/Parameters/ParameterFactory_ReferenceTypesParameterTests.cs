@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Parameters;
+using dnWalker.Parameters;
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Parameter = dnWalker.Concolic.Parameters.Parameter;
+using Parameter = dnWalker.Parameters.Parameter;
 
 namespace dnWalker.Tests.Concolic.Parameters
 {

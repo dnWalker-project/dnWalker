@@ -23,12 +23,6 @@ namespace dnWalker.Concolic.Parameters
         public static void SetParameter(this IDataElement dataElement, Parameter parameter, ExplicitActiveState cur)
         {
             cur.PathStore.CurrentPath.SetObjectAttribute<Parameter>(dataElement, "parameter", parameter);
-
-            // TODO: redo it somehow...
-            if (parameter.HasSingleExpression)
-            {
-                dataElement.SetExpression(parameter.GetSingleParameterExpression(), cur);
-            }
         }
 
         public static Boolean IsInterfaceParameter(this IDataElement objectReference, ExplicitActiveState cur, out InterfaceParameter interfaceParameter)

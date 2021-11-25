@@ -197,8 +197,9 @@ namespace dnWalker.Concolic
 
                     _logger.Log(LogPriority.Message, "Explored path: {0}", path.PathConstraintString);
 
-
-                    var exprs = _parameterStore.GetParametersAsExpressions();
+                    // TODO: figure out hot to create the ParameterExpression list - in the current Path on the fly?
+                    // _parameterStore.GetParametersAsExpressions();
+                    var exprs = new List<ParameterExpression>(); 
                     data = PathStore.GetNextInputValues(_solver, exprs);
 
                     OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, null, path));

@@ -1,0 +1,126 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace dnWalker.Parameters
+{
+    public abstract class PrimitiveValueParameter : Parameter
+    {
+        protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
+        { }
+
+        protected PrimitiveValueParameter(string typeName, string localName, Parameter owner) : base(typeName, localName, owner)
+        { }
+
+        public abstract object GetValue();
+
+        public override IEnumerable<Parameter> GetChildren()
+        {
+            return Enumerable.Empty<Parameter>();
+        }
+    }
+
+    public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
+    {
+        protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
+        { }
+
+        protected PrimitiveValueParameter(string typeName, string localName, Parameter owner) : base(typeName, localName, owner)
+        { }
+
+        protected PrimitiveValueParameter(string typeName, string name, TValue value) : base(typeName, name)
+        {
+            Value = value;
+        }
+        protected PrimitiveValueParameter(string typeName, string localName, TValue value, Parameter owner) : base(typeName, localName, owner)
+        {
+            Value = value;
+        }
+
+        public override object GetValue()
+        {
+            return Value;
+        }
+
+        public TValue Value
+        {
+            get;
+            set;
+        }
+
+        public override string ToString()
+        {
+            return $"Parameter: {LocalName}, Type: {TypeName}, Value: {Value}";
+        }
+    }
+
+<#
+ string[] types = 
+ {
+    "Boolean",
+    "Char",
+    "Byte",
+    "SByte",
+    "Int16",
+    "Int32",
+    "Int64",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "Single",
+    "Double",
+ };
+
+ string[] aliases = 
+ {
+    "bool",
+    "char",
+    "byte",
+    "sbyte",
+    "short",
+    "int",
+    "long",
+    "ushort",
+    "uint",
+    "ulong",
+    "float",
+    "double",
+ };
+
+ for (int i = 0; i < types.Length; ++i)
+ {
+    string type = types[i];
+    string alias = aliases[i];
+
+  #>
+    public class <#= type #>Parameter : PrimitiveValueParameter<<#= type #>>
+    {
+        public <#= type #>Parameter(string name) : base(TypeNames.<#= type #>TypeName, name)
+        {
+        }
+
+        public <#= type #>Parameter(string localName, Parameter parent): base(TypeNames.<#= type #>TypeName, localName, parent)
+        { }
+
+        public <#= type #>Parameter(string name, <#= alias #> value) : base(TypeNames.<#= type #>TypeName, name)
+        {
+            Value = value;
+        }
+        public <#= type #>Parameter(string localName, <#= alias #> value, Parameter parent) : base(TypeNames.<#= type #>TypeName, localName, parent)
+        {
+            Value = value;
+        }
+    }
+ 
+ <#
+ }
+
+ #>
+}

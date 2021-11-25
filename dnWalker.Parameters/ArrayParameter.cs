@@ -21,7 +21,7 @@ namespace dnWalker.Parameters
             _lengthParameter = new Int32Parameter(LengthName, this);
         }
 
-        public ArrayParameter(string elementTypeName, string localName, Parameter? owner) : base(elementTypeName + "[]", localName, owner)
+        public ArrayParameter(string elementTypeName, string localName, Parameter parent) : base(elementTypeName + "[]", localName, parent)
         {
             _elementTypeName= elementTypeName;
             _lengthParameter = new Int32Parameter(LengthName, this);
@@ -36,7 +36,7 @@ namespace dnWalker.Parameters
 
         public int Length
         {
-            get { return _lengthParameter.Value ?? 0; }
+            get { return _lengthParameter.Value; }
             set 
             {
                 int length = Length;
@@ -93,7 +93,7 @@ namespace dnWalker.Parameters
                 if (item != null)
                 {
                     _items[index] = null;
-                    item.Owner = null;
+                    item.Parent = null;
                 }
             }
         }
@@ -110,8 +110,16 @@ namespace dnWalker.Parameters
             return item != null;
         }
 
+        public IEnumerable<KeyValuePair<int, Parameter>> GetKnownItems()
+        {
+            return Enumerable
+                .Range(0, Length)
+                .Select(i => (i, _items[i]))
+                .Where(t => t.Item2 != null)
+                .Select(t => KeyValuePair.Create(t.i, t.Item2!));
+        }
 
-        public override IEnumerable<Parameter> GetOwnedParameters()
+        public override IEnumerable<Parameter> GetChildren()
         {
             return ((IEnumerable<Parameter>)_items.Where(item => item != null)).Append(IsNullParameter).Append(LengthParameter);
         }

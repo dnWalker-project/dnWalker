@@ -52,7 +52,7 @@ private void WriteObjectInitializationMethods()
 
     foreach (ExplorationIterationData iterationData in TestData.ExplorationData.Iterations)
     {
-        foreach (ObjectParameter objectParameter in iterationData.Parameters.GetAllParameters().OfType<ObjectParameter>())
+        foreach (ObjectParameter objectParameter in iterationData.ParameterStore.GetAllParameters().OfType<ObjectParameter>())
         {
             foreach (string fieldName in objectParameter.GetKnownFields().Select(p => p.Key))
             {
@@ -82,7 +82,7 @@ private void WriteObjectInitializationMethod(string fullTypeName, IEnumerable<st
     Type type = AppDomain.CurrentDomain.GetType(fullTypeName) ?? throw new ArgumentException("Cannot find specified type.");
 
     List<KeyValuePair<string, Type>> fieldInfos = fieldsToInitialize
-            .Where(f => f != ReferenceTypeParameter.IsNullParameterName && f != ArrayParameter.LengthParameterName)
+            .Where(f => f != ReferenceTypeParameter.IsNullName && f != ArrayParameter.LengthName)
             .Select(f => KeyValuePair.Create(f, type.GetField(f)?.FieldType ?? throw new Exception("Cannot find specified field.")))
             .ToList();
 #>
@@ -133,7 +133,7 @@ private void WriteTestMethod(ExplorationIterationData iterationData)
 <#+
     MethodInfo sutMethod = TestData.SUTMethod;
     Type sutType = TestData.SUTType;
-    ParameterStore parameters = iterationData.Parameters;
+    ParameterStore parameters = iterationData.ParameterStore;
 
     foreach (ParameterInfo pi in sutMethod.GetParameters())
     {
@@ -240,7 +240,7 @@ private void WriteRightHandParameterInitialization(ObjectParameter p)
 {
     Type type = AppDomain.CurrentDomain.GetType(p.TypeName);
 
-    if (!p.IsNull.HasValue || p.IsNull.Value)
+    if (p.IsNull)
     {
         // initialize as null
         #>null<#+

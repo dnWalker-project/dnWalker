@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,71 +10,116 @@ namespace dnWalker.Parameters
 {
     public class ParameterStore
     {
-        private readonly IDictionary<string, Parameter> _parameters = new Dictionary<string, Parameter>();
+        private readonly IDictionary<string, Parameter> _rootParameters = new Dictionary<string, Parameter>();
 
         public const string ThisParameterName = "#__THIS__";
         public const string ResultParameterName = "#__RESULT__";
 
-        public Parameter AddParameter(Parameter parameter)
+        public Parameter AddRootParameter(Parameter parameter)
         {
-            if (!parameter.HasName()) throw new InvalidOperationException("Cannot add parameter without a name!");
-
-            //_parameters.Add(parameter);
-            var name = parameter.Name;
-            if (_parameters.ContainsKey(name))
+            var name = parameter.LocalName;
+            if (_rootParameters.ContainsKey(name))
             {
                 throw new InvalidOperationException("Parameter with this name is already specified.");
             }
 
-            _parameters.Add(name, parameter);
+            _rootParameters.Add(name, parameter);
 
             return parameter;
         }
 
-        internal void AddParameter(object p)
-        {
-            throw new NotImplementedException();
-        }
 
-        public bool TryGetParameter(string name, out Parameter parameter)
+        public bool TryGetParameter(ParameterName name, [NotNullWhen(true)]out Parameter? parameter)
         {
-            // try to perform walk through the parameter forest
-            var rootParameterName = ParameterNameUtils.GetRootName(name);
-
-            if (rootParameterName == name)
-            {
-                return _parameters.TryGetValue(name, out parameter);
-            }
-            else if (_parameters.TryGetValue(rootParameterName, out var rootParameter))
-            {
-                return rootParameter.TryGetChildParameter(name, out parameter);
-            }
-            else
+            if (name.IsEmpty)
             {
                 parameter = null;
                 return false;
+            }
+
+            parameter = _rootParameters[name.RootName];
+
+            foreach(ParameterName currentName in name.TraversFromRoot().Skip(1)) // we want to skip the root 
+            {
+                if (!TryGetNextParameter(currentName.LocalName, parameter, out parameter))
+                {
+                    return false;
+                }
+            }
+
+            return TryGetNextParameter(name.LocalName, parameter, out parameter);
+        }
+
+        public bool TryGetRootParameter(ParameterName name, [NotNullWhen(true)] out Parameter? parameter)
+        {
+            return _rootParameters.TryGetValue(name.RootName, out parameter);
+        }
+
+        private bool TryGetNextParameter(string localName, Parameter currentParameter, [NotNullWhen(true)] out Parameter? parameter)
+        {
+            switch (currentParameter)
+            {
+                case ObjectParameter op:
+                    if (localName == ReferenceTypeParameter.IsNullName)
+                    {
+                        parameter = op.IsNullParameter;
+                        return true;
+                    }
+                    else
+                    {
+                        return op.TryGetField(localName, out parameter);
+                    }
+
+                case InterfaceParameter ip:
+                    if (localName == ReferenceTypeParameter.IsNullName)
+                    {
+                        parameter = ip.IsNullParameter;
+                        return true;
+                    }
+                    else
+                    {
+                        string[] p = localName.Split(ParameterNameUtils.CallIndexDelimiter);
+                        if (p.Length == 2 && int.TryParse(p[1], out int callNumber))
+                        {
+                            return ip.TryGetMethodResult(p[0], callNumber, out parameter);
+                        }
+                        parameter = null;
+                        return false;
+                    }
+
+                case ArrayParameter ap:
+                    if (int.TryParse(localName, out int index))
+                    {
+                        return ap.TryGetItem(index, out parameter);
+                    }
+                    parameter = null;
+                    return false;
+
+                default:
+                    parameter = null;
+                    return false;
             }
         }
 
 
         public IEnumerable<Parameter> RootParameters
         {
-            get { return _parameters.Values; }
+            get { return _rootParameters.Values; }
         }
 
         public IEnumerable<Parameter> GetAllParameters()
         {
-            return _parameters.Values.Flatten(p => p.GetChildrenParameters());
+            return _rootParameters.Values.Flatten(p => p.GetChildren());
         }
 
         public void Clear()
         {
-            _parameters.Clear();
+            _rootParameters.Clear();
         }
 
         public override string ToString()
         {
-            return String.Join(Environment.NewLine, _parameters.Values);
+            return String.Join(Environment.NewLine, _rootParameters.Values);
         }
 
     }

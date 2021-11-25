@@ -14,7 +14,7 @@ namespace dnWalker.Parameters.Tests
     {
         protected override ObjectParameter Create(String name = "p")
         {
-            return new ObjectParameter(typeof(Object).FullName) { Name = name };
+            return new ObjectParameter(typeof(Object).FullName, name);
         }
 
         [Theory]
@@ -22,7 +22,7 @@ namespace dnWalker.Parameters.Tests
         [InlineData(typeof(MyItem))]
         public void Test_Type_Is_EquivalentTo_WrappedType(Type systemType)
         {
-            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName, "SomeObject");
 
             objectParameter.TypeName.Should().BeEquivalentTo(systemType.FullName);
         }
@@ -33,7 +33,7 @@ namespace dnWalker.Parameters.Tests
         [InlineData(typeof(MyItem))]
         public void UninitializedField_Should_Be_Null(Type systemType)
         {
-            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName, "SomeObject");
 
             objectParameter.TryGetField("field", out Parameter fieldParameter).Should().BeFalse();
             fieldParameter.Should().BeNull();
@@ -46,9 +46,9 @@ namespace dnWalker.Parameters.Tests
         {
             const String FieldName = "field";
 
-            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName) { Name = "SomeObject" };
+            ObjectParameter objectParameter = new ObjectParameter(systemType.FullName, "SomeObject");
 
-            Parameter fieldParameter = new BooleanParameter() { Value = false };
+            Parameter fieldParameter = new BooleanParameter(FieldName, false );
 
             objectParameter.SetField(FieldName, fieldParameter);
 
@@ -62,25 +62,11 @@ namespace dnWalker.Parameters.Tests
         {
             var objectParameter = new ObjectParameter(typeof(MyClass).FullName, "SomeObject");
 
-            Parameter fieldParameter = new DoubleParameter();
+            Parameter fieldParameter = new DoubleParameter("value", 0);
 
             objectParameter.SetField("value", fieldParameter);
 
-            fieldParameter.Name.Should().Be(ParameterNameUtils.ConstructField("SomeObject", "value"));
-        }
-
-        [Fact]
-        public void ChangingName_Should_ChangeName_Of_FieldParmaters()
-        {
-            var objectParameter = new ObjectParameter(typeof(MyClass).FullName, "SomeObject");
-
-            Parameter fieldParameter = new DoubleParameter();
-
-            objectParameter.SetField("value", fieldParameter);
-
-            objectParameter.Name = "AnotherObject";
-
-            fieldParameter.Name.Should().Be(ParameterNameUtils.ConstructField("AnotherObject", "value"));
+            fieldParameter.FullName.ToString().Should().Be(ParameterNameUtils.ConstructField("SomeObject", "value"));
         }
     }
 }

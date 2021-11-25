@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace dnWalker.Parameters.Xml
 {
-    public static class XmlSerializer
+    public static partial class XmlSerializer
     {
         public static XElement ToXml(this Parameter parameter)
         {
@@ -34,74 +34,10 @@ namespace dnWalker.Parameters.Xml
 
         }
 
-        public static XElement ToXml(this CharParameter parameter)
-        {
-            char symbol = parameter.Value.HasValue ? parameter.Value.Value : default(char);
-
-            string unicodeFormat = string.Format(@"U+{0:x4}", (int)symbol).ToUpper();
-
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.Name), unicodeFormat);
-        }
-
-        public static XElement ToXml(this SingleParameter parameter)
-        {
-            float number = parameter.Value.HasValue ? parameter.Value.Value : default(float);
-
-            string numberRepr;
-            if (float.IsNaN(number))
-            {
-                numberRepr = "NAN";
-            }
-            else if (float.IsPositiveInfinity(number))
-            {
-                numberRepr = "INF";
-            }
-            else if (float.IsNegativeInfinity(number))
-            {
-                numberRepr = "-INF";
-            }
-            else
-            {
-                numberRepr = number.ToString();
-            }
-
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.Name), numberRepr);
-        }
-
-        public static XElement ToXml(this DoubleParameter parameter)
-        {
-            double number = parameter.Value.HasValue ? parameter.Value.Value : default(double);
-
-            string numberRepr;
-            if (double.IsNaN(number))
-            {
-                numberRepr = "NAN";
-            }
-            else if (double.IsPositiveInfinity(number))
-            {
-                numberRepr = "INF";
-            }
-            else if (double.IsNegativeInfinity(number))
-            {
-                numberRepr = "-INF";
-            }
-            else
-            {
-                numberRepr = number.ToString();
-            }
-
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.Name), numberRepr);
-        }
-
-        public static XElement ToXml<T>(this PrimitiveValueParameter<T> parameter) where T : struct
-        {
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.Name), parameter.Value.HasValue ? parameter.Value.Value : default(T));
-        }
-
         public static XElement ToXml(this ObjectParameter parameter)
         {
-            bool isNull = parameter.IsNull ?? true;
-            XElement xml = new XElement("Object", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.Name), new XAttribute("IsNull", isNull));
+            bool isNull = parameter.IsNull;
+            XElement xml = new XElement("Object", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), new XAttribute("IsNull", isNull));
             
             if (!isNull)
             {
@@ -117,34 +53,29 @@ namespace dnWalker.Parameters.Xml
 
         public static XElement ToXml(this InterfaceParameter parameter)
         {
-            bool isNull = parameter.IsNull ?? true;
+            bool isNull = parameter.IsNull;
 
-            XElement xml = new XElement("Interface", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.Name), new XAttribute("IsNull", isNull));
+            XElement xml = new XElement("Interface", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), new XAttribute("IsNull", isNull));
 
             if (!isNull)
             {
                 xml.Add(parameter.GetKnownMethodResults()
-                                 .Select(p =>
-                                 {
-                                     XElement methodResultXml = new XElement("MethodResult", new XAttribute("Name", p.Key));
-
-                                     methodResultXml.Add(p.Value.Select(r =>
-                                     {
-                                         XElement callResultXml = new XElement("Call", new XAttribute("CallNumber", r.Key), ToXml(r.Value));
-                                         return callResultXml;
-                                     }));
-
-                                     return methodResultXml;
-                                 }));
+                            .GroupBy(p => p.Key.Item1)
+                            .Select(g =>
+                            {
+                                XElement methodResultXml = new XElement("MethodResult", new XAttribute("Name", g.Key));
+                                methodResultXml.Add(g.Select(r => new XElement("Call", new XAttribute("CallNumber", r.Key.Item2), ToXml(r.Value))));
+                                return methodResultXml;
+                            }));
             }
             return xml;
         }
 
         public static XElement ToXml(this ArrayParameter parameter)
         {
-            bool isNull = parameter.IsNull ?? true;
+            bool isNull = parameter.IsNull;
 
-            XElement xml = new XElement("Array", new XAttribute("ElementType", parameter.TypeName), new XAttribute("Name", parameter.Name), new XAttribute("IsNull", isNull), new XAttribute("Length", parameter.Length ?? 0));
+            XElement xml = new XElement("Array", new XAttribute("ElementType", parameter.TypeName), new XAttribute("Name", parameter.LocalName), new XAttribute("IsNull", isNull), new XAttribute("Length", parameter.Length));
 
             if (!isNull)
             {

@@ -106,6 +106,12 @@ namespace dnWalker.Concolic.Parameters
             }
         }
 
+        private static IDataElement AsDataElement(StringParameter stringParameter, ExplicitActiveState cur, bool byCil = false)
+        {
+            ConstantString constantString = new ConstantString(stringParameter.IsNull ? null : stringParameter.CreateString());
+            return constantString;
+        }
+
         private static IDataElement AsDataElement(ArrayParameter arrayParameter, ExplicitActiveState cur, bool byCil = false)
         {
             if (arrayParameter.IsNull)
@@ -151,6 +157,7 @@ namespace dnWalker.Concolic.Parameters
 
                 ObjectParameter p => AsDataElement(p, cur, byCil),
                 InterfaceParameter p => AsDataElement(p, cur, byCil),
+                StringParameter p => AsDataElement(p, cur, byCil),
                 ArrayParameter p => AsDataElement(p, cur, byCil),
                 _ => throw new NotSupportedException()
             };
@@ -166,18 +173,5 @@ namespace dnWalker.Concolic.Parameters
             return _dataElements.TryGetValue(parameter, out IDataElement _);
         }
 
-        public static IEnumerable<Parameter> GetUsedDescendantParameters(this Parameter parameter)
-        {
-            if (HasDataElement(parameter))
-            {
-                return parameter.GetOwnedParameters().SelectMany(p => GetUsedDescendantParameters(p)).Append(parameter);
-            }
-            return Enumerable.Empty<Parameter>();
-        }
-
-        public static IEnumerable<Parameter> GetUsedParameters(this ParameterStore store)
-        {
-            return store.RootParameters.SelectMany(p => GetUsedDescendantParameters(p));
-        }
     }
 }

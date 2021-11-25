@@ -1543,7 +1543,7 @@ namespace dnWalker.Symbolic.Instructions
 
             if (arrayRef.IsArrayParameter(cur, out var arrayParameter))
             {
-                var length = arrayParameter.LengthParameter.CreateDataElement(cur);
+                var length = arrayParameter.LengthParameter.AsDataElement(cur);
 
                 // TODO: somehow make sure that the length is greater than 0 OR use UInt32 & change dnWalker.Z3 to support 
                 // cur.PathStore.CurrentPath.AddPathConstraint(Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, arrayParameter.LengthParameter.GetSingleParameterExpression(), Expression.Constant(0)));
@@ -2521,7 +2521,7 @@ namespace dnWalker.Symbolic.Instructions
                 // b == null
                 var bIsNullParameter = bRefTypeP.IsNullParameter;
 
-                var bIsNull = bIsNullParameter.CreateDataElement(cur);
+                var bIsNull = bIsNullParameter.AsDataElement(cur);
                 var ceq = bIsNull.ToBool();
 
                 var result = new Int4(ceq ? 1 : 0);
@@ -2542,7 +2542,7 @@ namespace dnWalker.Symbolic.Instructions
                 // a == null
                 var aIsNullParameter = aRefTypeP.IsNullParameter;
 
-                var aIsNull = aIsNullParameter.CreateDataElement(cur);
+                var aIsNull = aIsNullParameter.AsDataElement(cur);
                 var ceq = aIsNull.ToBool();
 
                 var result = new Int4(ceq ? 1 : 0);
@@ -3345,12 +3345,12 @@ namespace dnWalker.Symbolic.Instructions
                     if (!interfaceParameter.TryGetMethodResult(methodName, callCount, out var resultParameter))
                     {
                         // initialize it to default value and add the parameter...
-                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType);
+                        resultParameter = ParameterFactory.CreateParameter(methDef.ReturnType, $"{methodName}{dnWalker.Parameters.ParameterNameUtils.CallIndexDelimiter}{callCount}");
                         interfaceParameter.SetMethodResult(methodName, callCount, resultParameter);
                     }
 
                     // get the IDataElement and push it onto the stack
-                    var result = resultParameter.CreateDataElement(cur);
+                    var result = resultParameter.AsDataElement(cur);
                     cur.EvalStack.Push(result);
 
                     return nextRetval;

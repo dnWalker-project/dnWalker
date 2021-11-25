@@ -14,15 +14,20 @@ namespace dnWalker.Parameters
         {
         }
 
-        public InterfaceParameter(string typeName, string localName, Parameter? owner) : base(typeName, localName, owner)
+        public InterfaceParameter(string typeName, string localName, Parameter parent) : base(typeName, localName, parent)
         {
         }
 
         private readonly Dictionary<string, Dictionary<int, Parameter>> _methodResults = new Dictionary<string, Dictionary<int, Parameter>>();
 
-        public override IEnumerable<Parameter> GetOwnedParameters()
+        public override IEnumerable<Parameter> GetChildren()
         {
-            return _methodResults.Values.SelectMany(mr => mr.Values).Append(IsNullParameter);
+            return GetKnownMethodResults().Select(p => p.Value).Append(IsNullParameter);
+        }
+
+        public IEnumerable<KeyValuePair<(string, int), Parameter>> GetKnownMethodResults()
+        {
+            return _methodResults.SelectMany(ps => ps.Value.Select(pi => KeyValuePair.Create((ps.Key, pi.Key), pi.Value)));
         }
 
         public bool TryGetMethodResult(string methodName, int callNumber, [NotNullWhen(true)]out Parameter? result)
@@ -71,7 +76,7 @@ namespace dnWalker.Parameters
             }
 
             results[callNumber] = result;
-            result.Owner = this;
+            result.Parent = this;
         }
 
         public void ClearMethodResult(string methodName, int callNumber)
@@ -83,7 +88,7 @@ namespace dnWalker.Parameters
 
             if (results.TryGetValue(callNumber, out Parameter? result))
             {
-                result.Owner = null;
+                result.Parent = null;
                 results.Remove(callNumber);
             }
 
@@ -97,7 +102,7 @@ namespace dnWalker.Parameters
 
             foreach(Parameter result in results.Values)
             {
-                result.Owner = null;
+                result.Parent = null;
             }
 
             _methodResults.Remove(methodName);

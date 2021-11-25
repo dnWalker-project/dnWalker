@@ -15,16 +15,20 @@ namespace dnWalker.Parameters
         {
         }
 
-        public ObjectParameter(string typeName, string localName, Parameter? owner) : base(typeName, localName, owner)
+        public ObjectParameter(string typeName, string localName, Parameter parent) : base(typeName, localName, parent)
         {
         }
 
         private readonly Dictionary<string, Parameter> _fields = new Dictionary<string, Parameter>();
 
-        public override IEnumerable<Parameter> GetOwnedParameters()
+        public override IEnumerable<Parameter> GetChildren()
         {
-            //return base.GetOwnedParameters().Concat(_fields.Values);
             return _fields.Values.Append(IsNullParameter);
+        }
+
+        public IEnumerable<KeyValuePair<string, Parameter>> GetKnownFields()
+        {
+            return _fields.AsEnumerable();
         }
 
         public void SetField(string fieldName, Parameter? fieldValue)
@@ -40,14 +44,14 @@ namespace dnWalker.Parameters
                 return;
             }
 
-            fieldValue.Owner = this;
+            fieldValue.Parent = this;
         }
 
         public void ClearField(string fieldName)
         {
             if (_fields.TryGetValue(fieldName, out Parameter? fieldValue))
             {
-                fieldValue.Owner = null;
+                fieldValue.Parent = null;
                 _fields.Remove(fieldName);
             }
         }
