@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions
 {
-    public class ExtendableInstructionExecBase : InstructionExecBase
+    public abstract class ExtendableInstructionExecBase : InstructionExecBase
     {
         public ExtendableInstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
@@ -35,7 +35,14 @@ namespace dnWalker.Instructions
             }
         }
 
-        public override IIEReturnValue Execute(ExplicitActiveState cur)
+        /// <summary>
+        /// This method, when overrideden, will provide the default execution behavior.
+        /// </summary>
+        /// <param name="cur"></param>
+        /// <returns></returns>
+        protected abstract IIEReturnValue ExecuteCore(ExplicitActiveState cur);
+
+        public sealed override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // pre-execute
             foreach (IInstructionExtension extension in _extensions)
@@ -45,6 +52,7 @@ namespace dnWalker.Instructions
 
             // execute
             IIEReturnValue retValue = null;
+            // in order to make sure that if extension fails to execute the instruction, the cur is not changed - ExplicitActiveState.MakeSavePoint() and ExpliciteActiveState.RestoreState(), and/or add trackin capabilities, e.g. evalstack.push(...) will be saved and we will be able to undo it...
             foreach (IInstructionExtension extension in _extensions)
             {
                 if (extension.TryExecute(this, cur, out retValue))
@@ -55,7 +63,7 @@ namespace dnWalker.Instructions
 
             if (retValue == null)
             {
-                retValue = base.Execute(cur);
+                retValue = ExecuteCore(cur);
             }
 
             // post-execute
