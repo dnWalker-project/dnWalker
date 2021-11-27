@@ -1,4 +1,5 @@
-﻿using dnWalker.Tests.ExampleTests;
+﻿using dnWalker.Concolic;
+using dnWalker.Tests.ExampleTests;
 
 using FluentAssertions;
 
@@ -22,23 +23,21 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Objects
         [Fact]
         public void Test_UsingObjectParamterSubstitute_For_FieldAccess()
         {
-            Explore("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.InvokeMethodWithFieldAccess",
-                initializeConfig: cfg =>
-                {
-                    cfg.MaxIterations = 10;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.InvokeMethodWithFieldAccess");
 
-                    paths.Count().Should().Be(3);
-                });
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(3);
         }
     }
 }

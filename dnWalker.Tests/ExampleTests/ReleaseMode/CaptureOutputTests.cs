@@ -21,29 +21,24 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
         [Fact]
         public void CaptureOutputTest1()
         {
-            ExploreModelChecker("Examples.CaptureOutput.Capture1",
-                null,
-                finished: explorer =>
-                {
-                    explorer.GetUnhandledException().Should().BeNull();
-                    explorer.PathStore.Paths.Count().Should().Be(1);
-                    var output = explorer.PathStore.Paths.First().Output;
-                    output.Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
-                });
+            MMC.Explorer explorer = GetModelCheckerBuilder("Examples.CaptureOutput.Capture1").BuildAndRun();
+
+            explorer.GetUnhandledException().Should().BeNull();
+            explorer.PathStore.Paths.Count().Should().Be(1);
+            string output = explorer.PathStore.Paths.First().Output;
+            output.Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
+
         }
 
         [Fact]
         public void CaptureOutputTest2()
         {
-            ExploreModelChecker("Examples.CaptureOutput.Capture2",
-                null,
-                finished: explorer =>
-                {
-                    explorer.GetUnhandledException().Should().BeNull();
-                    explorer.PathStore.Paths.Count().Should().Be(1);
-                    var output = explorer.PathStore.Paths.First().Output;
-                    output.Should().Be($"X=2{Environment.NewLine}X=2{Environment.NewLine}");
-                });
+            MMC.Explorer explorer = GetModelCheckerBuilder("Examples.CaptureOutput.Capture2").BuildAndRun();
+
+            explorer.GetUnhandledException().Should().BeNull();
+            explorer.PathStore.Paths.Count().Should().Be(1);
+            string output = explorer.PathStore.Paths.First().Output;
+            output.Should().Be($"X=2{Environment.NewLine}X=2{Environment.NewLine}");
         }
     }
 }

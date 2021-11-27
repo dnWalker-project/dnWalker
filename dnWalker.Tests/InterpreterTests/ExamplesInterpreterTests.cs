@@ -1,4 +1,7 @@
 ﻿using dnWalker.Tests.ExampleTests;
+
+using MMC;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +10,17 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace dnWalker.Tests.ExampleTests.ReleaseMode.Interpreter
+namespace dnWalker.Tests.InterpreterTests
 {
     [Trait("Category", "Interpreter")]
-    public class IntepreterTests : ReleaseExamplesTestBase
+    public class ExamplesInterpreterTests : InterpreterTestBase
     {
-        public IntepreterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
+        protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\framework\Examples.Framework.exe";
+
+        protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
+
+        public ExamplesInterpreterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
         {
         }
 

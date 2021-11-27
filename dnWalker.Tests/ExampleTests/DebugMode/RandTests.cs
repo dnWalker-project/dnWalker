@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using dnWalker.Concolic;
+
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,19 +21,15 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void Rand()
         {
-            Explore("Examples.Rand.Go",
-                c =>
-                {
-                    c.MaxIterations = 1;
-                    c.SetCustomSetting("evaluateRandom", true);
-                },
-                (explorer) =>
-                {
-                    var paths = explorer.PathStore.Paths;
-                    paths.Should().HaveCount(6);
-                    paths.Where(p => p.Exception != null).Should().HaveCount(2);
-                    paths.Select(p => p.Length).Should().AllBeEquivalentTo(3);
-                });
+            IExplorer explorer = GetConcolicExplorerBuilder().Build();
+            explorer.GetConfiguration().SetCustomSetting("evaluateRandom", true);
+
+            explorer.Run("Examples.Rand.Go");
+
+            var paths = explorer.PathStore.Paths;
+            paths.Should().HaveCount(6);
+            paths.Where(p => p.Exception != null).Should().HaveCount(2);
+            paths.Select(p => p.Length).Should().AllBeEquivalentTo(3);
         }
     }
 }

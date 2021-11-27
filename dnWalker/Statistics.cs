@@ -22,6 +22,8 @@ namespace MMC
         int StateCount { get; }
         int RevisitCount { get; }
 
+        int Deadlocks { get; }
+
         void Start();
         void NewState();
         void RevisitState();

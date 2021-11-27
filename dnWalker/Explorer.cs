@@ -522,6 +522,7 @@ namespace MMC
             }
         }
 
-        public ExplicitActiveState cur { get; }
+        internal ExplicitActiveState cur { get; }
+        public ExplicitActiveState ActiveState { get; }
     }
 }

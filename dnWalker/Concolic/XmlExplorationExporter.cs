@@ -182,6 +182,8 @@ namespace dnWalker.Concolic
         private XElement _currentExplorationElement;
         private XElement _currentIterationElement;
 
+        private string _currentSUTName = "";
+
         public XmlExplorationExporter(string file)
         {
             _file = file;
@@ -214,11 +216,21 @@ namespace dnWalker.Concolic
 
         private void SaveData()
         {
-            _rootElement.Save(_file);
+            string outFile = _file;
+
+            // TODO: setup proper placeholders...
+            if (outFile.Contains('{'))
+            {
+                outFile = outFile.Replace("{SUT}", _currentSUTName);
+            }
+
+            _rootElement.Save(outFile);
         }
 
         private void OnExplorationStarted(object sender, ExplorationStartedEventArgs e)
         {
+            _currentSUTName = e.Method.Name;
+
             // create a new exploration element
             _currentExplorationElement = new XElement("Exploration");
             _currentExplorationElement.SetAttributeValue("AssemblyName", e.AssemblyName);
@@ -234,12 +246,16 @@ namespace dnWalker.Concolic
         private void OnExplorationFinished(object sender, ExplorationFinishedEventArgs e)
         {
             SaveData();
+
+            _currentSUTName = "";
         }
 
         private void OnExplorationFailed(object sender, ExplorationFailedEventArgs e)
         {
             _currentExplorationElement.SetAttributeValue("Failed", true);
             SaveData();
+
+            _currentSUTName = "";
         }
 
         private void OnIterationStarted(object sender, IterationStartedEventArgs e)
@@ -261,7 +277,7 @@ namespace dnWalker.Concolic
 
     public static class XmlExplorationExporterExtensions
     {
-        public static XmlExplorationExporter ExportXmlData(this Explorer explorer, string outputFile = "data.xml")
+        public static XmlExplorationExporter ExportXmlData(this IExplorer explorer, string outputFile = "data.xml")
         {
             XmlExplorationExporter exporter = new XmlExplorationExporter(outputFile);
             explorer.AddExtension(exporter);

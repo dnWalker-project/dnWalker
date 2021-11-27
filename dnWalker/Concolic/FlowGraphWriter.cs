@@ -23,7 +23,15 @@ namespace dnWalker.Concolic
 
         private void OnExplorationStarted(object sender, ExplorationStartedEventArgs e)
         {
-            using (TextWriter writer = File.CreateText(OutputFile))
+            string outFile = OutputFile;
+
+            // TODO: setup proper placeholders...
+            if (outFile.Contains('{'))
+            {
+                outFile = outFile.Replace("{SUT}", e.Method.Name);
+            }
+
+            using (TextWriter writer = File.CreateText(outFile))
             {
                 var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
                 dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
@@ -41,7 +49,7 @@ namespace dnWalker.Concolic
 
     public static class FlowGraphWriterExtensions
     {
-        public static FlowGraphWriter WriteFlowGraph(this Explorer explorer, string outputFile = "flowgraph.dot")
+        public static FlowGraphWriter WriteFlowGraph(this IExplorer explorer, string outputFile = "flowgraph.dot")
         {
             FlowGraphWriter writer = new FlowGraphWriter() { OutputFile = outputFile };
             explorer.AddExtension(writer);

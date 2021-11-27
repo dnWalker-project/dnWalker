@@ -1,4 +1,5 @@
-﻿using dnWalker.Symbolic;
+﻿using dnWalker.Concolic;
+using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
 
 using FluentAssertions;
@@ -22,69 +23,63 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
         [Trait("Category", "Concolic")]
         public void Branching_BasedOn_ArrayLength_ShouldEnd_Within_2_Iterations()
         {
-            Explore("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayLength",
-                (cgf) =>
-                {
-                    cgf.MaxIterations = 10;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
 
-                    paths.Count().Should().Be(3);
-                });
+            explorer.Run("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayLength");
+
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(3);
         }
 
         [Fact]
         [Trait("Category", "Concolic")]
         public void Test_Branching_Based_On_ArrayLength_And_Static_Index()
         {
-            Explore("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayElementAtStaticIndex",
-                (cgf) =>
-                {
-                    cgf.MaxIterations = 10;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            explorer.Run("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayElementAtStaticIndex");
 
-                    paths.Count().Should().Be(3);
-                });
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(3);
         }
 
         [Fact]
         [Trait("Category", "Concolic")]
         public void Test_Branching_Based_On_ArrayLength_And_Dynamic_Index()
         {
-            Explore("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayElementAtDynamicIndex",
-                (cgf) =>
-                {
-                    cgf.MaxIterations = 10;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            explorer.Run("Examples.Concolic.Features.Arrays.BranchingBasedOnArrayProperties.BranchBasedOnArrayElementAtDynamicIndex");
 
-                    paths.Count().Should().Be(3);
-                });
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(3);
         }
     }
 }

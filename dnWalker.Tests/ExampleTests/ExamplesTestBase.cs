@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,29 +12,136 @@ namespace dnWalker.Tests.ExampleTests
 {
     public abstract class ExamplesTestBase : TestBase
     {
-        //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
         protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\framework\Examples.Framework.exe";
 
         protected ExamplesTestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
         {
+            string testClassName = typeof(ExamplesTestBase).Name;
+            OverrideConcolicExplorerBuilderInitialization(b =>
+            {
+                dnWalker.Concolic.XmlExplorationExporter xmlExporter = new dnWalker.Concolic.XmlExplorationExporter(testClassName + "{SUT}.xml");
+                dnWalker.Concolic.FlowGraphWriter graphExporter = new dnWalker.Concolic.FlowGraphWriter() { OutputFile = testClassName + "{SUT}.dot" };
 
+                b.With(xmlExporter);
+                b.With(graphExporter);
+            });
         }
 
-        protected void Explore(string methodName, Action<IConfig> initializeConfig = null, Action<dnWalker.Concolic.Explorer> starting = null, Action<dnWalker.Concolic.Explorer> finished = null, IDictionary<string, object> data = null)
+        public static ArgsProvider Args()
         {
-            initializeConfig?.Invoke(_config);
-
-            var explorer = new dnWalker.Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
-
-            starting?.Invoke(explorer);
-            explorer.Run(methodName);//, args);
-
-            finished?.Invoke(explorer);
+            return new ArgsProvider();
         }
 
-        public static string GetTestMethodName([CallerMemberName]string methodName = null)
+        public class ArgsProvider : IDictionary<string, object>
         {
-            return methodName ?? string.Empty;
+            private readonly IDictionary<string, object> _data = new Dictionary<string, object>();
+
+            public ArgsProvider Set<T>(string key, T value)
+            {
+                _data.Add(key, value);
+
+                return this;
+            }
+
+            void IDictionary<string, object>.Add(string key, object value)
+            {
+                _data.Add(key, value);
+            }
+
+            bool IDictionary<string, object>.ContainsKey(string key)
+            {
+                return _data.ContainsKey(key);
+            }
+
+            bool IDictionary<string, object>.Remove(string key)
+            {
+                return _data.Remove(key);
+            }
+
+            bool IDictionary<string, object>.TryGetValue(string key, out object value)
+            {
+                return _data.TryGetValue(key, out value);
+            }
+
+            object IDictionary<string, object>.this[string key]
+            {
+                get
+                {
+                    return _data[key];
+                }
+
+                set
+                {
+                    _data[key] = value;
+                }
+            }
+
+            ICollection<string> IDictionary<string, object>.Keys
+            {
+                get
+                {
+                    return this._data.Keys;
+                }
+            }
+
+            ICollection<object> IDictionary<string, object>.Values
+            {
+                get
+                {
+                    return _data.Values;
+                }
+            }
+
+            void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
+            {
+                _data.Add(item);
+            }
+
+            void ICollection<KeyValuePair<string, object>>.Clear()
+            {
+                _data.Clear();
+            }
+
+            bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
+            {
+                return (_data.Contains(item));
+            }
+
+            void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+            {
+                _data.CopyTo(array, arrayIndex);
+            }
+
+            bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
+            {
+                return _data.Remove(item);
+            }
+
+            int ICollection<KeyValuePair<string, object>>.Count
+            {
+                get
+                {
+                    return _data.Count;
+                }
+            }
+
+            bool ICollection<KeyValuePair<string, object>>.IsReadOnly
+            {
+                get
+                {
+                    return _data.IsReadOnly;
+                }
+            }
+
+            IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
         }
     }
 }

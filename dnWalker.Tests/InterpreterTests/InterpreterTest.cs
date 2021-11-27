@@ -23,6 +23,8 @@
 //#define EXCEPTIONS
 
 using dnWalker.Tests;
+using dnWalker.Tests.InterpreterTests;
+
 using MMC;
 using System;
 using Xunit;
@@ -31,7 +33,7 @@ using Xunit.Abstractions;
 namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 {
     [Trait("Category", "Interpreter")]
-    public sealed class InterpreterTest : TestBase
+    public sealed class InterpreterTest : InterpreterTestBase
     {
         private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
 
@@ -40,7 +42,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
 
         public InterpreterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {
-            _config.StateStorageSize = 5;
+            //_config.StateStorageSize = 5;
+            OverrideModelCheckerExplorerBuilderInitialization(c => c.SetStateStorageSize(5));
         }
 
         private new void Test(string methodName, params object[] args)

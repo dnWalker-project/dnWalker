@@ -1,4 +1,5 @@
-﻿using dnWalker.Symbolic;
+﻿using dnWalker.Concolic;
+using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
 
 using FluentAssertions;
@@ -24,46 +25,40 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
         [Trait("Category", "Concolic")]
         public void Test_UsingIntefaceProxy_For_PureMethods()
         {
-            Explore("Examples.Concolic.Features.Interfaces.InterfaceMethodInvoking.BranchingBasedOnPureValueProvider",
-                initializeConfig: cfg =>
-                {
-                    cfg.MaxIterations = 10;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+            explorer.Run("Examples.Concolic.Features.Interfaces.InterfaceMethodInvoking.BranchingBasedOnPureValueProvider");
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
 
-                    paths.Count().Should().Be(3);
-                });
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(4);
         }
 
         [Fact]
         [Trait("Category", "Concolic")]
         public void Test_MethodIvokedMultipleTimes()
         {
-            Explore("Examples.Concolic.Features.Interfaces.InterfaceMethodInvoking.MethodInvokedMultipleTimes",
-                initializeConfig: cfg =>
-                {
-                    cfg.MaxIterations = 10;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+            explorer.Run("Examples.Concolic.Features.Interfaces.InterfaceMethodInvoking.MethodInvokedMultipleTimes");
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
 
-                    paths.Count().Should().Be(3);
-                });
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(3);
         }
     }
 }

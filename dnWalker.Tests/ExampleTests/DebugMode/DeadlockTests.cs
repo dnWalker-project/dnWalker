@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 
+using MMC.Data;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +22,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void Go()
         {
-            ExploreModelChecker("Deadlock.Go",
-                null,
-                (ex, stats) =>
-                {
-                    ex.Should().BeNull();
-                    stats.Deadlocks.Should().BeGreaterThan(0, "deadlock should have been detected.");
-                });
+            MMC.Explorer explorer = GetModelCheckerBuilder("Deadlock.Go").WithArgs(Array.Empty<IDataElement>()).BuildAndRun();
+            explorer.GetUnhandledException().Should().BeNull();
+            explorer.Statistics.Deadlocks.Should().BeGreaterThan(0, "deadlock should have been detected.");
         }
     }
 }

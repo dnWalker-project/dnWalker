@@ -24,117 +24,72 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
 
         [Fact]
-        public void CaptureOutputTest1()
-        {
-            ExploreModelChecker("Examples.Concolic.Simple.Branches.Branch",
-                null,
-                finished: explorer =>
-                {
-                    explorer.GetUnhandledException().Should().BeNull();
-                    explorer.PathStore.Paths.Count().Should().Be(1);
-                    var output = explorer.PathStore.Paths.First().Output;
-                    output.Should().Be($"X=1{Environment.NewLine}Y=1{Environment.NewLine}Z=1{Environment.NewLine}");
-                });
-        }
-
-        [Fact]
         public void NoBranching_ShouldEnd_Within_1_Iteration()
         {
-            Explore("Examples.Concolic.Simple.Branches.NoBranching",
-                initializeConfig: cgf =>
-                {
-                    cgf.MaxIterations = 1;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(1)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            explorer.Run("Examples.Concolic.Simple.Branches.NoBranching", Args().Set("x", 10));
 
-                    paths.Count().Should().Be(1);
-                },
-                data: new Dictionary<string, object> { ["x"] = 10 });
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(1);
         }
 
         [Fact]
         public void SingleBranching_ShouldEnd_Within_2_Iteration()
         {
-            Explore("Examples.Concolic.Simple.Branches.SingleBranching",
-                initializeConfig: cgf =>
-                {
-                    cgf.MaxIterations = 2;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(2)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            explorer.Run("Examples.Concolic.Simple.Branches.SingleBranching", Args().Set("x", 10));
 
-                    paths.Count().Should().Be(2);
-                },
-                data: new Dictionary<string, object> { ["x"] = 10 });
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(2);
         }
 
         [Fact]
         public void InvertingVariableValue()
         {
-            Explore("Examples.Concolic.Simple.Branches.SingleBranchingWithModification",
-                initializeConfig: cgf =>
-                {
-                    cgf.MaxIterations = 2;
-                },
-                finished: explorer =>
-                {
-                    //explorer.GetUnhandledException().Should().BeNull();
-                    var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(2)
+                .Build();
 
-                    foreach (var p in paths)
-                    {
-                        System.Console.Out.WriteLine(p.GetPathInfo());
-                    }
+            explorer.Run("Examples.Concolic.Simple.Branches.SingleBranchingWithModification", Args().Set("x", 10));
 
-                    paths.Count().Should().Be(2);
-                },
-                data: new Dictionary<string, object> { ["x"] = 10 });
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count.Should().Be(2);
         }
 
         [Fact]
         public void ExceedingMaxNumberOfIterations_Should_Throw()
         {
-            Assert.Throws<MaxIterationsExceededException>(() =>
-            {
-                Explore("Examples.Concolic.Simple.Branches.MultipleBranchingWithMultipleParameters",
-                    initializeConfig: cgf =>
-                    {
-                            cgf.MaxIterations = 2;
-                        },
-                    finished: explorer =>
-                    {
-                        //explorer.GetUnhandledException().Should().BeNull();
-                        var paths = explorer.PathStore.Paths;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(2)
+                .Build();
 
-                        foreach (var p in paths)
-                        {
-                            System.Console.Out.WriteLine(p.GetPathInfo());
-                        }
 
-                        paths.Count().Should().Be(4);
-                    },
-                    data: new Dictionary<string, object> 
-                    { 
-                        ["x"] = 10,
-                        ["y"] = -5,
-                        ["z"] = 6
-                    });
-            });
+            Assert.Throws<MaxIterationsExceededException>(() => explorer.Run("Examples.Concolic.Simple.Branches.MultipleBranchingWithMultipleParameters", Args().Set("x", 10).Set("y", -5).Set("z", 6)));
         }
 
         // comparing variable "x" against 5
@@ -142,231 +97,227 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void Test_Branch_Equals_TruePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
-                initializeConfig: cgf =>
-                {
-                    cgf.MaxIterations = 5;
-                },
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 5));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
+            pathStore.Paths.Count().Should().Be(2);
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 5 });
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
         }
         [Fact]
         public void Test_Branch_Equals_FalsePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_Equals",
-                initializeConfig: cgf =>
-                {
-                    cgf.MaxIterations = 5;
-                },
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 4));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 4 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
         }
 
         [Fact]
         public void Test_Branch_NotEquals_TruePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
-                cfg => cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 4));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 4 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
         }
+
         [Fact]
         public void Test_Branch_NotEquals_FalsePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_NotEquals",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 5));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 5 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
         }
 
         [Fact]
         public void Test_Branch_GreaterThan_TruePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 7));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 7 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
         }
+
         [Fact]
         public void Test_Branch_GreaterThan_FalsePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThan",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 4));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 4 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
         }
 
         [Fact]
         public void Test_Branch_GreaterThanOrEquals_TruePathFirst() // this throws MaxIterationExceeded
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 7));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            pathStore.Paths.Count().Should().Be(2);
 
-                },
-                data: new Dictionary<string, object> { ["x"] = 7 });
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
         }
+
         [Fact]
         public void Test_Branch_GreaterThanOrEquals_FalsePathFirst() // this throws MaxIterationExceeded
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 4));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 4 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
         }
 
         [Fact]
         public void Test_Branch_LowerThan_TruePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 4));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 4 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
         }
+
         [Fact]
         public void Test_Branch_LowerThan_FalsePathFirst()
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThan",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 7));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
+
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 7 });
+            pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
         }
 
         [Fact]
         public void Test_Branch_LowerThanOrEquals_TruePathFirst() // this throws MaxIterationExceeded
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 4));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 4 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
         }
+
         [Fact]
         public void Test_Branch_LowerThanOrEquals_FalsePathFirst() // this throws MaxIterationExceeded
         {
-            Explore("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals",
-                initializeConfig: cfg=> cfg.MaxIterations = 5,
-                finished: explorer =>
-                {
-                    PathStore pathStore = explorer.PathStore;
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(5)
+                .Build();
 
-                    pathStore.Paths.Count().Should().Be(2);
+            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 7));
 
-                    String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            PathStore pathStore = explorer.PathStore;
 
-                    pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-                    pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-                },
-                data: new Dictionary<string, object> { ["x"] = 7 });
+            pathStore.Paths.Count().Should().Be(2);
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+
+            pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+            pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
         }
     }
 }

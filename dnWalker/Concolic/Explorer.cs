@@ -20,23 +20,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic
 {
-    public static class ExplorerExtensions
-    {
-        public static TExtension AddExtension<TExtension>(this Explorer explorer) where TExtension : IExplorationExtension, new()
-        {
-            TExtension extension = new TExtension();
-            explorer.AddExtension(extension);
-            return extension;
-        }
-        public static TExtension AddExtension<TExtension>(this Explorer explorer, Func<TExtension> extensionFactory) where TExtension : IExplorationExtension
-        {
-            TExtension extension = extensionFactory();
-            explorer.AddExtension(extension);
-            return extension;
-        }
-    }
-
-    public class Explorer : IDisposable
+    public class Explorer : IDisposable, IExplorer
     {
         private readonly Config _config;
         private readonly Logger _logger;
@@ -45,7 +29,7 @@ namespace dnWalker.Concolic
 
         private int _currentIteration;
         private PathStore _pathStore;
-        private ParameterStore _inputParameters;
+        private ParameterStore _parameterStore;
 
         private readonly IExplorationExtension _explorationExporter;
 
@@ -79,9 +63,9 @@ namespace dnWalker.Concolic
         {
             get { return _pathStore; }
         }
-        public ParameterStore InputParameters
+        public ParameterStore ParameterStore
         {
-            get { return _inputParameters; }
+            get { return _parameterStore; }
         }
         public int IterationCount
         {
@@ -135,7 +119,7 @@ namespace dnWalker.Concolic
             }
 
             // get the tested method
-            var  entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
+            var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
             // setup iteration global objects
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
@@ -143,7 +127,7 @@ namespace dnWalker.Concolic
             _pathStore = new PathStore(entryPoint);
 
             var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
-                
+
             if (data == null)
             {
                 data = new Dictionary<string, object>();
@@ -165,16 +149,16 @@ namespace dnWalker.Concolic
                     cur.PathStore = _pathStore;
 
                     // 1. clear parameterStore
-                    _inputParameters = new ParameterStore();
+                    _parameterStore = new ParameterStore();
 
                     // 2. setup default values for the arguments
-                    _inputParameters.InitializeDefaultMethodParameters(entryPoint);
+                    _parameterStore.InitializeDefaultMethodParameters(entryPoint);
 
                     // 3. set traits using the 'data' dictionary - either passed as argument or as solver output
-                    _inputParameters.SetTraits(cur.DefinitionProvider, data);
+                    _parameterStore.SetTraits(cur.DefinitionProvider, data);
 
                     // 4. construct the arguments DataElementList
-                    var arguments = _inputParameters.GetMethodParematers(cur, entryPoint);
+                    var arguments = _parameterStore.GetMethodParematers(cur, entryPoint);
 
                     var mainState = new MethodState(entryPoint, arguments, cur);
 
@@ -193,7 +177,7 @@ namespace dnWalker.Concolic
                     _logger.Log(LogPriority.Message, "Starting exploration, data: ");
                     foreach (var p in data) _logger.Log(LogPriority.Message, "{0} = {1}", p.Key, p.Value);
 
-                    OnIterationStarted(new IterationStartedEventArgs(_currentIteration, _inputParameters));
+                    OnIterationStarted(new IterationStartedEventArgs(_currentIteration, _parameterStore));
 
                     explorer.InstructionExecuted += _pathStore.OnInstructionExecuted;
                     explorer.Run();
@@ -206,7 +190,7 @@ namespace dnWalker.Concolic
                     _logger.Log(LogPriority.Message, "Explored path: {0}", path.PathConstraintString);
 
 
-                    var exprs = _inputParameters.GetParametersAsExpressions();
+                    var exprs = _parameterStore.GetParametersAsExpressions();
                     data = PathStore.GetNextInputValues(_solver, exprs);
 
                     OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, null, path));
@@ -232,6 +216,11 @@ namespace dnWalker.Concolic
         public void Dispose()
         {
             _extensions.ForEach(e => e.Unregister(this));
+        }
+
+        public IConfig GetConfiguration()
+        {
+            return _config;
         }
     }
 }
