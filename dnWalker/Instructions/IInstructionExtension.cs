@@ -29,7 +29,7 @@ namespace dnWalker.Instructions
 
 
         /// <summary>
-        /// Tries to execute the operation in place of the default execution. 
+        /// Tries to execute the operation in place of the default execution.
         /// It may not be invoked when the extended instruction is executed - another extension with higher priority can execute the instruction before.
         /// </summary>
         /// <param name="instruction"></param>
