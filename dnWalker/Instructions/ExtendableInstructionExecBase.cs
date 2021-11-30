@@ -45,7 +45,7 @@ namespace dnWalker.Instructions
         public sealed override IIEReturnValue Execute(ExplicitActiveState cur)
         {
             // pre-execute
-            foreach (IInstructionExtension extension in _extensions)
+            foreach (IPreExecuteInstructionExtension extension in _extensions.OfType<IPreExecuteInstructionExtension>())
             {
                 extension.PreExecute(this, cur);
             }
@@ -53,7 +53,7 @@ namespace dnWalker.Instructions
             // execute
             IIEReturnValue retValue = null;
             // in order to make sure that if extension fails to execute the instruction, the cur is not changed - ExplicitActiveState.MakeSavePoint() and ExpliciteActiveState.RestoreState(), and/or add trackin capabilities, e.g. evalstack.push(...) will be saved and we will be able to undo it...
-            foreach (IInstructionExtension extension in _extensions)
+            foreach (ITryExecuteInstructionExtension extension in _extensions.OfType<ITryExecuteInstructionExtension>())
             {
                 if (extension.TryExecute(this, cur, out retValue))
                 {
@@ -67,7 +67,7 @@ namespace dnWalker.Instructions
             }
 
             // post-execute
-            foreach (IInstructionExtension extension in _extensions)
+            foreach (IPostExecuteInstructionExtension extension in _extensions.OfType<IPostExecuteInstructionExtension>())
             {
                 extension.PostExecute(this, cur, retValue);
             }

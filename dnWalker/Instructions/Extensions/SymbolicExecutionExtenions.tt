@@ -1,0 +1,263 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #>
+using dnlib.DotNet.Emit;
+
+using dnWalker.Symbolic;
+
+using MMC.Data;
+using MMC.InstructionExec;
+using MMC.State;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Instructions.Extensions
+{
+    public abstract class SymbolicBinaryExecutionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
+    {
+        public abstract bool CanExecute(Code code);
+
+        /// <summary>
+        /// Gets the expression type which is created by this extension.
+        /// </summary>
+        public abstract ExpressionType ExpressionType { get; }
+
+        IDataElement _lhs;
+        IDataElement _rhs;
+
+        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            _rhs = cur.EvalStack[cur.EvalStack.Length - 1];
+            _lhs = cur.EvalStack[cur.EvalStack.Length - 2];
+        }
+
+
+        public void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            bool isRhsSymbolic = _rhs.TryGetExpression(cur, out Expression rhsExpr);
+            bool isLhsSymbolic = _lhs.TryGetExpression(cur, out Expression lhsExpr);
+            
+            if (isRhsSymbolic || isLhsSymbolic)
+            {
+                IDataElement result = cur.EvalStack.Peek();
+
+                result.SetExpression(Expression.MakeBinary(ExpressionType, lhsExpr ?? _lhs.AsExpression(), rhsExpr ?? _rhs.AsExpression()), cur);
+            }
+        }
+    }
+    
+    public abstract class SymbolicUnaryExecutionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
+    {
+        public abstract bool CanExecute(Code code);
+
+        /// <summary>
+        /// Gets the expression type which is created by this extension.
+        /// </summary>
+        public abstract ExpressionType ExpressionType { get; }
+
+        IDataElement _value;
+
+        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            _value = cur.EvalStack[cur.EvalStack.Length - 1];
+        }
+
+
+        public void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            if (_value.TryGetExpression(cur, out Expression valueExpr))
+            {
+                IDataElement result = cur.EvalStack.Peek();
+
+                result.SetExpression(Expression.MakeUnary(ExpressionType, valueExpr, valueExpr.Type), cur);
+            }
+        }
+    }
+<#
+    // info
+    string[] names = new string[]
+    {
+        // compare
+        "CGT",
+        "CLT",
+        "CEQ",
+
+        // numeric
+        "ADD",
+        "ADD_OVF_UN",
+        "DIV",
+        "MUL",
+        "REM",
+        "SUB",
+        "NEG",
+
+        // logical
+        "AND",
+        "NOT",
+        "OR",
+        "XOR",
+        "SHL",
+        "SHR",
+        "SHR_UN"
+    };
+
+    string[][] acceptedCodes = new string[][]
+    {
+        // compare
+        new string[] { "Cgt", "Cgt_Un" },
+        new string[] { "Clt", "Clt_Un" },
+        new string[] { "Ceq" },
+        
+        // numeric
+        new string[] { "Add" },
+        new string[] { "Add_Ovf_Un" },
+        new string[] { "Div" },
+        new string[] { "Mul" },
+        new string[] { "Rem" },
+        new string[] { "Sub" },
+        new string[] { "Neg" },
+        
+        // logical
+        new string[] { "And" },
+        new string[] { "Not" },
+        new string[] { "Or" },
+        new string[] { "Xor" },
+        new string[] { "Shl" },
+        new string[] { "Shr" },
+        new string[] { "Shr_Un" },
+    };
+
+    string[] expressionTypes = new string[]
+    {
+        // compare
+        "GreaterThan",
+        "LessThan",
+        "Equal",
+        
+        // numeric
+        "Add",
+        "Add",
+        "Divide",
+        "Multiply",
+        "Modulo",
+        "Subtract",
+        "Negate",
+
+        // logical
+        "And",
+        "Not",
+        "Or",
+        "ExclusiveOr",
+        "LeftShift",
+        "RightShift",
+        "RightShift"
+    };
+
+    bool[] isBinary = new bool[]
+    {
+        // compare
+        true,
+        true,
+        true,
+        
+        // numeric
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        
+        // logical
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+    };
+ #>
+
+    public static class SymbolicExecutionFactoryExtensions
+    {
+        public static ExtendableInstructionFactory AddSymbolicExecution(this ExtendableInstructionFactory factory)
+        {
+<#
+            foreach (string name in names)
+            {
+ #>
+                factory.RegisterExtension(new <#= name #>_SymbolicExecutionExtension());
+<#
+            }
+ #>     
+            return factory;
+        }
+    
+    }
+
+
+<#
+
+    for (int i = 0; i < names.Length; ++i)
+    {
+        string name = names[i];
+        string[] codes = acceptedCodes[i];
+        string expressionType = expressionTypes[i];
+ #>
+
+    public class <#= name #>_SymbolicExecutionExtension : <#= isBinary[i] ? "SymbolicBinaryExecutionExtension" : "SymbolicUnaryExecutionExtension" #>
+    {
+        public override bool CanExecute(Code code)
+        {
+<#
+            if (codes.Length == 1)
+            {
+ #>
+            return code == Code.<#= codes[0] #>;
+<#
+            }
+            else if (codes.Length == 2)
+            {
+ #>
+            return code == Code.<#= codes[0] #> || code == Code.<#= codes[1] #>;
+<#
+            }
+            else
+            {
+ #>
+            return switch(code)
+            {
+<#
+                foreach(string c in codes)
+                {
+ #>
+                Code.<#= c #> => true;
+<#
+                }
+ #>
+                _ => false;
+            }
+<#
+            }
+ #>
+        }
+
+        public override ExpressionType ExpressionType
+        {
+            get { return ExpressionType.<#= expressionType #>; }
+        }
+    }
+<#
+    }
+ #>
+}

@@ -15,7 +15,7 @@ namespace dnWalker.Instructions
     /// <summary>
     /// Base class for <see cref="IInstructionExtension"/> implementations. Does nothing, only caches the current instruction and explicit active state.
     /// </summary>
-    public abstract class InstructionExtensionBase : IInstructionExtension
+    public abstract class InstructionExtensionBase : IInstructionExtension, IPreExecuteInstructionExtension, IPostExecuteInstructionExtension, ITryExecuteInstructionExtension
     {
         public abstract bool CanExecute(Code code);
 

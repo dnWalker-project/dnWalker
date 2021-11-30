@@ -12,18 +12,11 @@ namespace dnWalker.Instructions
 {
     public class ExtendableInstructionFactory : dnWalker.Factories.InstructionFactory
     {
-        private readonly Dictionary<Code, IList<IInstructionExtension>> _extensions = new Dictionary<Code, IList<IInstructionExtension>>();
+        private readonly IList<IInstructionExtension> _extensions = new List<IInstructionExtension>();
 
         public void RegisterExtension(IInstructionExtension instructionExtension)
         {
-            Code c = instructionExtension.Operation;
-            if (!_extensions.TryGetValue(c, out IList<IInstructionExtension> extensions))
-            {
-                extensions = new List<IInstructionExtension>();
-                _extensions[c] = extensions;
-            }
-
-            extensions.Add(instructionExtension);
+            _extensions.Add(instructionExtension);
         }
 
 
@@ -52,9 +45,12 @@ namespace dnWalker.Instructions
 
             if (iExec is ExtendableInstructionExecBase extendableInstructionExec)
             {
-                foreach (IInstructionExtension instructionExtension in _extensions[instr.OpCode.Code])
+                foreach (IInstructionExtension instructionExtension in _extensions)
                 {
-                    extendableInstructionExec.Extensions.Add(instructionExtension);
+                    if (instructionExtension.CanExecute(instr.OpCode.Code))
+                    {
+                        extendableInstructionExec.Extensions.Add(instructionExtension);
+                    }
                 }
             }
 
