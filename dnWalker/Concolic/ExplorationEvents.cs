@@ -1,4 +1,6 @@
-﻿using dnWalker.Concolic.Parameters;
+﻿using dnlib.DotNet;
+
+using dnWalker.Concolic.Parameters;
 using dnWalker.Traversal;
 
 using System;
@@ -12,20 +14,32 @@ namespace dnWalker.Concolic
 {
     public class ExplorationStartedEventArgs : EventArgs
     {
-        public ExplorationStartedEventArgs(string assemblyFileName, string assemblyName, string methodName, bool isStatic, string solver)
+        public ExplorationStartedEventArgs(string assemblyFileName, MethodDef method, Type solverType)
         {
-            AssemblyName = assemblyName;
-            MethodName = methodName;
-            IsStatic = isStatic;
-            Solver = solver;
+            Method = method;
+            SolverType = solverType;
             AssemblyFileName = assemblyFileName;
         }
 
         public string AssemblyFileName { get; }
-        public string AssemblyName { get; }
-        public string MethodName { get; }
-        public bool IsStatic { get; }
-        public string Solver { get; }
+        public string AssemblyName
+        {
+            get { return Method.Module.Assembly.Name; }
+        }
+
+        public string MethodSignature
+        {
+            get { return Method.FullName; }
+        }
+
+        public bool IsStatic
+        {
+            get { return Method.IsStatic; }
+        }
+
+        public Type SolverType { get; }
+
+        public MethodDef Method { get; }
     }
     public class ExplorationFinishedEventArgs : EventArgs
     {

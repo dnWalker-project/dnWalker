@@ -173,14 +173,16 @@ namespace dnWalker.Concolic
     }
 
 
-    public class XmlExplorationExporter : IExplorationExtension, IDisposable
+    public class XmlExplorationExporter : IExplorationExtension
     {
-        private Explorer2 _explorer;
+        private Explorer _explorer;
         private readonly string _file;
 
         private readonly XElement _rootElement;
         private XElement _currentExplorationElement;
         private XElement _currentIterationElement;
+
+        private string _currentSUTName = "";
 
         public XmlExplorationExporter(string file)
         {
@@ -190,7 +192,7 @@ namespace dnWalker.Concolic
             _rootElement = new XElement("Explorations");
         }
 
-        public void Register(Explorer2 explorer)
+        public void Register(Explorer explorer)
         {
             _explorer = explorer;
             _explorer.ExplorationStarted += OnExplorationStarted;
@@ -201,7 +203,7 @@ namespace dnWalker.Concolic
             _explorer.IterationFinished += OnIterationFinished;
         }
 
-        public void Dispose()
+        public void Unregister(Explorer explorer)
         {
             _explorer.ExplorationStarted -= OnExplorationStarted;
             _explorer.ExplorationFinished -= OnExplorationFinished;
@@ -211,20 +213,31 @@ namespace dnWalker.Concolic
             _explorer.IterationFinished -= OnIterationFinished;
         }
 
+
         private void SaveData()
         {
-            _rootElement.Save(_file);
+            string outFile = _file;
+
+            // TODO: setup proper placeholders...
+            if (outFile.Contains('{'))
+            {
+                outFile = outFile.Replace("{SUT}", _currentSUTName);
+            }
+
+            _rootElement.Save(outFile);
         }
 
         private void OnExplorationStarted(object sender, ExplorationStartedEventArgs e)
         {
+            _currentSUTName = e.Method.Name;
+
             // create a new exploration element
             _currentExplorationElement = new XElement("Exploration");
             _currentExplorationElement.SetAttributeValue("AssemblyName", e.AssemblyName);
             _currentExplorationElement.SetAttributeValue("AssemblyFileName", e.AssemblyFileName);
-            _currentExplorationElement.SetAttributeValue("MethodNameSignature", e.MethodName);
+            _currentExplorationElement.SetAttributeValue("MethodNameSignature", e.MethodSignature);
             _currentExplorationElement.SetAttributeValue("IsStatic", e.IsStatic);
-            _currentExplorationElement.SetAttributeValue("Solver", e.Solver);
+            _currentExplorationElement.SetAttributeValue("Solver", e.SolverType.FullName);
 
 
             _rootElement.Add(_currentExplorationElement);
@@ -233,12 +246,16 @@ namespace dnWalker.Concolic
         private void OnExplorationFinished(object sender, ExplorationFinishedEventArgs e)
         {
             SaveData();
+
+            _currentSUTName = "";
         }
 
         private void OnExplorationFailed(object sender, ExplorationFailedEventArgs e)
         {
             _currentExplorationElement.SetAttributeValue("Failed", true);
             SaveData();
+
+            _currentSUTName = "";
         }
 
         private void OnIterationStarted(object sender, IterationStartedEventArgs e)
@@ -255,6 +272,16 @@ namespace dnWalker.Concolic
         private void OnIterationFinished(object sender, IterationFinishedEventArgs e)
         {
             SaveData();
+        }
+    }
+
+    public static class XmlExplorationExporterExtensions
+    {
+        public static XmlExplorationExporter ExportXmlData(this IExplorer explorer, string outputFile = "data.xml")
+        {
+            XmlExplorationExporter exporter = new XmlExplorationExporter(outputFile);
+            explorer.AddExtension(exporter);
+            return exporter;
         }
     }
 }
