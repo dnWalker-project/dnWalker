@@ -23,7 +23,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void CaptureOutputTest1()
         {
-            MMC.Explorer explorer = GetModelCheckerBuilder("Examples.CaptureOutput.Capture1").WithArgs(new IDataElement[]{}).BuildAndRun();
+            MMC.Explorer explorer = GetModelCheckerBuilder("Examples.CaptureOutput.Capture1").SetArgs(new IDataElement[]{}).Build();
+            explorer.Run();
 
             explorer.GetUnhandledException().Should().BeNull();
             explorer.PathStore.Paths.Count().Should().Be(1);
@@ -34,7 +35,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void CaptureOutputTest2()
         {
-            MMC.Explorer explorer = GetModelCheckerBuilder("Examples.CaptureOutput.Capture2").WithArgs(new IDataElement[] {}).BuildAndRun();
+            MMC.Explorer explorer = GetModelCheckerBuilder("Examples.CaptureOutput.Capture2").SetArgs(new IDataElement[] {}).Build();
+            explorer.Run();
 
             explorer.GetUnhandledException().Should().BeNull();
             explorer.PathStore.Paths.Count().Should().Be(1);

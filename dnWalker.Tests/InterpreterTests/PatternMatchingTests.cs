@@ -1,10 +1,10 @@
 ﻿using Xunit;
 using Xunit.Abstractions;
 
-namespace dnWalker.Tests.ExampleTests.DebugMode
+namespace dnWalker.Tests.InterpreterTests
 {
     [Trait("Category", "PatternMatching")]
-    public class PatternMatchingTests : DebugExamplesTestBase
+    public class PatternMatchingTests : ExamplesInterpreterTests
     {
         public PatternMatchingTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {

@@ -24,27 +24,50 @@ namespace dnWalker.Instructions.Extensions
         /// </summary>
         public abstract ExpressionType ExpressionType { get; }
 
-        IDataElement _lhs;
-        IDataElement _rhs;
+        private IDataElement _lhs;
+        private IDataElement _rhs;
 
-        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        protected IDataElement Lhs
+        {
+            get { return _lhs; }
+        }
+        
+        protected IDataElement Rhs
+        {
+            get { return _rhs; }
+        }
+
+        public virtual void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
         {
             _rhs = cur.EvalStack[cur.EvalStack.Length - 1];
             _lhs = cur.EvalStack[cur.EvalStack.Length - 2];
         }
 
 
-        public void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        public virtual void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
         {
-            bool isRhsSymbolic = _rhs.TryGetExpression(cur, out Expression rhsExpr);
-            bool isLhsSymbolic = _lhs.TryGetExpression(cur, out Expression lhsExpr);
-            
-            if (isRhsSymbolic || isLhsSymbolic)
+            if (IsSymbolic(cur, out Expression lhsExpr, out Expression rhsExpr))
             {
                 IDataElement result = cur.EvalStack.Peek();
 
-                result.SetExpression(Expression.MakeBinary(ExpressionType, lhsExpr ?? _lhs.AsExpression(), rhsExpr ?? _rhs.AsExpression()), cur);
+                result.SetExpression(Expression.MakeBinary(ExpressionType, lhsExpr, rhsExpr), cur);
             }
+        }
+
+        protected virtual bool IsSymbolic(ExplicitActiveState cur, out Expression lhsExpr, out Expression rhsExpr)
+        {
+            bool isLhsSymbolic = _lhs.TryGetExpression(cur, out lhsExpr);
+            bool isRhsSymbolic = _rhs.TryGetExpression(cur, out rhsExpr);
+
+            if (isRhsSymbolic || isLhsSymbolic)
+            {
+                lhsExpr ??= _lhs.AsExpression();
+                rhsExpr ??= _rhs.AsExpression();
+
+                return true;
+            }
+
+            return false;
         }
     }
     
@@ -59,13 +82,13 @@ namespace dnWalker.Instructions.Extensions
 
         IDataElement _value;
 
-        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        public virtual void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
         {
             _value = cur.EvalStack[cur.EvalStack.Length - 1];
         }
 
 
-        public void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        public virtual void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
         {
             if (_value.TryGetExpression(cur, out Expression valueExpr))
             {
@@ -82,9 +105,7 @@ namespace dnWalker.Instructions.Extensions
         {
                 factory.RegisterExtension(new CGT_SymbolicExecutionExtension());
                 factory.RegisterExtension(new CLT_SymbolicExecutionExtension());
-                factory.RegisterExtension(new CEQ_SymbolicExecutionExtension());
                 factory.RegisterExtension(new ADD_SymbolicExecutionExtension());
-                factory.RegisterExtension(new ADD_OVF_UN_SymbolicExecutionExtension());
                 factory.RegisterExtension(new DIV_SymbolicExecutionExtension());
                 factory.RegisterExtension(new MUL_SymbolicExecutionExtension());
                 factory.RegisterExtension(new REM_SymbolicExecutionExtension());
@@ -96,40 +117,13 @@ namespace dnWalker.Instructions.Extensions
                 factory.RegisterExtension(new XOR_SymbolicExecutionExtension());
                 factory.RegisterExtension(new SHL_SymbolicExecutionExtension());
                 factory.RegisterExtension(new SHR_SymbolicExecutionExtension());
-                factory.RegisterExtension(new SHR_UN_SymbolicExecutionExtension());
+                factory.RegisterExtension(new CEQ_SymbolicExecutionExtension());
      
             return factory;
         }
     
     }
-
-
-
-    public class CGT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
-    {
-        public override bool CanExecute(Code code)
-        {
-            return code == Code.Cgt || code == Code.Cgt_Un;
-        }
-
-        public override ExpressionType ExpressionType
-        {
-            get { return ExpressionType.GreaterThan; }
-        }
-    }
-
-    public class CLT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
-    {
-        public override bool CanExecute(Code code)
-        {
-            return code == Code.Clt || code == Code.Clt_Un;
-        }
-
-        public override ExpressionType ExpressionType
-        {
-            get { return ExpressionType.LessThan; }
-        }
-    }
+    
 
     public class CEQ_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
@@ -142,13 +136,66 @@ namespace dnWalker.Instructions.Extensions
         {
             get { return ExpressionType.Equal; }
         }
+
+        public override void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            // two posibilities
+            // 1. (else branch) we are comparing two normal data elements => just do the default magic
+            // 2. (if branch)   we are comparing a boolean value with zero (or possibly one if compiler is weird)
+            //                  in other word we are doing negation / nothing over the iput value
+            //                  only way to verify, which mode of execution is desired is if 
+            //                    1) LHS is symbolic and its type is boolean
+            //                    2) RHS is not symbolic
+            //                  (this method is a bit dirty, but works thus far)
+            if (Lhs.TryGetExpression(cur, out Expression lhsExpr) && !Rhs.TryGetExpression(cur, out Expression _) && lhsExpr.Type == typeof(bool))
+            {
+                IDataElement result = cur.EvalStack[cur.EvalStack.Length - 1];
+                if (!Rhs.ToBool())
+                {
+                    result.SetExpression(Expression.MakeUnary(ExpressionType.Not, lhsExpr, typeof(bool)), cur);
+                }
+                else
+                {
+                    // weird compiler
+                    result.SetExpression(lhsExpr, cur);
+                }
+            }
+            else
+            {
+                base.PostExecute(instruction, cur, retValue);
+            }
+        }
     }
 
+    public class CGT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
+    {
+        public override bool CanExecute(Code code)
+        {
+            return code == Code.Cgt;
+        }
+
+        public override ExpressionType ExpressionType
+        {
+            get { return ExpressionType.GreaterThan; }
+        }
+    }
+    public class CLT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
+    {
+        public override bool CanExecute(Code code)
+        {
+            return code == Code.Clt;
+        }
+
+        public override ExpressionType ExpressionType
+        {
+            get { return ExpressionType.LessThan; }
+        }
+    }
     public class ADD_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
         {
-            return code == Code.Add;
+            return code == Code.Add || code == Code.Add_Ovf_Un;
         }
 
         public override ExpressionType ExpressionType
@@ -156,20 +203,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Add; }
         }
     }
-
-    public class ADD_OVF_UN_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
-    {
-        public override bool CanExecute(Code code)
-        {
-            return code == Code.Add_Ovf_Un;
-        }
-
-        public override ExpressionType ExpressionType
-        {
-            get { return ExpressionType.Add; }
-        }
-    }
-
     public class DIV_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -182,7 +215,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Divide; }
         }
     }
-
     public class MUL_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -195,7 +227,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Multiply; }
         }
     }
-
     public class REM_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -208,7 +239,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Modulo; }
         }
     }
-
     public class SUB_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -221,7 +251,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Subtract; }
         }
     }
-
     public class NEG_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -234,7 +263,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Negate; }
         }
     }
-
     public class AND_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -247,8 +275,7 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.And; }
         }
     }
-
-    public class NOT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
+    public class NOT_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
     {
         public override bool CanExecute(Code code)
         {
@@ -260,7 +287,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Not; }
         }
     }
-
     public class OR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -273,7 +299,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.Or; }
         }
     }
-
     public class XOR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -286,7 +311,6 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.ExclusiveOr; }
         }
     }
-
     public class SHL_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
@@ -299,25 +323,11 @@ namespace dnWalker.Instructions.Extensions
             get { return ExpressionType.LeftShift; }
         }
     }
-
     public class SHR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
         public override bool CanExecute(Code code)
         {
-            return code == Code.Shr;
-        }
-
-        public override ExpressionType ExpressionType
-        {
-            get { return ExpressionType.RightShift; }
-        }
-    }
-
-    public class SHR_UN_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
-    {
-        public override bool CanExecute(Code code)
-        {
-            return code == Code.Shr_Un;
+            return code == Code.Shr || code == Code.Shr_Un;
         }
 
         public override ExpressionType ExpressionType

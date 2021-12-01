@@ -22,7 +22,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         [Fact]
         public void Go()
         {
-            MMC.Explorer explorer = GetModelCheckerBuilder("Deadlock.Go").WithArgs(Array.Empty<IDataElement>()).BuildAndRun();
+            MMC.Explorer explorer = GetModelCheckerBuilder("Deadlock.Go").SetArgs(Array.Empty<IDataElement>()).Build();
+            explorer.Run();
+
             explorer.GetUnhandledException().Should().BeNull();
             explorer.Statistics.Deadlocks.Should().BeGreaterThan(0, "deadlock should have been detected.");
         }

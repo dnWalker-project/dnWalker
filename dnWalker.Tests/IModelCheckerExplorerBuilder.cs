@@ -1,5 +1,6 @@
 ﻿using MMC;
 using MMC.Data;
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -15,19 +16,21 @@ namespace dnWalker.Tests
         IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> provideDefinitionProvider);
         IModelCheckerExplorerBuilder OverrideStatistics(Func<IStatistics> provideStatistics);
 
-        public string MethodName
-        {
-            get; set;
-        }
+        //public string MethodName
+        //{
+        //    get; set;
+        //}
 
-        public IDataElement[] Args
-        {
-            get; set;
-        }
+        //public IDataElement[] Args
+        //{
+        //    get; set;
+        //}
 
-        IModelCheckerExplorerBuilder WithMethod(string methodName);
-        IModelCheckerExplorerBuilder WithArgs(IDataElement[] args);
+        IModelCheckerExplorerBuilder SetMethod(string methodName);
+        IModelCheckerExplorerBuilder SetArgs(params IDataElement[] args);
 
-        Explorer BuildAndRun();
+        IModelCheckerExplorerBuilder SetArgs(Func<ExplicitActiveState, IDataElement[]> args);
+
+        Explorer Build();
     }
 }

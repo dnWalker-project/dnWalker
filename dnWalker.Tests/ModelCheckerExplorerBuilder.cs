@@ -1,7 +1,10 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Traversal;
+
 using MMC;
 using MMC.Data;
+using MMC.InstructionExec;
 using MMC.State;
 
 using System;
@@ -18,13 +21,16 @@ namespace dnWalker.Tests
         private Func<DefinitionProvider> _provideDefinitionProvider;
         private Func<IStatistics> _provideStatistics;
 
+        private string _methodName;
+        private Func<ExplicitActiveState, IDataElement[]> _provideArgs;
+
         public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<DefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
         {
             _provideLogger = provideLogger ?? throw new ArgumentNullException(nameof(provideLogger));
             _provideDefinitionProvider = provideDefinitionProvider ?? throw new ArgumentNullException(nameof(provideDefinitionProvider));
             _provideStatistics = provideStatistics ?? throw new ArgumentNullException(nameof(provideStatistics));
 
-            MethodName = methodName;
+            _methodName = methodName;
         }
 
         public IModelCheckerExplorerBuilder OverrideLogger(Func<Logger> provideLogger)
@@ -45,19 +51,9 @@ namespace dnWalker.Tests
             return this;
         }
 
-        public string MethodName
+        public Explorer Build()
         {
-            get; set;
-        }
-
-        public IDataElement[] Args
-        {
-            get; set;
-        }
-
-        public Explorer BuildAndRun()
-        {
-            if (MethodName == null)
+            if (_methodName == null)
             {
                 throw new InvalidOperationException("Cannot initialize the ModelChecker without method name!");
             }
@@ -67,12 +63,18 @@ namespace dnWalker.Tests
             Logger logger = _provideLogger();
 
             StateSpaceSetup stateSpaaceSetup = new StateSpaceSetup(definitionProvider, Config, logger);
-            MethodDef entryPoint = definitionProvider.GetMethodDefinition(MethodName) ?? throw new NullReferenceException($"Method {MethodName} not found");
+            MethodDef entryPoint = definitionProvider.GetMethodDefinition(_methodName) ?? throw new NullReferenceException($"Method {_methodName} not found");
 
-            ExplicitActiveState cur = stateSpaaceSetup.CreateInitialState(entryPoint, Args ?? throw new NullReferenceException("Args is null!"));
+            PathStore pathStore = new PathStore();
+
+            ExplicitActiveState cur = stateSpaaceSetup.CreateInitialState(entryPoint, _provideArgs ?? throw new NullReferenceException("Args is null!"));
+            cur.PathStore = pathStore;
+
+
+
             IStatistics statistics = _provideStatistics();
-            Explorer explorer = new Explorer(cur, statistics, logger, Config);
-            explorer.Run();
+            Explorer explorer = new Explorer(cur, statistics, logger, Config, pathStore);
+            //explorer.Run();
             return explorer;
         }
 
@@ -81,15 +83,21 @@ namespace dnWalker.Tests
             return this;
         }
 
-        public IModelCheckerExplorerBuilder WithMethod(string methodName)
+        public IModelCheckerExplorerBuilder SetMethod(string methodName)
         {
-            MethodName = methodName;
+            _methodName = methodName;
             return this;
         }
 
-        public IModelCheckerExplorerBuilder WithArgs(IDataElement[] args)
+        public IModelCheckerExplorerBuilder SetArgs(IDataElement[] args)
         {
-            Args = args;
+            _provideArgs = state => args;
+            return this;
+        }
+
+        public IModelCheckerExplorerBuilder SetArgs(Func<ExplicitActiveState, IDataElement[]> args)
+        {
+            _provideArgs = args;
             return this;
         }
     }

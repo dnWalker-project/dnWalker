@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Instructions\Extensions\PathConstraintProducerExtensions.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PathConstraintProducerExtensions.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
     <PackageReference Include="dnlib" Version="3.3.5" />
     <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.13" />
@@ -34,6 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Instructions\Extensions\PathConstraintProducerExtensions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PathConstraintProducerExtensions.tt.cs</LastGenOutput>
+    </None>
     <None Update="Instructions\Extensions\SymbolicExecutionExtenions.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SymbolicExecutionExtenions.tt.cs</LastGenOutput>
@@ -45,6 +57,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Instructions\Extensions\PathConstraintProducerExtensions.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PathConstraintProducerExtensions.tt</DependentUpon>
+    </Compile>
     <Compile Update="Instructions\Extensions\SymbolicExecutionExtenions.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

@@ -25,15 +25,16 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
         [Fact]
         public void CallMethodWithFinallyWithException()
         {
-            IModelCheckerExplorerBuilder builder = GetModelCheckerBuilder("Examples.ExceptionHandling.MethodWithFinally");
-            // TODO: do it differently
-            builder.Args = new IDataElement[]
-            {
-                new Int4(4),
-                new Int4(0)
-            };
+            IModelCheckerExplorerBuilder builder = GetModelCheckerBuilder("Examples.ExceptionHandling.MethodWithFinally")
+                .SetArgs(new IDataElement[]
+                {
+                    new Int4(4),
+                    new Int4(0)
+                });
 
-            Explorer explorer = builder.BuildAndRun();
+            Explorer explorer = builder.Build();
+            explorer.Run();
+
             explorer.GetUnhandledException().Should().NotBeNull();
         }
 

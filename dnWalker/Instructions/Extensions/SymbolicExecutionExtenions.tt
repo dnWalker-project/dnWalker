@@ -30,27 +30,50 @@ namespace dnWalker.Instructions.Extensions
         /// </summary>
         public abstract ExpressionType ExpressionType { get; }
 
-        IDataElement _lhs;
-        IDataElement _rhs;
+        private IDataElement _lhs;
+        private IDataElement _rhs;
 
-        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        protected IDataElement Lhs
+        {
+            get { return _lhs; }
+        }
+        
+        protected IDataElement Rhs
+        {
+            get { return _rhs; }
+        }
+
+        public virtual void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
         {
             _rhs = cur.EvalStack[cur.EvalStack.Length - 1];
             _lhs = cur.EvalStack[cur.EvalStack.Length - 2];
         }
 
 
-        public void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        public virtual void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
         {
-            bool isRhsSymbolic = _rhs.TryGetExpression(cur, out Expression rhsExpr);
-            bool isLhsSymbolic = _lhs.TryGetExpression(cur, out Expression lhsExpr);
-            
-            if (isRhsSymbolic || isLhsSymbolic)
+            if (IsSymbolic(cur, out Expression lhsExpr, out Expression rhsExpr))
             {
                 IDataElement result = cur.EvalStack.Peek();
 
-                result.SetExpression(Expression.MakeBinary(ExpressionType, lhsExpr ?? _lhs.AsExpression(), rhsExpr ?? _rhs.AsExpression()), cur);
+                result.SetExpression(Expression.MakeBinary(ExpressionType, lhsExpr, rhsExpr), cur);
             }
+        }
+
+        protected virtual bool IsSymbolic(ExplicitActiveState cur, out Expression lhsExpr, out Expression rhsExpr)
+        {
+            bool isLhsSymbolic = _lhs.TryGetExpression(cur, out lhsExpr);
+            bool isRhsSymbolic = _rhs.TryGetExpression(cur, out rhsExpr);
+
+            if (isRhsSymbolic || isLhsSymbolic)
+            {
+                lhsExpr ??= _lhs.AsExpression();
+                rhsExpr ??= _rhs.AsExpression();
+
+                return true;
+            }
+
+            return false;
         }
     }
     
@@ -65,13 +88,13 @@ namespace dnWalker.Instructions.Extensions
 
         IDataElement _value;
 
-        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        public virtual void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
         {
             _value = cur.EvalStack[cur.EvalStack.Length - 1];
         }
 
 
-        public void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        public virtual void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
         {
             if (_value.TryGetExpression(cur, out Expression valueExpr))
             {
@@ -82,109 +105,27 @@ namespace dnWalker.Instructions.Extensions
         }
     }
 <#
-    // info
-    string[] names = new string[]
+    SymbolicOperationInfo[] infos = new SymbolicOperationInfo[]
     {
-        // compare
-        "CGT",
-        "CLT",
-        "CEQ",
+        new SymbolicOperationInfo("CGT", "GreaterThan", true, "Cgt"),
+        new SymbolicOperationInfo("CLT", "LessThan", true, "Clt"),
+        // new SymbolicOperationInfo("CEQ", "Equal", true, "Ceq"), // CEQ is a special case - there are two posibilities how to handle it => done explicitly
 
-        // numeric
-        "ADD",
-        "ADD_OVF_UN",
-        "DIV",
-        "MUL",
-        "REM",
-        "SUB",
-        "NEG",
+        new SymbolicOperationInfo("ADD", "Add", true, "Add", "Add_Ovf_Un"),
+        new SymbolicOperationInfo("DIV", "Divide", true, "Div"),
+        new SymbolicOperationInfo("MUL", "Multiply", true, "Mul"),
+        new SymbolicOperationInfo("REM", "Modulo", true, "Rem"),
+        new SymbolicOperationInfo("SUB", "Subtract", true, "Sub"),
+        new SymbolicOperationInfo("NEG", "Negate", false, "Neg"),
 
-        // logical
-        "AND",
-        "NOT",
-        "OR",
-        "XOR",
-        "SHL",
-        "SHR",
-        "SHR_UN"
-    };
+        new SymbolicOperationInfo("AND", "And", true, "And"),
+        new SymbolicOperationInfo("NOT", "Not", false, "Not"),
+        new SymbolicOperationInfo("OR", "Or", true, "Or"),
+        new SymbolicOperationInfo("XOR", "ExclusiveOr", true, "Xor"),
+        new SymbolicOperationInfo("SHL", "LeftShift", true, "Shl"),
+        new SymbolicOperationInfo("SHR", "RightShift", true, "Shr", "Shr_Un"),
 
-    string[][] acceptedCodes = new string[][]
-    {
-        // compare
-        new string[] { "Cgt", "Cgt_Un" },
-        new string[] { "Clt", "Clt_Un" },
-        new string[] { "Ceq" },
-        
-        // numeric
-        new string[] { "Add" },
-        new string[] { "Add_Ovf_Un" },
-        new string[] { "Div" },
-        new string[] { "Mul" },
-        new string[] { "Rem" },
-        new string[] { "Sub" },
-        new string[] { "Neg" },
-        
-        // logical
-        new string[] { "And" },
-        new string[] { "Not" },
-        new string[] { "Or" },
-        new string[] { "Xor" },
-        new string[] { "Shl" },
-        new string[] { "Shr" },
-        new string[] { "Shr_Un" },
-    };
-
-    string[] expressionTypes = new string[]
-    {
-        // compare
-        "GreaterThan",
-        "LessThan",
-        "Equal",
-        
-        // numeric
-        "Add",
-        "Add",
-        "Divide",
-        "Multiply",
-        "Modulo",
-        "Subtract",
-        "Negate",
-
-        // logical
-        "And",
-        "Not",
-        "Or",
-        "ExclusiveOr",
-        "LeftShift",
-        "RightShift",
-        "RightShift"
-    };
-
-    bool[] isBinary = new bool[]
-    {
-        // compare
-        true,
-        true,
-        true,
-        
-        // numeric
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        false,
-        
-        // logical
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true
+        // TODO - extend UnarySymbolicExecutionExtension to accomodate more options, like specifying resulting type etc new SymbolicOperationInfo("CONV", "Convert", false, "Convert", "Conv_I", "Conv_I1", "Conv_I2")
     };
  #>
 
@@ -193,7 +134,7 @@ namespace dnWalker.Instructions.Extensions
         public static ExtendableInstructionFactory AddSymbolicExecution(this ExtendableInstructionFactory factory)
         {
 <#
-            foreach (string name in names)
+            foreach (string name in infos.Select(i => i.Name).Append("CEQ"))
             {
  #>
                 factory.RegisterExtension(new <#= name #>_SymbolicExecutionExtension());
@@ -204,32 +145,81 @@ namespace dnWalker.Instructions.Extensions
         }
     
     }
+    
 
+    public class CEQ_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
+    {
+        public override bool CanExecute(Code code)
+        {
+            return code == Code.Ceq;
+        }
+
+        public override ExpressionType ExpressionType
+        {
+            get { return ExpressionType.Equal; }
+        }
+
+        public override void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            // two posibilities
+            // 1. (else branch) we are comparing two normal data elements => just do the default magic
+            // 2. (if branch)   we are comparing a boolean value with zero (or possibly one if compiler is weird)
+            //                  in other word we are doing negation / nothing over the iput value
+            //                  only way to verify, which mode of execution is desired is if 
+            //                    1) LHS is symbolic and its type is boolean
+            //                    2) RHS is not symbolic
+            //                  (this method is a bit dirty, but works thus far)
+            if (Lhs.TryGetExpression(cur, out Expression lhsExpr) && !Rhs.TryGetExpression(cur, out Expression _) && lhsExpr.Type == typeof(bool))
+            {
+                IDataElement result = cur.EvalStack[cur.EvalStack.Length - 1];
+                if (!Rhs.ToBool())
+                {
+                    result.SetExpression(Expression.MakeUnary(ExpressionType.Not, lhsExpr, typeof(bool)), cur);
+                }
+                else
+                {
+                    // weird compiler
+                    result.SetExpression(lhsExpr, cur);
+                }
+            }
+            else
+            {
+                base.PostExecute(instruction, cur, retValue);
+            }
+        }
+    }
 
 <#
 
-    for (int i = 0; i < names.Length; ++i)
+    foreach (SymbolicOperationInfo i in infos)
     {
-        string name = names[i];
-        string[] codes = acceptedCodes[i];
-        string expressionType = expressionTypes[i];
+        if (i.IsBinary)
+        {
  #>
-
-    public class <#= name #>_SymbolicExecutionExtension : <#= isBinary[i] ? "SymbolicBinaryExecutionExtension" : "SymbolicUnaryExecutionExtension" #>
+    public class <#= i.Name #>_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
+<#
+        }
+        else
+        {
+ #>
+    public class <#= i.Name #>_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
+<#
+        }
+ #>
     {
         public override bool CanExecute(Code code)
         {
 <#
-            if (codes.Length == 1)
+            if (i.AcceptedCodes.Length == 1)
             {
  #>
-            return code == Code.<#= codes[0] #>;
+            return code == Code.<#= i.AcceptedCodes[0] #>;
 <#
             }
-            else if (codes.Length == 2)
+            else if (i.AcceptedCodes.Length == 2)
             {
  #>
-            return code == Code.<#= codes[0] #> || code == Code.<#= codes[1] #>;
+            return code == Code.<#= i.AcceptedCodes[0] #> || code == Code.<#= i.AcceptedCodes[1] #>;
 <#
             }
             else
@@ -238,7 +228,7 @@ namespace dnWalker.Instructions.Extensions
             return switch(code)
             {
 <#
-                foreach(string c in codes)
+                foreach(string c in i.AcceptedCodes)
                 {
  #>
                 Code.<#= c #> => true;
@@ -254,10 +244,29 @@ namespace dnWalker.Instructions.Extensions
 
         public override ExpressionType ExpressionType
         {
-            get { return ExpressionType.<#= expressionType #>; }
+            get { return ExpressionType.<#= i.ExpressionType #>; }
         }
     }
 <#
     }
  #>
 }
+<#+
+
+readonly struct SymbolicOperationInfo
+{
+    public SymbolicOperationInfo(string name, string expressionType, bool isBinary, params string[] acceptedCodes)
+    {
+        Name = name;
+        ExpressionType = expressionType;
+        IsBinary = isBinary;
+        AcceptedCodes = acceptedCodes;
+    }
+
+    public string Name { get; }
+    public string[] AcceptedCodes { get; }
+    public string ExpressionType { get; }
+    public bool IsBinary { get; }
+}
+
+ #>

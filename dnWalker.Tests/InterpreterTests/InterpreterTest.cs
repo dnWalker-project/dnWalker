@@ -37,8 +37,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
     {
         private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
 
-        protected static Lazy<DefinitionProvider> Lazy =
-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
+        private static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
 
         public InterpreterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {
@@ -46,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
             OverrideModelCheckerExplorerBuilderInitialization(c => c.SetStateStorageSize(5));
         }
 
-        private new void Test(string methodName, params object[] args)
+        private void Test(string methodName, params object[] args)
         {
             methodName = "dnSpy.Debugger.DotNet.Interpreter.Tests.TestClass." + methodName;
             TestAndCompare(methodName, args);
@@ -4624,122 +4623,5 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
         [Fact]
         public void Test_XOR__IntPtr_Int32() { Test("Test_XOR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); }
 
-
-
-        /*
-
-        void Verify(DmdType type, ILValue v1, object v2)
-{
-    var o1 = testRuntime.Convert(v1, type);
-    VerifyValues(o1, v2);
-}
-
-void VerifyValues(object o1, object o2)
-{
-    bool b;
-    if (o1 is float f1 && o2 is float f2)
-        b = Equals(BitConverter.GetBytes(f1), BitConverter.GetBytes(f2));
-    else if (o1 is double d1 && o2 is double d2)
-        b = Equals(BitConverter.GetBytes(d1), BitConverter.GetBytes(d2));
-    else
-        b = Equals(o1, o2);
-    if (!b)
-        System.Diagnostics.Debugger.Break();
-}
-
-bool Verify(bool b)
-{
-    if (!b)
-        System.Diagnostics.Debugger.Break();
-    return b;
-}
-
-static bool Equals(byte[] a, byte[] b)
-{
-    if (a == b)
-        return true;
-    if (a is null || b is null)
-        return false;
-    if (a.Length != b.Length)
-        return false;
-    for (int i = 0; i < a.Length; i++)
-    {
-        if (a[i] != b[i])
-            return false;
-    }
-    return true;
-}
-
-void TestMethodEX(string methodName, params object[] args)
-{
-#if EXCEPTIONS
-            TestMethod(methodName, args);
-#endif
-}
-void // TestMethodEX2(string methodName, params object[] args)
-{
-#if EXCEPTIONS
-            TestMethod2(methodName, args);
-#endif
-}
-
-void TestMethod(string methodName, params object[] args)
-{
-    var m1 = testType1.GetMethod(methodName) ?? throw new InvalidOperationException();
-    var m2 = testType2.GetMethod(methodName) ?? throw new InvalidOperationException();
-    if (args.Length != m1.GetMethodSignature().GetParameterTypes().Count)
-        throw new InvalidOperationException();
-    testRuntime.SetMethodExecState(CreateArguments(args), m1.GetMethodBody());
-    var state = ilvm.CreateExecuteState(m1);
-    ILValue res1;
-    object res2;
-    Exception ex1 = null, ex2 = null;
-    try
-    {
-        res1 = ilvm.Execute(testRuntime.DebuggerRuntime, state);
-    }
-    catch (Exception ex)
-    {
-        ex1 = ex;
-        res1 = null;
-    }
-    try
-    {
-        res2 = m2.Invoke(null, args);
-    }
-    catch (TargetInvocationException tie)
-    {
-        ex2 = tie.InnerException;
-        res2 = null;
-    }
-    catch (Exception ex)
-    {
-        ex2 = ex;
-        res2 = null;
-    }
-    if (!(ex1 is null) || !(ex2 is null))
-        Verify(ex1?.GetType().FullName == ex2?.GetType().FullName);
-    else
-        Verify(m1.ReturnType, res1, res2);
-}
-
-void TestMethod2(string methodName, params object[] args)
-{
-    if (args.Length != 2)
-        throw new InvalidOperationException();
-    var args2 = new object[2] { args[1], args[0] };
-    TestMethod(methodName, args);
-    TestMethod(methodName, args2);
-}
-
-void TestMethod_BR(string methodName1, string methodName2, params object[] args)
-{
-    if (args.Length != 2)
-        throw new InvalidOperationException();
-    var args2 = new object[2] { args[1], args[0] };
-    TestMethod(methodName1, args);
-    TestMethod(methodName2, args2);
-}
-*/
     }
 }

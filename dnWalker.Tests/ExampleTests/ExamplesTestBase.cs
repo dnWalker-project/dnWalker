@@ -10,7 +10,8 @@ using Xunit.Abstractions;
 
 namespace dnWalker.Tests.ExampleTests
 {
-    public abstract class ExamplesTestBase : TestBase
+    //public abstract class ExamplesTestBase : TestBase
+    public abstract class ExamplesTestBase : InterpreterTests.InterpreterTestBase
     {
         protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\framework\Examples.Framework.exe";
 

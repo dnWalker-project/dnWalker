@@ -245,7 +245,7 @@ namespace MMC
 
         public PathStore PathStore => _pathStore;
 
-        private IStatistics Statistics { get; }
+        public IStatistics Statistics { get; }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
@@ -522,7 +522,12 @@ namespace MMC
             }
         }
 
+        // settle on one property...
         internal ExplicitActiveState cur { get; }
-        public ExplicitActiveState ActiveState { get; }
+        public ExplicitActiveState ActiveState
+        {
+            get { return cur; }
+        }
+
     }
 }

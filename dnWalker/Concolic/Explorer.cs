@@ -3,6 +3,7 @@ using dnlib.DotNet.Emit;
 
 using dnWalker.Concolic.Parameters;
 using dnWalker.Concolic.Traversal;
+using dnWalker.Instructions.Extensions;
 using dnWalker.NativePeers;
 
 using MMC;
@@ -126,7 +127,11 @@ namespace dnWalker.Concolic
 
             _pathStore = new PathStore(entryPoint);
 
-            var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory();
+            f.AddSymbolicExecution();
+            f.AddPathConstraintProducers();
+
+            var instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
             if (data == null)
             {

@@ -23,20 +23,19 @@ namespace dnWalker.Tests.InterpreterTests
         }
 
 
-        [Obsolete]
         private object Test(string methodName, out Exception unhandledException, params object[] args)
         {
             IModelCheckerExplorerBuilder builder = GetModelCheckerBuilder();
-            builder.Args = args.Select(a => new Arg<object>(a).AsDataElement(DefinitionProvider)).ToArray();
-            builder.MethodName = methodName;
+            builder.SetArgs(args.Select(a => new Arg<object>(a).AsDataElement(DefinitionProvider)).ToArray());
+            builder.SetMethod(methodName);
 
-            Explorer explorer = builder.BuildAndRun();
+            Explorer explorer = builder.Build();
+            explorer.Run();
 
             unhandledException = explorer.GetUnhandledException();
             return explorer.ActiveState.CurrentThread.RetValue;
         }
 
-        [Obsolete]
         protected virtual void TestAndCompare(string methodName, params object[] args)
         {
             object res2;
