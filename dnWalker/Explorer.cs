@@ -268,7 +268,7 @@ namespace MMC
             return -42;// m_dfs.Count;
 		}
 
-        public System.Exception GetUnhandledException()
+        public ExceptionInfo GetUnhandledException()
         {
             return cur.CurrentThread.UnhandledException;
         }

@@ -1077,7 +1077,17 @@ namespace dnWalker.Instructions
             if (!cls.Initialized)
             {
                 cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
-                MethodDefinition cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
+
+                MethodDefinition cctorDef;
+                try
+                {
+                    cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
+                }
+                catch (NotSupportedException e)
+                {
+                    cctorDef = null;
+                }
+
                 if (cctorDef == null)
                 {
                     // Trivial case, no initializtion needed.

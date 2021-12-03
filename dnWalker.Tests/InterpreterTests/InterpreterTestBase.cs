@@ -4,6 +4,7 @@ using FluentAssertions;
 
 using MMC;
 using MMC.Data;
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,33 @@ namespace dnWalker.Tests.InterpreterTests
         {
         }
 
+        private static IDataElement AsDataElement(object o)
+        {
+            switch (o)
+            {
+                case bool b: return new Int4(b ? 1 : 0);
+                case char c: return new Int4(c);
+                case byte b: return new Int4(b);
+                case sbyte sb: return new Int4(sb);
+                case short s: return new Int4(s);
+                case ushort us: return new Int4(us);
+                case int i: return new Int4(i);
+                case uint ui: return new UnsignedInt4(ui);
+                case long l: return new Int8(l);
+                case ulong ul: return new UnsignedInt8(ul);
+                case float f: return new Float4(f);
+                case double d: return new Float8(d);
+                case string s: return new ConstantString(s);
+                case null: return ObjectReference.Null;
+                default:
+                    throw new ArgumentException($"Invalid argument type: {o.GetType().FullName}");
+            }
+        }
 
-        private object Test(string methodName, out Exception unhandledException, params object[] args)
+        private object Test(string methodName, out ExceptionInfo unhandledException, params object[] args)
         {
             IModelCheckerExplorerBuilder builder = GetModelCheckerBuilder();
-            builder.SetArgs(args.Select(a => new Arg<object>(a).AsDataElement(DefinitionProvider)).ToArray());
+            builder.SetArgs(args.Select(a => AsDataElement(a)).ToArray());
             builder.SetMethod(methodName);
 
             Explorer explorer = builder.Build();
@@ -36,13 +59,23 @@ namespace dnWalker.Tests.InterpreterTests
             return explorer.ActiveState.CurrentThread.RetValue;
         }
 
+        protected virtual ExceptionInfo TestAndCatch(string methodName, params object[] args)
+        {
+            _ = Test(methodName, out ExceptionInfo modelCheckerException, args);
+
+            return modelCheckerException;
+        }
+
         protected virtual void TestAndCompare(string methodName, params object[] args)
         {
+            // run in model checker
+            object modelCheckerResult = Test(methodName, out var modelCheckerException, args);
+
+            MethodInfo methodInfo = Utils.GetMethodInfo(methodName);
+
+            // run in CLR
             object res2;
             Exception ex2 = null;
-            var modelCheckerResult = Test(methodName, out var modelCheckerException, args);
-
-            var methodInfo = Utils.GetMethodInfo(methodName);
             try
             {
                 res2 = methodInfo.Invoke(null, args);
@@ -58,13 +91,16 @@ namespace dnWalker.Tests.InterpreterTests
                 res2 = null;
             }
 
+            // compare results
+            // unhandled exception
             if (ex2 != null)
             {
-                modelCheckerException?.GetType().Should().Be(ex2?.GetType(), modelCheckerException?.ToString());
-                modelCheckerException?.Message.Should().BeEquivalentTo(ex2?.Message);
+                modelCheckerException?.Type.FullName.Should().Be(ex2?.GetType().FullName, modelCheckerException?.ToString());
+                //modelCheckerException?.Message.Should().BeEquivalentTo(ex2?.Message); // have only the field Exception._message but the property could change it
                 return;
             }
 
+            // return type
             if (methodInfo.ReturnType != typeof(void))
             {
                 if (modelCheckerResult != null && modelCheckerResult.Equals(ObjectReference.Null))

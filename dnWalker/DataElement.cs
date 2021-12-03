@@ -2542,6 +2542,11 @@ namespace MMC.Data
 
         public int CompareTo(object obj)
         {
+            if (obj is ObjectReference or && or.Location == ObjectReference.Null.Location)
+            {
+                return 1;
+            }
+
             return Value.CompareTo(((ConstantString)obj).Value);
         }
 
@@ -2663,6 +2668,11 @@ namespace MMC.Data
 
         public int CompareTo(object obj)
         {
+            if (obj is ConstantString)
+            {
+                return -1;
+            }
+
             return (int)(Location - ((ObjectReference)obj).Location);
         }
 
