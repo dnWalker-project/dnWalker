@@ -205,7 +205,16 @@ namespace dnWalker.Instructions.Extensions
 
         public override bool CanExecute(Code code)
         {
-            return code == Code.Bge || code == Code.Bge_S;
+            switch(code)
+            {
+                case Code.Bge:
+                case Code.Bge_S:
+                case Code.Bge_Un:
+                case Code.Bge_Un_S:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
     public class BGT_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension
@@ -218,7 +227,16 @@ namespace dnWalker.Instructions.Extensions
 
         public override bool CanExecute(Code code)
         {
-            return code == Code.Bgt || code == Code.Bgt_S;
+            switch(code)
+            {
+                case Code.Bgt:
+                case Code.Bgt_S:
+                case Code.Bgt_Un:
+                case Code.Bgt_Un_S:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
     public class BLE_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension
@@ -231,7 +249,16 @@ namespace dnWalker.Instructions.Extensions
 
         public override bool CanExecute(Code code)
         {
-            return code == Code.Ble || code == Code.Ble_S;
+            switch(code)
+            {
+                case Code.Ble:
+                case Code.Ble_S:
+                case Code.Ble_Un:
+                case Code.Ble_Un_S:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
     public class BLT_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension
@@ -244,7 +271,16 @@ namespace dnWalker.Instructions.Extensions
 
         public override bool CanExecute(Code code)
         {
-            return code == Code.Blt || code == Code.Blt_S;
+            switch(code)
+            {
+                case Code.Blt:
+                case Code.Blt_S:
+                case Code.Blt_Un:
+                case Code.Blt_Un_S:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
     public class BNE_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension

@@ -148,15 +148,15 @@ namespace dnWalker.Instructions.Extensions
 <#
     BranchInstructionInfo[] infos = new BranchInstructionInfo[]
     {
-        new BranchInstructionInfo("BRFALSE", "Not", null, BranchConditionType.Unary, "Brfalse"),
-        new BranchInstructionInfo("BRTRUE", null, "Not", BranchConditionType.Unary, "Brtrue"),
+        new BranchInstructionInfo("BRFALSE", "Not", null, BranchConditionType.Unary, "Brfalse", "Brfalse_S"),
+        new BranchInstructionInfo("BRTRUE", null, "Not", BranchConditionType.Unary, "Brtrue", "Brtrue_S"),
         
-        new BranchInstructionInfo("BEQ", "Equal", "NotEqual", BranchConditionType.Binary, "Beq"),
-        new BranchInstructionInfo("BGE", "GreaterThanOrEqual", "LessThan", BranchConditionType.Binary, "Bge"),
-        new BranchInstructionInfo("BGT", "GreaterThan", "LessThanOrEqual", BranchConditionType.Binary, "Bgt"),
-        new BranchInstructionInfo("BLE", "LessThanOrEqual", "GreaterThan", BranchConditionType.Binary, "Ble"),
-        new BranchInstructionInfo("BLT", "LessThan", "GreaterThanOrEqual", BranchConditionType.Binary, "Blt"),
-        new BranchInstructionInfo("BNE", "NotEqual", "Equal", BranchConditionType.Binary, "Bne_Un"),
+        new BranchInstructionInfo("BEQ", "Equal", "NotEqual", BranchConditionType.Binary, "Beq", "Beq_S"),
+        new BranchInstructionInfo("BGE", "GreaterThanOrEqual", "LessThan", BranchConditionType.Binary, "Bge", "Bge_S", "Bge_Un", "Bge_Un_S"),
+        new BranchInstructionInfo("BGT", "GreaterThan", "LessThanOrEqual", BranchConditionType.Binary, "Bgt", "Bgt_S", "Bgt_Un", "Bgt_Un_S"),
+        new BranchInstructionInfo("BLE", "LessThanOrEqual", "GreaterThan", BranchConditionType.Binary, "Ble", "Ble_S", "Ble_Un", "Ble_Un_S"),
+        new BranchInstructionInfo("BLT", "LessThan", "GreaterThanOrEqual", BranchConditionType.Binary, "Blt", "Blt_S", "Blt_Un", "Blt_Un_S"),
+        new BranchInstructionInfo("BNE", "NotEqual", "Equal", BranchConditionType.Binary, "Bne_Un", "Bne_Un_S"),
 
     };
  #>
@@ -230,7 +230,39 @@ namespace dnWalker.Instructions.Extensions
 
         public override bool CanExecute(Code code)
         {
-            return code == Code.<#= i.AcceptedCode #> || code == Code.<#= i.AcceptedCode #>_S;
+<#
+            if (i.AcceptedCodes.Length == 1)
+            {
+ #>
+            return code == Code.<#= i.AcceptedCodes[0] #>;
+<#
+            }
+            else if (i.AcceptedCodes.Length == 2)
+            {
+ #>
+            return code == Code.<#= i.AcceptedCodes[0] #> || code == Code.<#= i.AcceptedCodes[1] #>;
+<#
+            }
+            else
+            {
+ #>
+            switch(code)
+            {
+<#
+                foreach(string c in i.AcceptedCodes)
+                {
+ #>
+                case Code.<#= c #>:
+<#
+                }
+ #>
+                    return true;
+                default:
+                    return false;
+            }
+<#
+            }
+ #>
         }
     }
 <#
@@ -249,17 +281,17 @@ enum BranchConditionType
 
 readonly struct BranchInstructionInfo
 {
-    public BranchInstructionInfo(string name, string willBranchExpressionType, string willNotBranchExpressionType, BranchConditionType branchConditionType, string acceptedCode)
+    public BranchInstructionInfo(string name, string willBranchExpressionType, string willNotBranchExpressionType, BranchConditionType branchConditionType, params string[] acceptedCodes)
     {
         Name = name;
         WillBranchExpressionType = willBranchExpressionType;
         WillNotBranchExpressionType = willNotBranchExpressionType;
         BranchConditionType = branchConditionType;
-        AcceptedCode = acceptedCode; // just one code is eneough, because we can easily produce the other one by appending _S
+        AcceptedCodes = acceptedCodes;
     }
 
     public string Name { get; }
-    public string AcceptedCode { get; }
+    public string[] AcceptedCodes { get; }
 
     public string WillBranchExpressionType { get; }
     public string WillNotBranchExpressionType { get; }

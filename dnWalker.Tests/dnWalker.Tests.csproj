@@ -28,7 +28,6 @@
 
     <ItemGroup>
       <Folder Include="Concolic\DataExport\" />
-      <Folder Include="InterpreterExtensionTests\BranchProducerExtension\" />
     </ItemGroup>
 
 </Project>

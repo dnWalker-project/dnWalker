@@ -225,17 +225,19 @@ namespace dnWalker.Instructions.Extensions
             else
             {
  #>
-            return switch(code)
+            switch(code)
             {
 <#
                 foreach(string c in i.AcceptedCodes)
                 {
  #>
-                Code.<#= c #> => true;
+                case Code.<#= c #>:
 <#
                 }
  #>
-                _ => false;
+                    return true;
+                default:
+                    return false;
             }
 <#
             }

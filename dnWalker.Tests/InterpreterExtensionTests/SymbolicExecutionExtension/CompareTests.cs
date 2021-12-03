@@ -27,9 +27,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
 
 
 
-        [Theory]
-        [InlineData(5, 10)]
-        public void Test_CGT(int x, int y)
+        [Theory, CombinatorialData]
+        public void Test_CGT([CombinatorialValues(5, 10)] int x, [CombinatorialValues(5, 10)] int y, [CombinatorialValues(true, false)] bool isXSymb, [CombinatorialValues(true, false)] bool isYSymb)
         {
             Int4 xDE = new Int4(x);
             Int4 yDE = new Int4(y);
@@ -41,21 +40,23 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
-            yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
+            if (isXSymb) xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
+            if (isYSymb) yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
 
             explorer.Run();
 
             Int4 result = (Int4)state.CurrentThread.RetValue;
 
             result.ToBool().Should().Be(x > y);
-            result.TryGetExpression(state, out Expression expr).Should().BeTrue();
-            expr.ToString().Should().BeEquivalentTo("(x > y)");
+            result.TryGetExpression(state, out Expression expr).Should().Be(isXSymb || isYSymb);
+
+            if (isXSymb && isYSymb) expr.ToString().Should().BeEquivalentTo($"(x > y)");
+            if (isXSymb && !isYSymb) expr.ToString().Should().BeEquivalentTo($"(x > {y})");
+            if (!isXSymb && isYSymb) expr.ToString().Should().BeEquivalentTo($"({x} > y)");
         }
 
-        [Theory]
-        [InlineData(5, 10)]
-        public void Test_CLT(int x, int y)
+        [Theory, CombinatorialData]
+        public void Test_CLT([CombinatorialValues(5, 10)] int x, [CombinatorialValues(5, 10)] int y, [CombinatorialValues(true, false)] bool isXSymb, [CombinatorialValues(true, false)] bool isYSymb)
         {
             Int4 xDE = new Int4(x);
             Int4 yDE = new Int4(y);
@@ -67,21 +68,23 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
-            yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
+            if (isXSymb) xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
+            if (isYSymb) yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
 
             explorer.Run();
 
             Int4 result = (Int4)state.CurrentThread.RetValue;
 
             result.ToBool().Should().Be(x < y);
-            result.TryGetExpression(state, out Expression expr).Should().BeTrue();
-            expr.ToString().Should().BeEquivalentTo("(x < y)");
+            result.TryGetExpression(state, out Expression expr).Should().Be(isXSymb || isYSymb);
+
+            if (isXSymb && isYSymb) expr.ToString().Should().BeEquivalentTo($"(x < y)");
+            if (isXSymb && !isYSymb) expr.ToString().Should().BeEquivalentTo($"(x < {y})");
+            if (!isXSymb && isYSymb) expr.ToString().Should().BeEquivalentTo($"({x} < y)");
         }
 
-        [Theory]
-        [InlineData(5, 10)]
-        public void Test_CEQ(int x, int y)
+        [Theory, CombinatorialData]
+        public void Test_CEQ([CombinatorialValues(5, 10)] int x, [CombinatorialValues(5, 10)] int y, [CombinatorialValues(true, false)] bool isXSymb, [CombinatorialValues(true, false)] bool isYSymb)
         {
             Int4 xDE = new Int4(x);
             Int4 yDE = new Int4(y);
@@ -93,16 +96,19 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
-            yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
+            if (isXSymb) xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
+            if (isYSymb) yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
 
             explorer.Run();
 
             Int4 result = (Int4)state.CurrentThread.RetValue;
 
             result.ToBool().Should().Be(x == y);
-            result.TryGetExpression(state, out Expression expr).Should().BeTrue();
-            expr.ToString().Should().BeEquivalentTo("(x == y)");
+            result.TryGetExpression(state, out Expression expr).Should().Be(isXSymb || isYSymb);
+
+            if (isXSymb && isYSymb) expr.ToString().Should().BeEquivalentTo($"(x == y)");
+            if (isXSymb && !isYSymb) expr.ToString().Should().BeEquivalentTo($"(x == {y})");
+            if (!isXSymb && isYSymb) expr.ToString().Should().BeEquivalentTo($"({x} == y)");
         }
     }
 }
