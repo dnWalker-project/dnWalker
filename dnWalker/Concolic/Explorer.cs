@@ -1,409 +1,231 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-using dnWalker.DataElements;
+using dnWalker.Concolic.Parameters;
+using dnWalker.Concolic.Traversal;
+using dnWalker.Instructions.Extensions;
 using dnWalker.NativePeers;
-using dnWalker.Symbolic;
-using dnWalker.Traversal;
-using Echo.ControlFlow.Serialization.Dot;
-using Echo.Platforms.Dnlib;
+
 using MMC;
 using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace dnWalker.Concolic
 {
-    public delegate void PathExploredHandler(dnWalker.Traversal.Path path);
-
-    public class Explorer
+    public class Explorer : IDisposable, IExplorer
     {
         private readonly Config _config;
         private readonly Logger _logger;
         private readonly ISolver _solver;
         private readonly DefinitionProvider _definitionProvider;
 
-        public static Explorer ForAssembly(string assemblyFilename, ISolver solver, Action<Config> setup = null, TextWriter loggerOutput = null)
-        {
-            var assemblyLoader = new AssemblyLoader();
+        private int _currentIteration;
+        private PathStore _pathStore;
+        private ParameterStore _parameterStore;
 
-            var data = File.ReadAllBytes(assemblyFilename);
+        private readonly IExplorationExtension _explorationExporter;
 
-            _ = assemblyLoader.GetModuleDef(data);
-
-            System.Reflection.Assembly.LoadFrom(assemblyFilename);
-            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
-
-
-            var config = new Config();
-            var logger = new Logger(Logger.Default); // | LogPriority.Trace);
-
-            logger.AddOutput(new TextLoggerOutput(loggerOutput ?? Console.Out));
-
-            return new Explorer(definitionProvider, config, logger, solver);
-        }
+        private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
 
         public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
+            _definitionProvider = definitionProvider;
             _config = config;
             _logger = logger;
             _solver = solver;
-            _definitionProvider = definitionProvider;            
         }
 
-        public event PathExploredHandler OnPathExplored;
 
-        private int _iterationCount;
-        private List<ExplorationIterationData> _iterationData;
 
+        public void AddExtension(IExplorationExtension extension)
+        {
+            extension.Register(this);
+            _extensions.Add(extension);
+        }
+
+        public void RemoveExtension(IExplorationExtension extension)
+        {
+            if (_extensions.Remove(extension))
+            {
+                extension.Unregister(this);
+            }
+        }
+
+        public PathStore PathStore
+        {
+            get { return _pathStore; }
+        }
+        public ParameterStore ParameterStore
+        {
+            get { return _parameterStore; }
+        }
         public int IterationCount
         {
-            get
+            get { return _currentIteration; }
+        }
+
+        // setting event to an empty delegate will optimize invocation - no need to check for null...
+        public event Action<dnWalker.Traversal.Path> PathExplored = delegate { };
+        public event EventHandler<ExplorationStartedEventArgs> ExplorationStarted = delegate { };
+        public event EventHandler<ExplorationFinishedEventArgs> ExplorationFinished = delegate { };
+        public event EventHandler<ExplorationFailedEventArgs> ExplorationFailed = delegate { };
+        public event EventHandler<IterationStartedEventArgs> IterationStarted = delegate { };
+        public event EventHandler<IterationFinishedEventArgs> IterationFinished = delegate { };
+
+        protected virtual void OnPathExplored(dnWalker.Traversal.Path path)
+        {
+            PathExplored(path);
+        }
+
+        protected virtual void OnExplorationStarted(ExplorationStartedEventArgs e)
+        {
+            ExplorationStarted(this, e);
+        }
+        protected virtual void OnExplorationFailed(ExplorationFailedEventArgs e)
+        {
+            ExplorationFailed(this, e);
+        }
+
+        protected virtual void OnIterationStarted(IterationStartedEventArgs e)
+        {
+            IterationStarted(this, e);
+        }
+
+        protected virtual void OnIterationFinished(IterationFinishedEventArgs e)
+        {
+            IterationFinished(this, e);
+        }
+
+        public void Run(string methodName, IDictionary<string, object> data = null)
+        {
+            _currentIteration = 0;
+            var maxIterations = _config.MaxIterations;
+
+            void NextIterationOrThrow()
             {
-                return _iterationCount;
+                if (maxIterations > 0 && _currentIteration >= maxIterations)
+                {
+                    throw new MaxIterationsExceededException(_currentIteration);
+                }
+                ++_currentIteration;
             }
-        }
 
-        public Traversal.PathStore PathStore { get; private set; }
-
-        private static void WriteFlowGraph(dnlib.DotNet.MethodDef method, string filename = @"c:\temp\dot.dot")
-        {
-            using (TextWriter writer = File.CreateText(filename))
-            {
-                var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
-                dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
-                dotWriter.NodeAdorner = new ControlFlowNodeAdorner<Instruction>();
-                dotWriter.EdgeAdorner = new ControlFlowEdgeAdorner<Instruction>();
-                dotWriter.Write(method.ConstructStaticFlowGraph());
-            }
-        }
-
-        public IReadOnlyList<ExplorationIterationData> IterationData
-        {
-            get { return _iterationData; }
-        }
-
-        public void Run(string methodName)
-        {
+            // get the tested method
             var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
 
-            // generate IArg[] array for default values
-            var arguments = new IArg[entryPoint.Parameters.Count];
-
-            Run(methodName, arguments);
-        }
-
-        public void Run(string methodName, params IArg[] arguments)
-        {
-            var entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
-
-            WriteFlowGraph(entryPoint);
-
+            // setup iteration global objects
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
-            var pathStore = new Traversal.PathStore(entryPoint);
-            PathStore = pathStore;
+            _pathStore = new PathStore(entryPoint);
 
-            //IDataElement[] args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory();
+            f.AddSymbolicExecution();
+            f.AddPathConstraintProducers();
 
-            // setup iteration management
-            var maxIterations = _config.MaxIterations;
-            _iterationCount = 0;
+            var instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
-            IDictionary<string, object> next = null;
+            if (data == null)
+            {
+                data = new Dictionary<string, object>();
+            }
 
-            _iterationData = new List<ExplorationIterationData>();
+            OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint, _solver?.GetType()));
 
+            // run iteration
             while (true)
             {
                 SystemConsole.OutTextWriterRef = ObjectReference.Null;
 
                 try
                 {
-                    // check iteration
-                    if (maxIterations > 0 && _iterationCount >= maxIterations)
-                    {
-                        throw new MaxIterationsExceededException(maxIterations);
-                    }
+                    NextIterationOrThrow();
 
-                    ++_iterationCount;
-
-                    var parameters = new List<ParameterExpression>();
-                    // initial state
-                    // -------------
-                    var instructionExecProvider = InstructionExecProvider.Get(_config, new Symbolic.Instructions.InstructionFactory());
+                    // setup initial state
                     var cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
-                    cur.PathStore = pathStore;
+                    cur.PathStore = _pathStore;
 
-                    var dataElementList = cur.StorageFactory.CreateList(arguments.Length);
+                    // 1. clear parameterStore
+                    _parameterStore = new ParameterStore();
 
-                    //ParameterStore parameterStore = new ParameterStore(cur);
+                    // 2. setup default values for the arguments
+                    _parameterStore.InitializeDefaultMethodParameters(entryPoint);
 
-                    var useArgs = next == null;
-                    if (useArgs) next = new Dictionary<string, object>();
-                    for (var i = 0; i < arguments.Length; i++)
-                    {
-                        //IDataElement arg = args[i];
+                    // 3. set traits using the 'data' dictionary - either passed as argument or as solver output
+                    _parameterStore.SetTraits(cur.DefinitionProvider, data);
 
-                        // either next is null => use arguments array
-                        // OR next is not null => use entryPoint.Parameters array
+                    // 4. construct the arguments DataElementList
+                    var arguments = _parameterStore.GetMethodParematers(cur, entryPoint);
 
-                        var argName = entryPoint.Parameters[i].Name;
-                        IDataElement arg = null;
-
-                        if (!useArgs && next.TryGetValue(argName, out var value))
-                        {
-                            // we have an explicit desired value from the solver
-                            arg = _definitionProvider.CreateDataElement(value);
-                        }
-                        else
-                        {
-                            // we do not have an explicit desired value from the solver => use the value provided by outside                            
-                            arg = arguments[i] != null ? arguments[i].AsDataElement(_definitionProvider) : _definitionProvider.GetParameterNullOrDefaultValue(entryPoint.Parameters[i]);
-                        }
-
-                        // we use ArrayOf whenever we are working with an array of items
-                        // we add parameter in the parameter list for every element
-                        if (arg is ArrayOf arrayOf)
-                        {
-                            var elementType = arrayOf.Inner.GetType().GetElementType();
-
-                            // first we construct an array and initialize its items
-                            // then we add the expressions for each item <PARAM_NAME>[i]...
-                            var placement = cur.DynamicArea.DeterminePlacement(false);
-                            var arrayRef = cur.DynamicArea.AllocateArray(placement, arrayOf.ElementType, arrayOf.Length);
-                            dataElementList[i] = arrayRef;
-
-                            // add array.Length parameter
-                            //ParameterExpression arrayLengthParameterExpression = Expression.Parameter(typeof(int), argName + "->Length");
-
-                            var allocatedArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
-
-                            for (var j = 0; j < arrayOf.Inner.Length; j++)
-                            {
-                                var elementName = argName + "[" + j + "]";
-
-                                var item = _definitionProvider.CreateDataElement(arrayOf.Inner.GetValue(j));
-
-                                allocatedArray.Fields[j] = item;
-
-                                //ParameterExpression itemParameterExpression = Expression.Parameter(elementType, elementName);
-                                //parameters.Add(itemParameterExpression);
-
-                                //item.SetExpression(itemParameterExpression, cur);
-                            }
-
-                            var arrayParameterExpression = Expression.Parameter(arrayOf.Inner.GetType(), entryPoint.Parameters[i].Name);
-                            parameters.Add(arrayParameterExpression);
-
-                            arrayRef.SetExpression(arrayParameterExpression, cur);
-                        }
-
-                        // we use InterfaceProxy to inject custom values whenever its methods are requested
-                        else if (arg is InterfaceProxy interfaceProxy)
-                        {
-                            dataElementList[i] = interfaceProxy;
-
-                            IDictionary<string, Func<IDataElement>> methodsResolvers = new Dictionary<string, Func<IDataElement>>();
-
-                            // for each method create a parameter expression <PARAM_NAME>.<METHOD_NAME>
-                            // TODO: handle, should the result of the method be something different than a number or a string
-                            foreach(var method in interfaceProxy.WrappedType.Methods)
-                            {
-                                var returnName = argName + "->" + method.FullName;
-
-                                var returnType = GetBaseTypeFromName(method.ReturnType.FullName);
-                                if (returnType == null) throw new Exception("Not supported return type, only numbers and strings are supported: " + method.ReturnType.FullName);
-
-                                var methodResultParameterExpression = Expression.Parameter(returnType, returnName);
-                                parameters.Add(methodResultParameterExpression);
-
-                                if (next != null && next.TryGetValue(returnName, out var desiredResult))
-                                {
-                                    // we have a desired value specified => use it
-                                    methodsResolvers[method.FullName] = () =>
-                                    {
-                                        var dataElement = _definitionProvider.CreateDataElement(next[returnName]);
-                                        dataElement.SetExpression(methodResultParameterExpression, cur);
-                                        return dataElement;
-                                    };
-                                }
-                                else
-                                {
-                                    // no value is specified => use default
-                                    methodsResolvers[method.FullName] = () =>
-                                    {
-                                        var dataElement = GetDefaultDataElement(returnType, _definitionProvider);
-                                        dataElement.SetExpression(methodResultParameterExpression, cur);
-                                        return dataElement;
-                                    };
-                                }
-                            }
-
-                            interfaceProxy.SetMethodResolvers(cur, methodsResolvers);
-
-                            // cur.PathStore.CurrentPath.SetObjectAttribute<IDictionary<String, Func<IDataElement>>>(arg, "method_results", results);
-                        }
-                        // TODO: add ClassProxy?
-                        // we use ClassProxy to inject custom values whenever its methods or fields are requested
-                        // else if (arg is ClassProxy classProxy) { }
-
-                        // now it should be base types only
-                        else
-                        {
-                            var paramType = GetBaseTypeFromName(entryPoint.Parameters[i].Type.FullName);
-                            if (paramType == null) throw new Exception("Not supported param type, only arrays, interfaces, numbers and strings are supported: " + entryPoint.Parameters[i].Type.FullName);
-
-                            dataElementList[i] = arg;
-
-                            var argParameterExpression = Expression.Parameter(paramType, argName);
-                            parameters.Add(argParameterExpression);
-
-                            dataElementList[i].SetExpression(argParameterExpression, cur);
-                        }
-
-                        //ParameterExpression parameter = Expression.Parameter(
-                        //    paramType,
-                        //    entryPoint.Parameters[i].Name);
-                        //parameters.Add(parameter);
-
-                        //dataElementList[i].SetExpression(parameter, cur);
-                    }
-
-                    //dataElementList = cur.StorageFactory.CreateSingleton(args[0]);
-                    if (arguments.Length != entryPoint.Parameters.Count)
-                    {
-                        throw new InvalidOperationException("Invalid number of arguments provided to method " + entryPoint.Name);
-                    }
-                    
-
-                    var mainState = new MethodState(
-                        entryPoint,
-                        dataElementList,
-                        cur);
+                    var mainState = new MethodState(entryPoint, arguments, cur);
 
                     // Initialize main thread.
-                    cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, _logger));                    
+                    cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, _logger));
                     // -------------
 
                     //var cur = stateSpaceSetup.CreateInitialState(entryPoint, args);
-                    cur.CurrentThread.InstructionExecuted += pathStore.OnInstructionExecuted;
+                    cur.CurrentThread.InstructionExecuted += _pathStore.OnInstructionExecuted;
 
                     var statistics = new SimpleStatistics();
 
                     var explorer = new MMC.Explorer(cur, statistics, _logger, _config, PathStore);
-                    explorer.InstructionExecuted += pathStore.OnInstructionExecuted;
 
+                    //_logger.Log(LogPriority.Message, "Starting exploration, parameters: {0}", parameterStore.ToString());
+                    _logger.Log(LogPriority.Message, "Starting exploration, data: ");
+                    foreach (var p in data) _logger.Log(LogPriority.Message, "{0} = {1}", p.Key, p.Value);
+
+                    OnIterationStarted(new IterationStartedEventArgs(_currentIteration, _parameterStore));
+
+                    explorer.InstructionExecuted += _pathStore.OnInstructionExecuted;
                     explorer.Run();
 
-                    var path = PathStore.CurrentPath;
+                    explorer.InstructionExecuted -= _pathStore.OnInstructionExecuted;
 
-                    System.Diagnostics.Debug.WriteLine($"Path explored {path.PathConstraintString}, input {string.Join(", ", dataElementList.Select(a => a.ToString()))}");
+                    var path = _pathStore.CurrentPath;
+                    PathExplored?.Invoke(path);
 
-                    //Dictionary<String, ParameterInfo> usedArgs = new Dictionary<String, ParameterInfo>();
-                    //for (Int32 i = 0; i < entryPoint.Parameters.Count; ++i)
-                    //{
-                    //    String paramName = entryPoint.Parameters[i].Name;
-                    //    String typeName = entryPoint.Parameters[i].Type.FullName;
-                    //    TypeDef type = _definitionProvider.GetTypeDefinition(typeName);
+                    _logger.Log(LogPriority.Message, "Explored path: {0}", path.PathConstraintString);
 
-                    //    if (type.IsInterface)
-                    //    {
-                    //        usedArgs[paramName] = ParameterInfo.FromInterface(paramName, typeName, next);
-                    //    }
-                    //    else
-                    //    {
-                    //        switch (typeName)
-                    //        {
-                    //            case "System.Boolean": usedArgs[paramName] = ParameterInfo.FromValue(paramName, dataElementList[i].ToBool()); break;
-                    //            case "System.Char": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Char)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.SByte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (SByte)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.Byte": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Byte)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.Int16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int16)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.UInt16": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt16)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.Int32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Int4)dataElementList[i]).Value); break;
-                    //            case "System.UInt32": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt32)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.Int64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (Int64)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.UInt64": usedArgs[paramName] = ParameterInfo.FromValue(paramName, (UInt64)((Int4)dataElementList[i]).Value); break;
-                    //            case "System.Single": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float4)dataElementList[i]).Value); break;
-                    //            case "System.Double": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((Float8)dataElementList[i]).Value); break;
-                    //            case "System.String": usedArgs[paramName] = ParameterInfo.FromValue(paramName, ((ConstantString)dataElementList[i]).Value); break;
 
-                    //            default:
-                    //                throw new Exception("Unexpected TYPE");
-                    //        }
-                    //    }
-                    //}
-                    //ExplorationIterationData iterationData = new ExplorationIterationData(path.PathConstraintString, usedArgs);
+                    var exprs = _parameterStore.GetParametersAsExpressions();
+                    data = PathStore.GetNextInputValues(_solver, exprs);
 
-                    //_iterationData.Add(iterationData);
+                    OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, null, path));
 
-                    next = PathStore.GetNextInputValues(_solver, parameters);
-
-                    OnPathExplored?.Invoke(path);
-
-                    if (next == null)
+                    if (data == null)
                     {
                         break;
                     }
-
-                    // no need to do this
-                    //args = entryPoint.Parameters
-                    //    .Select(p => new { p.Name, Value = next[p.Name] })
-                    //    .Select(v => _definitionProvider.CreateDataElement(v.Value))
-                    //    .ToArray();
 
                     PathStore.ResetPath();
                 }
                 catch (Exception e)
                 {
                     _logger.Log(LogPriority.Fatal, e.Message);
+                    OnExplorationFailed(new ExplorationFailedEventArgs(e));
                     throw;
                 }
+
             }
+
         }
 
-        //private static Type GetFrameworkType(ArrayOf arrayOf)
-        //{
-        //    return arrayOf.Inner.GetType();
-        //}
-
-        private static Type GetBaseTypeFromName(String fullName)
+        public void Dispose()
         {
-            switch (fullName)
-            {
-                case "System.Int32": return typeof(Int32);
-                case "System.UInt16": return typeof(UInt16);
-                case "System.UInt32": return typeof(UInt32);
-                case "System.UInt64": return typeof(UInt64);
-                case "System.Int16": return typeof(Int16);
-                case "System.Int64": return typeof(Int64);
-                case "System.SByte": return typeof(SByte);
-                case "System.Byte": return typeof(Byte);
-                case "System.Boolean": return typeof(Boolean);
-                case "System.Char": return typeof(Char);
-                case "System.Double": return typeof(Double);
-                case "System.Decimal": return typeof(Decimal);
-                case "System.Single": return typeof(Single);
-                case "System.IntPtr": return typeof(IntPtr);
-                case "System.UIntPtr": return typeof(UIntPtr);
-
-
-                default:
-                    return null;
-                    // throw new ArgumentException("Unexpected type: " + fullName);
-            }
+            _extensions.ForEach(e => e.Unregister(this));
         }
 
-        private static IDataElement GetDefaultDataElement(Type type, DefinitionProvider definitionProvider)
+        public IConfig GetConfiguration()
         {
-            var defaultValue = type.IsValueType ? Activator.CreateInstance(type) : null;
-            return definitionProvider.CreateDataElement(defaultValue);
+            return _config;
         }
     }
 }

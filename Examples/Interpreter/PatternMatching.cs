@@ -11,15 +11,19 @@ namespace Examples.Interpreter
         public static double ComputeAreaModernIs(object shape)
         {
             if (shape is Square s)
+            {
                 return s.Side * s.Side;
+            }
             else if (shape is Circle c)
+            {
                 return c.Radius * c.Radius * Math.PI;
+            }
             else if (shape is Rectangle r)
+            {
                 return r.Height * r.Length;
+            }
             // elided
-            throw new ArgumentException(
-                message: "shape is not a recognized shape",
-                paramName: nameof(shape));
+            throw new ArgumentException(message: "shape is not a recognized shape", paramName: nameof(shape));
         }
 
         public static string GenerateMessage(params string[] parts)
@@ -119,9 +123,7 @@ namespace Examples.Interpreter
                 case null:
                     throw new ArgumentNullException(paramName: nameof(shape), message: "Shape must not be null");
                 default:
-                    throw new ArgumentException(
-                        message: "shape is not a recognized shape",
-                        paramName: nameof(shape));
+                    throw new ArgumentException(message: "shape is not a recognized shape", paramName: nameof(shape));
             }
         }
 
@@ -138,11 +140,8 @@ namespace Examples.Interpreter
                 case "large-circle":
                     return new Circle(12);
 
-                case var o when (o?.Trim().Length ?? 0) == 0:
-                    // white space
-                    return null;
-                default:
-                    return "invalid shape description";
+                default: 
+                    throw new ArgumentException(message: "shapeDescription is not a recognized shape", paramName: nameof(shapeDescription));
             }
         }
     }

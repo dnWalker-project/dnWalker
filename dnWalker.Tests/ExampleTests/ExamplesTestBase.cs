@@ -1,88 +1,148 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
 using dnWalker.Traversal;
 using MMC;
 using Xunit.Abstractions;
 
 namespace dnWalker.Tests.ExampleTests
 {
-    public abstract class ExamplesTestBase : TestBase
+    //public abstract class ExamplesTestBase : TestBase
+    public abstract class ExamplesTestBase : InterpreterTests.InterpreterTestBase
     {
-        protected static Lazy<DefinitionProvider> Lazy =
-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(@"..\..\..\..\Examples\bin\debug\Examples.exe")));//..\..\..\Examples\bin\debug\Examples.exe")));
+        protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\framework\Examples.Framework.exe";
 
-        protected ExamplesTestBase(DefinitionProvider definitionProvider) : base(definitionProvider)
+        protected ExamplesTestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
         {
-            _config.StateStorageSize = 5;
-        }
-    }
+            string testClassName = typeof(ExamplesTestBase).Name;
+            OverrideConcolicExplorerBuilderInitialization(b =>
+            {
+                dnWalker.Concolic.XmlExplorationExporter xmlExporter = new dnWalker.Concolic.XmlExplorationExporter(testClassName + "{SUT}.xml");
+                dnWalker.Concolic.FlowGraphWriter graphExporter = new dnWalker.Concolic.FlowGraphWriter() { OutputFile = testClassName + "{SUT}.dot" };
 
-    public abstract class SymbolicExamplesTestBase : AbstractTestBase
-    {
-        protected const string AssemblyFile = @"..\..\..\..\Examples\bin\debug\Examples.exe";
-
-        protected readonly Config _config;
-        private readonly DefinitionProvider _definitionProvider;
-        private readonly Logger _logger;
-
-        protected static Lazy<DefinitionProvider> Lazy =
-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFile)));
-
-        protected SymbolicExamplesTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-        {
-            _config = new Config();
-            _logger = new Logger(Logger.Default | LogPriority.Trace);
-            _logger.AddOutput(new TestLoggerOutput());
-            _definitionProvider = Lazy.Value;
+                b.With(xmlExporter);
+                b.With(graphExporter);
+            });
         }
 
-        protected void Explore(
-            string methodName,
-            Action<IConfig> before,
-            Action<dnWalker.Concolic.Explorer> finished,
-            params IArg[] args)
+        public static ArgsProvider Args()
         {
-            before?.Invoke(_config);
-
-            var explorer = new dnWalker.Concolic.Explorer(_definitionProvider, _config, _logger, new Z3.Solver());
-            explorer.Run(methodName);//, args);
-
-            finished(explorer);
-        }
-    }
-
-    public abstract class SymbolicExamplesTestBase2 : AbstractTestBase
-    {
-        protected const string AssemblyFile = @"..\..\..\..\Examples\bin\debug\Examples.exe";
-
-        protected readonly Config _config;
-        private readonly DefinitionProvider _definitionProvider;
-        private readonly Logger _logger;
-        
-        protected static Lazy<DefinitionProvider> Lazy =
-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFile)));
-
-        protected SymbolicExamplesTestBase2(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-        {
-            _config = new Config();
-            _logger = new Logger(Logger.Default | LogPriority.Trace);
-            _logger.AddOutput(new TestLoggerOutput());
-            _definitionProvider = Lazy.Value;            
+            return new ArgsProvider();
         }
 
-        protected void Explore(
-            string methodName,
-            Action<Config> before,
-            Action<dnWalker.Concolic.Explorer2> finished,
-            params IArg[] args)
+        public class ArgsProvider : IDictionary<string, object>
         {
-            _config.FlowGraphFile = this.GetType().Namespace + "." + this.GetType().Name + "FlowGraph" + ".dot";
-            before?.Invoke(_config);
+            private readonly IDictionary<string, object> _data = new Dictionary<string, object>();
 
-            var explorer = new dnWalker.Concolic.Explorer2(_definitionProvider, _config, _logger, new Z3.Solver());
-            explorer.Run(methodName);//, args);
+            public ArgsProvider Set<T>(string key, T value)
+            {
+                _data.Add(key, value);
 
-            finished(explorer);
+                return this;
+            }
+
+            void IDictionary<string, object>.Add(string key, object value)
+            {
+                _data.Add(key, value);
+            }
+
+            bool IDictionary<string, object>.ContainsKey(string key)
+            {
+                return _data.ContainsKey(key);
+            }
+
+            bool IDictionary<string, object>.Remove(string key)
+            {
+                return _data.Remove(key);
+            }
+
+            bool IDictionary<string, object>.TryGetValue(string key, out object value)
+            {
+                return _data.TryGetValue(key, out value);
+            }
+
+            object IDictionary<string, object>.this[string key]
+            {
+                get
+                {
+                    return _data[key];
+                }
+
+                set
+                {
+                    _data[key] = value;
+                }
+            }
+
+            ICollection<string> IDictionary<string, object>.Keys
+            {
+                get
+                {
+                    return this._data.Keys;
+                }
+            }
+
+            ICollection<object> IDictionary<string, object>.Values
+            {
+                get
+                {
+                    return _data.Values;
+                }
+            }
+
+            void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
+            {
+                _data.Add(item);
+            }
+
+            void ICollection<KeyValuePair<string, object>>.Clear()
+            {
+                _data.Clear();
+            }
+
+            bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
+            {
+                return (_data.Contains(item));
+            }
+
+            void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+            {
+                _data.CopyTo(array, arrayIndex);
+            }
+
+            bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
+            {
+                return _data.Remove(item);
+            }
+
+            int ICollection<KeyValuePair<string, object>>.Count
+            {
+                get
+                {
+                    return _data.Count;
+                }
+            }
+
+            bool ICollection<KeyValuePair<string, object>>.IsReadOnly
+            {
+                get
+                {
+                    return _data.IsReadOnly;
+                }
+            }
+
+            IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
         }
     }
 }

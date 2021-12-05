@@ -70,7 +70,7 @@ namespace MMC.State
 
         public ObjectReference ThreadObject { get; set; }
 
-        public Exception UnhandledException { get; internal set; }
+        public ExceptionInfo UnhandledException { get; internal set; }
 
         public ExplicitActiveState Cur => cur;
 
@@ -90,8 +90,9 @@ namespace MMC.State
 
                 var exceptionObj = cur.DynamicArea.Allocations[_exceptionReference] as AllocatedObject;
                 var messageField = cur.DefinitionProvider.GetFieldDefinition(typeof(System.Exception).FullName, "_message");
-                UnhandledException = new System.Exception($"An exception of type {exceptionObj.Type.FullName} has been thrown " +
-                    $"with message '{exceptionObj.Fields[(int)messageField.FieldOffset].ToString()}");
+                string message = exceptionObj.Fields[(int)messageField.FieldOffset].ToString();
+
+                UnhandledException = new ExceptionInfo(exceptionObj.Type, message);
             }
         }
 
