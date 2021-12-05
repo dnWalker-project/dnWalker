@@ -19,7 +19,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
         {
         }
 
-        [Fact]
+        [Fact(Skip = "Not handling multithreading right now.")]
         public void Go()
         {
             MMC.Explorer explorer = GetModelCheckerBuilder("Deadlock.Go").SetArgs(Array.Empty<IDataElement>()).Build();

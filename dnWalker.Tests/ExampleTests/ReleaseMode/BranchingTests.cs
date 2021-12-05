@@ -89,7 +89,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
                 .Build();
 
 
-            Assert.Throws<MaxIterationsExceededException>(() => explorer.Run("Examples.Concolic.Simple.Branches.SingleBranchingWithModification", Args().Set("x", 10).Set("y", -5).Set("z", 6)));
+            Assert.Throws<MaxIterationsExceededException>(() => explorer.Run("Examples.Concolic.Simple.Branches.MultipleBranchingWithMultipleParameters", Args().Set("x", 10).Set("y", -5).Set("z", 6)));
         }
 
         // comparing variable "x" against 5

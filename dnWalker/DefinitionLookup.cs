@@ -155,14 +155,24 @@ namespace MMC
                     return retval;
                 }
 
-                if (name == "System.IO.TextWriter")
-                {
-                    retval = GetOwnTypeDefinition(typeof(SystemIOTextWriterImpl).FullName);
-                }
+                //if (name == "System.IO.TextWriter")
+                //{
+                //    retval = GetOwnTypeDefinition(typeof(SystemIOTextWriterImpl).FullName);
+                //}
 
                 if (retval == null)
                 {
                     retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+                }
+
+                if (retval == null)
+                {
+                    //retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+                    ExportedType eType = asm.ExportedTypes.FirstOrDefault(t => t.ReflectionFullName == name);
+                    if (eType != null)
+                    {
+                        retval = eType.Resolve();
+                    }
                 }
 
                 if (retval != null)
@@ -174,17 +184,18 @@ namespace MMC
             }
         }
 
-        private TypeDef GetOwnTypeDefinition(string name)
-        {
-            //var assemblyLoader = new AssemblyLoader();
+        //private TypeDef GetOwnTypeDefinition(string name)
+        //{
+        //    //var assemblyLoader = new AssemblyLoader();
 
-            //var data = File.ReadAllBytes(GetType().Assembly.Modules);
-            return GetType().Assembly.Modules.Select(m =>
-            {
-                var moduleDef = ModuleDefMD.Load(m);
-                return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
-            }).FirstOrDefault();
-        }
+        //    //var data = File.ReadAllBytes(GetType().Assembly.Modules);
+        //    return GetType().Assembly.Modules.Select(m =>
+        //    {
+        //        var moduleDef = ModuleDefMD.Load(m);
+        //        //return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+        //        return moduleDef.ExportedTypes.FirstOrDefault(t => t.ReflectionFullName == name).Resolve();
+        //    }).FirstOrDefault();
+        //}
 
         /// <summary>
         /// Look up a type definition by reference in the main assembly

@@ -74,6 +74,8 @@ namespace MMC.Data
     public interface IRealElement : INumericElement
     {
         bool IsFinite();
+
+        bool IsNaN();
     }
 
     public interface ISignedNumericElement : INumericElement
@@ -1768,6 +1770,11 @@ namespace MMC.Data
         public int HashCode => _hashCode;
         // public DataElementKind Kind => DataElementKind.Single;
 
+        public bool IsNaN()
+        {
+            return float.IsNaN(m_value);
+        }
+
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
 
@@ -2008,6 +2015,10 @@ namespace MMC.Data
         int _hashCode;
         public int HashCode => _hashCode;
 
+        public bool IsNaN()
+        {
+            return double.IsNaN(Value);
+        }
         public bool IsFinite()
         {
             return !(double.IsInfinity(Value) || double.IsNaN(Value));
@@ -2118,7 +2129,7 @@ namespace MMC.Data
 
         public int CompareTo(object obj)
         {
-            if (obj is IRealElement r)
+            if (obj is INumericElement r)
             {
                 return Value.CompareTo(r.ToFloat8(true).Value);
             }

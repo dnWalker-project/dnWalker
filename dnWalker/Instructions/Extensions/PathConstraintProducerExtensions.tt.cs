@@ -47,7 +47,7 @@ namespace dnWalker.Instructions.Extensions
 
         protected void AddPathConstraint(ExplicitActiveState cur, Expression expression)
         {
-            cur.PathStore.CurrentPath.AddPathConstraint(expression, _nextInstruction, cur);
+            cur.PathStore.AddPathConstraint(expression, _nextInstruction, cur);
         }
 
     }
