@@ -22,7 +22,7 @@ namespace dnWalker.Tests
         private Func<IStatistics> _provideStatistics;
 
         private string _methodName;
-        private Func<ExplicitActiveState, IDataElement[]> _provideArgs;
+        private Func<ExplicitActiveState, IDataElement[]> _provideArgs = (cur) => Array.Empty<IDataElement>();
 
         public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<DefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
         {

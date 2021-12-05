@@ -15,42 +15,42 @@ namespace dnWalker.Tests
 {
     public abstract class TestBase : IDisposable
     {
-        private class Converter : TextWriter
-        {
-            private readonly ITestOutputHelper _output;
+        //private class Converter : TextWriter
+        //{
+        //    private readonly ITestOutputHelper _output;
 
-            public Converter(ITestOutputHelper output)
-            {
-                _output = output;
-            }
+        //    public Converter(ITestOutputHelper output)
+        //    {
+        //        _output = output;
+        //    }
 
-            public override Encoding Encoding
-            {
-                get { return Encoding.UTF8; }
-            }
+        //    public override Encoding Encoding
+        //    {
+        //        get { return Encoding.UTF8; }
+        //    }
 
-            public override void WriteLine(string message)
-            {
-                _output.WriteLine(message);
-            }
+        //    public override void WriteLine(string message)
+        //    {
+        //        _output.WriteLine(message);
+        //    }
 
-            public override void WriteLine(string format, params object[] args)
-            {
-                _output.WriteLine(format, args);
-            }
-        }
+        //    public override void WriteLine(string format, params object[] args)
+        //    {
+        //        _output.WriteLine(format, args);
+        //    }
+        //}
 
         public ITestOutputHelper Output { get; }
 
         public DefinitionProvider DefinitionProvider { get; }
         public Logger Logger { get; }
 
-        private TextWriter _originalConsoleOut;
+        //private TextWriter _originalConsoleOut;
         protected TestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider)
         {
-            var converter = new Converter(testOutputHelper);
-            _originalConsoleOut = Console.Out;
-            Console.SetOut(converter);
+            //var converter = new Converter(testOutputHelper);
+            //_originalConsoleOut = Console.Out;
+            //Console.SetOut(converter);
 
             Logger = new Logger(Logger.Default | LogPriority.Trace);
             Logger.AddOutput(new TestLoggerOutput());
@@ -60,7 +60,7 @@ namespace dnWalker.Tests
 
         public void Dispose()
         {
-            Console.SetOut(_originalConsoleOut);
+            //Console.SetOut(_originalConsoleOut);
         }
 
         public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)

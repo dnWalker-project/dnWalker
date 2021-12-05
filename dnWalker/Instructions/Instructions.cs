@@ -328,16 +328,24 @@ namespace dnWalker.Instructions
 
         protected int CompareOperands(IDataElement a, IDataElement b)
         {
-            if (Unsigned && a is INumericElement na && b is INumericElement nb)
+            if (Unsigned && a is IIntegerElement ia && b is IIntegerElement ib)
             {
-                if (na.Equals(nb))
+                if (ia.Equals(ib))
                 {
                     return 0;
                 }
 
-                return na.ToUnsignedInt8(CheckOverflow).CompareTo(nb.ToUnsignedInt8(CheckOverflow));
+                return ia.ToUnsignedInt8(CheckOverflow).CompareTo(ib.ToUnsignedInt8(CheckOverflow));
+            }
+            else if (Unsigned && a is IRealElement ra && b is IRealElement rb)
+            {
+                // check for nans ??
+                if (ra.IsNaN() && rb.IsNaN()) return 0;
+                // NaN is greater than not NaN??
+                else if (ra.IsNaN()) return 1; 
+                else if (rb.IsNaN()) return -1;
 
-                //return ValueComparer.CompareUnsigned((INumericElement)a, (INumericElement)b);
+                return ra.CompareTo(rb);
             }
 
             return a.CompareTo(b);
@@ -2133,7 +2141,8 @@ namespace dnWalker.Instructions
 
             try
             {
-                cur.EvalStack.Push(left.Add(right, CheckOverflow));
+                IDataElement result = left.Add(right, CheckOverflow);
+                cur.EvalStack.Push(result);
             }
             catch (OverflowException e)
             {
@@ -2437,14 +2446,21 @@ namespace dnWalker.Instructions
 
         protected int CompareOperands(IDataElement a, IDataElement b)
         {
-            if (Unsigned && a is INumericElement na && b is INumericElement nb)
+
+            if (Unsigned && a is IIntegerElement ia && b is IIntegerElement ib)
             {
-                if (na.Equals(nb))
+                if (ia.Equals(ib))
                 {
                     return 0;
                 }
 
-                return na.ToUnsignedInt8(CheckOverflow).CompareTo(nb.ToUnsignedInt8(CheckOverflow));
+                return ia.ToUnsignedInt8(CheckOverflow).CompareTo(ib.ToUnsignedInt8(CheckOverflow));
+            }
+            else if (Unsigned && a is IRealElement ra && b is IRealElement rb)
+            {
+                // check for nans ??
+
+                return ra.CompareTo(rb);
             }
 
             return a.CompareTo(b);
