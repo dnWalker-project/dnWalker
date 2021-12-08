@@ -1,5 +1,6 @@
 ﻿using dnWalker.Concolic;
 using dnWalker.Concolic.Traversal;
+using dnWalker.Parameters;
 using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
 
@@ -94,6 +95,8 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
         // comparing variable "x" against 5
 
+        // comparing variable "x" against 5
+
         [Fact]
         public void Test_Branch_Equals_TruePathFirst()
         {
@@ -102,14 +105,18 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
                 .Build();
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 5));
-            
+
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
-            pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+            ParameterStore store = explorer.ParameterStore;
+
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x == 5)");
+            pathConstraints[1].Should().Be(@"(x != 5)");
         }
+
         [Fact]
         public void Test_Branch_Equals_FalsePathFirst()
         {
@@ -120,13 +127,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x != 5)");
+            pathConstraints[1].Should().Be(@"(x == 5)");
         }
 
         [Fact]
@@ -139,13 +147,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x != 5)");
+            pathConstraints[1].Should().Be(@"(x == 5)");
         }
 
         [Fact]
@@ -158,13 +167,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 5));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x == 5)");
+            pathConstraints[1].Should().Be(@"(x != 5)");
         }
 
         [Fact]
@@ -177,13 +187,15 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x > 5)");
+            pathConstraints[1].Should().Be(@"(x <= 5)");
+
         }
 
         [Fact]
@@ -196,13 +208,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x <= 5)");
+            pathConstraints[1].Should().Be(@"(x > 5)");
         }
 
         [Fact]
@@ -215,13 +228,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x >= 5)");
+            pathConstraints[1].Should().Be(@"(x < 5)");
         }
 
         [Fact]
@@ -234,13 +248,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x < 5)");
+            pathConstraints[1].Should().Be(@"(x >= 5)");
         }
 
         [Fact]
@@ -253,13 +268,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x < 5)");
+            pathConstraints[1].Should().Be(@"(x >= 5)");
         }
 
         [Fact]
@@ -272,14 +288,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            pathConstraints[0].Should().Be(@"(x >= 5)");
+            pathConstraints[1].Should().Be(@"(x < 5)");
         }
 
         [Fact]
@@ -292,13 +308,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x <= 5)");
+            pathConstraints[1].Should().Be(@"(x > 5)");
         }
 
         [Fact]
@@ -311,13 +328,14 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x > 5)");
+            pathConstraints[1].Should().Be(@"(x <= 5)");
         }
     }
 }

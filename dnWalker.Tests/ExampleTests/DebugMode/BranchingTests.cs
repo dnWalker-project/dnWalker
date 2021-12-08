@@ -1,5 +1,6 @@
 ﻿using dnWalker.Concolic;
 using dnWalker.Concolic.Traversal;
+using dnWalker.Parameters;
 using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
 
@@ -106,10 +107,12 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+            
+            pathConstraints[0].Should().Be(@"(x == 5)");
+            pathConstraints[1].Should().Be(@"(x != 5)");
         }
 
         [Fact]
@@ -122,13 +125,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x != 5)");
+            pathConstraints[1].Should().Be(@"(x == 5)");
         }
 
         [Fact]
@@ -141,13 +145,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x != 5)");
+            pathConstraints[1].Should().Be(@"(x == 5)");
         }
 
         [Fact]
@@ -160,13 +165,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 5));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x == 5)");
+            pathConstraints[1].Should().Be(@"(x != 5)");
         }
 
         [Fact]
@@ -179,13 +185,15 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x > 5)");
+            pathConstraints[1].Should().Be(@"(x <= 5)");
+            
         }
 
         [Fact]
@@ -198,13 +206,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x <= 5)");
+            pathConstraints[1].Should().Be(@"(x > 5)");
         }
 
         [Fact]
@@ -217,13 +226,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x >= 5)");
+            pathConstraints[1].Should().Be(@"(x < 5)");
         }
 
         [Fact]
@@ -236,13 +246,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x < 5)");
+            pathConstraints[1].Should().Be(@"(x >= 5)");
         }
 
         [Fact]
@@ -255,13 +266,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x < 5)");
+            pathConstraints[1].Should().Be(@"(x >= 5)");
         }
 
         [Fact]
@@ -274,13 +286,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x >= 5)");
+            pathConstraints[1].Should().Be(@"(x < 5)");
         }
 
         [Fact]
@@ -293,13 +306,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 4));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x <= 5)");
+            pathConstraints[1].Should().Be(@"(x > 5)");
         }
 
         [Fact]
@@ -312,13 +326,14 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 7));
 
             PathStore pathStore = explorer.PathStore;
-
             pathStore.Paths.Count().Should().Be(2);
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            ParameterStore store = explorer.ParameterStore;
 
-            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
-            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
+            String[] pathConstraints = pathStore.Paths.Select(p => p.GetPathConstraintWithAcessStrings(store)).ToArray();
+
+            pathConstraints[0].Should().Be(@"(x > 5)");
+            pathConstraints[1].Should().Be(@"(x <= 5)");
         }
     }
 }

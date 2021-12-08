@@ -18,7 +18,6 @@ namespace dnWalker.Parameters
         ParameterAccessor? Accessor { get; set; }
 
 
-
         IEnumerable<IParameter> GetChildren();
     }
 
@@ -44,6 +43,19 @@ namespace dnWalker.Parameters
 
             parent = null;
             return false;
+        }
+        public static string GetAccessString(this IParameter parameter)
+        {
+            if (parameter.Accessor == null) return string.Empty;
+
+            string accessString = parameter.Accessor.GetAccessString();
+
+            if (parameter.TryGetParent(out IParameter? parent))
+            {
+                accessString = parent.GetAccessString() + accessString;
+            }
+
+            return accessString;
         }
     }
 }

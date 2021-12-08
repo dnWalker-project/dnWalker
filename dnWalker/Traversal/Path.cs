@@ -2,6 +2,8 @@
 
 using dnWalker.Graphs;
 using dnWalker.NativePeers;
+using dnWalker.Parameters;
+
 using Echo.ControlFlow;
 using MMC.Data;
 using MMC.State;
@@ -175,6 +177,11 @@ namespace dnWalker.Traversal
             null;
 
         public string PathConstraintString => PathConstraint?.ToString();
+
+        public string GetPathConstraintWithAcessStrings(ParameterStore store)
+        {
+            return PathConstraint.SubstitueIdWithAccess(store).ToString();
+        }
 
         public string GetPathInfo()
         {

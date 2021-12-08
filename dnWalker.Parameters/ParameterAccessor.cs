@@ -19,9 +19,7 @@ namespace dnWalker.Parameters
             Parent = parent;
         }
 
-        //public abstract void OnChildSet(IParameter? child);
-        //public abstract bool TryGetChild([NotNullWhen(true)] out IParameter? child);
-        //public abstract void ClearChild();
+        public abstract string GetAccessString();
     }
 
     public class FieldParameterAccessor : ParameterAccessor
@@ -38,27 +36,10 @@ namespace dnWalker.Parameters
             FieldName = fieldName;
         }
 
-        //public override void OnChildSet(IParameter? child)
-        //{
-        //    if (child == null)
-        //    {
-        //        Parent.ClearField(FieldName);
-        //    }
-        //    else
-        //    {
-        //        Parent.SetField(FieldName, child);
-        //    }
-        //}
-
-        //public override bool TryGetChild([NotNullWhen(true)] out IParameter? child)
-        //{
-        //    return Parent.TryGetField(FieldName, out child);
-        //}
-
-        //public override void ClearChild()
-        //{
-        //    Parent.ClearField(FieldName);
-        //}
+        public override string GetAccessString()
+        {
+            return $".{FieldName}";
+        }
     }
 
     public class ItemParameterAccessor : ParameterAccessor
@@ -75,27 +56,10 @@ namespace dnWalker.Parameters
             Index = index;
         }
 
-        //public override void OnChildSet(IParameter? child)
-        //{
-        //    if (child == null)
-        //    {
-        //        Parent.ClearItem(Index);
-        //    }
-        //    else
-        //    {
-        //        Parent.SetItem(Index, child);
-        //    }
-        //}
-
-        //public override bool TryGetChild([NotNullWhen(true)] out IParameter? child)
-        //{
-        //    return Parent.TryGetItem(Index, out child);
-        //}
-
-        //public override void ClearChild()
-        //{
-        //    Parent.ClearItem(Index);
-        //}
+        public override string GetAccessString()
+        {
+            return $"[{Index}]";
+        }
     }
 
     public class MethodResultParameterAccessor : ParameterAccessor
@@ -114,27 +78,10 @@ namespace dnWalker.Parameters
             Invocation = invocation;
         }
 
-        //public override void OnChildSet(IParameter? child)
-        //{
-        //    if (child == null)
-        //    {
-        //        Parent.ClearMethodResult(MethodSignature, Invocation);
-        //    }
-        //    else
-        //    {
-        //        Parent.SetMethodResult(MethodSignature, Invocation, child);
-        //    }
-        //}
-
-        //public override bool TryGetChild([NotNullWhen(true)] out IParameter? child)
-        //{
-        //    return Parent.TryGetMethodResult(MethodSignature, Invocation, out child);
-        //}
-
-        //public override void ClearChild()
-        //{
-        //    Parent.ClearMethodResult(MethodSignature, Invocation);
-        //}
+        public override string GetAccessString()
+        {
+            return $".{MethodSignature.MethodName}({string.Join(',', MethodSignature.ArgumentTypeFullNames)})[{Invocation}]";
+        }
     }
 
     public class RootParameterAccessor : ParameterAccessor
@@ -146,15 +93,9 @@ namespace dnWalker.Parameters
             Name = name;
         }
 
-        //public override void OnChildSet(IParameter? child)
-        //{ }
-
-        //public override bool TryGetChild([NotNullWhen(true)] out IParameter? child)
-        //{
-        //    child = null;
-        //    return false;
-        //}
-        //public override void ClearChild()
-        //{ }
+        public override string GetAccessString()
+        {
+            return Name;
+        }
     }
 }
