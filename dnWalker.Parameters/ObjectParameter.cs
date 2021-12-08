@@ -9,72 +9,55 @@ using Expressions = System.Linq.Expressions;
 
 namespace dnWalker.Parameters
 {
-    public class ObjectParameter : ReferenceTypeParameter
+    public class ObjectParameter : MethodResolverParameter, IObjectParameter
     {
-        public ObjectParameter(string typeName, string localName) : base(typeName, localName)
+        public ObjectParameter(string typeName) : base(typeName)
         {
         }
 
-        public ObjectParameter(string typeName, string localName, Parameter parent) : base(typeName, localName, parent)
+        public ObjectParameter(string typeName, int id) : base(typeName, id)
         {
         }
 
-        private readonly Dictionary<string, Parameter> _fields = new Dictionary<string, Parameter>();
+        private readonly Dictionary<string, IParameter> _fields = new Dictionary<string, IParameter>();
 
-        public override IEnumerable<Parameter> GetChildren()
+        public IEnumerable<KeyValuePair<string, IParameter>> GetFields()
         {
-            return _fields.Values.Append(IsNullParameter);
+            return _fields.AsEnumerable();
         }
 
-        public IEnumerable<KeyValuePair<string, Parameter>> GetKnownFields()
+        public bool TryGetField(string fieldName, [NotNullWhen(true)] out IParameter? parameter)
         {
-            return IsNull ? Enumerable.Empty<KeyValuePair<string, Parameter>>() : _fields.AsEnumerable();
+            return _fields.TryGetValue(fieldName, out parameter);
         }
 
-        public void SetField(string fieldName, Parameter? fieldValue)
+        public void SetField(string fieldName, IParameter? parameter)
         {
-            if (String.IsNullOrWhiteSpace(fieldName))
+            ClearField(fieldName);
+
+            if (parameter != null)
             {
-                throw new ArgumentNullException(nameof(fieldName)); 
+                _fields[fieldName] = parameter;
+                parameter.Accessor = new FieldParameterAccessor(fieldName, this);
             }
-
-            if (fieldValue == null)
-            {
-                ClearField(fieldName);
-                return;
-            }
-
-            _fields[fieldName] = fieldValue;
-
-            fieldValue.Parent = this;
         }
 
         public void ClearField(string fieldName)
         {
-            if (_fields.TryGetValue(fieldName, out Parameter? fieldValue))
+            if (_fields.TryGetValue(fieldName, out IParameter? parameter))
             {
-                fieldValue.Parent = null;
                 _fields.Remove(fieldName);
+                parameter.Accessor = null;
             }
         }
 
-        public bool TryGetField(string fieldName, [NotNullWhen(true)]out Parameter? fieldValue)
+        public override IEnumerable<IParameter> GetChildren()
         {
-            return _fields.TryGetValue(fieldName, out fieldValue);
-        }
-
-        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
-        {
-            if (base.TryGetChild(parameterName, out parameter))
-            {
-                return true;
-            }
-
-            if (parameterName.TryGetField(out string? fieldName))
-            {
-                return TryGetField(fieldName, out parameter);
-            }
-            return false;
+            return Enumerable.Concat
+                   (
+                        GetMethodResults().SelectMany(mr => mr.Value).Where(mr => mr != null).Select(mr => mr!),
+                        GetFields().Select(f => f.Value)
+                   );
         }
     }
 }

@@ -6,19 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Xml\XmlDeserializer.PrimitiveValueParameters.tt.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XmlDeserializer.PrimitiveValueParameters.tt</DependentUpon>
+    <None Update="IPrimitiveValueParameters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IPrimitiveValueParameters.tt.cs</LastGenOutput>
     </None>
-    <None Include="Xml\XmlSerializer.PrimitiveValueParameters.tt.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XmlSerializer.PrimitiveValueParameters.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="PrimitiveValueParameters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrimitiveValueParameters.tt.cs</LastGenOutput>
@@ -38,6 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="IPrimitiveValueParameters.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IPrimitiveValueParameters.tt</DependentUpon>
+    </Compile>
     <Compile Update="PrimitiveValueParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

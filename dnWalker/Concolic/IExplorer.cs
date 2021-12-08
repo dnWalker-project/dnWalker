@@ -1,4 +1,4 @@
-﻿using dnWalker.Concolic.Parameters;
+﻿using dnWalker.Parameters;
 using dnWalker.Traversal;
 
 using MMC;

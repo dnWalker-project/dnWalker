@@ -10,18 +10,18 @@ using Xunit;
 
 namespace dnWalker.Parameters.Tests
 {
-    public class ObjectParameterTests : ReferenceTypeParameterTests<ObjectParameter>
+    public class ObjectParameterTests : MethodResolverParameterTests<ObjectParameter>
     {
-        protected override ObjectParameter Create(String name = "p")
+        protected override ObjectParameter Create(int id)
         {
-            return new ObjectParameter("MyNamespace.MyClass", name);
+            return new ObjectParameter(typeof(MyClass).FullName!, id);
         }
 
         [Theory]
         [InlineData("MyNamespace.MyClass")]
         public void TypeName_ShouldBeEqual_ToTheConstructorParameter(string typeName)
         {
-            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName);
 
             objectParameter.TypeName.Should().BeEquivalentTo(typeName);
         }
@@ -31,9 +31,9 @@ namespace dnWalker.Parameters.Tests
         [InlineData("MyNamespace.MyClass")]
         public void UninitializedField_Should_Be_Null(string typeName)
         {
-            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName);
 
-            objectParameter.TryGetField("field", out Parameter? fieldParameter).Should().BeFalse();
+            objectParameter.TryGetField("field", out IParameter? fieldParameter).Should().BeFalse();
             fieldParameter.Should().BeNull();
         }
 
@@ -43,43 +43,61 @@ namespace dnWalker.Parameters.Tests
         {
             const string fieldName = "field";
 
-            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName);
 
-            Parameter fieldParameter = new BooleanParameter(fieldName, false );
+            Parameter fieldParameter = new BooleanParameter(false);
 
             objectParameter.SetField(fieldName, fieldParameter);
 
-            objectParameter.TryGetField(fieldName, out Parameter? p).Should().BeTrue();
+            objectParameter.TryGetField(fieldName, out IParameter? p).Should().BeTrue();
             p.Should().BeSameAs(fieldParameter);
         }
 
         [Theory]
         [InlineData("MyNamespace.MyClass")]
-        public void SettingField_WillSetParent_OfTheFieldParameter(string typeName)
+        public void After_SetField_Accessor_ShouldBe_FieldAccessor(string typeName)
         {
             const String FieldName = "field";
 
-            ObjectParameter objectParameter = new ObjectParameter(typeName, "SomeObject");
+            ObjectParameter objectParameter = new ObjectParameter(typeName);
 
-            Parameter fieldParameter = new BooleanParameter(FieldName, false);
+            Parameter fieldParameter = new BooleanParameter(false);
 
             objectParameter.SetField(FieldName, fieldParameter);
 
-            fieldParameter.Parent.Should().BeSameAs(objectParameter);
+            fieldParameter.Accessor.Should().BeOfType<FieldParameterAccessor>();
         }
-
 
         [Theory]
         [InlineData("MyNamespace.MyClass")]
-        public void SettingField_Should_SetName_Of_FieldParameter(string typeName)
+        public void After_SetField_AccessorFieldName_ShouldBe_FieldName(string typeName)
         {
-            var objectParameter = new ObjectParameter(typeName, "SomeObject");
+            const String FieldName = "field";
 
-            Parameter fieldParameter = new DoubleParameter("value", 0);
+            ObjectParameter objectParameter = new ObjectParameter(typeName);
 
-            objectParameter.SetField("value", fieldParameter);
+            Parameter fieldParameter = new BooleanParameter(false);
 
-            fieldParameter.FullName.ToString().Should().Be($"SomeObject{ParameterName.Delimiter}value");
+            objectParameter.SetField(FieldName, fieldParameter);
+
+            FieldParameterAccessor accessor = (FieldParameterAccessor)fieldParameter.Accessor!;
+
+            accessor.FieldName.Should().Be(FieldName);
+        }
+
+        [Theory]
+        [InlineData("MyNamespace.MyClass")]
+        public void After_SetField_AccessorParent_ShouldBeSameAs_Object(string typeName)
+        {
+            const String FieldName = "field";
+
+            ObjectParameter objectParameter = new ObjectParameter(typeName);
+
+            Parameter fieldParameter = new BooleanParameter(false);
+
+            objectParameter.SetField(FieldName, fieldParameter);
+
+            fieldParameter.Accessor!.Parent.Should().BeSameAs(objectParameter);
         }
     }
 }

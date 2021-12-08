@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class StringParameter : ArrayParameter
+    public class StringParameter : ArrayParameter, IStringParameter
     {
-        public StringParameter(string localName) : base(TypeNames.CharTypeName, localName)
+        public StringParameter() : base(TypeNames.CharTypeName)
         {
         }
 
-        public StringParameter(string localName, Parameter parent) : base(TypeNames.CharTypeName, localName, parent)
+        public StringParameter(int id) : base(TypeNames.CharTypeName, id)
         {
         }
 
@@ -23,7 +23,7 @@ namespace dnWalker.Parameters
             char[] charArray = new char[Length];
             for (int i = 0; i < charArray.Length; i++)
             {
-                if (TryGetItem(i, out Parameter? p ) && p is CharParameter c)
+                if (TryGetItem(i, out IParameter? p ) && p is ICharParameter c)
                 {
                     charArray[i] = c.Value;
                 }

@@ -20,7 +20,19 @@ namespace dnWalker.Parameters.Tests
         where TValue : struct
         where TParameter : PrimitiveValueParameter<TValue>
     {
+        [Fact]
+        public void GetChildren_ShouldBe_Empty()
+        {
+            TParameter p = Create();
+            p.GetChildren().Should().HaveCount(0);
+        }
 
+        [Fact]
+        public void TypeName_ShouldBeEquiavalent_To_TValue()
+        {
+            TParameter p = Create();
+            p.TypeName.Should().Be(typeof(TValue).FullName);
+        }
     }
 
 <#
@@ -62,9 +74,9 @@ namespace dnWalker.Parameters.Tests
     string alias = aliases[i];
 
   #>
-    public class <#= type #>ParameterTests : PrimitiveValueParameterTests<<#= type #>Parameter, <#= type #>>
+    public class <#= type #>ParameterTests : PrimitiveValueParameterTests<<#= type #>Parameter, <#= alias #>>
     {
-        protected override <#= type #>Parameter Create(string name = "p") => new <#= type #>Parameter(name);
+        protected override <#= type #>Parameter Create(int id) => new <#= type #>Parameter(default(<#= alias #>), id);
     }
 
 <#

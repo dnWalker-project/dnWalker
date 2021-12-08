@@ -1400,7 +1400,6 @@ namespace dnWalker.Instructions
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
-            IDataElement ida = cur.EvalStack.Peek();
             Int4 idx = (Int4)cur.EvalStack.Pop();
             ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
 

@@ -9,200 +9,200 @@ namespace dnWalker.Parameters.Tests.Xml
 {
     public static class SerializationTestDataProvider
     {
-        private const string ObjectParameter_IsNull = "<Object Type=\"MyNamespace.MyClass\" Name=\"My_Namespace_My_Class\" IsNull=\"true\" />";
-        private const string ObjectParameter_NotNull_NoFields = "<Object Type=\"MyNamespace.MyClass\" Name=\"My_Namespace_My_Class\" IsNull=\"false\" />";
-        private const string ObjectParameter_NotNull_PrimitiveFields_ComplexField = "<Object Type=\"MyNamespace.MyClass\" Name=\"My_Namespace_My_Class\" IsNull=\"false\">\r\n  <Field Name=\"My_Field\">\r\n    <PrimitiveValue Type=\"System.Int32\" Name=\"My_Field\">-5</PrimitiveValue>\r\n  </Field>\r\n  <Field Name=\"My_ComplexField\">\r\n    <Object Type=\"MyNamespace.AnotherClass\" Name=\"My_ComplexField\" IsNull=\"false\" />\r\n  </Field>\r\n</Object>";
-        private const string ObjectParameter_NotNull_PrimitiveFields = "<Object Type=\"MyNamespace.MyClass\" Name=\"My_Namespace_My_Class\" IsNull=\"false\">\r\n  <Field Name=\"My_Field\">\r\n    <PrimitiveValue Type=\"System.Int32\" Name=\"My_Field\">-5</PrimitiveValue>\r\n  </Field>\r\n</Object>";
-        private const string PrimitiveValueFormat = "<PrimitiveValue Type=\"{0}\" Name=\"{1}\">{2}</PrimitiveValue>";
+        private const string ObjectParameter_IsNull = "<Object Type=\"MyNamespace.MyClass\" Id=\"5\" IsNull=\"true\" />";
+        private const string ObjectParameter_NotNull_NoFields = "<Object Type=\"MyNamespace.MyClass\" Id=\"5\" IsNull=\"false\" />";
+        private const string ObjectParameter_NotNull_PrimitiveFields_ComplexField = "<Object Type=\"MyNamespace.MyClass\" Id=\"5\" IsNull=\"false\">\r\n  <Field Name=\"My_Field\">\r\n    <PrimitiveValue Type=\"System.Int32\" Id=\"6\" Value=\"-5\" />\r\n  </Field>\r\n  <Field Name=\"My_ComplexField\">\r\n    <Object Type=\"MyNamespace.AnotherClass\" Id=\"7\" IsNull=\"false\" />\r\n  </Field>\r\n</Object>";
+        private const string ObjectParameter_NotNull_PrimitiveFields = "<Object Type=\"MyNamespace.MyClass\" Id=\"5\" IsNull=\"false\">\r\n  <Field Name=\"My_Field\">\r\n    <PrimitiveValue Type=\"System.Int32\" Id=\"6\" Value=\"-5\" />\r\n  </Field>\r\n</Object>";
+        private const string PrimitiveValueFormat = "<PrimitiveValue Type=\"{0}\" Id=\"{1}\" Value=\"{2}\" />";
 
         public class PrimitiveValueParameterProvider : IEnumerable<object[]>
         {
             public static IEnumerable<object[]> GeneratePrimitiveValueParameters()
             {
-                string GenerateExpectedXml(string fulltypename, string paramName, object value)
+                static string GenerateExpectedXml(string fulltypename, int id, object value)
                 {
-                    return string.Format(PrimitiveValueFormat, fulltypename, paramName, value.ToString());
+                    return string.Format(PrimitiveValueFormat, fulltypename, id, value.ToString());
                 }
 
-                Parameter parameter;
+                IParameter parameter;
 
                 // Boolean Parameters => TRUE/FALSE
-                parameter = new BooleanParameter("My:Boolean:Parameter", true);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "true") };
+                parameter = new BooleanParameter(true);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "true") };
 
-                parameter = new BooleanParameter("My:Boolean:Parameter", false);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "false") };
+                parameter = new BooleanParameter(false);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "false") };
 
                 // Char parameters => normal symbol / control symbol / space - TODO: generate from some big subset of chars?
-                parameter = new CharParameter("My:Char:Parameter", 'a');
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "U+0061") };
+                parameter = new CharParameter('a');
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "U+0061") };
 
-                parameter = new CharParameter("My:Char:Parameter", '\n');
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "U+000A") };
+                parameter = new CharParameter('\n');
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "U+000A") };
 
-                parameter = new CharParameter("My:Char:Parameter", ' ');
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "U+0020") };
+                parameter = new CharParameter(' ');
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "U+0020") };
 
                 // Byte Parameters => 1/MinValue/MaxValue
-                parameter = new ByteParameter("My:Byte:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new ByteParameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new ByteParameter("My:Byte:Parameter", byte.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, byte.MinValue) };
+                parameter = new ByteParameter(byte.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, byte.MinValue) };
 
-                parameter = new ByteParameter("My:Byte:Parameter", byte.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, byte.MaxValue) };
+                parameter = new ByteParameter(byte.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, byte.MaxValue) };
 
                 // SByte Parameters => +1/-1/MinValue/MaxValue
-                parameter = new SByteParameter("My:SByte:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new SByteParameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new SByteParameter("My:SByte:Parameter", -1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, -1) };
+                parameter = new SByteParameter(-1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, -1) };
 
-                parameter = new SByteParameter("My:SByte:Parameter", sbyte.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, sbyte.MinValue) };
+                parameter = new SByteParameter(sbyte.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, sbyte.MinValue) };
 
-                parameter = new SByteParameter("My:SByte:Parameter", sbyte.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, sbyte.MaxValue) };
+                parameter = new SByteParameter(sbyte.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, sbyte.MaxValue) };
 
                 // Int16 Parameters => +1/-1/MinValue/MaxValue
-                parameter = new Int16Parameter("My:Int16:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new Int16Parameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new Int16Parameter("My:Int16:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new Int16Parameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new Int16Parameter("My:Int16:Parameter", -1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, -1) };
+                parameter = new Int16Parameter(-1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, -1) };
 
-                parameter = new Int16Parameter("My:Int16:Parameter", short.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, short.MinValue) };
+                parameter = new Int16Parameter(short.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, short.MinValue) };
 
-                parameter = new Int16Parameter("My:Int16:Parameter", short.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, short.MaxValue) };
+                parameter = new Int16Parameter(short.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, short.MaxValue) };
 
                 // Int32 Parameters => +1/-1/MinValue/MaxValue
-                parameter = new Int32Parameter("My:Int32:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new Int32Parameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new Int32Parameter("My:Int32:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new Int32Parameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new Int32Parameter("My:Int32:Parameter", -1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, -1) };
+                parameter = new Int32Parameter(-1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, -1) };
 
-                parameter = new Int32Parameter("My:Int32:Parameter", int.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, int.MinValue) };
+                parameter = new Int32Parameter(int.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, int.MinValue) };
 
-                parameter = new Int32Parameter("My:Int32:Parameter", int.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, int.MaxValue) };
+                parameter = new Int32Parameter(int.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, int.MaxValue) };
 
                 // Int64 Parameters => +1/-1/MinValue/MaxValue
-                parameter = new Int64Parameter("My:Int64:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new Int64Parameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new Int64Parameter("My:Int64:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new Int64Parameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new Int64Parameter("My:Int64:Parameter", -1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, -1) };
+                parameter = new Int64Parameter(-1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, -1) };
 
-                parameter = new Int64Parameter("My:Int64:Parameter", long.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, long.MinValue) };
+                parameter = new Int64Parameter(long.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, long.MinValue) };
 
-                parameter = new Int64Parameter("My:Int64:Parameter", long.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, long.MaxValue) };
+                parameter = new Int64Parameter(long.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, long.MaxValue) };
 
                 // UInt16 Parameters => +1/-1/MinValue/MaxValue
-                parameter = new UInt16Parameter("My:UInt16:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new UInt16Parameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new UInt16Parameter("My:UInt16:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new UInt16Parameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new UInt16Parameter("My:UInt16:Parameter", ushort.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, ushort.MinValue) };
+                parameter = new UInt16Parameter(ushort.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, ushort.MinValue) };
 
-                parameter = new UInt16Parameter("My:UInt16:Parameter", ushort.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, ushort.MaxValue) };
+                parameter = new UInt16Parameter(ushort.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, ushort.MaxValue) };
 
                 // UInt32 Parameters => +1/-1/MinValue/MaxValue
-                parameter = new UInt32Parameter("My:UInt32:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new UInt32Parameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new UInt32Parameter("My:UInt32:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new UInt32Parameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new UInt32Parameter("My:UInt32:Parameter", uint.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, uint.MinValue) };
+                parameter = new UInt32Parameter(uint.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, uint.MinValue) };
 
-                parameter = new UInt32Parameter("My:UInt32:Parameter", uint.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, uint.MaxValue) };
+                parameter = new UInt32Parameter(uint.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, uint.MaxValue) };
 
                 // UInt64 Parameters => +1/-1/MinValue/MaxValue
-                parameter = new UInt64Parameter("My:UInt64:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new UInt64Parameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new UInt64Parameter("My:UInt64:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new UInt64Parameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new UInt64Parameter("My:UInt64:Parameter", ulong.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, ulong.MinValue) };
+                parameter = new UInt64Parameter(ulong.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, ulong.MinValue) };
 
-                parameter = new UInt64Parameter("My:UInt64:Parameter", ulong.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, ulong.MaxValue) };
+                parameter = new UInt64Parameter(ulong.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, ulong.MaxValue) };
 
 
                 // Single Parameters => +1/-1/MinValue/MaxValue
-                parameter = new SingleParameter("My:Single:Parameter", -1.0f);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, -1.0f) };
+                parameter = new SingleParameter(-1.0f);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, -1.0f) };
 
-                parameter = new SingleParameter("My:Single:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new SingleParameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new SingleParameter("My:Single:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new SingleParameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new SingleParameter("My:Single:Parameter", float.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, float.MinValue) };
+                parameter = new SingleParameter(float.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, float.MinValue) };
 
-                parameter = new SingleParameter("My:Single:Parameter", float.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, float.MaxValue) };
+                parameter = new SingleParameter(float.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, float.MaxValue) };
 
-                parameter = new SingleParameter("My:Single:Parameter", float.NaN);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "NAN") };
+                parameter = new SingleParameter(float.NaN);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "NAN") };
 
-                parameter = new SingleParameter("My:Single:Parameter", float.PositiveInfinity);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "INF") };
+                parameter = new SingleParameter(float.PositiveInfinity);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "INF") };
 
-                parameter = new SingleParameter("My:Single:Parameter", float.NegativeInfinity);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "-INF") };
+                parameter = new SingleParameter(float.NegativeInfinity);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "-INF") };
 
                 // Double Parameters => +1/-1/MinValue/MaxValue
-                parameter = new DoubleParameter("My:Double:Parameter", -1.0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, -1.0) };
+                parameter = new DoubleParameter(-1.0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, -1.0) };
 
-                parameter = new DoubleParameter("My:Double:Parameter", 1);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 1) };
+                parameter = new DoubleParameter(1);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 1) };
 
-                parameter = new DoubleParameter("My:Double:Parameter", 0);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, 0) };
+                parameter = new DoubleParameter(0);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, 0) };
 
-                parameter = new DoubleParameter("My:Double:Parameter", double.MinValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, double.MinValue) };
+                parameter = new DoubleParameter(double.MinValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, double.MinValue) };
 
-                parameter = new DoubleParameter("My:Double:Parameter", double.MaxValue);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, double.MaxValue) };
+                parameter = new DoubleParameter(double.MaxValue);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, double.MaxValue) };
 
-                parameter = new DoubleParameter("My:Double:Parameter", double.NaN);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "NAN") };
+                parameter = new DoubleParameter(double.NaN);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "NAN") };
 
-                parameter = new DoubleParameter("My:Double:Parameter", double.PositiveInfinity);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "INF") };
+                parameter = new DoubleParameter(double.PositiveInfinity);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "INF") };
 
-                parameter = new DoubleParameter("My:Double:Parameter", double.NegativeInfinity);
-                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.LocalName, "-INF") };
+                parameter = new DoubleParameter(double.NegativeInfinity);
+                yield return new object[] { parameter, GenerateExpectedXml(parameter.TypeName, parameter.Id, "-INF") };
             }
 
             public IEnumerator<object[]> GetEnumerator()
@@ -220,42 +220,35 @@ namespace dnWalker.Parameters.Tests.Xml
             public static IEnumerable<object[]> GenerateObjectParameters()
             {
                 const string Type = "MyNamespace.MyClass";
-                const string Name = "My_Namespace_My_Class";
 
-                ObjectParameter parameter;
+                IObjectParameter parameter;
 
                 // IsNull == true && no fields
                 {
-                    parameter = new ObjectParameter(Type, Name) { IsNull = true };
+                    parameter = new ObjectParameter(Type, 5) { IsNull = true };
                     yield return new object[] { parameter, ObjectParameter_IsNull };
                 }
 
-                // IsNull == true && some fields
-                {
-                    parameter = new ObjectParameter(Type, Name) { IsNull = true };
-                    parameter.SetField("My_Field", new Int32Parameter("My_Field", -5 ));
-                    yield return new object[] { parameter, ObjectParameter_IsNull };
-                }
 
                 // IsNull == false && no fields
                 {
-                    parameter = new ObjectParameter(Type, Name) { IsNull = false };
+                    parameter = new ObjectParameter(Type, 5) { IsNull = false };
                     yield return new object[] { parameter, ObjectParameter_NotNull_NoFields };
                 }
 
                 // IsNull == false && some fields
                 {
-                    parameter = new ObjectParameter(Type, Name) { IsNull = false };
-                    parameter.SetField("My_Field", new Int32Parameter("My_Field", -5 ));
+                    parameter = new ObjectParameter(Type, 5) { IsNull = false };
+                    parameter.SetField("My_Field", new Int32Parameter(-5, 6));
                     yield return new object[] { parameter, ObjectParameter_NotNull_PrimitiveFields };
                 }
 
                 // IsNull == false && primitive field && complex field
                 {
-                    parameter = new ObjectParameter(Type, Name) { IsNull = false };
-                    parameter.SetField("My_Field", new Int32Parameter("My_Field", -5));
+                    parameter = new ObjectParameter(Type, 5) { IsNull = false };
+                    parameter.SetField("My_Field", new Int32Parameter(-5, 6));
 
-                    ObjectParameter complexFieldValue = new ObjectParameter("MyNamespace.AnotherClass", "My_ComplexField") { IsNull = false };
+                    ObjectParameter complexFieldValue = new ObjectParameter("MyNamespace.AnotherClass", 7) { IsNull = false };
 
                     parameter.SetField("My_ComplexField", complexFieldValue);
                     yield return new object[] { parameter, ObjectParameter_NotNull_PrimitiveFields_ComplexField };

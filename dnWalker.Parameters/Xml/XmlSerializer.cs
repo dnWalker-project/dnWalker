@@ -9,43 +9,51 @@ namespace dnWalker.Parameters.Xml
 {
     public static partial class XmlSerializer
     {
-        public static XElement ToXml(this Parameter parameter)
+        public static XElement ToXml(this IParameter parameter)
         {
             switch (parameter)
             {
-                case BooleanParameter p: return p.ToXml();
-                case CharParameter p: return p.ToXml();
-                case ByteParameter p: return p.ToXml();
-                case SByteParameter p: return p.ToXml();
-                case Int16Parameter p: return p.ToXml();
-                case Int32Parameter p: return p.ToXml();
-                case Int64Parameter p: return p.ToXml();
-                case UInt16Parameter p: return p.ToXml();
-                case UInt32Parameter p: return p.ToXml();
-                case UInt64Parameter p: return p.ToXml();
-                case SingleParameter p: return p.ToXml();
-                case DoubleParameter p: return p.ToXml();
-                case ObjectParameter p: return p.ToXml();
-                case InterfaceParameter p: return p.ToXml();
-                case ArrayParameter p: return p.ToXml();
+                case IBooleanParameter p: return p.ToXml();
+                case ICharParameter p: return p.ToXml();
+                case IByteParameter p: return p.ToXml();
+                case ISByteParameter p: return p.ToXml();
+                case IInt16Parameter p: return p.ToXml();
+                case IInt32Parameter p: return p.ToXml();
+                case IInt64Parameter p: return p.ToXml();
+                case IUInt16Parameter p: return p.ToXml();
+                case IUInt32Parameter p: return p.ToXml();
+                case IUInt64Parameter p: return p.ToXml();
+                case ISingleParameter p: return p.ToXml();
+                case IDoubleParameter p: return p.ToXml();
+                case IObjectParameter p: return p.ToXml();
+                case IInterfaceParameter p: return p.ToXml();
+                case IArrayParameter p: return p.ToXml();
                 default:
                     throw new NotSupportedException();
             }
 
         }
 
-        public static XElement ToXml(this ObjectParameter parameter)
+        public static XElement ToXml(this IObjectParameter parameter)
         {
             bool isNull = parameter.IsNull;
-            XElement xml = new XElement("Object", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), new XAttribute("IsNull", isNull));
+            XElement xml = new XElement("Object", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull));
             
             if (!isNull)
             {
-                xml.Add(parameter.GetKnownFields()
+                xml.Add(parameter.GetFields()
                                  .Select(p =>
                                  {
                                      XElement fieldXml = new XElement("Field", new XAttribute("Name", p.Key), ToXml(p.Value));
                                      return fieldXml;
+                                 }));
+                xml.Add(parameter.GetMethodResults()
+                                 .SelectMany(p => p.Value.Select((prm, i) => (methodSignature: p.Key, invocation: i, result: prm)))
+                                 .Where(tpl => tpl.result != null)
+                                 .Select(tpl => 
+                                 {
+                                     XElement methodXml = new XElement("MethodResult", new XAttribute("Signature", tpl.methodSignature.ToString()), new XAttribute("Invocation", tpl.invocation), ToXml(tpl.result!));
+                                     return methodXml;
                                  }));
             }
             return xml;
@@ -55,18 +63,18 @@ namespace dnWalker.Parameters.Xml
         {
             bool isNull = parameter.IsNull;
 
-            XElement xml = new XElement("Interface", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), new XAttribute("IsNull", isNull));
+            XElement xml = new XElement("Interface", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull));
 
             if (!isNull)
             {
-                xml.Add(parameter.GetKnownMethodResults()
-                            .GroupBy(p => p.Key.Item1)
-                            .Select(g =>
-                            {
-                                XElement methodResultXml = new XElement("MethodResult", new XAttribute("Name", g.Key));
-                                methodResultXml.Add(g.Select(r => new XElement("Call", new XAttribute("CallNumber", r.Key.Item2), ToXml(r.Value))));
-                                return methodResultXml;
-                            }));
+                xml.Add(parameter.GetMethodResults()
+                                 .SelectMany(p => p.Value.Select((prm, i) => (methodSignature: p.Key, invocation: i, result: prm)))
+                                 .Where(tpl => tpl.result != null)
+                                 .Select(tpl =>
+                                 {
+                                     XElement methodXml = new XElement("MethodResult", new XAttribute("Signature", tpl.methodSignature.ToString()), new XAttribute("Invocation", tpl.invocation), ToXml(tpl.result!));
+                                     return methodXml;
+                                 }));
             }
             return xml;
         }
@@ -75,15 +83,16 @@ namespace dnWalker.Parameters.Xml
         {
             bool isNull = parameter.IsNull;
 
-            XElement xml = new XElement("Array", new XAttribute("ElementType", parameter.TypeName), new XAttribute("Name", parameter.LocalName), new XAttribute("IsNull", isNull), new XAttribute("Length", parameter.Length));
+            XElement xml = new XElement("Array", new XAttribute("ElementType", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull), new XAttribute("Length", parameter.Length));
 
             if (!isNull)
             {
-                xml.Add(parameter.GetKnownItems()
-                                 .Select(p =>
+                xml.Add(parameter.GetItems()
+                                 .Select((p,i) => (index: i, item: p))
+                                 .Where(tpl => tpl.item != null)
+                                 .Select(tpl =>
                                  {
-                                     XElement itemXml = new XElement("Item", new XAttribute("Index", p.Key), ToXml(p.Value));
-
+                                     XElement itemXml = new XElement("Item", new XAttribute("Index", tpl.index), ToXml(tpl.item!));
                                      return itemXml;
                                  }));
             }
@@ -93,7 +102,7 @@ namespace dnWalker.Parameters.Xml
     
         public static XElement ToXml(this ParameterStore store)
         {
-            XElement storeXml = new XElement("ParameterStore", store.RootParameters.Select(p => p.ToXml()));
+            XElement storeXml = new XElement("ParameterStore", store.GetRootParameters().Select(rp => new XElement("Root", new XAttribute("Name", rp.Key), ToXml(rp.Value))));
             return storeXml;
         }
     }

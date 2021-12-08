@@ -107,9 +107,11 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             pathStore.Paths.Count().Should().Be(2);
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
-            pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
         }
+
         [Fact]
         public void Test_Branch_Equals_FalsePathFirst()
         {
@@ -125,8 +127,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
         }
 
         [Fact]
@@ -144,8 +146,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
         }
 
         [Fact]
@@ -163,8 +165,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x == 5)" || pc == "Not((x != 5))" || pc == "Not(Not((x == 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x != 5)" || pc == "Not((x == 5))" || pc == "Not(Not((x != 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} == 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} != 5\)");
         }
 
         [Fact]
@@ -182,8 +184,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
         }
 
         [Fact]
@@ -201,8 +203,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
         }
 
         [Fact]
@@ -220,8 +222,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
         }
 
         [Fact]
@@ -239,8 +241,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
         }
 
         [Fact]
@@ -258,8 +260,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
         }
 
         [Fact]
@@ -277,9 +279,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-
-            pathConstraints[0].Should().Match(pc => pc == "(x >= 5)" || pc == "Not((x < 5))" || pc == "Not(Not((x >= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x < 5)" || pc == "Not((x >= 5))" || pc == "Not(Not((x < 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} >= 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} < 5\)");
         }
 
         [Fact]
@@ -297,8 +298,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
         }
 
         [Fact]
@@ -316,8 +317,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
             String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
-            pathConstraints[0].Should().Match(pc => pc == "(x > 5)" || pc == "Not((x <= 5))" || pc == "Not(Not((x > 5)))");
-            pathConstraints[1].Should().Match(pc => pc == "(x <= 5)" || pc == "Not((x > 5))" || pc == "Not(Not((x <= 5)))");
+            pathConstraints[0].Should().MatchRegex(@"\(V[0-9a-f]{8} > 5\)");
+            pathConstraints[1].Should().MatchRegex(@"\(V[0-9a-f]{8} <= 5\)");
         }
     }
 }

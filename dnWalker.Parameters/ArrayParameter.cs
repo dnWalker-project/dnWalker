@@ -8,23 +8,31 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class ArrayParameter : ReferenceTypeParameter
+    public class ArrayParameter : ReferenceTypeParameter, IArrayParameter
     {
-        public static readonly string LengthName = "#__Length__";
+        private int _length;
+        private IParameter?[] _items = Array.Empty<IParameter?>();
+        private readonly string _elementTypeName;
 
-        private string _elementTypeName;
-        private static readonly Parameter?[] EmptyArray = new Parameter?[0];
 
-        public ArrayParameter(string elementTypeName, string localName) : base(elementTypeName + "[]", localName)
+        public ArrayParameter(string elementTypeName) : base(elementTypeName + "[]")
         {
             _elementTypeName = elementTypeName;
-            _lengthParameter = new Int32Parameter(LengthName, this);
         }
 
-        public ArrayParameter(string elementTypeName, string localName, Parameter parent) : base(elementTypeName + "[]", localName, parent)
+        public ArrayParameter(string elementTypeName, int id) : base(elementTypeName + "[]", id)
         {
-            _elementTypeName= elementTypeName;
-            _lengthParameter = new Int32Parameter(LengthName, this);
+            _elementTypeName = elementTypeName;
+        }
+
+
+        public int Length
+        {
+            get { return _length; }
+            set 
+            {
+                _length = Resize(value);
+            }
         }
 
         public string ElementTypeName
@@ -32,112 +40,72 @@ namespace dnWalker.Parameters
             get { return _elementTypeName; }
         }
 
-        private readonly Int32Parameter _lengthParameter;
 
-        public int Length
+        private int Resize(int minLength)
         {
-            get { return _lengthParameter.Value; }
-            set 
-            {
-                int length = Length;
-                // we are downsizing => do nothing;
-                if (length > value)
-                {
-                    length = value;
-                    return;
-                }
+            if (minLength < _items.Length) return minLength;
 
-                Resize(value);
-            }
-        }
-
-        public Int32Parameter LengthParameter
-        {
-            get { return _lengthParameter; }
-        }
-
-        private void Resize(int newLength)
-        {
-            // round up to next power of 2 or something?
-            Parameter[] newItems = new Parameter[newLength];
-
-            int length = Length;
-
-            Array.Copy(_items, newItems, length);
+            IParameter?[] newItems = new IParameter[minLength];
+            _items.CopyTo(newItems, 0);
 
             _items = newItems;
-
-            _lengthParameter.Value = newLength;
+            return minLength;
         }
 
-        private Parameter?[] _items = EmptyArray;
-
-        public void SetItem(int index, Parameter? item)
+        public IParameter?[] GetItems()
         {
-            if (item == null)
-            {
-                ClearItem(index);
-            }
+            IParameter?[] items = new IParameter[_length];
+            Array.Copy(_items, items, _length);
 
-            if (index > Length)
-            {
-                Resize(index + 1);
-            }
+            return items;
         }
 
-        private void ClearItem(int index)
+        public bool TryGetItem(int index, [NotNullWhen(true)] out IParameter? parameter)
         {
-            if (index < Length)
+            if (index > 0 && index < _length)
             {
-                Parameter? item = _items[index];
-                if (item != null)
-                {
-                    _items[index] = null;
-                    item.Parent = null;
-                }
-            }
-        }
-
-        public bool TryGetItem(int index, [NotNullWhen(true)]out Parameter? item)
-        {
-            if (index >= Length)
-            {
-                item = null;
-                return false;
+                parameter = _items[index];
+                return parameter != null;
             }
 
-            item = _items[index];
-            return item != null;
-        }
-
-        public IEnumerable<KeyValuePair<int, Parameter>> GetKnownItems()
-        {
-            return IsNull ? Enumerable.Empty<KeyValuePair<int, Parameter>>() : 
-                Enumerable
-                .Range(0, Length)
-                .Select(i => (i, _items[i]))
-                .Where(t => t.Item2 != null)
-                .Select(t => KeyValuePair.Create(t.i, t.Item2!));
-        }
-
-        public override IEnumerable<Parameter> GetChildren()
-        {
-            return ((IEnumerable<Parameter>)_items.Where(item => item != null)).Append(IsNullParameter).Append(LengthParameter);
-        }
-
-
-        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
-        {
-            if (base.TryGetChild(parameterName, out parameter))
-            {
-                return true;
-            }
-
-            if (parameterName.TryGetIndex(out int index))
-            {
-                return TryGetItem(index, out parameter);
-            }
+            parameter = null;
             return false;
+        }
+
+        public void SetItem(int index, IParameter? parameter)
+        {
+            ClearItem(index);
+            if (parameter != null)
+            {
+                if (index >= _length)
+                {
+                    _length = Resize(index + 1);
+                }
+
+                _items[index] = parameter;
+                parameter.Accessor = new ItemParameterAccessor(index, this);
+            }
+        }
+
+        public void ClearItem(int index)
+        {
+            if (index >= _length)
+            {
+                return;
+            }
+
+            ref IParameter? p = ref _items[index];
+
+            if (p != null)
+            {
+                p.Accessor = null;
+                p = null;
+            }
+        }
+
+        public override IEnumerable<IParameter> GetChildren()
+        {
+            return _items.Where(p => p != null).Select(p => p!);
         }
     }
 }

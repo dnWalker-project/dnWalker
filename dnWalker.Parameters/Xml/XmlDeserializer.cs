@@ -23,15 +23,17 @@ namespace dnWalker.Parameters.Xml
 
             ParameterStore store = new ParameterStore();
 
-            foreach(XElement rootParamterXml in xml.Elements())
+            foreach(XElement rootXml in xml.Elements())
             {
-                store.AddRootParameter(rootParamterXml.ToParameter());
+                string name = rootXml.Attribute("Name")?.Value ?? throw new Exception("Root accessor must contain 'Name' attribute.");
+                IParameter p = rootXml.Elements().First().ToParameter();
+                store.AddRootParameter(name, p);
             }
 
             return store;
         }
 
-        public static Parameter ToParameter(this XElement xml)
+        public static IParameter ToParameter(this XElement xml)
         {
             string parameteryKind = xml.Name.ToString();
 
@@ -73,10 +75,10 @@ namespace dnWalker.Parameters.Xml
         public static ObjectParameter ToObjectParameter(this XElement xml)
         {
             string typeName = xml.Attribute("Type")?.Value ?? throw new Exception("Object parameter XML must contain 'Type' attribute.");
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attrubute."));
             bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Object parameter XML must contain 'IsNull' attribute."));
 
-            ObjectParameter o = new ObjectParameter(typeName, name)
+            ObjectParameter o = new ObjectParameter(typeName, id)
             {
                 IsNull = isNull
             };
@@ -86,9 +88,17 @@ namespace dnWalker.Parameters.Xml
                 foreach (XElement fieldElement in xml.Elements("Field"))
                 {
                     string fieldName = fieldElement.Attribute("Name")?.Value ?? throw new Exception("Object field XMl must contain 'Name' attribute.");
-                    Parameter fieldValue = fieldElement.Elements().First().ToParameter();
+                    IParameter fieldValue = fieldElement.Elements().First().ToParameter();
 
                     o.SetField(fieldName, fieldValue);
+                }
+                foreach (XElement methodResultElement in xml.Elements("MethodResult"))
+                {
+                    MethodSignature methodSignature = MethodSignature.Parse(methodResultElement.Attribute("Signature")?.Value ?? throw new Exception("MethodResult XML must contain 'Signature' attribute."));
+                    int invocation = int.Parse(methodResultElement.Attribute("Invocation")?.Value ?? throw new Exception("MethodResult XML must contain 'Invocation' attribute."));
+                    IParameter result = methodResultElement.Elements().First().ToParameter();
+
+                    o.SetMethodResult(methodSignature, invocation, result);
                 }
             }
 
@@ -98,26 +108,24 @@ namespace dnWalker.Parameters.Xml
         public static InterfaceParameter ToInterfaceParameter(this XElement xml)
         {
             string typeName = xml.Attribute("Type")?.Value ?? throw new Exception("Interface parameter XML must contain 'Type' attribute.");
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attrubute."));
             bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Interface parameter XML must contain 'IsNull' attribute."));
 
-            InterfaceParameter i = new InterfaceParameter(typeName, name)
+            InterfaceParameter i = new InterfaceParameter(typeName, id)
             {
                 IsNull = isNull
             };
 
             if (!isNull)
-            { 
+            {
+
                 foreach (XElement methodResultElement in xml.Elements("MethodResult"))
                 {
-                    string methodName = methodResultElement.Attribute("Name")?.Value ?? throw new Exception("Interface MethodResult XML must contain 'Name' attribute.");
-                    foreach (XElement callResultEelement in methodResultElement.Elements("Call"))
-                    {
-                        int callNumber = int.Parse(callResultEelement.Attribute("CallNumber")?.Value ?? throw new Exception("Interface CallResult XML must contain 'CallNumber' attribute."));
-                        Parameter callResult = callResultEelement.Elements().First().ToParameter();
+                    MethodSignature methodSignature = MethodSignature.Parse(methodResultElement.Attribute("Signature")?.Value ?? throw new Exception("MethodResult XML must contain 'Signature' attribute."));
+                    int invocation = int.Parse(methodResultElement.Attribute("Invocation")?.Value ?? throw new Exception("MethodResult XML must contain 'Invocation' attribute."));
+                    IParameter result = methodResultElement.Elements().First().ToParameter();
 
-                        i.SetMethodResult(methodName, callNumber, callResult);
-                    }
+                    i.SetMethodResult(methodSignature, invocation, result);
                 }
             }
             return i;
@@ -126,11 +134,11 @@ namespace dnWalker.Parameters.Xml
         public static ArrayParameter ToArrayParameter(this XElement xml)
         {
             string elementTypeName = xml.Attribute("ElementType")?.Value ?? throw new Exception("Array parameter XML must contain 'ElementType' attribute.");
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attrubute."));
             bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Array parameter XML must contain 'IsNull' attribute."));
             int length = int.Parse(xml.Attribute("Length")?.Value ?? throw new Exception("Array parameter XML must contain 'Length' attribute."));
 
-            ArrayParameter a = new ArrayParameter(elementTypeName, name)
+            ArrayParameter a = new ArrayParameter(elementTypeName, id)
             {
                 IsNull = isNull,
                 Length = length
@@ -141,7 +149,7 @@ namespace dnWalker.Parameters.Xml
                 foreach (XElement itemElement in xml.Elements("Item"))
                 {
                     int itemIndex = int.Parse(itemElement.Attribute("Index")?.Value ?? throw new Exception("Array item XMl must contain 'Index' attribute."));
-                    Parameter item = itemElement.Elements().First().ToParameter();
+                    IParameter item = itemElement.Elements().First().ToParameter();
 
                     a.SetItem(itemIndex, item);
                 }

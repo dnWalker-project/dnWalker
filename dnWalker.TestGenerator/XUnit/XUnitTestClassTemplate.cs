@@ -779,27 +779,27 @@ this.Write(";\r\n");
         
         #line 207 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  
-private void WriteRightHandParameterInitialization(Parameter p)
+private void WriteRightHandParameterInitialization(IParameter p)
 {
     PushIndent("    ");
     switch(p)
     {
-        case PrimitiveValueParameter primitiveValue:
+        case IPrimitiveValueParameter primitiveValue:
             WriteRightHandParameterInitialization(primitiveValue);
             break;
 
-        case ObjectParameter objectParameter:
+        case IObjectParameter objectParameter:
             WriteRightHandParameterInitialization(objectParameter);
             break;
     }
     PopIndent();
 }
 
-private void WriteRightHandParameterInitialization(PrimitiveValueParameter p)
+private void WriteRightHandParameterInitialization(IPrimitiveValueParameter p)
 {
     Type type = AppDomain.CurrentDomain.GetType(p.TypeName);
 
-    object value = p.GetValue();
+    object value = p.Value;
     if (value != null)
     {
         
@@ -823,7 +823,7 @@ this.Write(this.ToStringHelper.ToStringWithCulture(value.ToString()));
     }
 }
 
-private void WriteRightHandParameterInitialization(ObjectParameter p)
+private void WriteRightHandParameterInitialization(IObjectParameter p)
 {
     Type type = AppDomain.CurrentDomain.GetType(p.TypeName);
 

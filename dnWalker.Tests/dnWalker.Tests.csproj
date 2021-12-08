@@ -27,7 +27,27 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Concolic\DataExport\" />
+      <None Update="Parameters\ParameterFactory_NumericParameterTests.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>ParameterFactory_NumericParameterTests.tt.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Parameters\ParameterFactory_NumericParameterTests.tt.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ParameterFactory_NumericParameterTests.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Parameters\ParameterFactory_NumerParameterTests.tt.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ParameterFactory_NumerParameterTests.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

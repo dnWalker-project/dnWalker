@@ -55,18 +55,12 @@ namespace dnWalker.Parameters.Xml
     string alias = aliases[i];
 
   #>
-        public static <#= type #>Parameter To<#= type #>Parameter(this XElement xml)
+        public static I<#= type #>Parameter To<#= type #>Parameter(this XElement xml)
         {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            <#= alias #> value = <#= alias #>.Parse(xml.Value);
-            return new <#= type #>Parameter(name, value);
-        }
-        
-        public static <#= type #>Parameter To<#= type #>Parameter(this XElement xml, Parameter parent)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            <#= alias #> value = <#= alias #>.Parse(xml.Value);
-            return new <#= type #>Parameter(name, value, parent);
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attribute."));
+            string valueStr = xml.Attribute("Value")?.Value ?? throw new Exception("PrimitiveValueParameter XML must contain 'Value' attribute.");
+            <#= alias #> value = <#= alias #>.Parse(valueStr);
+            return new <#= type #>Parameter(value, id);
         }
 <#
  }
@@ -74,101 +68,50 @@ namespace dnWalker.Parameters.Xml
  #> 
         public static CharParameter ToCharParameter(this XElement xml)
         {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attribute."));
+            string valueStr = xml.Attribute("Value")?.Value ?? throw new Exception("PrimitiveValueParameter XML must contain 'Value' attribute.");
 
-            char value = Convert.ToChar(Convert.ToInt32(xml.Value.Substring(2), 16));
+            char value = Convert.ToChar(Convert.ToInt32(valueStr.Substring(2), 16));
 
-            return new CharParameter(name, value);
-        }
-
-        public static CharParameter ToCharParameter(this XElement xml, Parameter parent)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            char value = Convert.ToChar(Convert.ToInt32(xml.Value.Substring(2), 16));
-
-            return new CharParameter(name, value, parent);
+            return new CharParameter(value, id);
         }
 
         public static SingleParameter ToSingleParameter(this XElement xml)
         {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attribute."));
+            string valueStr = xml.Attribute("Value")?.Value ?? throw new Exception("PrimitiveValueParameter XML must contain 'Value' attribute.");
 
             float value;
-            switch (strValue)
+            switch (valueStr)
             {
                 case "NAN": value = float.NaN; break;
                 case "INF": value = float.PositiveInfinity; break;
                 case "-INF": value = float.NegativeInfinity; break;
 
 
-                default: value = float.Parse(strValue); break;
+                default: value = float.Parse(valueStr); break;
             }
 
-            return new SingleParameter(name, value);
-        }
-
-        public static SingleParameter ToSingleParameter(this XElement xml, Parameter parent)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
-
-            float value;
-            switch (strValue)
-            {
-                case "NAN": value = float.NaN; break;
-                case "INF": value = float.PositiveInfinity; break;
-                case "-INF": value = float.NegativeInfinity; break;
-
-
-                default: value = float.Parse(strValue); break;
-            }
-
-            return new SingleParameter(name, value, parent);
+            return new SingleParameter(value, id);
         }
 
         public static DoubleParameter ToDoubleParameter(this XElement xml)
         {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
+            int id = int.Parse(xml.Attribute("Id")?.Value ?? throw new Exception("Parameter XML must contain 'Id' attribute."));
+            string valueStr = xml.Attribute("Value")?.Value ?? throw new Exception("PrimitiveValueParameter XML must contain 'Value' attribute.");
 
             double value;
-            switch (strValue)
+            switch (valueStr)
             {
                 case "NAN": value = double.NaN; break;
                 case "INF": value = double.PositiveInfinity; break;
                 case "-INF": value = double.NegativeInfinity; break;
 
 
-                default: value = double.Parse(strValue); break;
+                default: value = double.Parse(valueStr); break;
             }
 
-            return new DoubleParameter(name, value);
-        }
-        
-
-        public static DoubleParameter ToDoubleParameter(this XElement xml, Parameter parent)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
-
-            double value;
-            switch (strValue)
-            {
-                case "NAN": value = double.NaN; break;
-                case "INF": value = double.PositiveInfinity; break;
-                case "-INF": value = double.NegativeInfinity; break;
-
-
-                default: value = double.Parse(strValue); break;
-            }
-
-            return new DoubleParameter(name, value, parent);
+            return new DoubleParameter(value, id);
         }
     }
 }

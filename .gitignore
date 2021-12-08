@@ -351,6 +351,3 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-
-# T4 generated classes
-*.tt.cs

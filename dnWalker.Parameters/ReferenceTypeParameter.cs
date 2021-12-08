@@ -10,43 +10,54 @@ using Expressions = System.Linq.Expressions;
 
 namespace dnWalker.Parameters
 {
-    public abstract class ReferenceTypeParameter : Parameter
+    public abstract class ReferenceTypeParameter : Parameter, IReferenceTypeParameter
     {
-        public static readonly string IsNullName = "#__IsNUll__";
-
-        protected ReferenceTypeParameter(string typeName, string localName) : base(typeName, localName)
+        protected ReferenceTypeParameter(string typeName) : base(typeName)
         {
-            _isNullParameter = new BooleanParameter(IsNullName, true, this);
         }
 
-        protected ReferenceTypeParameter(string typeName, string localName, Parameter parent) : base(typeName, localName, parent)
+        protected ReferenceTypeParameter(string typeName, int id) : base(typeName, id)
         {
-            _isNullParameter = new BooleanParameter(IsNullName, true, this);
-        }
-
-        private readonly BooleanParameter _isNullParameter;
-
-        public BooleanParameter IsNullParameter
-        {
-            get { return _isNullParameter; }
         }
 
         public bool IsNull
         {
-            get { return _isNullParameter.Value; }
-            set { _isNullParameter.Value = value; }
+            get;
+            set;
+        } = true;
+
+        private readonly HashSet<int> _refs = new HashSet<int>();
+
+        public bool ReferenceEquals(IReferenceTypeParameter? other)
+        {
+            return other != null && (_refs.Contains(other.Id));
         }
 
-        public override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)] out Parameter? parameter)
+        public void SetReferenceEquals(IReferenceTypeParameter other, bool value = true)
         {
-            if (parameterName.TryGetField(out string? field) && field == IsNullName)
+            if (other == null)  throw new ArgumentNullException(nameof(other));
+
+            if (!value)
             {
-                parameter = IsNullParameter;
-                return true;
+                ClearReferenceEquals(other);
+                return;
             }
 
-            parameter = null;
-            return false;
+            if (_refs.Add(other.Id))
+            {
+                // we added the id
+                other.SetReferenceEquals(this, value);
+            }
+        }
+
+        public void ClearReferenceEquals(IReferenceTypeParameter other)
+        {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+
+            if (_refs.Remove(other.Id))
+            {
+                other.ClearReferenceEquals(this);
+            }
         }
     }
 }

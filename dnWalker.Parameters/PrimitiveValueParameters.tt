@@ -12,48 +12,24 @@ using System.Linq;
 
 namespace dnWalker.Parameters
 {
-    public abstract class PrimitiveValueParameter : Parameter
+
+    public abstract class PrimitiveValueParameter<TValue> : Parameter, IPrimitiveValueParameter<TValue> where TValue : struct
     {
-        protected PrimitiveValueParameter(string typeName, string name) : base(typeName, name)
+        protected PrimitiveValueParameter() : base(typeof(TValue).FullName!)
         { }
 
-        protected PrimitiveValueParameter(string typeName, string localName, Parameter owner) : base(typeName, localName, owner)
-        { }
-
-        public abstract object GetValue();
-
-        public override IEnumerable<Parameter> GetChildren()
-        {
-            return Enumerable.Empty<Parameter>();
-        }
-
-        public sealed override bool TryGetChild(ParameterName parameterName, [NotNullWhen(true)]out Parameter? parameter)
-        {
-            parameter = null;
-            return false;
-        }
-    }
-
-    public abstract class PrimitiveValueParameter<TValue> : PrimitiveValueParameter where TValue : struct
-    {
-        protected PrimitiveValueParameter(string typeName, string localName) : base(typeName, localName)
-        { }
-
-        protected PrimitiveValueParameter(string typeName, string localName, Parameter owner) : base(typeName, localName, owner)
-        { }
-
-        protected PrimitiveValueParameter(string typeName, string localName, TValue value) : base(typeName, localName)
+        protected PrimitiveValueParameter(TValue value) : base(typeof(TValue).FullName!)
         {
             Value = value;
         }
-        protected PrimitiveValueParameter(string typeName, string localName, TValue value, Parameter owner) : base(typeName, localName, owner)
+        protected PrimitiveValueParameter(TValue value, int id)  : base(typeof(TValue).FullName!, id)
         {
             Value = value;
         }
 
-        public override object GetValue()
+        public sealed override IEnumerable<IParameter> GetChildren()
         {
-            return Value;
+            return Enumerable.Empty<IParameter>();
         }
 
         public TValue Value
@@ -62,10 +38,6 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override string ToString()
-        {
-            return $"Parameter: {LocalName}, Type: {TypeName}, Value: {Value}";
-        }
     }
 
 <#
@@ -107,22 +79,14 @@ namespace dnWalker.Parameters
     string alias = aliases[i];
 
   #>
-    public class <#= type #>Parameter : PrimitiveValueParameter<<#= type #>>
+    public class <#= type #>Parameter : PrimitiveValueParameter<<#= alias #>>, I<#= type #>Parameter
     {
-        public <#= type #>Parameter(string localName) : base(TypeNames.<#= type #>TypeName, localName)
+        public <#= type #>Parameter() : base()
         { }
-
-        public <#= type #>Parameter(string localName, Parameter parent): base(TypeNames.<#= type #>TypeName, localName, parent)
+        public <#= type #>Parameter(<#= alias #> value) : base(value)
         { }
-
-        public <#= type #>Parameter(string localName, <#= alias #> value) : base(TypeNames.<#= type #>TypeName, localName)
-        {
-            Value = value;
-        }
-        public <#= type #>Parameter(string localName, <#= alias #> value, Parameter parent) : base(TypeNames.<#= type #>TypeName, localName, parent)
-        {
-            Value = value;
-        }
+        public <#= type #>Parameter(<#= alias #> value, int id) : base(value, id)
+        { }
     }
  
  <#

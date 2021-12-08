@@ -55,24 +55,24 @@ namespace dnWalker.Parameters.Xml
     string alias = aliases[i];
 
   #>
-        public static XElement ToXml(this <#= type #>Parameter parameter)
+        public static XElement ToXml(this I<#= type #>Parameter parameter)
         {
-            return new XElement("PrimitiveValue", new XAttribute("Type", TypeNames.<#= type #>TypeName), new XAttribute("Name", parameter.LocalName), parameter.Value);
+            return new XElement("PrimitiveValue", new XAttribute("Type", TypeNames.<#= type #>TypeName), new XAttribute("Id", parameter.Id), new XAttribute("Value", parameter.Value));
         }
 <#
  }
-        // write Char, Single and Double values manually - using custom convesion methods
+        // write Char, Single and Double values manually - using custom conversion methods
  #> 
-        public static XElement ToXml(this CharParameter parameter)
+        public static XElement ToXml(this ICharParameter parameter)
         {
             char symbol = parameter.Value;
 
             string unicodeFormat = string.Format(@"U+{0:x4}", (int)symbol).ToUpper();
 
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), unicodeFormat);
+            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("Value", unicodeFormat));
         }
 
-        public static XElement ToXml(this SingleParameter parameter)
+        public static XElement ToXml(this ISingleParameter parameter)
         {
             float number = parameter.Value;
 
@@ -94,10 +94,10 @@ namespace dnWalker.Parameters.Xml
                 numberRepr = number.ToString();
             }
 
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), numberRepr);
+            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("Value", numberRepr));
         }
 
-        public static XElement ToXml(this DoubleParameter parameter)
+        public static XElement ToXml(this IDoubleParameter parameter)
         {
             double number = parameter.Value;
 
@@ -119,7 +119,7 @@ namespace dnWalker.Parameters.Xml
                 numberRepr = number.ToString();
             }
 
-            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Name", parameter.LocalName), numberRepr);
+            return new XElement("PrimitiveValue", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("Value", numberRepr));
         }
     }
 }

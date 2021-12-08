@@ -103,9 +103,9 @@ namespace MMC.Data {
 			return popped;
 		}
 
-        public IDataElement Peek()
+        public IDataElement Peek(int depth = 0)
         {
-            return m_elements[m_stackptr - 1];
+            return m_elements[m_stackptr - depth - 1];
         }
 
         internal IDataElement Top()

@@ -8,87 +8,22 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public abstract class Parameter
+    public abstract class Parameter : IParameter, IEquatable<IParameter?>
     {
+        private readonly int _id;
         private readonly string _typeName;
-        private readonly string _localName;
-        private Parameter? _parent;
+        private ParameterAccessor? _accessor;
 
-        private ParameterName? _fullName;
-
-        public string LocalName
+        protected Parameter(string typeName)
         {
-            get { return _localName; }
-        }
-
-        public ParameterName FullName
-        {
-            get
-            {
-                //return _parent == null ? _localName : $"{_parent.GetFullName()}{ParameterNameUtils.Delimiter}{_localName}";
-                if (!_fullName.HasValue)
-                {
-                    if (_parent == null)
-                    {
-                        // create a new root parameter name
-                        _fullName = _localName;
-                    }
-                    else
-                    {
-                        _fullName = _parent.FullName.WithAccessor(_localName);
-                    }
-                }
-
-                return _fullName.Value;
-            }
-        }
-
-        public Parameter? Parent
-        {
-            get { return _parent; }
-            set 
-            {
-                _parent = value; 
-                _fullName = null;
-            }
-        }
-
-        public bool IsRoot
-        {
-            get { return _parent == null; }
-        }
-
-        public abstract Boolean TryGetChild(ParameterName parameterName, [NotNullWhen(true)]out Parameter? parameter);
-
-        public abstract IEnumerable<Parameter> GetChildren();
-
-        protected Parameter(string typeName, string localName)
-        {
-            if (string.IsNullOrWhiteSpace(typeName))
-            {
-                throw new ArgumentException($"'{nameof(typeName)}' cannot be null or whitespace.", nameof(typeName));
-            }
-
-            if (string.IsNullOrWhiteSpace(localName))
-            {
-                throw new ArgumentException($"'{nameof(localName)}' cannot be null or whitespace.", nameof(localName));
-            }
-
             _typeName = typeName;
-            _localName = localName;
-            _fullName = null;
+            _id = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
 
-        protected Parameter(string typeName, string localName, Parameter owner)
+        protected Parameter(string typeName, int id)
         {
-            if (string.IsNullOrEmpty(typeName))
-            {
-                throw new ArgumentNullException(nameof(typeName));
-            }
-
             _typeName = typeName;
-            _localName = localName;
-            _parent = owner ?? throw new ArgumentNullException(nameof(owner));
+            _id = id;
         }
 
         public string TypeName
@@ -96,10 +31,51 @@ namespace dnWalker.Parameters
             get { return _typeName; }
         }
 
-        public override string ToString()
+        public int Id
         {
-            return $"Parameter: {LocalName}, Type: {TypeName}";
+            get { return _id; }
+        }
+
+        public ParameterAccessor? Accessor
+        {
+            get { return _accessor; }
+            set
+            {
+                _accessor = value;
+            }
+        }
+        //public bool IsRoot
+        //{
+        //    get { return ((IParameter)this).IsRoot; }
+        //}
+
+        //public bool TryGetParent([NotNullWhen(true)] out IParameter? parent)
+        //{
+        //    return ((IParameter)this).TryGetParent(out parent);
+        //}
+
+        //public IEnumerable<IParameter> GetSelfAndDescendants()
+        //{
+        //    return((IParameter)this).GetSelfAndDescendants();
+        //}
+
+        public abstract IEnumerable<IParameter> GetChildren();
+
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as IParameter);
+        }
+
+        public bool Equals(IParameter? other)
+        {
+            return other != null &&
+                   _id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_id);
         }
     }
-
 }

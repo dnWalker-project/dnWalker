@@ -15,6 +15,8 @@
  *
  */
 
+// TODO - consolidate
+
 namespace MMC
 {
     using System;
@@ -695,14 +697,14 @@ namespace MMC
 
                     var typeDef = this.GetTypeDefinition(typeName);
 
-                    if (typeDef.IsInterface)
-                    {
-                        return new InterfaceProxy(typeDef);
-                    }
-
                     //throw new NotSupportedException("CreateDataElement for " + value.GetType());
                     return ObjectReference.Null;
             }
+        }
+
+        public TypeSig GetTypeSig(string typeName)
+        {
+            return GetTypeDefinition(typeName).ToTypeSig();
         }
     }
 }

@@ -10,81 +10,58 @@ namespace dnWalker.Parameters
 {
     public class ParameterStore
     {
-        private readonly IDictionary<string, Parameter> _rootParameters = new Dictionary<string, Parameter>();
+        public const string ThisName = "#__THIS__";
+        public const string ReturnValueName = "#__RETVAL__";
 
-        public const string ThisParameterName = "#__THIS__";
-        public const string ResultParameterName = "#__RESULT__";
 
-        public Parameter AddRootParameter(Parameter parameter)
+        private readonly Dictionary<string, IParameter> _rootParamters = new Dictionary<string, IParameter>();
+        private readonly Dictionary<int, IParameter> _parameters = new Dictionary<int, IParameter>();
+
+        public IEnumerable<KeyValuePair<string, IParameter>> GetRootParameters()
         {
-            var name = parameter.LocalName;
-            if (_rootParameters.ContainsKey(name))
+            return _rootParamters.AsEnumerable();
+        }
+
+        public IEnumerable<IParameter> GetAllParameters()
+        {
+            return _parameters.Values.AsEnumerable();
+        }
+
+        public void PruneParameter(IParameter parameter)
+        {
+            if (!_parameters.ContainsKey(parameter.Id)) return; //already pruned
+
+            if (parameter.Accessor is RootParameterAccessor r)
             {
-                throw new InvalidOperationException("Parameter with this name is already specified.");
+                _rootParamters.Remove(r.Name);
             }
 
-            _rootParameters.Add(name, parameter);
-
-            return parameter;
-        }
-
-
-        public bool TryGetParameter(ParameterName name, [NotNullWhen(true)]out Parameter? parameter)
-        {
-            if (name.IsEmpty)
+            foreach (IParameter p in parameter.GetSelfAndDescendants())
             {
-                parameter = null;
-                return false;
+                _parameters.Remove(p.Id);
             }
-
-            parameter = _rootParameters[name.RootName];
-
-            if (parameter == null) return false;
-
-            foreach(ParameterName currentName in name.TraversFromRoot().Skip(1)) // we want to skip the root 
-            {
-                if (parameter.TryGetChild(currentName, out parameter))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-            //return TryGetNextParameter(name, parameter, out parameter);
         }
 
-        public bool TryGetRootParameter(ParameterName name, [NotNullWhen(true)] out Parameter? parameter)
+        public void AddParameter(IParameter parameter)
         {
-            return _rootParameters.TryGetValue(name.RootName, out parameter);
+            _parameters[parameter.Id] = parameter;
         }
 
-        public IEnumerable<Parameter> RootParameters
+        public void AddRootParameter(string name, IParameter parameter)
         {
-            get { return _rootParameters.Values; }
+            _parameters[parameter.Id] = parameter;
+            _rootParamters[name] = parameter;
+            parameter.Accessor = new RootParameterAccessor(name);
         }
 
-        public IEnumerable<Parameter> GetAllParameters()
+        public bool TryGetParameter(int id, [NotNullWhen(true)] out IParameter? parameter)
         {
-            return _rootParameters.Values.Flatten(p => p.GetChildren());
+            return _parameters.TryGetValue(id, out parameter);
         }
 
-        public void Clear()
+        public bool TryGetRootParameter(string name, [NotNullWhen(true)] out IParameter? parameter)
         {
-            _rootParameters.Clear();
-        }
-
-        public override string ToString()
-        {
-            return String.Join(Environment.NewLine, _rootParameters.Values);
-        }
-
-    }
-
-    public static class LinqExt
-    {
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> sources, Func<T, IEnumerable<T>> selector)
-        {
-            return sources.Concat(sources.SelectMany(s => selector(s).Flatten(selector)));
+            return _rootParamters.TryGetValue(name, out parameter);
         }
     }
 }
