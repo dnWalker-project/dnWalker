@@ -20,7 +20,7 @@ namespace dnWalker.Parameters.Tests.Xml
         [ClassData(typeof(SerializationTestDataProvider.PrimitiveValueParameterProvider))]
         public void Test_PrimitiveValueParameterSerialization(Parameter parameter, string expectedXml)
         {
-            parameter.ToXml().ToString().Should().Be(expectedXml);
+            parameter.ToXml().ToString().ToLower().Should().BeEquivalentTo(expectedXml.ToLower());
         }
 
 
@@ -29,7 +29,7 @@ namespace dnWalker.Parameters.Tests.Xml
         public void Test_ObjectParameterSerialization(Parameter parameter, string expectedXml)
         {
             string xml = parameter.ToXml().ToString();
-            xml.Should().Be(expectedXml);
+            xml.ToLower().Should().BeEquivalentTo(expectedXml.ToLower());
         }
     }
 }

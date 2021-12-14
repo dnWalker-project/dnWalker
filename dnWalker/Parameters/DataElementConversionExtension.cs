@@ -74,7 +74,7 @@ namespace dnWalker.Parameters
 
         private static IDataElement CreateDataElement(IArrayParameter arrayParameter, ExplicitActiveState cur)
         {
-            if (arrayParameter.IsNull)
+            if (!arrayParameter.GetIsNull())
             {
                 // initialize fake null reference
                 // cannot use ObjectReference.Null, because we need a unique data element
@@ -88,14 +88,14 @@ namespace dnWalker.Parameters
                 ITypeDefOrRef elementType = cur.DefinitionProvider.GetTypeDefinition(arrayParameter.ElementTypeName);
 
                 // create ObjectReference
-                ObjectReference arrayReference = cur.DynamicArea.AllocateArray(cur.DynamicArea.DeterminePlacement(false), elementType, arrayParameter.Length);
+                ObjectReference arrayReference = cur.DynamicArea.AllocateArray(cur.DynamicArea.DeterminePlacement(false), elementType, arrayParameter.GetLength());
                 return arrayReference;
             }
         }
 
         private static IDataElement CreateDataElement(IInterfaceParameter interfaceParameter, ExplicitActiveState cur)
         {
-            if (interfaceParameter.IsNull)
+            if (!interfaceParameter.GetIsNull())
             {
                 // initialize fake null reference
                 // cannot use ObjectReference.Null, because we need a unique data element
@@ -116,7 +116,7 @@ namespace dnWalker.Parameters
 
         private static IDataElement CreateDataElement(IObjectParameter objectParameter, ExplicitActiveState cur)
         {
-            if (objectParameter.IsNull)
+            if (!objectParameter.GetIsNull())
             {
                 // initialize fake null reference
                 // cannot use ObjectReference.Null, because we need a unique data element

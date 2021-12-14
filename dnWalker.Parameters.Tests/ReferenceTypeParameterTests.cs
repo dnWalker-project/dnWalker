@@ -15,57 +15,19 @@ namespace dnWalker.Parameters.Tests
     {
 
         [Fact]
-        public void UnitializedReferenceTypeParameter_IsNull_ShouldBeTrue()
+        public void UnitializedReferenceTypeParameter_IsNull_ShouldBeNull()
         {
             TParameter parameter = Create();
 
-            parameter.IsNull.Should().BeTrue();
+            parameter.IsNull.Should().BeNull();
         }
 
         [Fact]
-        public void After_SetReferenceEquals_ReferenceEquals_ShouldBeTrue()
+        public void UnitializedReferenceTypeParameter_GetIsNull_ShouldBeTrue()
         {
-            TParameter parameter = Create(3);
-            TParameter refParameter = Create(2);
+            TParameter parameter = Create();
 
-            parameter.SetReferenceEquals(refParameter);
-
-            parameter.ReferenceEquals(refParameter).Should().BeTrue();
-            refParameter.ReferenceEquals(parameter).Should().BeTrue();
-        }
-
-        [Fact]
-        public void After_ClearReferenceEquals_ReferenceEquals_ShouldBeFalse()
-        {
-            TParameter parameter = Create(3);
-            TParameter refParameter = Create(2);
-
-            parameter.SetReferenceEquals(refParameter);
-
-            parameter.ReferenceEquals(refParameter).Should().BeTrue();
-            refParameter.ReferenceEquals(parameter).Should().BeTrue();
-
-            parameter.ClearReferenceEquals(refParameter);
-
-            parameter.ReferenceEquals(refParameter).Should().BeFalse();
-            refParameter.ReferenceEquals(parameter).Should().BeFalse();
-        }
-
-        [Fact]
-        public void After_SetReferenceEquals_WithFalse_ReferenceEquals_ShouldBeFalse()
-        {
-            TParameter parameter = Create(3);
-            TParameter refParameter = Create(2);
-
-            parameter.SetReferenceEquals(refParameter);
-
-            parameter.ReferenceEquals(refParameter).Should().BeTrue();
-            refParameter.ReferenceEquals(parameter).Should().BeTrue();
-
-            parameter.SetReferenceEquals(refParameter, false);
-
-            parameter.ReferenceEquals(refParameter).Should().BeFalse();
-            refParameter.ReferenceEquals(parameter).Should().BeFalse();
+            parameter.GetIsNull().Should().BeTrue();
         }
     }
 }

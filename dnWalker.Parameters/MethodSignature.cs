@@ -105,12 +105,23 @@ namespace dnWalker.Parameters
             return ReturnTypeFullName == other.ReturnTypeFullName &&
                    DeclaringTypeFullName == other.DeclaringTypeFullName &&
                    MethodName == other.MethodName &&
-                   EqualityComparer<string[]>.Default.Equals(ArgumentTypeFullNames, other.ArgumentTypeFullNames);
+                   ArgumentTypeFullNames.SequenceEqual(other.ArgumentTypeFullNames);
         }
 
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            //return ToString().GetHashCode();
+            HashCode hashCode = new HashCode();
+            hashCode.Add(ReturnTypeFullName);
+            hashCode.Add(DeclaringTypeFullName);
+            hashCode.Add(MethodName);
+
+            foreach (string arg in ArgumentTypeFullNames)
+            {
+                hashCode.Add(arg);
+            }
+
+            return hashCode.ToHashCode();
         }
 
         public static bool operator ==(MethodSignature left, MethodSignature right)

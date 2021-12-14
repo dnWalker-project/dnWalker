@@ -59,5 +59,42 @@ namespace dnWalker.Parameters
                         GetFields().Select(f => f.Value)
                    );
         }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            ObjectParameter objectParameter = new ObjectParameter(TypeName, id);
+            objectParameter.IsNull = IsNull;
+
+            foreach (KeyValuePair<string, IParameter> fieldInfo in GetFields())
+            {
+                if (fieldInfo.Value is IReferenceTypeParameter refType)
+                {
+                    objectParameter.SetField(fieldInfo.Key, refType.CreateAlias());
+                }
+                else if (fieldInfo.Value is IPrimitiveValueParameter valueType)
+                {
+                    objectParameter.SetField(fieldInfo.Key, valueType.ShallowCopy());
+                }
+
+            }
+
+            foreach (KeyValuePair<MethodSignature, IParameter?[]> methodResultInfo in GetMethodResults())
+            {
+                IParameter?[] results = methodResultInfo.Value;
+                for (int i = 0; i < results.Length; ++i)
+                {
+                    if (results[i] is IReferenceTypeParameter refType)
+                    {
+                        objectParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias());
+                    }
+                    else if (results[i] is IPrimitiveValueParameter valueType)
+                    {
+                        objectParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy());
+                    }
+                }
+            }
+
+            return objectParameter;
+        }
     }
 }

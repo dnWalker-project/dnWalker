@@ -20,6 +20,11 @@ namespace dnWalker.Parameters
         }
 
         public abstract string GetAccessString();
+
+        public virtual void ChangeTarget(IParameter newTarget)
+        {
+            newTarget.Accessor = this;
+        }
     }
 
     public class FieldParameterAccessor : ParameterAccessor
@@ -29,6 +34,14 @@ namespace dnWalker.Parameters
         public new IFieldOwnerParameter Parent
         {
             get { return (IFieldOwnerParameter?)base.Parent ?? throw new Exception("Parent must not be null!"); }
+        }
+
+        public override void ChangeTarget(IParameter newTarget)
+        {
+            base.ChangeTarget(newTarget);
+
+            Parent.ClearField(FieldName);
+            Parent.SetField(FieldName, newTarget);
         }
 
         public FieldParameterAccessor(string fieldName, IFieldOwnerParameter parent) : base(parent)
@@ -49,6 +62,14 @@ namespace dnWalker.Parameters
         public new IItemOwnerParameter Parent
         {
             get { return (IItemOwnerParameter?)base.Parent ?? throw new Exception("Parent must not be null!"); }
+        }
+
+        public override void ChangeTarget(IParameter newTarget)
+        {
+            base.ChangeTarget(newTarget);
+
+            Parent.ClearItem(Index);
+            Parent.SetItem(Index, newTarget);
         }
 
         public ItemParameterAccessor(int index, IItemOwnerParameter parent) : base(parent)
@@ -72,6 +93,14 @@ namespace dnWalker.Parameters
             get { return (IMethodResolverParameter?)base.Parent ?? throw new Exception("Parent must not be null!"); }
         }
 
+        public override void ChangeTarget(IParameter newTarget)
+        {
+            base.ChangeTarget(newTarget);
+
+            Parent.ClearMethodResult(MethodSignature, Invocation);
+            Parent.SetMethodResult(MethodSignature, Invocation, newTarget);
+        }
+
         public MethodResultParameterAccessor(MethodSignature methodSignature, int invocation, IMethodResolverParameter parent) : base(parent)
         {
             MethodSignature = methodSignature;
@@ -86,7 +115,7 @@ namespace dnWalker.Parameters
 
     public class RootParameterAccessor : ParameterAccessor
     {
-        public string Name { get; }
+        public virtual string Name { get; }
 
         public RootParameterAccessor(string name) : base(null)
         {
@@ -96,6 +125,21 @@ namespace dnWalker.Parameters
         public override string GetAccessString()
         {
             return Name;
+        }
+    }
+
+    public class MethodArgumentParameterAccessor : RootParameterAccessor
+    {
+        public MethodArgumentParameterAccessor(string name) : base(name)
+        {
+        }
+    }
+
+    public class StaticFieldParameterAccessor : RootParameterAccessor
+    {
+        public StaticFieldParameterAccessor(string className, string fieldName) : base($"{className}.{fieldName}")
+        {
+
         }
     }
 }

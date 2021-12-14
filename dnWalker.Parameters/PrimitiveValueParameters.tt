@@ -37,7 +37,6 @@ namespace dnWalker.Parameters
             get;
             set;
         }
-
     }
 
 <#
@@ -87,6 +86,11 @@ namespace dnWalker.Parameters
         { }
         public <#= type #>Parameter(<#= alias #> value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new <#= type #>Parameter(Value, id);
+        }
     }
  
  <#

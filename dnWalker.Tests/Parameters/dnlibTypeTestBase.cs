@@ -45,6 +45,7 @@ namespace dnWalker.Tests.Parameters
             var f = new dnWalker.Instructions.ExtendableInstructionFactory();
             f.AddSymbolicExecution();
             f.AddPathConstraintProducers();
+            f.AddParameterHandlers();
 
 
             _instructionExecProvider = InstructionExecProvider.Get(_config, f);

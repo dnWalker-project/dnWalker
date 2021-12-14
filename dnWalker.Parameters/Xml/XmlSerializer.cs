@@ -36,10 +36,10 @@ namespace dnWalker.Parameters.Xml
 
         public static XElement ToXml(this IObjectParameter parameter)
         {
-            bool isNull = parameter.IsNull;
-            XElement xml = new XElement("Object", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull));
+            bool? isNull = parameter.IsNull;
+            XElement xml = new XElement("Object", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull?.ToString() ?? "Unknown"));
             
-            if (!isNull)
+            if (isNull == false)
             {
                 xml.Add(parameter.GetFields()
                                  .Select(p =>
@@ -61,11 +61,11 @@ namespace dnWalker.Parameters.Xml
 
         public static XElement ToXml(this InterfaceParameter parameter)
         {
-            bool isNull = parameter.IsNull;
+            bool? isNull = parameter.IsNull;
 
-            XElement xml = new XElement("Interface", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull));
+            XElement xml = new XElement("Interface", new XAttribute("Type", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull?.ToString() ?? "Unknown"));
 
-            if (!isNull)
+            if (isNull != false)
             {
                 xml.Add(parameter.GetMethodResults()
                                  .SelectMany(p => p.Value.Select((prm, i) => (methodSignature: p.Key, invocation: i, result: prm)))
@@ -81,11 +81,11 @@ namespace dnWalker.Parameters.Xml
 
         public static XElement ToXml(this ArrayParameter parameter)
         {
-            bool isNull = parameter.IsNull;
+            bool? isNull = parameter.IsNull;
 
-            XElement xml = new XElement("Array", new XAttribute("ElementType", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull), new XAttribute("Length", parameter.Length));
+            XElement xml = new XElement("Array", new XAttribute("ElementType", parameter.TypeName), new XAttribute("Id", parameter.Id), new XAttribute("IsNull", isNull?.ToString() ?? "Unknown"), new XAttribute("Length", parameter.Length));
 
-            if (!isNull)
+            if (isNull == false)
             {
                 xml.Add(parameter.GetItems()
                                  .Select((p,i) => (index: i, item: p))

@@ -8,38 +8,23 @@ using System.Xml;
 
 namespace dnWalker.Parameters
 {
-    public class ParameterStore
+    public class ParameterStore : IParameterStore
     {
         public const string ThisName = "#__THIS__";
-        public const string ReturnValueName = "#__RETVAL__";
+        public const string ReturnName = "#__RETVAL__";
 
 
-        private readonly Dictionary<string, IParameter> _rootParamters = new Dictionary<string, IParameter>();
+        private readonly Dictionary<string, IParameter> _rootParameters = new Dictionary<string, IParameter>();
         private readonly Dictionary<int, IParameter> _parameters = new Dictionary<int, IParameter>();
 
         public IEnumerable<KeyValuePair<string, IParameter>> GetRootParameters()
         {
-            return _rootParamters.AsEnumerable();
+            return _rootParameters.AsEnumerable();
         }
 
         public IEnumerable<IParameter> GetAllParameters()
         {
             return _parameters.Values.AsEnumerable();
-        }
-
-        public void PruneParameter(IParameter parameter)
-        {
-            if (!_parameters.ContainsKey(parameter.Id)) return; //already pruned
-
-            if (parameter.Accessor is RootParameterAccessor r)
-            {
-                _rootParamters.Remove(r.Name);
-            }
-
-            foreach (IParameter p in parameter.GetSelfAndDescendants())
-            {
-                _parameters.Remove(p.Id);
-            }
         }
 
         public void AddParameter(IParameter parameter)
@@ -50,8 +35,18 @@ namespace dnWalker.Parameters
         public void AddRootParameter(string name, IParameter parameter)
         {
             _parameters[parameter.Id] = parameter;
-            _rootParamters[name] = parameter;
+            _rootParameters[name] = parameter;
             parameter.Accessor = new RootParameterAccessor(name);
+        }
+
+        public void AddThisParameter(IParameter parameter)
+        {
+            AddRootParameter(ThisName, parameter);
+        }
+
+        public void AddReturnParameter(IParameter parameter)
+        {
+            AddRootParameter(ReturnName, parameter);
         }
 
         public bool TryGetParameter(int id, [NotNullWhen(true)] out IParameter? parameter)
@@ -61,7 +56,30 @@ namespace dnWalker.Parameters
 
         public bool TryGetRootParameter(string name, [NotNullWhen(true)] out IParameter? parameter)
         {
-            return _rootParamters.TryGetValue(name, out parameter);
+            return _rootParameters.TryGetValue(name, out parameter);
         }
+
+        public bool TryGetReturnParameter([NotNullWhen(true)]out IParameter? retVal)
+        {
+            return TryGetRootParameter(ReturnName, out retVal);
+        }
+
+        public bool TryGetThisParameter([NotNullWhen(true)] out IParameter? retVal)
+        {
+            return TryGetRootParameter(ThisName, out retVal);
+        }
+
+        public bool RemoveParameter(IParameter parameter)
+        {
+            bool result = true;
+
+            if (parameter.Accessor is RootParameterAccessor root)
+            {
+                result &= _rootParameters.Remove(root.Name);
+            }
+
+            return result && _parameters.Remove(parameter.Id);
+        }
+        
     }
 }

@@ -23,7 +23,7 @@ namespace dnWalker.Parameters
         protected Parameter(string typeName, int id)
         {
             _typeName = typeName;
-            _id = id;
+            _id = id < 0 ? System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this) : id;
         }
 
         public string TypeName
@@ -77,5 +77,7 @@ namespace dnWalker.Parameters
         {
             return HashCode.Combine(_id);
         }
+
+        public abstract IParameter ShallowCopy(int id);
     }
 }

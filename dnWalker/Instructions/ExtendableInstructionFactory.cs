@@ -19,6 +19,10 @@ namespace dnWalker.Instructions
             _extensions.Add(instructionExtension);
         }
 
+        public ExtendableInstructionFactory()
+        {
+
+        }
 
         public override InstructionExecBase CreateInstructionExec(Instruction instr)
         {

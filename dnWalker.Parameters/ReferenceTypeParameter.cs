@@ -20,44 +20,18 @@ namespace dnWalker.Parameters
         {
         }
 
-        public bool IsNull
+        public bool? IsNull
         {
             get;
             set;
-        } = true;
+        } = null;
 
-        private readonly HashSet<int> _refs = new HashSet<int>();
 
-        public bool ReferenceEquals(IReferenceTypeParameter? other)
-        {
-            return other != null && (_refs.Contains(other.Id));
-        }
+        //private readonly HashSet<IAliasParameter> _aliases = new HashSet<IAliasParameter>();
 
-        public void SetReferenceEquals(IReferenceTypeParameter other, bool value = true)
-        {
-            if (other == null)  throw new ArgumentNullException(nameof(other));
-
-            if (!value)
-            {
-                ClearReferenceEquals(other);
-                return;
-            }
-
-            if (_refs.Add(other.Id))
-            {
-                // we added the id
-                other.SetReferenceEquals(this, value);
-            }
-        }
-
-        public void ClearReferenceEquals(IReferenceTypeParameter other)
-        {
-            if (other == null) throw new ArgumentNullException(nameof(other));
-
-            if (_refs.Remove(other.Id))
-            {
-                other.ClearReferenceEquals(this);
-            }
-        }
+        //public ICollection<IAliasParameter> Aliases
+        //{
+        //    get { return _aliases; }
+        //}
     }
 }

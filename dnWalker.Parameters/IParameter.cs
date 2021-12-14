@@ -19,9 +19,16 @@ namespace dnWalker.Parameters
 
 
         IEnumerable<IParameter> GetChildren();
+
+        /// <summary>
+        /// Shallow copy will create a new instance of the parameter with same children (using alias parameters)
+        /// </summary>
+        /// <returns></returns>
+        IParameter ShallowCopy(int id = -1);
+
     }
 
-    public static class ParameterExtensions
+    public static partial class ParameterExtensions
     {
         public static bool IsRoot(this IParameter parameter)
         {

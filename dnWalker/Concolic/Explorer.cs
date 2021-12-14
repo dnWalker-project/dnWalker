@@ -138,6 +138,7 @@ namespace dnWalker.Concolic
             var f = new dnWalker.Instructions.ExtendableInstructionFactory();
             f.AddSymbolicExecution();
             f.AddPathConstraintProducers();
+            f.AddParameterHandlers();
 
             var instructionExecProvider = InstructionExecProvider.Get(_config, f);
 

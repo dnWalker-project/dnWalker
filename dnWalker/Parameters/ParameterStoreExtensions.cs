@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.DataElements;
+using dnWalker.Parameters.Expressions;
 
 using MMC.Data;
 using MMC.State;
@@ -79,167 +80,69 @@ namespace dnWalker.Parameters
             // TODO
         }
 
-        public static void NextGeneration(this ParameterStore store, IDictionary<string, object> data)
+        private class ExprSorter : IComparer<KeyValuePair<ParameterExpression, object>>
         {
-            // data is in format:
-            // <KIND><ID 1><ID 2>...<ID N>
-            // V - value of, single id - primitive value only
-            // N - is null, single id - reference types only
-            // L - length, single id - array only
-            // E - reference equals, two ids  - refernce types only
-
-            const char ValueOf = 'V';
-            const char Null = 'N';
-            const char LengthOf = 'L';
-            const char RefEquals = 'E';
-
-            HashSet<int> toPrune = new HashSet<int>(store.GetAllParameters().Select(p => p.Id));
-                
-            static int GetId(string key)
+            public int Compare(KeyValuePair<ParameterExpression, object> x, KeyValuePair<ParameterExpression, object> y)
             {
-                return Convert.ToInt32(key, 16);
-            }
+                // return -1 if expr1 <  expr2 => we want to handle expr1 before expr2
+                // return  0 if expr1 == expr2 => we do not care which one we handle first
+                // return  1 if expr1 >  expr2 => we want to handle expr2 before expr1
 
-            void MarkToKeep(IParameter p)
-            {
-                // walk from the parameter through the accessors until the roots
-                // remove them from the toPrune hashset
-                int id = p.Id;
-                if (!toPrune.Contains(id))
+                ParameterExpression px = x.Key;
+                ParameterExpression py = x.Key;
+
+                switch ((px, py))
                 {
-                    // already marked to keep
-                    return;
-                }
+                    // value of, lenght of, is null - all must be handled before any ref equals
+                    case (ValueOfParameterExpression _, RefEqualsParameterExpression _):
+                    case (LengthOfParameterExpression _, RefEqualsParameterExpression _):
+                    case (IsNullParameterExpression _, RefEqualsParameterExpression _):
+                        return -1;
 
-                toPrune.Remove(id);
+                    case (RefEqualsParameterExpression _, RefEqualsParameterExpression _):
+                    default:
+                        // left is ! refEquals, right is ! RefEquals
+                        return 0;
 
-                p = p.Accessor?.Parent;
-                if (p != null)
-                {
-                    MarkToKeep(p);
-                }
-
-                // if it is null, it is either because
-                // the accessor was not set (should not be possible)
-                // or the parameter is root, so no need to climb further
-            }
-
-
-            bool IsValueOf(string key, out IPrimitiveValueParameter p)
-            {
-                if (key[0] == ValueOf)
-                {
-                    int id = GetId(key.Substring(1));
-                    store.TryGetParameter(id, out IParameter parameter);
-                    p = parameter as IPrimitiveValueParameter;
-
-                    return p != null;
-                }
-                p = null;
-                return false;
-            }
-            bool IsNull(string key, out IReferenceTypeParameter p)
-            {
-
-                if (key[0] == Null)
-                {
-                    int id = GetId(key.Substring(1));
-                    store.TryGetParameter(id, out IParameter parameter);
-                    p = parameter as IReferenceTypeParameter;
-
-                    return p != null;
-                }
-                p = null;
-                return false;
-            }
-            bool IsLengthOf(string key, out IArrayParameter p)
-            {
-                if (key[0] == LengthOf)
-                {
-                    int id = GetId(key.Substring(1));
-                    store.TryGetParameter(id, out IParameter parameter);
-                    p = parameter as IArrayParameter;
-
-                    return p != null;
-                }
-                p = null;
-                return false;
-            }
-            bool IsReferenceEquals(string key, out IReferenceTypeParameter lhs, out IReferenceTypeParameter rhs)
-            {
-
-                if (key[0] == RefEquals)
-                {
-                    int id1 = GetId(key.Substring(1, 4));
-                    int id2 = GetId(key.Substring(5));
-                    store.TryGetParameter(id1, out IParameter p1);
-                    store.TryGetParameter(id2, out IParameter p2);
-                    lhs = p1 as IReferenceTypeParameter;
-                    rhs = p2 as IReferenceTypeParameter;
-
-                    return lhs != null && rhs != null;
-                }
-                lhs = null;
-                rhs = null;
-                return false;
-            }
-
-
-
-            foreach (KeyValuePair<string, object> pair in data)
-            {
-                string key = pair.Key;
-
-                if (IsValueOf(key, out IPrimitiveValueParameter primitiveValueParameter))
-                {
-                    primitiveValueParameter.Value = pair.Value;
-                    MarkToKeep(primitiveValueParameter);
-                }
-
-                else if (IsNull(key, out IReferenceTypeParameter referenceTypeParameter))
-                {
-                    bool value = (bool)pair.Value;
-                    referenceTypeParameter.IsNull = value;
-                    MarkToKeep(referenceTypeParameter);
-                }
-
-                else if (IsLengthOf(key, out IArrayParameter arrayParameter))
-                {
-                    int length = (int)pair.Value;
-                    arrayParameter.Length = length;
-                    MarkToKeep(arrayParameter);
-                }
-
-                else if (IsReferenceEquals(key, out IReferenceTypeParameter lhs, out IReferenceTypeParameter rhs))
-                {
-                    bool value = (bool)pair.Value;
-
-                    if (value)
-                    {
-                        lhs.SetReferenceEquals(rhs);
-                        rhs.SetReferenceEquals(lhs);
-                    }
-                    else
-                    {
-                        lhs.ClearReferenceEquals(rhs);
-                        rhs.ClearReferenceEquals(lhs);
-                    }
-                    MarkToKeep(lhs);
-                    MarkToKeep(rhs);
-                }
-
-                else
-                {
-                    throw new Exception($"Unexpected expression evaluation: {key}");
+                    case (RefEqualsParameterExpression _, _):
+                        return 1;
                 }
             }
 
-            foreach (IParameter parameter in toPrune
-                .Select(i => { store.TryGetParameter(i, out IParameter parameter); return parameter; })
-                .Where(parameter => parameter != null))
-            {
-                store.PruneParameter(parameter);
-            }
+            private static readonly Lazy<ExprSorter> _lazy = new Lazy<ExprSorter>();
+
+            public static ExprSorter Instance { get { return _lazy.Value; } }
+        }
+
+        public static ParameterStore NextGeneration(this ParameterStore store, IDictionary<string, object> rawData)
+        {
+            ParameterStore nextGeneration = new ParameterStore();
+
+            KeyValuePair<ParameterExpression, object>[] data = rawData
+                .Select(p => KeyValuePair.Create(ParameterExpression.Parse(p.Key), p.Value))
+                .ToArray();
+
+            Array.Sort(data, ExprSorter.Instance);
+
+            return nextGeneration;
+
+            // we now have data in order in which we want to handle the parametric expression
+
+
+            //foreach (KeyValuePair<string, object> pair in data)
+            //{
+            //    string key = pair.Key;
+
+            //    ParametricExpression expr = ParametricExpression.Parse(key);
+
+            //}
+
+            //foreach (IParameter parameter in toPrune
+            //    .Select(i => { store.TryGetParameter(i, out IParameter parameter); return parameter; })
+            //    .Where(parameter => parameter != null))
+            //{
+            //    store.PruneParameter(parameter);
+            //}
         }
     }
 }

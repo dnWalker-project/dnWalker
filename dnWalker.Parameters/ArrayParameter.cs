@@ -10,7 +10,7 @@ namespace dnWalker.Parameters
 {
     public class ArrayParameter : ReferenceTypeParameter, IArrayParameter
     {
-        private int _length;
+        private int? _length;
         private IParameter?[] _items = Array.Empty<IParameter?>();
         private readonly string _elementTypeName;
 
@@ -26,12 +26,13 @@ namespace dnWalker.Parameters
         }
 
 
-        public int Length
+        public int? Length
         {
             get { return _length; }
             set 
             {
-                _length = Resize(value);
+                _length = value;
+                if (value.HasValue) Resize(value.Value);
             }
         }
 
@@ -40,29 +41,36 @@ namespace dnWalker.Parameters
             get { return _elementTypeName; }
         }
 
-
-        private int Resize(int minLength)
+        /// <summary>
+        /// Updates the inner storage so it can contain enough items.
+        /// </summary>
+        /// <param name="minLength"></param>
+        /// <returns></returns>
+        private void Resize(int minLength)
         {
-            if (minLength < _items.Length) return minLength;
+            if (minLength < _items.Length) return;
 
             IParameter?[] newItems = new IParameter[minLength];
             _items.CopyTo(newItems, 0);
 
             _items = newItems;
-            return minLength;
         }
 
         public IParameter?[] GetItems()
         {
-            IParameter?[] items = new IParameter[_length];
-            Array.Copy(_items, items, _length);
+            // if _length is null => we do not care about the length, ergo we just use the highest index + 1
+            // if _length is not null and is lower than the length of the array, cut higher indeces off...
+            int length = _length ?? _items.Length;
+
+            IParameter?[] items = new IParameter[length];
+            Array.Copy(_items, items, length);
 
             return items;
         }
 
         public bool TryGetItem(int index, [NotNullWhen(true)] out IParameter? parameter)
         {
-            if (index > 0 && index < _length)
+            if (index >= 0 && index < _length)
             {
                 parameter = _items[index];
                 return parameter != null;
@@ -77,19 +85,20 @@ namespace dnWalker.Parameters
             ClearItem(index);
             if (parameter != null)
             {
-                if (index >= _length)
+                if (index >= _items.Length)
                 {
-                    _length = Resize(index + 1);
+                    Resize(index + 1);
                 }
 
                 _items[index] = parameter;
                 parameter.Accessor = new ItemParameterAccessor(index, this);
+
             }
         }
 
         public void ClearItem(int index)
         {
-            if (index >= _length)
+            if (index >= _items.Length)
             {
                 return;
             }
@@ -105,7 +114,35 @@ namespace dnWalker.Parameters
 
         public override IEnumerable<IParameter> GetChildren()
         {
-            return _items.Where(p => p != null).Select(p => p!);
+            int length = _length ?? _items.Length;
+
+            return _items
+                .Select((p, i) => (p, i))
+                .Where(tpl => tpl.i < length && tpl.p != null)
+                .Select(tpl => tpl.p!);
+        }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            ArrayParameter arrayParameter = new ArrayParameter(ElementTypeName, id);
+            arrayParameter.Length = Length;
+            arrayParameter.IsNull = IsNull;
+
+            for (int i = 0; i < _items.Length; ++i)
+            {
+                IParameter? itemParameter = _items[i];
+                if (itemParameter is IReferenceTypeParameter refTypeItem)
+                {
+                    arrayParameter.SetItem(i, refTypeItem.CreateAlias());
+                }
+                else if (itemParameter is IPrimitiveValueParameter valueItem)
+                {
+                    // can only create alias for a reference type parameter
+                    arrayParameter.SetItem(i, valueItem.ShallowCopy());
+                }
+            }
+
+            return arrayParameter;
         }
     }
 }

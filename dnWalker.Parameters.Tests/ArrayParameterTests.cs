@@ -18,7 +18,7 @@ namespace dnWalker.Parameters.Tests
         }
 
         [Fact]
-        public void After_SetItem_LengthIsGreaterThanTheIndex()
+        public void After_SetItem_GetLength_IsGreaterThanTheIndex()
         {
             ArrayParameter array = new ArrayParameter("System.Boolean");
 
@@ -26,7 +26,7 @@ namespace dnWalker.Parameters.Tests
 
             array.SetItem(5, itemParameter);
 
-            array.Length.Should().BeGreaterThan(5);
+            array.GetLength().Should().BeGreaterThan(5);
         }
 
         [Fact]

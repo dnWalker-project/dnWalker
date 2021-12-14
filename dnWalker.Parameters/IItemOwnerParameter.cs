@@ -9,7 +9,7 @@ namespace dnWalker.Parameters
 {
     public interface IItemOwnerParameter : IParameter
     {
-        int Length { get; set; }
+        int? Length { get; set; }
 
         string ElementTypeName { get; }
 
@@ -18,5 +18,13 @@ namespace dnWalker.Parameters
         bool TryGetItem(int index, [NotNullWhen(true)] out IParameter? parameter);
         void SetItem(int index, IParameter? parameter);
         void ClearItem(int index);
+    }
+
+    public static class ItemOwnerParameterExtensions
+    {
+        public static int GetLength(this IItemOwnerParameter itemOwner)
+        {
+            return itemOwner.Length ?? itemOwner.GetItems().Length;
+        }
     }
 }

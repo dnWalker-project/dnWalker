@@ -18,9 +18,9 @@ namespace dnWalker.Parameters
 
         public string? CreateString()
         {
-            if (IsNull) return null;
+            if (this.GetIsNull()) return null;
 
-            char[] charArray = new char[Length];
+            char[] charArray = new char[this.GetLength()];
             for (int i = 0; i < charArray.Length; i++)
             {
                 if (TryGetItem(i, out IParameter? p ) && p is ICharParameter c)

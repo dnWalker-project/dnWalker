@@ -31,7 +31,6 @@ namespace dnWalker.Parameters
             get;
             set;
         }
-
     }
 
     public class BooleanParameter : PrimitiveValueParameter<bool>, IBooleanParameter
@@ -42,6 +41,11 @@ namespace dnWalker.Parameters
         { }
         public BooleanParameter(bool value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new BooleanParameter(Value, id);
+        }
     }
  
      public class CharParameter : PrimitiveValueParameter<char>, ICharParameter
@@ -52,6 +56,11 @@ namespace dnWalker.Parameters
         { }
         public CharParameter(char value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new CharParameter(Value, id);
+        }
     }
  
      public class ByteParameter : PrimitiveValueParameter<byte>, IByteParameter
@@ -62,6 +71,11 @@ namespace dnWalker.Parameters
         { }
         public ByteParameter(byte value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new ByteParameter(Value, id);
+        }
     }
  
      public class SByteParameter : PrimitiveValueParameter<sbyte>, ISByteParameter
@@ -72,6 +86,11 @@ namespace dnWalker.Parameters
         { }
         public SByteParameter(sbyte value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new SByteParameter(Value, id);
+        }
     }
  
      public class Int16Parameter : PrimitiveValueParameter<short>, IInt16Parameter
@@ -82,6 +101,11 @@ namespace dnWalker.Parameters
         { }
         public Int16Parameter(short value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new Int16Parameter(Value, id);
+        }
     }
  
      public class Int32Parameter : PrimitiveValueParameter<int>, IInt32Parameter
@@ -92,6 +116,11 @@ namespace dnWalker.Parameters
         { }
         public Int32Parameter(int value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new Int32Parameter(Value, id);
+        }
     }
  
      public class Int64Parameter : PrimitiveValueParameter<long>, IInt64Parameter
@@ -102,6 +131,11 @@ namespace dnWalker.Parameters
         { }
         public Int64Parameter(long value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new Int64Parameter(Value, id);
+        }
     }
  
      public class UInt16Parameter : PrimitiveValueParameter<ushort>, IUInt16Parameter
@@ -112,6 +146,11 @@ namespace dnWalker.Parameters
         { }
         public UInt16Parameter(ushort value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new UInt16Parameter(Value, id);
+        }
     }
  
      public class UInt32Parameter : PrimitiveValueParameter<uint>, IUInt32Parameter
@@ -122,6 +161,11 @@ namespace dnWalker.Parameters
         { }
         public UInt32Parameter(uint value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new UInt32Parameter(Value, id);
+        }
     }
  
      public class UInt64Parameter : PrimitiveValueParameter<ulong>, IUInt64Parameter
@@ -132,6 +176,11 @@ namespace dnWalker.Parameters
         { }
         public UInt64Parameter(ulong value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new UInt64Parameter(Value, id);
+        }
     }
  
      public class SingleParameter : PrimitiveValueParameter<float>, ISingleParameter
@@ -142,6 +191,11 @@ namespace dnWalker.Parameters
         { }
         public SingleParameter(float value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new SingleParameter(Value, id);
+        }
     }
  
      public class DoubleParameter : PrimitiveValueParameter<double>, IDoubleParameter
@@ -152,6 +206,11 @@ namespace dnWalker.Parameters
         { }
         public DoubleParameter(double value, int id) : base(value, id)
         { }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return new DoubleParameter(Value, id);
+        }
     }
  
  }

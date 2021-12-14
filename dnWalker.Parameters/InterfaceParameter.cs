@@ -24,5 +24,29 @@ namespace dnWalker.Parameters
         {
             return GetMethodResults().SelectMany(mr => mr.Value).Where(mr => mr != null).Select(mr => mr!);
         }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            InterfaceParameter interfaceParameter = new InterfaceParameter(TypeName, id);
+            interfaceParameter.IsNull = IsNull;
+
+            foreach (KeyValuePair<MethodSignature, IParameter?[]> methodResultInfo in GetMethodResults())
+            {
+                IParameter?[] results = methodResultInfo.Value;
+                for (int i = 0; i < results.Length; ++i)
+                {
+                    if (results[i] is IReferenceTypeParameter refType)
+                    {
+                        interfaceParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias());
+                    }
+                    else if (results[i] is IPrimitiveValueParameter valueType)
+                    {
+                        interfaceParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy());
+                    }
+                }
+            }
+
+            return interfaceParameter;
+        }
     }
 }

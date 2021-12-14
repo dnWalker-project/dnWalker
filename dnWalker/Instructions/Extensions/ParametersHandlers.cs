@@ -29,6 +29,8 @@ namespace dnWalker.Instructions.Extensions
             factory.RegisterExtension(new LDELEM_ParameterLoaderExtension());
             factory.RegisterExtension(new LDLEN_ParameterLoaderExtension());
 
+
+
             return factory;
         }
     }

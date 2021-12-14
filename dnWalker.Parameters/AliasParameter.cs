@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,24 +9,54 @@ namespace dnWalker.Parameters
 {
     public class AliasParameter : Parameter, IAliasParameter
     {
-        public AliasParameter(IParameter referencedParameter, string typeName) : base(typeName)
+        public AliasParameter(IReferenceTypeParameter referencedParameter, string typeName) : base(typeName)
         {
             ReferencedParameter = referencedParameter ?? throw new ArgumentNullException(nameof(referencedParameter));
         }
 
-        public AliasParameter(IParameter referencedParameter, string typeName, int id) : base(typeName, id)
+        public AliasParameter(IReferenceTypeParameter referencedParameter, string typeName, int id) : base(typeName, id)
         {
             ReferencedParameter = referencedParameter ?? throw new ArgumentNullException(nameof(referencedParameter));
         }
 
-        public IParameter ReferencedParameter
+        public IReferenceTypeParameter ReferencedParameter
         {
             get;
+            set;
         }
 
         public override IEnumerable<IParameter> GetChildren()
         {
-            return Enumerable.Empty<IParameter>();
+            return ReferencedParameter.GetChildren();
         }
+
+        public override IParameter ShallowCopy(int id)
+        {
+            return ReferencedParameter.ShallowCopy(id);
+        }
+
+        public bool? IsNull
+        {
+            get
+            {
+                return ReferencedParameter.IsNull;
+            }
+
+            set
+            {
+                // ??
+                ReferencedParameter.IsNull = value;
+            }
+        }
+
+        //private readonly HashSet<IAliasParameter> _aliases = new HashSet<IAliasParameter>();
+
+        //public ICollection<IAliasParameter> Aliases
+        //{
+        //    get
+        //    {
+        //        return _aliases;
+        //    }
+        //}
     }
 }
