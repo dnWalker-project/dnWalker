@@ -24,7 +24,7 @@ namespace dnWalker.Parameters
         /// Shallow copy will create a new instance of the parameter with same children (using alias parameters)
         /// </summary>
         /// <returns></returns>
-        IParameter ShallowCopy(int id = -1);
+        IParameter ShallowCopy(ParameterStore store, int id = -1);
 
     }
 

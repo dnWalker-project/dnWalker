@@ -122,7 +122,7 @@ namespace dnWalker.Parameters
                 .Select(tpl => tpl.p!);
         }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
             ArrayParameter arrayParameter = new ArrayParameter(ElementTypeName, id);
             arrayParameter.Length = Length;
@@ -133,12 +133,12 @@ namespace dnWalker.Parameters
                 IParameter? itemParameter = _items[i];
                 if (itemParameter is IReferenceTypeParameter refTypeItem)
                 {
-                    arrayParameter.SetItem(i, refTypeItem.CreateAlias());
+                    arrayParameter.SetItem(i, refTypeItem.CreateAlias(store));
                 }
                 else if (itemParameter is IPrimitiveValueParameter valueItem)
                 {
                     // can only create alias for a reference type parameter
-                    arrayParameter.SetItem(i, valueItem.ShallowCopy());
+                    arrayParameter.SetItem(i, valueItem.ShallowCopy(store));
                 }
             }
 

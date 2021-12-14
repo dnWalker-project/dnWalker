@@ -54,12 +54,12 @@ namespace dnWalker.Parameters
 
 
 
-        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter)
+        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, ParameterStore store)
         {
-            return CreateAlias(parameter, parameter.TypeName);
+            return CreateAlias(parameter, store, parameter.TypeName);
         }
 
-        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, string typeName)
+        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, ParameterStore store, string typeName)
         {
             // we do not create alias of an alias => dereference to the referenced parameter
             // should only happen once, but use the while cycle, just in case
@@ -69,15 +69,16 @@ namespace dnWalker.Parameters
             }
 
             AliasParameter aliasParameter = new AliasParameter(parameter, typeName);
+            store.AddParameter(aliasParameter);
             return aliasParameter;
         }
 
-        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, int id)
+        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, ParameterStore store, int id)
         {
-            return CreateAlias(parameter, parameter.TypeName, id);
+            return CreateAlias(parameter, store, parameter.TypeName, id);
         }
 
-        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, string typeName, int id)
+        public static IAliasParameter CreateAlias(this IReferenceTypeParameter parameter, ParameterStore store, string typeName, int id)
         {
             // we do not create alias of an alias => dereference to the referenced parameter
             
@@ -87,6 +88,7 @@ namespace dnWalker.Parameters
             }
 
             AliasParameter aliasParameter = new AliasParameter(parameter, typeName, id);
+            store.AddParameter(aliasParameter);
             return aliasParameter;
         }
     }

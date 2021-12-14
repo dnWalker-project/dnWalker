@@ -25,7 +25,7 @@ namespace dnWalker.Parameters
             return GetMethodResults().SelectMany(mr => mr.Value).Where(mr => mr != null).Select(mr => mr!);
         }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
             InterfaceParameter interfaceParameter = new InterfaceParameter(TypeName, id);
             interfaceParameter.IsNull = IsNull;
@@ -37,11 +37,11 @@ namespace dnWalker.Parameters
                 {
                     if (results[i] is IReferenceTypeParameter refType)
                     {
-                        interfaceParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias());
+                        interfaceParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias(store));
                     }
                     else if (results[i] is IPrimitiveValueParameter valueType)
                     {
-                        interfaceParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy());
+                        interfaceParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy(store));
                     }
                 }
             }

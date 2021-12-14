@@ -78,6 +78,6 @@ namespace dnWalker.Parameters
             return HashCode.Combine(_id);
         }
 
-        public abstract IParameter ShallowCopy(int id);
+        public abstract IParameter ShallowCopy(ParameterStore store, int id);
     }
 }

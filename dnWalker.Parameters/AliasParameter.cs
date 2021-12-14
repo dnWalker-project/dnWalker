@@ -30,9 +30,9 @@ namespace dnWalker.Parameters
             return ReferencedParameter.GetChildren();
         }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return ReferencedParameter.ShallowCopy(id);
+            return this.GetReferencedParameter().CreateAlias(store, id);
         }
 
         public bool? IsNull

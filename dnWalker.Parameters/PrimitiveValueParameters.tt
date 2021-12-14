@@ -87,9 +87,13 @@ namespace dnWalker.Parameters
         public <#= type #>Parameter(<#= alias #> value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new <#= type #>Parameter(Value, id);
+            <#= type #>Parameter result = new <#= type #>Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  

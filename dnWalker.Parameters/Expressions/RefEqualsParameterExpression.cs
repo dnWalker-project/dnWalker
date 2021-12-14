@@ -127,7 +127,7 @@ namespace dnWalker.Parameters.Expressions
 
                             // remove lhs from the store
                             // create an alias of rhs with the same id
-                            IParameter newLhs = refTypeRhs.CreateAlias(lhsP.Id);
+                            IParameter newLhs = refTypeRhs.CreateAlias(store, lhsP.Id);
                             ReplaceParameter(store, lhsP, newLhs);
 
 
@@ -163,7 +163,7 @@ namespace dnWalker.Parameters.Expressions
                         {
                             // because the parameters do ref equals, aliasLhs.GetReferencedParameter() will return the rhsP
                             // create a copy of rhsP with the same id as aliasLhs
-                            IParameter newLhs = rhsP.ShallowCopy(lhsP.Id);
+                            IParameter newLhs = rhsP.ShallowCopy(store, lhsP.Id);
                             ReplaceParameter(store, lhsP, newLhs);
 
                         }
@@ -171,14 +171,14 @@ namespace dnWalker.Parameters.Expressions
                                  aliasLhs != null)
                         {
                             // same as before with switched sides
-                            IParameter newRhs = rhsP.ShallowCopy(rhsP.Id);
+                            IParameter newRhs = rhsP.ShallowCopy(store, rhsP.Id);
                             ReplaceParameter(store, rhsP, newRhs);
                         }
                         else if (aliasLhs != null &&
                                  aliasRhs != null)
                         {
                             // both are aliases => both reference the same parameter => do almost the same thing as with the 1st case
-                            IParameter newLhs = aliasRhs.GetReferencedParameter().ShallowCopy(lhsP.Id);
+                            IParameter newLhs = aliasRhs.GetReferencedParameter().ShallowCopy(store, lhsP.Id);
                             ReplaceParameter(store, lhsP, newLhs);
                         }
                     }

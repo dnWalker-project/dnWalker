@@ -42,9 +42,13 @@ namespace dnWalker.Parameters
         public BooleanParameter(bool value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new BooleanParameter(Value, id);
+            BooleanParameter result = new BooleanParameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -57,9 +61,13 @@ namespace dnWalker.Parameters
         public CharParameter(char value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new CharParameter(Value, id);
+            CharParameter result = new CharParameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -72,9 +80,13 @@ namespace dnWalker.Parameters
         public ByteParameter(byte value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new ByteParameter(Value, id);
+            ByteParameter result = new ByteParameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -87,9 +99,13 @@ namespace dnWalker.Parameters
         public SByteParameter(sbyte value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new SByteParameter(Value, id);
+            SByteParameter result = new SByteParameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -102,9 +118,13 @@ namespace dnWalker.Parameters
         public Int16Parameter(short value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new Int16Parameter(Value, id);
+            Int16Parameter result = new Int16Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -117,9 +137,13 @@ namespace dnWalker.Parameters
         public Int32Parameter(int value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new Int32Parameter(Value, id);
+            Int32Parameter result = new Int32Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -132,9 +156,13 @@ namespace dnWalker.Parameters
         public Int64Parameter(long value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new Int64Parameter(Value, id);
+            Int64Parameter result = new Int64Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -147,9 +175,13 @@ namespace dnWalker.Parameters
         public UInt16Parameter(ushort value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new UInt16Parameter(Value, id);
+            UInt16Parameter result = new UInt16Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -162,9 +194,13 @@ namespace dnWalker.Parameters
         public UInt32Parameter(uint value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new UInt32Parameter(Value, id);
+            UInt32Parameter result = new UInt32Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -177,9 +213,13 @@ namespace dnWalker.Parameters
         public UInt64Parameter(ulong value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new UInt64Parameter(Value, id);
+            UInt64Parameter result = new UInt64Parameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -192,9 +232,13 @@ namespace dnWalker.Parameters
         public SingleParameter(float value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new SingleParameter(Value, id);
+            SingleParameter result = new SingleParameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  
@@ -207,9 +251,13 @@ namespace dnWalker.Parameters
         public DoubleParameter(double value, int id) : base(value, id)
         { }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
-            return new DoubleParameter(Value, id);
+            DoubleParameter result = new DoubleParameter(Value, id);
+            
+            store.AddParameter(result);
+
+            return result;
         }
     }
  

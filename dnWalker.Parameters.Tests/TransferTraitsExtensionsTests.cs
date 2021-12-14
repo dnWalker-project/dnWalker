@@ -133,7 +133,7 @@ namespace dnWalker.Parameters.Tests
         }
 
         [Fact]
-        public void Test_MethodResults_NoConclict()
+        public void Test_MethodResults_NoConflict()
         {
             MethodSignature[] signatures = new MethodSignature[] { "System.Void MyObject::MyMethod1()", "System.Void MyObject::MyMethod2()", "System.Void MyObject::MyMethod2()" };
             int[] invocations = new int[] { 0, 1, 2 };

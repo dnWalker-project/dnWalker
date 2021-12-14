@@ -60,7 +60,7 @@ namespace dnWalker.Parameters
                    );
         }
 
-        public override IParameter ShallowCopy(int id)
+        public override IParameter ShallowCopy(ParameterStore store, int id)
         {
             ObjectParameter objectParameter = new ObjectParameter(TypeName, id);
             objectParameter.IsNull = IsNull;
@@ -69,11 +69,11 @@ namespace dnWalker.Parameters
             {
                 if (fieldInfo.Value is IReferenceTypeParameter refType)
                 {
-                    objectParameter.SetField(fieldInfo.Key, refType.CreateAlias());
+                    objectParameter.SetField(fieldInfo.Key, refType.CreateAlias(store));
                 }
                 else if (fieldInfo.Value is IPrimitiveValueParameter valueType)
                 {
-                    objectParameter.SetField(fieldInfo.Key, valueType.ShallowCopy());
+                    objectParameter.SetField(fieldInfo.Key, valueType.ShallowCopy(store));
                 }
 
             }
@@ -85,11 +85,11 @@ namespace dnWalker.Parameters
                 {
                     if (results[i] is IReferenceTypeParameter refType)
                     {
-                        objectParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias());
+                        objectParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias(store));
                     }
                     else if (results[i] is IPrimitiveValueParameter valueType)
                     {
-                        objectParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy());
+                        objectParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy(store));
                     }
                 }
             }

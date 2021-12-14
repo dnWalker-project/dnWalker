@@ -43,6 +43,8 @@ namespace dnWalker.Parameters.Expressions
             {
                 if (!traitsArray[i].TryApplyTo(store))
                 {
+                    throw new Exception($"Failed to apply trait: {traitsArray[i].Expression} = {traitsArray[i].Result}");
+
                     // store.DiscardChanges();
                     // throw some error?
                 }
