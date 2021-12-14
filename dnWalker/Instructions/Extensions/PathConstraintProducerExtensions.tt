@@ -25,7 +25,7 @@ namespace dnWalker.Instructions.Extensions
 
     public abstract class PathConstraintProducerInstructionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
     {
-        public abstract bool CanExecute(Code code);
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
 
         private Instruction _nextInstruction;
 
@@ -148,15 +148,15 @@ namespace dnWalker.Instructions.Extensions
 <#
     BranchInstructionInfo[] infos = new BranchInstructionInfo[]
     {
-        new BranchInstructionInfo("BRFALSE", "Not", null, BranchConditionType.Unary, "Brfalse", "Brfalse_S"),
-        new BranchInstructionInfo("BRTRUE", null, "Not", BranchConditionType.Unary, "Brtrue", "Brtrue_S"),
+        new BranchInstructionInfo("BRFALSE", "Not", null, BranchConditionType.Unary, "BRFALSE"),
+        new BranchInstructionInfo("BRTRUE", null, "Not", BranchConditionType.Unary, "BRTRUE"),
         
-        new BranchInstructionInfo("BEQ", "Equal", "NotEqual", BranchConditionType.Binary, "Beq", "Beq_S"),
-        new BranchInstructionInfo("BGE", "GreaterThanOrEqual", "LessThan", BranchConditionType.Binary, "Bge", "Bge_S", "Bge_Un", "Bge_Un_S"),
-        new BranchInstructionInfo("BGT", "GreaterThan", "LessThanOrEqual", BranchConditionType.Binary, "Bgt", "Bgt_S", "Bgt_Un", "Bgt_Un_S"),
-        new BranchInstructionInfo("BLE", "LessThanOrEqual", "GreaterThan", BranchConditionType.Binary, "Ble", "Ble_S", "Ble_Un", "Ble_Un_S"),
-        new BranchInstructionInfo("BLT", "LessThan", "GreaterThanOrEqual", BranchConditionType.Binary, "Blt", "Blt_S", "Blt_Un", "Blt_Un_S"),
-        new BranchInstructionInfo("BNE", "NotEqual", "Equal", BranchConditionType.Binary, "Bne_Un", "Bne_Un_S"),
+        new BranchInstructionInfo("BEQ", "Equal", "NotEqual", BranchConditionType.Binary, "BEQ"),
+        new BranchInstructionInfo("BGE", "GreaterThanOrEqual", "LessThan", BranchConditionType.Binary, "BGE"),
+        new BranchInstructionInfo("BGT", "GreaterThan", "LessThanOrEqual", BranchConditionType.Binary, "BGT"),
+        new BranchInstructionInfo("BLE", "LessThanOrEqual", "GreaterThan", BranchConditionType.Binary, "BLE"),
+        new BranchInstructionInfo("BLT", "LessThan", "GreaterThanOrEqual", BranchConditionType.Binary, "BLT"),
+        new BranchInstructionInfo("BNE", "NotEqual", "Equal", BranchConditionType.Binary, "BNE"),
 
     };
  #>
@@ -228,41 +228,19 @@ namespace dnWalker.Instructions.Extensions
         }
  #>
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-<#
-            if (i.AcceptedCodes.Length == 1)
-            {
- #>
-            return code == Code.<#= i.AcceptedCodes[0] #>;
-<#
-            }
-            else if (i.AcceptedCodes.Length == 2)
-            {
- #>
-            return code == Code.<#= i.AcceptedCodes[0] #> || code == Code.<#= i.AcceptedCodes[1] #>;
-<#
-            }
-            else
-            {
- #>
-            switch(code)
+            get
             {
 <#
-                foreach(string c in i.AcceptedCodes)
-                {
+        foreach (string instructionType in i.AcceptedCodes)
+        {
  #>
-                case Code.<#= c #>:
+                yield return typeof(<#= instructionType #>);
 <#
-                }
+        }
  #>
-                    return true;
-                default:
-                    return false;
             }
-<#
-            }
- #>
         }
     }
 <#

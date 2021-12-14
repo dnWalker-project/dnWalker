@@ -17,7 +17,7 @@ namespace dnWalker.Instructions.Extensions
 {
     public abstract class SymbolicBinaryExecutionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
     {
-        public abstract bool CanExecute(Code code);
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
 
         /// <summary>
         /// Gets the expression type which is created by this extension.
@@ -73,7 +73,7 @@ namespace dnWalker.Instructions.Extensions
     
     public abstract class SymbolicUnaryExecutionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
     {
-        public abstract bool CanExecute(Code code);
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
 
         /// <summary>
         /// Gets the expression type which is created by this extension.
@@ -127,9 +127,9 @@ namespace dnWalker.Instructions.Extensions
 
     public class CEQ_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Ceq;
+            get { yield return typeof(CEQ); }
         }
 
         public override ExpressionType ExpressionType
@@ -169,9 +169,13 @@ namespace dnWalker.Instructions.Extensions
 
     public class CGT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Cgt;
+            get
+            {
+                yield return typeof(CGT);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -181,9 +185,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class CLT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Clt;
+            get
+            {
+                yield return typeof(CLT);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -193,9 +201,14 @@ namespace dnWalker.Instructions.Extensions
     }
     public class ADD_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Add || code == Code.Add_Ovf_Un;
+            get
+            {
+                yield return typeof(ADD);
+                yield return typeof(ADD_OVF_UN);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -205,9 +218,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class DIV_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Div;
+            get
+            {
+                yield return typeof(DIV);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -217,9 +234,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class MUL_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Mul;
+            get
+            {
+                yield return typeof(MUL);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -229,9 +250,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class REM_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Rem;
+            get
+            {
+                yield return typeof(REM);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -241,9 +266,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class SUB_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Sub;
+            get
+            {
+                yield return typeof(SUB);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -253,9 +282,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class NEG_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Neg;
+            get
+            {
+                yield return typeof(NEG);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -265,9 +298,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class AND_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.And;
+            get
+            {
+                yield return typeof(AND);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -277,9 +314,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class NOT_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Not;
+            get
+            {
+                yield return typeof(NOT);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -289,9 +330,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class OR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Or;
+            get
+            {
+                yield return typeof(OR);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -301,9 +346,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class XOR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Xor;
+            get
+            {
+                yield return typeof(XOR);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -313,9 +362,13 @@ namespace dnWalker.Instructions.Extensions
     }
     public class SHL_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Shl;
+            get
+            {
+                yield return typeof(SHL);
+            }
         }
 
         public override ExpressionType ExpressionType
@@ -325,9 +378,14 @@ namespace dnWalker.Instructions.Extensions
     }
     public class SHR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Shr || code == Code.Shr_Un;
+            get
+            {
+                yield return typeof(SHR);
+                yield return typeof(SHR_UN);
+            }
         }
 
         public override ExpressionType ExpressionType

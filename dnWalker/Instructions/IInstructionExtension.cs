@@ -15,9 +15,9 @@ namespace dnWalker.Instructions
     public interface IInstructionExtension
     {
         /// <summary>
-        /// Determines wheter the extension can execute instruction with the supplied <paramref name="code"/>.
+        /// Determines whether the extension can be injected into the instruction execution.
         /// </summary>
-        public bool CanExecute(Code code);
+        public IEnumerable<Type> SupportedInstructions { get; }
     }
 
     public interface ITryExecuteInstructionExtension : IInstructionExtension

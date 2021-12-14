@@ -23,7 +23,7 @@ namespace dnWalker.Instructions.Extensions
 {
     public abstract class SymbolicBinaryExecutionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
     {
-        public abstract bool CanExecute(Code code);
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
 
         /// <summary>
         /// Gets the expression type which is created by this extension.
@@ -79,7 +79,7 @@ namespace dnWalker.Instructions.Extensions
     
     public abstract class SymbolicUnaryExecutionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
     {
-        public abstract bool CanExecute(Code code);
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
 
         /// <summary>
         /// Gets the expression type which is created by this extension.
@@ -107,23 +107,23 @@ namespace dnWalker.Instructions.Extensions
 <#
     SymbolicOperationInfo[] infos = new SymbolicOperationInfo[]
     {
-        new SymbolicOperationInfo("CGT", "GreaterThan", true, "Cgt"),
-        new SymbolicOperationInfo("CLT", "LessThan", true, "Clt"),
-        // new SymbolicOperationInfo("CEQ", "Equal", true, "Ceq"), // CEQ is a special case - there are two posibilities how to handle it => done explicitly
+        new SymbolicOperationInfo("CGT", "GreaterThan", true, "CGT"),
+        new SymbolicOperationInfo("CLT", "LessThan", true, "CLT"),
+        // new SymbolicOperationInfo("CEQ", "Equal", true, "CEQ"), // CEQ is a special case - there are two posibilities how to handle it => done explicitly
 
-        new SymbolicOperationInfo("ADD", "Add", true, "Add", "Add_Ovf_Un"),
-        new SymbolicOperationInfo("DIV", "Divide", true, "Div"),
-        new SymbolicOperationInfo("MUL", "Multiply", true, "Mul"),
-        new SymbolicOperationInfo("REM", "Modulo", true, "Rem"),
-        new SymbolicOperationInfo("SUB", "Subtract", true, "Sub"),
-        new SymbolicOperationInfo("NEG", "Negate", false, "Neg"),
+        new SymbolicOperationInfo("ADD", "Add", true, "ADD", "ADD_OVF_UN"),
+        new SymbolicOperationInfo("DIV", "Divide", true, "DIV"),
+        new SymbolicOperationInfo("MUL", "Multiply", true, "MUL"),
+        new SymbolicOperationInfo("REM", "Modulo", true, "REM"),
+        new SymbolicOperationInfo("SUB", "Subtract", true, "SUB"),
+        new SymbolicOperationInfo("NEG", "Negate", false, "NEG"),
 
-        new SymbolicOperationInfo("AND", "And", true, "And"),
-        new SymbolicOperationInfo("NOT", "Not", false, "Not"),
-        new SymbolicOperationInfo("OR", "Or", true, "Or"),
-        new SymbolicOperationInfo("XOR", "ExclusiveOr", true, "Xor"),
-        new SymbolicOperationInfo("SHL", "LeftShift", true, "Shl"),
-        new SymbolicOperationInfo("SHR", "RightShift", true, "Shr", "Shr_Un"),
+        new SymbolicOperationInfo("AND", "And", true, "AND"),
+        new SymbolicOperationInfo("NOT", "Not", false, "NOT"),
+        new SymbolicOperationInfo("OR", "Or", true, "OR"),
+        new SymbolicOperationInfo("XOR", "ExclusiveOr", true, "XOR"),
+        new SymbolicOperationInfo("SHL", "LeftShift", true, "SHL"),
+        new SymbolicOperationInfo("SHR", "RightShift", true, "SHR", "SHR_UN"),
 
         // TODO - extend UnarySymbolicExecutionExtension to accomodate more options, like specifying resulting type etc new SymbolicOperationInfo("CONV", "Convert", false, "Convert", "Conv_I", "Conv_I1", "Conv_I2")
     };
@@ -149,9 +149,9 @@ namespace dnWalker.Instructions.Extensions
 
     public class CEQ_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Ceq;
+            get { yield return typeof(CEQ); }
         }
 
         public override ExpressionType ExpressionType
@@ -207,41 +207,20 @@ namespace dnWalker.Instructions.Extensions
         }
  #>
     {
-        public override bool CanExecute(Code code)
+    
+        public override IEnumerable<Type> SupportedInstructions
         {
-<#
-            if (i.AcceptedCodes.Length == 1)
-            {
- #>
-            return code == Code.<#= i.AcceptedCodes[0] #>;
-<#
-            }
-            else if (i.AcceptedCodes.Length == 2)
-            {
- #>
-            return code == Code.<#= i.AcceptedCodes[0] #> || code == Code.<#= i.AcceptedCodes[1] #>;
-<#
-            }
-            else
-            {
- #>
-            switch(code)
+            get
             {
 <#
-                foreach(string c in i.AcceptedCodes)
-                {
+    foreach(string instructionType in i.AcceptedCodes)
+    {
  #>
-                case Code.<#= c #>:
+                yield return typeof(<#= instructionType #>);
 <#
-                }
+    }
  #>
-                    return true;
-                default:
-                    return false;
             }
-<#
-            }
- #>
         }
 
         public override ExpressionType ExpressionType
