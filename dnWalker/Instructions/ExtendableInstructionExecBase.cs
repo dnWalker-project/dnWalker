@@ -15,23 +15,25 @@ namespace dnWalker.Instructions
     {
         public ExtendableInstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
-            _extensions = new List<IInstructionExtension>();
         }
         public ExtendableInstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr, IEnumerable<IInstructionExtension> extensions) : base(instr, operand, atr)
         {
-            _extensions = new List<IInstructionExtension>(extensions);
         }
 
-        private readonly List<IInstructionExtension> _extensions;
+        private IReadOnlyList<IInstructionExtension> _extensions = null;
 
         /// <summary>
         /// An ordered collection of extensions to use.
         /// </summary>
-        public IList<IInstructionExtension> Extensions
+        public IReadOnlyList<IInstructionExtension> Extensions
         {
             get
             {
                 return _extensions;
+            }
+            set
+            {
+                _extensions = value;
             }
         }
 
@@ -44,35 +46,42 @@ namespace dnWalker.Instructions
 
         public sealed override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            // pre-execute
-            foreach (IPreExecuteInstructionExtension extension in _extensions.OfType<IPreExecuteInstructionExtension>())
+            if (_extensions != null)
             {
-                extension.PreExecute(this, cur);
-            }
-
-            // execute
-            IIEReturnValue retValue = null;
-            // in order to make sure that if extension fails to execute the instruction, the cur is not changed - ExplicitActiveState.MakeSavePoint() and ExpliciteActiveState.RestoreState(), and/or add trackin capabilities, e.g. evalstack.push(...) will be saved and we will be able to undo it...
-            foreach (ITryExecuteInstructionExtension extension in _extensions.OfType<ITryExecuteInstructionExtension>())
-            {
-                if (extension.TryExecute(this, cur, out retValue))
+                // pre-execute
+                foreach (IPreExecuteInstructionExtension extension in _extensions.OfType<IPreExecuteInstructionExtension>())
                 {
-                    break;
+                    extension.PreExecute(this, cur);
                 }
-            }
 
-            if (retValue == null)
+                // execute
+                IIEReturnValue retValue = null;
+                // in order to make sure that if extension fails to execute the instruction, the cur is not changed - ExplicitActiveState.MakeSavePoint() and ExpliciteActiveState.RestoreState(), and/or add trackin capabilities, e.g. evalstack.push(...) will be saved and we will be able to undo it...
+                foreach (ITryExecuteInstructionExtension extension in _extensions.OfType<ITryExecuteInstructionExtension>())
+                {
+                    if (extension.TryExecute(this, cur, out retValue))
+                    {
+                        break;
+                    }
+                }
+
+                if (retValue == null)
+                {
+                    retValue = ExecuteCore(cur);
+                }
+
+                // post-execute
+                foreach (IPostExecuteInstructionExtension extension in _extensions.OfType<IPostExecuteInstructionExtension>())
+                {
+                    extension.PostExecute(this, cur, retValue);
+                }
+
+                return retValue;
+            }
+            else
             {
-                retValue = ExecuteCore(cur);
+                return ExecuteCore(cur);
             }
-
-            // post-execute
-            foreach (IPostExecuteInstructionExtension extension in _extensions.OfType<IPostExecuteInstructionExtension>())
-            {
-                extension.PostExecute(this, cur, retValue);
-            }
-
-            return retValue;
         }
     }
 }

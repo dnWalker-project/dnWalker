@@ -19,7 +19,7 @@ namespace dnWalker.Instructions.Extensions
 
     public abstract class PathConstraintProducerInstructionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
     {
-        public abstract bool CanExecute(Code code);
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
 
         private Instruction _nextInstruction;
 
@@ -164,9 +164,12 @@ namespace dnWalker.Instructions.Extensions
             return willBranch ? Expression.MakeUnary(ExpressionType.Not, valueExpression, typeof(bool)) : valueExpression;
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Brfalse || code == Code.Brfalse_S;
+            get
+            {
+                yield return typeof(BRFALSE);
+            }
         }
     }
     public class BRTRUE_PathConstraintProducerInstructionExtension : UnaryPathConstraintProducerInstructionExtension
@@ -177,9 +180,12 @@ namespace dnWalker.Instructions.Extensions
             return willBranch ? valueExpression : Expression.MakeUnary(ExpressionType.Not, valueExpression, typeof(bool));
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Brtrue || code == Code.Brtrue_S;
+            get
+            {
+                yield return typeof(BRTRUE);
+            }
         }
     }
     public class BEQ_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension
@@ -190,9 +196,12 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.Equal : ExpressionType.NotEqual, lhsExpression, rhsExpression);
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Beq || code == Code.Beq_S;
+            get
+            {
+                yield return typeof(BEQ);
+            }
         }
     }
     public class BGE_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension
@@ -203,17 +212,11 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.GreaterThanOrEqual : ExpressionType.LessThan, lhsExpression, rhsExpression);
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            switch(code)
+            get
             {
-                case Code.Bge:
-                case Code.Bge_S:
-                case Code.Bge_Un:
-                case Code.Bge_Un_S:
-                    return true;
-                default:
-                    return false;
+                yield return typeof(BGE);
             }
         }
     }
@@ -225,17 +228,11 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual, lhsExpression, rhsExpression);
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            switch(code)
+            get
             {
-                case Code.Bgt:
-                case Code.Bgt_S:
-                case Code.Bgt_Un:
-                case Code.Bgt_Un_S:
-                    return true;
-                default:
-                    return false;
+                yield return typeof(BGT);
             }
         }
     }
@@ -247,17 +244,11 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.LessThanOrEqual : ExpressionType.GreaterThan, lhsExpression, rhsExpression);
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            switch(code)
+            get
             {
-                case Code.Ble:
-                case Code.Ble_S:
-                case Code.Ble_Un:
-                case Code.Ble_Un_S:
-                    return true;
-                default:
-                    return false;
+                yield return typeof(BLE);
             }
         }
     }
@@ -269,17 +260,11 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual, lhsExpression, rhsExpression);
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            switch(code)
+            get
             {
-                case Code.Blt:
-                case Code.Blt_S:
-                case Code.Blt_Un:
-                case Code.Blt_Un_S:
-                    return true;
-                default:
-                    return false;
+                yield return typeof(BLT);
             }
         }
     }
@@ -291,9 +276,12 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.NotEqual : ExpressionType.Equal, lhsExpression, rhsExpression);
         }
 
-        public override bool CanExecute(Code code)
+        public override IEnumerable<Type> SupportedInstructions
         {
-            return code == Code.Bne_Un || code == Code.Bne_Un_S;
+            get
+            {
+                yield return typeof(BNE);
+            }
         }
     }
 }

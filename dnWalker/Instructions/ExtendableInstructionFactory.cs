@@ -11,18 +11,29 @@ using System.Threading.Tasks;
 namespace dnWalker.Instructions
 {
     public class ExtendableInstructionFactory : dnWalker.Factories.InstructionFactory
-    {
-        private readonly IList<IInstructionExtension> _extensions = new List<IInstructionExtension>();
-
+    {        
         public void RegisterExtension(IInstructionExtension instructionExtension)
         {
-            _extensions.Add(instructionExtension);
+            foreach (Type supportedInstruction in instructionExtension.SupportedInstructions)
+            {
+                ExtendPipeline(supportedInstruction, instructionExtension);
+            }
+
         }
 
-        public ExtendableInstructionFactory()
+        private void ExtendPipeline(Type instructionType, IInstructionExtension extension)
         {
+            if (!_pipelines.TryGetValue(instructionType, out var pipeline))
+            {
+                pipeline = new List<IInstructionExtension>();
+                _pipelines[instructionType] = pipeline;
+            }
 
+            pipeline.Add(extension);
         }
+
+        private readonly Dictionary<Type, List<IInstructionExtension>> _pipelines = new Dictionary<Type, List<IInstructionExtension>>();
+
 
         public override InstructionExecBase CreateInstructionExec(Instruction instr)
         {
@@ -49,12 +60,11 @@ namespace dnWalker.Instructions
 
             if (iExec is ExtendableInstructionExecBase extendableInstructionExec)
             {
-                foreach (IInstructionExtension instructionExtension in _extensions)
+                Type instructionType = extendableInstructionExec.GetType();
+
+                if (_pipelines.TryGetValue(instructionType, out var pipeline))
                 {
-                    if (instructionExtension.CanExecute(instr.OpCode.Code))
-                    {
-                        extendableInstructionExec.Extensions.Add(instructionExtension);
-                    }
+                    extendableInstructionExec.Extensions = pipeline;
                 }
             }
 
