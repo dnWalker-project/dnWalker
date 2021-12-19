@@ -1,29 +1,32 @@
-﻿namespace dnWalker.Parameters.Expressions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Parameters.Expressions
 {
     public class IsNullParameterExpression : UnaryParameterExpression
     {
-        public IsNullParameterExpression(ParameterReference operand) : base(operand)
+        public IsNullParameterExpression(ParameterRef operand) : base(operand)
         {
         }
 
-        internal static readonly char IdChar = 'N';
-
-        protected override char Identifier
+        public override ParameterExpressionType ExpressionType
         {
-            get { return IdChar; }
-        }
-
-        public override bool TryApplyTo(ParameterStore store, object value)
-        {
-            if (Operand.TryResolve(store, out IParameter? resolved) &&
-                resolved is IReferenceTypeParameter referenceTypeParameter &&
-                value is bool boolValue)
+            get
             {
-                referenceTypeParameter.IsNull = boolValue;
-                return true;
+                return ParameterExpressionType.IsNull;
             }
-            return false;
+        }
+
+        public override void ApplyTo(IParameterContext ctx, object value)
+        {
+            bool? isNull = value as bool?;
+
+            IReferenceTypeParameter parameter = Operand.Resolve<IReferenceTypeParameter>(ctx) ?? throw new Exception("Cannot resolve the operand.");
+
+            parameter.IsNull = isNull;
         }
     }
 }
-

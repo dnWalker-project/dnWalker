@@ -4,41 +4,12 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".tt.cs" #>
-
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace dnWalker.Parameters
 {
-
-    public abstract class PrimitiveValueParameter<TValue> : Parameter, IPrimitiveValueParameter<TValue> where TValue : struct
-    {
-        protected PrimitiveValueParameter() : base(typeof(TValue).FullName!)
-        { }
-
-        protected PrimitiveValueParameter(TValue value) : base(typeof(TValue).FullName!)
-        {
-            Value = value;
-        }
-        protected PrimitiveValueParameter(TValue value, int id)  : base(typeof(TValue).FullName!, id)
-        {
-            Value = value;
-        }
-
-        public sealed override IEnumerable<IParameter> GetChildren()
-        {
-            return Enumerable.Empty<IParameter>();
-        }
-
-        public TValue Value
-        {
-            get;
-            set;
-        }
-    }
-
 <#
  string[] types = 
  {
@@ -77,28 +48,77 @@ namespace dnWalker.Parameters
     string type = types[i];
     string alias = aliases[i];
 
-  #>
-    public class <#= type #>Parameter : PrimitiveValueParameter<<#= alias #>>, I<#= type #>Parameter
+#>
+
+    public class <#= type #>Parameter : Parameter, I<#= type #>Parameter
     {
-        public <#= type #>Parameter() : base()
-        { }
-        public <#= type #>Parameter(<#= alias #> value) : base(value)
-        { }
-        public <#= type #>Parameter(<#= alias #> value, int id) : base(value, id)
-        { }
-
-        public override IParameter ShallowCopy(ParameterStore store, int id)
+        internal <#= type #>Parameter(IParameterContext context) : base(context)
         {
-            <#= type #>Parameter result = new <#= type #>Parameter(Value, id);
-            
-            store.AddParameter(result);
+        }
 
-            return result;
+        internal <#= type #>Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        {
+        }
+        
+        internal <#= type #>Parameter(IParameterContext context, ParameterRef reference, <#= alias #>? value) : base(context, reference)
+        {
+            Value = value;
+        }
+
+        public <#= alias #>? Value
+        {
+            get;
+            set;
+        }
+
+        public override <#= type #>Parameter Clone(IParameterContext context)
+        {
+             <#= type #>Parameter parameter = new <#= type #>Parameter(context, Reference, Value);
+
+             parameter.Accessor = Accessor?.Clone();
+
+             return parameter;
+        }
+
+        public override string ToString()
+        {
+            return $"Parameter<<#= type #>>, Reference = {Reference}, Value = {Value}";
         }
     }
- 
- <#
+<#
  }
+#>
 
- #>
+
+    public static partial class ParameterContextExtensions
+    {
+<# 
+for (int i = 0; i < types.Length; ++i)
+{
+    string type = types[i];
+    string alias = aliases[i];
+
+#>
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context)
+        {
+            return Create<#= type #>Parameter(context, ParameterRef.Any, null);
+        }
+        
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference)
+        {
+            return Create<#= type #>Parameter(context, reference, null);
+        }
+        
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference, <#= alias #>? value)
+        {
+            <#= type #>Parameter parameter = new <#= type #>Parameter(context, reference, value);
+            
+            context.Parameters.Add(parameter.Reference, parameter);
+            
+            return parameter;
+        }
+<#
+}
+#>
+    }
 }

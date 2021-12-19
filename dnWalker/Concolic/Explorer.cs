@@ -6,6 +6,7 @@ using dnWalker.DataElements;
 using dnWalker.Instructions.Extensions;
 using dnWalker.NativePeers;
 using dnWalker.Parameters;
+using dnWalker.Parameters.Expressions;
 
 using MMC;
 using MMC.Data;
@@ -19,6 +20,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+
+using LinqParameterExpression = System.Linq.Expressions.ParameterExpression;
+using ParameterExpression = dnWalker.Parameters.Expressions.ParameterExpression;
 
 namespace dnWalker.Concolic
 {
@@ -134,11 +138,14 @@ namespace dnWalker.Concolic
             var stateSpaceSetup = new StateSpaceSetup(_definitionProvider, _config, _logger);
 
             _pathStore = new PathStore(entryPoint);
+            // _parameterStore.BaseContext should contain default values for all input parameters
+            _parameterStore = new ParameterStore(entryPoint);
+
 
             var f = new dnWalker.Instructions.ExtendableInstructionFactory();
             f.AddSymbolicExecution();
             f.AddPathConstraintProducers();
-            f.AddParameterHandlers();
+            //f.AddParameterHandlers();
 
             var instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
@@ -147,28 +154,15 @@ namespace dnWalker.Concolic
                 data = new Dictionary<string, object>();
             }
 
-            _parameterStore = new ParameterStore();
-
+            // data contains start point information for PRIMITIVE ARGUMENTS ONLY
             foreach (KeyValuePair<string, object> kvp in data)
             {
-                TypeSig type = entryPoint.Parameters.FirstOrDefault(p => p.Name == kvp.Key)?.Type;
-
-                if (type == null)
+                if (_parameterStore.BaseContext.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
                 {
-                    _logger.Warning($"Parameter with name {kvp.Key} is not defined for the explored method.");
-                }
-                else
-                {
-                    IParameter p = ParameterFactory.CreateParameter(type);
-                    if (p is IPrimitiveValueParameter primitiveValueParameter)
-                    {
-                        primitiveValueParameter.Value = kvp.Value;
-                        _parameterStore.AddRootParameter(kvp.Key, p);
-                    }
+                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseContext);
+                    p.Value = kvp.Value;
                 }
             }
-
-            _parameterStore.EnsureMethodParameters(entryPoint);
 
             OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint, _solver?.GetType()));
 
@@ -185,7 +179,7 @@ namespace dnWalker.Concolic
                     ExplicitActiveState cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
                     cur.PathStore = _pathStore;
 
-                    DataElementList arguments = _parameterStore.CreateMethodArguments(entryPoint, cur);
+                    DataElementList arguments = _parameterStore.CreateMethodArguments(cur);
 
                     MethodState mainState = new MethodState(entryPoint, arguments, cur);
 
@@ -219,12 +213,11 @@ namespace dnWalker.Concolic
                         _parameterStore.SetReturnValue(retValue, cur);
                     }
 
-                    OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, null, path));
-
+                    OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, _parameterStore, path));
 
 
                     _logger.Log(LogPriority.Message, "Explored path: {0}", path.PathConstraintString);
-                    IList<ParameterExpression> usedExpressions =  cur.GetExpressionLookup().Values.ToList();
+                    IList<LinqParameterExpression> usedExpressions =  cur.GetExpressionLookup().Values.ToList();
                     data = PathStore.GetNextInputValues(_solver, usedExpressions);
 
                     if (data == null)
@@ -232,9 +225,9 @@ namespace dnWalker.Concolic
                         break;
                     }
 
-                    PathStore.ResetPath();
+                    _pathStore.ResetPath();
 
-                    _parameterStore.NextGeneration(data);
+                    _parameterStore.Apply(data.Select(p => new ParameterTrait(ParameterExpression.Parse(p.Key), p.Value)));
                 }
                 catch (Exception e)
                 {

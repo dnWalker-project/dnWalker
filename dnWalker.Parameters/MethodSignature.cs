@@ -42,7 +42,7 @@ namespace dnWalker.Parameters
         }
 
         private static readonly char[] _splitChars = new char[] { ' ', ':', '(', ',', ')' };
-        
+
         public static readonly MethodSignature Empty = new MethodSignature();
 
         public static MethodSignature Parse(string methodSignature)
@@ -56,7 +56,7 @@ namespace dnWalker.Parameters
         }
 
         static readonly string retType2DeclType = " ";
-        static readonly string declType2MethodName= "::";
+        static readonly string declType2MethodName = "::";
         static readonly string[] methodName2Args = { "(", ")" };
         static readonly string arg2Arg = ",";
         public static bool TryParse(string methodSignatureString, out MethodSignature methodSignature)

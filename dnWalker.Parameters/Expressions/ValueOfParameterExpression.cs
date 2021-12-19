@@ -1,31 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace dnWalker.Parameters.Expressions
 {
     public class ValueOfParameterExpression : UnaryParameterExpression
     {
-        public ValueOfParameterExpression(ParameterReference operand) : base(operand)
+        public ValueOfParameterExpression(ParameterRef operand) : base(operand)
         {
         }
 
-        internal static readonly char IdChar = 'V';
-
-        protected override char Identifier
+        public override ParameterExpressionType ExpressionType
         {
-            get { return IdChar; }
-        }
-
-        public override bool TryApplyTo(ParameterStore store, object value)
-        {
-            if (Operand.TryResolve(store, out IParameter? resolvedParameter) &&
-                resolvedParameter is IPrimitiveValueParameter primitiveValueParameter &&
-                value.GetType() == Type.GetType(primitiveValueParameter.TypeName))
+            get
             {
-                primitiveValueParameter.Value = value;
-                return true;
+                return ParameterExpressionType.ValueOf;
             }
-            return false;
+        }
+
+        public override void ApplyTo(IParameterContext ctx, object value)
+        {
+            IPrimitiveValueParameter parameter = Operand.Resolve<IPrimitiveValueParameter>(ctx) ?? throw new Exception("Cannot resolve the operand.");
+
+            parameter.Value = value;
         }
     }
 }
-

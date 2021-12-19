@@ -15,7 +15,7 @@ namespace dnWalker.Parameters.Tests
         [Theory]
         [InlineData("System.Void", "My.Namespace.MyClass", "MyMethod", new string[] { "System.Boolean", "System.Int32" })]
         [InlineData("System.Void", "My.Namespace.MyClass", "MyMethod", new string[] { "System.Boolean" })]
-        [InlineData("System.Void", "My.Namespace.MyClass", "MyMethod", new string[] {})]
+        [InlineData("System.Void", "My.Namespace.MyClass", "MyMethod", new string[] { })]
         public void Test_Constructor(string returnType, string declaringType, string methodName, string[] argumentTypes)
         {
             MethodSignature ms = new MethodSignature(returnType, declaringType, methodName, argumentTypes);

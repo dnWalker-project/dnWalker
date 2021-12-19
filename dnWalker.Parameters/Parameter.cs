@@ -1,83 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public abstract class Parameter : IParameter, IEquatable<IParameter?>
+    public abstract class Parameter : IParameter
     {
-        private readonly int _id;
-        private readonly string _typeName;
-        private ParameterAccessor? _accessor;
-
-        protected Parameter(string typeName)
+        private static int _nextId = 1;
+        private static ParameterRef GetReferenceIdFor(IParameter instance)
         {
-            _typeName = typeName;
-            _id = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
+            // "random" ids => using the GetHashCode function
+            // return RuntimeHelpers.GetHashCode(instance);
+            return _nextId++;
         }
 
-        protected Parameter(string typeName, int id)
+
+        protected Parameter(IParameterContext context)
         {
-            _typeName = typeName;
-            _id = id < 0 ? System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this) : id;
+            Context = context;
+            Reference = GetReferenceIdFor(this);
+        }
+        protected Parameter(IParameterContext context, ParameterRef reference)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Reference = reference == ParameterRef.Any ? GetReferenceIdFor(this) : reference;
         }
 
-        public string TypeName
+        public IParameterContext Context
         {
-            get { return _typeName; }
+            get;
         }
 
-        public int Id
+        public ParameterRef Reference
         {
-            get { return _id; }
+            get;
         }
+
+        public abstract IParameter Clone(IParameterContext newContext);
+
+        private ParameterAccessor? _accessor = null;
 
         public ParameterAccessor? Accessor
         {
-            get { return _accessor; }
+            get
+            {
+                return _accessor;
+            }
             set
             {
+                if (_accessor is RootParameterAccessor rOld)
+                {
+                    Context.Roots.Remove(rOld.Expression);
+                }
+
                 _accessor = value;
+
+                if (value is RootParameterAccessor rNew)
+                {
+                    Context.Roots.Add(rNew.Expression, Reference);
+                }
             }
         }
-        //public bool IsRoot
-        //{
-        //    get { return ((IParameter)this).IsRoot; }
-        //}
 
-        //public bool TryGetParent([NotNullWhen(true)] out IParameter? parent)
-        //{
-        //    return ((IParameter)this).TryGetParent(out parent);
-        //}
-
-        //public IEnumerable<IParameter> GetSelfAndDescendants()
-        //{
-        //    return((IParameter)this).GetSelfAndDescendants();
-        //}
-
-        public abstract IEnumerable<IParameter> GetChildren();
-
-
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as IParameter);
-        }
-
-        public bool Equals(IParameter? other)
-        {
-            return other != null &&
-                   _id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_id);
-        }
-
-        public abstract IParameter ShallowCopy(ParameterStore store, int id);
     }
 }

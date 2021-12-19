@@ -9,60 +9,79 @@ namespace dnWalker.Parameters
 {
     public interface IParameter
     {
-        string TypeName { get; }
-        int Id { get; }
 
-        /// <summary>
-        /// Gets, sets how is this <see cref="IParameter"/> accessable.
-        /// </summary>
+        IParameterContext Context { get; }
+
+        ParameterRef Reference { get; }
+
+        IParameter Clone(IParameterContext newContext);
+
         ParameterAccessor? Accessor { get; set; }
-
-
-        IEnumerable<IParameter> GetChildren();
-
-        /// <summary>
-        /// Shallow copy will create a new instance of the parameter with same children (using alias parameters)
-        /// </summary>
-        /// <returns></returns>
-        IParameter ShallowCopy(ParameterStore store, int id = -1);
-
     }
 
-    public static partial class ParameterExtensions
+    public static class ParameterExtensions
     {
         public static bool IsRoot(this IParameter parameter)
         {
-            return parameter.Accessor is RootParameterAccessor;
+            return parameter.Accessor is ParameterAccessor;
         }
 
-        public static IEnumerable<IParameter> GetSelfAndDescendants(this IParameter parameter)
+        public static bool IsRoot<TAccessor>(this IParameter parameter, [NotNullWhen(true)] out TAccessor? rootAccessor)
+            where TAccessor : ParameterAccessor
         {
-            return parameter.GetChildren().SelectMany(p => p.GetSelfAndDescendants()).Append(parameter);
+            rootAccessor = parameter.Accessor as TAccessor;
+            return rootAccessor != null;
         }
 
-        public static bool TryGetParent(this IParameter parameter, [NotNullWhen(true)] out IParameter? parent)
+        public static bool IsField(this IParameter parameter, [NotNullWhen(true)] out IFieldOwnerParameter? fieldOwner, [NotNullWhen(true)] out string? fieldName)
         {
-            if (parameter.Accessor != null)
+            if (parameter.Accessor is FieldParameterAccessor fieldAccessor &&
+                fieldAccessor.ParentRef.TryResolve(parameter.Context, out fieldOwner))
             {
-                parent = parameter.Accessor.Parent;
-                return parent != null;
+                fieldName = fieldAccessor.FieldName;
+                return true;
             }
 
-            parent = null;
+            fieldOwner = null;
+            fieldName = null;
             return false;
         }
+
+        public static bool IsItem(this IParameter parameter, [NotNullWhen(true)] out IItemOwnerParameter? itemOwner, out int index)
+        {
+            if (parameter.Accessor is ItemParameterAccessor itemAccessor &&
+                itemAccessor.ParentRef.TryResolve(parameter.Context, out itemOwner))
+            {
+                index = itemAccessor.Index;
+                return true;
+            }
+
+            itemOwner = null;
+            index = 0;
+            return false;
+        }
+
+        public static bool IsMethodResult(this IParameter parameter, [NotNullWhen(true)] out IMethodResolverParameter? methodResolver, out MethodSignature methodSignature, out int invocation)
+        {
+            if (parameter.Accessor is MethodResultParameterAccessor methodResultAccessor &&
+                methodResultAccessor.ParentRef.TryResolve(parameter.Context, out methodResolver))
+            {
+                invocation = methodResultAccessor.Invocation;
+                methodSignature = methodResultAccessor.MethodSignature;
+                return true;
+            }
+
+            methodResolver = null;
+            methodSignature = MethodSignature.Empty;
+            invocation = 0;
+            return false;
+        }
+
         public static string GetAccessString(this IParameter parameter)
         {
             if (parameter.Accessor == null) return string.Empty;
 
-            string accessString = parameter.Accessor.GetAccessString();
-
-            if (parameter.TryGetParent(out IParameter? parent))
-            {
-                accessString = parent.GetAccessString() + accessString;
-            }
-
-            return accessString;
+            return parameter.Accessor.GetAccessString(parameter.Context);
         }
     }
 }

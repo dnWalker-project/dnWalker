@@ -12,134 +12,152 @@ namespace dnWalker.Parameters
     /// </summary>
     public abstract class ParameterAccessor
     {
-        public IParameter? Parent { get; }
+        public abstract string GetAccessString(IParameterContext context);
 
-        protected ParameterAccessor(IParameter? parent)
-        {
-            Parent = parent;
-        }
-
-        public abstract string GetAccessString();
-
-        public virtual void ChangeTarget(IParameter newTarget)
-        {
-            newTarget.Accessor = this;
-        }
+        public abstract ParameterAccessor Clone();
     }
 
-    public class FieldParameterAccessor : ParameterAccessor
+    public abstract class ParentChildParameterAccessor : ParameterAccessor
+    {
+        public ParameterRef ParentRef { get; }
+
+
+        protected ParentChildParameterAccessor(ParameterRef parentRef)
+        {
+            ParentRef = parentRef;
+        }
+
+    }
+
+    public class FieldParameterAccessor : ParentChildParameterAccessor
     {
         public string FieldName { get; }
 
-        public new IFieldOwnerParameter Parent
-        {
-            get { return (IFieldOwnerParameter?)base.Parent ?? throw new Exception("Parent must not be null!"); }
-        }
 
-        public override void ChangeTarget(IParameter newTarget)
-        {
-            base.ChangeTarget(newTarget);
-
-            Parent.ClearField(FieldName);
-            Parent.SetField(FieldName, newTarget);
-        }
-
-        public FieldParameterAccessor(string fieldName, IFieldOwnerParameter parent) : base(parent)
+        public FieldParameterAccessor(string fieldName, ParameterRef parent) : base(parent)
         {
             FieldName = fieldName;
         }
 
-        public override string GetAccessString()
+        public override string GetAccessString(IParameterContext context)
         {
-            return $".{FieldName}";
+            context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
+            return $"{parent?.GetAccessString() ?? string.Empty}.{FieldName}";
+        }
+
+        public override FieldParameterAccessor Clone()
+        {
+            return new FieldParameterAccessor(FieldName, ParentRef);
         }
     }
 
-    public class ItemParameterAccessor : ParameterAccessor
+    public class ItemParameterAccessor : ParentChildParameterAccessor
     {
         public int Index { get; }
 
-        public new IItemOwnerParameter Parent
-        {
-            get { return (IItemOwnerParameter?)base.Parent ?? throw new Exception("Parent must not be null!"); }
-        }
-
-        public override void ChangeTarget(IParameter newTarget)
-        {
-            base.ChangeTarget(newTarget);
-
-            Parent.ClearItem(Index);
-            Parent.SetItem(Index, newTarget);
-        }
-
-        public ItemParameterAccessor(int index, IItemOwnerParameter parent) : base(parent)
+        public ItemParameterAccessor(int index, ParameterRef parent) : base(parent)
         {
             Index = index;
         }
 
-        public override string GetAccessString()
+        public override string GetAccessString(IParameterContext context)
         {
-            return $"[{Index}]";
+            context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
+            return $"{parent?.GetAccessString() ?? string.Empty}[{Index}]";
+        }
+
+        public override ItemParameterAccessor Clone()
+        {
+            return new ItemParameterAccessor(Index, ParentRef);
         }
     }
 
-    public class MethodResultParameterAccessor : ParameterAccessor
+    public class MethodResultParameterAccessor : ParentChildParameterAccessor
     {
         public MethodSignature MethodSignature { get; }
         public int Invocation { get; }
 
-        public new IMethodResolverParameter Parent
-        {
-            get { return (IMethodResolverParameter?)base.Parent ?? throw new Exception("Parent must not be null!"); }
-        }
-
-        public override void ChangeTarget(IParameter newTarget)
-        {
-            base.ChangeTarget(newTarget);
-
-            Parent.ClearMethodResult(MethodSignature, Invocation);
-            Parent.SetMethodResult(MethodSignature, Invocation, newTarget);
-        }
-
-        public MethodResultParameterAccessor(MethodSignature methodSignature, int invocation, IMethodResolverParameter parent) : base(parent)
+        public MethodResultParameterAccessor(MethodSignature methodSignature, int invocation, ParameterRef parent) : base(parent)
         {
             MethodSignature = methodSignature;
             Invocation = invocation;
         }
 
-        public override string GetAccessString()
+        public override string GetAccessString(IParameterContext context)
         {
-            return $".{MethodSignature.MethodName}({string.Join(',', MethodSignature.ArgumentTypeFullNames)})[{Invocation}]";
+            context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
+            return $"{parent?.GetAccessString() ?? string.Empty}.{MethodSignature.MethodName}({string.Join(',', MethodSignature.ArgumentTypeFullNames)})[{Invocation}]";
+
+        }
+
+        public override MethodResultParameterAccessor Clone()
+        {
+            return new MethodResultParameterAccessor(MethodSignature, Invocation, ParentRef);
         }
     }
 
-    public class RootParameterAccessor : ParameterAccessor
+    public abstract class RootParameterAccessor : ParameterAccessor
     {
-        public virtual string Name { get; }
+        public virtual string Expression { get; }
 
-        public RootParameterAccessor(string name) : base(null)
+        public RootParameterAccessor(string name)
         {
-            Name = name;
+            Expression = name;
         }
 
-        public override string GetAccessString()
+        public override string GetAccessString(IParameterContext context)
         {
-            return Name;
+            return Expression;
         }
+
     }
 
     public class MethodArgumentParameterAccessor : RootParameterAccessor
     {
-        public MethodArgumentParameterAccessor(string name) : base(name)
+        public MethodArgumentParameterAccessor(string expression) : base(expression)
         {
+        }
+
+        public override MethodArgumentParameterAccessor Clone()
+        {
+            return new MethodArgumentParameterAccessor(Expression);
         }
     }
 
     public class StaticFieldParameterAccessor : RootParameterAccessor
     {
+        public string ClassName { get; }
+        public string FieldName { get; }
+
         public StaticFieldParameterAccessor(string className, string fieldName) : base($"{className}.{fieldName}")
         {
+            ClassName = className;
+            FieldName = fieldName;
+        }
 
+        public override StaticFieldParameterAccessor Clone()
+        {
+            return new StaticFieldParameterAccessor(ClassName, FieldName);
+        }
+    }
+
+    public class ReturnValueParameterAccessor : RootParameterAccessor
+    {
+        public ReturnValueParameterAccessor() : base("RetVal")
+        {
+        }
+
+        public override ReturnValueParameterAccessor Clone()
+        {
+            return new ReturnValueParameterAccessor();
+        }
+
+        public override string Expression
+        {
+            get
+            {
+                return base.Expression;
+            }
         }
     }
 }

@@ -1,20 +1,20 @@
-﻿namespace dnWalker.Parameters.Expressions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Parameters.Expressions
 {
     public abstract class BinaryParameterExpression : ParameterExpression
     {
-        protected BinaryParameterExpression(ParameterReference lhs, ParameterReference rhs)
+        protected BinaryParameterExpression(ParameterRef leftOperand, ParameterRef rightOperand)
         {
-            Lhs = lhs;
-            Rhs = rhs;
+            LeftOperand = leftOperand;
+            RightOperand = rightOperand;
         }
 
-        public ParameterReference Lhs { get; }
-        public ParameterReference Rhs { get; }
-
-        public override string ToString()
-        {
-            return $"{Identifier}{Lhs}{Rhs}";
-        }
+        public ParameterRef LeftOperand { get; }
+        public ParameterRef RightOperand { get; }
     }
 }
-

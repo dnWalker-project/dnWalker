@@ -8,5 +8,6 @@ namespace dnWalker.Parameters
 {
     public interface IArrayParameter : IReferenceTypeParameter, IItemOwnerParameter
     {
+        string ElementType { get; }
     }
 }

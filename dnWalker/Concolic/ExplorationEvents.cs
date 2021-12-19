@@ -57,27 +57,27 @@ namespace dnWalker.Concolic
 
     public class IterationStartedEventArgs : EventArgs
     {
-        public IterationStartedEventArgs(int iterationNmber, ParameterStore inputParameters)
+        public IterationStartedEventArgs(int iterationNmber, ParameterStore parameterStore)
         {
             IterationNmber = iterationNmber;
-            InputParameters = inputParameters;
+            ParameterStore = parameterStore;
         }
 
         public int IterationNmber { get; }
-        public ParameterStore InputParameters { get; }
+        public ParameterStore ParameterStore { get; }
     }
 
     public class IterationFinishedEventArgs : EventArgs
     {
-        public IterationFinishedEventArgs(int iterationNumber, object methodResult, Path exploredPath)
+        public IterationFinishedEventArgs(int iterationNumber, ParameterStore parameterStore, Path exploredPath)
         {
             IterationNumber = iterationNumber;
-            MethodResult = methodResult;
+            ParameterStore = parameterStore;
             ExploredPath = exploredPath;
         }
 
         public int IterationNumber { get; }
-        public Object MethodResult { get; }
+        public ParameterStore ParameterStore { get; }
         public Path ExploredPath { get; }
     }
 }

@@ -178,11 +178,6 @@ namespace dnWalker.Traversal
 
         public string PathConstraintString => PathConstraint?.ToString();
 
-        public string GetPathConstraintWithAcessStrings(ParameterStore store)
-        {
-            return PathConstraint.SubstitueIdWithAccess(store).ToString();
-        }
-
         public string GetPathInfo()
         {
             var sb = new StringBuilder();

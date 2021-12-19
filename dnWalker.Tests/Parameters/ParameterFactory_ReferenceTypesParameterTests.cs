@@ -21,20 +21,10 @@ namespace dnWalker.Tests.Parameters
         [Fact]
         public void Test_ParameterFor_MyClass_Is_ObjectParameter()
         {
-            var p = ParameterFactory.CreateParameter(GetType(typeof(MyClass)));
+            IParameterContext ctx = new ParameterContext();
+            var p = ctx.CreateParameter(GetType(typeof(MyClass)));
 
             p.Should().BeOfType<ObjectParameter>();
-        }
-    }
-
-    public class ParameterFactory_InterfaceParameterTests : dnlibTypeTestBase
-    {
-        [Fact]
-        public void Test_ParameterFor_MyInterface_Is_ObjectParameter()
-        {
-            var p = ParameterFactory.CreateParameter(GetType(typeof(IMyInterface)));
-
-            p.Should().BeOfType<InterfaceParameter>();
         }
     }
 
@@ -46,7 +36,8 @@ namespace dnWalker.Tests.Parameters
         {
             var type = GetType(typeof(IMyInterface[]));
 
-            var p = ParameterFactory.CreateParameter(type);
+            IParameterContext ctx = new ParameterContext();
+            var p = ctx.CreateParameter(type);
 
             p.Should().BeOfType<ArrayParameter>();
         }
@@ -54,7 +45,8 @@ namespace dnWalker.Tests.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Objects_Is_ArrayParameter()
         {
-            var p = ParameterFactory.CreateParameter(GetType(typeof(MyClass[])));
+            IParameterContext ctx = new ParameterContext();
+            var p = ctx.CreateParameter(GetType(typeof(MyClass[])));
 
             p.Should().BeOfType<ArrayParameter>();
         }
@@ -62,7 +54,8 @@ namespace dnWalker.Tests.Parameters
         [Fact]
         public void Test_ParameterFor_Array_Of_Numbers_Is_ArrayParameter()
         {
-            var p = ParameterFactory.CreateParameter(GetType(typeof(double[])));
+            IParameterContext ctx = new ParameterContext();
+            var p = ctx.CreateParameter(GetType(typeof(double[])));
 
             p.Should().BeOfType<ArrayParameter>();
         }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public interface IObjectParameter : IFieldOwnerParameter, IMethodResolverParameter, IReferenceTypeParameter
+    public interface IObjectParameter : IFieldOwnerParameter, IMethodResolverParameter, IReferenceTypeParameter, IParameter
     {
+        public string Type { get; }
     }
 }

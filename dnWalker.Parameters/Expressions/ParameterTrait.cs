@@ -8,34 +8,21 @@ namespace dnWalker.Parameters.Expressions
 {
     public class ParameterTrait
     {
-        private readonly ParameterExpression _expression;
-        private readonly object _result;
-
-        public ParameterTrait(ParameterExpression expression, object result)
+        public ParameterTrait(ParameterExpression expression, object value)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
-            _result = result ?? throw new ArgumentNullException(nameof(result));
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            Value = value;
         }
 
-        public ParameterExpression Expression 
-        {
-            get { return _expression; }
-        }
-        
-        public object Result
-        {
-            get { return _result; }
-        }
+        public ParameterExpression Expression { get; }
+        public object Value { get; }
 
-        public T ResultAs<T>()
-            where T : struct
-        {
-            return (T)_result;
-        }
 
-        public bool TryApplyTo(ParameterStore store)
+        public void ApplyTo(IParameterContext ctx)
         {
-            return Expression.TryApplyTo(store, Result);
+            if (ctx == null) throw new ArgumentNullException(nameof(ctx));
+
+            Expression.ApplyTo(ctx, Value);
         }
     }
 }

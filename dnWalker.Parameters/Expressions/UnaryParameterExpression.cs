@@ -1,18 +1,18 @@
-﻿namespace dnWalker.Parameters.Expressions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Parameters.Expressions
 {
     public abstract class UnaryParameterExpression : ParameterExpression
     {
-        protected UnaryParameterExpression(ParameterReference operand)
+        protected UnaryParameterExpression(ParameterRef operand)
         {
             Operand = operand;
         }
 
-        public ParameterReference Operand { get; }
-
-        public override string ToString()
-        {
-            return $"{Identifier}{Operand}";
-        }
+        public ParameterRef Operand { get; }
     }
 }
-

@@ -1,100 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
-
-using Expressions = System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class ObjectParameter : MethodResolverParameter, IObjectParameter
+    public class ObjectParameter : ReferenceTypeParameter, IObjectParameter
     {
-        public ObjectParameter(string typeName) : base(typeName)
+        private readonly FieldOwnerImplementation _fields;
+        private readonly MethodResolverImplementation _methodResults;
+
+        internal ObjectParameter(IParameterContext context, string type) : base(context)
         {
+            Type = type;
+            _fields = new FieldOwnerImplementation(Reference, context);
+            _methodResults = new MethodResolverImplementation(Reference, context);
         }
 
-        public ObjectParameter(string typeName, int id) : base(typeName, id)
+        internal ObjectParameter(IParameterContext context, ParameterRef reference, string type) : base(context, reference)
         {
+            Type = type;
+            _fields = new FieldOwnerImplementation(Reference, context);
+            _methodResults = new MethodResolverImplementation(Reference, context);
         }
 
-        private readonly Dictionary<string, IParameter> _fields = new Dictionary<string, IParameter>();
 
-        public IEnumerable<KeyValuePair<string, IParameter>> GetFields()
+        public string Type
         {
-            return _fields.AsEnumerable();
+            get;
         }
 
-        public bool TryGetField(string fieldName, [NotNullWhen(true)] out IParameter? parameter)
+        #region IFieldOwner Members
+        public IReadOnlyDictionary<string, ParameterRef> GetFields()
         {
-            return _fields.TryGetValue(fieldName, out parameter);
+            return ((IFieldOwner)_fields).GetFields();
         }
 
-        public void SetField(string fieldName, IParameter? parameter)
+        public bool TryGetField(string fieldName, out ParameterRef fieldRef)
         {
-            ClearField(fieldName);
+            return ((IFieldOwner)_fields).TryGetField(fieldName, out fieldRef);
+        }
 
-            if (parameter != null)
-            {
-                _fields[fieldName] = parameter;
-                parameter.Accessor = new FieldParameterAccessor(fieldName, this);
-            }
+        public void SetField(string fieldName, ParameterRef fieldRef)
+        {
+            ((IFieldOwner)_fields).SetField(fieldName, fieldRef);
         }
 
         public void ClearField(string fieldName)
         {
-            if (_fields.TryGetValue(fieldName, out IParameter? parameter))
-            {
-                _fields.Remove(fieldName);
-                parameter.Accessor = null;
-            }
+            ((IFieldOwner)_fields).ClearField(fieldName);
+        }
+        #endregion IFieldOwner Members
+
+        #region IMethodResolver Members
+        public IReadOnlyDictionary<MethodSignature, ParameterRef[]> GetMethodResults()
+        {
+            return ((IMethodResolver)_methodResults).GetMethodResults();
         }
 
-        public override IEnumerable<IParameter> GetChildren()
+        public bool TryGetMethodResult(MethodSignature methodSignature, int invocation, out ParameterRef resultRef)
         {
-            return Enumerable.Concat
-                   (
-                        GetMethodResults().SelectMany(mr => mr.Value).Where(mr => mr != null).Select(mr => mr!),
-                        GetFields().Select(f => f.Value)
-                   );
+            return ((IMethodResolver)_methodResults).TryGetMethodResult(methodSignature, invocation, out resultRef);
         }
 
-        public override IParameter ShallowCopy(ParameterStore store, int id)
+        public void SetMethodResult(MethodSignature methodSignature, int invocation, ParameterRef resultRef)
         {
-            ObjectParameter objectParameter = new ObjectParameter(TypeName, id);
-            objectParameter.IsNull = IsNull;
+            ((IMethodResolver)_methodResults).SetMethodResult(methodSignature, invocation, resultRef);
+        }
 
-            foreach (KeyValuePair<string, IParameter> fieldInfo in GetFields())
+        public void ClearMethodResult(MethodSignature methodSignature, int invocation)
+        {
+            ((IMethodResolver)_methodResults).ClearMethodResult(methodSignature, invocation);
+        }
+        #endregion IMethodResolver Members
+
+
+        public override ObjectParameter Clone(IParameterContext newContext)
+        {
+            ObjectParameter objectParameter = new ObjectParameter(newContext, Reference, Type)
             {
-                if (fieldInfo.Value is IReferenceTypeParameter refType)
-                {
-                    objectParameter.SetField(fieldInfo.Key, refType.CreateAlias(store));
-                }
-                else if (fieldInfo.Value is IPrimitiveValueParameter valueType)
-                {
-                    objectParameter.SetField(fieldInfo.Key, valueType.ShallowCopy(store));
-                }
+                IsNull = IsNull,
+                Accessor = Accessor?.Clone()
+            };
 
-            }
+            _fields.CopyTo(objectParameter._fields);
+            _methodResults.CopyTo(objectParameter._methodResults);
 
-            foreach (KeyValuePair<MethodSignature, IParameter?[]> methodResultInfo in GetMethodResults())
-            {
-                IParameter?[] results = methodResultInfo.Value;
-                for (int i = 0; i < results.Length; ++i)
-                {
-                    if (results[i] is IReferenceTypeParameter refType)
-                    {
-                        objectParameter.SetMethodResult(methodResultInfo.Key, i, refType.CreateAlias(store));
-                    }
-                    else if (results[i] is IPrimitiveValueParameter valueType)
-                    {
-                        objectParameter.SetMethodResult(methodResultInfo.Key, i, valueType.ShallowCopy(store));
-                    }
-                }
-            }
+
+            objectParameter.Accessor = Accessor?.Clone();
 
             return objectParameter;
+        }
+        public override string ToString()
+        {
+            return $"ObjectParameter<{Type}>, Reference = {Reference}, IsNull = {IsNull}";
+        }
+    }
+
+    public static partial class ParameterContextExtensions
+    {
+        public static IObjectParameter CreateObjectParameter(this IParameterContext context, string type, bool? isNull = null)
+        {
+            return CreateObjectParameter(context, ParameterRef.Any, type, isNull);
+        }
+
+        public static IObjectParameter CreateObjectParameter(this IParameterContext context, ParameterRef reference, string type, bool? isNull = null)
+        {
+            ObjectParameter parameter = new ObjectParameter(context, reference, type)
+            {
+                IsNull = isNull
+            };
+
+            context.Parameters.Add(parameter.Reference, parameter);
+
+            return parameter;
         }
     }
 }

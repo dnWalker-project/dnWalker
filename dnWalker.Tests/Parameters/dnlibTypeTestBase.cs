@@ -19,8 +19,8 @@ namespace dnWalker.Tests.Parameters
         private static readonly ModuleContext _context = ModuleDef.CreateModuleContext();
         //private static readonly List<ModuleDef> _modules = new List<ModuleDef>();
 
-        private static readonly IConfig _config;// = new Config();
-        private static readonly Logger _logger;// = new Logger();
+        private static readonly IConfig _config;
+        private static readonly Logger _logger;
 
         private static readonly IInstructionExecProvider _instructionExecProvider;
         private static readonly DefinitionProvider _definitionProvider;
@@ -45,7 +45,7 @@ namespace dnWalker.Tests.Parameters
             var f = new dnWalker.Instructions.ExtendableInstructionFactory();
             f.AddSymbolicExecution();
             f.AddPathConstraintProducers();
-            f.AddParameterHandlers();
+            //f.AddParameterHandlers();
 
 
             _instructionExecProvider = InstructionExecProvider.Get(_config, f);

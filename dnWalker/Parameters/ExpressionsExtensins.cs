@@ -27,12 +27,12 @@ namespace dnWalker.Parameters
         public static Expression GetValueExpression(this IPrimitiveValueParameter parameter, ExplicitActiveState cur)
         {
             IDictionary<string, ParameterExpression> lookup = GetExpressionLookup(cur);
-            string name = $"V{parameter.Id.ToString("x8")}"; // VALUE parameter name in expression is in format V<ID AS HEX NUMBER>
+            string name = $"V{parameter.Reference}"; // VALUE parameter name in expression is in format V<ID AS HEX NUMBER>
 
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
 
-                expression = Expression.Parameter(Type.GetType(parameter.TypeName), name);
+                expression = Expression.Parameter(Type.GetType(parameter.Type), name);
 
                 lookup[name] = expression;
             }
@@ -43,7 +43,7 @@ namespace dnWalker.Parameters
         public static Expression GetIsNullExpression(this IReferenceTypeParameter parameter, ExplicitActiveState cur)
         {
             IDictionary<string, ParameterExpression> lookup = GetExpressionLookup(cur);
-            string name = $"N{parameter.Id.ToString("x8")}"; // NULL parameter name in expression is in format N<ID AS HEX NUMBER>
+            string name = $"N{parameter.Reference}"; // NULL parameter name in expression is in format N<ID AS HEX NUMBER>
 
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
@@ -59,7 +59,7 @@ namespace dnWalker.Parameters
         public static Expression GetLengthExpression(this IArrayParameter parameter, ExplicitActiveState cur)
         {
             IDictionary<string, ParameterExpression> lookup = GetExpressionLookup(cur);
-            string name = $"L{parameter.Id.ToString("x8")}"; // LENGTH parameter name in expression is in format L<ID AS HEX NUMBER>
+            string name = $"L{parameter.Reference}"; // LENGTH parameter name in expression is in format L<ID AS HEX NUMBER>
 
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
@@ -75,8 +75,8 @@ namespace dnWalker.Parameters
         public static Expression GetReferenceEqualsExpression(this IReferenceTypeParameter p1, IReferenceTypeParameter p2, ExplicitActiveState cur)
         {
             IDictionary<string, ParameterExpression> lookup = GetExpressionLookup(cur);
-            string name1 = $"E{p1.Id.ToString("x")}{p2.Id.ToString("x8")}"; // REF EQUAL parameter name in expression is in format E<ID1 AS HEX NUMBER><ID2 AS HEX NUMBER>
-            string name2 = $"E{p2.Id.ToString("x")}{p1.Id.ToString("x8")}"; // REF EQUAL parameter name in expression is in format E<ID1 AS HEX NUMBER><ID2 AS HEX NUMBER>
+            string name1 = $"E{p1.Reference}{p2.Reference}"; // REF EQUAL parameter name in expression is in format E<ID1 AS HEX NUMBER><ID2 AS HEX NUMBER>
+            string name2 = $"E{p2.Reference}{p1.Reference}"; // REF EQUAL parameter name in expression is in format E<ID1 AS HEX NUMBER><ID2 AS HEX NUMBER>
 
             ParameterExpression expression = null;
             if (lookup.TryGetValue(name1, out expression) || lookup.TryGetValue(name2, out expression))

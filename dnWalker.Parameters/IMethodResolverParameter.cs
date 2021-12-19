@@ -7,12 +7,57 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public interface IMethodResolverParameter : IParameter
+    public interface IMethodResolver
     {
-        IEnumerable<KeyValuePair<MethodSignature, IParameter?[]>> GetMethodResults();
+        IReadOnlyDictionary<MethodSignature, ParameterRef[]> GetMethodResults();
 
-        bool TryGetMethodResult(MethodSignature methodSignature, int invocation, [NotNullWhen(true)] out IParameter? parameter);
-        void SetMethodResult(MethodSignature methodSignature, int invocation, IParameter? parameter);
+        bool TryGetMethodResult(MethodSignature methodSignature, int invocation, out ParameterRef resultRef);
+        
+        void SetMethodResult(MethodSignature methodSignature, int invocation, ParameterRef resultRef);
+
         void ClearMethodResult(MethodSignature methodSignature, int invocation);
+    }
+
+    public interface IMethodResolverParameter : IMethodResolver, IParameter
+    {
+    }
+
+    public static class MethodResolverParameterExtensions
+    {
+        public static bool TryGetMethodResult(this IMethodResolverParameter methodResolver, MethodSignature methodSignature, int invocation, [NotNullWhen(true)] out IParameter? parameter)
+        {
+            if (methodResolver.TryGetMethodResult(methodSignature, invocation, out ParameterRef reference) &&
+                reference.TryResolve(methodResolver.Context, out parameter))
+            {
+                return true;
+            }
+
+            parameter = null;
+            return false;
+        }
+        public static bool TryGetMethodResult<TParameter>(this IMethodResolverParameter methodResolver, MethodSignature methodSignature, int invocation, [NotNullWhen(true)] out TParameter? parameter)
+            where TParameter : class, IParameter
+        {
+            if (methodResolver.TryGetMethodResult(methodSignature, invocation, out ParameterRef reference) &&
+                reference.TryResolve(methodResolver.Context, out parameter))
+            {
+                return true;
+            }
+
+            parameter = null;
+            return false;
+        }
+
+        public static void SetMethodResult(this IMethodResolverParameter methodResolver, MethodSignature methodSignature, int invocation, IParameter methodResult)
+        {
+            methodResolver.SetMethodResult(methodSignature, invocation, methodResult.Reference);
+        }
+
+        public static IReadOnlyDictionary<MethodSignature, IParameter?[]> GetMethodResults(this IMethodResolverParameter methodResolver)
+        {
+            IReadOnlyDictionary<MethodSignature, ParameterRef[]> refs = methodResolver.GetMethodResults();
+
+            return new Dictionary<MethodSignature, IParameter?[]>(refs.Select(p => KeyValuePair.Create(p.Key, p.Value.Select(r => r.Resolve(methodResolver.Context)).ToArray())));
+        }
     }
 }

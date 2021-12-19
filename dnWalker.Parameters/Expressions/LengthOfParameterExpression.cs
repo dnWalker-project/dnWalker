@@ -1,29 +1,32 @@
-﻿namespace dnWalker.Parameters.Expressions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Parameters.Expressions
 {
     public class LengthOfParameterExpression : UnaryParameterExpression
     {
-        public LengthOfParameterExpression(ParameterReference operand) : base(operand)
+        public LengthOfParameterExpression(ParameterRef operand) : base(operand)
         {
         }
 
-        internal static readonly char IdChar = 'L';
-
-        protected override char Identifier
+        public override ParameterExpressionType ExpressionType
         {
-            get { return IdChar; }
-        }
-
-        public override bool TryApplyTo(ParameterStore store, object value)
-        {
-            if (Operand.TryResolve(store, out IParameter? operand) &&
-                operand is IItemOwnerParameter itemOwnerParameter &&
-                value is int intValue)
+            get
             {
-                itemOwnerParameter.Length = intValue;
-                return true;
+                return ParameterExpressionType.LengthOf; 
             }
-            return false;
+        }
+
+        public override void ApplyTo(IParameterContext ctx, object value)
+        {
+            int? length = value as int?;
+
+            IArrayParameter parameter = Operand.Resolve<IArrayParameter>(ctx) ?? throw new Exception("Cannot resolve the operand.");
+
+            parameter.Length = length;
         }
     }
 }
-
