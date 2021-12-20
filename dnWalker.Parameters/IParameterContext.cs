@@ -23,6 +23,19 @@ namespace dnWalker.Parameters
 
     public static partial class ParameterContextExtensions
     {
+        public static bool Remove(this IParameterContext context, ParameterRef reference)
+        {
+            if (reference.TryResolve(context, out IParameter? parameter))
+            {
+                context.Parameters.Remove(reference);
+                if (parameter.Accessor is RootParameterAccessor r)
+                {
+                    context.Roots.Remove(r.Expression);
+                }
+                return true;
+            }
 
+            return false;
+        }
     }
 }

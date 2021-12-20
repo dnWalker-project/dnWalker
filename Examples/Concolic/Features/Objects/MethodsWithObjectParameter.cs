@@ -33,5 +33,29 @@ namespace Examples.Concolic.Features.Objects
                 Console.Out.WriteLine("instance:_myField != 3");
             }
         }
+
+        public static void BranchIfNull(TestClass instance)
+        {
+            if (instance == null)
+            {
+                Console.Out.WriteLine("instance is null");
+            }
+            else
+            {
+                Console.Out.WriteLine("instance is not null");
+            }
+        }
+
+        public static void BranchIfNotNull(TestClass instance)
+        {
+            if (instance != null)
+            {
+                Console.Out.WriteLine("instance is not null");
+            }
+            else
+            {
+                Console.Out.WriteLine("instance is null");
+            }
+        }
     }
 }

@@ -148,17 +148,16 @@ namespace dnWalker.Traversal
 
         public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
-            try
-            {
-                expression = ExpressionOptimizer.visit(expression);
-            }
-            catch
-            {
-                // exception is ignored, 3rd party 
-            }
+            //try
+            //{
+            //    expression = ExpressionOptimizer.visit(expression);
+            //}
+            //catch
+            //{
+            //    // exception is ignored, 3rd party 
+            //}
 
             expression = expression.Optimize();
-            expression = expression.Simplify();
 
             _pathConstraints.Add(
                 new PathConstraint

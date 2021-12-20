@@ -39,5 +39,34 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Objects
 
             paths.Count().Should().Be(3);
         }
+
+
+        [Fact]
+        public void Test_ObjectSubstitute_NullEquality()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNull");
+
+            var paths = explorer.PathStore.Paths;
+
+            paths.Count().Should().Be(2);
+        }
+
+        [Fact]
+        public void Test_ObjectSubstitute_NotNullEquality()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull");
+
+            var paths = explorer.PathStore.Paths;
+
+            paths.Count().Should().Be(2);
+        }
     }
 }

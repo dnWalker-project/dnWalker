@@ -42,10 +42,7 @@ namespace dnWalker.Tests.Parameters
             _config = new Config();
             _logger = new Logger();
 
-            var f = new dnWalker.Instructions.ExtendableInstructionFactory();
-            f.AddSymbolicExecution();
-            f.AddPathConstraintProducers();
-            //f.AddParameterHandlers();
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
 
 
             _instructionExecProvider = InstructionExecProvider.Get(_config, f);

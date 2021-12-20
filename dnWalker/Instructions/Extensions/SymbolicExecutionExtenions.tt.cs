@@ -139,10 +139,10 @@ namespace dnWalker.Instructions.Extensions
 
         public override void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
         {
-            // two posibilities
+            // two possibilities
             // 1. (else branch) we are comparing two normal data elements => just do the default magic
             // 2. (if branch)   we are comparing a boolean value with zero (or possibly one if compiler is weird)
-            //                  in other word we are doing negation / nothing over the iput value
+            //                  in other word we are doing negation / nothing over the input value
             //                  only way to verify, which mode of execution is desired is if 
             //                    1) LHS is symbolic and its type is boolean
             //                    2) RHS is not symbolic

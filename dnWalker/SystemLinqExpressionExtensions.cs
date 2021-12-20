@@ -9,77 +9,132 @@ namespace dnWalker
 {
     public static class SystemLinqExpressionExtensions
     {
-        public static Expression Simplify(this Expression expression)
+
+
+        public static Expression Optimize(this Expression expression)
         {
-            switch (expression)
+            if (expression is BinaryExpression binary)
             {
-                case BinaryExpression binaryExpression:
-                    return SimplifyBinary(binaryExpression);
-                case UnaryExpression unaryExpression:
-                    return SimplifyUnary(unaryExpression);                 
-                default:
-                    return expression;
+                Expression lhs = Optimize(binary.Left);
+                Expression rhs = Optimize(binary.Right);
+
+                switch (expression.NodeType)
+                {
+                    //case ExpressionType.Add: return OptimizeAdd(lhs, rhs);
+                    //case ExpressionType.Subtract: return OptimizeSubtract(lhs, rhs);
+                    //case ExpressionType.Multiply: return OptimizeMultiply(lhs, rhs);
+                    //case ExpressionType.Divide: return OptimizeDivide(lhs, rhs);
+
+                    //case ExpressionType.Equal: return OptimizeEqual(lhs, rhs);
+                    //case ExpressionType.NotEqual: return OptimizeNotEqual(lhs, rhs);
+
+                    //case ExpressionType.GreaterThan: return OptimizeGreaterThan(lhs, rhs);
+                    //case ExpressionType.GreaterThanOrEqual: return OptimizeGreaterThanOrEqual(lhs, rhs);
+                    //case ExpressionType.LessThan: return OptimizeLessThan(lhs, rhs);
+                    //case ExpressionType.LessThanOrEqual: return OptimizeLessThanOrEqual(lhs, rhs);
+                }
+
+
+                return Expression.MakeBinary(expression.NodeType, lhs, rhs);
             }
+            else if (expression is UnaryExpression unary)
+            {
+                Expression operand = unary.Operand;
 
+                switch (expression.NodeType)
+                {
+                    //case ExpressionType.Negate: return OptimizeNegate(operand);
+                    case ExpressionType.Not: return OptimizeNot(operand);
+                }
 
-            //while (expression.CanReduce)
-            //{
-            //    expression = expression.Reduce();
-            //}
-            //return expression;
+                return Expression.MakeUnary(expression.NodeType, operand, expression.Type);
+            }
+            else
+            {
+                return expression;
+            }
         }
 
-        private static Expression SimplifyUnary(UnaryExpression unaryExpression)
+        private static Expression OptimizeAdd(Expression lhs, Expression rhs)
         {
-            Expression operand = unaryExpression.Operand.Simplify();
-
-            switch (unaryExpression.NodeType)
-            {
-               
-                case ExpressionType.Negate:
-                    break;
-                case ExpressionType.Not:
-                    Expression lhs = ((BinaryExpression)operand).Left;
-                    Expression rhs = ((BinaryExpression)operand).Right;
-
-                    ExpressionType negation = operand.NodeType.LogicalNot();
-                    if (negation != operand.NodeType)
-                    {
-                        return Expression.MakeBinary(negation, lhs, rhs);
-                    }
-
-                    break;
-
-                case ExpressionType.IsTrue:
-                    break;
-                case ExpressionType.IsFalse:
-                    break;
-            }
-
-            return Expression.MakeUnary(unaryExpression.NodeType, operand, operand.Type);
+            throw new NotImplementedException();
         }
 
-
-        private static Expression SimplifyBinary(BinaryExpression binaryExpression)
+        private static Expression OptimizeSubtract(Expression lhs, Expression rhs)
         {
-            Expression lhs = binaryExpression.Left.Simplify();
-            Expression rhs = binaryExpression.Right.Simplify();
-
-            return Expression.MakeBinary(binaryExpression.NodeType, lhs, rhs);
+            throw new NotImplementedException();
         }
 
-        private static ExpressionType LogicalNot(this ExpressionType type)
+        private static Expression OptimizeMultiply(Expression lhs, Expression rhs)
         {
-            switch (type)
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeDivide(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeEqual(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeNotEqual(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeGreaterThan(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeGreaterThanOrEqual(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeLessThan(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeLessThanOrEqual(Expression lhs, Expression rhs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeNegate(Expression operand)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Expression OptimizeNot(Expression operand)
+        {
+            if (operand is UnaryExpression unaryOperand && operand.NodeType == ExpressionType.Not)
             {
-                case ExpressionType.Equal: return ExpressionType.NotEqual;
-                case ExpressionType.LessThan: return ExpressionType.GreaterThanOrEqual;
-                case ExpressionType.LessThanOrEqual: return ExpressionType.GreaterThan;
-                case ExpressionType.GreaterThan: return ExpressionType.LessThanOrEqual;
-                case ExpressionType.GreaterThanOrEqual: return ExpressionType.LessThan;
-                default:
-                    return type;
+                // double not => negate them => just return the operand of the operand
+                return unaryOperand.Operand;
             }
+
+            if (operand is BinaryExpression binaryOperand)
+            {
+                ExpressionType? negatedNodeType = binaryOperand.NodeType switch
+                {
+                    ExpressionType.GreaterThan => ExpressionType.LessThanOrEqual,
+                    ExpressionType.GreaterThanOrEqual => ExpressionType.LessThan,
+                    ExpressionType.LessThan => ExpressionType.GreaterThanOrEqual,
+                    ExpressionType.LessThanOrEqual => ExpressionType.GreaterThan,
+                    ExpressionType.Equal => ExpressionType.NotEqual,
+                    ExpressionType.NotEqual => ExpressionType.Equal,
+                    _ => null
+                };
+
+                if (negatedNodeType.HasValue) return BinaryExpression.MakeBinary(negatedNodeType.Value, binaryOperand.Left, binaryOperand.Right);
+            }
+
+            return Expression.Not(operand);
         }
     }
 }

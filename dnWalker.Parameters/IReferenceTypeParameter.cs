@@ -11,4 +11,12 @@ namespace dnWalker.Parameters
 
         bool? IsNull { get; set; }
     }
+
+    public static class ReferenceTypeParameterExtensions
+    {
+        public static bool GetIsNull(this IReferenceTypeParameter referenceTypeParameter)
+        {
+            return referenceTypeParameter.IsNull ?? true;
+        }
+    }
 }

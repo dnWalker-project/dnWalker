@@ -21,6 +21,34 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
         }
 
         [Fact]
+        public void Test_ObjectSubstitute_NullEquality()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNull");
+
+            var paths = explorer.PathStore.Paths;
+
+            paths.Count().Should().Be(2);
+        }
+
+        [Fact]
+        public void Test_ObjectSubstitute_NotNullEquality()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull");
+
+            var paths = explorer.PathStore.Paths;
+
+            paths.Count().Should().Be(2);
+        }
+
+        [Fact]
         public void Test_UsingObjectParamterSubstitute_For_FieldAccess()
         {
             IExplorer explorer = GetConcolicExplorerBuilder()

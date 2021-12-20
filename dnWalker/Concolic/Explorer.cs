@@ -142,10 +142,7 @@ namespace dnWalker.Concolic
             _parameterStore = new ParameterStore(entryPoint);
 
 
-            var f = new dnWalker.Instructions.ExtendableInstructionFactory();
-            f.AddSymbolicExecution();
-            f.AddPathConstraintProducers();
-            //f.AddParameterHandlers();
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
 
             var instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
@@ -178,6 +175,9 @@ namespace dnWalker.Concolic
                     // setup initial state
                     ExplicitActiveState cur = new ExplicitActiveState(_config, instructionExecProvider, _definitionProvider, _logger);
                     cur.PathStore = _pathStore;
+
+                    _parameterStore.InitializeExecutionContext();
+                    cur.SetParameterContext(_parameterStore);
 
                     DataElementList arguments = _parameterStore.CreateMethodArguments(cur);
 
@@ -228,6 +228,7 @@ namespace dnWalker.Concolic
                     _pathStore.ResetPath();
 
                     _parameterStore.Apply(data.Select(p => new ParameterTrait(ParameterExpression.Parse(p.Key), p.Value)));
+
                 }
                 catch (Exception e)
                 {

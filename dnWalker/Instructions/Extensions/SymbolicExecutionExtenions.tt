@@ -109,7 +109,7 @@ namespace dnWalker.Instructions.Extensions
     {
         new SymbolicOperationInfo("CGT", "GreaterThan", true, "CGT"),
         new SymbolicOperationInfo("CLT", "LessThan", true, "CLT"),
-        // new SymbolicOperationInfo("CEQ", "Equal", true, "CEQ"), // CEQ is a special case - there are two posibilities how to handle it => done explicitly
+        // new SymbolicOperationInfo("CEQ", "Equal", true, "CEQ"), // CEQ is a special case - there are two possibilities how to handle it => done explicitly
 
         new SymbolicOperationInfo("ADD", "Add", true, "ADD", "ADD_OVF_UN"),
         new SymbolicOperationInfo("DIV", "Divide", true, "DIV"),
@@ -125,9 +125,11 @@ namespace dnWalker.Instructions.Extensions
         new SymbolicOperationInfo("SHL", "LeftShift", true, "SHL"),
         new SymbolicOperationInfo("SHR", "RightShift", true, "SHR", "SHR_UN"),
 
-        // TODO - extend UnarySymbolicExecutionExtension to accomodate more options, like specifying resulting type etc new SymbolicOperationInfo("CONV", "Convert", false, "Convert", "Conv_I", "Conv_I1", "Conv_I2")
+        // new SymbolicOperationInfo("CONV", "Convert", false, "CONV")
+
+        // TODO - extend UnarySymbolicExecutionExtension to accommodate more options, like specifying resulting type etc new SymbolicOperationInfo("CONV", "Convert", false, "Convert", "Conv_I", "Conv_I1", "Conv_I2")
     };
- #>
+#>
 
     public static class SymbolicExecutionFactoryExtensions
     {
@@ -136,11 +138,11 @@ namespace dnWalker.Instructions.Extensions
 <#
             foreach (string name in infos.Select(i => i.Name).Append("CEQ"))
             {
- #>
+#>
                 factory.RegisterExtension(new <#= name #>_SymbolicExecutionExtension());
 <#
             }
- #>     
+#>     
             return factory;
         }
     
@@ -161,10 +163,10 @@ namespace dnWalker.Instructions.Extensions
 
         public override void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
         {
-            // two posibilities
+            // two possibilities
             // 1. (else branch) we are comparing two normal data elements => just do the default magic
             // 2. (if branch)   we are comparing a boolean value with zero (or possibly one if compiler is weird)
-            //                  in other word we are doing negation / nothing over the iput value
+            //                  in other word we are doing negation / nothing over the input value
             //                  only way to verify, which mode of execution is desired is if 
             //                    1) LHS is symbolic and its type is boolean
             //                    2) RHS is not symbolic
@@ -195,17 +197,17 @@ namespace dnWalker.Instructions.Extensions
     {
         if (i.IsBinary)
         {
- #>
+#>
     public class <#= i.Name #>_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
 <#
         }
         else
         {
- #>
+#>
     public class <#= i.Name #>_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
 <#
         }
- #>
+#>
     {
     
         public override IEnumerable<Type> SupportedInstructions
@@ -215,11 +217,11 @@ namespace dnWalker.Instructions.Extensions
 <#
     foreach(string instructionType in i.AcceptedCodes)
     {
- #>
+#>
                 yield return typeof(<#= instructionType #>);
 <#
     }
- #>
+#>
             }
         }
 
@@ -230,7 +232,7 @@ namespace dnWalker.Instructions.Extensions
     }
 <#
     }
- #>
+#>
 }
 <#+
 
@@ -250,4 +252,4 @@ readonly struct SymbolicOperationInfo
     public bool IsBinary { get; }
 }
 
- #>
+#>
