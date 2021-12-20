@@ -3376,6 +3376,302 @@ namespace dnWalker.Instructions
     }
 
     /// <summary>
+    /// Converts the value on top of the evaluation stack to native int.
+    /// </summary>
+    public class CONV_I : ConvertInstructionExec
+    {
+        public CONV_I(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            toPush = a.ToInt4(false);
+
+            cur.EvalStack.Push(toPush);
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to int8, then extends (pads) it to int32.
+    /// </summary>
+    public class CONV_I1 : ConvertInstructionExec
+    {
+        public CONV_I1(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            toPush = a.ToInt4(false).ToByte(false);
+
+            cur.EvalStack.Push(toPush);
+            return nextRetval;
+        }
+    }
+
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to int16, then extends (pads) it to int32.
+    /// </summary>
+    public class CONV_I2 : ConvertInstructionExec
+    {
+        public CONV_I2(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            toPush = a.ToInt4(false).ToShort(false);
+
+            cur.EvalStack.Push(toPush);
+            return nextRetval;
+        }
+    }
+
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to int32.
+    /// </summary>
+    public class CONV_I4 : ConvertInstructionExec
+    {
+        public CONV_I4(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            toPush = a.ToInt4(false);
+
+            cur.EvalStack.Push(toPush);
+            return nextRetval;
+        }
+    }
+
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to int64.
+    /// </summary>
+    public class CONV_I8 : ConvertInstructionExec
+    {
+        public CONV_I8(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            // should not throw...
+            //try
+            //{
+            //    if (a is UnsignedInt4 ui4)
+            //    {
+            //        cur.EvalStack.Push(ui4.ToInt4(false).ToInt8(false));
+            //        return nextRetval;
+            //    }
+
+            //    cur.EvalStack.Push(a.ToInt8(false));
+            //    return nextRetval;
+            //}
+            //catch (OverflowException e)
+            //{
+            //    return ThrowException(e, cur);
+            //}
+
+            //cur.EvalStack.Push(toPush);
+
+            toPush = a.ToInt8(false);
+
+
+            return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed native int, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I : ConvertInstructionExec
+    {
+        public CONV_OVF_I(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to signed native int, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_I_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(CheckOverflow));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed int8 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I1 : ConvertInstructionExec
+    {
+        public CONV_OVF_I1(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to signed int8 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I1_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_I1_UN(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed int16 and extending it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I2 : ConvertInstructionExec
+    {
+        public CONV_OVF_I2(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to signed int16 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I2_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_I2_UN(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to signed int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I4 : ConvertInstructionExec
+    {
+        public CONV_OVF_I4(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to signed int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_I4_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_I4_UN(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
     /// Converts the signed value on top of the evaluation stack to signed int64, throwing OverflowException on overflow.
     /// </summary>
     public class CONV_OVF_I8 : ConvertInstructionExec
@@ -3400,70 +3696,6 @@ namespace dnWalker.Instructions
                 }
 
                 cur.EvalStack.Push(a.ToInt8(CheckOverflow));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
-        }
-    }
-
-    /// <summary>
-    /// Converts the signed value on top of the evaluation stack to signed native int, throwing OverflowException on overflow.
-    /// </summary>
-    public class CONV_OVF_I : ConvertInstructionExec
-    {
-        public CONV_OVF_I(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
-        {
-        }
-
-        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
-        {
-            IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
-
-            try
-            {
-                cur.EvalStack.Push(a.ToInt4(false));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
-        }
-    }
-
-    /// <summary>
-    /// Converts the signed value on top of the evaluation stack to signed native int, throwing OverflowException on overflow.
-    /// </summary>
-    public class CONV_OVF_I_UN : ConvertInstructionExec
-    {
-        public CONV_OVF_I_UN(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
-        {
-        }
-
-        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
-        {
-            IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
-
-            try
-            {
-                cur.EvalStack.Push(a.ToInt4(CheckOverflow));
                 return nextRetval;
             }
             catch (OverflowException e)
@@ -3518,6 +3750,23 @@ namespace dnWalker.Instructions
     }
 
     /// <summary>
+    /// Converts the signed value on top of the evaluation stack to unsigned native int, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U : ConvertInstructionExec
+    {
+        public CONV_OVF_U(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
     /// Converts the unsigned value on top of the evaluation stack to unsigned native int, throwing OverflowException on overflow.
     /// </summary>
     public class CONV_OVF_U_UN : ConvertInstructionExec
@@ -3564,6 +3813,91 @@ namespace dnWalker.Instructions
     }
 
     /// <summary>
+    /// Converts the signed value on top of the evaluation stack to unsigned int8 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U1 : ConvertInstructionExec
+    {
+        public CONV_OVF_U1(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to unsigned int8 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U1_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_U1_UN(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to unsigned int16 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U2 : ConvertInstructionExec
+    {
+        public CONV_OVF_U2(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the unsigned value on top of the evaluation stack to unsigned int16 and extends it to int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U2_UN : ConvertInstructionExec
+    {
+        public CONV_OVF_U2_UN(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to unsigned int32, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U4 : ConvertInstructionExec
+    {
+        public CONV_OVF_U4(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+        }
+    }
+
+    /// <summary>
     /// Converts the unsigned value on top of the evaluation stack to unsigned int32, throwing OverflowException on overflow.
     /// </summary>
     public class CONV_OVF_U4_UN : ConvertInstructionExec
@@ -3593,6 +3927,23 @@ namespace dnWalker.Instructions
             cur.EvalStack.Push(toPush);
 
             return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the signed value on top of the evaluation stack to unsigned int64, throwing OverflowException on overflow.
+    /// </summary>
+    public class CONV_OVF_U8 : ConvertInstructionExec
+    {
+        public CONV_OVF_U8(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
         }
     }
 
@@ -3636,6 +3987,45 @@ namespace dnWalker.Instructions
             return nextRetval;
         }
     }
+
+    /// <summary>
+    /// Converts the unsigned integer value on top of the evaluation stack to float32.
+    /// </summary>
+    public class CONV_R_UN : ConvertInstructionExec
+    {
+        public CONV_R_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                if (a is Int8 || a is UnsignedInt8)
+                {
+                    cur.EvalStack.Push(a.ToUnsignedInt8(false).ToFloat4(false));
+                    return nextRetval;
+                }
+
+                cur.EvalStack.Push(a.ToUnsignedInt4(false).ToFloat4(false));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
+
+            cur.EvalStack.Push(toPush);
+
+            return nextRetval;
+        }
+    }
+
 
     /// <summary>
     /// Converts the value on top of the evaluation stack to float32.
@@ -3726,12 +4116,11 @@ namespace dnWalker.Instructions
     }
 
     /// <summary>
-    /// Converts the unsigned integer value on top of the evaluation stack to float32.
+    /// Converts the value on top of the evaluation stack to unsigned native int, and extends it to native int.
     /// </summary>
-    public class CONV_R_UN : ConvertInstructionExec
+    public class CONV_U : ConvertInstructionExec
     {
-        public CONV_R_UN(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+        public CONV_U(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
         }
 
@@ -3740,33 +4129,15 @@ namespace dnWalker.Instructions
             IDataElement popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
-
-            try
-            {
-                if (a is Int8 || a is UnsignedInt8)
-                {
-                    cur.EvalStack.Push(a.ToUnsignedInt8(false).ToFloat4(false));
-                    return nextRetval;
-                }
-
-                cur.EvalStack.Push(a.ToUnsignedInt4(false).ToFloat4(false));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
-    public class CONV_I8 : ConvertInstructionExec
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to unsigned int8, and extends it to int32.
+    /// </summary>
+    public class CONV_U1 : ConvertInstructionExec
     {
-        public CONV_I8(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+        public CONV_U1(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
         }
 
@@ -3775,26 +4146,6 @@ namespace dnWalker.Instructions
             IDataElement popped = cur.EvalStack.Pop();
             IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
-
-            try
-            {
-                if (a is UnsignedInt4 ui4)
-                {
-                    cur.EvalStack.Push(ui4.ToInt4(false).ToInt8(false));
-                    return nextRetval;
-                }
-
-                cur.EvalStack.Push(a.ToInt8(false));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -3833,6 +4184,23 @@ namespace dnWalker.Instructions
             cur.EvalStack.Push(toPush);
 
             return nextRetval;
+        }
+    }
+
+    /// <summary>
+    /// Converts the value on top of the evaluation stack to unsigned int32, and extends it to int32.
+    /// </summary>
+    public class CONV_U4 : ConvertInstructionExec
+    {
+        public CONV_U4(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
+        {
+        }
+
+        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+        {
+            IDataElement popped = cur.EvalStack.Pop();
+            IDataElement toPush = null;
+            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
         }
     }
 
