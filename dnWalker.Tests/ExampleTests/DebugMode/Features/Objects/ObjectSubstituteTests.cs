@@ -49,7 +49,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
         }
 
         [Fact]
-        public void Test_UsingObjectParamterSubstitute_For_FieldAccess()
+        public void Test_ObjectSubstitute_LoadFieldAccess()
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
                 .SetMaxIterations(10)

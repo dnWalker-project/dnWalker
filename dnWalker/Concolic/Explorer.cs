@@ -177,7 +177,7 @@ namespace dnWalker.Concolic
                     cur.PathStore = _pathStore;
 
                     _parameterStore.InitializeExecutionContext();
-                    cur.SetParameterContext(_parameterStore);
+                    cur.SetParameterStore(_parameterStore);
 
                     DataElementList arguments = _parameterStore.CreateMethodArguments(cur);
 

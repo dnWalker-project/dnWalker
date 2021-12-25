@@ -98,8 +98,8 @@ namespace dnWalker.Instructions.Extensions
             }
         }
     }
-
-    public static class SymbolicExecutionFactoryExtensions
+    
+    public static partial class Extensions
     {
         public static ExtendableInstructionFactory AddSymbolicExecution(this ExtendableInstructionFactory factory)
         {
@@ -127,9 +127,15 @@ namespace dnWalker.Instructions.Extensions
 
     public class CEQ_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
+    
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(CEQ),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
-            get { yield return typeof(CEQ); }
+            get { return _instructions; }
         }
 
         public override ExpressionType ExpressionType
@@ -170,11 +176,16 @@ namespace dnWalker.Instructions.Extensions
     public class CGT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(CGT),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(CGT);
+                return _instructions;
             }
         }
 
@@ -186,11 +197,16 @@ namespace dnWalker.Instructions.Extensions
     public class CLT_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(CLT),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(CLT);
+                return _instructions;
             }
         }
 
@@ -202,12 +218,17 @@ namespace dnWalker.Instructions.Extensions
     public class ADD_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(ADD),
+                typeof(ADD_OVF_UN),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(ADD);
-                yield return typeof(ADD_OVF_UN);
+                return _instructions;
             }
         }
 
@@ -219,11 +240,16 @@ namespace dnWalker.Instructions.Extensions
     public class DIV_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(DIV),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(DIV);
+                return _instructions;
             }
         }
 
@@ -235,11 +261,16 @@ namespace dnWalker.Instructions.Extensions
     public class MUL_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(MUL),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(MUL);
+                return _instructions;
             }
         }
 
@@ -251,11 +282,16 @@ namespace dnWalker.Instructions.Extensions
     public class REM_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(REM),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(REM);
+                return _instructions;
             }
         }
 
@@ -267,11 +303,16 @@ namespace dnWalker.Instructions.Extensions
     public class SUB_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(SUB),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(SUB);
+                return _instructions;
             }
         }
 
@@ -283,11 +324,16 @@ namespace dnWalker.Instructions.Extensions
     public class NEG_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(NEG),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(NEG);
+                return _instructions;
             }
         }
 
@@ -299,11 +345,16 @@ namespace dnWalker.Instructions.Extensions
     public class AND_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(AND),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(AND);
+                return _instructions;
             }
         }
 
@@ -315,11 +366,16 @@ namespace dnWalker.Instructions.Extensions
     public class NOT_SymbolicExecutionExtension : SymbolicUnaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(NOT),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(NOT);
+                return _instructions;
             }
         }
 
@@ -331,11 +387,16 @@ namespace dnWalker.Instructions.Extensions
     public class OR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(OR),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(OR);
+                return _instructions;
             }
         }
 
@@ -347,11 +408,16 @@ namespace dnWalker.Instructions.Extensions
     public class XOR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(XOR),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(XOR);
+                return _instructions;
             }
         }
 
@@ -363,11 +429,16 @@ namespace dnWalker.Instructions.Extensions
     public class SHL_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(SHL),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(SHL);
+                return _instructions;
             }
         }
 
@@ -379,12 +450,17 @@ namespace dnWalker.Instructions.Extensions
     public class SHR_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(SHR),
+                typeof(SHR_UN),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(SHR);
-                yield return typeof(SHR_UN);
+                return _instructions;
             }
         }
 

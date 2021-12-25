@@ -160,8 +160,8 @@ namespace dnWalker.Instructions.Extensions
 
     };
  #>
-    
-    public static class PathConstraintProducerFactoryExtensions
+
+    public static partial class Extensions
     {
         public static ExtendableInstructionFactory AddPathConstraintProducers(this ExtendableInstructionFactory factory)
         {
@@ -228,18 +228,23 @@ namespace dnWalker.Instructions.Extensions
         }
  #>
 
-        public override IEnumerable<Type> SupportedInstructions
+        private static readonly Type[] _instructions = new Type[]
         {
-            get
-            {
 <#
         foreach (string instructionType in i.AcceptedCodes)
         {
  #>
-                yield return typeof(<#= instructionType #>);
+                typeof(<#= instructionType #>),
 <#
         }
  #>
+        };
+
+        public override IEnumerable<Type> SupportedInstructions
+        {
+            get
+            {
+                return _instructions;
             }
         }
     }

@@ -130,8 +130,8 @@ namespace dnWalker.Instructions.Extensions
         // TODO - extend UnarySymbolicExecutionExtension to accommodate more options, like specifying resulting type etc new SymbolicOperationInfo("CONV", "Convert", false, "Convert", "Conv_I", "Conv_I1", "Conv_I2")
     };
 #>
-
-    public static class SymbolicExecutionFactoryExtensions
+    
+    public static partial class Extensions
     {
         public static ExtendableInstructionFactory AddSymbolicExecution(this ExtendableInstructionFactory factory)
         {
@@ -151,9 +151,15 @@ namespace dnWalker.Instructions.Extensions
 
     public class CEQ_SymbolicExecutionExtension : SymbolicBinaryExecutionExtension
     {
+    
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(CEQ),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
-            get { yield return typeof(CEQ); }
+            get { return _instructions; }
         }
 
         public override ExpressionType ExpressionType
@@ -210,18 +216,23 @@ namespace dnWalker.Instructions.Extensions
 #>
     {
     
+        private static readonly Type[] _instructions = new Type[]
+        {
+<#
+        foreach (string instructionType in i.AcceptedCodes)
+        {
+ #>
+                typeof(<#= instructionType #>),
+<#
+        }
+ #>
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-<#
-    foreach(string instructionType in i.AcceptedCodes)
-    {
-#>
-                yield return typeof(<#= instructionType #>);
-<#
-    }
-#>
+                return _instructions;
             }
         }
 

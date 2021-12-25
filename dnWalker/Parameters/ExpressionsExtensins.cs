@@ -31,8 +31,25 @@ namespace dnWalker.Parameters
 
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
+                Type parameterType = Type.GetTypeCode(Type.GetType(parameter.Type)) switch
+                {
+                    TypeCode.SByte => typeof(int),
+                    TypeCode.Int16 => typeof(int),
+                    TypeCode.Int32 => typeof(int),
+                    TypeCode.Int64 => typeof(int),
+                    TypeCode.Byte => typeof(int),
+                    TypeCode.UInt16 => typeof(int),
+                    TypeCode.UInt32 => typeof(int),
+                    TypeCode.UInt64 => typeof(int),
+                    TypeCode.Char => typeof(int),
 
-                expression = Expression.Parameter(Type.GetType(parameter.Type), name);
+                    TypeCode.Boolean => typeof(bool),
+
+                    TypeCode.Double => typeof(double),
+                    TypeCode.Single => typeof(float)
+                };
+
+                expression = Expression.Parameter(parameterType, name);
 
                 lookup[name] = expression;
             }
@@ -64,7 +81,7 @@ namespace dnWalker.Parameters
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
 
-                expression = Expression.Parameter(typeof(uint), name);
+                expression = Expression.Parameter(typeof(int), name);
 
                 lookup[name] = expression;
             }

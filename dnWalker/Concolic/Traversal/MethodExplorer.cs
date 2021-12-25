@@ -56,7 +56,7 @@ namespace dnWalker.Concolic.Traversal
             path.AddVisitedNode(node);
         }
 
-        public Expression Flip(PathConstraint pathConstraint)
+        public Expression Flip(LocationPathConstraint pathConstraint)
         {
             var node = _cfg.GetNode(pathConstraint.Location.Instruction);
             var edge = node.GetNextUncoveredOutgoingEdge(); 
@@ -90,12 +90,12 @@ namespace dnWalker.Concolic.Traversal
             {
                 return Expression.Not(pathConstraint.Expression);
             }*/
-
-            return Expression.Not(pathConstraint.Expression);
+            // TODO: there could be more edges out (switch statement... not very likely.... usually it is indeed transformed into series of binary branching...
+            return Expression.Not(pathConstraint.Expression).Optimize();
             //return pathConstraint.Expression;
         }
 
-        public Expression FlipBackEdge(PathConstraint pathConstraint)
+        public Expression FlipBackEdge(LocationPathConstraint pathConstraint)
         {
             var cov = _coverageMap.Count(n => n.Value != 0) / (double)_coverageMap.Count;
             if (!_coverageMap.Any(c => c.Value == 0))

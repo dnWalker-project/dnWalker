@@ -3387,12 +3387,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            toPush = a.ToInt4(false);
-
-            cur.EvalStack.Push(toPush);
+            cur.EvalStack.Push(a.ToInt4(false));
             return nextRetval;
         }
     }
@@ -3409,12 +3406,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            toPush = a.ToInt4(false).ToByte(false);
-
-            cur.EvalStack.Push(toPush);
+            cur.EvalStack.Push(a.ToInt4(false).ToByte(false));
             return nextRetval;
         }
     }
@@ -3432,12 +3426,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            toPush = a.ToInt4(false).ToShort(false);
-
-            cur.EvalStack.Push(toPush);
+            cur.EvalStack.Push(a.ToInt4(false).ToShort(false));
             return nextRetval;
         }
     }
@@ -3455,12 +3446,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            toPush = a.ToInt4(false);
-
-            cur.EvalStack.Push(toPush);
+            cur.EvalStack.Push(a.ToInt4(false));
             return nextRetval;
         }
     }
@@ -3479,7 +3467,6 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             // should not throw...
@@ -3501,7 +3488,7 @@ namespace dnWalker.Instructions
 
             //cur.EvalStack.Push(toPush);
 
-            toPush = a.ToInt8(false);
+            cur.EvalStack.Push(a.ToInt8(false));
 
 
             return nextRetval;
@@ -3520,8 +3507,8 @@ namespace dnWalker.Instructions
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
+            // TODO: add conversion methods to native int, so that it corresponds with the 32 vs 64 system
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
@@ -3548,8 +3535,8 @@ namespace dnWalker.Instructions
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
+            // TODO: add conversion methods to native int, so that it corresponds with the 32 vs 64 system
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
@@ -3561,10 +3548,6 @@ namespace dnWalker.Instructions
             {
                 return ThrowException(e, cur);
             }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -3581,8 +3564,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true).ToByte(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3598,8 +3590,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true).ToByte(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3615,8 +3616,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true).ToShort(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3632,8 +3642,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true).ToShort(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3649,8 +3668,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3666,8 +3694,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToInt4(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3684,28 +3721,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
-                if (a is UnsignedInt4 ui4)
-                {
-                    cur.EvalStack.Push(a.ToInt4(false).ToInt8(CheckOverflow));
-                    return nextRetval;
-                }
-
-                cur.EvalStack.Push(a.ToInt8(CheckOverflow));
+                cur.EvalStack.Push(a.ToInt8(true));
                 return nextRetval;
             }
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
             }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -3722,30 +3748,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
-                switch (a)
-                {
-                    case Int4 i4:
-                        cur.EvalStack.Push(i4.ToUnsignedInt4(false).ToInt8(false)); // todo why?
-                        return nextRetval;
-                    default:
-                        Int8 unsigned = a.ToUnsignedInt8(true).ToInt8(false);//.Value;
-                        cur.EvalStack.Push(unsigned);// new Int8((long)unsigned));
-                        return nextRetval;
-                }
+                cur.EvalStack.Push(a.ToInt8(true));
+                return nextRetval;
             }
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
             }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -3760,9 +3773,19 @@ namespace dnWalker.Instructions
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
+            // TODO: add conversion methods to native int, so that it corresponds with the 32 vs 64 system
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt4(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3777,38 +3800,20 @@ namespace dnWalker.Instructions
         }
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
-        {
+        {   
+            // TODO: add conversion methods to native int, so that it corresponds with the 32 vs 64 system
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
-                if (a is Int4 i4)
-                {
-                    UIntPtr uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
-                }
-                /*else if (a is Int8 i8)
-                {
-                    var uintptr = (UIntPtr)a.ToUnsignedInt8(false).Value;
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
-                }*/
-                else
-                {
-                    UInt64 unsigned = a.ToUnsignedInt8(false).Value;
-                    cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
-                }
+                cur.EvalStack.Push(a.ToUnsignedInt4(true));
                 return nextRetval;
             }
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
             }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -3824,8 +3829,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt4(true).ToByte(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3841,8 +3855,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt4(true).ToByte(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3858,8 +3881,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt4(true).ToShort(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3875,8 +3907,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt4(true).ToShort(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3892,8 +3933,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt4(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3910,23 +3960,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
-                UInt32 unsigned = a.ToUnsignedInt4(false).Value;
-                cur.EvalStack.Push(new UnsignedInt4(checked(unsigned)));
+                cur.EvalStack.Push(a.ToUnsignedInt4(true));
                 return nextRetval;
             }
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
             }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -3942,8 +3986,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            try
+            {
+                cur.EvalStack.Push(a.ToUnsignedInt8(true));
+                return nextRetval;
+            }
+            catch (OverflowException e)
+            {
+                return ThrowException(e, cur);
+            }
         }
     }
 
@@ -3960,31 +4013,17 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
             try
             {
-                if (a is Int4 i4)
-                {
-                    UnsignedInt8 value = a.ToUnsignedInt4(false).ToUnsignedInt8(false);
-                    cur.EvalStack.Push(value);
-                }
-                else
-                {
-                    UInt64 unsigned = a.ToUnsignedInt8(false).Value;
-                    cur.EvalStack.Push(new UnsignedInt8(checked(unsigned)));
-                }
+                cur.EvalStack.Push(a.ToUnsignedInt8(true));
                 return nextRetval;
             }
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
             }
-
-            cur.EvalStack.Push(toPush);
-
-            return nextRetval;
         }
     }
 
@@ -4000,28 +4039,11 @@ namespace dnWalker.Instructions
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
+            // TODO: add method which converts to native floating point value, e.g. single vs double
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            try
-            {
-                if (a is Int8 || a is UnsignedInt8)
-                {
-                    cur.EvalStack.Push(a.ToUnsignedInt8(false).ToFloat4(false));
-                    return nextRetval;
-                }
-
-                cur.EvalStack.Push(a.ToUnsignedInt4(false).ToFloat4(false));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
+            cur.EvalStack.Push(a.ToFloat4(false));
             return nextRetval;
         }
     }
@@ -4040,33 +4062,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            try
-            {
-                if (a is Int8 || a is UnsignedInt8)
-                {
-                    cur.EvalStack.Push(a.ToInt8(false).ToFloat4(false));
-                }
-                else if (a is Float8 || a is Float4)
-                {
-                    cur.EvalStack.Push(a.ToFloat4(false));
-                }
-                else
-                {
-                    cur.EvalStack.Push(a.ToInt4(false).ToFloat4(false));
-                }
-
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
+            cur.EvalStack.Push(a.ToFloat4(false));
             return nextRetval;
         }
     }
@@ -4084,33 +4082,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            try
-            {
-                if (a is Int8 || a is UnsignedInt8)
-                {
-                    cur.EvalStack.Push(a.ToInt8(false).ToFloat8(false));
-                }
-                else if (a is Float8 || a is Float4)
-                {
-                    cur.EvalStack.Push(a.ToFloat8(false));
-                }
-                else
-                {
-                    cur.EvalStack.Push(a.ToInt4(false).ToFloat8(false));
-                }
-
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
+            cur.EvalStack.Push(a.ToFloat8(false));
             return nextRetval;
         }
     }
@@ -4127,8 +4101,10 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            cur.EvalStack.Push(a.ToUnsignedInt4(false));
+            return nextRetval;
         }
     }
 
@@ -4144,8 +4120,10 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            cur.EvalStack.Push(a.ToUnsignedInt4(false).ToByte(false));
+            return nextRetval;
         }
     }
 
@@ -4162,27 +4140,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            try
-            {
-                if (a is IRealElement r)
-                {
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)r.ToFloat8(false).Value));
-                    return nextRetval;
-                }
-
-                cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)a.ToInt8(false).Value));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
+            cur.EvalStack.Push(a.ToUnsignedInt4(false).ToShort(false));
             return nextRetval;
         }
     }
@@ -4199,8 +4159,10 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+
+            cur.EvalStack.Push(a.ToUnsignedInt4(false));
+            return nextRetval;
         }
     }
 
@@ -4217,27 +4179,9 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            IDataElement toPush = null;
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            try
-            {
-                if (a is Int4 i4)
-                {
-                    cur.EvalStack.Push(a.ToUnsignedInt4(false).ToUnsignedInt8(false));
-                    return nextRetval;
-                }
-
-                cur.EvalStack.Push(a.ToUnsignedInt8(false));
-                return nextRetval;
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            cur.EvalStack.Push(toPush);
-
+            cur.EvalStack.Push(a.ToUnsignedInt8(false));
             return nextRetval;
         }
     }

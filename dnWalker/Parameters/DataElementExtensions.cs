@@ -15,14 +15,14 @@ namespace dnWalker.Parameters
 {
     public static partial class ParameterExtensions
     {
-        public static void SetParameterContext(this ExplicitActiveState cur, ParameterStore store)
+        public static void SetParameterStore(this ExplicitActiveState cur, ParameterStore store)
         {
-            cur.PathStore.CurrentPath.SetPathAttribute("parameter_context", store.ExecutionContext);
+            cur.PathStore.CurrentPath.SetPathAttribute("parameter_store", store);
         }
 
-        public static bool TryGetParameterContext(this ExplicitActiveState cur, out IParameterContext context)
+        public static bool TryGetParameterStore(this ExplicitActiveState cur, out ParameterStore store)
         {
-            return cur.PathStore.CurrentPath.TryGetPathAttribute("parameter_context", out context);
+            return cur.PathStore.CurrentPath.TryGetPathAttribute("parameter_store", out store);
         }
 
 
@@ -70,25 +70,28 @@ namespace dnWalker.Parameters
 
         public static Int4 GetRefsEqualDataElement(this ExplicitActiveState cur, IReferenceTypeParameter lhs, IReferenceTypeParameter rhs)
         {
-            if (!cur.TryGetParameterContext(out IParameterContext context))
+            if (!cur.TryGetParameterStore(out ParameterStore store))
             {
                 throw new Exception("No IParameterContext is registered with this ExplicitActiveState");
             }
 
-            Int4 de = new Int4(context.RefEquals(lhs.Reference, rhs.Reference) ? 1 : 0);
+            Int4 de = new Int4(store.ExecutionContext.RefEquals(lhs.Reference, rhs.Reference) ? 1 : 0);
             de.SetExpression(lhs.GetReferenceEqualsExpression(rhs, cur), cur);
             return de;
         }
 
         public static UnsignedInt4 GetLengthDataElement(this ExplicitActiveState cur, IArrayParameter array)
         {
-            if (!cur.TryGetParameterContext(out IParameterContext context))
-            {
-                throw new Exception("No IParameterContext is registered with this ExplicitActiveState");
-            }
-
             UnsignedInt4 de = new UnsignedInt4((uint)array.GetLength());
-            de.SetExpression(array.GetLengthExpression(cur), cur);
+
+            Expression lengthExpression = array.GetLengthExpression(cur);
+
+            de.SetExpression(lengthExpression, cur);
+
+            //// Z3 can't work with unsigned integers => all int parameters are signed and amended by GreaterThanOrEqual constraint
+            Expression nonNegativeLength = Expression.GreaterThanOrEqual(lengthExpression, Expression.Constant(0));
+            cur.PathStore.AddPathConstraint(nonNegativeLength, de);
+
             return de;
         }
     }

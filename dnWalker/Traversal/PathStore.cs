@@ -1,4 +1,6 @@
 ﻿using dnlib.DotNet.Emit;
+
+using MMC.Data;
 using MMC.State;
 using System;
 using System.Collections.Generic;
@@ -39,6 +41,11 @@ namespace dnWalker.Traversal
         public virtual void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
             _currentPath.AddPathConstraint(expression, next, cur);
+        }
+
+        public virtual void AddPathConstraint(Expression expression, IDataElement dataElement)
+        {
+            _currentPath.AddPathConstraint(expression, dataElement);
         }
 
         public void BacktrackStop(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)

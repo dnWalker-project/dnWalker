@@ -139,8 +139,8 @@ namespace dnWalker.Instructions.Extensions
         protected abstract Expression CreatePathConstraintExpression(Expression lhsExpression, Expression rhsExpression, bool willBranch);
     }
 
-    
-    public static class PathConstraintProducerFactoryExtensions
+
+    public static partial class Extensions
     {
         public static ExtendableInstructionFactory AddPathConstraintProducers(this ExtendableInstructionFactory factory)
         {
@@ -164,11 +164,16 @@ namespace dnWalker.Instructions.Extensions
             return willBranch ? Expression.MakeUnary(ExpressionType.Not, valueExpression, typeof(bool)) : valueExpression;
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BRFALSE),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BRFALSE);
+                return _instructions;
             }
         }
     }
@@ -180,11 +185,16 @@ namespace dnWalker.Instructions.Extensions
             return willBranch ? valueExpression : Expression.MakeUnary(ExpressionType.Not, valueExpression, typeof(bool));
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BRTRUE),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BRTRUE);
+                return _instructions;
             }
         }
     }
@@ -196,11 +206,16 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.Equal : ExpressionType.NotEqual, lhsExpression, rhsExpression);
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BEQ),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BEQ);
+                return _instructions;
             }
         }
     }
@@ -212,11 +227,16 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.GreaterThanOrEqual : ExpressionType.LessThan, lhsExpression, rhsExpression);
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BGE),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BGE);
+                return _instructions;
             }
         }
     }
@@ -228,11 +248,16 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.GreaterThan : ExpressionType.LessThanOrEqual, lhsExpression, rhsExpression);
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BGT),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BGT);
+                return _instructions;
             }
         }
     }
@@ -244,11 +269,16 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.LessThanOrEqual : ExpressionType.GreaterThan, lhsExpression, rhsExpression);
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BLE),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BLE);
+                return _instructions;
             }
         }
     }
@@ -260,11 +290,16 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.LessThan : ExpressionType.GreaterThanOrEqual, lhsExpression, rhsExpression);
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BLT),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BLT);
+                return _instructions;
             }
         }
     }
@@ -276,11 +311,16 @@ namespace dnWalker.Instructions.Extensions
             return Expression.MakeBinary(willBranch ? ExpressionType.NotEqual : ExpressionType.Equal, lhsExpression, rhsExpression);
         }
 
+        private static readonly Type[] _instructions = new Type[]
+        {
+                typeof(BNE),
+        };
+
         public override IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                yield return typeof(BNE);
+                return _instructions;
             }
         }
     }

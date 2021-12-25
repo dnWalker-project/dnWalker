@@ -19,12 +19,22 @@ using System.Text;
 namespace dnWalker.Traversal
 {
     [DebuggerDisplay("{Expression}")]
-    public class PathConstraint
+    public abstract class PathConstraint
     {
         public Expression Expression { get; set; }
+    }
+
+    public class LocationPathConstraint : PathConstraint
+    {
         public Instruction Next { get; set; }
         public CILLocation Location { get; set; }
     }
+
+    public class ValuePathConstraint : PathConstraint
+    {
+        public IDataElement Value { get; set; }
+    }
+
 
     public class Path : ICloneable
     {
@@ -160,11 +170,23 @@ namespace dnWalker.Traversal
             expression = expression.Optimize();
 
             _pathConstraints.Add(
-                new PathConstraint
+                new LocationPathConstraint
                 {
                     Expression = expression,
                     Location = new CILLocation(cur.CurrentLocation.Instruction, cur.CurrentLocation.Method),
                     Next = next
+                });
+        }
+
+        public void AddPathConstraint(Expression expression, IDataElement dataElement)
+        {
+            expression = expression.Optimize();
+
+            _pathConstraints.Add(
+                new ValuePathConstraint
+                {
+                    Expression = expression,
+                    Value = dataElement
                 });
         }
 

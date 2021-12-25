@@ -15,11 +15,32 @@ namespace Examples.Concolic.Features.Objects
             return _myField;
         }
 
+        public double OtherField;
     }
 
 
     public class MethodsWithObjectParameter
     {
+        public static void DirectFieldAccess(TestClass instance)
+        {
+            if (instance == null)
+            {
+                Console.Out.WriteLine("instance is null");
+                return;
+            }
+
+            if (instance.OtherField != 10)
+            {
+                Console.Out.WriteLine("instance.OtherField != 10");
+                return;
+            }
+            else
+            {
+                Console.Out.WriteLine("instance.OtherField == 10");
+                return;
+            }
+        }
+
         public static void InvokeMethodWithFieldAccess(TestClass instance)
         {
             if (instance == null) return;

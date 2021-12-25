@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions
 {
-    public static class ParameterHandlersFactoryExtensions
+    public static partial class Extensions
     {
         public static ExtendableInstructionFactory AddParameterHandlers(this ExtendableInstructionFactory factory)
         {
@@ -18,6 +18,11 @@ namespace dnWalker.Instructions.Extensions
 
             // array type parameter
             factory.RegisterExtension(new LDLEN_ParameterHandler());
+            factory.RegisterExtension(new LDELEM_ParameterHandler());
+
+            // object type parameter
+            factory.RegisterExtension(new LDFLD_ParameterHandler());
+            factory.RegisterExtension(new CALLVIRT_ParameterHandler());
 
             return factory;
         }

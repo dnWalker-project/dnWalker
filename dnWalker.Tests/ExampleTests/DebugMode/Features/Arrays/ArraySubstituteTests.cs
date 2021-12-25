@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.Traversal;
 
 using FluentAssertions;
 
@@ -74,6 +75,39 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             var paths = explorer.PathStore.Paths;
 
             paths.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Test_ArraySubstitute_ItemAtStaticIndexIsGreaterThan5()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5");
+
+            var paths = explorer.PathStore.Paths;
+
+            paths.Count().Should().Be(4);
+        }
+
+        [Fact]
+        public void Test_ArraySubstitute_ItemAtDynamicIndexIsGreaterThan5()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtDynamicIndexIsGreaterThan5");
+
+            var paths = explorer.PathStore.Paths;
+
+            foreach (Path p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(4);
         }
     }
 }
