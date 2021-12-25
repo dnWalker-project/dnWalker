@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.Parameters;
 
 using FluentAssertions;
 
@@ -34,14 +35,15 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
             }
 
             paths.Count().Should().Be(5);
-            paths.Select(p => p.PathConstraintString)
+            //paths.Select(p => p.PathConstraintString)
+            paths.Select(p => p.GetConstraintStringWithAccesses(explorer.ParameterStore.BaseContext))
                 .Should()
                 .BeEquivalentTo(
                     "((((x >= 0) And (y >= 0)) And (x >= y)) And (x != 0))",
                     "((((x >= 0) And (y >= 0)) And (x >= y)) And (x == 0))",
                     "(((x >= 0) And (y >= 0)) And (x < y))",
-                    "(((x >= 0) And (y < 0)) And (x < 1))",
-                    "((x < 0) And (y < 0))");
+                    "(((x >= 0) And (y < 0)) And (x < -y))",
+                    "((((x < 0) And (y < 0)) And (-x >= -y)) And (-x != 0))");
         }
 
         [Fact]

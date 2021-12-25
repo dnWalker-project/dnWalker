@@ -2669,6 +2669,11 @@ namespace MMC.Data
     {
         public static readonly ObjectReference Null = new ObjectReference(0);
 
+        public bool IsNull()
+        {
+            return Location == 0;
+        }
+
         public int HashCode { get; }
 
         public string WrapperName { get; }

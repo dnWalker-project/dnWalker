@@ -67,5 +67,45 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(3);
         }
+
+        [Fact]
+        public void Test_ObjectSubstitute_ConcreteMethodInvocation()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.AbstractClass_ConcreteMethod");
+
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Test_ObjectSubstitute_AbstractMethodSubstitution()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.AbstractClass_AbstractMethod");
+
+            //explorer.GetUnhandledException().Should().BeNull();
+            var paths = explorer.PathStore.Paths;
+
+            foreach (var p in paths)
+            {
+                Output.WriteLine(p.GetPathInfo());
+            }
+
+            paths.Count().Should().Be(6);
+        }
     }
 }

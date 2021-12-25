@@ -95,8 +95,62 @@ namespace dnWalker.Instructions.Extensions
 
         public bool TryExecute(InstructionExecBase instruction, ExplicitActiveState cur, [NotNullWhen(true)] out IIEReturnValue retValue)
         {
-            retValue = null;
-            return false;
+            MethodDef methodDefinition = (MethodDef) instruction.Operand;
+
+            if (!methodDefinition.IsAbstract)
+            {
+                // not an abstract method => do nothing
+                retValue = null;
+                return false;
+            }
+
+            ObjectReference instance = (ObjectReference)cur.EvalStack.Peek(methodDefinition.GetParamCount());
+            if (!instance.TryGetParameter(cur, out IObjectParameter objectParameter))
+            {
+                // the instance is not parametrized => do nothing
+                retValue = null;
+                return false;
+            }
+
+            // we will resolve this instruction
+            // we do not care for the arguments => pop them out
+            for (int i = 0; i < methodDefinition.GetParamCount() + 1; ++i)
+            {
+                _ = cur.EvalStack.Pop();
+            }
+
+            if (!methodDefinition.HasReturnType)
+            {
+                // the method returns nothing
+                // somehow mock the changes in the instance? - way to hard (if possible...)
+                
+                retValue = nextRetval;
+                return true;
+            }
+
+            MethodSignature signature = methodDefinition.FullName;
+            int invocation = cur.IncreaseInvocationCount(instance, signature);
+
+
+            if (!objectParameter.TryGetMethodResult(signature, invocation, out IParameter resultParameter))
+            {
+                cur.TryGetParameterStore(out ParameterStore store);
+                // there is not information about the method result
+                // => initialize a new parameter with default values
+                resultParameter = store.ExecutionContext.CreateParameter(methodDefinition.ReturnType);
+                objectParameter.SetMethodResult(signature, invocation, resultParameter);
+
+                // add it to the base context as well => we are lazily initializing start state...
+                IParameter baseFieldParameter = resultParameter.Clone(store.BaseContext);
+                store.BaseContext.Parameters.Add(baseFieldParameter.Reference, baseFieldParameter);
+                objectParameter.Reference.Resolve<IObjectParameter>(store.ExecutionContext).SetMethodResult(signature, invocation, baseFieldParameter);
+            }
+
+            IDataElement resultDataElement = resultParameter.AsDataElement(cur);
+            cur.EvalStack.Push(resultDataElement);
+
+            retValue = nextRetval;
+            return true;
         }
 
     }

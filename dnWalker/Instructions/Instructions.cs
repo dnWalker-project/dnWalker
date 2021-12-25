@@ -3044,8 +3044,23 @@ namespace dnWalker.Instructions
             // Virtual calls use the run-time type of an object to determine
             // the location of the method to be called. It always requires
             // a this pointer, but we use the CreateArgumentList.
+
+
             MethodDefinition methDef = Operand as MethodDefinition;
             DataElementList args = CreateArgumentList(cur);
+
+            IDataElement de = args[0];
+            if (de is not ObjectReference instance)
+            {
+                args.Dispose();
+                throw new InvalidOperationException($"Expected 'ObjectReference', not '{de.GetType()}'");
+            }
+
+            if (instance.IsNull())
+            {
+                args.Dispose();
+                return ThrowException(new NullReferenceException(), cur);
+            }
 
             if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
             {

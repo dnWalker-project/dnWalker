@@ -15,7 +15,26 @@ namespace Examples.Concolic.Features.Objects
             return _myField;
         }
 
+        public void SetMyFieldValue(int myField)
+        {
+            _myField = myField;
+        }
+
         public double OtherField;
+    }
+
+
+    public abstract class AbstractClass
+    {
+        private int _field;
+
+
+        public int ConcreteMethod(int add)
+        {
+            return _field + add;
+        }
+
+        public abstract TestClass AbstractMethod();
     }
 
 
@@ -76,6 +95,67 @@ namespace Examples.Concolic.Features.Objects
             else
             {
                 Console.Out.WriteLine("instance is null");
+            }
+        }
+
+        public static void AbstractClass_ConcreteMethod(AbstractClass instance)
+        {
+            if (instance == null)
+            {
+                Console.Out.WriteLine("instance is null");
+                return;
+            }
+
+            if (instance.ConcreteMethod(5) < 10)
+            {
+                Console.Out.WriteLine("instance.ConcreteMethod() < 10");
+            }
+            else
+            {
+                Console.Out.WriteLine("instance.ConcreteMethod() >= 10");
+            }
+        }
+
+        public static void AbstractClass_AbstractMethod(AbstractClass instance)
+        {
+            if (instance == null)
+            {
+                Console.Out.WriteLine("instance is null");
+                return;
+            }
+
+            TestClass testInstance = instance.AbstractMethod();
+
+            if (testInstance == null)
+            {
+                Console.Out.WriteLine("instance.AbstractMethod()|0| is null");
+                return;
+            }
+
+            if (testInstance.OtherField < 5)
+            {
+                Console.Out.WriteLine("instance.AbstractMethod()|0|.OtherField < 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("instance.AbstractMethod()|0|.OtherField >= 5");
+            }
+
+
+            testInstance = instance.AbstractMethod();
+
+            if (testInstance == null)
+            {
+                Console.Out.WriteLine("instance.AbstractMethod()|1| is null");
+                return;
+            }
+            if (testInstance.OtherField < 6)
+            {
+                Console.Out.WriteLine("instance.AbstractMethod()|1|.OtherField < 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("instance.AbstractMethod()|1|.OtherField >= 5");
             }
         }
     }

@@ -95,5 +95,34 @@ namespace dnWalker.Parameters
 
             return de;
         }
+
+        private const string Method2Invocation = "MET2INV";
+
+        public static IDictionary<MethodSignature, int> GetInvocationLookup(this ObjectReference objectReference, ExplicitActiveState cur)
+        {
+            if (!cur.PathStore.CurrentPath.TryGetPathAttribute(Method2Invocation, out IDictionary<MethodSignature, int> lookup))
+            {
+                lookup = new Dictionary<MethodSignature, int>();
+                cur.PathStore.CurrentPath.SetPathAttribute(Method2Invocation, lookup);
+            }
+
+            return lookup;
+        }
+
+        public static int IncreaseInvocationCount(this ExplicitActiveState cur, ObjectReference objectReference, MethodSignature methodSignature)
+        {
+            IDictionary<MethodSignature,int> invocationLookup = objectReference.GetInvocationLookup(cur);
+            if (!invocationLookup.TryGetValue(methodSignature, out int invocationCount))
+            {
+                invocationCount = 0;
+                invocationLookup[methodSignature] = invocationCount;
+            }
+            else
+            {
+                invocationCount++;
+                invocationLookup[methodSignature] = invocationCount;
+            }
+            return invocationCount;
+        }
     }
 }

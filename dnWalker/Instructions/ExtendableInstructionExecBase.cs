@@ -38,7 +38,7 @@ namespace dnWalker.Instructions
         }
 
         /// <summary>
-        /// This method, when overrideden, will provide the default execution behavior.
+        /// This method, when overridden, will provide the default execution behavior.
         /// </summary>
         /// <param name="cur"></param>
         /// <returns></returns>

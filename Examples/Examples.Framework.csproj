@@ -49,6 +49,7 @@
     <Compile Include="Concolic\Features\Arrays\Input.cs" />
     <Compile Include="Concolic\Features\Arrays\MethodsWithArrayParameter.cs" />
     <Compile Include="Concolic\Features\Interfaces\InterfaceMethodInvoking.cs" />
+    <Compile Include="Concolic\Features\Interfaces\MethodsWithInterfaceParameter.cs" />
     <Compile Include="Concolic\Features\Math\Input.cs" />
     <Compile Include="Concolic\Features\Objects\MethodsWithObjectParameter.cs" />
     <Compile Include="Concolic\Protocol.cs" />

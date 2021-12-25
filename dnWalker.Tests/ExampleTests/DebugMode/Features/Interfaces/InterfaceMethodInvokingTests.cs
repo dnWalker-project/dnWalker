@@ -38,7 +38,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(4);
+            paths.Count().Should().Be(3);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(3);
+            paths.Count().Should().Be(4);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet.Emit;
 
+using dnWalker.Concolic;
 using dnWalker.Graphs;
 using dnWalker.NativePeers;
 using dnWalker.Parameters;
@@ -158,7 +159,7 @@ namespace dnWalker.Traversal
             //    // exception is ignored, 3rd party 
             //}
 
-            expression = expression.Optimize();
+            expression = expression.Optimize().Simplify();
 
             _pathConstraints.Add(
                 new PathConstraint
