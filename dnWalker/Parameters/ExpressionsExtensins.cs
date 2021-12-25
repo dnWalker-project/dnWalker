@@ -33,20 +33,22 @@ namespace dnWalker.Parameters
             {
                 Type parameterType = Type.GetTypeCode(Type.GetType(parameter.Type)) switch
                 {
-                    TypeCode.SByte => typeof(int),
-                    TypeCode.Int16 => typeof(int),
+                    TypeCode.SByte => typeof(sbyte),
+                    TypeCode.Int16 => typeof(short),
                     TypeCode.Int32 => typeof(int),
-                    TypeCode.Int64 => typeof(int),
-                    TypeCode.Byte => typeof(int),
-                    TypeCode.UInt16 => typeof(int),
-                    TypeCode.UInt32 => typeof(int),
-                    TypeCode.UInt64 => typeof(int),
-                    TypeCode.Char => typeof(int),
+                    TypeCode.Int64 => typeof(long),
+                    TypeCode.Byte => typeof(byte),
+                    TypeCode.UInt16 => typeof(ushort),
+                    TypeCode.UInt32 => typeof(uint),
+                    TypeCode.UInt64 => typeof(ulong),
+                    TypeCode.Char => typeof(char),
 
                     TypeCode.Boolean => typeof(bool),
 
                     TypeCode.Double => typeof(double),
-                    TypeCode.Single => typeof(float)
+                    TypeCode.Single => typeof(float),
+
+                    _ => throw new NotSupportedException()
                 };
 
                 expression = Expression.Parameter(parameterType, name);
@@ -81,7 +83,7 @@ namespace dnWalker.Parameters
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
 
-                expression = Expression.Parameter(typeof(int), name);
+                expression = Expression.Parameter(typeof(uint), name);
 
                 lookup[name] = expression;
             }

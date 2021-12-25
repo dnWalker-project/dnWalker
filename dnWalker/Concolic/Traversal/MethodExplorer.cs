@@ -56,7 +56,7 @@ namespace dnWalker.Concolic.Traversal
             path.AddVisitedNode(node);
         }
 
-        public Expression Flip(LocationPathConstraint pathConstraint)
+        public Expression Flip(PathConstraint pathConstraint)
         {
             var node = _cfg.GetNode(pathConstraint.Location.Instruction);
             var edge = node.GetNextUncoveredOutgoingEdge(); 
@@ -95,7 +95,7 @@ namespace dnWalker.Concolic.Traversal
             //return pathConstraint.Expression;
         }
 
-        public Expression FlipBackEdge(LocationPathConstraint pathConstraint)
+        public Expression FlipBackEdge(PathConstraint pathConstraint)
         {
             var cov = _coverageMap.Count(n => n.Value != 0) / (double)_coverageMap.Count;
             if (!_coverageMap.Any(c => c.Value == 0))

@@ -43,11 +43,6 @@ namespace dnWalker.Traversal
             _currentPath.AddPathConstraint(expression, next, cur);
         }
 
-        public virtual void AddPathConstraint(Expression expression, IDataElement dataElement)
-        {
-            _currentPath.AddPathConstraint(expression, dataElement);
-        }
-
         public void BacktrackStop(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)
         {
             var path = _currentPath.BacktrackTo(sd.ID);

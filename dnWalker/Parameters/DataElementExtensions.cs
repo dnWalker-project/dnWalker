@@ -88,9 +88,10 @@ namespace dnWalker.Parameters
 
             de.SetExpression(lengthExpression, cur);
 
+            // removed - do this magic in the Z3Solver...
             //// Z3 can't work with unsigned integers => all int parameters are signed and amended by GreaterThanOrEqual constraint
-            Expression nonNegativeLength = Expression.GreaterThanOrEqual(lengthExpression, Expression.Constant(0));
-            cur.PathStore.AddPathConstraint(nonNegativeLength, de);
+            //Expression nonNegativeLength = Expression.GreaterThanOrEqual(lengthExpression, Expression.Constant(0));
+            //cur.PathStore.AddPathConstraint(nonNegativeLength, de);
 
             return de;
         }

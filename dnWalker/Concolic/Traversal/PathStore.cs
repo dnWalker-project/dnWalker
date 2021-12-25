@@ -92,32 +92,25 @@ namespace dnWalker.Concolic.Traversal
 
             foreach (var pathConstraint in pathConstraints.Reverse())
             {
-                if (pathConstraint is LocationPathConstraint locationPathConstraint)
+                var methodExplorer = GetMethodExplorer(pathConstraint.Location);
+                if (flipped)
                 {
-                    var methodExplorer = GetMethodExplorer(locationPathConstraint.Location);
-                    if (flipped)
-                    {
-                        pc.Insert(0, pathConstraint.Expression);
-                        continue;
-                    }
-
-                    var expression = methodExplorer.Flip(locationPathConstraint);
-                    if (expression != pathConstraint.Expression)
-                    {
-                        flipped = true;
-                    }
-                    else
-                    {
-                        // flipping is not needed for this constraint - all the possibilities are done already => we can throw it away?
-                        continue;
-                    }
-
-                    pc.Insert(0, expression);
+                    pc.Insert(0, pathConstraint.Expression);
+                    continue;
                 }
-                else if (pathConstraint is ValuePathConstraint valuePathConstraint)
+
+                var expression = methodExplorer.Flip(pathConstraint);
+                if (expression != pathConstraint.Expression)
                 {
-                    pc.Insert(0, valuePathConstraint.Expression);
+                    flipped = true;
                 }
+                else
+                {
+                    // flipping is not needed for this constraint - all the possibilities are done already => we can throw it away?
+                    continue;
+                }
+
+                pc.Insert(0, expression);
             }
 
             if (flipped)
@@ -129,24 +122,21 @@ namespace dnWalker.Concolic.Traversal
 
             foreach (var pathConstraint in pathConstraints.Reverse())
             {
-                if (pathConstraint is LocationPathConstraint locationPathConstraint)
+                var methodExplorer = GetMethodExplorer(pathConstraint.Location);
+                if (flipped)
                 {
-                    var methodExplorer = GetMethodExplorer(locationPathConstraint.Location);
-                    if (flipped)
-                    {
-                        pc.Insert(0, pathConstraint.Expression);
-                        continue;
-                    }
-
-                    var expression = methodExplorer.FlipBackEdge(locationPathConstraint);
-                    if (expression != pathConstraint.Expression)
-                    {
-                        expression = expression.Simplify();
-                        flipped = true;
-                    }
-
-                    pc.Insert(0, expression);
+                    pc.Insert(0, pathConstraint.Expression);
+                    continue;
                 }
+
+                var expression = methodExplorer.FlipBackEdge(pathConstraint);
+                if (expression != pathConstraint.Expression)
+                {
+                    expression = expression.Simplify();
+                    flipped = true;
+                }
+
+                pc.Insert(0, expression);
             }
 
             if (flipped)
