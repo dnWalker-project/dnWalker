@@ -124,11 +124,50 @@ namespace <#= TestData.TestNamespaceName #>
 					foreach (var r in mi.Value)
 					{
 						--j;
+						if (r == ParameterRef.Empty)
+						{
+#> default(<#= mi.Key.ReturnTypeFullName #>)<#= j > 0 ? "," : "" #><#
+						}
+						else
+						{
 #> var_<#= r #><#= j > 0 ? "," : "" #><#
+						}
 					}
 
 #> } <#= i > 0 ? "," : "" #>
 <#
+				}
+#>
+			);
+<#
+			}
+		}
+
+		foreach (var ap in arraysToInitialize)
+		{
+			int i = ap.GetItems().Length;
+			if (i > 0)
+			{
+#>
+			InitializeItems_<#= ap.Reference #>
+			(
+				var_<#= ap.Reference #>,
+<#
+				foreach (var item in ap.GetItems())
+				{
+					--i;
+					if (item == ParameterRef.Empty)
+					{
+#>
+				default(<#= ap.ElementType #>)<#= i > 0 ? "," : "" #>
+<#
+					}
+					else
+					{
+#>
+				var_<#= item #><#= i > 0 ? "," : "" #>
+<#
+					}
 				}
 #>
 			);
@@ -338,7 +377,7 @@ namespace <#= TestData.TestNamespaceName #>
 		// we need to write the initialization method signature
 		// we know which fields we want to use and which method we want to mock
 #>
-		private void Initialize_<#= arrayInitialization.Reference #>(<#= arrayInitialization.ExpectedElementType.FullName #>[] array, params <#= arrayInitialization.ExpectedElementType.FullName #>[] items)
+		private void InitializeItems_<#= arrayInitialization.Reference #>(<#= arrayInitialization.ExpectedElementType.FullName #>[] array, params <#= arrayInitialization.ExpectedElementType.FullName #>[] items)
 		{
 			items.CopyTo(array, System.Math.Min(items.Length, array.Length));
 		}
