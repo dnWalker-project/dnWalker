@@ -72,12 +72,13 @@ namespace dnWalker.Concolic
             _currentExplorationElement = new XElement("Exploration");
             _currentExplorationElement.SetAttributeValue("AssemblyName", e.AssemblyName);
             _currentExplorationElement.SetAttributeValue("AssemblyFileName", e.AssemblyFileName);
-            _currentExplorationElement.SetAttributeValue("MethodNameSignature", e.MethodSignature);
+            _currentExplorationElement.SetAttributeValue("MethodSignature", e.MethodSignature);
             _currentExplorationElement.SetAttributeValue("IsStatic", e.IsStatic);
             _currentExplorationElement.SetAttributeValue("Solver", e.SolverType.FullName);
 
-
             _rootElement.Add(_currentExplorationElement);
+
+            SaveData();
         }
 
         private void OnExplorationFinished(object sender, ExplorationFinishedEventArgs e)

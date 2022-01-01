@@ -35,6 +35,8 @@ namespace dnWalker.TestGenerator
         {
             if (!File.Exists(args.ExplorationDataFileName)) throw new FileNotFoundException("ExplorationData file was not found!");
 
+            string outputDirectory = Path.GetFullPath(args.OutputDir!);
+
             IEnumerable<ExplorationData> explorations = XElement.Load(args.ExplorationDataFileName!).Elements("Exploration").Select(xe => xe.ToExplorationData());
 
             foreach (ExplorationData explorationData in explorations)
@@ -44,13 +46,12 @@ namespace dnWalker.TestGenerator
 
                 TestGeneratorContext testData = new TestGeneratorContext(sutAssembly, explorationData);
 
-                string? outputDirectory = Path.GetDirectoryName(args.OutputFileName);
                 if (!string.IsNullOrWhiteSpace(outputDirectory))
                 {
                     Directory.CreateDirectory(outputDirectory);
                 }
 
-                string outputFile = $"{sutAssembly.GetName().Name}_{testData.SUTType.FullName!.Replace('.', '_')}_{testData.SUTMethod.Name}.Tests.cs";
+                string outputFile = Path.Combine(outputDirectory, $"{sutAssembly.GetName().Name}_{testData.SUTType.FullName!.Replace('.', '_')}_{testData.SUTMethod.Name}.Tests.cs");
 
                 using (XUnitTestClassWriter testWriter = new XUnitTestClassWriter(new StreamWriter(outputFile)))
                 {

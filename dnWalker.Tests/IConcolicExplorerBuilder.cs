@@ -5,6 +5,7 @@ using MMC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,6 +35,12 @@ namespace dnWalker.Tests
             where TSolver : ISolver, new()
         {
             return builder.OverrideSolver(static () => new TSolver());
+        }
+
+        public static IConcolicExplorerBuilder ExportXmlData(this IConcolicExplorerBuilder builder, [CallerMemberName]string methodName = null)
+        {
+            methodName ??= "data";
+            return builder.With(new XmlExplorationExporter(methodName + ".xml"));
         }
     }
 }

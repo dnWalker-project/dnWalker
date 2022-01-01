@@ -1,4 +1,6 @@
 ﻿
+using dnWalker.Parameters;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +15,12 @@ namespace dnWalker.TestGenerator
     /// </summary>
     public class ExplorationData
     {
-        internal ExplorationData(ExplorationIterationData[] iterations, string assemblyName, string assemblyFilePath, string fullMethodName, bool isStatic)
+        internal ExplorationData(ExplorationIterationData[] iterations, string assemblyName, string assemblyFilePath, MethodSignature methodSignature, bool isStatic)
         {
             Iterations = iterations ?? throw new ArgumentNullException(nameof(iterations));
             AssemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
             AssemblyFileName = assemblyFilePath ?? throw new ArgumentNullException(nameof(assemblyFilePath));
-            MethodSignature = fullMethodName ?? throw new ArgumentNullException(nameof(fullMethodName));
+            MethodSignature = methodSignature;
             IsStatic = isStatic;
         }
 
@@ -37,7 +39,7 @@ namespace dnWalker.TestGenerator
             get;
         }
 
-        public string MethodSignature
+        public MethodSignature MethodSignature
         {
             get;
         }

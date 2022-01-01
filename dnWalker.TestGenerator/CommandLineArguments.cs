@@ -13,7 +13,7 @@ namespace dnWalker.TestGenerator
         [Option('e', "exploration-data")]
         public string? ExplorationDataFileName { get; set; }
 
-        [Option('o', "output", Default = "GeneratedTests.cs")]
-        public string? OutputFileName { get; set; }
+        [Option('o', "output", Default = ".")]
+        public string? OutputDir { get; set; }
     }
 }

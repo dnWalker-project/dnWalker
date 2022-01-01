@@ -11,22 +11,22 @@ namespace dnWalker.TestGenerator
     /// </summary>
     public class ExplorationIterationData
     {
-        internal ExplorationIterationData(ParameterStore parameterStore, int iterationNumber, string pathConstraint, Exception? exception, string stdandardOutput, string errorOutput)
+        internal ExplorationIterationData(IParameterContext parameterContext, int iterationNumber, string pathConstraint, Exception? exception, string stdandardOutput, string errorOutput)
         {
-            ParameterStore = parameterStore ?? throw new ArgumentNullException(nameof(parameterStore));
+            ParameterContext = parameterContext ?? throw new ArgumentNullException(nameof(parameterContext));
             PathConstraint = pathConstraint;
-            IterationNumber = iterationNumber;
+            Number = iterationNumber;
             Exception = exception;
             StandardOutput = stdandardOutput ?? throw new ArgumentNullException(nameof(stdandardOutput));
             ErrorOutput = errorOutput ?? throw new ArgumentNullException(nameof(errorOutput));
         }
 
-        public ParameterStore ParameterStore 
+        public IParameterContext ParameterContext
         {
             get;
         }
 
-        public int IterationNumber
+        public int Number
         {
             get;
         }

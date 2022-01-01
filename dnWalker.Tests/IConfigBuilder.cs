@@ -8,6 +8,7 @@ namespace dnWalker.Tests
 {
     public interface IConfigBuilder<TConfigBuilder> where TConfigBuilder : IConfigBuilder<TConfigBuilder>
     {
+        TConfigBuilder SetAssemblyFileName(string assemblyFileName);
         TConfigBuilder SetMaxIterations(int maxIterations);
         TConfigBuilder SetVerbose(bool value = true);
         TConfigBuilder SetSymmetryReduction(bool value = true);

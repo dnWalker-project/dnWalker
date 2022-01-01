@@ -70,6 +70,12 @@ namespace dnWalker.Tests
             }
 
             ConcolicExplorer explorer = new ConcolicExplorer(_provideDefinitions(), base.Config, _provideLogger(), _provideSolver());
+
+            foreach (IExplorationExtension extension in _extensions)
+            {
+                explorer.AddExtension(extension);
+            }
+
             return explorer;
         }
 

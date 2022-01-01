@@ -115,7 +115,7 @@ namespace dnWalker.Parameters.Xml
             foreach (XElement fieldXml in xml.Elements(XmlField))
             {
                 string fieldName = fieldXml.Attribute(XmlName)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/Field", XmlName);
-                reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/Field", XmlReference));
+                reference = String2Ref(fieldXml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/Field", XmlReference));
 
                 objectParameter.SetField(fieldName, reference);
             }
@@ -124,7 +124,7 @@ namespace dnWalker.Parameters.Xml
             {
                 MethodSignature methodSignature = methodResultXml.Attribute(XmlMethodSignature)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlMethodSignature);
                 int invocation = int.Parse(methodResultXml.Attribute(XmlInvocation)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlInvocation));
-                reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlReference));
+                reference = String2Ref(methodResultXml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlReference));
 
                 objectParameter.SetMethodResult(methodSignature, invocation, reference);
             }
@@ -153,7 +153,7 @@ namespace dnWalker.Parameters.Xml
 
         public static IArrayParameter ToArrayParameter(this XElement xml, IParameterContext context)
         {
-            string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlType);
+            string type = xml.Attribute(XmlElementType)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlElementType);
             bool? isNull = String2Bool(xml.Attribute(XmlIsNull)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlIsNull));
             int? length = String2Int(xml.Attribute(XmlLength)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlLength));
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlReference));
@@ -163,7 +163,7 @@ namespace dnWalker.Parameters.Xml
             foreach (XElement itemXml in xml.Elements(XmlItem))
             {
                 int index = int.Parse(itemXml.Attribute(XmlIndex)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter) + "/Item", XmlIndex));
-                reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter) + "/Item", XmlReference));
+                reference = String2Ref(itemXml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter) + "/Item", XmlReference));
 
                 arrayParameter.SetItem(index, reference);
             }

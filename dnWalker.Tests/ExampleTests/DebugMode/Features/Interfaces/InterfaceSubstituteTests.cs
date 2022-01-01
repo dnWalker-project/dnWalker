@@ -27,6 +27,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Interfaces
                 .SetMaxIterations(10)
                 .Build();
 
+
             explorer.Run("Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.Interface_AbstractMethod");
 
             //explorer.GetUnhandledException().Should().BeNull();

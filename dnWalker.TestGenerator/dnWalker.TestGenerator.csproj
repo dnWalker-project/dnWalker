@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Parameters\**" />
-    <EmbeddedResource Remove="Parameters\**" />
-    <None Remove="Parameters\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
   </ItemGroup>
@@ -40,6 +34,21 @@
 
   <ItemGroup>
     <None Update="ExplorationData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ExplorationData_AbstractMethodSubstitution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ExplorationData_ConcreteMethodInvocation.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ExplorationData_LoadFieldAccess.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ExplorationData_NotNullEquality.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ExplorationData_NullEquality.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="XUnit\XUnitTestClassTemplate.tt">

@@ -27,6 +27,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
                 .SetMaxIterations(10)
                 .Build();
 
+
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNull");
 
             var paths = explorer.PathStore.Paths;
@@ -41,6 +42,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
                 .SetMaxIterations(10)
                 .Build();
 
+
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull");
 
             var paths = explorer.PathStore.Paths;
@@ -54,6 +56,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             IExplorer explorer = GetConcolicExplorerBuilder()
                 .SetMaxIterations(10)
                 .Build();
+
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.InvokeMethodWithFieldAccess");
 
@@ -75,6 +78,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
                 .SetMaxIterations(10)
                 .Build();
 
+
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.AbstractClass_ConcreteMethod");
 
             //explorer.GetUnhandledException().Should().BeNull();
@@ -94,6 +98,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             IExplorer explorer = GetConcolicExplorerBuilder()
                 .SetMaxIterations(10)
                 .Build();
+
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.AbstractClass_AbstractMethod");
 

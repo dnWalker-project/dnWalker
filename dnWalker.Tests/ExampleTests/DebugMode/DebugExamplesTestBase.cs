@@ -21,6 +21,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
 
         protected DebugExamplesTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
         {
+            OverrideConcolicExplorerBuilderInitialization(builder => builder.SetAssemblyFileName(AssemblyFilePath));
         }
     }
 }

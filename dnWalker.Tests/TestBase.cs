@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using Xunit.Abstractions;
@@ -111,11 +112,13 @@ namespace dnWalker.Tests
             return builder;
         }
 
-        protected IConcolicExplorerBuilder GetConcolicExplorerBuilder()
+        protected IConcolicExplorerBuilder GetConcolicExplorerBuilder([CallerMemberName] string testMethod = null)
         {
             ConcolicExplorerBuilder builder = new ConcolicExplorerBuilder(() => Logger, () => DefinitionProvider, static () => _solver);
 
             _initializeConcolicExplorerBuilder.ForEach(a => a(builder));
+
+            builder.ExportXmlData(testMethod);
 
             return builder;
         }

@@ -21,6 +21,13 @@ namespace dnWalker.Tests
         protected abstract T GetOutterBuilder();
 
         #region IConfigBuilder
+
+        public T SetAssemblyFileName(string assemblyFileName)
+        {
+            _config.AssemblyToCheckFileName = assemblyFileName;
+            return GetOutterBuilder();
+        }
+
         public T SetMaxIterations(int maxIterations)
         {
             _config.MaxIterations = maxIterations;
