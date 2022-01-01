@@ -18,18 +18,18 @@ namespace dnWalker.Parameters.Xml
 
             switch (type)
             {
-                case "Boolean": return ToBooleanParameter(xml, context);
-                case "Byte": return ToByteParameter(xml, context);
-                case "SByte": return ToSByteParameter(xml, context);
-                case "Int16": return ToInt16Parameter(xml, context);
-                case "Int32": return ToInt32Parameter(xml, context);
-                case "Int64": return ToInt64Parameter(xml, context);
-                case "UInt16": return ToUInt16Parameter(xml, context);
-                case "UInt32": return ToUInt32Parameter(xml, context);
-                case "UInt64": return ToUInt64Parameter(xml, context);
-                case "Char": return ToCharParameter(xml, context);
-                case "Single": return ToSingleParameter(xml, context);
-                case "Double": return ToDoubleParameter(xml, context);
+                case "System.Boolean": return ToBooleanParameter(xml, context);
+                case "System.Byte": return ToByteParameter(xml, context);
+                case "System.SByte": return ToSByteParameter(xml, context);
+                case "System.Int16": return ToInt16Parameter(xml, context);
+                case "System.Int32": return ToInt32Parameter(xml, context);
+                case "System.Int64": return ToInt64Parameter(xml, context);
+                case "System.UInt16": return ToUInt16Parameter(xml, context);
+                case "System.UInt32": return ToUInt32Parameter(xml, context);
+                case "System.UInt64": return ToUInt64Parameter(xml, context);
+                case "System.Char": return ToCharParameter(xml, context);
+                case "System.Single": return ToSingleParameter(xml, context);
+                case "System.Double": return ToDoubleParameter(xml, context);
                 default: throw new NotSupportedException();
             }
         }
@@ -38,9 +38,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IBooleanParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(BooleanParameter), XmlReference));
 
-            bool? value = xmlValue == XmlUnknown ? null : bool.Parse(xmlValue);
-
             IBooleanParameter parameter = context.CreateBooleanParameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : bool.Parse(xmlValue);
 
             return parameter;
         }
@@ -50,9 +49,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IByteParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(ByteParameter), XmlReference));
 
-            byte? value = xmlValue == XmlUnknown ? null : byte.Parse(xmlValue);
-
             IByteParameter parameter = context.CreateByteParameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : byte.Parse(xmlValue);
 
             return parameter;
         }
@@ -62,9 +60,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(ISByteParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(SByteParameter), XmlReference));
 
-            sbyte? value = xmlValue == XmlUnknown ? null : sbyte.Parse(xmlValue);
-
             ISByteParameter parameter = context.CreateSByteParameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : sbyte.Parse(xmlValue);
 
             return parameter;
         }
@@ -74,9 +71,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IInt16Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(Int16Parameter), XmlReference));
 
-            short? value = xmlValue == XmlUnknown ? null : short.Parse(xmlValue);
-
             IInt16Parameter parameter = context.CreateInt16Parameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : short.Parse(xmlValue);
 
             return parameter;
         }
@@ -86,9 +82,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IInt32Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(Int32Parameter), XmlReference));
 
-            int? value = xmlValue == XmlUnknown ? null : int.Parse(xmlValue);
-
             IInt32Parameter parameter = context.CreateInt32Parameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : int.Parse(xmlValue);
 
             return parameter;
         }
@@ -98,9 +93,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IInt64Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(Int64Parameter), XmlReference));
 
-            long? value = xmlValue == XmlUnknown ? null : long.Parse(xmlValue);
-
             IInt64Parameter parameter = context.CreateInt64Parameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : long.Parse(xmlValue);
 
             return parameter;
         }
@@ -110,9 +104,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IUInt16Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(UInt16Parameter), XmlReference));
 
-            ushort? value = xmlValue == XmlUnknown ? null : ushort.Parse(xmlValue);
-
             IUInt16Parameter parameter = context.CreateUInt16Parameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : ushort.Parse(xmlValue);
 
             return parameter;
         }
@@ -122,9 +115,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IUInt32Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(UInt32Parameter), XmlReference));
 
-            uint? value = xmlValue == XmlUnknown ? null : uint.Parse(xmlValue);
-
             IUInt32Parameter parameter = context.CreateUInt32Parameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : uint.Parse(xmlValue);
 
             return parameter;
         }
@@ -134,9 +126,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IUInt64Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(UInt64Parameter), XmlReference));
 
-            ulong? value = xmlValue == XmlUnknown ? null : ulong.Parse(xmlValue);
-
             IUInt64Parameter parameter = context.CreateUInt64Parameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : ulong.Parse(xmlValue);
 
             return parameter;
         }
@@ -146,9 +137,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(ICharParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(CharParameter), XmlReference));
 
-            char? value = xmlValue == XmlUnknown ? null : Convert.ToChar(Convert.ToInt32(xmlValue.Substring(2), 16));
-
             ICharParameter parameter = context.CreateCharParameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : Convert.ToChar(Convert.ToInt32(xmlValue.Substring(2), 16));
 
             return parameter;
         }
@@ -158,9 +148,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(ISingleParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(SingleParameter), XmlReference));
 
-            float? value = xmlValue == XmlUnknown ? null : FloatFromXml(xmlValue);
-
             ISingleParameter parameter = context.CreateSingleParameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : FloatFromXml(xmlValue);
 
             return parameter;
         }
@@ -170,9 +159,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IDoubleParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(DoubleParameter), XmlReference));
 
-            double? value = xmlValue == XmlUnknown ? null : DoubleFromXml(xmlValue);
-
             IDoubleParameter parameter = context.CreateDoubleParameter(reference);
+            parameter.Value = xmlValue == XmlUnknown ? null : DoubleFromXml(xmlValue);
 
             return parameter;
         }

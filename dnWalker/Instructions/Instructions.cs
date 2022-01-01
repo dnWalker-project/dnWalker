@@ -3214,6 +3214,7 @@ namespace dnWalker.Instructions
     #region Convert Instructions
     public abstract class ConvertInstructionExec : ExtendableInstructionExecBase
     {
+        protected const ulong U8PaddingMask = 0x00000000FFFFFFFF;
 
         public ConvertInstructionExec(Instruction instr, object operand,
                 InstructionExecAttributes atr)
@@ -4099,7 +4100,9 @@ namespace dnWalker.Instructions
             IDataElement popped = cur.EvalStack.Pop();
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            cur.EvalStack.Push(a.ToFloat8(false));
+            Float8 result = a.ToFloat8(false);
+
+            cur.EvalStack.Push(result);
             return nextRetval;
         }
     }
@@ -4157,7 +4160,11 @@ namespace dnWalker.Instructions
             IDataElement popped = cur.EvalStack.Pop();
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            cur.EvalStack.Push(a.ToUnsignedInt4(false).ToShort(false));
+            UnsignedInt4 ui4 = a.ToUnsignedInt4(false);
+            Int4 i4 = ui4.ToShort(false);
+
+            cur.EvalStack.Push(i4);
+            //cur.EvalStack.Push(a.ToUnsignedInt4(false).ToShort(false));
             return nextRetval;
         }
     }
@@ -4196,7 +4203,21 @@ namespace dnWalker.Instructions
             IDataElement popped = cur.EvalStack.Pop();
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
 
-            cur.EvalStack.Push(a.ToUnsignedInt8(false));
+            UnsignedInt8 result;
+            if (a is Int4 i4)
+            {
+                result = new UnsignedInt8(U8PaddingMask & (uint)i4.Value);
+            }
+            else if (a is UnsignedInt4 ui4)
+            {
+                result = new UnsignedInt8(U8PaddingMask & ui4.Value);
+            }
+            else
+            {
+                result = a.ToUnsignedInt8(false);
+            }
+
+            cur.EvalStack.Push(result);
             return nextRetval;
         }
     }

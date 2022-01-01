@@ -67,7 +67,7 @@ namespace dnWalker.Parameters.Xml
     {
         private static ParameterRef String2Ref(string pref)
         {
-            return Convert.ToInt32(pref.Substring(2));
+            return Convert.ToInt32(pref.Substring(2), 16);
         }
 
         private static bool? String2Bool(string value)
@@ -97,7 +97,9 @@ namespace dnWalker.Parameters.Xml
                 default: throw new NotSupportedException(xml.ToString());
             }
 
-            parameter.Accessor = xml.Element(XmlAccessor)?.ToAccessor() ?? throw new MissingElementException(nameof(IParameter), XmlAccessor);
+            XElement accessorElement = xml.Element(XmlAccessor) ?? throw new MissingElementException(nameof(IParameter), XmlAccessor);
+
+            parameter.Accessor = accessorElement.ToAccessor();
 
             return parameter;
         }

@@ -36,9 +36,6 @@ namespace dnWalker.Parameters.Xml
                     throw new NotSupportedException();
             }
 
-
-            xml.Add(parameter.Accessor?.ToXml());
-
             return xml;
         }
 
@@ -57,6 +54,8 @@ namespace dnWalker.Parameters.Xml
                                  .Where(tpl => tpl.result != ParameterRef.Empty)
                                  .Select(tpl => new XElement(XmlMethodResult, new XAttribute(XmlMethodSignature, tpl.methodSignature), new XAttribute(XmlInvocation, tpl.invocation), new XAttribute(XmlReference, tpl.result))));
 
+            xml.Add(parameter.Accessor?.ToXml());
+
             return xml;
         }
 
@@ -68,10 +67,12 @@ namespace dnWalker.Parameters.Xml
             xml.Add(parameter.GetFields()
                                 .Select(p => new XElement(XmlField, new XAttribute(XmlName, p.Key), new XAttribute(XmlReference, p.Value))));
 
+            xml.Add(parameter.Accessor?.ToXml());
+
             return xml;
         }
 
-        public static XElement ToXml(this ArrayParameter parameter)
+        public static XElement ToXml(this IArrayParameter parameter)
         {
             bool? isNull = parameter.IsNull;
             int? length = parameter.Length;
@@ -83,6 +84,8 @@ namespace dnWalker.Parameters.Xml
                              .Select((p, i) => (index: i, item: p))
                              .Where(tpl => tpl.item != ParameterRef.Empty)
                              .Select(tpl => new XElement(XmlItem, new XAttribute(XmlIndex, tpl.index), new XAttribute(XmlReference, tpl.item))));
+
+            xml.Add(parameter.Accessor?.ToXml());
 
             return xml;
         }

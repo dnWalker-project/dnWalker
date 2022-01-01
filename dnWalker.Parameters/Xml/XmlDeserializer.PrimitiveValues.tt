@@ -79,7 +79,7 @@ namespace dnWalker.Parameters.Xml
  {
     string type = types[i];
 #>
-                case "<#= type #>": return To<#= type #>Parameter(xml, context);
+                case "System.<#= type #>": return To<#= type #>Parameter(xml, context);
 <#
  }
 #>
@@ -98,9 +98,8 @@ namespace dnWalker.Parameters.Xml
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(I<#= type #>Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(<#= type #>Parameter), XmlReference));
 
-            <#= alias #>? value = <#= fromXmlExpressions[i] #>;
-
             I<#= type #>Parameter parameter = context.Create<#= type #>Parameter(reference);
+            parameter.Value = <#= fromXmlExpressions[i] #>;
 
             return parameter;
         }
