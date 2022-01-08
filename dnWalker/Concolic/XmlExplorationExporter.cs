@@ -101,14 +101,18 @@ namespace dnWalker.Concolic
             _currentIterationElement = new XElement("Iteration");
             _currentIterationElement.SetAttributeValue("Number", e.IterationNmber);
 
-            _currentIterationElement.Add(e.ParameterStore.BaseContext.ToXml());
+            _currentIterationElement.Add(new XElement("StartingState", e.ParameterStore.BaseContext.ToXml()));
 
 
             _currentExplorationElement.Add(_currentIterationElement);
+
+            SaveData();
         }
 
         private void OnIterationFinished(object sender, IterationFinishedEventArgs e)
         {
+            _currentIterationElement.Add(new XElement("EndingState", e.ParameterStore.ExecutionContext.ToXml()));
+
             SaveData();
         }
     }

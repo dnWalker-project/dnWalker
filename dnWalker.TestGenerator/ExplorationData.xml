@@ -1,5 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Explorations>
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Int32 Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue::GetSumIfTrueDiffIfFalse(System.Int32,System.Int32,System.Boolean)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<StartingState>
+				<ParameterContext>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000001" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="a" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000002" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="b" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Boolean" Reference="0x00000003" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="flag" />
+					</PrimitiveValue>
+				</ParameterContext>
+			</StartingState>
+			<EndingState>
+				<ParameterContext>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000001" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="a" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000002" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="b" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Boolean" Reference="0x00000003" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="flag" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000004" Value="0">
+						<Accessor Type="ReturnValue" />
+					</PrimitiveValue>
+				</ParameterContext>
+			</EndingState>
+		</Iteration>
+		<Iteration Number="2">
+			<StartingState>
+				<ParameterContext>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000001" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="a" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000002" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="b" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Boolean" Reference="0x00000003" Value="True">
+						<Accessor Type="MethodArgument" Name="flag" />
+					</PrimitiveValue>
+				</ParameterContext>
+			</StartingState>
+			<EndingState>
+				<ParameterContext>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000001" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="a" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000002" Value="Unknown">
+						<Accessor Type="MethodArgument" Name="b" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Boolean" Reference="0x00000003" Value="True">
+						<Accessor Type="MethodArgument" Name="flag" />
+					</PrimitiveValue>
+					<PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="0">
+						<Accessor Type="ReturnValue" />
+					</PrimitiveValue>
+				</ParameterContext>
+			</EndingState>
+		</Iteration>
+	</Exploration>
+</Explorations>
+
+<!--<?xml version="1.0" encoding="utf-8"?>
+<Explorations>
 	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfNotNull(System.Int32[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
 		<Iteration Number="1">
 			<ParameterContext>
@@ -346,4 +414,4 @@
 			</ParameterContext>
 		</Iteration>
 	</Exploration>
-</Explorations>
+</Explorations>-->

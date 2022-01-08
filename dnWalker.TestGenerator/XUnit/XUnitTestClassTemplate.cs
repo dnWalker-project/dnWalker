@@ -89,15 +89,17 @@ namespace dnWalker.TestGenerator.XUnit
             
             #line default
             #line hidden
-            this.Write("()\r\n\t\t{\r\n\t\t\t// construct all parameters which are used in the test\r\n\t\t\t// TODO: c" +
-                    "onstruct return value comparer instance\r\n");
+            this.Write("()\r\n\t\t{\r\n\t\t\t// construct all input parameters which are used in the test\r\n\t\t\t// T" +
+                    "ODO: construct return value comparer instance\r\n");
             
             #line 45 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		List<IObjectParameter> objectsToInitialize = new List<IObjectParameter>();
 		List<IArrayParameter> arraysToInitialize = new List<IArrayParameter>();
-		IParameterContext ctx = iteration.ParameterContext;
-		foreach (var keyValue in ctx.Parameters)
+		IParameterContext startingCtx = iteration.StartingParameterContext;
+		IParameterContext endingCtx = iteration.EndingParameterContext;
+
+		foreach (var keyValue in startingCtx.Parameters)
 		{
 			if (keyValue.Value is IPrimitiveValueParameter pv)
 			{
@@ -107,54 +109,54 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t");
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(pv.Type));
             
             #line default
             #line hidden
             this.Write(" var_");
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  if (pv.Value != null) { 
             
             #line default
             #line hidden
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(pv.Value));
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(pv.Value.GetType() == typeof(bool) ? pv.Value.ToString().ToLower() : pv.Value));
             
             #line default
             #line hidden
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write(" default(");
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(pv.Type));
             
             #line default
             #line hidden
             this.Write(") ");
             
-            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  }
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 55 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 57 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 			else if (keyValue.Value is IObjectParameter op)
@@ -166,63 +168,63 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(op.Type));
             
             #line default
             #line hidden
             this.Write("? var_");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  if (!op.GetIsNull()) { objectsToInitialize.Add(op); 
             
             #line default
             #line hidden
             this.Write("Create_");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write("(out Mock<");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(op.Type));
             
             #line default
             #line hidden
             this.Write("> methodsMock_");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  } else {  
             
             #line default
             #line hidden
             this.Write("null");
             
-            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 62 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 64 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 			else if (keyValue.Value is IArrayParameter ap)
@@ -233,61 +235,61 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ap.ElementType));
             
             #line default
             #line hidden
             this.Write("[]? var_");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  if (!ap.GetIsNull()) { arraysToInitialize.Add(ap); 
             
             #line default
             #line hidden
             this.Write("Create_");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ap.GetLength()));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  } else {  
             
             #line default
             #line hidden
             this.Write("null");
             
-            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 68 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 70 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 			else
 			{
-				// TODO: array parameters...
+				// 
 			}
 
             
@@ -295,7 +297,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t\r\n");
             
-            #line 76 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 78 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		}
 
@@ -305,7 +307,7 @@ namespace dnWalker.TestGenerator.XUnit
             this.Write("\t\t\t// initialize all parameters which needs initialization\r\n\t\t\t// TODO: initializ" +
                     "e return value comparer instance\r\n\t\t\t\r\n");
             
-            #line 82 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 84 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		foreach (var op in objectsToInitialize)
 		{
@@ -319,21 +321,21 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\tInitializeFields_");
             
-            #line 90 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 92 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(op.Reference));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t\t(\r\n\t\t\t\tvar_");
             
-            #line 92 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 94 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(op.Reference));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 93 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 95 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 				foreach (var fi in op.GetFields())
 				{
@@ -344,27 +346,27 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t\targ_");
             
-            #line 98 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 100 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(fi.Key));
             
             #line default
             #line hidden
             this.Write(": var_");
             
-            #line 98 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 100 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(fi.Value));
             
             #line default
             #line hidden
             
-            #line 98 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 100 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? "," : ""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 99 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 101 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 				}
 
@@ -373,7 +375,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t);\r\n\r\n");
             
-            #line 104 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 106 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 
@@ -388,21 +390,21 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\tInitializeMethods_");
             
-            #line 113 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 115 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(op.Reference));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t\t(\r\n\t\t\t\tmethodsMock_");
             
-            #line 115 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 117 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(op.Reference));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 116 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 118 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 				foreach (var mi in results)
 				{
@@ -413,21 +415,21 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t\targ_");
             
-            #line 121 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 123 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(mi.Key.MethodName));
             
             #line default
             #line hidden
             this.Write(": new ");
             
-            #line 121 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 123 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(mi.Key.ReturnTypeFullName));
             
             #line default
             #line hidden
             this.Write("[] { ");
             
-            #line 121 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 123 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
  
 					
 					int j = mi.Value.Length;
@@ -442,20 +444,20 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write(" default(");
             
-            #line 129 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 131 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(mi.Key.ReturnTypeFullName));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 129 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 131 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(j > 0 ? "," : ""));
             
             #line default
             #line hidden
             
-            #line 129 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 131 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 						}
 						else
@@ -466,19 +468,19 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write(" var_");
             
-            #line 133 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 135 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r));
             
             #line default
             #line hidden
             
-            #line 133 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 135 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(j > 0 ? "," : ""));
             
             #line default
             #line hidden
             
-            #line 133 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 135 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 						}
 					}
@@ -489,14 +491,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write(" } ");
             
-            #line 137 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 139 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? "," : ""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 138 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 140 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 				}
 
@@ -505,7 +507,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t);\r\n");
             
-            #line 142 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 144 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 		}
@@ -521,21 +523,21 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\tInitializeItems_");
             
-            #line 152 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 154 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ap.Reference));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t\t(\r\n\t\t\t\tvar_");
             
-            #line 154 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 156 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ap.Reference));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 155 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 157 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 				foreach (var item in ap.GetItems())
 				{
@@ -548,21 +550,21 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t\tdefault(");
             
-            #line 162 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 164 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ap.ElementType));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 162 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 164 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? "," : ""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 163 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 165 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 					}
 					else
@@ -573,20 +575,20 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t\tvar_");
             
-            #line 168 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 170 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(item));
             
             #line default
             #line hidden
             
-            #line 168 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 170 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? "," : ""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 169 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 171 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 					}
 				}
@@ -596,7 +598,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t);\r\n");
             
-            #line 174 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 176 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 		}
@@ -608,7 +610,7 @@ namespace dnWalker.TestGenerator.XUnit
                     "\t// TODO: make assert for method return values\r\n\t\t\t// TODO: handle instance meth" +
                     "ods\r\n");
             
-            #line 182 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 184 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		if (TestData.SUTMethod.IsStatic)
 		{
@@ -620,28 +622,28 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\t");
             
-            #line 188 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 190 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TestData.SUTType.FullName));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 188 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 190 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TestData.SUTMethod.Name));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 188 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(BuildExecutionArgs(TestData.SUTMethod, ctx)));
+            #line 190 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(BuildExecutionArgs(TestData.SUTMethod, startingCtx)));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 189 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 191 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 			else
@@ -652,28 +654,28 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\tvar result = ");
             
-            #line 194 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 196 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TestData.SUTType.FullName));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 194 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 196 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TestData.SUTMethod.Name));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 194 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(BuildExecutionArgs(TestData.SUTMethod, ctx)));
+            #line 196 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(BuildExecutionArgs(TestData.SUTMethod, startingCtx)));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 195 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 197 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 		}
@@ -681,9 +683,210 @@ namespace dnWalker.TestGenerator.XUnit
             
             #line default
             #line hidden
-            this.Write("\t\t}\r\n");
+            this.Write("\r\n\t\t\t// construct all output parameters which are used in the test\r\n\t\t\t// 1. ret " +
+                    "val if exists\r\n");
             
-            #line 200 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 204 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+
+			if (TestData.SUTMethod.ReturnType != typeof(void))
+			{
+				IParameter retParamter = endingCtx.Roots["RetVal"].Resolve(endingCtx);
+
+				if (retParamter is IPrimitiveValueParameter pv)
+				{
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t");
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(pv.Type));
+            
+            #line default
+            #line hidden
+            this.Write("  retVal_");
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(retParamter.Reference));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ if (pv.Value != null) { 
+            
+            #line default
+            #line hidden
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(pv.Value.GetType() == typeof(bool) ? pv.Value.ToString().ToLower() : pv.Value));
+            
+            #line default
+            #line hidden
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ } else { 
+            
+            #line default
+            #line hidden
+            this.Write(" default(");
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(pv.Type));
+            
+            #line default
+            #line hidden
+            this.Write(") ");
+            
+            #line 212 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ }
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n");
+            
+            #line 213 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+
+				}
+				else if (retParamter is IObjectParameter op)
+				{
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t");
+            
+            #line 218 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(op.Type));
+            
+            #line default
+            #line hidden
+            this.Write("? retVal_");
+            
+            #line 218 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(retParamter.Reference));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 218 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ if (!op.GetIsNull()) { objectsToInitialize.Add(op); 
+            
+            #line default
+            #line hidden
+            this.Write("Create_");
+            
+            #line 218 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(retParamter.Reference));
+            
+            #line default
+            #line hidden
+            this.Write("(out _ ");
+            
+            #line 218 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ } else {  
+            
+            #line default
+            #line hidden
+            this.Write("null");
+            
+            #line 218 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n");
+            
+            #line 219 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+
+				}
+				else if (retParamter is IArrayParameter ap)
+				{
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ap.ElementType));
+            
+            #line default
+            #line hidden
+            this.Write("[]? retVal_");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(retParamter.Reference));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ if (!ap.GetIsNull()) { arraysToInitialize.Add(ap); 
+            
+            #line default
+            #line hidden
+            this.Write("Create_");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(retParamter.Reference));
+            
+            #line default
+            #line hidden
+            this.Write("(");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ap.GetLength()));
+            
+            #line default
+            #line hidden
+            this.Write(")");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ } else {  
+            
+            #line default
+            #line hidden
+            this.Write("null");
+            
+            #line 224 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n");
+            
+            #line 225 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+
+				}
+
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\t\t\tAssert.Equal(result, retVal_");
+            
+            #line 230 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(retParamter.Reference));
+            
+            #line default
+            #line hidden
+            this.Write(");\r\n");
+            
+            #line 231 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+
+			}
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\r\n\t\t}\r\n");
+            
+            #line 237 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	}
 
@@ -694,7 +897,7 @@ namespace dnWalker.TestGenerator.XUnit
                     "hods constructs instances of parameters along with interfaces for their initiali" +
                     "zation\r\n");
             
-            #line 207 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 244 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	foreach (var keyValue in TestData.Initializations)
 	{
@@ -718,7 +921,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t\r\n");
             
-            #line 226 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 263 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		}
 
@@ -728,7 +931,7 @@ namespace dnWalker.TestGenerator.XUnit
             this.Write("\r\n\r\n\t\t#endregion Parameter Creation Methods\r\n\r\n\t\t#region Parameter Initialization" +
                     " Methods\r\n");
             
-            #line 234 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 271 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	// Setup initialization functions for each non-primitive parameter
 	foreach (var keyValue in TestData.Initializations)
@@ -744,14 +947,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t// initialize parameter ");
             
-            #line 244 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 281 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(keyValue.Key));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 245 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 282 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		if (keyValue.Value.Accesses.Count > 0)
 		{
@@ -763,14 +966,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("\t\t// - ");
             
-            #line 251 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 288 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(access));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 252 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 289 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 		}
@@ -788,7 +991,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line default
             #line hidden
             
-            #line 265 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+            #line 302 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	}
 
@@ -799,7 +1002,7 @@ namespace dnWalker.TestGenerator.XUnit
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 272 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 309 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	// Methods
 	private string BuildArgumentsSignature(Type[] argTypes, string[] argNames)
@@ -822,7 +1025,7 @@ namespace dnWalker.TestGenerator.XUnit
         #line default
         #line hidden
         
-        #line 290 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 327 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	private void WriteObjectConstruction(ObjectInitializationInfo objectInitialization)
 	{
@@ -835,70 +1038,70 @@ namespace dnWalker.TestGenerator.XUnit
         #line default
         #line hidden
         
-        #line 297 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 334 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\tprivate ");
 
         
         #line default
         #line hidden
         
-        #line 298 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 335 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(instanceType));
 
         
         #line default
         #line hidden
         
-        #line 298 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 335 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(" Create_");
 
         
         #line default
         #line hidden
         
-        #line 298 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 335 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(objectInitialization.Reference));
 
         
         #line default
         #line hidden
         
-        #line 298 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 335 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("(out Mock<");
 
         
         #line default
         #line hidden
         
-        #line 298 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 335 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(instanceType));
 
         
         #line default
         #line hidden
         
-        #line 298 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 335 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("> methodsMock)\r\n\t\t{\r\n\t\t\tmethodsMock = new Mock<");
 
         
         #line default
         #line hidden
         
-        #line 300 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 337 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(instanceType));
 
         
         #line default
         #line hidden
         
-        #line 300 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 337 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(">();\r\n\t\t\tvar instance = methodsMock.Object;\r\n\t\t\treturn instance;\r\n\t\t}\r\n");
 
         
         #line default
         #line hidden
         
-        #line 304 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 341 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	}
 
@@ -906,7 +1109,7 @@ this.Write(">();\r\n\t\t\tvar instance = methodsMock.Object;\r\n\t\t\treturn ins
         #line default
         #line hidden
         
-        #line 307 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	private void WriteObjectIntialization(ObjectInitializationInfo objectInitialization)
 	{
@@ -925,56 +1128,56 @@ this.Write(">();\r\n\t\t\tvar instance = methodsMock.Object;\r\n\t\t\treturn ins
         #line default
         #line hidden
         
-        #line 320 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 357 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\tprivate void InitializeFields_");
 
         
         #line default
         #line hidden
         
-        #line 321 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 358 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(objectInitialization.Reference));
 
         
         #line default
         #line hidden
         
-        #line 321 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 358 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("(");
 
         
         #line default
         #line hidden
         
-        #line 321 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 358 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(objectInitialization.ExpectedType.FullName));
 
         
         #line default
         #line hidden
         
-        #line 321 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 358 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(" instance, ");
 
         
         #line default
         #line hidden
         
-        #line 321 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 358 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(BuildArgumentsSignature(argTypes, argNames)));
 
         
         #line default
         #line hidden
         
-        #line 321 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 358 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(")\r\n\t\t{\r\n\t\t\t// initialize field using private object\r\n");
 
         
         #line default
         #line hidden
         
-        #line 324 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 361 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			foreach (var fi in objectInitialization.UsedFields)
 			{
@@ -984,42 +1187,42 @@ this.Write(")\r\n\t\t{\r\n\t\t\t// initialize field using private object\r\n");
         #line default
         #line hidden
         
-        #line 328 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 365 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\t\tinstance.SetPrivate(\"");
 
         
         #line default
         #line hidden
         
-        #line 329 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 366 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(fieldName));
 
         
         #line default
         #line hidden
         
-        #line 329 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 366 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\", arg_");
 
         
         #line default
         #line hidden
         
-        #line 329 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 366 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(fieldName));
 
         
         #line default
         #line hidden
         
-        #line 329 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 366 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(");\r\n");
 
         
         #line default
         #line hidden
         
-        #line 330 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 367 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 
@@ -1027,14 +1230,14 @@ this.Write(");\r\n");
         #line default
         #line hidden
         
-        #line 332 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 369 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\t}\r\n");
 
         
         #line default
         #line hidden
         
-        #line 334 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 371 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		}
 
@@ -1049,49 +1252,49 @@ this.Write("\t\t}\r\n");
         #line default
         #line hidden
         
-        #line 343 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\tprivate void InitializeMethods_");
 
         
         #line default
         #line hidden
         
-        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 381 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(objectInitialization.Reference));
 
         
         #line default
         #line hidden
         
-        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 381 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("(Mock<");
 
         
         #line default
         #line hidden
         
-        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 381 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(instanceType));
 
         
         #line default
         #line hidden
         
-        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 381 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("> mock, ");
 
         
         #line default
         #line hidden
         
-        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 381 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(BuildArgumentsSignature(argTypes, argNames)));
 
         
         #line default
         #line hidden
         
-        #line 344 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 381 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(")\r\n\t\t{\r\n\t\t\t// TODO: initialize method results to correspond to provided values\r\n\t" +
         "\t\t// first invocation returns arg_<MethodName>[0] etc\r\n\t\t\t// right now, always r" +
         "eturn first element... :(\r\n");
@@ -1100,7 +1303,7 @@ this.Write(")\r\n\t\t{\r\n\t\t\t// TODO: initialize method results to correspond
         #line default
         #line hidden
         
-        #line 349 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 386 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			foreach ((MethodInfo method, string arg) in methods)
 			{
@@ -1110,56 +1313,56 @@ this.Write(")\r\n\t\t{\r\n\t\t\t// TODO: initialize method results to correspond
         #line default
         #line hidden
         
-        #line 353 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 390 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\t\tmock.Setup(o => o.");
 
         
         #line default
         #line hidden
         
-        #line 354 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 391 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
 
         
         #line default
         #line hidden
         
-        #line 354 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 391 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("(");
 
         
         #line default
         #line hidden
         
-        #line 354 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 391 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(BuildAnyMockArguments(method)));
 
         
         #line default
         #line hidden
         
-        #line 354 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 391 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(")).Returns(");
 
         
         #line default
         #line hidden
         
-        #line 354 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 391 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arg));
 
         
         #line default
         #line hidden
         
-        #line 354 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 391 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("[0]);\r\n");
 
         
         #line default
         #line hidden
         
-        #line 355 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 392 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 			}
 
@@ -1167,14 +1370,14 @@ this.Write("[0]);\r\n");
         #line default
         #line hidden
         
-        #line 357 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 394 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\t}\r\n");
 
         
         #line default
         #line hidden
         
-        #line 359 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 396 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 		}
 	}
@@ -1183,7 +1386,7 @@ this.Write("\t\t}\r\n");
         #line default
         #line hidden
         
-        #line 363 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 400 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	private void WriteArrayConstruction(ArrayInitializationInfo arrayInitialization)
 	{
@@ -1192,56 +1395,56 @@ this.Write("\t\t}\r\n");
         #line default
         #line hidden
         
-        #line 366 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 403 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\tprivate ");
 
         
         #line default
         #line hidden
         
-        #line 367 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 404 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arrayInitialization.ExpectedElementType.FullName));
 
         
         #line default
         #line hidden
         
-        #line 367 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 404 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("[] Create_");
 
         
         #line default
         #line hidden
         
-        #line 367 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 404 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arrayInitialization.Reference));
 
         
         #line default
         #line hidden
         
-        #line 367 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 404 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("(int length)\r\n\t\t{\r\n\t\t\treturn new ");
 
         
         #line default
         #line hidden
         
-        #line 369 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 406 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arrayInitialization.ExpectedElementType.FullName));
 
         
         #line default
         #line hidden
         
-        #line 369 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 406 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("[length];\r\n\t\t}\r\n");
 
         
         #line default
         #line hidden
         
-        #line 371 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 408 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	}
 
@@ -1249,7 +1452,7 @@ this.Write("[length];\r\n\t\t}\r\n");
         #line default
         #line hidden
         
-        #line 374 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 411 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	private void WriteArrayInitialization(ArrayInitializationInfo arrayInitialization)
 	{
@@ -1260,49 +1463,49 @@ this.Write("[length];\r\n\t\t}\r\n");
         #line default
         #line hidden
         
-        #line 379 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 416 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("\t\tprivate void InitializeItems_");
 
         
         #line default
         #line hidden
         
-        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 417 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arrayInitialization.Reference));
 
         
         #line default
         #line hidden
         
-        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 417 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("(");
 
         
         #line default
         #line hidden
         
-        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 417 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arrayInitialization.ExpectedElementType.FullName));
 
         
         #line default
         #line hidden
         
-        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 417 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("[] array, params ");
 
         
         #line default
         #line hidden
         
-        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 417 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(arrayInitialization.ExpectedElementType.FullName));
 
         
         #line default
         #line hidden
         
-        #line 380 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 417 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 this.Write("[] items)\r\n\t\t{\r\n\t\t\titems.CopyTo(array, System.Math.Min(items.Length, array.Length" +
         "));\r\n\t\t}\r\n");
 
@@ -1310,7 +1513,7 @@ this.Write("[] items)\r\n\t\t{\r\n\t\t\titems.CopyTo(array, System.Math.Min(item
         #line default
         #line hidden
         
-        #line 384 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 421 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	}
 
@@ -1318,7 +1521,7 @@ this.Write("[] items)\r\n\t\t{\r\n\t\t\titems.CopyTo(array, System.Math.Min(item
         #line default
         #line hidden
         
-        #line 387 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
+        #line 424 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
 	private string BuildExecutionArgs(MethodInfo method, IParameterContext context)
 	{

@@ -33,6 +33,7 @@ namespace dnWalker.Parameters.Xml
         public const string XmlNoAccessor = "None";
         public const string XmlMethodArgumentRoot = "MethodArgument";
         public const string XmlStaticFieldRoot = "StaticField";
+        public const string XmlReturnValue = "ReturnValue";
 
         public const string XmlFullName = "FullName";
     }

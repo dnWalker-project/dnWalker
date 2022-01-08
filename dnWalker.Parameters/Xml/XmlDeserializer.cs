@@ -221,6 +221,10 @@ namespace dnWalker.Parameters.Xml
                         );
                     break;
 
+                case XmlReturnValue:
+                    accessor = new ReturnValueParameterAccessor();
+                    break;
+
                 case XmlNoAccessor:
                     accessor = null;
                     break;

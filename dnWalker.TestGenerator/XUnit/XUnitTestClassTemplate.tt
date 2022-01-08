@@ -40,18 +40,20 @@ namespace <#= TestData.TestNamespaceName #>
 		[Fact]
 		public void Test_Iteration_<#= iteration.Number #>()
 		{
-			// construct all parameters which are used in the test
+			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
 <#
 		List<IObjectParameter> objectsToInitialize = new List<IObjectParameter>();
 		List<IArrayParameter> arraysToInitialize = new List<IArrayParameter>();
-		IParameterContext ctx = iteration.ParameterContext;
-		foreach (var keyValue in ctx.Parameters)
+		IParameterContext startingCtx = iteration.StartingParameterContext;
+		IParameterContext endingCtx = iteration.EndingParameterContext;
+
+		foreach (var keyValue in startingCtx.Parameters)
 		{
 			if (keyValue.Value is IPrimitiveValueParameter pv)
 			{
 #>
-			<#= pv.Type #> var_<#= keyValue.Key #> = <# if (pv.Value != null) { #><#= pv.Value #><# } else { #> default(<#= pv.Type #>) <# }#>;
+			<#= pv.Type #> var_<#= keyValue.Key #> = <# if (pv.Value != null) { #><#= pv.Value.GetType() == typeof(bool) ? pv.Value.ToString().ToLower() : pv.Value #><# } else { #> default(<#= pv.Type #>) <# }#>;
 <#
 			}
 			else if (keyValue.Value is IObjectParameter op)
@@ -69,7 +71,7 @@ namespace <#= TestData.TestNamespaceName #>
 			}
 			else
 			{
-				// TODO: array parameters...
+				// 
 			}
 #>
 			
@@ -185,17 +187,52 @@ namespace <#= TestData.TestNamespaceName #>
 			if (TestData.SUTMethod.ReturnType == typeof(void))
 			{
 #>
-			<#= TestData.SUTType.FullName #>.<#= TestData.SUTMethod.Name #>(<#= BuildExecutionArgs(TestData.SUTMethod, ctx) #>);
+			<#= TestData.SUTType.FullName #>.<#= TestData.SUTMethod.Name #>(<#= BuildExecutionArgs(TestData.SUTMethod, startingCtx) #>);
 <#
 			}
 			else
 			{
 #>
-			var result = <#= TestData.SUTType.FullName #>.<#= TestData.SUTMethod.Name #>(<#= BuildExecutionArgs(TestData.SUTMethod, ctx) #>);
+			var result = <#= TestData.SUTType.FullName #>.<#= TestData.SUTMethod.Name #>(<#= BuildExecutionArgs(TestData.SUTMethod, startingCtx) #>);
 <#
 			}
 		}
 #>
+
+			// construct all output parameters which are used in the test
+			// 1. ret val if exists
+<#
+			if (TestData.SUTMethod.ReturnType != typeof(void))
+			{
+				IParameter retParamter = endingCtx.Roots["RetVal"].Resolve(endingCtx);
+
+				if (retParamter is IPrimitiveValueParameter pv)
+				{
+#>
+			<#= pv.Type #>  retVal_<#= retParamter.Reference #> = <# if (pv.Value != null) { #><#= pv.Value.GetType() == typeof(bool) ? pv.Value.ToString().ToLower() : pv.Value #><# } else { #> default(<#= pv.Type #>) <# }#>;
+<#
+				}
+				else if (retParamter is IObjectParameter op)
+				{
+#>
+			<#= op.Type #>? retVal_<#= retParamter.Reference #> = <# if (!op.GetIsNull()) { objectsToInitialize.Add(op); #>Create_<#= retParamter.Reference #>(out _ <# } else {  #>null<# } #>;
+<#
+				}
+				else if (retParamter is IArrayParameter ap)
+				{
+#>
+			<#= ap.ElementType #>[]? retVal_<#= retParamter.Reference #> = <# if (!ap.GetIsNull()) { arraysToInitialize.Add(ap); #>Create_<#= retParamter.Reference #>(<#= ap.GetLength() #>)<# } else {  #>null<# } #>;
+<#
+				}
+
+#>
+
+			Assert.Equal(result, retVal_<#= retParamter.Reference #>);
+<#
+			}
+#>
+
+
 		}
 <#
 	}

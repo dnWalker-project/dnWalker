@@ -32,8 +32,21 @@ namespace dnWalker.TestGenerator
             {
                 foreach (var iterationData in explorationData.Iterations)
                 {
-                    IParameterContext ctx = iterationData.ParameterContext;
+                    IParameterContext ctx = iterationData.StartingParameterContext;
                     foreach (var keyValue in ctx.Parameters)
+                    {
+                        if (!_initializations.TryGetValue(keyValue.Key, out ParameterInitializationInfo? initInfo))
+                        {
+                            initInfo = ParameterInitializationInfo.Create(keyValue.Value);
+                            _initializations.Add(keyValue.Key, initInfo);
+                        }
+
+                        initInfo.AddContext(ctx);
+                    }
+
+
+                    ctx = iterationData.EndingParameterContext;
+                    foreach (var keyValue in ctx.Parameters.Where(kv => !_initializations.ContainsKey(kv.Key)))
                     {
                         if (!_initializations.TryGetValue(keyValue.Key, out ParameterInitializationInfo? initInfo))
                         {

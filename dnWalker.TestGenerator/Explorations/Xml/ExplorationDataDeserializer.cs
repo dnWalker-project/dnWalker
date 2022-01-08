@@ -28,7 +28,8 @@ namespace dnWalker.TestGenerator.Explorations.Xml
         {
             ExplorationIterationData iterationData = new ExplorationIterationData
                 (
-                    xml.Element(nameof(ExplorationIterationData.ParameterContext))?.ToParameterContext() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/ParameterContext' element."),
+                    xml.Element("StartingState")?.Element("ParameterContext")?.ToParameterContext() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/StartingState' element."),
+                    xml.Element("EndingState")?.Element("ParameterContext")?.ToParameterContext() ?? throw new Exception("Exploration iteration XML must have a 'Iteration/EndingState' element."),
                     int.Parse(xml.Attribute(nameof(ExplorationIterationData.Number))?.Value ?? throw new Exception("Exploration iteration XML must have a 'Number' attribute.")),
                     xml.Attribute(nameof(ExplorationIterationData.PathConstraint))?.Value ?? string.Empty,
                     null, // create exception from the XML if there is one

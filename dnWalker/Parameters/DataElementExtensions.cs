@@ -44,12 +44,12 @@ namespace dnWalker.Parameters
             return cur.PathStore.CurrentPath.TryGetObjectAttribute(dataElement, "parameter", out parameter);
         }
 
-        public static bool TryGetParameter<TParameter>(this IDataElement dataElement, ExplicitActiveState cur, [NotNullWhen(true)] out TParameter arrayParameter)
+        public static bool TryGetParameter<TParameter>(this IDataElement dataElement, ExplicitActiveState cur, [NotNullWhen(true)] out TParameter parameter)
             where TParameter : class, IParameter
         {
             TryGetParameter(dataElement, cur, out IParameter p);
-            arrayParameter = p as TParameter;
-            return p != null;
+            parameter = p as TParameter;
+            return parameter != null;
         }
 
         public static Int4 GetIsNotNullDataElement(this ExplicitActiveState cur, IReferenceTypeParameter referenceTypeParameter)

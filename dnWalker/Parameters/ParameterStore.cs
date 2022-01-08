@@ -108,9 +108,21 @@ namespace dnWalker.Parameters
             _executionContext = _baseContext.Clone();
         }
 
-        public void SetReturnValue(ReturnValue retValue, ExplicitActiveState cur)
-        {
+        private ParameterRef _returnValue;
 
+        public void SetReturnValue(IDataElement retValue, ExplicitActiveState cur, TypeSig retValueType)
+        {
+            IParameter parameter = retValue.GetOrCreateParameter(cur, retValueType);
+            parameter.Accessor = new ReturnValueParameterAccessor();
+            _returnValue = parameter.Reference;
+        }
+
+        public ParameterRef ReturnValue
+        {
+            get
+            {
+                return _returnValue;
+            }
         }
 
         private class ExprSorter : IComparer<ParameterTrait>

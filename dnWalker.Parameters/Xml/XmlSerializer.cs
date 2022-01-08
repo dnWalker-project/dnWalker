@@ -112,6 +112,9 @@ namespace dnWalker.Parameters.Xml
                 case null:
                     return new XElement(XmlAccessor, new XAttribute(XmlType, XmlNoAccessor));
 
+                case ReturnValueParameterAccessor returnValueParameterAccessor:
+                    return new XElement(XmlAccessor, new XAttribute(XmlType, XmlReturnValue));
+
                 default:
                     throw new NotSupportedException();
 

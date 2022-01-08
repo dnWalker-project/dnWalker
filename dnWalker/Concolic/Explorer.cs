@@ -209,8 +209,8 @@ namespace dnWalker.Concolic
 
                     if (entryPoint.HasReturnType)
                     {
-                        ReturnValue retValue = (ReturnValue)cur.CurrentThread.RetValue;
-                        _parameterStore.SetReturnValue(retValue, cur);
+                        IDataElement retValue = cur.CurrentThread.RetValue;
+                        _parameterStore.SetReturnValue(retValue, cur, entryPoint.ReturnType);
                     }
 
                     OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, _parameterStore, path));
