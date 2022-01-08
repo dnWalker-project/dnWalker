@@ -245,7 +245,7 @@ namespace MMC
 
         public PathStore PathStore => _pathStore;
 
-        private IStatistics Statistics { get; }
+        public IStatistics Statistics { get; }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
@@ -268,7 +268,7 @@ namespace MMC
             return -42;// m_dfs.Count;
 		}
 
-        public System.Exception GetUnhandledException()
+        public ExceptionInfo GetUnhandledException()
         {
             return cur.CurrentThread.UnhandledException;
         }
@@ -522,6 +522,12 @@ namespace MMC
             }
         }
 
-        public ExplicitActiveState cur { get; }
+        // settle on one property...
+        internal ExplicitActiveState cur { get; }
+        public ExplicitActiveState ActiveState
+        {
+            get { return cur; }
+        }
+
     }
 }

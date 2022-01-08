@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Explorations>
+  <Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfNull(System.Int32[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
+    <Iteration Number="1">
+      <ParameterContext>
+        <Array ElementType="System.Int32" Reference="0x00000008" IsNull="Unknown" Length="Unknown">
+          <Accessor Type="MethodArgument" Name="instance" />
+        </Array>
+      </ParameterContext>
+    </Iteration>
+    <Iteration Number="2">
+      <ParameterContext>
+        <Array ElementType="System.Int32" Reference="0x00000008" IsNull="False" Length="Unknown">
+          <Accessor Type="MethodArgument" Name="instance" />
+        </Array>
+      </ParameterContext>
+    </Iteration>
+  </Exploration>
+</Explorations>

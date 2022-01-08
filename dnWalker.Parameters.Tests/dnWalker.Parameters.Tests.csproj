@@ -4,12 +4,28 @@
     <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Xml\XmlDeserializerTest_PrimitiveValueParameters.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlDeserializerTest_PrimitiveValueParameters.tt</DependentUpon>
+    </None>
+    <None Include="Xml\XmlSerializerTest_PrimitiveValueParameters.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlSerializerTest_PrimitiveValueParameters.tt</DependentUpon>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="Xunit.Combinatorial" Version="1.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -22,6 +38,34 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Xml\XmlDeserializerTest_PrimitiveValueParameters.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlDeserializerTest_PrimitiveValueParameters.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Xml\XmlSerializerTest_PrimitiveValueParameters.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlSerializerTest_PrimitiveValueParameters.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Xml\XmlDeserializerTest_PrimitiveValueParameters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlDeserializerTest_PrimitiveValueParameters.tt.cs</LastGenOutput>
+    </None>
+    <None Update="Xml\XmlSerializerTest_PrimitiveValueParameters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlSerializerTest_PrimitiveValueParameters.tt.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,133 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+using static dnWalker.Parameters.Xml.XmlTokens;
+
+namespace dnWalker.Parameters.Xml
+{
+
+    public static partial class XmlDeserializer
+    {
+<#
+ string[] types = 
+ {
+    "Boolean",
+    "Byte",
+    "SByte",
+    "Int16",
+    "Int32",
+    "Int64",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "Char",
+    "Single",
+    "Double"
+ };
+
+ string[] aliases = 
+ {
+    "bool",
+    "byte",
+    "sbyte",
+    "short",
+    "int",
+    "long",
+    "ushort",
+    "uint",
+    "ulong",
+    "char",
+    "float",
+    "double",
+ };
+ 
+
+ string[] fromXmlExpressions = 
+ {
+    "xmlValue == XmlUnknown ? null : bool.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : byte.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : sbyte.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : short.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : int.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : long.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : ushort.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : uint.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : ulong.Parse(xmlValue)",
+    "xmlValue == XmlUnknown ? null : Convert.ToChar(Convert.ToInt32(xmlValue.Substring(2), 16))",
+    "xmlValue == XmlUnknown ? null : FloatFromXml(xmlValue)",
+    "xmlValue == XmlUnknown ? null : DoubleFromXml(xmlValue)",
+ };
+#>
+        public static IPrimitiveValueParameter ToPrimitiveValueParameter(XElement xml, IParameterContext context)
+        {
+            string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IPrimitiveValueParameter), XmlType);
+
+            switch (type)
+            {
+<#
+ for (int i = 0; i < types.Length; ++i)
+ {
+    string type = types[i];
+#>
+                case "System.<#= type #>": return To<#= type #>Parameter(xml, context);
+<#
+ }
+#>
+                default: throw new NotSupportedException();
+            }
+        }
+<#
+ for (int i = 0; i < types.Length; ++i)
+ {
+    string type = types[i];
+    string alias = aliases[i];
+
+#>
+        public static I<#= type #>Parameter To<#= type #>Parameter(this XElement xml, IParameterContext context)
+        {
+            string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(I<#= type #>Parameter), XmlValue);
+            ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(<#= type #>Parameter), XmlReference));
+
+            I<#= type #>Parameter parameter = context.Create<#= type #>Parameter(reference);
+            parameter.Value = <#= fromXmlExpressions[i] #>;
+
+            return parameter;
+        }
+
+<#
+ }
+#> 
+
+        private static float FloatFromXml(string xmlValue)
+        {
+            switch(xmlValue)
+            {
+                case "NAN": return float.NaN;
+                case "INF": return float.PositiveInfinity;
+                case "-INF": return float.NegativeInfinity;
+                default: return float.Parse(xmlValue);
+            }
+        }
+
+        private static double DoubleFromXml(string xmlValue)
+        {
+            switch(xmlValue)
+            {
+                case "NAN": return double.NaN;
+                case "INF": return double.PositiveInfinity;
+                case "-INF": return double.NegativeInfinity;
+                default: return double.Parse(xmlValue);
+            }
+        }
+    }
+}

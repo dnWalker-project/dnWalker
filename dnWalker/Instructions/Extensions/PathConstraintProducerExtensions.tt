@@ -1,0 +1,285 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #>
+using dnlib.DotNet.Emit;
+
+using dnWalker.Symbolic;
+
+using MMC.Data;
+using MMC.InstructionExec;
+using MMC.State;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Instructions.Extensions
+{
+
+    public abstract class PathConstraintProducerInstructionExtension : IPreExecuteInstructionExtension, IPostExecuteInstructionExtension
+    {
+        public abstract IEnumerable<Type> SupportedInstructions { get; }
+
+        private Instruction _nextInstruction;
+
+        public abstract void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur);
+
+        public virtual void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            if (WillBranch(retValue))
+            {
+                // we do jump;
+                _nextInstruction = (Instruction)instruction.Operand;
+            }
+            else
+            {
+                // we do NOT jump
+                _nextInstruction = null;
+            }
+        }
+
+        [Pure]
+        protected static bool WillBranch(IIEReturnValue retValue)
+        {
+            return retValue is not NextReturnValue;
+        }
+
+        protected void AddPathConstraint(ExplicitActiveState cur, Expression expression)
+        {
+            cur.PathStore.AddPathConstraint(expression, _nextInstruction, cur);
+        }
+
+    }
+
+    public abstract class UnaryPathConstraintProducerInstructionExtension : PathConstraintProducerInstructionExtension
+    {
+        private IDataElement _value;
+
+        protected IDataElement Value
+        {
+            get { return _value; }
+        }
+
+        public override void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            _value = cur.EvalStack.Peek();
+        }
+
+        public override void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            // initialize 
+            base.PostExecute(instruction, cur, retValue);
+
+            if (IsSymbolic(cur, out Expression valueExpression))
+            {
+                // we may branch based on a symbolic value => add the path constraint
+                Expression constraintExpression = CreatePathConstraintExpression(valueExpression, WillBranch(retValue));
+                AddPathConstraint(cur, constraintExpression);
+            }
+        }
+
+        private bool IsSymbolic(ExplicitActiveState cur, out Expression expression)
+        {
+            return _value.TryGetExpression(cur, out expression);
+        }
+        protected abstract Expression CreatePathConstraintExpression(Expression valueExpression, bool willBranch);
+    }
+
+    public abstract class BinaryPathConstraintProducerInstructionExtension : PathConstraintProducerInstructionExtension
+    {
+        private IDataElement _lhs;
+        private IDataElement _rhs;
+
+        protected IDataElement Lhs
+        {
+            get { return _lhs; }
+        }
+        protected IDataElement Rhs
+        {
+            get { return _rhs; }
+        }
+
+
+        public override void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            _rhs = cur.EvalStack[cur.EvalStack.Length - 1];
+            _lhs = cur.EvalStack[cur.EvalStack.Length - 2];
+        }
+
+        public override void PostExecute(InstructionExecBase instruction, ExplicitActiveState cur, IIEReturnValue retValue)
+        {
+            // initialize 
+            base.PostExecute(instruction, cur, retValue);
+
+            if (IsSymbolic(cur, out Expression lhsExpr, out Expression rhsExpr))
+            {
+                // we may branch based on a symbolic value => add the path constraint
+                Expression constraintExpression = CreatePathConstraintExpression(lhsExpr, rhsExpr, WillBranch(retValue));
+                AddPathConstraint(cur, constraintExpression);
+            }
+        }
+
+        private bool IsSymbolic(ExplicitActiveState cur, out Expression lhsExpr, out Expression rhsExpr)
+        {
+            bool isLhsSymbolic = _lhs.TryGetExpression(cur, out lhsExpr);
+            bool isRhsSymbolic = _rhs.TryGetExpression(cur, out rhsExpr);
+
+            if (isRhsSymbolic || isLhsSymbolic)
+            {
+                lhsExpr ??= _lhs.AsExpression();
+                rhsExpr ??= _rhs.AsExpression();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        protected abstract Expression CreatePathConstraintExpression(Expression lhsExpression, Expression rhsExpression, bool willBranch);
+    }
+
+<#
+    BranchInstructionInfo[] infos = new BranchInstructionInfo[]
+    {
+        new BranchInstructionInfo("BRFALSE", "Not", null, BranchConditionType.Unary, "BRFALSE"),
+        new BranchInstructionInfo("BRTRUE", null, "Not", BranchConditionType.Unary, "BRTRUE"),
+        
+        new BranchInstructionInfo("BEQ", "Equal", "NotEqual", BranchConditionType.Binary, "BEQ"),
+        new BranchInstructionInfo("BGE", "GreaterThanOrEqual", "LessThan", BranchConditionType.Binary, "BGE"),
+        new BranchInstructionInfo("BGT", "GreaterThan", "LessThanOrEqual", BranchConditionType.Binary, "BGT"),
+        new BranchInstructionInfo("BLE", "LessThanOrEqual", "GreaterThan", BranchConditionType.Binary, "BLE"),
+        new BranchInstructionInfo("BLT", "LessThan", "GreaterThanOrEqual", BranchConditionType.Binary, "BLT"),
+        new BranchInstructionInfo("BNE", "NotEqual", "Equal", BranchConditionType.Binary, "BNE"),
+
+    };
+ #>
+
+    public static partial class Extensions
+    {
+        public static ExtendableInstructionFactory AddPathConstraintProducers(this ExtendableInstructionFactory factory)
+        {
+<#
+    foreach (String name in infos.Select(i => i.Name))
+    {
+ #>
+            factory.RegisterExtension(new <#= name #>_PathConstraintProducerInstructionExtension());
+<#    
+    }
+ #>
+            return factory;
+        }
+    }
+
+<#
+    foreach (BranchInstructionInfo i in infos)
+    {
+        if (i.BranchConditionType == BranchConditionType.Binary)
+        {
+ #>
+    public class <#= i.Name #>_PathConstraintProducerInstructionExtension : BinaryPathConstraintProducerInstructionExtension
+    {
+
+        protected override Expression CreatePathConstraintExpression(Expression lhsExpression, Expression rhsExpression, bool willBranch)
+        {
+            return Expression.MakeBinary(willBranch ? ExpressionType.<#= i.WillBranchExpressionType #> : ExpressionType.<#= i.WillNotBranchExpressionType #>, lhsExpression, rhsExpression);
+        }
+<#
+        }
+        else if (i.BranchConditionType == BranchConditionType.Unary)
+        {
+ #>
+    public class <#= i.Name #>_PathConstraintProducerInstructionExtension : UnaryPathConstraintProducerInstructionExtension
+    {
+
+        protected override Expression CreatePathConstraintExpression(Expression valueExpression, bool willBranch)
+        {
+            return willBranch ? <# 
+                if (i.WillBranchExpressionType == null) 
+                { 
+                    #>valueExpression<# 
+                } 
+                else 
+                {
+                    #>Expression.MakeUnary(ExpressionType.<#= i.WillBranchExpressionType #>, valueExpression, typeof(bool))<#
+                }
+                #> : <#
+                if (i.WillNotBranchExpressionType == null)
+                {
+                    #>valueExpression<#
+                }
+                else
+                {
+                    #>Expression.MakeUnary(ExpressionType.<#= i.WillNotBranchExpressionType #>, valueExpression, typeof(bool))<#
+                }
+                #>;
+        }
+<#
+        }
+        else
+        {
+            // TODO switch? - or manually?
+        }
+ #>
+
+        private static readonly Type[] _instructions = new Type[]
+        {
+<#
+        foreach (string instructionType in i.AcceptedCodes)
+        {
+ #>
+                typeof(<#= instructionType #>),
+<#
+        }
+ #>
+        };
+
+        public override IEnumerable<Type> SupportedInstructions
+        {
+            get
+            {
+                return _instructions;
+            }
+        }
+    }
+<#
+    }
+ #>
+}
+
+<#+
+
+enum BranchConditionType
+{
+    Unary,
+    Binary,
+    Multiple
+}
+
+readonly struct BranchInstructionInfo
+{
+    public BranchInstructionInfo(string name, string willBranchExpressionType, string willNotBranchExpressionType, BranchConditionType branchConditionType, params string[] acceptedCodes)
+    {
+        Name = name;
+        WillBranchExpressionType = willBranchExpressionType;
+        WillNotBranchExpressionType = willNotBranchExpressionType;
+        BranchConditionType = branchConditionType;
+        AcceptedCodes = acceptedCodes;
+    }
+
+    public string Name { get; }
+    public string[] AcceptedCodes { get; }
+
+    public string WillBranchExpressionType { get; }
+    public string WillNotBranchExpressionType { get; }
+    public BranchConditionType BranchConditionType { get; }
+}
+
+
+ #>

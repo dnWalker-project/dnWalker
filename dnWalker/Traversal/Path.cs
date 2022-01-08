@@ -1,6 +1,10 @@
 ﻿using dnlib.DotNet.Emit;
+
+using dnWalker.Concolic;
 using dnWalker.Graphs;
 using dnWalker.NativePeers;
+using dnWalker.Parameters;
+
 using Echo.ControlFlow;
 using MMC.Data;
 using MMC.State;
@@ -8,6 +12,7 @@ using MMC.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -17,10 +22,11 @@ namespace dnWalker.Traversal
     [DebuggerDisplay("{Expression}")]
     public class PathConstraint
     {
-        public Expression Expression { get; set; }
         public Instruction Next { get; set; }
         public CILLocation Location { get; set; }
+        public Expression Expression { get; set; }
     }
+
 
     public class Path : ICloneable
     {
@@ -39,21 +45,37 @@ namespace dnWalker.Traversal
             _segments.Add(new Segment(fromState, toState));
         }
 
-        public T Get<T>(string name)
-        {
-            if (_attributes.TryGetValue(name, out var o) && o is T t)
-            {
-                return t;
-            }
+        //public T Get<T>(string name)
+        //{
+        //    if (_attributes.TryGetValue(name, out var o) && o is T t)
+        //    {
+        //        return t;
+        //    }
 
-            throw new ArgumentException(name);
+        //    throw new ArgumentException(name);
+        //}
+
+        //public T SetObjectAttribute<T>(Allocation alloc, string attributeName, T attributeValue)
+        //{
+        //    var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
+        //    _attributes[key] = attributeValue;
+        //    return attributeValue;
+        //}
+
+        public bool TryGetPathAttribute<T>(string name, [NotNullWhen(true)]out T attribute)
+        {
+            if (_attributes.TryGetValue(name, out object o) && o is T t)
+            {
+                attribute = t;
+                return true;
+            }
+            attribute = default;
+            return false;
         }
 
-        public T SetObjectAttribute<T>(Allocation alloc, string attributeName, T attributeValue)
+        public void SetPathAttribute<T>(string name, T attribute)
         {
-            var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
-            _attributes[key] = attributeValue;
-            return attributeValue;
+            _attributes[name] = attribute;
         }
 
         private class Eq : IEqualityComparer<IDataElement>
@@ -80,7 +102,7 @@ namespace dnWalker.Traversal
             return attributeValue;
         }
 
-        public bool TryGetObjectAttribute<T>(IDataElement dataElement, string attributeName, out T attributeValue)
+        public bool TryGetObjectAttribute<T>(IDataElement dataElement, string attributeName, [NotNullWhen(true)] out T attributeValue)
         {
             attributeValue = default;
             if (!_properties.TryGetValue(dataElement, out var dict) || !dict.TryGetValue(attributeName, out var value))
@@ -128,14 +150,16 @@ namespace dnWalker.Traversal
 
         public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {
-            try
-            {
-                expression = ExpressionOptimizer.visit(expression);
-            }
-            catch
-            {
-                // exception is ignored, 3rd party 
-            }
+            //try
+            //{
+            //    expression = ExpressionOptimizer.visit(expression);
+            //}
+            //catch
+            //{
+            //    // exception is ignored, 3rd party 
+            //}
+
+            expression = expression.Optimize().Simplify();
 
             _pathConstraints.Add(
                 new PathConstraint

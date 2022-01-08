@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic
 {
-    public class Coverage
+    public readonly struct Coverage
     {
-        public double Edges { get; set; }
-        public double Nodes { get; set; }
+        public Coverage(double edges, double nodes)
+        {
+            Edges = edges;
+            Nodes = nodes;
+        }
+
+        public double Edges { get; }
+        public double Nodes { get; }
     }
 }

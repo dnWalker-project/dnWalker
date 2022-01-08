@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Explorations>
+  <Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Objects.MethodsWithObjectParameter::InvokeMethodWithFieldAccess(Examples.Concolic.Features.Objects.TestClass)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+    <Iteration Number="1">
+      <ParameterContext>
+        <Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000002" IsNull="Unknown">
+          <Accessor Type="MethodArgument" Name="instance" />
+        </Object>
+      </ParameterContext>
+    </Iteration>
+    <Iteration Number="2">
+      <ParameterContext>
+        <Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000002" IsNull="False">
+          <Accessor Type="MethodArgument" Name="instance" />
+        </Object>
+      </ParameterContext>
+    </Iteration>
+    <Iteration Number="3">
+      <ParameterContext>
+        <Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000002" IsNull="False">
+          <Field Name="_myField" Reference="0x00000003" />
+          <Accessor Type="MethodArgument" Name="instance" />
+        </Object>
+        <PrimitiveValue Type="System.Int32" Reference="0x00000003" Value="3">
+          <Accessor Type="None" />
+        </PrimitiveValue>
+      </ParameterContext>
+    </Iteration>
+  </Exploration>
+</Explorations>

@@ -99,15 +99,13 @@ namespace MMC.InstructionExec
         {
             var exceptionType = cur.DefinitionProvider.GetTypeDefinition(ex.GetType().FullName);
 
-            var exceptionRef = cur.DynamicArea.AllocateObject(
-                cur.DynamicArea.DeterminePlacement(),
-                exceptionType);
+            var exceptionRef = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(), exceptionType);
 
             //var exceptionObject = cur.DynamicArea.Allocations[exceptionRef];
             //exceptionObject.From(ex);
 
             cur.CurrentThread.ExceptionReference = exceptionRef;
-            cur.CurrentThread.UnhandledException = ex;
+            cur.CurrentThread.UnhandledException = new ExceptionInfo(exceptionType, ex.Message);
             cur.CurrentMethod.IsExceptionSource = true;
 
             // Constructor calls should leave object reference on the stack.

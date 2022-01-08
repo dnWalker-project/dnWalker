@@ -90,8 +90,8 @@ namespace dnWalker.Concolic.Traversal
             {
                 return Expression.Not(pathConstraint.Expression);
             }*/
-
-            return Expression.Not(pathConstraint.Expression);
+            // TODO: there could be more edges out (switch statement... not very likely.... usually it is indeed transformed into series of binary branching...
+            return Expression.Not(pathConstraint.Expression).Optimize();
             //return pathConstraint.Expression;
         }
 
@@ -175,11 +175,30 @@ namespace dnWalker.Concolic.Traversal
 
         public Coverage GetCoverage()
         {
-            return new Coverage
+            int nodeCount = 0;
+            int edgeCount = 0;
+            int coveredNodes = 0;
+            int coveredEdges = 0;
+
+            foreach (Graphs.Edge edge in _cfg.Edges)
             {
-                //Nodes = 0,//_nodes.Count(n => n.Value) / (double)_nodes.Count,
-                //Edges = _edges.Count(e => e.Value != 0) / (double)_edges.Count,
-            };
+                edgeCount++;
+                if (edge.Tag.IsCovered)
+                {
+                    coveredEdges++;
+                }
+            }
+
+            foreach (Graphs.Node node in _cfg.Vertices)
+            {
+                nodeCount++;
+                if (node.IsCovered)
+                {
+                    coveredNodes++;
+                }
+            }
+
+            return new Coverage((double)coveredNodes / nodeCount, (double)coveredEdges / edgeCount);
         }
     }
 }

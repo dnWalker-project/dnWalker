@@ -75,6 +75,11 @@ namespace dnWalker.Graphs
             return _controlFlowGraph.Edges.Where(e => e.Source.Offset == this.Offset).Cast<Edge>();
         }
 
+        public bool IsCovered
+        {
+            get { return _isCovered; }
+        }
+
         public override string ToString()
         {
             return _controlFlowNode.ToString();
@@ -85,6 +90,8 @@ namespace dnWalker.Graphs
     {
         public Edge(Node source, Node target, CoverageInfo o) : base(source, target, o)
         {
+
+
         }
     }
 
@@ -154,6 +161,7 @@ namespace dnWalker.Graphs
                 
                 AddVerticesAndEdge(cfgEdge);
             }
+
         }
 
         public Node GetNode(Instruction instruction)
@@ -165,5 +173,6 @@ namespace dnWalker.Graphs
             }
             return _nodeMapping[node.Offset];
         }
+
     }
 }

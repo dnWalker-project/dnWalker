@@ -222,7 +222,7 @@ namespace MMC.State {
 
         public static ITypeDefOrRef DelegateTypeDef { get; set; }//= new Lazy<TypeDef>(() => DefinitionProvider.GetTypeDefinition("System.Delegate"));
 
-		public override AllocationType AllocationType
+        public override AllocationType AllocationType
         {
             get { return AllocationType.Delegate; }
         }

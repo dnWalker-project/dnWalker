@@ -1,4 +1,6 @@
-﻿using dnWalker.Concolic.Parameters;
+﻿using dnlib.DotNet;
+
+using dnWalker.Parameters;
 using dnWalker.Traversal;
 
 using System;
@@ -12,20 +14,32 @@ namespace dnWalker.Concolic
 {
     public class ExplorationStartedEventArgs : EventArgs
     {
-        public ExplorationStartedEventArgs(string assemblyFileName, string assemblyName, string methodName, bool isStatic, string solver)
+        public ExplorationStartedEventArgs(string assemblyFileName, MethodDef method, Type solverType)
         {
-            AssemblyName = assemblyName;
-            MethodName = methodName;
-            IsStatic = isStatic;
-            Solver = solver;
+            Method = method;
+            SolverType = solverType;
             AssemblyFileName = assemblyFileName;
         }
 
         public string AssemblyFileName { get; }
-        public string AssemblyName { get; }
-        public string MethodName { get; }
-        public bool IsStatic { get; }
-        public string Solver { get; }
+        public string AssemblyName
+        {
+            get { return Method.Module.Assembly.Name; }
+        }
+
+        public string MethodSignature
+        {
+            get { return Method.FullName; }
+        }
+
+        public bool IsStatic
+        {
+            get { return Method.IsStatic; }
+        }
+
+        public Type SolverType { get; }
+
+        public MethodDef Method { get; }
     }
     public class ExplorationFinishedEventArgs : EventArgs
     {
@@ -43,27 +57,27 @@ namespace dnWalker.Concolic
 
     public class IterationStartedEventArgs : EventArgs
     {
-        public IterationStartedEventArgs(int iterationNmber, ParameterStore inputParameters)
+        public IterationStartedEventArgs(int iterationNmber, ParameterStore parameterStore)
         {
             IterationNmber = iterationNmber;
-            InputParameters = inputParameters;
+            ParameterStore = parameterStore;
         }
 
         public int IterationNmber { get; }
-        public ParameterStore InputParameters { get; }
+        public ParameterStore ParameterStore { get; }
     }
 
     public class IterationFinishedEventArgs : EventArgs
     {
-        public IterationFinishedEventArgs(int iterationNumber, object methodResult, Path exploredPath)
+        public IterationFinishedEventArgs(int iterationNumber, ParameterStore parameterStore, Path exploredPath)
         {
             IterationNumber = iterationNumber;
-            MethodResult = methodResult;
+            ParameterStore = parameterStore;
             ExploredPath = exploredPath;
         }
 
         public int IterationNumber { get; }
-        public Object MethodResult { get; }
+        public ParameterStore ParameterStore { get; }
         public Path ExploredPath { get; }
     }
 }

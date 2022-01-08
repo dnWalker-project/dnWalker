@@ -1,98 +1,349 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Explorations>
-    <!-- Method with result, multiple iterations, primitive arguments -->
-    <Exploration AssemblyName="Examples, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-                 AssemblyFileName="..\..\..\..\Examples\bin\debug\Examples.exe"
-                 MethodSignature="System.Boolean Examples.TestGeneration.Static.PrimitiveArgs::IsGreaterThan5(System.Int32)"
-                 IsStatic="true"
-                 Solver="dnWalker.Z3.Solver"
-                 Failed="false">
-        <Iteration IterationNumber="1">
-            <Parameters>
-                <PrimitiveValue Type="System.Int32" Name="x">0</PrimitiveValue>
-                <PrimitiveValue Type="System.Boolean" Name="#__RESULT__">false</PrimitiveValue>
-            </Parameters>
-        </Iteration>
-        <Iteration IterationNumber="2">
-            <Parameters>
-                <PrimitiveValue Type="System.Int32" Name="x">6</PrimitiveValue>
-                <PrimitiveValue Type="System.Boolean" Name="#__RESULT__">true</PrimitiveValue>
-            </Parameters>
-        </Iteration>
-    </Exploration>
-    
-    <!-- Method with result, multiple iterations, complex arguments -->
-    <Exploration AssemblyName="Examples, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" 
-                 AssemblyFileName="..\..\..\..\Examples\bin\debug\Examples.exe" 
-                 MethodSignature="System.Boolean Examples.TestGeneration.Static.ComplexArgs::Return_Sum_Of_IntFields(Examples.TestGeneration.ClassWithManyFields)" 
-                 IsStatic="true" 
-                 Solver="dnWalker.Z3.Solver" 
-                 Failed="false">
-        <!-- the argument should be null in this case => we know nothing about it -->
-        <!-- and it should throw NullReferenceException - TODO: properly export these information && to the exception thrown assertions within the template -->
-        <Iteration IterationNumber="1">
-            <Parameters/>
-        </Iteration>
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfNotNull(System.Int32[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000009" IsNull="Unknown" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000009" IsNull="False" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
 
-        <Iteration IterationNumber="2">
-            <Parameters>
-                <Object Type="Examples.TestGeneration.ClassWithManyFields" Name="instance" IsNull="false"/>
-                <PrimitiveValue Type="System.Int32" Name="#__RESULT__">0</PrimitiveValue>
-            </Parameters>
-        </Iteration>
-        
-        <!-- we will specify a few fields -->
-        <Iteration IterationNumber="3">
-            <Parameters>
-                <Object Type="Examples.TestGeneration.ClassWithManyFields" Name="instance" IsNull="false">
-                    <Field Name="I1">
-                        <PrimitiveValue Type="System.Int32" Name="instance:I1">5</PrimitiveValue>
-                    </Field>
-                    <Field Name="I3">
-                        <PrimitiveValue Type="System.Int32" Name="instance:I3">8</PrimitiveValue>
-                    </Field>
-                </Object>
-                <PrimitiveValue Type="System.Int32" Name="#__RESULT__">13</PrimitiveValue>
-            </Parameters>
-        </Iteration>
-    </Exploration>
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfLengthLowerThan5(System.Int32[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000007" IsNull="Unknown" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000007" IsNull="False" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000007" IsNull="False" Length="5">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+	
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfLengthGreaterThan5(System.Int32[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000001" IsNull="Unknown" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000001" IsNull="False" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000001" IsNull="False" Length="6">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
 
-    <!-- Method which works with a primitive and complex parameters -->
-    <Exploration AssemblyName="Examples, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-                 AssemblyFileName="..\..\..\..\Examples\bin\debug\Examples.exe"
-                 MethodSignature="Examples.TestGeneration.ClassWithManyFields Examples.TestGeneration.Static.ComplexArgs::Get_ManyFields_If_Any_IntegerField_Matches_Arg(Examples.TestGeneration.ClassReferencingAnotherClass,System.Int32)"
-                 IsStatic="true"
-                 Solver="dnWalker.Z3.Solver"
-                 Failed="false">
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfItemAtStaticIndexIsGreaterThan5(System.Double[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000002" IsNull="Unknown" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000002" IsNull="False" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000002" IsNull="False" Length="4">
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="4">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000002" IsNull="False" Length="4">
+					<Item Index="3" Reference="0x00000003" />
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+				<PrimitiveValue Type="System.Double" Reference="0x00000003" Value="6">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
 
-        <!-- just one iteration for testing purposes -->
-        <!-- arg is not 0, IntegerField1 is -5, IntegerField2 is 10, ManyFields field is not null -->
-        <!-- TODO: somehow handle AliasParameters -->
-        <Iteration IterationNumber="2">
-            <Parameters>
-                <Object Type="Examples.TestGeneration.ClassReferencingAnotherClass" Name="myObject" IsNull="false">
-                    <Field Name="IntegerField1">
-                        <PrimitiveValue Type="System.Int32" Name="myObject:IntegerField1">-5</PrimitiveValue>
-                    </Field>
-                    <Field Name="IntegerField2">
-                        <PrimitiveValue Type="System.Int32" Name="myObject:IntegerField2">10</PrimitiveValue>
-                    </Field>
-                    <Field Name="ManyFields">
-                        <Object Type="Examples.TestGeneration.ClassWithManyFields" Name="myObject:ManyFields" IsNull="false">
-                            <Field Name="D3">
-                                <PrimitiveValue Type="System.Double" Name="myObject:ManyFields:D3">0.128</PrimitiveValue>
-                            </Field>
-                        </Object>
-                    </Field>
-                </Object>
-                <PrimitiveValue Type="System.Int32" Name="arg">-5</PrimitiveValue>
-                <!-- <AliasParameter Type="Examples.TestGeneration.ClassWithManyFields" Name="#__RESULT__" ReferencedParameter="myObject:ManyFields"/> -->
-                <Object Type="Examples.TestGeneration.ClassWithManyFields" Name="#__RESULT__" IsNull="false">
-                    <Field Name="D3">
-                        <PrimitiveValue Type="System.Double" Name="myObject:ManyFields:D3">0.128</PrimitiveValue>
-                    </Field>
-                </Object>
-            </Parameters>
-        </Iteration>
-    </Exploration>
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfItemAtDynamicIndexIsGreaterThan5(System.Double[],System.Int32)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000004" IsNull="Unknown" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+				<PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="Unknown">
+					<Accessor Type="MethodArgument" Name="index" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000004" IsNull="False" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+				<PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="Unknown">
+					<Accessor Type="MethodArgument" Name="index" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000004" IsNull="False" Length="1">
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+				<PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="0">
+					<Accessor Type="MethodArgument" Name="index" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="4">
+			<ParameterContext>
+				<Array ElementType="System.Double" Reference="0x00000004" IsNull="False" Length="1">
+					<Item Index="0" Reference="0x00000006" />
+					<Accessor Type="MethodArgument" Name="array" />
+				</Array>
+				<PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="0">
+					<Accessor Type="MethodArgument" Name="index" />
+				</PrimitiveValue>
+				<PrimitiveValue Type="System.Double" Reference="0x00000006" Value="6">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Objects.MethodsWithObjectParameter::BranchIfNull(Examples.Concolic.Features.Objects.TestClass)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x0000000F" IsNull="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x0000000F" IsNull="False">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Objects.MethodsWithObjectParameter::BranchIfNotNull(Examples.Concolic.Features.Objects.TestClass)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000014" IsNull="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000014" IsNull="False">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Objects.MethodsWithObjectParameter::InvokeMethodWithFieldAccess(Examples.Concolic.Features.Objects.TestClass)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000002" IsNull="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000002" IsNull="False">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000002" IsNull="False">
+					<Field Name="_myField" Reference="0x00000003" />
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+				<PrimitiveValue Type="System.Int32" Reference="0x00000003" Value="3">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Objects.MethodsWithObjectParameter::AbstractClass_ConcreteMethod(Examples.Concolic.Features.Objects.AbstractClass)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000011" IsNull="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000011" IsNull="False">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000011" IsNull="False">
+					<Field Name="_field" Reference="0x00000013" />
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+				<PrimitiveValue Type="System.Int32" Reference="0x00000013" Value="5">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Objects.MethodsWithObjectParameter::AbstractClass_AbstractMethod(Examples.Concolic.Features.Objects.AbstractClass)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000005" IsNull="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000005" IsNull="False">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="3">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000005" IsNull="False">
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="0" Reference="0x00000007" />
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000007" IsNull="False">
+					<Accessor Type="None" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="4">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000005" IsNull="False">
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="0" Reference="0x00000007" />
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="1" Reference="0x0000000A" />
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000007" IsNull="False">
+					<Field Name="OtherField" Reference="0x00000009" />
+					<Accessor Type="None" />
+				</Object>
+				<PrimitiveValue Type="System.Double" Reference="0x00000009" Value="0">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x0000000A" IsNull="False">
+					<Accessor Type="None" />
+				</Object>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="5">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000005" IsNull="False">
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="0" Reference="0x00000007" />
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="1" Reference="0x0000000A" />
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000007" IsNull="False">
+					<Field Name="OtherField" Reference="0x00000009" />
+					<Accessor Type="None" />
+				</Object>
+				<PrimitiveValue Type="System.Double" Reference="0x00000009" Value="0">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x0000000A" IsNull="False">
+					<Field Name="OtherField" Reference="0x0000000C" />
+					<Accessor Type="None" />
+				</Object>
+				<PrimitiveValue Type="System.Double" Reference="0x0000000C" Value="6">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="6">
+			<ParameterContext>
+				<Object Type="Examples.Concolic.Features.Objects.AbstractClass" Reference="0x00000005" IsNull="False">
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="0" Reference="0x00000007" />
+					<MethodResult Signature="Examples.Concolic.Features.Objects.TestClass Examples.Concolic.Features.Objects.AbstractClass::AbstractMethod()" Invocation="1" Reference="0x0000000A" />
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Object>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x00000007" IsNull="False">
+					<Field Name="OtherField" Reference="0x00000009" />
+					<Accessor Type="None" />
+				</Object>
+				<PrimitiveValue Type="System.Double" Reference="0x00000009" Value="5">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+				<Object Type="Examples.Concolic.Features.Objects.TestClass" Reference="0x0000000A" IsNull="False">
+					<Field Name="OtherField" Reference="0x0000000C" />
+					<Accessor Type="None" />
+				</Object>
+				<PrimitiveValue Type="System.Double" Reference="0x0000000C" Value="6">
+					<Accessor Type="None" />
+				</PrimitiveValue>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
+
+	<Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfNull(System.Int32[])" IsStatic="true" Solver="dnWalker.Z3.Solver">
+		<Iteration Number="1">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000008" IsNull="Unknown" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+		<Iteration Number="2">
+			<ParameterContext>
+				<Array ElementType="System.Int32" Reference="0x00000008" IsNull="False" Length="Unknown">
+					<Accessor Type="MethodArgument" Name="instance" />
+				</Array>
+			</ParameterContext>
+		</Iteration>
+	</Exploration>
 </Explorations>

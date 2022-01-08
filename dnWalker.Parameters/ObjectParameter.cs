@@ -2,132 +2,120 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-
-using Expressions = System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class ObjectParameter : ReferenceTypeParameter, IEquatable<ObjectParameter>
+    public class ObjectParameter : ReferenceTypeParameter, IObjectParameter
     {
-        public ObjectParameter(String typeName) : base(typeName)
+        private readonly FieldOwnerImplementation _fields;
+        private readonly MethodResolverImplementation _methodResults;
+
+        internal ObjectParameter(IParameterContext context, string type) : base(context)
         {
+            Type = type;
+            _fields = new FieldOwnerImplementation(Reference, context);
+            _methodResults = new MethodResolverImplementation(Reference, context);
         }
 
-        public ObjectParameter(String typeName, String name) : base(typeName, name)
+        internal ObjectParameter(IParameterContext context, ParameterRef reference, string type) : base(context, reference)
         {
-
+            Type = type;
+            _fields = new FieldOwnerImplementation(Reference, context);
+            _methodResults = new MethodResolverImplementation(Reference, context);
         }
 
-        private readonly Dictionary<String, Parameter> _fields = new Dictionary<String, Parameter>();
 
-        public IEnumerable<KeyValuePair<String, Parameter>> GetKnownFields()
+        public string Type
         {
-            return _fields;
-        }
-        
-        public Boolean TryGetField(String fieldName, out Parameter fieldParameter)
-        {
-            return _fields.TryGetValue(fieldName, out fieldParameter);
-
-            //if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
-            //{
-            //    return field.FieldValueParameter;
-            //}
-            //return null;
+            get;
         }
 
-        public void SetField(String fieldName, Parameter parameter)
+        #region IFieldOwner Members
+        public IReadOnlyDictionary<string, ParameterRef> GetFields()
         {
-            _fields[fieldName] = parameter;
-            if (HasName()) parameter.Name = ParameterName.ConstructField(Name, fieldName);
-
-            //if (TryGetTrait<FieldValueTrait>(t => t.FieldName == fieldName, out FieldValueTrait field))
-            //{
-            //    field.FieldValueParameter = parameter;
-            //}
-            //else
-            //{
-            //    field = new FieldValueTrait(fieldName, parameter);
-            //}
-            //parameter.Name = ParameterName.ConstructField(Name, fieldName);
+            return ((IFieldOwner)_fields).GetFields();
         }
 
-        /// <summary>
-        /// Invoked when the parameter name changes. Updates names of the <see cref="ReferenceTypeParameter.IsNullParameter"/> and fields parameters.
-        /// </summary>
-        /// <param name="newName"></param>
-        protected override void OnNameChanged(String newName)
+        public bool TryGetField(string fieldName, out ParameterRef fieldRef)
         {
-            base.OnNameChanged(newName);
+            return ((IFieldOwner)_fields).TryGetField(fieldName, out fieldRef);
+        }
 
-            if (_fields != null)
+        public void SetField(string fieldName, ParameterRef fieldRef)
+        {
+            ((IFieldOwner)_fields).SetField(fieldName, fieldRef);
+        }
+
+        public void ClearField(string fieldName)
+        {
+            ((IFieldOwner)_fields).ClearField(fieldName);
+        }
+        #endregion IFieldOwner Members
+
+        #region IMethodResolver Members
+        public IReadOnlyDictionary<MethodSignature, ParameterRef[]> GetMethodResults()
+        {
+            return ((IMethodResolver)_methodResults).GetMethodResults();
+        }
+
+        public bool TryGetMethodResult(MethodSignature methodSignature, int invocation, out ParameterRef resultRef)
+        {
+            return ((IMethodResolver)_methodResults).TryGetMethodResult(methodSignature, invocation, out resultRef);
+        }
+
+        public void SetMethodResult(MethodSignature methodSignature, int invocation, ParameterRef resultRef)
+        {
+            ((IMethodResolver)_methodResults).SetMethodResult(methodSignature, invocation, resultRef);
+        }
+
+        public void ClearMethodResult(MethodSignature methodSignature, int invocation)
+        {
+            ((IMethodResolver)_methodResults).ClearMethodResult(methodSignature, invocation);
+        }
+        #endregion IMethodResolver Members
+
+
+        public override ObjectParameter Clone(IParameterContext newContext)
+        {
+            ObjectParameter objectParameter = new ObjectParameter(newContext, Reference, Type)
             {
-                foreach (KeyValuePair<String, Parameter> pair in _fields)
-                {
-                    pair.Value.Name = ParameterName.ConstructField(newName, pair.Key);
-                }
-            }
+                IsNull = IsNull,
+                Accessor = Accessor?.Clone()
+            };
+
+            _fields.CopyTo(objectParameter._fields);
+            _methodResults.CopyTo(objectParameter._methodResults);
+
+
+            objectParameter.Accessor = Accessor?.Clone();
+
+            return objectParameter;
+        }
+        public override string ToString()
+        {
+            return $"ObjectParameter<{Type}>, Reference = {Reference}, IsNull = {IsNull}";
+        }
+    }
+
+    public static partial class ParameterContextExtensions
+    {
+        public static IObjectParameter CreateObjectParameter(this IParameterContext context, string type, bool? isNull = null)
+        {
+            return CreateObjectParameter(context, ParameterRef.Any, type, isNull);
         }
 
-        public override IEnumerable<ParameterExpression> GetParameterExpressions()
+        public static IObjectParameter CreateObjectParameter(this IParameterContext context, ParameterRef reference, string type, bool? isNull = null)
         {
-            return base.GetParameterExpressions()
-                .Concat(_fields.Values.SelectMany(fieldParameter => fieldParameter.GetParameterExpressions()));
-        }
-
-        public override Boolean TryGetChildParameter(String name, out Parameter childParameter)
-        {
-            if (base.TryGetChildParameter(name, out childParameter)) return true;
-
-            String accessor = ParameterName.GetAccessor(Name, name);
-            if (TryGetField(accessor, out childParameter))
+            ObjectParameter parameter = new ObjectParameter(context, reference, type)
             {
-                return true;
-            }
-            else
-            {
-                childParameter = null;
-                return false;
-            }
+                IsNull = isNull
+            };
+
+            context.Parameters.Add(parameter.Reference, parameter);
+
+            return parameter;
         }
-
-        public override IEnumerable<Parameter> GetChildrenParameters()
-        {
-            return _fields.Values.Append(IsNullParameter);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as ObjectParameter);
-        }
-
-        public bool Equals(ObjectParameter other)
-        {
-            bool isNull = IsNull.HasValue ? IsNull.Value : true;
-
-            return other != null &&
-                   Name == other.Name &&
-                   IsNull == other.IsNull &&
-                   TypeName == other.TypeName &&
-                   (isNull || _fields.Count == other._fields.Count) &&
-                   (isNull || _fields.All(p => other._fields.TryGetValue(p.Key, out Parameter otherField) && Equals(p.Value, otherField)));
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name, TypeName, IsNull, _fields);
-        }
-
-        public static bool operator ==(ObjectParameter left, ObjectParameter right)
-        {
-            return EqualityComparer<ObjectParameter>.Default.Equals(left, right);
-        }
-
-        public static bool operator !=(ObjectParameter left, ObjectParameter right)
-        {
-            return !(left == right);
-        }
-
     }
 }

@@ -11,6 +11,8 @@ namespace dnWalker
         private readonly ModuleContext _moduleContext;
         private ModuleDef _module;
 
+        private HashSet<string> _loadedModules = new HashSet<string>();
+
         public AssemblyLoader()
         {
             _moduleContext = ModuleDef.CreateModuleContext();
@@ -45,6 +47,9 @@ namespace dnWalker
                 return DefinitionProvider.AssemblyDefinition;
             }*/
             _module = module;
+
+            _loadedModules.Add(module.FullName);
+
             return module;
         }
 
@@ -64,15 +69,39 @@ namespace dnWalker
 
         public ModuleDef GetModule() => _module ?? throw new Exception("Module was not loaded");
 
-        public ModuleDef[] GetReferencedModules(ModuleDef module)
+        private void LoadReferencedModulesRecursive(ModuleDef src, List<ModuleDef> modules)
         {
-            var refs = module.GetAssemblyRefs();
+            var refs = src.GetAssemblyRefs();
 
-            var refAssemblies = refs.Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module));
+            var refAssemblies = refs.Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, src));
 
             var refModules = refAssemblies.SelectMany(a => a.Modules);
 
-            return refModules.ToArray();
+            foreach (ModuleDef m in refModules)
+            {
+                if (_loadedModules.Contains(m.FullName)) continue;
+                _loadedModules.Add(m.FullName);
+                modules.Add(m);
+                LoadReferencedModulesRecursive(m, modules);
+            }
+
+        }
+
+
+        public ModuleDef[] GetReferencedModules(ModuleDef module)
+        {
+            List<ModuleDef> refs = new List<ModuleDef>();
+            LoadReferencedModulesRecursive(module, refs);
+            return refs.ToArray();
+
+            //var refs = module.GetAssemblyRefs();
+
+            //var refAssemblies = refs.Select(ar => _moduleContext.AssemblyResolver.Resolve(ar.Name, module));
+
+            //var refModules = refAssemblies.SelectMany(a => a.Modules);
+
+
+            //return refModules.ToArray();
 
 
             //return module.GetAssemblyRefs()

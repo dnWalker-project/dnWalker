@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.Parameters;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -31,9 +33,41 @@ namespace dnWalker.TestGenerator.Reflection
             return null;
         }
 
-        public static string ToSignatureString(this MethodInfo methodInfo)
+        //public static string ToSignatureString(this MethodInfo methodInfo)
+        //{
+        //    return new MethodSignature(methodInfo).ToString();
+        //}
+
+        //public static MethodSignature GetMethodSignature(this Type type, dnWalker.Parameters.MethodSignature methodSignature)
+        //{
+        //    Type[] argTypes = methodSignature.ArgumentTypeFullNames.Length == 0 ? 
+        //        Type.EmptyTypes : 
+        //        methodSignature.ArgumentTypeFullNames
+        //            .Select(t => AppDomain.CurrentDomain.GetType(t) ?? throw new Exception($"Could not find type '{t}'"))
+        //            .ToArray();
+
+        //    return new MethodSignature(type.GetMethod(methodSignature.MethodName, argTypes) ?? throw new Exception($"Could not find method with signature '{methodSignature}'"));
+        //}
+
+        public static MethodInfo? GetMethodFromSignature(this Type type, MethodSignature methodSignature)
         {
-            return new MethodSignature(methodInfo).ToString();
+            Type[] argTypes = methodSignature.ArgumentTypeFullNames.Length == 0 ?
+                Type.EmptyTypes :
+                methodSignature.ArgumentTypeFullNames
+                    .Select(t => AppDomain.CurrentDomain.GetType(t) ?? throw new Exception($"Could not find type '{t}'"))
+                    .ToArray();
+
+            return type.GetMethod(methodSignature.MethodName, argTypes);
         }
+        //public static MethodInfo? GetMethodFromSignature(this Type type, MethodSignature methodSignature, BindingFlags bindingFlags)
+        //{
+        //    Type[] argTypes = methodSignature.ArgumentTypeFullNames.Length == 0 ?
+        //        Type.EmptyTypes :
+        //        methodSignature.ArgumentTypeFullNames
+        //            .Select(t => AppDomain.CurrentDomain.GetType(t) ?? throw new Exception($"Could not find type '{t}'"))
+        //            .ToArray();
+
+        //    return type.GetMethod(methodSignature.MethodName, argTypes);
+        //}
     }
 }

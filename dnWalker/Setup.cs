@@ -24,6 +24,7 @@ namespace MMC
     using System;
     using dnWalker;
     using System.Linq;
+    using dnWalker.Instructions.Extensions;
 
     public class StateSpaceSetup
     {
@@ -69,19 +70,32 @@ namespace MMC
             return CreateInitialState(entryPoint, args);
         }
 
+
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IDataElement[] arguments = null)
+        {
+            return CreateInitialState(entryPoint, state => arguments);
+        }
+
         /// <summary>
         /// Creates initial state for exploration.
         /// </summary>
         /// <returns></returns>
-        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IDataElement[] arguments = null)
+        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, Func<ExplicitActiveState, IDataElement[]> createArgs)
         {
             var config = _config;
 
-            var instructionExecProvider = InstructionExecProvider.Get(
-                config,
-                new dnWalker.Symbolic.Instructions.InstructionFactory()); // TODO enable dynamic switch
+            //var instructionExecProvider = InstructionExecProvider.Get(
+            //    config,
+            //    new dnWalker.Symbolic.Instructions.InstructionFactory()); // TODO enable dynamic switch
+
+
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
+
+            var instructionExecProvider = InstructionExecProvider.Get(config, f);
 
             var cur = new ExplicitActiveState(config, instructionExecProvider, _definitionProvider, _logger);
+
+            IDataElement[] arguments = createArgs(cur) ?? Array.Empty<IDataElement>();
 
             //StorageFactory.UseRefCounting(_config.UseRefCounting);
             if (config.UseRefCounting)

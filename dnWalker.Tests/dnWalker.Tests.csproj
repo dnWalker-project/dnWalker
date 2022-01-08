@@ -10,6 +10,7 @@
         <PackageReference Include="FluentAssertions" Version="6.2.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
         <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="Xunit.Combinatorial" Version="1.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -23,6 +24,30 @@
     <ItemGroup>
         <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
         <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Parameters\ParameterFactory_NumericParameterTests.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>ParameterFactory_NumericParameterTests.tt.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Parameters\ParameterFactory_NumericParameterTests.tt.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ParameterFactory_NumericParameterTests.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Parameters\ParameterFactory_NumerParameterTests.tt.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ParameterFactory_NumerParameterTests.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

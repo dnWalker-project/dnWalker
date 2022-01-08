@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Explorations>
+  <Exploration AssemblyName="Examples.Framework" AssemblyFileName="..\..\..\..\Examples\bin\Debug\framework\Examples.Framework.exe" MethodSignature="System.Void Examples.Concolic.Features.Arrays.MethodsWithArrayParameter::BranchIfItemAtDynamicIndexIsGreaterThan5(System.Double[],System.Int32)" IsStatic="true" Solver="dnWalker.Z3.Solver">
+    <Iteration Number="1">
+      <ParameterContext>
+        <Array ElementType="System.Double" Reference="0x00000004" IsNull="Unknown" Length="Unknown">
+          <Accessor Type="MethodArgument" Name="array" />
+        </Array>
+        <PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="Unknown">
+          <Accessor Type="MethodArgument" Name="index" />
+        </PrimitiveValue>
+      </ParameterContext>
+    </Iteration>
+    <Iteration Number="2">
+      <ParameterContext>
+        <Array ElementType="System.Double" Reference="0x00000004" IsNull="False" Length="Unknown">
+          <Accessor Type="MethodArgument" Name="array" />
+        </Array>
+        <PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="Unknown">
+          <Accessor Type="MethodArgument" Name="index" />
+        </PrimitiveValue>
+      </ParameterContext>
+    </Iteration>
+    <Iteration Number="3">
+      <ParameterContext>
+        <Array ElementType="System.Double" Reference="0x00000004" IsNull="False" Length="1">
+          <Accessor Type="MethodArgument" Name="array" />
+        </Array>
+        <PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="0">
+          <Accessor Type="MethodArgument" Name="index" />
+        </PrimitiveValue>
+      </ParameterContext>
+    </Iteration>
+    <Iteration Number="4">
+      <ParameterContext>
+        <Array ElementType="System.Double" Reference="0x00000004" IsNull="False" Length="1">
+          <Item Index="0" Reference="0x00000006" />
+          <Accessor Type="MethodArgument" Name="array" />
+        </Array>
+        <PrimitiveValue Type="System.Int32" Reference="0x00000005" Value="0">
+          <Accessor Type="MethodArgument" Name="index" />
+        </PrimitiveValue>
+        <PrimitiveValue Type="System.Double" Reference="0x00000006" Value="6">
+          <Accessor Type="None" />
+        </PrimitiveValue>
+      </ParameterContext>
+    </Iteration>
+  </Exploration>
+</Explorations>

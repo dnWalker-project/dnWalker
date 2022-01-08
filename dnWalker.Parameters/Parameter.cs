@@ -1,73 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public abstract class Parameter
+    public abstract class Parameter : IParameter
     {
-        private string _name;
-
-        public string Name
+        private static int _nextId = 1;
+        private static ParameterRef GetReferenceIdFor(IParameter instance)
         {
-            get { return _name; }
+            // "random" ids => using the GetHashCode function
+            // return RuntimeHelpers.GetHashCode(instance);
+            return _nextId++;
+        }
+
+
+        protected Parameter(IParameterContext context)
+        {
+            Context = context;
+            Reference = GetReferenceIdFor(this);
+        }
+        protected Parameter(IParameterContext context, ParameterRef reference)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Reference = reference == ParameterRef.Any ? GetReferenceIdFor(this) : reference;
+        }
+
+        public IParameterContext Context
+        {
+            get;
+        }
+
+        public ParameterRef Reference
+        {
+            get;
+        }
+
+        public abstract IParameter Clone(IParameterContext newContext);
+
+        private ParameterAccessor? _accessor = null;
+
+        public ParameterAccessor? Accessor
+        {
+            get
+            {
+                return _accessor;
+            }
             set
             {
-                if (String.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
-
-                if (_name != value)
+                if (_accessor is RootParameterAccessor rOld)
                 {
-                    _name = value;
-                    OnNameChanged(value);
+                    Context.Roots.Remove(rOld.Expression);
+                }
+
+                _accessor = value;
+
+                if (value is RootParameterAccessor rNew)
+                {
+                    Context.Roots.Add(rNew.Expression, Reference);
                 }
             }
         }
 
-        public bool HasName()
-        {
-            return !String.IsNullOrWhiteSpace(_name);
-        }
-
-        public string TypeName { get; }
-
-        //public IList<ParameterTrait> Traits { get; }
-
-        /// <summary>
-        /// Invoked when the parameter name changes. When overridden, updates names of child parameters.
-        /// </summary>
-        /// <param name="newName"></param>
-        protected virtual void OnNameChanged(string newName)
-        { }
-
-        protected Parameter(string typeName)
-        {
-            TypeName = typeName;
-        }
-
-        protected Parameter(string typeName, string name)
-        {
-            if (String.IsNullOrWhiteSpace(typeName)) throw new ArgumentNullException(nameof(typeName));
-            if (String.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
-
-            TypeName = typeName;
-            Name = name;
-            //Traits = new List<ParameterTrait>();
-        }
-
-        public abstract IEnumerable<ParameterExpression> GetParameterExpressions();
-        public abstract bool HasSingleExpression { get; }
-        public abstract ParameterExpression GetSingleParameterExpression();
-
-        public override string ToString()
-        {
-            return $"Parameter: {Name}, Type: {TypeName}";
-        }
-
-        public abstract bool TryGetChildParameter(string name, out Parameter childParameter);
-
-        public abstract IEnumerable<Parameter> GetChildrenParameters();
     }
 }

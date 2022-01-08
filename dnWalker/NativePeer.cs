@@ -10,6 +10,8 @@ namespace dnWalker
     {
         public static NativePeer Get(TypeDef typeDef)
         {
+            string fullName = typeDef.FullName;
+
             if (typeDef.FullName == typeof(Environment).FullName)
             {
                 return new NativePeers.SystemEnvironment();
@@ -79,6 +81,16 @@ namespace dnWalker
             if (typeDef.FullName == typeof(Math).FullName)
             {
                 return new NativePeers.SystemMath();
+            }
+
+            if (fullName == typeof(IntPtr).FullName)
+            {
+                return new NativePeers.SystemIntPtr();
+            }
+
+            if (fullName == typeof(UIntPtr).FullName)
+            {
+                return new NativePeers.SystemUIntPtr();
             }
 
             return null;

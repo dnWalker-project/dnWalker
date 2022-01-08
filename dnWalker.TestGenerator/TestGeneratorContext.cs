@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.Reflection;
+﻿using dnWalker.Parameters;
+using dnWalker.TestGenerator.Reflection;
 
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace dnWalker.TestGenerator
 {
@@ -23,10 +25,33 @@ namespace dnWalker.TestGenerator
             SUTAssembly = assembly;
             ExplorationData = explorationData;
 
-            _sutMethodSignature = MethodSignature.FromString(explorationData.MethodSignature);
+            _sutType = AppDomain.CurrentDomain.GetType(explorationData.MethodSignature.DeclaringTypeFullName) ?? throw new Exception($"Could not find type '{explorationData.MethodSignature.DeclaringTypeFullName}'");
+            _sutMethod = _sutType.GetMethodFromSignature(explorationData.MethodSignature) ?? throw new Exception($"Could not find method '{explorationData.MethodSignature}'");
+
+            if (explorationData.Iterations != null && explorationData.Iterations.Length > 0)
+            {
+                foreach (var iterationData in explorationData.Iterations)
+                {
+                    IParameterContext ctx = iterationData.ParameterContext;
+                    foreach (var keyValue in ctx.Parameters)
+                    {
+                        if (!_initializations.TryGetValue(keyValue.Key, out ParameterInitializationInfo? initInfo))
+                        {
+                            initInfo = ParameterInitializationInfo.Create(keyValue.Value);
+                            _initializations.Add(keyValue.Key, initInfo);
+                        }
+
+                        initInfo.AddContext(ctx);
+                    }
+                }
+            }
+
         }
 
-        private readonly MethodSignature _sutMethodSignature;
+        private readonly MethodInfo _sutMethod;
+        private readonly Type _sutType;
+
+        private Dictionary<ParameterRef, ParameterInitializationInfo> _initializations = new Dictionary<ParameterRef, ParameterInitializationInfo>();
 
         public Assembly SUTAssembly 
         {
@@ -37,7 +62,7 @@ namespace dnWalker.TestGenerator
         {
             get
             {
-                return _sutMethodSignature.DeclaringType;
+                return _sutType;
             }
         }
 
@@ -45,7 +70,7 @@ namespace dnWalker.TestGenerator
         {
             get
             {
-                return _sutMethodSignature.MethodInfo;
+                return _sutMethod;
             }
         }
 
@@ -67,6 +92,14 @@ namespace dnWalker.TestGenerator
             get
             {
                 return SUTType.Name + "_Tests_" + SUTMethod.Name;
+            }
+        }
+
+        public IReadOnlyDictionary<ParameterRef, ParameterInitializationInfo> Initializations
+        {
+            get
+            {
+                return _initializations;
             }
         }
     }

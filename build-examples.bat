@@ -1,5 +1,5 @@
-dotnet build Examples\Examples.csproj --configuration DEBUG
-dotnet build Examples\Examples.csproj --configuration RELEASE
+dotnet build Examples\Examples.csproj --configuration Debug
+dotnet build Examples\Examples.csproj --configuration Release
 
-dotnet build dnWalker.TestGenerator.SUT\dnWalker.TestGenerator.SUT.csproj --configuration DEBUG
-dotnet build dnWalker.TestGenerator.SUT\dnWalker.TestGenerator.SUT.csproj --configuration RELEASE
+dotnet build Examples\Examples.Framework.csproj --configuration Debug
+dotnet build Examples\Examples.Framework.csproj --configuration Release

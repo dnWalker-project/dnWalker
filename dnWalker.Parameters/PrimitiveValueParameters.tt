@@ -1,0 +1,124 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #>
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
+namespace dnWalker.Parameters
+{
+<#
+ string[] types = 
+ {
+    "Boolean",
+    "Char",
+    "Byte",
+    "SByte",
+    "Int16",
+    "Int32",
+    "Int64",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "Single",
+    "Double",
+ };
+
+ string[] aliases = 
+ {
+    "bool",
+    "char",
+    "byte",
+    "sbyte",
+    "short",
+    "int",
+    "long",
+    "ushort",
+    "uint",
+    "ulong",
+    "float",
+    "double",
+ };
+
+ for (int i = 0; i < types.Length; ++i)
+ {
+    string type = types[i];
+    string alias = aliases[i];
+
+#>
+
+    public class <#= type #>Parameter : Parameter, I<#= type #>Parameter
+    {
+        internal <#= type #>Parameter(IParameterContext context) : base(context)
+        {
+        }
+
+        internal <#= type #>Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        {
+        }
+        
+        internal <#= type #>Parameter(IParameterContext context, ParameterRef reference, <#= alias #>? value) : base(context, reference)
+        {
+            Value = value;
+        }
+
+        public <#= alias #>? Value
+        {
+            get;
+            set;
+        }
+
+        public override <#= type #>Parameter Clone(IParameterContext context)
+        {
+             <#= type #>Parameter parameter = new <#= type #>Parameter(context, Reference, Value);
+
+             parameter.Accessor = Accessor?.Clone();
+
+             return parameter;
+        }
+
+        public override string ToString()
+        {
+            return $"Parameter<<#= type #>>, Reference = {Reference}, Value = {Value}";
+        }
+    }
+<#
+ }
+#>
+
+
+    public static partial class ParameterContextExtensions
+    {
+<# 
+for (int i = 0; i < types.Length; ++i)
+{
+    string type = types[i];
+    string alias = aliases[i];
+
+#>
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context)
+        {
+            return Create<#= type #>Parameter(context, ParameterRef.Any, null);
+        }
+        
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference)
+        {
+            return Create<#= type #>Parameter(context, reference, null);
+        }
+        
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference, <#= alias #>? value)
+        {
+            <#= type #>Parameter parameter = new <#= type #>Parameter(context, reference, value);
+            
+            context.Parameters.Add(parameter.Reference, parameter);
+            
+            return parameter;
+        }
+<#
+}
+#>
+    }
+}

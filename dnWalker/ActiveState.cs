@@ -34,6 +34,7 @@ namespace MMC.State
     /// </summary>
     public class ExplicitActiveState : IStorageVisitable, ICleanable
     {
+
         DynamicArea m_dyn;
         IStaticArea m_stat;
         ThreadPool m_tp;

@@ -8,13 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
-    <PackageReference Include="dnlib" Version="3.3.5" />
+    <PackageReference Include="dnlib" Version="3.4.0" />
     <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.13" />
     <PackageReference Include="QuikGraph" Version="2.3.0" />
     <PackageReference Include="QuikGraph.Graphviz" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
     <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj" />
   </ItemGroup>
 
@@ -31,6 +32,43 @@
     <Reference Include="Echo.Platforms.Dnlib">
       <HintPath>..\lib\Echo\Echo.Platforms.Dnlib.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Instructions\Extensions\PathConstraintProducerExtensions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PathConstraintProducerExtensions.tt.cs</LastGenOutput>
+    </None>
+    <None Update="Instructions\Extensions\SymbolicConversionExecutionExtensions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SymbolicConversionExecutionExtensions.tt.cs</LastGenOutput>
+    </None>
+    <None Update="Instructions\Extensions\SymbolicExecutionExtenions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SymbolicExecutionExtenions.tt.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Instructions\Extensions\PathConstraintProducerExtensions.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PathConstraintProducerExtensions.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Instructions\Extensions\SymbolicConversionExecutionExtensions.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SymbolicConversionExecutionExtensions.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Instructions\Extensions\SymbolicExecutionExtenions.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SymbolicExecutionExtenions.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

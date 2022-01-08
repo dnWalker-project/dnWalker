@@ -1,257 +1,257 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+using static dnWalker.Parameters.Xml.XmlTokens;
+
 namespace dnWalker.Parameters.Xml
 {
-    public static class XmlDeserializer
+    public class MissingElementException : Exception
     {
-        public static ParameterStore ToParameterStore(this XElement xml)
+        public MissingElementException(string context, string elementName)
+        {
+            ElementName = elementName;
+            Context = context;
+        }
+
+        protected MissingElementException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            ElementName = info.GetString(nameof(ElementName)) ?? string.Empty;
+            Context = info.GetString(nameof(Context)) ?? string.Empty;
+        }
+
+        public string ElementName { get; }
+
+        public string Context { get; }
+
+        public override string Message
+        {
+            get
+            {
+                return $"'{Context}' XML must contain an '{ElementName}' element.";
+            }
+        }
+    }
+    public class MissingAttributeException : Exception
+    {
+        public MissingAttributeException(string context, string attributeName)
+        {
+            AttributeName = attributeName;
+            Context = context;
+        }
+
+        protected MissingAttributeException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            AttributeName = info.GetString(nameof(AttributeName)) ?? string.Empty;
+            Context = info.GetString(nameof(Context)) ?? string.Empty;
+        }
+
+        public string AttributeName { get; }
+
+        public string Context { get; }
+
+        public override string Message
+        {
+            get
+            {
+                return $"'{Context}' XML must contain an '{AttributeName}' attribute.";
+            }
+        }
+    }
+
+    public static partial class XmlDeserializer
+    {
+        private static ParameterRef String2Ref(string pref)
+        {
+            return Convert.ToInt32(pref.Substring(2), 16);
+        }
+
+        private static bool? String2Bool(string value)
+        {
+            if (value == XmlUnknown) return null;
+            return bool.Parse(value);
+        }
+
+        private static int? String2Int(string value)
+        {
+            if (value == XmlUnknown) return null;
+            return int.Parse(value);
+        }
+
+        public static IParameter ToParameter(this XElement xml, IParameterContext context)
+        {
+            string parameterType = xml.Name.LocalName;
+
+            IParameter? parameter;
+
+            switch (parameterType)
+            {
+                case XmlObject: parameter = ToObjectParameter(xml, context); break;
+                case XmlArray: parameter = ToArrayParameter(xml, context); break;
+                case XmlPrimitiveValue: parameter = ToPrimitiveValueParameter(xml, context); break;
+                case XmlStruct: parameter = ToStructParameter(xml, context); break;
+                default: throw new NotSupportedException(xml.ToString());
+            }
+
+            XElement accessorElement = xml.Element(XmlAccessor) ?? throw new MissingElementException(nameof(IParameter), XmlAccessor);
+
+            parameter.Accessor = accessorElement.ToAccessor();
+
+            return parameter;
+        }
+
+        public static IObjectParameter ToObjectParameter(this XElement xml, IParameterContext context)
+        {
+            string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter), XmlType);
+            bool? isNull = String2Bool(xml.Attribute(XmlIsNull)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter), XmlIsNull));
+            ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter), XmlReference));
+
+            IObjectParameter objectParameter = context.CreateObjectParameter(reference, type, isNull);
+
+            foreach (XElement fieldXml in xml.Elements(XmlField))
+            {
+                string fieldName = fieldXml.Attribute(XmlName)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/Field", XmlName);
+                reference = String2Ref(fieldXml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/Field", XmlReference));
+
+                objectParameter.SetField(fieldName, reference);
+            }
+
+            foreach (XElement methodResultXml in xml.Elements(XmlMethodResult))
+            {
+                MethodSignature methodSignature = methodResultXml.Attribute(XmlMethodSignature)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlMethodSignature);
+                int invocation = int.Parse(methodResultXml.Attribute(XmlInvocation)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlInvocation));
+                reference = String2Ref(methodResultXml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter) + "/MethodResult", XmlReference));
+
+                objectParameter.SetMethodResult(methodSignature, invocation, reference);
+            }
+
+
+            return objectParameter;
+        }
+
+        public static IStructParameter ToStructParameter(this XElement xml, IParameterContext context)
+        {
+            string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IStructParameter), XmlType);
+            ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IStructParameter), XmlReference));
+
+            IStructParameter structParameter = context.CreateStructParameter(reference, type);
+
+            foreach (XElement fieldXml in xml.Elements(XmlField))
+            {
+                string fieldName = fieldXml.Attribute(XmlName)?.Value ?? throw new MissingAttributeException(nameof(IStructParameter) + "/Field", XmlName);
+                reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IStructParameter) + "/Field", XmlReference));
+
+                structParameter.SetField(fieldName, reference);
+            }
+
+            return structParameter;
+        }
+
+        public static IArrayParameter ToArrayParameter(this XElement xml, IParameterContext context)
+        {
+            string type = xml.Attribute(XmlElementType)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlElementType);
+            bool? isNull = String2Bool(xml.Attribute(XmlIsNull)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlIsNull));
+            int? length = String2Int(xml.Attribute(XmlLength)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlLength));
+            ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlReference));
+
+            IArrayParameter arrayParameter = context.CreateArrayParameter(reference, type, isNull, length);
+
+            foreach (XElement itemXml in xml.Elements(XmlItem))
+            {
+                int index = int.Parse(itemXml.Attribute(XmlIndex)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter) + "/Item", XmlIndex));
+                reference = String2Ref(itemXml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter) + "/Item", XmlReference));
+
+                arrayParameter.SetItem(index, reference);
+            }
+
+
+
+            return arrayParameter;
+        }
+
+        public static ParameterAccessor? ToAccessor(this XElement xml)
+        {
+            string type = xml.Attribute(XmlType)?.Value ?? throw new Exception("Parameter accessor XML must contain 'Type' attribute.");
+
+            ParameterAccessor? accessor;
+
+            switch (type)
+            {
+                case XmlField:
+                    accessor = new FieldParameterAccessor
+                        (
+                            xml.Attribute(XmlField)?.Value ?? throw new MissingAttributeException(nameof(FieldParameterAccessor), XmlField),
+                            String2Ref(xml.Attribute(XmlReference)?.Value.Substring(2) ?? throw new MissingAttributeException(nameof(FieldParameterAccessor), XmlReference))
+                        );
+                    break;
+
+                case XmlMethodResult:
+                    accessor = new MethodResultParameterAccessor
+                        (
+                            xml.Attribute(XmlMethodSignature)?.Value ?? throw new MissingAttributeException(nameof(MethodResultParameterAccessor), XmlMethodSignature),
+                            int.Parse(xml.Attribute(XmlInvocation)?.Value ?? throw new MissingAttributeException(nameof(MethodResultParameterAccessor), XmlInvocation)),
+                            String2Ref(xml.Attribute(XmlReference)?.Value.Substring(2) ?? throw new MissingAttributeException(nameof(MethodResultParameterAccessor), XmlReference))
+                        );
+                    break;
+
+                case XmlIndex:
+                    accessor = new ItemParameterAccessor
+                        (
+                            int.Parse(xml.Attribute(XmlIndex)?.Value ?? throw new MissingAttributeException(nameof(ItemParameterAccessor), XmlIndex)),
+                            String2Ref(xml.Attribute(XmlReference)?.Value.Substring(2) ?? throw new MissingAttributeException(nameof(ItemParameterAccessor), XmlReference))
+                        );
+                    break;
+
+                case XmlMethodArgumentRoot:
+                    accessor = new MethodArgumentParameterAccessor
+                        (
+                            xml.Attribute(XmlName)?.Value ?? throw new MissingAttributeException(nameof(MethodArgumentParameterAccessor), XmlName)
+                        );
+                    break;
+
+                case XmlStaticFieldRoot:
+                    accessor = new StaticFieldParameterAccessor
+                        (
+                            xml.Attribute(XmlFullName)?.Value ?? throw new MissingAttributeException(nameof(StaticFieldParameterAccessor), XmlFullName),
+                            xml.Attribute(XmlField)?.Value ?? throw new MissingAttributeException(nameof(StaticFieldParameterAccessor), XmlField)
+                        );
+                    break;
+
+                case XmlNoAccessor:
+                    accessor = null;
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
+
+            return accessor;
+        }
+
+        public static IParameterContext ToParameterContext(this XElement xml)
         {
             if (xml == null)
             {
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            if (xml.Name != "ParameterStore")
+            if (xml.Name != XmlParameterContext)
             {
                 throw new ArgumentException("Unexpected XML element.");
             }
 
-            ParameterStore store = new ParameterStore();
+            IParameterContext context = new ParameterContext();
 
-            foreach(XElement rootParamterXml in xml.Elements())
+            foreach (XElement parameterXml in xml.Elements())
             {
-                store.AddParameter(rootParamterXml.ToParameter());
+                parameterXml.ToParameter(context);
             }
 
-            return store;
-        }
-
-        public static Parameter ToParameter(this XElement xml)
-        {
-            string parameteryKind = xml.Name.ToString();
-
-            switch(parameteryKind)
-            {
-                case "PrimitiveValue": 
-                    switch(xml.Attribute("Type").Value)
-                    {
-                        case TypeNames.BooleanTypeName: return ToBooleanParameter(xml);
-                        case TypeNames.CharTypeName: return ToCharParameter(xml);
-                        case TypeNames.ByteTypeName: return ToByteParameter(xml);
-                        case TypeNames.SByteTypeName: return ToSByteParameter(xml);
-                        case TypeNames.Int16TypeName: return ToInt16Parameter(xml);
-                        case TypeNames.Int32TypeName: return ToInt32Parameterer(xml);
-                        case TypeNames.Int64TypeName: return ToInt64Parameter(xml);
-                        case TypeNames.UInt16TypeName: return ToUInt16Parameter(xml);
-                        case TypeNames.UInt32TypeName: return ToUInt32Parameter(xml);
-                        case TypeNames.UInt64TypeName: return ToUInt64Parameter(xml);
-                        case TypeNames.SingleTypeName: return ToSingleParameter(xml);
-                        case TypeNames.DoubleTypeName: return ToDoubleParameter(xml);
-                        default:
-                            throw new NotSupportedException("Unexpected primitive value parameter type: " + xml.Attribute("Type").Value);
-                    }
-
-                case "Object":
-                    return ToObjectParameter(xml);
-
-                case "Interface":
-                    return ToInterfaceParameter(xml);
-
-                case "Array":
-                    return ToArrayParameter(xml);
-
-                default:
-                    throw new NotSupportedException("Unexpected parameter kind: " + parameteryKind);
-            }
-        }
-
-        public static ObjectParameter ToObjectParameter(this XElement xml)
-        {
-            string typeName = xml.Attribute("Type")?.Value ?? throw new Exception("Object parameter XML must contain 'Type' attribute.");
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Object parameter XML must contain 'IsNull' attribute."));
-
-            ObjectParameter o = new ObjectParameter(typeName, name)
-            {
-                IsNull = isNull
-            };
-
-            foreach(XElement fieldElement in xml.Elements("Field"))
-            {
-                string fieldName = fieldElement.Attribute("Name").Value ?? throw new Exception("Object field XMl must contain 'Name' attribute.");
-                Parameter fieldValue = fieldElement.Elements().First().ToParameter();
-
-                o.SetField(fieldName, fieldValue);
-            }
-
-            return o;
-        }
-
-        public static InterfaceParameter ToInterfaceParameter(this XElement xml)
-        {
-            string typeName = xml.Attribute("Type")?.Value ?? throw new Exception("Interface parameter XML must contain 'Type' attribute.");
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Interface parameter XML must contain 'IsNull' attribute."));
-
-            InterfaceParameter i = new InterfaceParameter(typeName, name)
-            {
-                IsNull = isNull
-            };
-
-            foreach (XElement methodResultElement in xml.Elements("MethodResult"))
-            {
-                string methodName = methodResultElement.Attribute("Name")?.Value ?? throw new Exception("Interface MethodResult XML must contain 'Name' attribute.");
-                foreach (XElement callResultEelement in methodResultElement.Elements("Call"))
-                {
-                    int callNumber = int.Parse(callResultEelement.Attribute("CallNumber")?.Value ?? throw new Exception("Interface CallResult XML must contain 'CallNumber' attribute."));
-                    Parameter callResult = callResultEelement.Elements().First().ToParameter();
-
-                    i.SetMethodResult(methodName, callNumber, callResult);
-                }
-            }
-
-            return i;
-        }
-
-        public static ArrayParameter ToArrayParameter(this XElement xml)
-        {
-            string elementTypeName = xml.Attribute("ElementType")?.Value ?? throw new Exception("Array parameter XML must contain 'ElementType' attribute.");
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool isNull = bool.Parse(xml.Attribute("IsNull")?.Value ?? throw new Exception("Array parameter XML must contain 'IsNull' attribute."));
-            int length = int.Parse(xml.Attribute("Length")?.Value ?? throw new Exception("Array parameter XML must contain 'Length' attribute."));
-
-            ArrayParameter a = new ArrayParameter(elementTypeName, name)
-            {
-                IsNull = isNull,
-                Length = length
-            };
-
-            foreach (XElement itemElement in xml.Elements("Item"))
-            {
-                int itemIndex = int.Parse(itemElement.Attribute("Index").Value ?? throw new Exception("Array item XMl must contain 'Index' attribute."));
-                Parameter item = itemElement.Elements().First().ToParameter();
-
-                a.SetItemAt(itemIndex, item);
-            }
-
-            return a;
-        }
-
-        public static BooleanParameter ToBooleanParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            bool value = bool.Parse(xml.Value);
-            return new BooleanParameter(name, value);
-        }
-
-        public static CharParameter ToCharParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            char value = Convert.ToChar(Convert.ToInt32(xml.Value.Substring(2), 16));
-
-            return new CharParameter(name, value);
-        }
-
-        public static ByteParameter ToByteParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            byte value = byte.Parse(xml.Value);
-            return new ByteParameter(name, value);
-        }
-
-        public static SByteParameter ToSByteParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            sbyte value = sbyte.Parse(xml.Value);
-            return new SByteParameter(name, value);
-        }
-
-        public static Int16Parameter ToInt16Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            short value = short.Parse(xml.Value);
-            return new Int16Parameter(name, value);
-        }
-
-        public static Int32Parameter ToInt32Parameterer(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            int value = int.Parse(xml.Value);
-            return new Int32Parameter(name, value);
-        }
-
-        public static Int64Parameter ToInt64Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            long value = long.Parse(xml.Value);
-            return new Int64Parameter(name, value);
-        }
-
-        public static UInt16Parameter ToUInt16Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            ushort value = ushort.Parse(xml.Value);
-            return new UInt16Parameter(name, value);
-        }
-
-        public static UInt32Parameter ToUInt32Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            uint value = uint.Parse(xml.Value);
-            return new UInt32Parameter(name, value);
-        }
-
-        public static UInt64Parameter ToUInt64Parameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-            ulong value = ulong.Parse(xml.Value);
-            return new UInt64Parameter(name, value);
-        }
-
-        public static SingleParameter ToSingleParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
-
-            float value;
-            switch (strValue)
-            {
-                case "NAN": value = float.NaN; break;
-                case "INF": value = float.PositiveInfinity; break;
-                case "-INF": value = float.NegativeInfinity; break;
-
-
-                default: value = float.Parse(strValue); break;
-            }
-
-            return new SingleParameter(name, value);
-        }
-
-        public static DoubleParameter ToDoubleParameter(this XElement xml)
-        {
-            string name = xml.Attribute("Name")?.Value ?? throw new Exception("Parameter XML must contain 'Name' attribute.");
-
-            string strValue = xml.Value;
-
-            double value;
-            switch (strValue)
-            {
-                case "NAN": value = double.NaN; break;
-                case "INF": value = double.PositiveInfinity; break;
-                case "-INF": value = double.NegativeInfinity; break;
-
-
-                default: value = double.Parse(strValue); break;
-            }
-
-            return new DoubleParameter(name, value);
+            return context;
         }
     }
 }
