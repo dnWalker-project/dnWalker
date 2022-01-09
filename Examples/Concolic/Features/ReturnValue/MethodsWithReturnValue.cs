@@ -14,11 +14,25 @@ namespace Examples.Concolic.Features.ReturnValue
         {
             if (flag)
             {
-                return a + b;
+                if (a < 10)
+                {
+                    return a + b + 8;
+                }
+                else
+                {
+                    return a + b - 6;
+                }
             }
             else
             {
-                return a - b;
+                if (b < 10)
+                {
+                    return a - b + 8;
+                }
+                else
+                {
+                    return a - b - 6;
+                }
             }
         }
 

@@ -198,7 +198,7 @@ namespace dnWalker.Parameters.Xml
                         );
                     break;
 
-                case XmlIndex:
+                case XmlItem:
                     accessor = new ItemParameterAccessor
                         (
                             int.Parse(xml.Attribute(XmlIndex)?.Value ?? throw new MissingAttributeException(nameof(ItemParameterAccessor), XmlIndex)),

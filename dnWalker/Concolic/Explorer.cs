@@ -207,11 +207,12 @@ namespace dnWalker.Concolic
                     var path = _pathStore.CurrentPath;
                     PathExplored?.Invoke(path);
 
-                    if (entryPoint.HasReturnType)
-                    {
-                        IDataElement retValue = cur.CurrentThread.RetValue;
-                        _parameterStore.SetReturnValue(retValue, cur, entryPoint.ReturnType);
-                    }
+                    // done by RET instruction extension
+                    //if (entryPoint.HasReturnType)
+                    //{
+                    //    IDataElement retValue = cur.CurrentThread.RetValue;
+                    //    _parameterStore.SetReturnValue(retValue, cur, entryPoint.ReturnType);
+                    //}
 
                     OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, _parameterStore, path));
 

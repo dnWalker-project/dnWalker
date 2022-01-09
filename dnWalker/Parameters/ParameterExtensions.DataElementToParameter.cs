@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.DataElements;
+
 using MMC;
 using MMC.Data;
 using MMC.State;
