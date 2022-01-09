@@ -37,7 +37,7 @@ namespace dnWalker.Parameters
 
             if (fieldRef.TryResolve(_context, out IParameter? p))
             {
-                p.Accessor = new FieldParameterAccessor(fieldName, _ownerRef);
+                p.Accessors.Add(new FieldParameterAccessor(fieldName, _ownerRef));
             }
             else
             {
@@ -50,7 +50,7 @@ namespace dnWalker.Parameters
             if (_fields.TryGetValue(fieldName, out ParameterRef fieldRef) &&
                 fieldRef.TryResolve(_context, out IParameter? fieldParameter))
             {
-                fieldParameter.Accessor = null;
+                fieldParameter.Accessors.RemoveAt(fieldParameter.Accessors.IndexOf(pa => pa is FieldParameterAccessor fa && fa.ParentRef == _ownerRef && fa.FieldName == fieldName));
             }
             _fields[fieldName] = ParameterRef.Empty;
         }

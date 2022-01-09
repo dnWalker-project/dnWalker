@@ -21,10 +21,10 @@ namespace dnWalker.Tests.ExampleTests
             string testClassName = typeof(ExamplesTestBase).Name;
             OverrideConcolicExplorerBuilderInitialization(b =>
             {
-                dnWalker.Concolic.XmlExplorationExporter xmlExporter = new dnWalker.Concolic.XmlExplorationExporter(testClassName + "{SUT}.xml");
+                //dnWalker.Concolic.XmlExplorationExporter xmlExporter = new dnWalker.Concolic.XmlExplorationExporter(testClassName + "{SUT}.xml");
                 dnWalker.Concolic.FlowGraphWriter graphExporter = new dnWalker.Concolic.FlowGraphWriter() { OutputFile = testClassName + "{SUT}.dot" };
 
-                b.With(xmlExporter);
+                //b.With(xmlExporter);
                 b.With(graphExporter);
             });
         }

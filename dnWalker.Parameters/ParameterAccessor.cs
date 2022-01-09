@@ -15,6 +15,11 @@ namespace dnWalker.Parameters
         public abstract string GetAccessString(IParameterContext context);
 
         public abstract ParameterAccessor Clone();
+
+        public abstract void ChangeTarget(ParameterRef newTarget, IParameterContext context);
+
+        public const string ThisName = "#__THIS__";
+        public const string ReturnValueName = "#__RETURN_VALUE__";
     }
 
     public abstract class ParentChildParameterAccessor : ParameterAccessor
@@ -49,6 +54,11 @@ namespace dnWalker.Parameters
         {
             return new FieldParameterAccessor(FieldName, ParentRef);
         }
+
+        public override void ChangeTarget(ParameterRef newTarget, IParameterContext context)
+        {
+            ParentRef.Resolve<IFieldOwnerParameter>(context)!.SetField(FieldName, newTarget);
+        }
     }
 
     public class ItemParameterAccessor : ParentChildParameterAccessor
@@ -69,6 +79,11 @@ namespace dnWalker.Parameters
         public override ItemParameterAccessor Clone()
         {
             return new ItemParameterAccessor(Index, ParentRef);
+        }
+
+        public override void ChangeTarget(ParameterRef newTarget, IParameterContext context)
+        {
+            ParentRef.Resolve<IItemOwnerParameter>(context)!.SetItem(Index, newTarget);
         }
     }
 
@@ -94,6 +109,11 @@ namespace dnWalker.Parameters
         {
             return new MethodResultParameterAccessor(MethodSignature, Invocation, ParentRef);
         }
+
+        public override void ChangeTarget(ParameterRef newTarget, IParameterContext context)
+        {
+            ParentRef.Resolve<IMethodResolverParameter>(context)!.SetMethodResult(MethodSignature, Invocation, newTarget);
+        }
     }
 
     public abstract class RootParameterAccessor : ParameterAccessor
@@ -110,6 +130,11 @@ namespace dnWalker.Parameters
             return Expression;
         }
 
+        public override void ChangeTarget(ParameterRef newTarget, IParameterContext context)
+        {
+            context.Roots[Expression] = newTarget;
+            newTarget.Resolve(context)!.Accessors.Add(this);
+        }
     }
 
     public class MethodArgumentParameterAccessor : RootParameterAccessor
@@ -143,7 +168,7 @@ namespace dnWalker.Parameters
 
     public class ReturnValueParameterAccessor : RootParameterAccessor
     {
-        public ReturnValueParameterAccessor() : base("RetVal")
+        public ReturnValueParameterAccessor() : base(ReturnValueName)
         {
         }
 

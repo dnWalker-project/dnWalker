@@ -128,9 +128,10 @@ namespace dnWalker.Parameters.Tests
 
             itemOwner.TryGetItem(MyIndex, out _).Should().BeTrue("Check assumptions.");
 
-            itemValue.Accessor.Should().BeOfType<ItemParameterAccessor>();
-            ((ItemParameterAccessor)itemValue.Accessor!).ParentRef.Should().Be(OwnerRef);
-            ((ItemParameterAccessor)itemValue.Accessor!).Index.Should().Be(MyIndex);
+            itemValue.Accessors.Should().HaveCountGreaterThanOrEqualTo(1);
+            itemValue.Accessors[0].Should().BeOfType<ItemParameterAccessor>();
+            ((ItemParameterAccessor)itemValue.Accessors[0]).ParentRef.Should().Be(OwnerRef);
+            ((ItemParameterAccessor)itemValue.Accessors[0]).Index.Should().Be(MyIndex);
         }
 
         [Fact]

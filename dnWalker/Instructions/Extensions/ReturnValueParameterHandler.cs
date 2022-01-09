@@ -28,7 +28,7 @@ namespace dnWalker.Instructions.Extensions
 
         public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
         {
-            if (cur.CallStack.Length > 1)
+            if (cur.CallStack.StackPointer > 1)
             {
                 // we are not returning from the entry point
                 return;

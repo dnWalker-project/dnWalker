@@ -73,12 +73,13 @@ namespace dnWalker.Parameters.Xml
     string alias = aliases[i];
 
 #>
-        public static XElement ToXml(this I<#= type #>Parameter parameter)
+        private static XElement ToXml(this I<#= type #>Parameter parameter)
         {
             string valueXmlString = <#= toXmlExpressions[i] #>;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
 <#

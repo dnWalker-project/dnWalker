@@ -39,31 +39,42 @@ namespace dnWalker.Parameters
             get;
         }
 
-        public abstract IParameter Clone(IParameterContext newContext);
+        public abstract IParameter CloneData(IParameterContext newContext);
 
-        private ParameterAccessor? _accessor = null;
 
-        public ParameterAccessor? Accessor
+        private readonly List<ParameterAccessor> _accessors = new List<ParameterAccessor>();
+
+        public IList<ParameterAccessor> Accessors
         {
             get
             {
-                return _accessor;
-            }
-            set
-            {
-                if (_accessor is RootParameterAccessor rOld)
-                {
-                    Context.Roots.Remove(rOld.Expression);
-                }
-
-                _accessor = value;
-
-                if (value is RootParameterAccessor rNew)
-                {
-                    Context.Roots.Add(rNew.Expression, Reference);
-                }
+                return _accessors;
             }
         }
+
+        //private ParameterAccessor? _accessor = null;
+
+        //public ParameterAccessor? Accessor
+        //{
+        //    get
+        //    {
+        //        return _accessor;
+        //    }
+        //    set
+        //    {
+        //        if (_accessor is RootParameterAccessor rOld)
+        //        {
+        //            Context.Roots.Remove(rOld.Expression);
+        //        }
+
+        //        _accessor = value;
+
+        //        if (value is RootParameterAccessor rNew)
+        //        {
+        //            Context.Roots.Add(rNew.Expression, Reference);
+        //        }
+        //    }
+        //}
 
     }
 }

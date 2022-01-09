@@ -448,13 +448,13 @@ namespace <#= TestData.TestNamespaceName #>
 
 	private string GetVariableName(IParameter parameter)
 	{
-		if (parameter.IsRoot(out MethodArgumentParameterAccessor arg))
+		if (parameter.IsRoot(out MethodArgumentParameterAccessor[] arg))
 		{
-			return arg.Expression;
+			return arg[0].Expression;
 		}
-		else if (parameter.IsRoot(out ReturnValueParameterAccessor rv))
+		else if (parameter.IsRoot(out ReturnValueParameterAccessor[] rv))
 		{
-			return rv.Expression;
+			return rv[0].Expression;
 		}
 
 		return $"var_{parameter.Reference}";

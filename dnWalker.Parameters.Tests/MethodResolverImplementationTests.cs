@@ -130,10 +130,11 @@ namespace dnWalker.Parameters.Tests
 
             methodResolver.TryGetMethodResult(Signature_ToString, Invocation_Second, out _).Should().BeTrue("Check assumptions.");
 
-            methodResult.Accessor.Should().BeOfType<MethodResultParameterAccessor>();
-            ((MethodResultParameterAccessor)methodResult.Accessor!).ParentRef.Should().Be(OwnerRef);
-            ((MethodResultParameterAccessor)methodResult.Accessor!).MethodSignature.Should().Be(Signature_ToString);
-            ((MethodResultParameterAccessor)methodResult.Accessor!).Invocation.Should().Be(Invocation_Second);
+            methodResult.Accessors.Should().HaveCountGreaterThanOrEqualTo(1);
+            methodResult.Accessors[0].Should().BeOfType<MethodResultParameterAccessor>();
+            ((MethodResultParameterAccessor)methodResult.Accessors[0]).ParentRef.Should().Be(OwnerRef);
+            ((MethodResultParameterAccessor)methodResult.Accessors[0]).MethodSignature.Should().Be(Signature_ToString);
+            ((MethodResultParameterAccessor)methodResult.Accessors[0]).Invocation.Should().Be(Invocation_Second);
         }
 
         [Fact]

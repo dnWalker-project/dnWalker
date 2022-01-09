@@ -75,7 +75,7 @@ namespace dnWalker.Parameters
                 throw new Exception("No IParameterContext is registered with this ExplicitActiveState");
             }
 
-            Int4 de = new Int4(store.ExecutionContext.RefEquals(lhs.Reference, rhs.Reference) ? 1 : 0);
+            Int4 de = new Int4(lhs.Reference == rhs.Reference ? 1 : 0);
             de.SetExpression(lhs.GetReferenceEqualsExpression(rhs, cur), cur);
             return de;
         }

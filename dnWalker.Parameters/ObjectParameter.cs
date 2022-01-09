@@ -77,19 +77,21 @@ namespace dnWalker.Parameters
         #endregion IMethodResolver Members
 
 
-        public override ObjectParameter Clone(IParameterContext newContext)
+        public override ObjectParameter CloneData(IParameterContext newContext)
         {
             ObjectParameter objectParameter = new ObjectParameter(newContext, Reference, Type)
             {
                 IsNull = IsNull,
-                Accessor = Accessor?.Clone()
             };
+
+            //foreach (var a in Accessors.Select(ac => ac.Clone()))
+            //{
+            //    objectParameter.Accessors.Add(a);
+            //}
 
             _fields.CopyTo(objectParameter._fields);
             _methodResults.CopyTo(objectParameter._methodResults);
 
-
-            objectParameter.Accessor = Accessor?.Clone();
 
             return objectParameter;
         }

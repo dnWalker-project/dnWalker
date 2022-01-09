@@ -1534,13 +1534,13 @@ this.Write("[] items)\r\n\t\t{\r\n\t\t\titems.CopyTo(array, System.Math.Min(item
 
 	private string GetVariableName(IParameter parameter)
 	{
-		if (parameter.IsRoot(out MethodArgumentParameterAccessor arg))
+		if (parameter.IsRoot(out MethodArgumentParameterAccessor[] arg))
 		{
-			return arg.Expression;
+			return arg[0].Expression;
 		}
-		else if (parameter.IsRoot(out ReturnValueParameterAccessor rv))
+		else if (parameter.IsRoot(out ReturnValueParameterAccessor[] rv))
 		{
-			return rv.Expression;
+			return rv[0].Expression;
 		}
 
 		return $"var_{parameter.Reference}";

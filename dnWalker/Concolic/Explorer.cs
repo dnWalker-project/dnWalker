@@ -95,6 +95,10 @@ namespace dnWalker.Concolic
         {
             ExplorationStarted(this, e);
         }
+        protected virtual void OnExplorationFinished(ExplorationFinishedEventArgs e)
+        {
+            ExplorationFinished(this, e);
+        }
         protected virtual void OnExplorationFailed(ExplorationFailedEventArgs e)
         {
             ExplorationFailed(this, e);
@@ -240,6 +244,7 @@ namespace dnWalker.Concolic
 
             }
 
+            OnExplorationFinished(new ExplorationFinishedEventArgs());
         }
 
         public void Dispose()

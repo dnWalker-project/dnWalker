@@ -20,7 +20,8 @@ namespace dnWalker.Parameters
         {
             if (dataElement.TryGetParameter(cur, out IParameter parameter))
             {
-                // parameter is already associated with this IDataElement => return it
+                // parameter is already associated with this IDataElement => return it XXXX
+                // return its alias / copy if primitive value
                 return parameter;
             }
 
