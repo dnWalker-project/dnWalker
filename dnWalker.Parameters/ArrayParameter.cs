@@ -35,14 +35,17 @@ namespace dnWalker.Parameters
         } = new HashSet<string>();
 
 
-        public override ArrayParameter Clone(IParameterContext newContext)
+        public override ArrayParameter CloneData(IParameterContext newContext)
         {
             ArrayParameter arrayParameter = new ArrayParameter(newContext, Reference, ElementType)
             {
                 IsNull = IsNull,
                 Length = Length,
-                Accessor = Accessor?.Clone()
             };
+            //foreach (var a in Accessors.Select(ac => ac.Clone()))
+            //{
+            //    arrayParameter.Accessors.Add(a);
+            //}
 
             _items.CopyTo(arrayParameter._items);
 

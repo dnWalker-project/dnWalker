@@ -16,6 +16,22 @@ namespace dnWalker.Parameters
         void SetMethodResult(MethodSignature methodSignature, int invocation, ParameterRef resultRef);
 
         void ClearMethodResult(MethodSignature methodSignature, int invocation);
+
+        void MoveTo(IMethodResolver other)
+        {
+            // make copy of the results because we might edit the returned dictionary
+            List<KeyValuePair<MethodSignature,ParameterRef[]>> results = GetMethodResults().ToList();
+            foreach (var kvp in results)
+            {
+                for (int i = 0; i < kvp.Value.Length; ++i)
+                {
+                    if (kvp.Value[i] == ParameterRef.Empty) continue;
+
+                    other.SetMethodResult(kvp.Key, i, kvp.Value[i]);
+                    ClearMethodResult(kvp.Key, i);
+                }
+            }
+        }
     }
 
     public interface IMethodResolverParameter : IMethodResolver, IParameter

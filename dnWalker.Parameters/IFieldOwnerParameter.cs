@@ -14,6 +14,18 @@ namespace dnWalker.Parameters
         bool TryGetField(string fieldName, out ParameterRef fieldRef);
         void SetField(string fieldName, ParameterRef fieldRef);
         void ClearField(string fieldName);
+
+        void MoveTo(IFieldOwner other)
+        {
+            foreach(KeyValuePair<string, ParameterRef> kvp in GetFields().ToList())
+            {
+                if (kvp.Value == ParameterRef.Empty) continue;
+
+                // make copy of the fields because we might edit the returned dictionary
+                other.SetField(kvp.Key, kvp.Value);
+                ClearField(kvp.Key);
+            }
+        }
     }
 
     public interface IFieldOwnerParameter : IFieldOwner, IParameter

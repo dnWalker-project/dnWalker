@@ -128,9 +128,10 @@ namespace dnWalker.Parameters.Tests
 
             fieldOwner.TryGetField(MyField, out _).Should().BeTrue("Check assumptions.");
 
-            fieldValue.Accessor.Should().BeOfType<FieldParameterAccessor>();
-            ((FieldParameterAccessor)fieldValue.Accessor!).ParentRef.Should().Be(OwnerRef);
-            ((FieldParameterAccessor)fieldValue.Accessor!).FieldName.Should().Be(MyField);
+            fieldValue.Accessors.Should().HaveCountGreaterThanOrEqualTo(1);
+            fieldValue.Accessors[0].Should().BeOfType<FieldParameterAccessor>();
+            ((FieldParameterAccessor)fieldValue.Accessors[0]).ParentRef.Should().Be(OwnerRef);
+            ((FieldParameterAccessor)fieldValue.Accessors[0]).FieldName.Should().Be(MyField);
         }
 
         [Fact]
