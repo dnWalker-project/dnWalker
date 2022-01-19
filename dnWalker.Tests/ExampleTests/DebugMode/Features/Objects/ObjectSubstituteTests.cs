@@ -150,7 +150,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(4);
+            paths.Count().Should().Be(5);
         }
     }
 }
