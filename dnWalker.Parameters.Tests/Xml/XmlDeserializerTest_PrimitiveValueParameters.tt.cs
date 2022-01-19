@@ -24,7 +24,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IBooleanParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IBooleanParameter;
             p.Should().NotBeNull();
@@ -43,7 +43,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             ICharParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ICharParameter;
             p.Should().NotBeNull();
@@ -60,7 +60,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IByteParameter;
             p.Should().NotBeNull();
@@ -78,7 +78,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             ISByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISByteParameter;
             p.Should().NotBeNull();
@@ -96,7 +96,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt16Parameter;
             p.Should().NotBeNull();
@@ -114,7 +114,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt32Parameter;
             p.Should().NotBeNull();
@@ -132,7 +132,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt64Parameter;
             p.Should().NotBeNull();
@@ -149,7 +149,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IUInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt16Parameter;
             p.Should().NotBeNull();
@@ -166,7 +166,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IUInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt32Parameter;
             p.Should().NotBeNull();
@@ -183,7 +183,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IUInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt64Parameter;
             p.Should().NotBeNull();
@@ -201,7 +201,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             ISingleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISingleParameter;
             p.Should().NotBeNull();
@@ -219,7 +219,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IDoubleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IDoubleParameter;
             p.Should().NotBeNull();
@@ -233,7 +233,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IBooleanParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IBooleanParameter;
             p.Should().NotBeNull();
@@ -247,7 +247,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             ICharParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ICharParameter;
             p.Should().NotBeNull();
@@ -261,7 +261,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IByteParameter;
             p.Should().NotBeNull();
@@ -275,7 +275,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             ISByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISByteParameter;
             p.Should().NotBeNull();
@@ -289,7 +289,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt16Parameter;
             p.Should().NotBeNull();
@@ -303,7 +303,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt32Parameter;
             p.Should().NotBeNull();
@@ -317,7 +317,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt64Parameter;
             p.Should().NotBeNull();
@@ -331,7 +331,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IUInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt16Parameter;
             p.Should().NotBeNull();
@@ -345,7 +345,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IUInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt32Parameter;
             p.Should().NotBeNull();
@@ -359,7 +359,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IUInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt64Parameter;
             p.Should().NotBeNull();
@@ -373,7 +373,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             ISingleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISingleParameter;
             p.Should().NotBeNull();
@@ -387,7 +387,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             IDoubleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IDoubleParameter;
             p.Should().NotBeNull();

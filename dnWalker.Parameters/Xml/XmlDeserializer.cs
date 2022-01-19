@@ -248,7 +248,7 @@ namespace dnWalker.Parameters.Xml
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            if (xml.Name != XmlParameterContext)
+            if (xml.Name != XmlBaseParameterContext)
             {
                 throw new ArgumentException("Unexpected XML element.");
             }
@@ -270,7 +270,7 @@ namespace dnWalker.Parameters.Xml
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            if (xml.Name != XmlParameterContext)
+            if (xml.Name != XmlExecutionParameterContext)
             {
                 throw new ArgumentException("Unexpected XML element.");
             }

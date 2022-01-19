@@ -24,7 +24,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_SetMethodResult_TryGetMethodResult_WillOutputTheValue()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter methodResult = context.CreateInt32Parameter();
 
@@ -40,7 +40,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void TryGetUninitializedMethodResult_ReturnsFalse()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
 
             methodResolver.TryGetMethodResult(Signature_ToString, Invocation_Second, out _).Should().BeFalse();
@@ -49,7 +49,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void TryGetInitializedMethodResult_ReturnsTrue()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter methodResult = context.CreateInt32Parameter();
 
@@ -63,7 +63,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void TryGetClearedMethodResult_ReturnsFalse()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter methodResult = context.CreateInt32Parameter();
 
@@ -79,7 +79,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void GetMethodResults_IsNotNull()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
 
             methodResolver.GetMethodResults().Should().NotBeNull();
@@ -88,7 +88,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_SetMethodResult_ValueWillBeInGetMethodResultsDictionary()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter methodResult = context.CreateInt32Parameter();
 
@@ -102,7 +102,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_ClearMethodResult_ValueWillNotBeInGetMethodResultsDictionary()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter methodResult = context.CreateInt32Parameter();
 
@@ -122,7 +122,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_SetMethodResult_MethodResultValueWillHave_MethodResultParameterAccess()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter methodResult = context.CreateInt32Parameter();
 
@@ -140,7 +140,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void Setting_Invocation_ShouldNot_Set_EarlierOrLaterInvocation()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             MethodResolverImplementation methodResolver = new MethodResolverImplementation(OwnerRef, context);
             IParameter firstMethodResult = context.CreateInt32Parameter();
             IParameter secondMethodResult = context.CreateInt32Parameter();

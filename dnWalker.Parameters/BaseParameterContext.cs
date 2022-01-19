@@ -25,6 +25,11 @@ namespace dnWalker.Parameters
                 parameters.Add(p.Key, p.Value.Clone(newContext));
             }
 
+            foreach (var r in Roots)
+            {
+                newContext.Roots.Add(r);
+            }
+
             return newContext;
         }
     }

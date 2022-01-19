@@ -48,7 +48,7 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes input into the next execution.
         /// </summary>
-        public IParameterContext BaseContext
+        public IBaseParameterContext BaseContext
         {
             get 
             {
@@ -67,7 +67,7 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes current state.
         /// </summary>
-        public IParameterContext ExecutionContext
+        public IExecutionParameterContext ExecutionContext
         {
             get
             {

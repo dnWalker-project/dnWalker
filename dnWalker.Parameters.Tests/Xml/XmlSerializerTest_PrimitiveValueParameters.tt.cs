@@ -24,7 +24,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IBooleanParameter? p = ctx.CreateBooleanParameter(reference, value);
 
@@ -47,7 +47,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             ICharParameter? p = ctx.CreateCharParameter(reference, value);
 
@@ -68,7 +68,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IByteParameter? p = ctx.CreateByteParameter(reference, value);
 
@@ -90,7 +90,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             ISByteParameter? p = ctx.CreateSByteParameter(reference, value);
 
@@ -112,7 +112,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IInt16Parameter? p = ctx.CreateInt16Parameter(reference, value);
 
@@ -134,7 +134,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IInt32Parameter? p = ctx.CreateInt32Parameter(reference, value);
 
@@ -156,7 +156,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IInt64Parameter? p = ctx.CreateInt64Parameter(reference, value);
 
@@ -177,7 +177,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IUInt16Parameter? p = ctx.CreateUInt16Parameter(reference, value);
 
@@ -198,7 +198,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IUInt32Parameter? p = ctx.CreateUInt32Parameter(reference, value);
 
@@ -219,7 +219,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IUInt64Parameter? p = ctx.CreateUInt64Parameter(reference, value);
 
@@ -241,7 +241,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             ISingleParameter? p = ctx.CreateSingleParameter(reference, value);
 
@@ -263,7 +263,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             IDoubleParameter? p = ctx.CreateDoubleParameter(reference, value);
 

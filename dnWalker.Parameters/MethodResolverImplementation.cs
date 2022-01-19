@@ -76,7 +76,7 @@ namespace dnWalker.Parameters
             }
             else
             {
-                //throw new Exception("Trying to set method result with an unknown parameter!");
+                throw new Exception("Trying to set method result with an unknown parameter!");
             }
         }
 

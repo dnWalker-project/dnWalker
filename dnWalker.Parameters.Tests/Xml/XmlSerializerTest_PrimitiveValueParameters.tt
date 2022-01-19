@@ -109,7 +109,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             
             I<#= types[i] #>Parameter? p = ctx.Create<#= types[i] #>Parameter(reference, value);
 

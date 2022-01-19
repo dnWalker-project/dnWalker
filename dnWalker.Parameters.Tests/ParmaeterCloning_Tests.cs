@@ -10,7 +10,7 @@ using Xunit;
 
 namespace dnWalker.Parameters.Tests
 {
-    public class CloneTests
+    public class ParmaeterCloning_Tests
     {
         private static readonly string MyField = "MyField";
         private static readonly string OtherField = "OtherField";
@@ -31,10 +31,10 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void ClonedParameter_HasSameReference()
         {
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
             IParameter p = context.CreateInt32Parameter();
 
-            IParameterContext newContext = new ParameterContext();
+            IBaseParameterContext newContext = new BaseParameterContext();
 
             IParameter pClone = p.Clone(newContext);
 
@@ -42,15 +42,15 @@ namespace dnWalker.Parameters.Tests
         }
 
         [Fact]
-        public void ClonedContext_HasSameReferences()
+        public void ExecutionContext_HasSameReferences()
         {
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
 
             ParameterRef[] refsOrig = Enumerable.Range(0, 10)
                 .Select(i => context.CreateInt32Parameter().Reference)
                 .ToArray();
 
-            IParameterContext contextClone = context.Clone();
+            IExecutionParameterContext contextClone = context.CreateExecutionContext();
 
             contextClone.Parameters.Keys.Should().BeEquivalentTo(refsOrig);
         }
@@ -58,14 +58,14 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void ClonedParameters_HaveNewContext()
         {
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
 
 
             ParameterRef[] refs = Enumerable.Range(0, 10)
                 .Select(i => context.CreateInt32Parameter().Reference)
                 .ToArray();
 
-            IParameterContext contextClone = context.Clone();
+            IExecutionParameterContext contextClone = context.CreateExecutionContext();
 
             contextClone.Parameters.Keys.Should().BeEquivalentTo(refs);
 
@@ -78,7 +78,7 @@ namespace dnWalker.Parameters.Tests
         }
 
         //[Fact]
-        //public void ClonedContext_HasHigherGeneration()
+        //public void ExecutionContext_HasHigherGeneration()
         //{
         //    ParameterContext ctx = new ParameterContext();
         //    ParameterContext ctxClone = (ParameterContext)ctx.Clone();
@@ -87,14 +87,14 @@ namespace dnWalker.Parameters.Tests
         //}
 
         [Fact]
-        public void ClonedContext_KeepsFieldAccessors()
+        public void ExecutionContext_KeepsFieldAccessors()
         {
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
             IObjectParameter objectParameter = context.CreateObjectParameter(ObjectType, false);
             IInt32Parameter fieldParameter = context.CreateInt32Parameter();
             objectParameter.SetField(MyField, fieldParameter);
 
-            IParameterContext contextClone = context.Clone();
+            IExecutionParameterContext contextClone = context.CreateExecutionContext();
             IObjectParameter objectParameterClone = (IObjectParameter)contextClone.Parameters[objectParameter.Reference];
             
             objectParameterClone.TryGetField(MyField, out IInt32Parameter? fieldParameterClone1).Should().BeTrue();
@@ -109,14 +109,14 @@ namespace dnWalker.Parameters.Tests
         }
 
         [Fact]
-        public void ClonedContext_KeepsItemAccessors()
+        public void ExecutionContext_KeepsItemAccessors()
         {
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
             IArrayParameter arrayParameter = context.CreateArrayParameter(ArrayElementType, false);
             IInt32Parameter itemParameter = context.CreateInt32Parameter();
             arrayParameter.SetItem(MyIndex, itemParameter);
 
-            IParameterContext contextClone = context.Clone();
+            IExecutionParameterContext contextClone = context.CreateExecutionContext();
             IArrayParameter arrayParameterClone = (IArrayParameter)contextClone.Parameters[arrayParameter.Reference];
 
             arrayParameterClone.TryGetItem(MyIndex, out IInt32Parameter? itemParameterClone1).Should().BeTrue();
@@ -131,14 +131,14 @@ namespace dnWalker.Parameters.Tests
         }
 
         [Fact]
-        public void ClonedContext_KeepsMethodResultAccessors()
+        public void ExecutionContext_KeepsMethodResultAccessors()
         {
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
             IObjectParameter objectParameter = context.CreateObjectParameter(ObjectType, false);
             IInt32Parameter methodResultParameter = context.CreateInt32Parameter();
             objectParameter.SetMethodResult(Signature_ToString, Invocation_Second, methodResultParameter);
 
-            IParameterContext contextClone = context.Clone();
+            IExecutionParameterContext contextClone = context.CreateExecutionContext();
             IObjectParameter objectParameterClone = (IObjectParameter)contextClone.Parameters[objectParameter.Reference];
 
             objectParameterClone.TryGetMethodResult(Signature_ToString, Invocation_Second, out IInt32Parameter? methodResultParameterClone1).Should().BeTrue();
