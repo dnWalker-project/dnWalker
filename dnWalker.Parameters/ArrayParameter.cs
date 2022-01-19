@@ -95,7 +95,7 @@ namespace dnWalker.Parameters
     {
         public static IArrayParameter CreateArrayParameter(this IParameterContext context, string elementType, bool? isNull = null, int? length = null)
         {
-            return CreateArrayParameter(context, ParameterRef.Any, elementType, isNull, length);
+            return CreateArrayParameter(context, context.GetParameterRef(), elementType, isNull, length);
         }
 
         public static IArrayParameter CreateArrayParameter(this IParameterContext context, ParameterRef reference, string elementType, bool? isNull = null, int? length = null)

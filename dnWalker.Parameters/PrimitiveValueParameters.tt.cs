@@ -442,7 +442,7 @@ namespace dnWalker.Parameters
     {
         public static IBooleanParameter CreateBooleanParameter(this IParameterContext context)
         {
-            return CreateBooleanParameter(context, ParameterRef.Any, null);
+            return CreateBooleanParameter(context, context.GetParameterRef(), null);
         }
         
         public static IBooleanParameter CreateBooleanParameter(this IParameterContext context, ParameterRef reference)
@@ -460,7 +460,7 @@ namespace dnWalker.Parameters
         }
         public static ICharParameter CreateCharParameter(this IParameterContext context)
         {
-            return CreateCharParameter(context, ParameterRef.Any, null);
+            return CreateCharParameter(context, context.GetParameterRef(), null);
         }
         
         public static ICharParameter CreateCharParameter(this IParameterContext context, ParameterRef reference)
@@ -478,7 +478,7 @@ namespace dnWalker.Parameters
         }
         public static IByteParameter CreateByteParameter(this IParameterContext context)
         {
-            return CreateByteParameter(context, ParameterRef.Any, null);
+            return CreateByteParameter(context, context.GetParameterRef(), null);
         }
         
         public static IByteParameter CreateByteParameter(this IParameterContext context, ParameterRef reference)
@@ -496,7 +496,7 @@ namespace dnWalker.Parameters
         }
         public static ISByteParameter CreateSByteParameter(this IParameterContext context)
         {
-            return CreateSByteParameter(context, ParameterRef.Any, null);
+            return CreateSByteParameter(context, context.GetParameterRef(), null);
         }
         
         public static ISByteParameter CreateSByteParameter(this IParameterContext context, ParameterRef reference)
@@ -514,7 +514,7 @@ namespace dnWalker.Parameters
         }
         public static IInt16Parameter CreateInt16Parameter(this IParameterContext context)
         {
-            return CreateInt16Parameter(context, ParameterRef.Any, null);
+            return CreateInt16Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IInt16Parameter CreateInt16Parameter(this IParameterContext context, ParameterRef reference)
@@ -532,7 +532,7 @@ namespace dnWalker.Parameters
         }
         public static IInt32Parameter CreateInt32Parameter(this IParameterContext context)
         {
-            return CreateInt32Parameter(context, ParameterRef.Any, null);
+            return CreateInt32Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IInt32Parameter CreateInt32Parameter(this IParameterContext context, ParameterRef reference)
@@ -550,7 +550,7 @@ namespace dnWalker.Parameters
         }
         public static IInt64Parameter CreateInt64Parameter(this IParameterContext context)
         {
-            return CreateInt64Parameter(context, ParameterRef.Any, null);
+            return CreateInt64Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IInt64Parameter CreateInt64Parameter(this IParameterContext context, ParameterRef reference)
@@ -568,7 +568,7 @@ namespace dnWalker.Parameters
         }
         public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context)
         {
-            return CreateUInt16Parameter(context, ParameterRef.Any, null);
+            return CreateUInt16Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context, ParameterRef reference)
@@ -586,7 +586,7 @@ namespace dnWalker.Parameters
         }
         public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context)
         {
-            return CreateUInt32Parameter(context, ParameterRef.Any, null);
+            return CreateUInt32Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context, ParameterRef reference)
@@ -604,7 +604,7 @@ namespace dnWalker.Parameters
         }
         public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context)
         {
-            return CreateUInt64Parameter(context, ParameterRef.Any, null);
+            return CreateUInt64Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context, ParameterRef reference)
@@ -622,7 +622,7 @@ namespace dnWalker.Parameters
         }
         public static ISingleParameter CreateSingleParameter(this IParameterContext context)
         {
-            return CreateSingleParameter(context, ParameterRef.Any, null);
+            return CreateSingleParameter(context, context.GetParameterRef(), null);
         }
         
         public static ISingleParameter CreateSingleParameter(this IParameterContext context, ParameterRef reference)
@@ -640,7 +640,7 @@ namespace dnWalker.Parameters
         }
         public static IDoubleParameter CreateDoubleParameter(this IParameterContext context)
         {
-            return CreateDoubleParameter(context, ParameterRef.Any, null);
+            return CreateDoubleParameter(context, context.GetParameterRef(), null);
         }
         
         public static IDoubleParameter CreateDoubleParameter(this IParameterContext context, ParameterRef reference)

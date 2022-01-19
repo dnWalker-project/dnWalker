@@ -43,7 +43,7 @@ namespace dnWalker.Parameters
     {
         public static IAliasParameter CreateAliasParameter(this IParameterContext context, ParameterRef referencedParameter)
         {
-            return CreateAliasParameter(context, ParameterRef.Any, referencedParameter);
+            return CreateAliasParameter(context, context.GetParameterRef(), referencedParameter);
         }
 
         public static IAliasParameter CreateAliasParameter(this IParameterContext context, ParameterRef reference, ParameterRef referencedParameter)
