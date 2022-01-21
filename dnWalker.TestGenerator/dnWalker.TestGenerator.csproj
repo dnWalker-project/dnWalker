@@ -20,6 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Templates\TemplateHelpers.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TemplateHelpers.tt</DependentUpon>
+    </Compile>
     <Compile Update="XUnit\XUnitTestClassTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
