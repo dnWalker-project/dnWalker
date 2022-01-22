@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public interface IParameterContext : ICloneable
+    public interface IParameterContext : IReadOnlyParameterContext, ICloneable
     {
         object ICloneable.Clone()
         {
@@ -15,10 +16,25 @@ namespace dnWalker.Parameters
 
         new IParameterContext Clone();
 
-        IDictionary<ParameterRef, IParameter> Parameters { get; }
+        new IDictionary<ParameterRef, IParameter> Parameters { get; }
 
-        IDictionary<string, ParameterRef> Roots { get; }
+        new IDictionary<string, ParameterRef> Roots { get; }
 
+        //IReadOnlyDictionary<ParameterRef, IParameter> IReadOnlyParameterContext.Parameters
+        //{
+        //    get
+        //    {
+        //        return new ReadOnlyDictionary<ParameterRef, IParameter>(Parameters);
+        //    }
+        //}
+
+        //IReadOnlyDictionary<string, ParameterRef> IReadOnlyParameterContext.Roots
+        //{
+        //    get
+        //    {
+        //        return new ReadOnlyDictionary<string, ParameterRef>(Roots);
+        //    }
+        //}
     }
 
     public static partial class ParameterContextExtensions

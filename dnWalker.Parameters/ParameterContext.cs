@@ -54,5 +54,21 @@ namespace dnWalker.Parameters
                 return _roots;
             }
         }
+
+        IReadOnlyDictionary<ParameterRef, IParameter> IReadOnlyParameterContext.Parameters
+        {
+            get
+            {
+                return _parameters;
+            }
+        }
+
+        IReadOnlyDictionary<string, ParameterRef> IReadOnlyParameterContext.Roots
+        {
+            get
+            {
+                return _roots;
+            }
+        }
     }
 }

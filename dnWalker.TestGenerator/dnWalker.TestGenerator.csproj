@@ -1,13 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="QuikGraph" Version="2.3.0" />
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
   </ItemGroup>
 
@@ -26,6 +28,11 @@
       <DependentUpon>TemplateHelpers.tt</DependentUpon>
     </Compile>
     <Compile Update="XUnit\XUnitTestClassTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="XUnit\XUnitTestProjectTemplate.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
@@ -61,6 +68,7 @@
       <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
     </None>
     <None Update="XUnit\XUnitTestProjectTemplate.tt">
+		<OutputFileName>XUnitTestProjectTemplate.tt.cs</OutputFileName>
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
     </None>
