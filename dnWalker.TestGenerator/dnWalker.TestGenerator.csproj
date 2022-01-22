@@ -68,7 +68,6 @@
       <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
     </None>
     <None Update="XUnit\XUnitTestProjectTemplate.tt">
-		<OutputFileName>XUnitTestProjectTemplate.tt.cs</OutputFileName>
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
     </None>

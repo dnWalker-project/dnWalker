@@ -31,9 +31,9 @@ namespace dnWalker.TestGenerator.Templates
             set;
         } = new StringBuilderGenerationEnvironment();
 
-        public virtual void TransformText()
+        public virtual string TransformText()
         {
-            // GenerationEnvironment?.ToString() ?? string.Empty;
+            return GenerationEnvironment?.ToString() ?? string.Empty;
         }
 
         
