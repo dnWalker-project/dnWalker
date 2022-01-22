@@ -77,14 +77,14 @@ namespace dnWalker.Parameters.Tests
             }
         }
 
-        [Fact]
-        public void ClonedContext_HasHigherGeneration()
-        {
-            ParameterContext ctx = new ParameterContext();
-            ParameterContext ctxClone = (ParameterContext)ctx.Clone();
+        //[Fact]
+        //public void ClonedContext_HasHigherGeneration()
+        //{
+        //    ParameterContext ctx = new ParameterContext();
+        //    ParameterContext ctxClone = (ParameterContext)ctx.Clone();
 
-            ctxClone.Generation.Should().BeGreaterThan(ctx.Generation);
-        }
+        //    ctxClone.Generation.Should().BeGreaterThan(ctx.Generation);
+        //}
 
         [Fact]
         public void ClonedContext_KeepsFieldAccessors()
@@ -103,7 +103,9 @@ namespace dnWalker.Parameters.Tests
             ReferenceEquals(fieldParameterClone1, fieldParameterClone2).Should().BeTrue();
             fieldParameterClone1.Should().BeSameAs(fieldParameterClone2);
 
-            fieldParameterClone1!.Accessor.Should().BeOfType<FieldParameterAccessor>();
+            fieldParameterClone1!.Accessors.Should().HaveCount(fieldParameter.Accessors.Count);
+            fieldParameterClone1!.Accessors[0].Should().BeOfType<FieldParameterAccessor>();
+            ((FieldParameterAccessor)fieldParameterClone1!.Accessors[0]).FieldName.Should().Be(MyField);
         }
 
         [Fact]
@@ -123,7 +125,9 @@ namespace dnWalker.Parameters.Tests
             ReferenceEquals(itemParameterClone1, itemParameterClone2).Should().BeTrue();
             itemParameterClone1.Should().BeSameAs(itemParameterClone2);
 
-            itemParameterClone1!.Accessor.Should().BeOfType<ItemParameterAccessor>();
+            itemParameterClone1!.Accessors.Should().HaveCount(itemParameter.Accessors.Count);
+            itemParameterClone1!.Accessors[0].Should().BeOfType<ItemParameterAccessor>();
+            ((ItemParameterAccessor)itemParameterClone1!.Accessors[0]).Index.Should().Be(MyIndex);
         }
 
         [Fact]
@@ -143,7 +147,10 @@ namespace dnWalker.Parameters.Tests
             ReferenceEquals(methodResultParameterClone1, methodResultParameterClone2).Should().BeTrue();
             methodResultParameterClone1.Should().BeSameAs(methodResultParameterClone2);
 
-            methodResultParameterClone1!.Accessor.Should().BeOfType<MethodResultParameterAccessor>();
+            methodResultParameterClone1!.Accessors.Should().HaveCount(methodResultParameter.Accessors.Count);
+            methodResultParameterClone1!.Accessors[0].Should().BeOfType<MethodResultParameterAccessor>();
+            ((MethodResultParameterAccessor)methodResultParameterClone1!.Accessors[0]).MethodSignature.Should().Be(Signature_ToString);
+            ((MethodResultParameterAccessor)methodResultParameterClone1!.Accessors[0]).Invocation.Should().Be(Invocation_Second);
         }
     }
 }

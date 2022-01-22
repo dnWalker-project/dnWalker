@@ -52,6 +52,7 @@
     <Compile Include="Concolic\Features\Interfaces\MethodsWithInterfaceParameter.cs" />
     <Compile Include="Concolic\Features\Math\Input.cs" />
     <Compile Include="Concolic\Features\Objects\MethodsWithObjectParameter.cs" />
+    <Compile Include="Concolic\Features\ReturnValue\MethodsWithReturnValue.cs" />
     <Compile Include="Concolic\Protocol.cs" />
     <Compile Include="Concolic\Simple\Branches.cs" />
     <Compile Include="DataRace.cs" />

@@ -11,9 +11,10 @@ namespace dnWalker.TestGenerator
     /// </summary>
     public class ExplorationIterationData
     {
-        internal ExplorationIterationData(IParameterContext parameterContext, int iterationNumber, string pathConstraint, Exception? exception, string stdandardOutput, string errorOutput)
+        internal ExplorationIterationData(IParameterContext startingParameterContext, IParameterContext endingParameterContext, int iterationNumber, string pathConstraint, Exception? exception, string stdandardOutput, string errorOutput)
         {
-            ParameterContext = parameterContext ?? throw new ArgumentNullException(nameof(parameterContext));
+            StartingParameterContext = startingParameterContext ?? throw new ArgumentNullException(nameof(startingParameterContext));
+            EndingParameterContext = endingParameterContext ?? throw new ArgumentNullException(nameof(endingParameterContext));
             PathConstraint = pathConstraint;
             Number = iterationNumber;
             Exception = exception;
@@ -21,7 +22,12 @@ namespace dnWalker.TestGenerator
             ErrorOutput = errorOutput ?? throw new ArgumentNullException(nameof(errorOutput));
         }
 
-        public IParameterContext ParameterContext
+        public IParameterContext StartingParameterContext
+        {
+            get;
+        }
+
+        public IParameterContext EndingParameterContext
         {
             get;
         }

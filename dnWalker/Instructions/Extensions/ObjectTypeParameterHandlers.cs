@@ -71,9 +71,9 @@ namespace dnWalker.Instructions.Extensions
                     objectParameter.SetField(field.Name, fieldParameter);
 
                     // add it to the base context as well => we are lazily initializing start state...
-                    IParameter baseFieldParameter = fieldParameter.Clone(store.BaseContext);
+                    IParameter baseFieldParameter = fieldParameter.CloneData(store.BaseContext);
                     store.BaseContext.Parameters.Add(baseFieldParameter.Reference, baseFieldParameter);
-                    objectParameter.Reference.Resolve<IObjectParameter>(store.ExecutionContext).SetField(field.Name, baseFieldParameter);
+                    objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext).SetField(field.Name, baseFieldParameter);
                 }
 
                 allocatedObject.Fields[fieldOffset] = fieldParameter.AsDataElement(cur);
@@ -141,9 +141,9 @@ namespace dnWalker.Instructions.Extensions
                 objectParameter.SetMethodResult(signature, invocation, resultParameter);
 
                 // add it to the base context as well => we are lazily initializing start state...
-                IParameter baseFieldParameter = resultParameter.Clone(store.BaseContext);
-                store.BaseContext.Parameters.Add(baseFieldParameter.Reference, baseFieldParameter);
-                objectParameter.Reference.Resolve<IObjectParameter>(store.ExecutionContext).SetMethodResult(signature, invocation, baseFieldParameter);
+                IParameter baseResultParameter = resultParameter.CloneData(store.BaseContext);
+                store.BaseContext.Parameters.Add(baseResultParameter.Reference, baseResultParameter);
+                objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext).SetMethodResult(signature, invocation, baseResultParameter);
             }
 
             IDataElement resultDataElement = resultParameter.AsDataElement(cur);

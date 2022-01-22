@@ -21,6 +21,18 @@ namespace dnWalker.Parameters
         void SetItem(int index, ParameterRef itemRef);
 
         void ClearItem(int index);
+
+        void MoveTo(IItemOwner other)
+        {
+            ParameterRef[] items = GetItems();
+            for (int i = 0; i < items.Length; ++i)
+            {
+                if (items[i] == ParameterRef.Empty) continue;
+
+                other.SetItem(i, items[i]);
+                ClearItem(i);
+            }
+        }
     }
 
     public interface IItemOwnerParameter : IItemOwner, IParameter

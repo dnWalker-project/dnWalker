@@ -13,9 +13,9 @@ using Xunit;
 
 using Moq;
 
-namespace Examples.Concolic.Features.Arrays.Tests
+namespace Examples.Concolic.Features.Interfaces.Tests
 {
-	public class MethodsWithArrayParameter_Tests_BranchIfItemAtStaticIndexIsGreaterThan5
+	public class MethodsWithInterfaceParameter_Tests_Interface_AbstractMethod
 	{
 		#region Test Methods
 
@@ -24,7 +24,7 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = null;
+			Examples.Concolic.Features.Interfaces.IMyInterface? instance = null;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
@@ -33,7 +33,7 @@ namespace Examples.Concolic.Features.Arrays.Tests
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.Interface_AbstractMethod(instance);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
@@ -46,7 +46,7 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = Create_0x00000002(0);
+			Examples.Concolic.Features.Interfaces.IMyInterface? instance = Create_0x00000001(out Mock<Examples.Concolic.Features.Interfaces.IMyInterface> methodsMock_0x00000001);
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
@@ -55,7 +55,7 @@ namespace Examples.Concolic.Features.Arrays.Tests
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.Interface_AbstractMethod(instance);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
@@ -68,24 +68,25 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = Create_0x00000002(4);
+			Examples.Concolic.Features.Interfaces.IMyInterface? instance = Create_0x00000001(out Mock<Examples.Concolic.Features.Interfaces.IMyInterface> methodsMock_0x00000001);
+			
+			System.Int32 var_0x00000002 = 2;
+			
+			System.Int32 var_0x00000003 = 135;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
 			
-			InitializeItems_0x00000002
+			InitializeMethods_0x00000001
 			(
-				array,
-				default(System.Double),
-				default(System.Double),
-				default(System.Double),
-				default(System.Double)
+				methodsMock_0x00000001,
+				arg_AbstractMethod: new System.Int32[] {  var_0x00000002, var_0x00000003 } 
 			);
 			// execute the tested method
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.Interface_AbstractMethod(instance);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
@@ -98,26 +99,25 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = Create_0x00000002(4);
+			Examples.Concolic.Features.Interfaces.IMyInterface? instance = Create_0x00000001(out Mock<Examples.Concolic.Features.Interfaces.IMyInterface> methodsMock_0x00000001);
 			
-			System.Double var_0x00000003 = 6;
+			System.Int32 var_0x00000002 = 3;
+			
+			System.Int32 var_0x00000003 = 135;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
 			
-			InitializeItems_0x00000002
+			InitializeMethods_0x00000001
 			(
-				array,
-				default(System.Double),
-				default(System.Double),
-				default(System.Double),
-				var_0x00000003
+				methodsMock_0x00000001,
+				arg_AbstractMethod: new System.Int32[] {  var_0x00000002, var_0x00000003 } 
 			);
 			// execute the tested method
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.Interface_AbstractMethod(instance);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
@@ -128,9 +128,11 @@ namespace Examples.Concolic.Features.Arrays.Tests
 
 		#region Parameter Creation Methods
 		// these methods constructs instances of parameters along with interfaces for their initialization
-		private System.Double[] Create_0x00000002(int length)
+		private Examples.Concolic.Features.Interfaces.IMyInterface Create_0x00000001(out Mock<Examples.Concolic.Features.Interfaces.IMyInterface> methodsMock)
 		{
-			return new System.Double[length];
+			methodsMock = new Mock<Examples.Concolic.Features.Interfaces.IMyInterface>();
+			var instance = methodsMock.Object;
+			return instance;
 		}
 		
 
@@ -138,11 +140,14 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		#endregion Parameter Creation Methods
 
 		#region Parameter Initialization Methods
-		// initialize parameter 0x00000002
-		// - array
-		private void InitializeItems_0x00000002(System.Double[] array, params System.Double[] items)
+		// initialize parameter 0x00000001
+		// - instance
+		private void InitializeMethods_0x00000001(Mock<Examples.Concolic.Features.Interfaces.IMyInterface> mock, System.Int32[] arg_AbstractMethod = default)
 		{
-			items.CopyTo(array, System.Math.Min(items.Length, array.Length));
+			// TODO: initialize method results to correspond to provided values
+			// first invocation returns arg_<MethodName>[0] etc
+			// right now, always return first element... :(
+			mock.Setup(o => o.AbstractMethod()).Returns(arg_AbstractMethod[0]);
 		}
 		#endregion Parameter Initialization Methods
 	}

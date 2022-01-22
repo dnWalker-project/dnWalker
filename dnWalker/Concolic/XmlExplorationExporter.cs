@@ -75,6 +75,7 @@ namespace dnWalker.Concolic
             _currentExplorationElement.SetAttributeValue("MethodSignature", e.MethodSignature);
             _currentExplorationElement.SetAttributeValue("IsStatic", e.IsStatic);
             _currentExplorationElement.SetAttributeValue("Solver", e.SolverType.FullName);
+            _currentExplorationElement.SetAttributeValue("StartedAt", DateTime.Now.ToString());
 
             _rootElement.Add(_currentExplorationElement);
 
@@ -83,6 +84,7 @@ namespace dnWalker.Concolic
 
         private void OnExplorationFinished(object sender, ExplorationFinishedEventArgs e)
         {
+            _currentExplorationElement.SetAttributeValue("FinishedAt", DateTime.Now.ToString());
             SaveData();
 
             _currentSUTName = "";
@@ -101,14 +103,18 @@ namespace dnWalker.Concolic
             _currentIterationElement = new XElement("Iteration");
             _currentIterationElement.SetAttributeValue("Number", e.IterationNmber);
 
-            _currentIterationElement.Add(e.ParameterStore.BaseContext.ToXml());
+            _currentIterationElement.Add(new XElement("StartingState", e.ParameterStore.BaseContext.ToXml()));
 
 
             _currentExplorationElement.Add(_currentIterationElement);
+
+            SaveData();
         }
 
         private void OnIterationFinished(object sender, IterationFinishedEventArgs e)
         {
+            _currentIterationElement.Add(new XElement("EndingState", e.ParameterStore.ExecutionContext.ToXml()));
+
             SaveData();
         }
     }

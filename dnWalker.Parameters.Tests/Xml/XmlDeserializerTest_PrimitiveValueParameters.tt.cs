@@ -18,8 +18,8 @@ namespace dnWalker.Parameters.Tests.Xml
     {
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000000\" Value=\"True\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, true)]  
-        [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000001\" Value=\"False\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, false)]
+        [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000000\" Value=\"True\" />", 0, true)]  
+        [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000001\" Value=\"False\" />", 1, false)]
         public void TestNotNull_BooleanParameter(string xml, int intRef, bool value)
         {
             ParameterRef reference = intRef;
@@ -34,11 +34,11 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000000\" Value=\"U+0000\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, '\0')]  
-        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000001\" Value=\"U+000A\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, '\n')]  
-        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000002\" Value=\"U+0061\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 'a')]  
-        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000003\" Value=\"U+0000\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, char.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000004\" Value=\"U+FFFF\" ><Accessor Type=\"None\" /></PrimitiveValue>", 4, char.MaxValue)]
+        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000000\" Value=\"U+0000\" />", 0, '\0')]  
+        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000001\" Value=\"U+000A\" />", 1, '\n')]  
+        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000002\" Value=\"U+0061\" />", 2, 'a')]  
+        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000003\" Value=\"U+0000\" />", 3, char.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000004\" Value=\"U+FFFF\" />", 4, char.MaxValue)]
         public void TestNotNull_CharParameter(string xml, int intRef, char value)
         {
             ParameterRef reference = intRef;
@@ -53,9 +53,9 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000000\" Value=\"0\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, byte.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000001\" Value=\"255\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, byte.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000002\" Value=\"127\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 127)]
+        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000000\" Value=\"0\" />", 0, byte.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000001\" Value=\"255\" />", 1, byte.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000002\" Value=\"127\" />", 2, 127)]
         public void TestNotNull_ByteParameter(string xml, int intRef, byte value)
         {
             ParameterRef reference = intRef;
@@ -70,10 +70,10 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000000\" Value=\"-128\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, sbyte.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000001\" Value=\"127\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, sbyte.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000002\" Value=\"63\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 63)]  
-        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000003\" Value=\"-63\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, -63)]
+        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000000\" Value=\"-128\" />", 0, sbyte.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000001\" Value=\"127\" />", 1, sbyte.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000002\" Value=\"63\" />", 2, 63)]  
+        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000003\" Value=\"-63\" />", 3, -63)]
         public void TestNotNull_SByteParameter(string xml, int intRef, sbyte value)
         {
             ParameterRef reference = intRef;
@@ -88,10 +88,10 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000000\" Value=\"-32768\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, short.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000001\" Value=\"32767\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, short.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000002\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000003\" Value=\"-1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, -1023)]
+        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000000\" Value=\"-32768\" />", 0, short.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000001\" Value=\"32767\" />", 1, short.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000002\" Value=\"1023\" />", 2, 1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000003\" Value=\"-1023\" />", 3, -1023)]
         public void TestNotNull_Int16Parameter(string xml, int intRef, short value)
         {
             ParameterRef reference = intRef;
@@ -106,10 +106,10 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000000\" Value=\"-2147483648\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, int.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000001\" Value=\"2147483647\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, int.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000002\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000003\" Value=\"-1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, -1023)]
+        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000000\" Value=\"-2147483648\" />", 0, int.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000001\" Value=\"2147483647\" />", 1, int.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000002\" Value=\"1023\" />", 2, 1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000003\" Value=\"-1023\" />", 3, -1023)]
         public void TestNotNull_Int32Parameter(string xml, int intRef, int value)
         {
             ParameterRef reference = intRef;
@@ -124,10 +124,10 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000000\" Value=\"-9223372036854775808\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, long.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000001\" Value=\"9223372036854775807\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, long.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000002\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000003\" Value=\"-1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, -1023)]
+        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000000\" Value=\"-9223372036854775808\" />", 0, long.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000001\" Value=\"9223372036854775807\" />", 1, long.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000002\" Value=\"1023\" />", 2, 1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000003\" Value=\"-1023\" />", 3, -1023)]
         public void TestNotNull_Int64Parameter(string xml, int intRef, long value)
         {
             ParameterRef reference = intRef;
@@ -142,9 +142,9 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000000\" Value=\"0\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, ushort.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000001\" Value=\"65535\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, ushort.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000002\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 1023)]
+        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000000\" Value=\"0\" />", 0, ushort.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000001\" Value=\"65535\" />", 1, ushort.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000002\" Value=\"1023\" />", 2, 1023)]
         public void TestNotNull_UInt16Parameter(string xml, int intRef, ushort value)
         {
             ParameterRef reference = intRef;
@@ -159,9 +159,9 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000000\" Value=\"0\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, uint.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000001\" Value=\"4294967295\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, uint.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000002\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 1023u)]
+        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000000\" Value=\"0\" />", 0, uint.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000001\" Value=\"4294967295\" />", 1, uint.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000002\" Value=\"1023\" />", 2, 1023u)]
         public void TestNotNull_UInt32Parameter(string xml, int intRef, uint value)
         {
             ParameterRef reference = intRef;
@@ -176,9 +176,9 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000000\" Value=\"0\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, ulong.MinValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000001\" Value=\"18446744073709551615\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, ulong.MaxValue)]  
-        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000002\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, 1023ul)]
+        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000000\" Value=\"0\" />", 0, ulong.MinValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000001\" Value=\"18446744073709551615\" />", 1, ulong.MaxValue)]  
+        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000002\" Value=\"1023\" />", 2, 1023ul)]
         public void TestNotNull_UInt64Parameter(string xml, int intRef, ulong value)
         {
             ParameterRef reference = intRef;
@@ -193,10 +193,10 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000000\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, 1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000001\" Value=\"-1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, -1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000002\" Value=\"INF\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, float.PositiveInfinity)]  
-        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000003\" Value=\"-INF\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, float.NegativeInfinity)]
+        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000000\" Value=\"1023\" />", 0, 1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000001\" Value=\"-1023\" />", 1, -1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000002\" Value=\"INF\" />", 2, float.PositiveInfinity)]  
+        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x00000003\" Value=\"-INF\" />", 3, float.NegativeInfinity)]
         public void TestNotNull_SingleParameter(string xml, int intRef, float value)
         {
             ParameterRef reference = intRef;
@@ -211,10 +211,10 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]  
-        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000000\" Value=\"1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, 1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000001\" Value=\"-1023\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, -1023)]  
-        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000002\" Value=\"INF\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, double.PositiveInfinity)]  
-        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000003\" Value=\"-INF\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, double.NegativeInfinity)]
+        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000000\" Value=\"1023\" />", 0, 1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000001\" Value=\"-1023\" />", 1, -1023)]  
+        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000002\" Value=\"INF\" />", 2, double.PositiveInfinity)]  
+        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x00000003\" Value=\"-INF\" />", 3, double.NegativeInfinity)]
         public void TestNotNull_DoubleParameter(string xml, int intRef, double value)
         {
             ParameterRef reference = intRef;
@@ -228,7 +228,7 @@ namespace dnWalker.Parameters.Tests.Xml
             p.Value.Value.Should().Be(value);
         }
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000000\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 0, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000000\" Value=\"Unknown\" />", 0, null)]
         public void TestNull_BooleanParameter(string xml, int intRef, bool value)
         {
             ParameterRef reference = intRef;
@@ -242,7 +242,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000001\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 1, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Char\" Reference=\"0x00000001\" Value=\"Unknown\" />", 1, null)]
         public void TestNull_CharParameter(string xml, int intRef, char value)
         {
             ParameterRef reference = intRef;
@@ -256,7 +256,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000002\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 2, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Byte\" Reference=\"0x00000002\" Value=\"Unknown\" />", 2, null)]
         public void TestNull_ByteParameter(string xml, int intRef, byte value)
         {
             ParameterRef reference = intRef;
@@ -270,7 +270,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000003\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 3, null)]
+        [InlineData("<PrimitiveValue Type=\"System.SByte\" Reference=\"0x00000003\" Value=\"Unknown\" />", 3, null)]
         public void TestNull_SByteParameter(string xml, int intRef, sbyte value)
         {
             ParameterRef reference = intRef;
@@ -284,7 +284,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000004\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 4, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Int16\" Reference=\"0x00000004\" Value=\"Unknown\" />", 4, null)]
         public void TestNull_Int16Parameter(string xml, int intRef, short value)
         {
             ParameterRef reference = intRef;
@@ -298,7 +298,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000005\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 5, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Int32\" Reference=\"0x00000005\" Value=\"Unknown\" />", 5, null)]
         public void TestNull_Int32Parameter(string xml, int intRef, int value)
         {
             ParameterRef reference = intRef;
@@ -312,7 +312,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000006\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 6, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Int64\" Reference=\"0x00000006\" Value=\"Unknown\" />", 6, null)]
         public void TestNull_Int64Parameter(string xml, int intRef, long value)
         {
             ParameterRef reference = intRef;
@@ -326,7 +326,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000007\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 7, null)]
+        [InlineData("<PrimitiveValue Type=\"System.UInt16\" Reference=\"0x00000007\" Value=\"Unknown\" />", 7, null)]
         public void TestNull_UInt16Parameter(string xml, int intRef, ushort value)
         {
             ParameterRef reference = intRef;
@@ -340,7 +340,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000008\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 8, null)]
+        [InlineData("<PrimitiveValue Type=\"System.UInt32\" Reference=\"0x00000008\" Value=\"Unknown\" />", 8, null)]
         public void TestNull_UInt32Parameter(string xml, int intRef, uint value)
         {
             ParameterRef reference = intRef;
@@ -354,7 +354,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000009\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 9, null)]
+        [InlineData("<PrimitiveValue Type=\"System.UInt64\" Reference=\"0x00000009\" Value=\"Unknown\" />", 9, null)]
         public void TestNull_UInt64Parameter(string xml, int intRef, ulong value)
         {
             ParameterRef reference = intRef;
@@ -368,7 +368,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x0000000A\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 10, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Single\" Reference=\"0x0000000A\" Value=\"Unknown\" />", 10, null)]
         public void TestNull_SingleParameter(string xml, int intRef, float value)
         {
             ParameterRef reference = intRef;
@@ -382,7 +382,7 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 
         [Theory]
-        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x0000000B\" Value=\"Unknown\" ><Accessor Type=\"None\" /></PrimitiveValue>", 11, null)]
+        [InlineData("<PrimitiveValue Type=\"System.Double\" Reference=\"0x0000000B\" Value=\"Unknown\" />", 11, null)]
         public void TestNull_DoubleParameter(string xml, int intRef, double value)
         {
             ParameterRef reference = intRef;

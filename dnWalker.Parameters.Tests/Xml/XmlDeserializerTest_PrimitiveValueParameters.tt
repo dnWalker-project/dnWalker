@@ -149,6 +149,6 @@ namespace dnWalker.Parameters.Tests.Xml
 <#+
     private static string GetXml(string type, string reference, string xmlValue)
     {
-        return string.Format(@"<PrimitiveValue Type=\""System.{0}\"" Reference=\""{1}\"" Value=\""{2}\"" ><Accessor Type=\""None\"" /></PrimitiveValue>", type, reference, xmlValue);
+        return string.Format(@"<PrimitiveValue Type=\""System.{0}\"" Reference=\""{1}\"" Value=\""{2}\"" />", type, reference, xmlValue);
     }
 #>

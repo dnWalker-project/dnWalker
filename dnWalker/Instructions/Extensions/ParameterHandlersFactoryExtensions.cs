@@ -24,6 +24,9 @@ namespace dnWalker.Instructions.Extensions
             factory.RegisterExtension(new LDFLD_ParameterHandler());
             factory.RegisterExtension(new CALLVIRT_ParameterHandler());
 
+            // return value initializer
+            factory.RegisterExtension(new ReturnValueParameterHandler());
+
             return factory;
         }
     }

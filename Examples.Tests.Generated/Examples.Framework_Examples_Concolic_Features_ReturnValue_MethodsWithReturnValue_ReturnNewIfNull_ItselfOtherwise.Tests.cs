@@ -13,9 +13,9 @@ using Xunit;
 
 using Moq;
 
-namespace Examples.Concolic.Features.Objects.Tests
+namespace Examples.Concolic.Features.ReturnValue.Tests
 {
-	public class MethodsWithObjectParameter_Tests_BranchIfNotNull
+	public class MethodsWithReturnValue_Tests_ReturnNewIfNull_ItselfOtherwise
 	{
 		#region Test Methods
 
@@ -33,10 +33,11 @@ namespace Examples.Concolic.Features.Objects.Tests
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull(instance);
+			var result = Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue.ReturnNewIfNull_ItselfOtherwise(instance);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
+			// ERROR: method has a return type but no return value is specified!!!! Maybe because it returns another parametrized value and the alias parameter is not yet implemented.
 
 
 		}
@@ -46,7 +47,7 @@ namespace Examples.Concolic.Features.Objects.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			Examples.Concolic.Features.Objects.TestClass? instance = Create_0x0000000B(out Mock<Examples.Concolic.Features.Objects.TestClass> methodsMock_0x0000000B);
+			Examples.Concolic.Features.Objects.TestClass? instance = Create_0x00000008(out Mock<Examples.Concolic.Features.Objects.TestClass> methodsMock_0x00000008);
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
@@ -55,10 +56,11 @@ namespace Examples.Concolic.Features.Objects.Tests
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull(instance);
+			var result = Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue.ReturnNewIfNull_ItselfOtherwise(instance);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
+			// ERROR: method has a return type but no return value is specified!!!! Maybe because it returns another parametrized value and the alias parameter is not yet implemented.
 
 
 		}
@@ -66,7 +68,7 @@ namespace Examples.Concolic.Features.Objects.Tests
 
 		#region Parameter Creation Methods
 		// these methods constructs instances of parameters along with interfaces for their initialization
-		private Examples.Concolic.Features.Objects.TestClass Create_0x0000000B(out Mock<Examples.Concolic.Features.Objects.TestClass> methodsMock)
+		private Examples.Concolic.Features.Objects.TestClass Create_0x00000008(out Mock<Examples.Concolic.Features.Objects.TestClass> methodsMock)
 		{
 			methodsMock = new Mock<Examples.Concolic.Features.Objects.TestClass>();
 			var instance = methodsMock.Object;
@@ -78,7 +80,7 @@ namespace Examples.Concolic.Features.Objects.Tests
 		#endregion Parameter Creation Methods
 
 		#region Parameter Initialization Methods
-		// initialize parameter 0x0000000B
+		// initialize parameter 0x00000008
 		// - instance
 		#endregion Parameter Initialization Methods
 	}
