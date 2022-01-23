@@ -158,5 +158,49 @@ namespace Examples.Concolic.Features.Objects
                 Console.Out.WriteLine("instance.AbstractMethod()|1|.OtherField >= 5");
             }
         }
+
+        public static int ArgumentIdentityComparer(TestClass obj1, TestClass obj2)
+        {
+            if (obj1 == null || obj2 == null)
+            {
+                return -1;
+            }
+
+            if (obj1 == obj2)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static void EditFieldsBasedOnArgumentIdenity(TestClass obj1, TestClass obj2)
+        {
+            int identical = ArgumentIdentityComparer(obj1, obj2);
+
+            if (identical < 0)
+            {
+                Console.WriteLine("obj1 or obj2 is null");
+                return;
+            }
+            else 
+            {
+                Console.WriteLine("obj1 and obj2 != null");
+
+
+                if (obj1.OtherField < 3)
+                {
+                    Console.WriteLine("obj1.OtherField < 3");
+                }
+
+                if (identical == 1)
+                {
+                    Console.WriteLine("obj1 == obj2");
+                }
+            }
+
+        }
     }
 }
