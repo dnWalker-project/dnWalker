@@ -8,38 +8,57 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.Templates
 {
+    public readonly struct MethodArgument
+    {
+        public string Expression { get; }
+
+        private MethodArgument(string expression)
+        {
+            Expression = expression;
+        }
+
+        public static MethodArgument Positional(string expression)
+        {
+            return new MethodArgument(expression);
+        }
+
+        public static MethodArgument Optional(string argument, string expression)
+        {
+            return new MethodArgument($"{argument}: {expression}");
+        }
+    }
+
+
     public class MethodInvocationData
     {
 
-        private MethodInvocationData(MethodInfo method, ICodeExpression? instance, ICodeExpression[]? positionalArguments = null, OptionalArgAssignment[]? optionalArguments = null)
+        private MethodInvocationData(MethodInfo method, string? instance, MethodArgument[]? arguments = null)
         {
             Instance = instance;
             Method = method ?? throw new ArgumentNullException(nameof(method));
-            PositionalArguments = positionalArguments ?? Array.Empty<ICodeExpression>();
-            OptionalArguments = optionalArguments ?? Array.Empty<OptionalArgAssignment>();
+            Arguments = arguments ?? Array.Empty<MethodArgument>();
         }
 
         /// <summary>
         /// Specifies the variable used for the instance method invocation. 
         /// If left null, the invocation is for a static method.
         /// </summary>
-        public ICodeExpression? Instance { get; }
+        public string? Instance { get; }
 
         public MethodInfo Method { get; }
 
-        public ICodeExpression[] PositionalArguments { get; }
+        public MethodArgument[] Arguments { get; }
 
-        public OptionalArgAssignment[] OptionalArguments { get; }
 
         public class Builder
         {
             private readonly MethodInfo _method;
-            private readonly ICodeExpression? _instance;
+            private readonly string? _instance;
 
-            private List<ICodeExpression> _positional = new List<ICodeExpression>();
-            private Dictionary<string, ICodeExpression> _optional = new Dictionary<string, ICodeExpression>();
+            private readonly List<string> _positional = new List<string>();
+            private readonly Dictionary<string, string> _optional = new Dictionary<string, string>();
 
-            private Builder(MethodInfo method, ICodeExpression? instance)
+            private Builder(MethodInfo method, string? instance)
             {
                 _method = method ?? throw new ArgumentNullException(nameof(method));
                 _instance = instance;
@@ -50,38 +69,43 @@ namespace dnWalker.TestGenerator.Templates
                 return new Builder(method, null);
             }
 
-            public static Builder GetInstance(MethodInfo method, ICodeExpression instance)
+            public static Builder GetInstance(MethodInfo method, string instance)
             {
                 if (method is null)
                 {
                     throw new ArgumentNullException(nameof(method));
                 }
 
-                if (instance is null)
+                if (string.IsNullOrWhiteSpace(instance))
                 {
-                    throw new ArgumentNullException(nameof(instance));
+                    throw new ArgumentException($"'{nameof(instance)}' cannot be null or whitespace.", nameof(instance));
                 }
 
                 return new Builder(method, instance);
             }
 
-            public Builder Positional<TExpr>(TExpr argumentExpression)
-                where TExpr : ICodeExpression
+            public Builder Positional(string expression)
             {
-                _positional.Add(argumentExpression);
+                _positional.Add(expression);
                 return this;
             }
 
-            public Builder Optional<TExpr>(string argName, TExpr argumentExpression)
-                where TExpr : ICodeExpression
+            public Builder Optional(string argName, string expression)
             {
-                _optional.Add(argName, argumentExpression);
+                _optional.TryAdd(argName, expression);
                 return this;
             }
 
             public MethodInvocationData Build()
             {
-                return new MethodInvocationData(_method, _instance, _positional.ToArray(), _optional.Select(p => new OptionalArgAssignment(p.Key, p.Value )).ToArray() );
+                IEnumerable<MethodArgument> args =
+                    Enumerable.Concat
+                    (
+                        _positional.Select(e => MethodArgument.Positional(e)),
+                        _optional.Select(p => MethodArgument.Optional(p.Key, p.Value))
+                    );
+
+                return new MethodInvocationData(_method, _instance, args.ToArray());
             }
 
             public static implicit operator MethodInvocationData(Builder b)

@@ -26,19 +26,30 @@ namespace dnWalker.TestGenerator.Parameters
     {
         public ComplexDependency(IEnumerable<Dependency> innerDependencies)
         {
-            InnerDependencies = new List<Dependency>(innerDependencies);
+            InnerDependencies = innerDependencies.ToList(); ;
         }
 
         public IReadOnlyList<Dependency> InnerDependencies { get; }
+
+        public IEnumerable<IParameter> GetParameters()
+        {
+            return Enumerable.Concat
+                (
+                    InnerDependencies.OfType<SimpleDependency>().Select(sd => sd.Parameter),
+                    InnerDependencies.OfType<ComplexDependency>().SelectMany(cd => cd.GetParameters())
+                );
+        }
     }
 
     public class SimpleDependency : Dependency
     {
+
         public SimpleDependency(IParameter parameter)
         {
             Parameter = parameter;
         }
         public IParameter Parameter { get; }
+
     }
 
     public class DependencyGraph

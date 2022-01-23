@@ -1,0 +1,47 @@
+﻿<#@ template language="C#" linepragmas="false" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+<#@ include file="TemplateHelpers.tt" once="true" #>
+<#+ 
+		protected void WriteTypeName(Type type)
+		{
+			if (type.IsNested)
+			{
+				WriteTypeName(type.DeclaringType);
+				Write(TemplateHelpers.Dot);
+			}
+
+			if (type.IsArray)
+			{
+				type = type.GetElementType();
+				WriteTypeName(type);
+				Write("[]");
+			}
+			else if (type.IsGenericType)
+			{
+				Write(TemplateHelpers.WithoutGenerics(TemplateHelpers.GetTypeNameOrAlias(type)));
+				Write("<");
+				
+                Type[] genericArgs = type.GetGenericArguments();
+                if (genericArgs.Length >= 1)
+                {
+                    WriteTypeName(genericArgs[0]);
+
+                    for (int i = 1; i < genericArgs.Length; ++i)
+                    {
+                        Write(TemplateHelpers.Coma);
+                        WriteTypeName(genericArgs[i]);
+                    }
+                }
+
+				Write(">");
+			}
+			else
+			{
+				Write(TemplateHelpers.GetTypeNameOrAlias(type));
+			}
+		}
+#>

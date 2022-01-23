@@ -48,6 +48,47 @@ namespace dnWalker.TestGenerator.Tests.Templates
         {
 
         }
+
+
+        public void NonGenericMethodWithPositionalAndOptionalArguments(int index, string message = null)
+        {
+
+        }
+
+        public void GenericMethodWithPositionalAndOptionalArguments<T>(T data, string message = null)
+        {
+
+        }
+
+        public void NonGenericMethodWithPositionalArguments(int index, string data)
+        {
+
+        }
+
+        public void GenericMethodWithPositionalArguments<T1, T2>(T1 index, T2 data)
+        {
+
+        }
+
+        public void NonGenericMethodWithOptionalArguments(int index = 0, string data = null)
+        {
+
+        }
+
+        public void GenericMethodWithOptionalArguments<T1, T2>(T1 index = default(T1), T2 data = default(T2))
+        {
+
+        }
+
+        public void NonGenericMethod()
+        {
+
+        }
+
+        public void GenericMethod<T1>()
+        {
+
+        }
     }
 
     internal class GenericTestClass<T>
@@ -91,6 +132,46 @@ namespace dnWalker.TestGenerator.Tests.Templates
         {
 
         }
+
+        public void NonGenericMethodWithPositionalAndOptionalArguments(int index, string message = null)
+        {
+
+        }
+
+        public void GenericMethodWithPositionalAndOptionalArguments<T2>(T2 data, string message = null)
+        {
+
+        }
+
+        public void NonGenericMethodWithPositionalArguments(int index, string data)
+        {
+
+        }
+
+        public void GenericMethodWithPositionalArguments<T1, T2>(T1 index, T2 data)
+        {
+
+        }
+
+        public void NonGenericMethodWithOptionalArguments(int index = 0, string data = null)
+        {
+
+        }
+
+        public void GenericMethodWithOptionalArguments<T1, T2>(T1 index = default(T1), T2 data = default(T2))
+        {
+
+        }
+
+        public void NonGenericMethod()
+        {
+
+        }
+
+        public void GenericMethod<T1>()
+        {
+
+        }
     }
 
     public static class TestClassMembers
@@ -131,6 +212,42 @@ namespace dnWalker.TestGenerator.Tests.Templates
         public static MethodInfo GetStaticGeneric<T>()
         {
             return _type.GetMethod(nameof(TestClass.StaticGenericMethod)).MakeGenericMethod(typeof(T));
+        }
+
+        public static MethodInfo GetNonGeneric_PositionalAndOptional()
+        {
+            return _type.GetMethod(nameof(TestClass.NonGenericMethodWithPositionalAndOptionalArguments));
+        }
+        public static MethodInfo GetGeneric_PositionalAndOptional<T>()
+        {
+            return _type.GetMethod(nameof(TestClass.GenericMethodWithPositionalAndOptionalArguments)).MakeGenericMethod(typeof(T));
+        }
+
+        public static MethodInfo GetNonGeneric_Positional()
+        {
+            return _type.GetMethod(nameof(TestClass.NonGenericMethodWithPositionalArguments));
+        }
+        public static MethodInfo GetGeneric_Positional<T1, T2>()
+        {
+            return _type.GetMethod(nameof(TestClass.GenericMethodWithPositionalArguments)).MakeGenericMethod(typeof(T1), typeof(T2));
+        }
+
+        public static MethodInfo GetNonGeneric_Optional()
+        {
+            return _type.GetMethod(nameof(TestClass.NonGenericMethodWithOptionalArguments));
+        }
+        public static MethodInfo GetGeneric_Optional<T1, T2>()
+        {
+            return _type.GetMethod(nameof(TestClass.GenericMethodWithOptionalArguments)).MakeGenericMethod(typeof(T1), typeof(T2));
+        }
+
+        public static MethodInfo GetNonGeneric()
+        {
+            return _type.GetMethod(nameof(TestClass.NonGenericMethod));
+        }
+        public static MethodInfo GetGeneric<T>()
+        {
+            return _type.GetMethod(nameof(TestClass.GenericMethod)).MakeGenericMethod(typeof(T));
         }
     }
 
@@ -178,6 +295,50 @@ namespace dnWalker.TestGenerator.Tests.Templates
         {
             Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
             return type.GetMethod(nameof(GenericTestClass<T>.StaticGenericMethod)).MakeGenericMethod(typeof(T2));
+        }
+
+        public static MethodInfo GetNonGeneric_PositionalAndOptional<T>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.NonGenericMethodWithPositionalAndOptionalArguments));
+        }
+        public static MethodInfo GetGeneric_PositionalAndOptional<T, T2>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.GenericMethodWithPositionalAndOptionalArguments)).MakeGenericMethod(typeof(T2));
+        }
+
+        public static MethodInfo GetNonGeneric_Positional<T>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.NonGenericMethodWithPositionalArguments));
+        }
+        public static MethodInfo GetGeneric_Positional<T, T2, T3>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.GenericMethodWithPositionalArguments)).MakeGenericMethod(typeof(T2), typeof(T3));
+        }
+
+        public static MethodInfo GetNonGeneric_Optional<T>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.NonGenericMethodWithOptionalArguments));
+        }
+        public static MethodInfo GetGeneric_Optional<T, T2, T3>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.GenericMethodWithOptionalArguments)).MakeGenericMethod(typeof(T2), typeof(T3));
+        }
+
+        public static MethodInfo GetNonGeneric<T>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.NonGenericMethod));
+        }
+        public static MethodInfo GetGeneric<T, T2>()
+        {
+            Type type = typeof(GenericTestClass<>).MakeGenericType(typeof(T));
+            return type.GetMethod(nameof(GenericTestClass<T>.GenericMethod)).MakeGenericMethod(typeof(T2));
         }
     }
 }
