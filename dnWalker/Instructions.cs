@@ -33,6 +33,8 @@ namespace MMC.InstructionExec
     using MMC.ICall;
     using dnWalker;
     using ThreadState = State.ThreadState;
+    using dnWalker.TypeSystem;
+    using System.Collections.Generic;
 
     //using FieldDefinition = dnlib.DotNet.Var;
 
@@ -655,7 +657,7 @@ namespace MMC.InstructionExec
             var or = cur.EvalStack.Pop();
             var method = Operand as MethodDefinition;
 
-            var toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
+            var toCall = cur.FindVirtualMethod(method, or);
             cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
@@ -867,7 +869,7 @@ namespace MMC.InstructionExec
             if (!cls.Initialized)
             {
                 cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
-                var cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
+                var cctorDef = type.ResolveTypeDefThrow().FindStaticConstructor();
                 if (cctorDef == null)
                 {
                     // Trivial case, no initializtion needed.
@@ -948,13 +950,24 @@ namespace MMC.InstructionExec
 
         public FieldDefinition GetFieldDefinition()
         {
-            var fld = Operand as FieldDefinition;
-            // Lookup layout information if it's not available.
-            if (!fld.HasLayoutInfo)
+            static void EnsureLayoutInfo(FieldDefinition fieldDef)
             {
-                fld = DefinitionProvider.GetFieldDefinition(fld);
-                //throw new NotImplementedException("GetFieldDefinition");
+                if (!fieldDef.FieldOffset.HasValue)
+                {
+                    IList<FieldDefinition> fields = fieldDef.DeclaringType.Fields;
+                    for (var i = 0; i < fields.Count; i++)
+                    {
+                        if (fields[i] == fieldDef)
+                        {
+                            fieldDef.FieldOffset = (uint)i;
+                            break;
+                        }
+                    }
+                }
             }
+
+            var fld = Operand as FieldDefinition;
+            EnsureLayoutInfo(fld);
 
             return fld;
         }
@@ -978,17 +991,17 @@ namespace MMC.InstructionExec
                 return m_offset;
             }
 
-            var fld = GetFieldDefinition();
-            var typeOffset = 0;
-            var matched = false;
-            var retval = 0;
+            FieldDefinition fld = GetFieldDefinition();
+            int typeOffset = 0;
+            bool matched = false;
+            int retval = 0;
 
-            foreach (TypeDefinition typeDef in DefinitionProvider.InheritanceEnumerator(superType))
+            foreach (TypeDefinition typeDef in superType.InheritanceEnumerator())
             {
                 /*
-				 * We start searching for the right field from the declaringtype,
-				 * it is possible that the declaring type does not define fld, therefore
-				 * it might be possible that we have to search further for fld in
+				 * We start searching for the right field from the declaring type,
+				 * it is possible that the declaring type does not define field, therefore
+				 * it might be possible that we have to search further for field in
 				 * the inheritance tree, (hence matched), and this continues until
 				 * a field is found which has the same offset and the same name 
 				 */
@@ -1004,7 +1017,7 @@ namespace MMC.InstructionExec
                     matched = true;
                 }
 
-                if (typeDef.BaseType != null && typeDef.BaseType.FullName != "System.Object") // if base type is System.Object, stop
+                if (typeDef.BaseType != null && typeDef.BaseType.FullName != "System.Object") // if base type is System.Object, stop // TODO: make it so that it does not rely on full name check!!!!
                 {
                     typeOffset += Math.Max(0, typeDef.Fields.Count - 1);
                 }
@@ -2716,7 +2729,7 @@ namespace MMC.InstructionExec
 
                 if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
                 {
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(args[0].ToString()));
+                    cur.EvalStack.Push(DataElement.CreateDataElement(args[0].ToString(), cur.DefinitionProvider));
                     return nextRetval;
                 }
 
@@ -2879,7 +2892,7 @@ namespace MMC.InstructionExec
                 }
                 else
                 {
-                    toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, args[0], cur);
+                    toCall = cur.FindVirtualMethod(methDef, args[0]);
                 }
 
                 cur.CurrentMethod.IsPrefixed = false;
@@ -3387,7 +3400,7 @@ namespace MMC.InstructionExec
                 if (a is Int4 i4)
                 {
                     var uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
+                    cur.EvalStack.Push(DataElement.CreateDataElement(uintptr, cur.DefinitionProvider));
                 }
                 /*else if (a is Int8 i8)
                 {
@@ -3667,11 +3680,11 @@ namespace MMC.InstructionExec
             {
                 if (a is IRealElement r)
                 {
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)r.ToFloat8(false).Value));
+                    cur.EvalStack.Push(DataElement.CreateDataElement((ushort)r.ToFloat8(false).Value, cur.DefinitionProvider));
                     return nextRetval;
                 }
 
-                cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)a.ToInt8(false).Value));
+                cur.EvalStack.Push(DataElement.CreateDataElement((ushort)a.ToInt8(false).Value, cur.DefinitionProvider));
                 return nextRetval;
             }
             catch (OverflowException e)
@@ -4018,11 +4031,11 @@ namespace MMC.InstructionExec
             var type = (ITypeDefOrRef)Operand;
             if (type.IsValueType)
             {
-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));
+                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.ToTypeSig())));
             }
             else
             {
-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf("System.IntPtr")));
+                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(cur.DefinitionProvider.BaseTypes.IntPtr)));
             }
 
             return nextRetval;

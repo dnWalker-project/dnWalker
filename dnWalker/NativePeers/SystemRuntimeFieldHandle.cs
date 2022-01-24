@@ -20,7 +20,7 @@ namespace dnWalker.NativePeers
                         args[0] = localVariablePointer.Value;
                         return TryGetValue(method, args, cur, out iieReturnValue);
                     case FieldHandle fieldHandle:
-                        cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(fieldHandle.Value.GetHashCode()));
+                        cur.EvalStack.Push(DataElement.CreateDataElement(fieldHandle.Value.GetHashCode(), cur.DefinitionProvider));
                         iieReturnValue = InstructionExecBase.nextRetval;
                         return true;
                     default:

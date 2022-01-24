@@ -1,4 +1,7 @@
 ﻿using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
+
 using MMC;
 using MMC.Data;
 using MMC.State;
@@ -92,7 +95,7 @@ namespace dnWalker.DataElements
             public void VisitAllocatedObject(AllocatedObject ao, ExplicitActiveState cur)
             {
                 var fields = new List<FieldDef>();
-                foreach (var typeDefOrRef in DefinitionProvider.InheritanceEnumerator(ao.Type))
+                foreach (var typeDefOrRef in ao.Type.InheritanceEnumerator())
                 {
                     fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
                 }
@@ -110,7 +113,7 @@ namespace dnWalker.DataElements
 
                     var objValue = f.GetValue(BaseObject);
                     var fieldValue = ao.Fields[(int)field.FieldOffset.Value];
-                    if (!cur.DefinitionProvider.CreateDataElement(objValue).Equals(fieldValue))
+                    if (!DataElement.CreateDataElement(objValue, cur.DefinitionProvider).Equals(fieldValue))
                     {
                         Result = -1;
                         return;

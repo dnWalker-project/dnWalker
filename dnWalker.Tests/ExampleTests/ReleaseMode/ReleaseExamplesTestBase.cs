@@ -1,4 +1,6 @@
-﻿using MMC;
+﻿using dnWalker.TypeSystem;
+
+using MMC;
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
         protected static readonly string AssemblyFilePath = string.Format(ExamplesAssemblyFileFormat, "Release");
 
         protected static Lazy<DefinitionProvider> LazyDefinitionProvider =
-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
+            new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
 
 
         protected ReleaseExamplesTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)

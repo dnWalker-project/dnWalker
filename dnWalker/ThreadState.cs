@@ -24,6 +24,7 @@ namespace MMC.State
     using dnWalker.DataElements;
     using MMC.InstructionExec;
     using System;
+    using dnWalker.TypeSystem;
 
     public delegate void ThreadStateChanged(ThreadState threadState, System.Threading.ThreadState state);
 
@@ -82,15 +83,15 @@ namespace MMC.State
             set
             {
                 _exceptionReference = value;
-                if (ObjectReference.Null.Equals(_exceptionReference))
+                if (_exceptionReference.IsNull())
                 {
                     UnhandledException = null;
                     return;
                 }
 
                 var exceptionObj = cur.DynamicArea.Allocations[_exceptionReference] as AllocatedObject;
-                var messageField = cur.DefinitionProvider.GetFieldDefinition(typeof(System.Exception).FullName, "_message");
-                string message = exceptionObj.Fields[(int)messageField.FieldOffset].ToString();
+                var messageField = cur.DefinitionProvider.BaseTypes.Exception.TypeDef.GetField("_message");
+                string message = exceptionObj.Fields[messageField.GetFieldOffset()].ToString();
 
                 UnhandledException = new ExceptionInfo(exceptionObj.Type, message);
             }

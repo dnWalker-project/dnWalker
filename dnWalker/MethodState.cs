@@ -22,6 +22,9 @@ namespace MMC.State
     using System.Linq;
     using dnlib.DotNet;
     using dnlib.DotNet.Emit;
+
+    using dnWalker.TypeSystem;
+
     using MMC.Data;
 
     public delegate void MethodStateCallback(MethodState me);
@@ -108,7 +111,9 @@ namespace MMC.State
                     // First to encounter, or this EH has a smaller scope than
                     // the previously found one.
                     if (retval == null || retval.TryStart.Offset < eh.TryStart.Offset || retval.TryEnd.Offset > eh.TryEnd.Offset)
+                    { 
                         retval = eh;
+                    }
                 }
             }
 
@@ -268,7 +273,7 @@ namespace MMC.State
                 Locals = cur.StorageFactory.CreateList(Definition.Body.Variables.Count);
                 for (var i = 0; i < Locals.Length; ++i)
                 {
-                    Locals[i] = DefinitionProvider.GetNullValue(Definition.Body.Variables[i].Type);
+                    Locals[i] = DataElement.GetNullValue(Definition.Body.Variables[i].Type);
                 }
             }
 

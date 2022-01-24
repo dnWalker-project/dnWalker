@@ -1,4 +1,6 @@
-﻿using MMC;
+﻿using dnWalker.TypeSystem;
+
+using MMC;
 using MMC.Data;
 
 using System;
@@ -16,7 +18,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests
     public class InterpreterExtensionTestBase : TestBase
     {
         private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
-        protected static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
+        protected static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilename)));
         public InterpreterExtensionTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {
         }

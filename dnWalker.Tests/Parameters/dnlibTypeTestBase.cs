@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Instructions.Extensions;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.InstructionExec;
@@ -16,14 +17,11 @@ namespace dnWalker.Tests.Parameters
 {
     public abstract class dnlibTypeTestBase
     {
-        private static readonly ModuleContext _context = ModuleDef.CreateModuleContext();
-        //private static readonly List<ModuleDef> _modules = new List<ModuleDef>();
-
         private static readonly IConfig _config;
         private static readonly Logger _logger;
 
         private static readonly IInstructionExecProvider _instructionExecProvider;
-        private static readonly DefinitionProvider _definitionProvider;
+        private static readonly IDefinitionProvider _definitionProvider;
 
         protected static ExplicitActiveState CreateState()
         {
@@ -31,7 +29,7 @@ namespace dnWalker.Tests.Parameters
             return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
         }
 
-        protected static DefinitionProvider DefinitionProvider
+        protected static IDefinitionProvider DefinitionProvider
         {
             get { return _definitionProvider; }
         }
@@ -48,22 +46,7 @@ namespace dnWalker.Tests.Parameters
             _instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
 
-            //AssemblyLoader assemblyLoader = new AssemblyLoader();
-            //assemblyLoader.GetModuleDef(typeof(dnlibTypeTestBase).Module);
-
-
-
-
-            ModuleDef mainModule = ModuleDefMD.Load(typeof(dnlibTypeTestBase).Module, _context);
-
-            var refModules = mainModule
-                .GetAssemblyRefs()
-                .Select(ar => _context.AssemblyResolver.Resolve(ar.Name, mainModule))
-                .Where(a => a != null)
-                .SelectMany(a => a.Modules)
-                .ToArray();
-
-            _definitionProvider = new DefinitionProvider(mainModule, refModules);
+            _definitionProvider = new DefinitionProvider(DefinitionContext.LoadFromAppDomain(typeof(dnlibTypeTestBase).Module));
         }
 
         public static TypeSig GetType(string typeName)
