@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="QuikGraph" Version="2.3.0" />
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
   </ItemGroup>
@@ -71,41 +72,9 @@
     <None Update="ExplorationData_NullEquality.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\ArrangePhaseTemplate.ComplexDependency.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Templates\ArrangePhaseTemplate.SimpleDependency.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Templates\ArrangePhaseTemplate.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Templates\GeneratorContext.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Templates\MethodInvocationTemplate.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
     <None Update="Templates\TemplateBase.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TemplateBase.cs</LastGenOutput>
-    </None>
-    <None Update="Templates\TemplateHelpers.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Templates\TypeNameTemplate.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Templates\VariableTemplate.tt">
-      <Generator></Generator>
-      <CustomToolNamespace></CustomToolNamespace>
     </None>
     <None Update="XUnit\XUnitTestClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

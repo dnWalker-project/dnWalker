@@ -6,6 +6,7 @@ namespace dnWalker.TestGenerator.Templates
 
     public partial class TemplateHelpers
     {
+        public static readonly string Semicolon = ";";
         public static readonly string Coma = ", ";
         public static readonly string Dot = ".";
         public static readonly string Null = "null";
