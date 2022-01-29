@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.TypeSystem;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,38 +12,38 @@ namespace dnWalker.Parameters
 {
     public static class ParameterContextExtensions
     {
-        public static IParameter CreateParameter(this IParameterSet context, TypeSig type)
+        public static IParameter CreateParameter(this IParameterSet set, TypeSig type)
         {
-            static IObjectParameter CreateObjectParameter(ClassSig type, IParameterSet context)
+            static IObjectParameter CreateObjectParameter(ClassSig type, IParameterSet set)
             {
-                return context.CreateObjectParameter(type.FullName);
+                return set.CreateObjectParameter(new TypeSignature(type.ToTypeDefOrRef()));
             }
 
-            static IArrayParameter CreateArrayParamter(ArraySigBase arrayType, IParameterSet context)
+            static IArrayParameter CreateArrayParamter(ArraySigBase arrayType, IParameterSet set)
             {
                 var elementType = arrayType.Next;
 
-                return context.CreateArrayParameter(elementType.FullName);
+                return set.CreateArrayParameter(new TypeSignature(elementType.ToTypeDefOrRef()));
             }
 
-            static IPrimitiveValueParameter CreatePrimitiveValueParameter(TypeSig type, IParameterSet context)
+            static IPrimitiveValueParameter CreatePrimitiveValueParameter(TypeSig type, IParameterSet set)
             {
                 if (type.IsPrimitive)
                 {
                     switch (type.FullName)
                     {
-                        case "System.Boolean": return context.CreateBooleanParameter();
-                        case "System.Byte": return context.CreateByteParameter();
-                        case "System.SByte": return context.CreateSByteParameter();
-                        case "System.Int16": return context.CreateInt16Parameter();
-                        case "System.Int32": return context.CreateInt32Parameter();
-                        case "System.Int64": return context.CreateInt64Parameter();
-                        case "System.UInt16": return context.CreateUInt16Parameter();
-                        case "System.UInt32": return context.CreateUInt32Parameter();
-                        case "System.UInt64": return context.CreateUInt64Parameter();
-                        case "System.Char": return context.CreateCharParameter();
-                        case "System.Single": return context.CreateSingleParameter();
-                        case "System.Double": return context.CreateDoubleParameter();
+                        case "System.Boolean": return set.CreateBooleanParameter();
+                        case "System.Byte": return set.CreateByteParameter();
+                        case "System.SByte": return set.CreateSByteParameter();
+                        case "System.Int16": return set.CreateInt16Parameter();
+                        case "System.Int32": return set.CreateInt32Parameter();
+                        case "System.Int64": return set.CreateInt64Parameter();
+                        case "System.UInt16": return set.CreateUInt16Parameter();
+                        case "System.UInt32": return set.CreateUInt32Parameter();
+                        case "System.UInt64": return set.CreateUInt64Parameter();
+                        case "System.Char": return set.CreateCharParameter();
+                        case "System.Single": return set.CreateSingleParameter();
+                        case "System.Double": return set.CreateDoubleParameter();
 
                         default: throw new Exception("Unexpected primitive value parameter.");
                     }
@@ -56,7 +58,7 @@ namespace dnWalker.Parameters
             // primitive, basic values 
             if (type.IsCorLibType && type.IsPrimitive)
             {
-                return CreatePrimitiveValueParameter(type, context);
+                return CreatePrimitiveValueParameter(type, set);
             }
             // TODO we are working with value types - TODO
             else if (type.IsValueType)
@@ -69,13 +71,13 @@ namespace dnWalker.Parameters
             else if (type.IsArray)
             {
                 var arraySig = type.ToArraySig();
-                return CreateArrayParamter(arraySig, context);
+                return CreateArrayParamter(arraySig, set);
             }
             // SZArray of reference types
             else if (type.IsSZArray)
             {
                 var arraySig = type.ToSZArraySig();
-                return CreateArrayParamter(arraySig, context);
+                return CreateArrayParamter(arraySig, set);
             }
             // Array of value types
             else if (type.IsValueArray)
@@ -89,7 +91,7 @@ namespace dnWalker.Parameters
                 var classSig = type.ToClassSig();
                 var typeDef = classSig.TryGetTypeDefOrRef().ResolveTypeDefThrow();
 
-                return CreateObjectParameter(classSig, context);
+                return CreateObjectParameter(classSig, set);
             }
 
 

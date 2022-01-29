@@ -61,6 +61,11 @@ namespace dnWalker.TypeSystem
             return new TypeSignature(sig.ToTypeDefOrRef());
         }
 
+        public ITypeDefOrRef ToTypeDefOrRef()
+        {
+            return _type;
+        }
+
         public override string ToString()
         {
             return _type.FullName;

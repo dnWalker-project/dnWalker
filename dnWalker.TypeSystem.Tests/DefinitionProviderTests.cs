@@ -23,8 +23,8 @@ namespace dnWalker.Tests.TypeSystem
         public void Test_DefinitionProviderResolves_TextWriter(string location)
         {
 
-            IDefinitionContext definitionLoader = DefinitionContext.LoadFromFile(location);
-            DefinitionProvider definitionProvider = new DefinitionProvider(definitionLoader);
+            IDomain domain = Domain.LoadFromFile(location);
+            DefinitionProvider definitionProvider = new DefinitionProvider(domain);
 
             definitionProvider.GetTypeDefinition("System.IO.TextWriter").Should().NotBeNull();
         }

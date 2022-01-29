@@ -13,6 +13,7 @@ namespace dnWalker.TypeSystem
         IDomain Context { get; }
 
         TypeDef GetTypeDefinition(string fullTypeName);
+        MethodDef GetMethodDefinition(string fullMethodName);
 
         int SizeOf(TypeSig type);
 

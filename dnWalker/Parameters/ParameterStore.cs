@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using DnParameter = dnlib.DotNet.Parameter;
 
 using static dnWalker.Parameters.ParameterAccessor;
+using dnWalker.TypeSystem;
 
 namespace dnWalker.Parameters
 {
@@ -22,37 +23,40 @@ namespace dnWalker.Parameters
     {
         private readonly MethodDef _entryPoint;
 
-        private readonly IBaseParameterSet _baseContext;
-        private IExecutionParameterSet _executionContext;
+        private readonly IParameterContext _context;
 
-        public ParameterStore(MethodDef entryPoint)
+        private readonly IBaseParameterSet _baseSet;
+        private IExecutionParameterSet _executionSet;
+
+        public ParameterStore(MethodDef entryPoint, IDefinitionProvider definitionProvider)
         {
-            _baseContext = new BaseParameterSet();
+            _context = new ParameterContext(definitionProvider);
+            _baseSet = new BaseParameterSet(_context);
 
             foreach (var arg in entryPoint.Parameters)
             {
-                IParameter parameter = _baseContext.CreateParameter(arg.Type);
+                IParameter parameter = _baseSet.CreateParameter(arg.Type);
                 parameter.Accessors.Add(new MethodArgumentParameterAccessor(arg.Name));
-                _baseContext.Roots.Add(arg.Name, parameter.Reference);
+                _baseSet.Roots.Add(arg.Name, parameter.Reference);
             }
             _entryPoint = entryPoint;
 
             if (entryPoint.HasThis)
             {
-                IParameter parameter = _baseContext.CreateParameter(entryPoint.DeclaringType.ToTypeSig());
+                IParameter parameter = _baseSet.CreateParameter(entryPoint.DeclaringType.ToTypeSig());
                 parameter.Accessors.Add(new MethodArgumentParameterAccessor(ThisName));
-                _baseContext.Roots.Add(ThisName, parameter.Reference);
+                _baseSet.Roots.Add(ThisName, parameter.Reference);
             }
         }
 
         /// <summary>
         /// Gets the parameter context which describes input into the next execution.
         /// </summary>
-        public IBaseParameterSet BaseContext
+        public IBaseParameterSet BaseSet
         {
             get 
             {
-                return _baseContext ?? throw new InvalidOperationException("Cannot access the 'BaseContext', the store is not initialized!");
+                return _baseSet ?? throw new InvalidOperationException("Cannot access the 'BaseContext', the store is not initialized!");
             }
         }
 
@@ -67,11 +71,11 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes current state.
         /// </summary>
-        public IExecutionParameterSet ExecutionContext
+        public IExecutionParameterSet ExecutionSet
         {
             get
             {
-                return _executionContext ?? throw new InvalidOperationException("Cannot access the 'ExecutionContext', it is not initialized!");
+                return _executionSet ?? throw new InvalidOperationException("Cannot access the 'ExecutionContext', it is not initialized!");
             }
         }
 
@@ -85,7 +89,7 @@ namespace dnWalker.Parameters
             int idx = 0;
 
             //IParameterContext ctx = _baseContext;
-            IParameterSet ctx = _executionContext;
+            IParameterSet ctx = _executionSet;
 
             if (method.HasThis)
             {
@@ -103,11 +107,11 @@ namespace dnWalker.Parameters
         }
 
         /// <summary>
-        /// Clears the <see cref="ParameterStore.ExecutionContext"/> and initializes a new <see cref="ParameterStore.ExecutionContext"/>.
+        /// Clears the <see cref="ParameterStore.ExecutionSet"/> and initializes a new <see cref="ParameterStore.ExecutionSet"/>.
         /// </summary>
         public void InitializeExecutionContext()
         {
-            _executionContext = _baseContext.CreateExecutionSet();
+            _executionSet = _baseSet.CreateExecutionSet();
         }
 
         private ParameterRef _returnValue;
@@ -117,7 +121,7 @@ namespace dnWalker.Parameters
             IParameter parameter = retValue.GetOrCreateParameter(cur, retValueType);
             parameter.Accessors.Add(new ReturnValueParameterAccessor());
 
-            _executionContext.Roots.Add(ReturnValueName, parameter.Reference);
+            _executionSet.Roots.Add(ReturnValueName, parameter.Reference);
 
             _returnValue = parameter.Reference;
         }
@@ -127,6 +131,14 @@ namespace dnWalker.Parameters
             get
             {
                 return _returnValue;
+            }
+        }
+
+        public IParameterContext Context
+        {
+            get
+            {
+                return _context;
             }
         }
 
@@ -172,7 +184,7 @@ namespace dnWalker.Parameters
 
             for (int i = 0; i < traitsArray.Length; ++i)
             {
-                traitsArray[i].ApplyTo(_baseContext);
+                traitsArray[i].ApplyTo(_baseSet);
             }
         }
     }

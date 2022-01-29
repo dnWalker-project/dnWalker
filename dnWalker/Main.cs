@@ -474,7 +474,7 @@ Disabling/enabling features:
 
             PrintConfig(config, logger);
 
-            IDefinitionProvider definitionProvider = new DefinitionProvider(DefinitionContext.LoadFromFile(config.AssemblyToCheckFileName));
+            IDefinitionProvider definitionProvider = new DefinitionProvider(Domain.LoadFromFile(config.AssemblyToCheckFileName));
 
             StateSpaceSetup stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
 

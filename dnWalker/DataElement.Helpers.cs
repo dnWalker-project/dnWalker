@@ -2,6 +2,7 @@
 
 using dnWalker.TypeSystem;
 
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -117,6 +118,57 @@ namespace MMC.Data
             }
 
             throw new NotSupportedException("GetNullValue for " + typeSig.FullName);
+        }
+
+        public static MethodDef FindVirtualMethod(this IDataElement dataElement, MethodDef method, ExplicitActiveState cur)
+        {
+            const string VirtualMethodLookupKey = "virtual-methods";
+
+            dataElement = dataElement is IManagedPointer ptr ? ptr.Value : dataElement;
+
+            if (!(dataElement is ObjectReference reference))
+            {
+                throw new NotSupportedException($"ObjectReference expected, '{dataElement?.GetType().FullName}' found.");
+            }
+
+            (MethodSig sig, string name) key = (method.MethodSig, method.Name);
+
+            if (!cur.PathStore.CurrentPath.TryGetObjectAttribute(dataElement, VirtualMethodLookupKey, out Dictionary<(MethodSig, string), MethodDef> lookup))
+            {
+                lookup = new Dictionary<(MethodSig, string), MethodDef>();
+                cur.PathStore.CurrentPath.SetObjectAttribute(dataElement, VirtualMethodLookupKey, lookup);
+            }
+
+            if (!lookup.TryGetValue(key, out MethodDef result))
+            {
+                AllocatedObject ao = (AllocatedObject)cur.DynamicArea.Allocations[reference];
+                ITypeDefOrRef type = ao.Type;
+
+                foreach (ITypeDefOrRef superType in type.InheritanceEnumerator())
+                {
+                    TypeDef superTypeDef = superType.ResolveTypeDefThrow();
+                    MethodDef candidate = superTypeDef.FindMethod(method.Name, key.sig);
+
+                    if (candidate != null &&
+                        candidate.Body != null &&
+                        candidate.Body.Instructions.Count > 0)
+                    {
+                        result = candidate;
+                        break;
+                    }
+                }
+
+                if (result != null)
+                {
+                    lookup[key] = result;
+                }
+                else
+                {
+                    throw new MemberNotFoundException(type.FullName, key.name);
+                }
+            }
+
+            return result;
         }
     }
 }

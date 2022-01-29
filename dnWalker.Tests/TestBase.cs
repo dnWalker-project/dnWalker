@@ -79,9 +79,9 @@ namespace dnWalker.Tests
         //    return assemblyLoader;
         //}
 
-        public static IDefinitionContext GetDefinitionContext(string assemblyFileName)
+        public static IDomain GetDefinitionContext(string assemblyFileName)
         {
-            IDefinitionContext definitionContext = DefinitionContext.LoadFromFile(assemblyFileName);
+            IDomain definitionContext = Domain.LoadFromFile(assemblyFileName);
 
             Assembly.LoadFrom(assemblyFileName);
 

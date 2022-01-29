@@ -86,7 +86,7 @@ namespace dnWalker.Parameters
             else
             {
                 // get ITypeOrDef
-                ITypeDefOrRef elementType = cur.DefinitionProvider.GetTypeDefinition(arrayParameter.ElementType);
+                ITypeDefOrRef elementType = arrayParameter.ElementType.ToTypeDefOrRef();
 
                 // create ObjectReference
                 ObjectReference arrayReference = cur.DynamicArea.AllocateArray(cur.DynamicArea.DeterminePlacement(false), elementType, arrayParameter.GetLength());
@@ -129,7 +129,7 @@ namespace dnWalker.Parameters
             else
             {
                 // get ITypeOrDef
-                ITypeDefOrRef type = cur.DefinitionProvider.GetTypeDefinition(objectParameter.Type);
+                ITypeDefOrRef type = objectParameter.Type.ToTypeDefOrRef();
 
                 // create ObjectReference
                 ObjectReference objectReference = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(false), type);

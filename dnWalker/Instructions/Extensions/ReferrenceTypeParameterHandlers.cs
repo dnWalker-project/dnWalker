@@ -83,7 +83,7 @@ namespace dnWalker.Instructions.Extensions
             rhs.TryGetParameter(cur, out IReferenceTypeParameter rhsRefType);
 
             cur.TryGetParameterStore(out ParameterStore store);
-            IParameterSet context = store.ExecutionContext;
+            IParameterSet context = store.ExecutionSet;
 
             // lhs is IReferenceTypeParameter, rhs is IReferenceTypeParameter
             // -> check whether one is an alias of the other... the GetRefsEqualDataElement(..., ...)
@@ -154,7 +154,7 @@ namespace dnWalker.Instructions.Extensions
             rhs.TryGetParameter(cur, out IReferenceTypeParameter rhsRefType);
 
             cur.TryGetParameterStore(out ParameterStore store);
-            IParameterSet context = store.ExecutionContext;
+            IParameterSet context = store.ExecutionSet;
 
             // lhs is IReferenceTypeParameter, rhs is an ObjectReference, null
             // -> check lhs.isNull value

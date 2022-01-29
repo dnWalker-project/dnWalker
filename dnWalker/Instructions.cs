@@ -657,7 +657,7 @@ namespace MMC.InstructionExec
             var or = cur.EvalStack.Pop();
             var method = Operand as MethodDefinition;
 
-            var toCall = cur.FindVirtualMethod(method, or);
+            var toCall = or.FindVirtualMethod(method, cur);
             cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
@@ -2892,7 +2892,7 @@ namespace MMC.InstructionExec
                 }
                 else
                 {
-                    toCall = cur.FindVirtualMethod(methDef, args[0]);
+                    toCall = args[0].FindVirtualMethod(methDef, cur);
                 }
 
                 cur.CurrentMethod.IsPrefixed = false;

@@ -144,7 +144,7 @@ namespace dnWalker.Concolic
 
             _pathStore = new PathStore(entryPoint);
             // _parameterStore.BaseContext should contain default values for all input parameters
-            _parameterStore = new ParameterStore(entryPoint);
+            _parameterStore = new ParameterStore(entryPoint, _definitionProvider);
 
 
             var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
@@ -159,9 +159,9 @@ namespace dnWalker.Concolic
             // data contains start point information for PRIMITIVE ARGUMENTS ONLY
             foreach (KeyValuePair<string, object> kvp in data)
             {
-                if (_parameterStore.BaseContext.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
+                if (_parameterStore.BaseSet.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
                 {
-                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseContext);
+                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseSet);
                     p.Value = kvp.Value;
                 }
             }

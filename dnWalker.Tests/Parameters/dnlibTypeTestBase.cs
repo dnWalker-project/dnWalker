@@ -46,7 +46,7 @@ namespace dnWalker.Tests.Parameters
             _instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
 
-            _definitionProvider = new DefinitionProvider(DefinitionContext.LoadFromAppDomain(typeof(dnlibTypeTestBase).Module));
+            _definitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(typeof(dnlibTypeTestBase).Assembly));
         }
 
         public static TypeSig GetType(string typeName)

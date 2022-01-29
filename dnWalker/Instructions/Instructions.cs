@@ -873,7 +873,7 @@ namespace dnWalker.Instructions
             IDataElement or = cur.EvalStack.Pop();
             MethodDefinition method = Operand as MethodDefinition;
 
-            MethodDefinition toCall = cur.FindVirtualMethod(method, or);
+            MethodDefinition toCall = or.FindVirtualMethod(method, cur);
             cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
@@ -3101,7 +3101,7 @@ namespace dnWalker.Instructions
                 }
                 else
                 {
-                    toCall = cur.FindVirtualMethod(methDef, args[0]);
+                    toCall = args[0].FindVirtualMethod(methDef, cur);
                 }
 
                 cur.CurrentMethod.IsPrefixed = false;
