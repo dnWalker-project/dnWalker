@@ -1,5 +1,154 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" visibility="internal"#>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<# ITestProjectContext context = Context; #>
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+<#
+	if (context.Targets.Count == 0)
+	{
+#>
+        <TargetFramework><#= FallbackTargetFramework #></TargetFramework>
+<#
+	}
+	else if (Context.Targets.Count == 1)
+	{
+#>
+        <TargetFramework><#= context.Targets[0] #></TargetFramework>
+<#
+	}
+	else
+	{
+#>
+        <TargetFrameworks><#= JoinTokens(context.Targets) #></TargetFrameworks>
+<#
+	}
+#>
+        <IsPackable>false</IsPackable>
+        <Nullable><#= context.NullableEnable ? "enable" : "disable" #></Nullable>
+    </PropertyGroup>
+
+<# 
+	// package references 
+	if (BasePackages.Count > 0 || context.PackageReferencies.Count > 0)
+	{
+#>
+    <ItemGroup>
+<#
+		foreach (PackageReference p in BasePackages)
+		{
+			WritePackageReference(p);
+		}
+#>
+<#
+		foreach (PackageReference p in context.PackageReferencies)
+		{
+			WritePackageReference(p);
+		}
+#>
+    </ItemGroup>
+
+<#
+	}
+
+	// project references
+	if (context.ProjectReferencies.Count > 0)
+	{
+#>
+    <ItemGroup>
+<#
+		foreach (string project in context.ProjectReferencies)
+		{
+			WriteProjectReference(project);
+		}
+#>
+    </ItemGroup>
+
+<#
+	}
+	// service references
+	if (BaseServices.Count > 0 || context.Services.Count > 0)
+	{
+#>
+    <ItemGroup>
+<#
+		foreach (Guid s in BaseServices)
+		{
+			WriteServiceReference(s);
+		}
+#>
+<#
+		foreach (Guid s in context.Services)
+		{
+			WriteServiceReference(s);
+		}
+#>
+    </ItemGroup>
+<#
+	}
+#>
+</Project>
+<#+
+	private static string JoinTokens(IEnumerable<string> tokens)
+	{
+		return string.Join("; ", tokens);
+	}
+#>
+<#+
+	private void WritePackageReference(PackageReference p)
+	{
+#>
+        <PackageReference Include="<#= p.Name #>" Version="<#= p.Version #>"<#+
+		if (p.IncludeAssets.Count > 0 || p.ExcludeAssets.Count > 0 || p.PrivateAssets.Count > 0)
+		{
+#>>
+<#+
+			if (p.IncludeAssets.Count > 0)
+			{
+#>
+            <IncludeAssets><#= JoinTokens(p.IncludeAssets) #></IncludeAssets>
+<#+
+			}
+			if (p.ExcludeAssets.Count > 0)
+			{
+#>
+            <ExcludeAssets><#= JoinTokens(p.ExcludeAssets) #></ExcludeAssets>
+<#+
+			}
+			if (p.PrivateAssets.Count > 0)
+			{
+#>
+            <PrivateAssets><#= JoinTokens(p.PrivateAssets) #></PrivateAssets>
+<#+
+			}
+#>
+        </PackageReference>
+<#+
+		}
+		else
+		{
+#> />
+<#+
+		}
+	}
+#>
+<#+
+	private void WriteProjectReference(string project)
+	{
+#>
+        <ProjectReference Include="<#= project #>" />
+<#+
+	}
+#>
+<#+
+	private void WriteServiceReference(Guid serviceGuid)
+	{
+#>
+        <Service Include="{<#= serviceGuid #>}" />
+<#+
+	}
+#>

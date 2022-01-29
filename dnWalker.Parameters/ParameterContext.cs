@@ -20,5 +20,21 @@ namespace dnWalker.Parameters
         {
             DefinitionProvider = definitionProvider;
         }
+
+        IReadOnlyDictionary<ParameterRef, IParameter> IReadOnlyParameterSet.Parameters
+        {
+            get
+            {
+                return _parameters;
+            }
+        }
+
+        IReadOnlyDictionary<string, ParameterRef> IReadOnlyParameterSet.Roots
+        {
+            get
+            {
+                return _roots;
+            }
+        }
     }
 }

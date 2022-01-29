@@ -9,13 +9,11 @@ namespace dnWalker.Parameters
     /// <summary>
     /// Represents a set of parameters. Provides resolution from <see cref="ParameterRef"/> to <see cref="IParameter"/>.
     /// </summary>
-    public interface IParameterSet
+    public interface IParameterSet : IReadOnlyParameterSet
     {
-        IParameterContext Context { get; }
+        new IDictionary<ParameterRef, IParameter> Parameters { get; }
 
-        IDictionary<ParameterRef, IParameter> Parameters { get; }
-
-        IDictionary<string, ParameterRef> Roots { get; }
+        new IDictionary<string, ParameterRef> Roots { get; }
 
         /// <summary>
         /// Creates a new parameter reference based on the parameter context strategy.
