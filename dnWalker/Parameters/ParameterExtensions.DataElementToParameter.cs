@@ -79,7 +79,7 @@ namespace dnWalker.Parameters
                 throw new InvalidOperationException("Cannot create a new parameter without the parameter store!");
             }
 
-            IParameterContext executionContext = store.ExecutionContext;
+            IParameterSet executionContext = store.ExecutionContext;
 
 
             if (expectedType.IsArray || expectedType.IsSZArray)
@@ -88,13 +88,13 @@ namespace dnWalker.Parameters
                 string elementTypeName = arraySig.Next.FullName;
 
 
-                return executionContext.CreateArrayParameter(elementTypeName, true);
+                return executionContext.CreateArrayParameter(elementTypeName, reference: true);
 
             }
             else if (expectedType.IsClassSig)
             {
                 string typeName = expectedType.FullName;
-                return executionContext.CreateObjectParameter(typeName, true);
+                return executionContext.CreateObjectParameter(typeName, reference: true);
             }
             else
             {
@@ -110,13 +110,13 @@ namespace dnWalker.Parameters
                 throw new InvalidOperationException("Cannot create a new parameter without the parameter store!");
             }
 
-            IParameterContext context = store.ExecutionContext;
+            IParameterSet context = store.ExecutionContext;
 
             TypeSig elementSig = allocatedArray.Type.ToTypeSig();
 
             int length = allocatedArray.Fields.Length;
 
-            IArrayParameter parameter = context.CreateArrayParameter(elementSig.FullName, false, length);
+            IArrayParameter parameter = context.CreateArrayParameter(elementSig.FullName, length, false);
             for (int i = 0; i < length; ++i)
             {
                 parameter.SetItem(i, GetOrCreateParameter(allocatedArray.Fields[i], cur, elementSig));
@@ -132,9 +132,9 @@ namespace dnWalker.Parameters
                 throw new InvalidOperationException("Cannot create a new parameter without the parameter store!");
             }
 
-            IParameterContext context = store.ExecutionContext;
+            IParameterSet context = store.ExecutionContext;
 
-            IObjectParameter objectParameter = context.CreateObjectParameter(allocatedObject.Type.FullName, false);
+            IObjectParameter objectParameter = context.CreateObjectParameter(allocatedObject.Type.FullName, reference: false);
 
             IReadOnlyList<FieldDef> fields = GetFieldMapping(allocatedObject.Type);
 
@@ -167,7 +167,7 @@ namespace dnWalker.Parameters
                 throw new InvalidOperationException("Cannot create a new parameter without the parameter store!");
             }
 
-            IParameterContext context = store.ExecutionContext;
+            IParameterSet context = store.ExecutionContext;
             IPrimitiveValueParameter parameter;
 
             switch (expectedTypeName)

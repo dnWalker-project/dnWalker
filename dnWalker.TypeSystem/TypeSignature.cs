@@ -54,5 +54,16 @@ namespace dnWalker.TypeSystem
         {
             return !(left == right);
         }
+
+        public TypeSignature MakeArray()
+        {
+            SZArraySig sig = new SZArraySig(_type.ToTypeSig());
+            return new TypeSignature(sig.ToTypeDefOrRef());
+        }
+
+        public override string ToString()
+        {
+            return _type.FullName;
+        }
     }
 }

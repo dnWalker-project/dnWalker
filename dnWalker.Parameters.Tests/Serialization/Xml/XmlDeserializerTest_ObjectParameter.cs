@@ -9,7 +9,7 @@ using dnWalker.Parameters.Xml;
 
 using Xunit;
 
-namespace dnWalker.Parameters.Tests.Xml
+namespace dnWalker.Parameters.Tests.Serialization.Xml
 {
     public class XmlDeserializerTest_ObjectParameter
     {

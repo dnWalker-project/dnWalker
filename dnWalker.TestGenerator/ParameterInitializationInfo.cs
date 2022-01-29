@@ -66,7 +66,7 @@ namespace dnWalker.TestGenerator
             return info;
         }
 
-        public virtual void AddContext(IParameterContext context)
+        public virtual void AddContext(IParameterSet context)
         {
             string? access = Reference.Resolve(context)?.GetAccessString();
             if (access != null)

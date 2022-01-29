@@ -7,165 +7,152 @@ using System.Xml.Linq;
 
 using static dnWalker.Parameters.Xml.XmlTokens;
 
-namespace dnWalker.Parameters.Xml
+namespace dnWalker.Parameters.Serialization.Xml
 {
-
-    public static partial class XmlDeserializer
-    {
-        public static IPrimitiveValueParameter ToPrimitiveValueParameter(XElement xml, IParameterContext context)
+	public partial class XmlDeserializer
+	{
+        public IPrimitiveValueParameter ToPrimitiveValueParameter(XElement xml, IParameterSet set)
         {
             string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IPrimitiveValueParameter), XmlType);
-
+            
             switch (type)
             {
-                case "System.Boolean": return ToBooleanParameter(xml, context);
-                case "System.Byte": return ToByteParameter(xml, context);
-                case "System.SByte": return ToSByteParameter(xml, context);
-                case "System.Int16": return ToInt16Parameter(xml, context);
-                case "System.Int32": return ToInt32Parameter(xml, context);
-                case "System.Int64": return ToInt64Parameter(xml, context);
-                case "System.UInt16": return ToUInt16Parameter(xml, context);
-                case "System.UInt32": return ToUInt32Parameter(xml, context);
-                case "System.UInt64": return ToUInt64Parameter(xml, context);
-                case "System.Char": return ToCharParameter(xml, context);
-                case "System.Single": return ToSingleParameter(xml, context);
-                case "System.Double": return ToDoubleParameter(xml, context);
+                case "System.Boolean": return ToBooleanParameter(xml, set);
+                case "System.Byte": return ToByteParameter(xml, set);
+                case "System.SByte": return ToSByteParameter(xml, set);
+                case "System.Int16": return ToInt16Parameter(xml, set);
+                case "System.Int32": return ToInt32Parameter(xml, set);
+                case "System.Int64": return ToInt64Parameter(xml, set);
+                case "System.UInt16": return ToUInt16Parameter(xml, set);
+                case "System.UInt32": return ToUInt32Parameter(xml, set);
+                case "System.UInt64": return ToUInt64Parameter(xml, set);
+                case "System.Char": return ToCharParameter(xml, set);
+                case "System.Single": return ToSingleParameter(xml, set);
+                case "System.Double": return ToDoubleParameter(xml, set);
                 default: throw new NotSupportedException();
             }
         }
-        public static IBooleanParameter ToBooleanParameter(this XElement xml, IParameterContext context)
+
+        private IBooleanParameter ToBooleanParameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IBooleanParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(BooleanParameter), XmlReference));
 
-            IBooleanParameter parameter = context.CreateBooleanParameter(reference);
+            IBooleanParameter parameter = set.CreateBooleanParameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : bool.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IByteParameter ToByteParameter(this XElement xml, IParameterContext context)
+        private IByteParameter ToByteParameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IByteParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(ByteParameter), XmlReference));
 
-            IByteParameter parameter = context.CreateByteParameter(reference);
+            IByteParameter parameter = set.CreateByteParameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : byte.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static ISByteParameter ToSByteParameter(this XElement xml, IParameterContext context)
+        private ISByteParameter ToSByteParameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(ISByteParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(SByteParameter), XmlReference));
 
-            ISByteParameter parameter = context.CreateSByteParameter(reference);
+            ISByteParameter parameter = set.CreateSByteParameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : sbyte.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IInt16Parameter ToInt16Parameter(this XElement xml, IParameterContext context)
+        private IInt16Parameter ToInt16Parameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IInt16Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(Int16Parameter), XmlReference));
 
-            IInt16Parameter parameter = context.CreateInt16Parameter(reference);
+            IInt16Parameter parameter = set.CreateInt16Parameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : short.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IInt32Parameter ToInt32Parameter(this XElement xml, IParameterContext context)
+        private IInt32Parameter ToInt32Parameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IInt32Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(Int32Parameter), XmlReference));
 
-            IInt32Parameter parameter = context.CreateInt32Parameter(reference);
+            IInt32Parameter parameter = set.CreateInt32Parameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : int.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IInt64Parameter ToInt64Parameter(this XElement xml, IParameterContext context)
+        private IInt64Parameter ToInt64Parameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IInt64Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(Int64Parameter), XmlReference));
 
-            IInt64Parameter parameter = context.CreateInt64Parameter(reference);
+            IInt64Parameter parameter = set.CreateInt64Parameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : long.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IUInt16Parameter ToUInt16Parameter(this XElement xml, IParameterContext context)
+        private IUInt16Parameter ToUInt16Parameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IUInt16Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(UInt16Parameter), XmlReference));
 
-            IUInt16Parameter parameter = context.CreateUInt16Parameter(reference);
+            IUInt16Parameter parameter = set.CreateUInt16Parameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : ushort.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IUInt32Parameter ToUInt32Parameter(this XElement xml, IParameterContext context)
+        private IUInt32Parameter ToUInt32Parameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IUInt32Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(UInt32Parameter), XmlReference));
 
-            IUInt32Parameter parameter = context.CreateUInt32Parameter(reference);
+            IUInt32Parameter parameter = set.CreateUInt32Parameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : uint.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static IUInt64Parameter ToUInt64Parameter(this XElement xml, IParameterContext context)
+        private IUInt64Parameter ToUInt64Parameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IUInt64Parameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(UInt64Parameter), XmlReference));
 
-            IUInt64Parameter parameter = context.CreateUInt64Parameter(reference);
+            IUInt64Parameter parameter = set.CreateUInt64Parameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : ulong.Parse(xmlValue);
 
             return parameter;
         }
-
-        public static ICharParameter ToCharParameter(this XElement xml, IParameterContext context)
+        private ICharParameter ToCharParameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(ICharParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(CharParameter), XmlReference));
 
-            ICharParameter parameter = context.CreateCharParameter(reference);
+            ICharParameter parameter = set.CreateCharParameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : Convert.ToChar(Convert.ToInt32(xmlValue.Substring(2), 16));
 
             return parameter;
         }
-
-        public static ISingleParameter ToSingleParameter(this XElement xml, IParameterContext context)
+        private ISingleParameter ToSingleParameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(ISingleParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(SingleParameter), XmlReference));
 
-            ISingleParameter parameter = context.CreateSingleParameter(reference);
+            ISingleParameter parameter = set.CreateSingleParameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : FloatFromXml(xmlValue);
 
             return parameter;
         }
-
-        public static IDoubleParameter ToDoubleParameter(this XElement xml, IParameterContext context)
+        private IDoubleParameter ToDoubleParameter(XElement xml, IParameterSet set)
         {
             string xmlValue = xml.Attribute(XmlValue)?.Value ?? throw new MissingAttributeException(nameof(IDoubleParameter), XmlValue);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(DoubleParameter), XmlReference));
 
-            IDoubleParameter parameter = context.CreateDoubleParameter(reference);
+            IDoubleParameter parameter = set.CreateDoubleParameter(reference);
             parameter.Value = xmlValue == XmlUnknown ? null : DoubleFromXml(xmlValue);
 
             return parameter;
         }
-
- 
 
         private static float FloatFromXml(string xmlValue)
         {

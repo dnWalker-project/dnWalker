@@ -4,6 +4,8 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".tt.cs" #>
+using dnWalker.TypeSystem;
+
 using System;
 using System.Linq;
 
@@ -51,35 +53,27 @@ namespace dnWalker.Parameters
 
     public class <#= type #>Parameter : Parameter, I<#= type #>Parameter
     {
-        internal <#= type #>Parameter(IParameterContext context) : base(context)
+        internal <#= type #>Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.<#= type #>.TypeDefOrRef))
         {
         }
 
-        internal <#= type #>Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal <#= type #>Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.<#= type #>.TypeDefOrRef), reference)
         {
         }
         
-        internal <#= type #>Parameter(IParameterContext context, ParameterRef reference, <#= alias #>? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public <#= alias #>? Value
         {
             get;
             set;
         }
 
-        public override <#= type #>Parameter CloneData(IParameterContext context)
+        public override <#= type #>Parameter CloneData(IParameterSet set)
         {
-             <#= type #>Parameter parameter = new <#= type #>Parameter(context, Reference, Value);
+             <#= type #>Parameter parameter = new <#= type #>Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
              
-
-            // foreach (var a in Accessors.Select(ac => ac.Clone()))
-            // {
-            //     parameter.Accessors.Add(a);
-            // }
-
             return parameter;
         }
 
@@ -102,21 +96,15 @@ for (int i = 0; i < types.Length; ++i)
     string alias = aliases[i];
 
 #>
-        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context)
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterSet set)
         {
-            return Create<#= type #>Parameter(context, context.GetParameterRef(), null);
+            return Create<#= type #>Parameter(set, set.GetParameterRef());
         }
         
-        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference)
+        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return Create<#= type #>Parameter(context, reference, null);
-        }
-        
-        public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference, <#= alias #>? value)
-        {
-            <#= type #>Parameter parameter = new <#= type #>Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            <#= type #>Parameter parameter = new <#= type #>Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }

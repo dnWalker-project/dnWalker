@@ -10,7 +10,7 @@ namespace dnWalker.TestGenerator
         {
         }
 
-        public override void AddContext(IParameterContext context)
+        public override void AddContext(IParameterSet context)
         {
             base.AddContext(context);
 

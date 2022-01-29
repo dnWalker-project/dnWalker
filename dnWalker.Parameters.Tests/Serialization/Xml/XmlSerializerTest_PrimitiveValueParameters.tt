@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 using dnWalker.Parameters;
-using dnWalker.Parameters.Xml;
+using dnWalker.Parameters.Serialization.Xml;
 
 using FluentAssertions;
 
 using Xunit;
 
-namespace dnWalker.Parameters.Tests.Xml
+namespace dnWalker.Parameters.Tests.Serialization.Xml
 {
-    public class XmlDeserializerTest_PrimitiveValueParameters
+    public class XmlSerializerTest_PrimitiveValueParameters : TestBase
     {
 <#
     string NULL = "null";
@@ -105,42 +105,28 @@ namespace dnWalker.Parameters.Tests.Xml
         }
 #>
 
-        public void TestNotNull_<#= types[i] #>Parameter(string xml, int intRef, <#= alias #> value)
+        public void Test_<#= types[i] #>Parameter(string xml, int intRef, <#= alias #> value)
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            IParameterSet set = new ParameterSet(context);
 
-            I<#= types[i] #>Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as I<#= types[i] #>Parameter;
+            XmlSerializer ser = new XmlSerializer();
+
+            I<#= types[i] #>Parameter? p = set.Create<#= types[i] #>Parameter(reference);
+            p.Value = value;
+
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
             p.Value.Value.Should().Be(value);
+
+            XElement serialization = ser.ToXml(p);
+            XNode.DeepEquals(serialization, XElement.Parse(xml)).Should().BeTrue();
         }
 <#
-    }
-#>
-<#
-    for (int i = 0; i < types.Length; ++i)
-    {
-        string type = types[i];
-        string alias = aliases[i];
-#>
-        [Theory]
-        [InlineData("<#= GetXml(types[i], $"0x{i:X8}", XMLNULL) #>", <#= i.ToString() #>, null)]
-        public void TestNull_<#= types[i] #>Parameter(string xml, int intRef, <#= alias #> value)
-        {
-            ParameterRef reference = intRef;
-
-            IParameterContext ctx = new BaseParameterContext();
-
-            I<#= types[i] #>Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as I<#= types[i] #>Parameter;
-            p.Should().NotBeNull();
-            p.Reference.Should().Be(reference);
-            p.Value.HasValue.Should().BeFalse();
-        }
-
-<#      
     }
 #>
     }

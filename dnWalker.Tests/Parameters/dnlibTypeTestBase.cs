@@ -16,14 +16,11 @@ namespace dnWalker.Tests.Parameters
 {
     public abstract class dnlibTypeTestBase
     {
-        private static readonly ModuleContext _context = ModuleDef.CreateModuleContext();
-        //private static readonly List<ModuleDef> _modules = new List<ModuleDef>();
-
         private static readonly IConfig _config;
         private static readonly Logger _logger;
 
         private static readonly IInstructionExecProvider _instructionExecProvider;
-        private static readonly DefinitionProvider _definitionProvider;
+        private static readonly IDefinitionProvider _definitionProvider;
 
         protected static ExplicitActiveState CreateState()
         {

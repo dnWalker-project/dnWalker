@@ -54,5 +54,10 @@ namespace dnWalker.TypeSystem
         {
             return !(left == right);
         }
+
+        public override string ToString()
+        {
+            return _method.FullName;
+        }
     }
 }

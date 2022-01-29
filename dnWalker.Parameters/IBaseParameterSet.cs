@@ -9,12 +9,12 @@ namespace dnWalker.Parameters
     /// <summary>
     /// Represents a base set of parameters. Provides execution context creation.
     /// </summary>
-    public interface IBaseParameterContext : IParameterContext
+    public interface IBaseParameterSet : IParameterSet
     {
         /// <summary>
         /// Creates a new execution context from this base context.
         /// </summary>
         /// <returns></returns>
-        IExecutionParameterContext CreateExecutionContext();
+        IExecutionParameterSet CreateExecutionSet();
     }
 }

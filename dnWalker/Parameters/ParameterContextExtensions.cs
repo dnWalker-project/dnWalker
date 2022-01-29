@@ -10,21 +10,21 @@ namespace dnWalker.Parameters
 {
     public static class ParameterContextExtensions
     {
-        public static IParameter CreateParameter(this IParameterContext context, TypeSig type)
+        public static IParameter CreateParameter(this IParameterSet context, TypeSig type)
         {
-            static IObjectParameter CreateObjectParameter(ClassSig type, IParameterContext context)
+            static IObjectParameter CreateObjectParameter(ClassSig type, IParameterSet context)
             {
                 return context.CreateObjectParameter(type.FullName);
             }
 
-            static IArrayParameter CreateArrayParamter(ArraySigBase arrayType, IParameterContext context)
+            static IArrayParameter CreateArrayParamter(ArraySigBase arrayType, IParameterSet context)
             {
                 var elementType = arrayType.Next;
 
                 return context.CreateArrayParameter(elementType.FullName);
             }
 
-            static IPrimitiveValueParameter CreatePrimitiveValueParameter(TypeSig type, IParameterContext context)
+            static IPrimitiveValueParameter CreatePrimitiveValueParameter(TypeSig type, IParameterSet context)
             {
                 if (type.IsPrimitive)
                 {

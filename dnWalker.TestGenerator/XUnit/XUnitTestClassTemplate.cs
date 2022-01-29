@@ -97,8 +97,8 @@ namespace dnWalker.TestGenerator.XUnit
 
 		List<IObjectParameter> objectsToInitialize = new List<IObjectParameter>();
 		List<IArrayParameter> arraysToInitialize = new List<IArrayParameter>();
-		IParameterContext startingCtx = iteration.StartingParameterContext;
-		IParameterContext endingCtx = iteration.EndingParameterContext;
+		IParameterSet startingCtx = iteration.StartingParameterContext;
+		IParameterSet endingCtx = iteration.EndingParameterContext;
 
 		foreach (var keyValue in startingCtx.Parameters)
 		{
@@ -1515,7 +1515,7 @@ this.Write("[] items)\r\n\t\t{\r\n\t\t\titems.CopyTo(array, System.Math.Min(item
         
         #line 436 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
-	private string BuildExecutionArgs(MethodInfo method, IParameterContext context)
+	private string BuildExecutionArgs(MethodInfo method, IParameterSet context)
 	{
 		IEnumerable<string> refs = method.GetParameters().Select(p => p.Name);
 		return string.Join(", ", refs);
@@ -1527,7 +1527,7 @@ this.Write("[] items)\r\n\t\t{\r\n\t\t\titems.CopyTo(array, System.Math.Min(item
         
         #line 443 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestClassTemplate.tt"
 
-	private string GetVariableName(ParameterRef reference, IParameterContext context)
+	private string GetVariableName(ParameterRef reference, IParameterSet context)
 	{
 		return GetVariableName(reference.Resolve(context));
 	}

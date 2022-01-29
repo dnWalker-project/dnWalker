@@ -13,10 +13,10 @@ using System.Xml.Linq;
 
 using static dnWalker.Parameters.Xml.XmlTokens;
 
-namespace dnWalker.Parameters.Xml
+namespace dnWalker.Parameters.Serialization.Xml
 {
 
-    public static partial class XmlSerializer
+    public partial class XmlSerializer
     {
 <#
  string[] types = 
@@ -73,7 +73,7 @@ namespace dnWalker.Parameters.Xml
     string alias = aliases[i];
 
 #>
-        private static XElement ToXml(this I<#= type #>Parameter parameter)
+        private XElement ToXml(I<#= type #>Parameter parameter)
         {
             string valueXmlString = <#= toXmlExpressions[i] #>;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -130,5 +130,3 @@ namespace dnWalker.Parameters.Xml
         }
     }
 }
-
-

@@ -1,5 +1,6 @@
 ﻿
 using dnWalker.Parameters;
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;

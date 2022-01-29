@@ -8,6 +8,5 @@ namespace dnWalker.Parameters
 {
     public interface IObjectParameter : IFieldOwnerParameter, IMethodResolverParameter, IReferenceTypeParameter, IParameter
     {
-        public string Type { get; }
     }
 }

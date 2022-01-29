@@ -22,12 +22,12 @@ namespace dnWalker.Parameters
     {
         private readonly MethodDef _entryPoint;
 
-        private readonly IBaseParameterContext _baseContext;
-        private IExecutionParameterContext _executionContext;
+        private readonly IBaseParameterSet _baseContext;
+        private IExecutionParameterSet _executionContext;
 
         public ParameterStore(MethodDef entryPoint)
         {
-            _baseContext = new BaseParameterContext();
+            _baseContext = new BaseParameterSet();
 
             foreach (var arg in entryPoint.Parameters)
             {
@@ -48,7 +48,7 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes input into the next execution.
         /// </summary>
-        public IBaseParameterContext BaseContext
+        public IBaseParameterSet BaseContext
         {
             get 
             {
@@ -67,7 +67,7 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes current state.
         /// </summary>
-        public IExecutionParameterContext ExecutionContext
+        public IExecutionParameterSet ExecutionContext
         {
             get
             {
@@ -85,7 +85,7 @@ namespace dnWalker.Parameters
             int idx = 0;
 
             //IParameterContext ctx = _baseContext;
-            IParameterContext ctx = _executionContext;
+            IParameterSet ctx = _executionContext;
 
             if (method.HasThis)
             {
@@ -107,7 +107,7 @@ namespace dnWalker.Parameters
         /// </summary>
         public void InitializeExecutionContext()
         {
-            _executionContext = _baseContext.CreateExecutionContext();
+            _executionContext = _baseContext.CreateExecutionSet();
         }
 
         private ParameterRef _returnValue;

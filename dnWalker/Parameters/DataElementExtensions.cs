@@ -1,4 +1,5 @@
 ﻿using dnWalker.Symbolic;
+using dnWalker.TypeSystem;
 
 using MMC.Data;
 using MMC.State;

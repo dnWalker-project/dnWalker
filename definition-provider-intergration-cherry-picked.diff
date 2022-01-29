@@ -1,0 +1,2749 @@
+diff --git a/dnWalker.Tests/ConcolicExplorerBuilder.cs b/dnWalker.Tests/ConcolicExplorerBuilder.cs
+index 31b3552..00cfcdc 100644
+--- a/dnWalker.Tests/ConcolicExplorerBuilder.cs
++++ b/dnWalker.Tests/ConcolicExplorerBuilder.cs
+@@ -1,4 +1,5 @@
+ ﻿using dnWalker.Concolic;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ 
+@@ -18,10 +19,10 @@ namespace dnWalker.Tests
+ 
+ 
+         private Func<Logger> _provideLogger;
+-        private Func<DefinitionProvider> _provideDefinitions;
++        private Func<IDefinitionProvider> _provideDefinitions;
+         private Func<ISolver> _provideSolver;
+ 
+-        public ConcolicExplorerBuilder(Func<Logger> provideLogger, Func<DefinitionProvider> provideDefinitions, Func<ISolver> provideSolver)
++        public ConcolicExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitions, Func<ISolver> provideSolver)
+         {
+             _provideLogger = provideLogger ?? throw new ArgumentNullException(nameof(provideLogger));
+             _provideDefinitions = provideDefinitions ?? throw new ArgumentNullException(nameof(provideDefinitions));
+@@ -46,7 +47,7 @@ namespace dnWalker.Tests
+             return this;
+         }
+ 
+-        public IConcolicExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> definitionProviderFactory)
++        public IConcolicExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> definitionProviderFactory)
+         {
+             _provideDefinitions = definitionProviderFactory ?? throw new ArgumentNullException(nameof(definitionProviderFactory));
+             return this;
+diff --git a/dnWalker.Tests/ExampleTests/DebugMode/DebugExamplesTestBase.cs b/dnWalker.Tests/ExampleTests/DebugMode/DebugExamplesTestBase.cs
+index 4c8608e..36d2ed9 100644
+--- a/dnWalker.Tests/ExampleTests/DebugMode/DebugExamplesTestBase.cs
++++ b/dnWalker.Tests/ExampleTests/DebugMode/DebugExamplesTestBase.cs
+@@ -1,4 +1,6 @@
+-﻿using MMC;
++﻿using dnWalker.TypeSystem;
++
++using MMC;
+ 
+ using System;
+ using System.Collections.Generic;
+@@ -17,7 +19,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
+         protected static readonly string AssemblyFilePath = string.Format(ExamplesAssemblyFileFormat, "Debug");
+ 
+         protected static Lazy<DefinitionProvider> LazyDefinitionProvider =
+-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
++            new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
+ 
+         protected DebugExamplesTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
+         {
+diff --git a/dnWalker.Tests/ExampleTests/ExamplesTestBase.cs b/dnWalker.Tests/ExampleTests/ExamplesTestBase.cs
+index fc8b99c..9bd4860 100644
+--- a/dnWalker.Tests/ExampleTests/ExamplesTestBase.cs
++++ b/dnWalker.Tests/ExampleTests/ExamplesTestBase.cs
+@@ -5,6 +5,8 @@ using System.Linq;
+ using System.Runtime.CompilerServices;
+ 
+ using dnWalker.Traversal;
++using dnWalker.TypeSystem;
++
+ using MMC;
+ using Xunit.Abstractions;
+ 
+@@ -16,7 +18,7 @@ namespace dnWalker.Tests.ExampleTests
+         //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
+         protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\framework\Examples.Framework.exe";
+ 
+-        protected ExamplesTestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
++        protected ExamplesTestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
+         {
+             string testClassName = typeof(ExamplesTestBase).Name;
+             OverrideConcolicExplorerBuilderInitialization(b =>
+diff --git a/dnWalker.Tests/ExampleTests/ReleaseMode/ReleaseExamplesTestBase.cs b/dnWalker.Tests/ExampleTests/ReleaseMode/ReleaseExamplesTestBase.cs
+index 1651f2a..adbb194 100644
+--- a/dnWalker.Tests/ExampleTests/ReleaseMode/ReleaseExamplesTestBase.cs
++++ b/dnWalker.Tests/ExampleTests/ReleaseMode/ReleaseExamplesTestBase.cs
+@@ -1,4 +1,6 @@
+-﻿using MMC;
++﻿using dnWalker.TypeSystem;
++
++using MMC;
+ 
+ using System;
+ using System.Collections.Generic;
+@@ -17,7 +19,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
+         protected static readonly string AssemblyFilePath = string.Format(ExamplesAssemblyFileFormat, "Release");
+ 
+         protected static Lazy<DefinitionProvider> LazyDefinitionProvider =
+-            new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
++            new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
+ 
+ 
+         protected ReleaseExamplesTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
+diff --git a/dnWalker.Tests/IConcolicExplorerBuilder.cs b/dnWalker.Tests/IConcolicExplorerBuilder.cs
+index 9ddf7b0..dfea726 100644
+--- a/dnWalker.Tests/IConcolicExplorerBuilder.cs
++++ b/dnWalker.Tests/IConcolicExplorerBuilder.cs
+@@ -1,4 +1,5 @@
+ ﻿using dnWalker.Concolic;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ 
+@@ -17,7 +18,7 @@ namespace dnWalker.Tests
+ 
+         IConcolicExplorerBuilder OverrideSolver(Func<ISolver> solverFactory);
+         IConcolicExplorerBuilder OverrideLogger(Func<Logger> loggerFactory);
+-        IConcolicExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> definitionProviderFactory);
++        IConcolicExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> definitionProviderFactory);
+ 
+         IExplorer Build();
+ 
+diff --git a/dnWalker.Tests/IModelCheckerExplorerBuilder.cs b/dnWalker.Tests/IModelCheckerExplorerBuilder.cs
+index 41d5d5a..8339908 100644
+--- a/dnWalker.Tests/IModelCheckerExplorerBuilder.cs
++++ b/dnWalker.Tests/IModelCheckerExplorerBuilder.cs
+@@ -1,4 +1,6 @@
+-﻿using MMC;
++﻿using dnWalker.TypeSystem;
++
++using MMC;
+ using MMC.Data;
+ using MMC.State;
+ 
+@@ -13,7 +15,7 @@ namespace dnWalker.Tests
+     public interface IModelCheckerExplorerBuilder : IConfigBuilder<IModelCheckerExplorerBuilder>
+     {
+         IModelCheckerExplorerBuilder OverrideLogger(Func<Logger> provideLogger);
+-        IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> provideDefinitionProvider);
++        IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> provideDefinitionProvider);
+         IModelCheckerExplorerBuilder OverrideStatistics(Func<IStatistics> provideStatistics);
+ 
+         //public string MethodName
+diff --git a/dnWalker.Tests/InterpreterExtensionTests/InterpreterExtensionTestBase.cs b/dnWalker.Tests/InterpreterExtensionTests/InterpreterExtensionTestBase.cs
+index cdc52ee..c658cca 100644
+--- a/dnWalker.Tests/InterpreterExtensionTests/InterpreterExtensionTestBase.cs
++++ b/dnWalker.Tests/InterpreterExtensionTests/InterpreterExtensionTestBase.cs
+@@ -1,4 +1,6 @@
+-﻿using MMC;
++﻿using dnWalker.TypeSystem;
++
++using MMC;
+ using MMC.Data;
+ 
+ using System;
+@@ -16,7 +18,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests
+     public class InterpreterExtensionTestBase : TestBase
+     {
+         private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
+-        protected static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
++        protected static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilename)));
+         public InterpreterExtensionTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
+         {
+         }
+diff --git a/dnWalker.Tests/InterpreterTests/ExamplesInterpreterTests.cs b/dnWalker.Tests/InterpreterTests/ExamplesInterpreterTests.cs
+index d620c8f..8f338f4 100644
+--- a/dnWalker.Tests/InterpreterTests/ExamplesInterpreterTests.cs
++++ b/dnWalker.Tests/InterpreterTests/ExamplesInterpreterTests.cs
+@@ -1,4 +1,5 @@
+ ﻿using dnWalker.Tests.ExampleTests;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ 
+@@ -18,7 +19,7 @@ namespace dnWalker.Tests.InterpreterTests
+         //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
+         protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\framework\Examples.Framework.exe";
+ 
+-        protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
++        protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
+ 
+         public ExamplesInterpreterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
+         {
+diff --git a/dnWalker.Tests/InterpreterTests/InterpreterTest.cs b/dnWalker.Tests/InterpreterTests/InterpreterTest.cs
+index 76d9ffe..a3f9e16 100644
+--- a/dnWalker.Tests/InterpreterTests/InterpreterTest.cs
++++ b/dnWalker.Tests/InterpreterTests/InterpreterTest.cs
+@@ -24,6 +24,7 @@
+ 
+ using dnWalker.Tests;
+ using dnWalker.Tests.InterpreterTests;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ using System;
+@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
+     {
+         private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
+ 
+-        private static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
++        private static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilename)));
+ 
+         public InterpreterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
+         {
+diff --git a/dnWalker.Tests/InterpreterTests/InterpreterTestBase.cs b/dnWalker.Tests/InterpreterTests/InterpreterTestBase.cs
+index 9754ee9..f4aafaa 100644
+--- a/dnWalker.Tests/InterpreterTests/InterpreterTestBase.cs
++++ b/dnWalker.Tests/InterpreterTests/InterpreterTestBase.cs
+@@ -1,4 +1,5 @@
+ ﻿using dnWalker.DataElements;
++using dnWalker.TypeSystem;
+ 
+ using FluentAssertions;
+ 
+@@ -19,7 +20,7 @@ namespace dnWalker.Tests.InterpreterTests
+ {
+     public class InterpreterTestBase : TestBase
+     {
+-        public InterpreterTestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
++        public InterpreterTestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
+         {
+         }
+ 
+diff --git a/dnWalker.Tests/InterpreterTests/PatternMatchingTests.cs b/dnWalker.Tests/InterpreterTests/PatternMatchingTests.cs
+index 8a55e6b..e63ca02 100644
+--- a/dnWalker.Tests/InterpreterTests/PatternMatchingTests.cs
++++ b/dnWalker.Tests/InterpreterTests/PatternMatchingTests.cs
+@@ -1,4 +1,6 @@
+-﻿using MMC;
++﻿using dnWalker.TypeSystem;
++
++using MMC;
+ 
+ using System;
+ 
+@@ -13,9 +15,9 @@ namespace dnWalker.Tests.InterpreterTests
+         //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
+         protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\framework\Examples.Framework.exe";
+ 
+-        protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
++        private static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
+ 
+-        public PatternMatchingTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
++        public PatternMatchingTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
+         {
+         }
+ 
+diff --git a/dnWalker.Tests/ModelCheckerExplorerBuilder.cs b/dnWalker.Tests/ModelCheckerExplorerBuilder.cs
+index b3fa4bf..493c65d 100644
+--- a/dnWalker.Tests/ModelCheckerExplorerBuilder.cs
++++ b/dnWalker.Tests/ModelCheckerExplorerBuilder.cs
+@@ -1,6 +1,7 @@
+ ﻿using dnlib.DotNet;
+ 
+ using dnWalker.Traversal;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ using MMC.Data;
+@@ -18,13 +19,13 @@ namespace dnWalker.Tests
+     public class ModelCheckerExplorerBuilder : ConfigBuilder<IModelCheckerExplorerBuilder>, IModelCheckerExplorerBuilder
+     {
+         private Func<Logger> _provideLogger;
+-        private Func<DefinitionProvider> _provideDefinitionProvider;
++        private Func<IDefinitionProvider> _provideDefinitionProvider;
+         private Func<IStatistics> _provideStatistics;
+ 
+         private string _methodName;
+         private Func<ExplicitActiveState, IDataElement[]> _provideArgs = (cur) => Array.Empty<IDataElement>();
+ 
+-        public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<DefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
++        public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
+         {
+             _provideLogger = provideLogger ?? throw new ArgumentNullException(nameof(provideLogger));
+             _provideDefinitionProvider = provideDefinitionProvider ?? throw new ArgumentNullException(nameof(provideDefinitionProvider));
+@@ -39,7 +40,7 @@ namespace dnWalker.Tests
+             return this;
+         }
+ 
+-        public IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> provideDefinitionProvider)
++        public IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> provideDefinitionProvider)
+         {
+             _provideDefinitionProvider = provideDefinitionProvider ?? throw new ArgumentNullException(nameof(_provideDefinitionProvider));
+             return this;
+@@ -58,7 +59,7 @@ namespace dnWalker.Tests
+                 throw new InvalidOperationException("Cannot initialize the ModelChecker without method name!");
+             }
+ 
+-            DefinitionProvider definitionProvider = _provideDefinitionProvider();
++            IDefinitionProvider definitionProvider = _provideDefinitionProvider();
+ 
+             Logger logger = _provideLogger();
+ 
+diff --git a/dnWalker.Tests/Parameters/dnlibTypeTestBase.cs b/dnWalker.Tests/Parameters/dnlibTypeTestBase.cs
+index 331f17a..ac6fb81 100644
+--- a/dnWalker.Tests/Parameters/dnlibTypeTestBase.cs
++++ b/dnWalker.Tests/Parameters/dnlibTypeTestBase.cs
+@@ -1,6 +1,7 @@
+ ﻿using dnlib.DotNet;
+ 
+ using dnWalker.Instructions.Extensions;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ using MMC.InstructionExec;
+@@ -16,14 +17,11 @@ namespace dnWalker.Tests.Parameters
+ {
+     public abstract class dnlibTypeTestBase
+     {
+-        private static readonly ModuleContext _context = ModuleDef.CreateModuleContext();
+-        //private static readonly List<ModuleDef> _modules = new List<ModuleDef>();
+-
+         private static readonly IConfig _config;
+         private static readonly Logger _logger;
+ 
+         private static readonly IInstructionExecProvider _instructionExecProvider;
+-        private static readonly DefinitionProvider _definitionProvider;
++        private static readonly IDefinitionProvider _definitionProvider;
+ 
+         protected static ExplicitActiveState CreateState()
+         {
+@@ -31,7 +29,7 @@ namespace dnWalker.Tests.Parameters
+             return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+         }
+ 
+-        protected static DefinitionProvider DefinitionProvider
++        protected static IDefinitionProvider DefinitionProvider
+         {
+             get { return _definitionProvider; }
+         }
+@@ -48,22 +46,7 @@ namespace dnWalker.Tests.Parameters
+             _instructionExecProvider = InstructionExecProvider.Get(_config, f);
+ 
+ 
+-            //AssemblyLoader assemblyLoader = new AssemblyLoader();
+-            //assemblyLoader.GetModuleDef(typeof(dnlibTypeTestBase).Module);
+-
+-
+-
+-
+-            ModuleDef mainModule = ModuleDefMD.Load(typeof(dnlibTypeTestBase).Module, _context);
+-
+-            var refModules = mainModule
+-                .GetAssemblyRefs()
+-                .Select(ar => _context.AssemblyResolver.Resolve(ar.Name, mainModule))
+-                .Where(a => a != null)
+-                .SelectMany(a => a.Modules)
+-                .ToArray();
+-
+-            _definitionProvider = new DefinitionProvider(mainModule, refModules);
++            _definitionProvider = new DefinitionProvider(DefinitionContext.LoadFromAppDomain(typeof(dnlibTypeTestBase).Module));
+         }
+ 
+         public static TypeSig GetType(string typeName)
+diff --git a/dnWalker.Tests/TestBase.cs b/dnWalker.Tests/TestBase.cs
+index dcab132..32e5932 100644
+--- a/dnWalker.Tests/TestBase.cs
++++ b/dnWalker.Tests/TestBase.cs
+@@ -1,4 +1,6 @@
+ ﻿using dnWalker.DataElements;
++using dnWalker.TypeSystem;
++
+ using FluentAssertions;
+ using MMC;
+ using MMC.Data;
+@@ -43,11 +45,11 @@ namespace dnWalker.Tests
+ 
+         public ITestOutputHelper Output { get; }
+ 
+-        public DefinitionProvider DefinitionProvider { get; }
++        public IDefinitionProvider DefinitionProvider { get; }
+         public Logger Logger { get; }
+ 
+         //private TextWriter _originalConsoleOut;
+-        protected TestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider)
++        protected TestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider)
+         {
+             //var converter = new Converter(testOutputHelper);
+             //_originalConsoleOut = Console.Out;
+@@ -64,17 +66,26 @@ namespace dnWalker.Tests
+             //Console.SetOut(_originalConsoleOut);
+         }
+ 
+-        public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
+-        {
+-            var assemblyLoader = new AssemblyLoader();
++        //public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
++        //{
++        //    var assemblyLoader = new AssemblyLoader();
++
++        //    var data = File.ReadAllBytes(assemblyFilename);
+ 
+-            var data = File.ReadAllBytes(assemblyFilename);
++        //    var moduleDef = assemblyLoader.GetModuleDef(data);
+ 
+-            var moduleDef = assemblyLoader.GetModuleDef(data);
++        //    Assembly.LoadFrom(assemblyFilename);
++
++        //    return assemblyLoader;
++        //}
++
++        public static IDefinitionContext GetDefinitionContext(string assemblyFileName)
++        {
++            IDefinitionContext definitionContext = DefinitionContext.LoadFromFile(assemblyFileName);
+ 
+-            Assembly.LoadFrom(assemblyFilename);
++            Assembly.LoadFrom(assemblyFileName);
+ 
+-            return assemblyLoader;
++            return definitionContext;
+         }
+ 
+         private static readonly ISolver _solver = new Z3.Solver();
+diff --git a/dnWalker/ActiveState.cs b/dnWalker/ActiveState.cs
+index b998809..176f35b 100644
+--- a/dnWalker/ActiveState.cs
++++ b/dnWalker/ActiveState.cs
+@@ -26,6 +26,7 @@ namespace MMC.State
+     using dnWalker;
+     using dnWalker.Traversal;
+     using System;
++    using dnWalker.TypeSystem;
+ 
+     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
+ 
+@@ -119,7 +120,7 @@ namespace MMC.State
+ 
+         internal ThreadObjectWatcher ThreadObjectWatcher { get; }
+ 
+-        public DefinitionProvider DefinitionProvider { get; }
++        public IDefinitionProvider DefinitionProvider { get; }
+ 
+         internal Collapser StateCollapser => m_stateConvertor;
+ 
+@@ -152,7 +153,7 @@ namespace MMC.State
+         {
+             return CurrentMethod != null &&
+                 (CurrentMethod.Definition.DeclaringType.Module == //.Assembly ==
+-                 CurrentMethod.Cur.DefinitionProvider.AssemblyDefinition);
++                 CurrentMethod.Cur.DefinitionProvider.Context.MainModule);
+         }
+ 
+         public delegate void DoSharingAnalysisRequestHandle();
+@@ -246,7 +247,7 @@ namespace MMC.State
+         internal ExplicitActiveState(
+             IConfig config,
+             IInstructionExecProvider instructionExecProvider,
+-            DefinitionProvider definitionProvider,
++            IDefinitionProvider definitionProvider,
+             Logger logger)
+         {
+             DefinitionProvider = definitionProvider;
+diff --git a/dnWalker/Arg.cs b/dnWalker/Arg.cs
+deleted file mode 100644
+index 3ca2600..0000000
+--- a/dnWalker/Arg.cs
++++ /dev/null
+@@ -1,36 +0,0 @@
+-﻿using MMC;
+-using MMC.Data;
+-
+-namespace dnWalker
+-{
+-    public class Args
+-    {
+-        public static Arg Arg<T>(T value)
+-        {
+-            return new Arg<T>(value);
+-        }
+-    }
+-
+-    public interface IArg
+-    {
+-        IDataElement AsDataElement(DefinitionProvider definitionProvider);
+-    }
+-
+-    public class Arg : IArg
+-    {
+-        protected object _value;
+-
+-        public virtual IDataElement AsDataElement(DefinitionProvider definitionProvider)
+-        {
+-            return definitionProvider.CreateDataElement(_value);
+-        }
+-    }
+-
+-    public class Arg<T> : Arg
+-    {
+-        public Arg(T value)
+-        {
+-            _value = value;
+-        }
+-    }
+-}
+diff --git a/dnWalker/BreakPointHandler.cs b/dnWalker/BreakPointHandler.cs
+index 22d2368..23fb073 100644
+--- a/dnWalker/BreakPointHandler.cs
++++ b/dnWalker/BreakPointHandler.cs
+@@ -73,7 +73,7 @@ namespace MMC {
+                 var declType = cur.DefinitionProvider.GetTypeDefinition(typeName);
+                 if (declType != null)
+                 {
+-                    bp.MethodDefinition = cur.DefinitionProvider.SearchMethod(methodName, declType);
++                    bp.MethodDefinition = cur.DefinitionProvider.GetMethodDefinition(methodFullName);
+                 }
+                 else
+                 {
+diff --git a/dnWalker/Concolic/Explorer.cs b/dnWalker/Concolic/Explorer.cs
+index dab5032..4cda925 100644
+--- a/dnWalker/Concolic/Explorer.cs
++++ b/dnWalker/Concolic/Explorer.cs
+@@ -7,6 +7,7 @@ using dnWalker.Instructions.Extensions;
+ using dnWalker.NativePeers;
+ using dnWalker.Parameters;
+ using dnWalker.Parameters.Expressions;
++using dnWalker.TypeSystem;
+ 
+ using MMC;
+ using MMC.Data;
+@@ -31,7 +32,7 @@ namespace dnWalker.Concolic
+         private readonly Config _config;
+         private readonly Logger _logger;
+         private readonly ISolver _solver;
+-        private readonly DefinitionProvider _definitionProvider;
++        private readonly IDefinitionProvider _definitionProvider;
+ 
+         private int _currentIteration;
+         private PathStore _pathStore;
+@@ -41,7 +42,7 @@ namespace dnWalker.Concolic
+ 
+         private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
+ 
+-        public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
++        public Explorer(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
+         {
+             _definitionProvider = definitionProvider;
+             _config = config;
+diff --git a/dnWalker/DataElement.cs b/dnWalker/DataElement.cs
+index 0f07e88..72d032e 100644
+--- a/dnWalker/DataElement.cs
++++ b/dnWalker/DataElement.cs
+@@ -2989,7 +2989,7 @@ namespace MMC.Data
+ 
+         public IAddElement Add(INumericElement a, bool checkOverflow)
+         {
+-            var ac = cur.StaticArea.GetClass(m_type);
++            AllocatedClass ac = cur.StaticArea.GetClass(m_type);
+             /*
+ 			 * Note: the offset added to this pointer is in the amount of bytes.
+ 			 * The offset is dependent on the size of the datatype of the fields.
+@@ -3008,15 +3008,15 @@ namespace MMC.Data
+ 			 * 
+ 			 * BTW, we only do (and allow) this to pass a few more Microsoft's IL_BVT tests :)
+ 			 */
+-            var i = 0;
+-            var byteOffset = a.ToInt4(false).Value;
++            int i = 0;
++            int byteOffset = a.ToInt4(false).Value;
+ 
+-            var typeDef = DefinitionProvider.GetTypeDefinition(ac.Type);
+-            foreach (var fld in typeDef.Fields)
++            TypeDef typeDef = ac.Type.ResolveTypeDefThrow();
++            foreach (FieldDef fld in typeDef.Fields)
+             {
+                 if (i >= fld.FieldOffset)
+                 {
+-                    byteOffset -= cur.DefinitionProvider.SizeOf(fld.FieldType.FullName);
++                    byteOffset -= cur.DefinitionProvider.SizeOf(fld.FieldType);
+                 }
+ 
+                 i++;
+diff --git a/dnWalker/DataElementStack.cs b/dnWalker/DataElementStack.cs
+index 5b29b9f..390c6d8 100644
+--- a/dnWalker/DataElementStack.cs
++++ b/dnWalker/DataElementStack.cs
+@@ -67,7 +67,7 @@ namespace MMC.Data {
+ 
+         public void Push(object o)
+         {
+-			Push(cur.DefinitionProvider.CreateDataElement(o));
++			Push(DataElement.CreateDataElement(o, cur.DefinitionProvider));
+         }
+ 
+         public virtual void Push(IDataElement e) {
+diff --git a/dnWalker/DataElements/ReturnValue.cs b/dnWalker/DataElements/ReturnValue.cs
+index c2de533..468ecce 100644
+--- a/dnWalker/DataElements/ReturnValue.cs
++++ b/dnWalker/DataElements/ReturnValue.cs
+@@ -1,4 +1,7 @@
+ ﻿using dnlib.DotNet;
++
++using dnWalker.TypeSystem;
++
+ using MMC;
+ using MMC.Data;
+ using MMC.State;
+@@ -100,7 +103,7 @@ namespace dnWalker.DataElements
+             public void VisitAllocatedObject(AllocatedObject ao, ExplicitActiveState cur)
+             {
+                 var fields = new List<FieldDef>();
+-                foreach (var typeDefOrRef in DefinitionProvider.InheritanceEnumerator(ao.Type))
++                foreach (var typeDefOrRef in ao.Type.InheritanceEnumerator())
+                 {
+                     fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
+                 }
+@@ -118,7 +121,7 @@ namespace dnWalker.DataElements
+ 
+                     var objValue = f.GetValue(BaseObject);
+                     var fieldValue = ao.Fields[(int)field.FieldOffset.Value];
+-                    if (!cur.DefinitionProvider.CreateDataElement(objValue).Equals(fieldValue))
++                    if (!DataElement.CreateDataElement(objValue, cur.DefinitionProvider).Equals(fieldValue))
+                     {
+                         Result = -1;
+                         return;
+diff --git a/dnWalker/DefinitionLookup.cs b/dnWalker/DefinitionLookup.cs
+index e16b9b7..13134eb 100644
+--- a/dnWalker/DefinitionLookup.cs
++++ b/dnWalker/DefinitionLookup.cs
+@@ -1,710 +1,710 @@
+-/*
+- *   Copyright 2007 University of Twente, Formal Methods and Tools group
+- *
+- *   Licensed under the Apache License, Version 2.0 (the "License");
+- *   you may not use this file except in compliance with the License.
+- *   You may obtain a copy of the License at
+- *
+- *       http://www.apache.org/licenses/LICENSE-2.0
+- *
+- *   Unless required by applicable law or agreed to in writing, software
+- *   distributed under the License is distributed on an "AS IS" BASIS,
+- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- *   See the License for the specific language governing permissions and
+- *   limitations under the License.
+- *
+- */
++///*
++// *   Copyright 2007 University of Twente, Formal Methods and Tools group
++// *
++// *   Licensed under the Apache License, Version 2.0 (the "License");
++// *   you may not use this file except in compliance with the License.
++// *   You may obtain a copy of the License at
++// *
++// *       http://www.apache.org/licenses/LICENSE-2.0
++// *
++// *   Unless required by applicable law or agreed to in writing, software
++// *   distributed under the License is distributed on an "AS IS" BASIS,
++// *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// *   See the License for the specific language governing permissions and
++// *   limitations under the License.
++// *
++// */
+ 
+ // TODO - consolidate
+ 
+-namespace MMC
+-{
+-    using System;
+-    using System.Collections.Generic;
+-    using MMC.Data;
+-    using MMC.State;
+-    using MethodDefinition = dnlib.DotNet.MethodDef;
+-    using MethodReference = dnlib.DotNet.MethodDef;
+-    using FieldDefinition = dnlib.DotNet.FieldDef;
+-    using dnlib.DotNet;
+-    using System.Linq;
+-    using dnWalker;
+-    using System.IO;
+-    using dnWalker.NativePeers;
+-    using dnWalker.DataElements;
+-
+-    /// <summary>
+-    /// This definition is used for quick storage of methodreferences.
+-    /// </summary>
+-    /// <remarks>A virtual method is associated with an object, that is why
+-    /// the objectreference is also included in the virtualmethdef</remarks>
+-    internal struct VirtualMethodDefinition
+-    {
+-        public MethodReference Method;
+-        public ObjectReference Reference;
+-
+-        public VirtualMethodDefinition(MethodReference methRef, ObjectReference objRef)
+-        {
+-            Method = methRef;
+-            Reference = objRef;
+-        }
+-
+-        public override bool Equals(object obj)
+-        {
+-            var other = (VirtualMethodDefinition)obj;
+-
+-            var equals = other.Method.Name.Equals(Method.Name) &&
+-                other.Reference.Equals(Reference) &&
+-                other.Method.Parameters.Count == Method.Parameters.Count;
+-
+-            for (var i = 0; equals && i < other.Method.Parameters.Count; ++i)
+-            {
+-                equals = other.Method.Parameters[i].Type.TypeName ==
+-                   Method.Parameters[i].Type.TypeName;
+-            }
+-
+-            return equals;
+-        }
+-
+-        public override int GetHashCode()
+-        {
+-            return Method.GetHashCode() ^ Reference.GetHashCode();
+-        }
+-    }
+-
+-    public interface IDefinitionProvider
+-    {
+-        TypeDef GetTypeDefinition(string typeName);
+-    }
+-
+-
+-    /// <summary>
+-    /// This is a straightforward implementation of IDefinitionProvider.
+-    /// </summary>
+-    /// <remarks>
+-    /// Hashing is used to speed up the lookup process.
+-    /// </remarks>
+-    public sealed class DefinitionProvider : IDefinitionProvider
+-    {
+-        private readonly object _lock = new object();
+-        private readonly ModuleDef[] m_referencedAssemblies;
+-        private readonly IDictionary<string, TypeDef> m_typeDefinitions;
+-        private readonly Dictionary<VirtualMethodDefinition, MethodDefinition> m_virtualMethodDefinitions;
+-        private readonly IDictionary<string, MethodDefinition> m_methodDefinitionsByReference;
+-        private readonly IDictionary<string, FieldDefinition> m_fieldDefinitions;
+-        private readonly IDictionary<string, int> m_typeSizes;
+-
+-        /// <summary>
+-        /// The main assembly we're working on (ro).
+-        /// </summary>
+-        public ModuleDef AssemblyDefinition { get; }
+-
+-        // ----------------------------------------------------------------------------------------------
+-
+-        public int SizeOf(string type)
+-        {
+-            if (m_typeSizes.TryGetValue(type, out var result))
+-            {
+-                return result;
+-            }
+-
+-            throw new KeyNotFoundException(type);
+-        }
+-
+-        /// <summary>
+-        /// Returns the inheritance chain of a type
+-        /// </summary>
+-        public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(ITypeDefOrRef m_typeDef)
+-        {
+-            var currentType = m_typeDef;
+-            do
+-            {
+-                var currentTypeDef = GetTypeDefinition(currentType);
+-                if (currentTypeDef == null)
+-                {
+-                    break;
+-                }
+-                yield return currentTypeDef;
+-                currentType = currentTypeDef.BaseType;
+-            } while (currentType != null);
+-        }
+-
+-        public bool IsSubtype(ITypeDefOrRef supertype, ITypeDefOrRef subtype)
+-        {
+-            foreach (var typeRef in InheritanceEnumerator(supertype))
+-            {
+-                if (typeRef.FullName.Equals(subtype.FullName))
+-                    return true;
+-            }
+-
+-            return false;
+-        }
+-
+-        /// <summary>Look up a type definition by name in a given assembly.</summary>
+-        /// <remarks>
+-        /// This uses its <b>full</b> name, so including namespaces. As a
+-        /// result, this search is <b>not</b> approximate.
+-        /// </remarks>
+-        /// <param name="name">The full name of the type to look up.</param>
+-        /// <param name="asm">The assembly to look in (all modules are searched).</param>
+-        /// <returns>A definition of the found type, or null is nothing was found.</returns>
+-        internal TypeDef SearchType(string name, ModuleDef asm)
+-        {
+-            lock (_lock)
+-            {
+-                if (m_typeDefinitions.TryGetValue(name, out var retval))
+-                {
+-                    return retval;
+-                }
+-
+-                //if (name == "System.IO.TextWriter")
+-                //{
+-                //    retval = GetOwnTypeDefinition(typeof(SystemIOTextWriterImpl).FullName);
+-                //}
+-
+-                if (retval == null)
+-                {
+-                    retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+-                }
+-
+-                if (retval == null)
+-                {
+-                    //retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+-                    ExportedType eType = asm.ExportedTypes.FirstOrDefault(t => t.ReflectionFullName == name);
+-                    if (eType != null)
+-                    {
+-                        retval = eType.Resolve();
+-                    }
+-                }
+-
+-                if (retval != null)
+-                {
+-                    m_typeDefinitions.Add(name, retval);
+-                }
+-
+-                return retval;
+-            }
+-        }
+-
+-        //private TypeDef GetOwnTypeDefinition(string name)
+-        //{
+-        //    //var assemblyLoader = new AssemblyLoader();
+-
+-        //    //var data = File.ReadAllBytes(GetType().Assembly.Modules);
+-        //    return GetType().Assembly.Modules.Select(m =>
+-        //    {
+-        //        var moduleDef = ModuleDefMD.Load(m);
+-        //        //return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
+-        //        return moduleDef.ExportedTypes.FirstOrDefault(t => t.ReflectionFullName == name).Resolve();
+-        //    }).FirstOrDefault();
+-        //}
+-
+-        /// <summary>
+-        /// Look up a type definition by reference in the main assembly
+-        /// and its reference assemblies.
+-        /// </summary>
+-        /// <remarks>
+-        /// This simply calls GetTypeDefinition(typeRef.FullName), which is okay
+-        /// as long as the search by name is not approximate.
+-        /// </remarks>
+-        /// <param name="typeRef">reference to find the definition of.</param>
+-        /// <returns>The definition, or null if none was found.</returns>
+-        /// <seealso cref="GetTypeDefinition(string)"/> 
+-        internal TypeDef GetTypeDefinition(TypeRef typeRef)
+-        {
+-            return typeRef.ResolveTypeDef();
+-        }
+-
+-        internal TypeDef GetTypeDefinition(TypeSig typeSig)
+-        {
+-            var typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
+-            if (typeDef == null)
+-            {
+-                typeDef = GetTypeDefinition(typeSig.FullName);
+-            }
+-            if (typeDef != null && typeDef.HasGenericParameters)
+-            {
+-                //    return typeDef;
+-            }
+-
+-            return typeDef;
+-        }
+-
+-        // TODO TypeDefFinder
+-        internal static TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
+-        {
+-            try
+-            {
+-                return typeRef.ResolveTypeDefThrow();
+-            }
+-            catch
+-            {
+-                if (typeRef.FullName == "System.Object")
+-                {
+-                    return null;
+-                }
+-                throw;
+-            }
+-        }
+-
+-        internal TypeDef GetTypeDefinition(TypeDef typeDef)
+-        {
+-            return typeDef;
+-        }
+-
+-        /// <summary>
+-        /// Look up a type definition by name in the main assembly
+-        /// and its reference assemblies.
+-        /// </summary>
+-        /// <remarks>
+-        /// This calls GetTypeDefinition(name, ...) for the main assembly, and
+-        /// then all its referenced assemblies until a definition is found.
+-        /// </remarks>
+-        /// <param name="name">of the type to find a definition for.</param>
+-        /// <returns>The definition, or null if none was found.</returns>
+-        /// <seealso cref="GetTypeDefinition(string, AssemblyDefinition)"/>
+-        public TypeDef GetTypeDefinition(string name)
+-        {
+-            var retval = SearchType(name, AssemblyDefinition);
+-            foreach (var refA in m_referencedAssemblies)
+-            {
+-                retval = SearchType(name, refA);
+-                if (retval != null)
+-                {
+-                    break;
+-                }
+-            }
+-
+-            if (retval == null)
+-            {
+-                throw new NullReferenceException($"Type {name} not found.");
+-            }
+-
+-            return retval;
+-        }
+-
+-        public MethodDefinition GetMethodDefinition(string methodName)
+-        {
+-            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
+-            {
+-                return retval;
+-            }
+-
+-            var lastDot = methodName.LastIndexOf(".");
+-            var methodTypeName = methodName.Substring(0, lastDot);
+-
+-            var typeDef = GetTypeDefinition(methodTypeName);
+-            retval = typeDef.FindMethod(new UTF8String(methodName.Substring(lastDot + 1)));
+-
+-            return retval;
+-        }
+-
+-        public MethodDefinition SearchVirtualMethod(MethodReference methRef, IDataElement dataElement, ExplicitActiveState cur)
+-        {
+-            dataElement = dataElement is IManagedPointer ptr ?
+-                ptr.Value :
+-                dataElement;
+-
+-            if (!(dataElement is ObjectReference objRef))
+-            {
+-                throw new NotSupportedException($"ObjectReference expected, {dataElement?.GetType().FullName} found.");
+-            }
+-
+-            var ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
+-            var superType = ao.Type;
+-            var vmdef = new VirtualMethodDefinition(methRef, objRef);
+-
+-            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out var retval))
+-            {
+-                return retval;
+-            }
+-
+-            foreach (var typeRef in InheritanceEnumerator(superType))
+-            {
+-                var typeDef = GetTypeDefinition(typeRef);
+-
+-                foreach (var curr in typeDef.Methods)
+-                {
+-                    if (curr.Body != null && curr.Body.Instructions.Count > 0)
+-                    {
+-                        var vmdefCurr = new VirtualMethodDefinition(curr, objRef);
+-
+-                        if (vmdefCurr.Equals(vmdef))
+-                        {
+-                            retval = curr;
+-                            break;
+-                        }
+-                    }
+-                }
+-
+-                if (retval != null)
+-                {
+-                    break;
+-                }
+-            }
+-
+-            m_virtualMethodDefinitions.Add(vmdef, retval);
+-
+-            return retval;
+-        }
+-
+-        /// <summary>
+-        /// Search for a method definition by name in a referenced type.
+-        /// </summary>
+-        /// <remarks>
+-        /// As explained in the IDefinitionProvider interface, this search is
+-        /// always <b>approximate</b>, since we cannot compare the formal
+-        /// parameter list. This means things may go wrong if someone defines
+-        /// two method with the same name, which is very common in OO
+-        /// programming. You have been warned.
+-        /// </remarks>
+-        /// <param name="name">The name of the method to look up.</param>
+-        /// <param name="typeDef">Definition of the type to search in.</param>
+-        /// <returns>A definition for the method to look for, or null if none was found.</returns>
+-        public MethodDefinition SearchMethod(string name, TypeDef typeDef)
+-        {
+-            var methodName = typeDef + "::" + name;
+-
+-            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
+-            {
+-                return retval;
+-            }
+-
+-            if (name == ".cctor")
+-            {
+-                var cctor = typeDef.FindStaticConstructor();
+-                if (cctor != null)
+-                {
+-                    m_methodDefinitionsByReference.Add(methodName, cctor);
+-                    return cctor;
+-                }
+-            }
+-
+-            throw new NotSupportedException("SearchMethod " + methodName);
+-        }
+-
+-        public static FieldDefinition GetFieldDefinition(IField fieldRef)
+-        {
+-            if (fieldRef == null)
+-            {
+-                return null;
+-            }
+-
+-            var fieldDefinition = fieldRef.ResolveFieldDef();
+-            if (!fieldDefinition.FieldOffset.HasValue)
+-            {
+-                var fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
+-                for (var i = 0; i < fields.Count; i++)
+-                {
+-                    if (fields[i] == fieldDefinition)
+-                    {
+-                        fieldDefinition.FieldOffset = (uint)i;
+-                        break;
+-                    }
+-                }
+-            }
+-
+-            return fieldDefinition;
+-        }
+-
+-        /// <summary>Look up a field definition by name, in a type given by name.</summary>
+-        /// <remarks>
+-        /// The type name should be fully specified, i.e. with namespace.
+-        /// </remarks>
+-        /// <param name="declTypeName">Name of the type to look in.</param>
+-        /// <param name="fieldName">Name of the field to look for.</param>
+-        /// <returns>Definition of the field to look for, or null if none was found.</returns>
+-        public FieldDefinition GetFieldDefinition(string declTypeName, string fieldName)
+-        {
+-            var key = declTypeName + "::" + fieldName;
+-            if (!m_fieldDefinitions.TryGetValue(key, out var retval))
+-            {
+-                var declType = GetTypeDefinition(declTypeName);
+-                if (declType == null)
+-                {
+-                    throw new System.Exception($"Declaring type {declTypeName} not found");
+-                }
+-                else
+-                {
+-                    var equal = false;
+-                    var i = 0;
+-                    for (; !equal && i < declType.Fields.Count; ++i)
+-                    {
+-                        equal = declType.Fields[i].Name == fieldName;
+-                    }
+-                    if (equal)
+-                    {
+-                        retval = declType.Fields[i - 1];
+-                        //retval.Offset = (uint)i - 1;
+-                    }
+-                }
+-                if (retval != null)
+-                {
+-                    m_fieldDefinitions[key] = retval;
+-                }
+-            }
+-
+-            return GetFieldDefinition(retval);
+-        }
+-
+-        /// <summary>Get the number of static fields in a type definition.</summary>
+-        /// <param name="typeDef">The definition of the type of which to count the static fields.</param>
+-        /// <returns>The number of static fields.</returns>
+-        public int GetStaticFieldCount(TypeDef typeDef)
+-        {
+-            return typeDef.Fields.Count - GetNonStaticFieldCount(typeDef);
+-        }
+-
+-        /// <summary>Get the number of non-static fields in a type definition.</summary>
+-        /// <param name="typeDef">The definition of the type of which to count the non-static fields.</param>
+-        /// <returns>The number of non-static fields.</returns>
+-        public int GetNonStaticFieldCount(TypeDef typeDef)
+-        {
+-            var count = 0;
+-            foreach (var fld in typeDef.Fields)
+-            {
+-                if (!fld.IsStatic)
+-                {
+-                    ++count;
+-                }
+-            }
+-            return count;
+-        }
+-
+-        // ----------------------------------------------------------------------------------------------
+-        public static IDataElement GetNullValue(TypeSig typeSig)
+-        {
+-            return GetNullValue(typeSig.ToTypeDefOrRef());
+-        }
+-
+-        public IDataElement GetParameterNullOrDefaultValue(Parameter parameter)
+-        {
+-            var methodDef = parameter.Method;
+-            if (parameter.IsHiddenThisParameter)
+-            {
+-                return ObjectReference.Null;
+-            }
+-
+-            return GetNullValue(parameter.Type.ToTypeDefOrRef());
+-        }
+-
+-        /// <summary>
+-        /// Get default(typeRef) of a type typeRef
+-        /// i.e., the default type for representation in the state of a given type
+-        /// </summary>
+-        public static IDataElement GetNullValue(ITypeDefOrRef typeRef)
+-        {
+-            var typeSig = typeRef.ToTypeSig();
+-            if (!typeSig.IsPrimitive)
+-            {
+-                return ObjectReference.Null;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.IntPtr == typeSig
+-                || typeRef.Module.CorLibTypes.Boolean == typeSig
+-                || typeRef.Module.CorLibTypes.Char == typeSig
+-                || typeRef.Module.CorLibTypes.Int16 == typeSig
+-                || typeRef.Module.CorLibTypes.Int32 == typeSig
+-                || typeRef.Module.CorLibTypes.SByte == typeSig
+-                || typeRef.Module.CorLibTypes.Byte == typeSig)
+-            {
+-                return Int4.Zero;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.Single == typeSig)
+-            {
+-                return Float4.Zero;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.Double == typeSig)
+-            {
+-                return Float8.Zero;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.UInt16 == typeSig
+-                || typeRef.Module.CorLibTypes.UInt32 == typeSig)
+-            {
+-                return UnsignedInt4.Zero;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.Int64 == typeSig)
+-            {
+-                return Int8.Zero;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.UInt64 == typeSig)
+-            {
+-                return UnsignedInt8.Zero;
+-            }
+-
+-            if (typeRef.Module.CorLibTypes.UIntPtr == typeSig)
+-            {
+-                return UnsignedInt8.Zero;
+-            }
+-
+-            throw new NotSupportedException("GetNullValue for " + typeRef.FullName);
+-        }
+-
+-        public static DefinitionProvider Create(AssemblyLoader assemblyLoader)
+-        {
+-            return new DefinitionProvider(assemblyLoader);
+-        }
+-
+-        public bool TryGetTypeHandle(ITypeDefOrRef typeRef, out RuntimeTypeHandle typeHandle)
+-        {
+-            var corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
+-            if (corLibType != null)
+-            {
+-                var typeSig = typeRef.ToTypeSig();
+-                if (corLibType == AssemblyDefinition.CorLibTypes.String)
+-                {
+-                    typeHandle = typeof(string).TypeHandle;
+-                    return true;
+-                }
+-            }
+-
+-            typeHandle = default(RuntimeTypeHandle);
+-            return false;
+-        }
+-
+-        // ----------------------------------------------------------------------------------------------
+-
+-        /// <summary>Initialize a new HashedDefinitionProvider.</summary>
+-        /// <remarks>
+-        /// This initialized the hash tables, and load the referenced
+-        /// assemblies. This loading is done in a terribly inefficient way. In
+-        /// order to find the file name of a references assembly, we use Mono
+-        /// reflection classes. These classes provide only constructor methods
+-        /// that immediately load the whole thing into memory. All that just
+-        /// for a file name. This is the reason MMC starts so slowly.
+-        /// </remarks>
+-        /// <param name="assemblyLoader">Assembly loader</param>
+-        private DefinitionProvider(AssemblyLoader assemblyLoader)
+-        {
+-            m_typeDefinitions = new Dictionary<string, TypeDef>();
+-            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
+-            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
+-            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
+-
+-            /*
+-			 * We need to know the sizes in order to perform
+-			 * managed pointer arithmetica
+-			 */
+-            m_typeSizes = new Dictionary<string, int>
+-            {
+-                ["System.UInt16"] = sizeof(ushort),
+-                ["System.UInt32"] = sizeof(uint),
+-                ["System.UInt64"] = sizeof(ulong),
+-                ["System.Int16"] = sizeof(short),
+-                ["System.Int32"] = sizeof(int),
+-                ["System.Int64"] = sizeof(long),
+-                ["System.SByte"] = sizeof(sbyte),
+-                ["System.Byte"] = sizeof(byte),
+-                ["System.Boolean"] = sizeof(bool),
+-                ["System.Char"] = sizeof(char),
+-                ["System.Double"] = sizeof(double),
+-                ["System.Decimal"] = sizeof(decimal),
+-                ["System.Single"] = sizeof(float),
+-                ["System.IntPtr"] = IntPtr.Size,
+-                ["System.UIntPtr"] = UIntPtr.Size
+-            };
+-
+-                AssemblyDefinition = assemblyLoader.GetModule();
+-
+-            m_referencedAssemblies = assemblyLoader.GetReferencedModules(AssemblyDefinition);
+-
+-            AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
+-        }
+-
+-        internal DefinitionProvider(ModuleDef mainModule, ModuleDef[] referencedModules)
+-        {
+-            m_typeDefinitions = new Dictionary<string, TypeDef>();
+-            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
+-            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
+-            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
+-
+-            /*
+-			 * We need to know the sizes in order to perform
+-			 * managed pointer arithmetica
+-			 */
+-            m_typeSizes = new Dictionary<string, int>
+-            {
+-                ["System.UInt16"] = sizeof(ushort),
+-                ["System.UInt32"] = sizeof(uint),
+-                ["System.UInt64"] = sizeof(ulong),
+-                ["System.Int16"] = sizeof(short),
+-                ["System.Int32"] = sizeof(int),
+-                ["System.Int64"] = sizeof(long),
+-                ["System.SByte"] = sizeof(sbyte),
+-                ["System.Byte"] = sizeof(byte),
+-                ["System.Boolean"] = sizeof(bool),
+-                ["System.Char"] = sizeof(char),
+-                ["System.Double"] = sizeof(double),
+-                ["System.Decimal"] = sizeof(decimal),
+-                ["System.Single"] = sizeof(float),
+-                ["System.IntPtr"] = IntPtr.Size,
+-                ["System.UIntPtr"] = UIntPtr.Size
+-            };
+-
+-            AssemblyDefinition = mainModule;
+-
+-            m_referencedAssemblies = referencedModules;
+-
+-            //AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
+-        }
+-
+-        public IDataElement CreateDataElement(object value)
+-        {
+-            if (value is null)
+-            {
+-                return ObjectReference.Null;
+-            }
+-
+-            var type = value.GetType();
+-            if (type.IsArray)
+-            {
+-                var array = value as Array;
+-                return new ArrayOf(array, GetTypeDefinition(type.GetElementType().FullName));
+-            }
+-
+-            switch (Type.GetTypeCode(type))
+-            {
+-                case TypeCode.Boolean: return new Int4((Boolean)value ? 1 : 0);
+-                case TypeCode.Char: return new Int4((Char)value);
+-                case TypeCode.SByte: return new Int4((SByte)value);
+-                case TypeCode.Byte: return new Int4((Byte)value);
+-                case TypeCode.Int16: return new Int4((Int16)value);
+-                case TypeCode.UInt16: return new UnsignedInt4((UInt16)value);
+-                case TypeCode.Int32: return new Int4((Int32)value);
+-                case TypeCode.UInt32: return new UnsignedInt4((UInt32)value);
+-                case TypeCode.Int64: return new Int8((Int64)value);
+-                case TypeCode.UInt64: return new UnsignedInt8((UInt64)value);
+-                case TypeCode.Single: return new Float4((Single)value);
+-                case TypeCode.Double: return new Float8((Double)value);
+-                case TypeCode.String: return new ConstantString(value.ToString());
+-                default:
+-                    if (value is IntPtr ip)
+-                    {
+-                        return IntPtr.Size == 4 ? CreateDataElement(ip.ToInt32()) : CreateDataElement(ip.ToInt64());
+-                    }
+-                    if (value is UIntPtr up)
+-                    {
+-                        return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
+-                    }
+-
+-                    // TODO: handle reference & complex types...
+-                    var typeName = type.FullName;
+-
+-                    var typeDef = this.GetTypeDefinition(typeName);
+-
+-                    //throw new NotSupportedException("CreateDataElement for " + value.GetType());
+-                    return ObjectReference.Null;
+-            }
+-        }
+-
+-        public TypeSig GetTypeSig(string typeName)
+-        {
+-            return GetTypeDefinition(typeName).ToTypeSig();
+-        }
+-    }
+-}
++//namespace MMC
++//{
++//    using System;
++//    using System.Collections.Generic;
++//    using MMC.Data;
++//    using MMC.State;
++//    using MethodDefinition = dnlib.DotNet.MethodDef;
++//    using MethodReference = dnlib.DotNet.MethodDef;
++//    using FieldDefinition = dnlib.DotNet.FieldDef;
++//    using dnlib.DotNet;
++//    using System.Linq;
++//    using dnWalker;
++//    using System.IO;
++//    using dnWalker.NativePeers;
++//    using dnWalker.DataElements;
++
++//    / <summary>
++//    / This definition is used for quick storage of methodreferences.
++//    / </summary>
++//    / <remarks>A virtual method is associated with an object, that is why
++//    / the objectreference is also included in the virtualmethdef</remarks>
++//    internal struct VirtualMethodDefinition
++//    {
++//        public MethodReference Method;
++//        public ObjectReference Reference;
++
++//        public VirtualMethodDefinition(MethodReference methRef, ObjectReference objRef)
++//        {
++//            Method = methRef;
++//            Reference = objRef;
++//        }
++
++//        public override bool Equals(object obj)
++//        {
++//            var other = (VirtualMethodDefinition)obj;
++
++//            var equals = other.Method.Name.Equals(Method.Name) &&
++//                other.Reference.Equals(Reference) &&
++//                other.Method.Parameters.Count == Method.Parameters.Count;
++
++//            for (var i = 0; equals && i < other.Method.Parameters.Count; ++i)
++//            {
++//                equals = other.Method.Parameters[i].Type.TypeName ==
++//                   Method.Parameters[i].Type.TypeName;
++//            }
++
++//            return equals;
++//        }
++
++//        public override int GetHashCode()
++//        {
++//            return Method.GetHashCode() ^ Reference.GetHashCode();
++//        }
++//    }
++
++//    public interface IDefinitionProvider
++//    {
++//        TypeDef GetTypeDefinition(string typeName);
++//    }
++
++
++//    / <summary>
++//    / This is a straightforward implementation of IDefinitionProvider.
++//    / </summary>
++//    / <remarks>
++//    / Hashing is used to speed up the lookup process.
++//    / </remarks>
++//    public sealed class DefinitionProvider : IDefinitionProvider
++//    {
++//        private readonly object _lock = new object();
++//        private readonly ModuleDef[] m_referencedAssemblies;
++//        private readonly IDictionary<string, TypeDef> m_typeDefinitions;
++//        private readonly Dictionary<VirtualMethodDefinition, MethodDefinition> m_virtualMethodDefinitions;
++//        private readonly IDictionary<string, MethodDefinition> m_methodDefinitionsByReference;
++//        private readonly IDictionary<string, FieldDefinition> m_fieldDefinitions;
++//        private readonly IDictionary<string, int> m_typeSizes;
++
++//        / <summary>
++//        / The main assembly we're working on (ro).
++//        / </summary>
++//        public ModuleDef AssemblyDefinition { get; }
++
++//         ----------------------------------------------------------------------------------------------
++
++//        public int SizeOf(string type)
++//        {
++//            if (m_typeSizes.TryGetValue(type, out var result))
++//            {
++//                return result;
++//            }
++
++//            throw new KeyNotFoundException(type);
++//        }
++
++//        / <summary>
++//        / Returns the inheritance chain of a type
++//        / </summary>
++//        public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(ITypeDefOrRef m_typeDef)
++//        {
++//            var currentType = m_typeDef;
++//            do
++//            {
++//                var currentTypeDef = GetTypeDefinition(currentType);
++//                if (currentTypeDef == null)
++//                {
++//                    break;
++//                }
++//                yield return currentTypeDef;
++//                currentType = currentTypeDef.BaseType;
++//            } while (currentType != null);
++//        }
++
++//        public bool IsSubtype(ITypeDefOrRef supertype, ITypeDefOrRef subtype)
++//        {
++//            foreach (var typeRef in InheritanceEnumerator(supertype))
++//            {
++//                if (typeRef.FullName.Equals(subtype.FullName))
++//                    return true;
++//            }
++
++//            return false;
++//        }
++
++//        / <summary>Look up a type definition by name in a given assembly.</summary>
++//        / <remarks>
++//        / This uses its <b>full</b> name, so including namespaces. As a
++//        / result, this search is <b>not</b> approximate.
++//        / </remarks>
++//        / <param name="name">The full name of the type to look up.</param>
++//        / <param name="asm">The assembly to look in (all modules are searched).</param>
++//        / <returns>A definition of the found type, or null is nothing was found.</returns>
++//        internal TypeDef SearchType(string name, ModuleDef asm)
++//        {
++//            lock (_lock)
++//            {
++//                if (m_typeDefinitions.TryGetValue(name, out var retval))
++//                {
++//                    return retval;
++//                }
++
++//                if (name == "System.IO.TextWriter")
++//                {
++//                    retval = GetOwnTypeDefinition(typeof(SystemIOTextWriterImpl).FullName);
++//                }
++
++//                if (retval == null)
++//                {
++//                    retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
++//                }
++
++//                if (retval == null)
++//                {
++//                    retval = asm.Types.FirstOrDefault(t => t.ReflectionFullName == name);
++//                    ExportedType eType = asm.ExportedTypes.FirstOrDefault(t => t.ReflectionFullName == name);
++//                    if (eType != null)
++//                    {
++//                        retval = eType.Resolve();
++//                    }
++//                }
++
++//                if (retval != null)
++//                {
++//                    m_typeDefinitions.Add(name, retval);
++//                }
++
++//                return retval;
++//            }
++//        }
++
++//        private TypeDef GetOwnTypeDefinition(string name)
++//        {
++//            //var assemblyLoader = new AssemblyLoader();
++
++//            //var data = File.ReadAllBytes(GetType().Assembly.Modules);
++//            return GetType().Assembly.Modules.Select(m =>
++//            {
++//                var moduleDef = ModuleDefMD.Load(m);
++//                //return moduleDef.Types.FirstOrDefault(t => t.ReflectionFullName == name);
++//                return moduleDef.ExportedTypes.FirstOrDefault(t => t.ReflectionFullName == name).Resolve();
++//            }).FirstOrDefault();
++//        }
++
++//        / <summary>
++//        / Look up a type definition by reference in the main assembly
++//        / and its reference assemblies.
++//        / </summary>
++//        / <remarks>
++//        / This simply calls GetTypeDefinition(typeRef.FullName), which is okay
++//        / as long as the search by name is not approximate.
++//        / </remarks>
++//        / <param name="typeRef">reference to find the definition of.</param>
++//        / <returns>The definition, or null if none was found.</returns>
++//        / <seealso cref="GetTypeDefinition(string)"/> 
++//        internal TypeDef GetTypeDefinition(TypeRef typeRef)
++//        {
++//            return typeRef.ResolveTypeDef();
++//        }
++
++//        internal TypeDef GetTypeDefinition(TypeSig typeSig)
++//        {
++//            var typeDef = typeSig.ToTypeDefOrRef().ResolveTypeDef();
++//            if (typeDef == null)
++//            {
++//                typeDef = GetTypeDefinition(typeSig.FullName);
++//            }
++//            if (typeDef != null && typeDef.HasGenericParameters)
++//            {
++//                    return typeDef;
++//            }
++
++//            return typeDef;
++//        }
++
++//         TODO TypeDefFinder
++//        internal static TypeDef GetTypeDefinition(ITypeDefOrRef typeRef)
++//        {
++//            try
++//            {
++//                return typeRef.ResolveTypeDefThrow();
++//            }
++//            catch
++//            {
++//                if (typeRef.FullName == "System.Object")
++//                {
++//                    return null;
++//                }
++//                throw;
++//            }
++//        }
++
++//        internal TypeDef GetTypeDefinition(TypeDef typeDef)
++//        {
++//            return typeDef;
++//        }
++
++//        / <summary>
++//        / Look up a type definition by name in the main assembly
++//        / and its reference assemblies.
++//        / </summary>
++//        / <remarks>
++//        / This calls GetTypeDefinition(name, ...) for the main assembly, and
++//        / then all its referenced assemblies until a definition is found.
++//        / </remarks>
++//        / <param name="name">of the type to find a definition for.</param>
++//        / <returns>The definition, or null if none was found.</returns>
++//        / <seealso cref="GetTypeDefinition(string, AssemblyDefinition)"/>
++//        public TypeDef GetTypeDefinition(string name)
++//        {
++//            var retval = SearchType(name, AssemblyDefinition);
++//            foreach (var refA in m_referencedAssemblies)
++//            {
++//                retval = SearchType(name, refA);
++//                if (retval != null)
++//                {
++//                    break;
++//                }
++//            }
++
++//            if (retval == null)
++//            {
++//                throw new NullReferenceException($"Type {name} not found.");
++//            }
++
++//            return retval;
++//        }
++
++//        public MethodDefinition GetMethodDefinition(string methodName)
++//        {
++//            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
++//            {
++//                return retval;
++//            }
++
++//            var lastDot = methodName.LastIndexOf(".");
++//            var methodTypeName = methodName.Substring(0, lastDot);
++
++//            var typeDef = GetTypeDefinition(methodTypeName);
++//            retval = typeDef.FindMethod(new UTF8String(methodName.Substring(lastDot + 1)));
++
++//            return retval;
++//        }
++
++//        public MethodDefinition SearchVirtualMethod(MethodReference methRef, IDataElement dataElement, ExplicitActiveState cur)
++//        {
++//            dataElement = dataElement is IManagedPointer ptr ?
++//                ptr.Value :
++//                dataElement;
++
++//            if (!(dataElement is ObjectReference objRef))
++//            {
++//                throw new NotSupportedException($"ObjectReference expected, {dataElement?.GetType().FullName} found.");
++//            }
++
++//            var ao = cur.DynamicArea.Allocations[objRef] as AllocatedObject;
++//            var superType = ao.Type;
++//            var vmdef = new VirtualMethodDefinition(methRef, objRef);
++
++//            if (m_virtualMethodDefinitions.TryGetValue(vmdef, out var retval))
++//            {
++//                return retval;
++//            }
++
++//            foreach (var typeRef in InheritanceEnumerator(superType))
++//            {
++//                var typeDef = GetTypeDefinition(typeRef);
++
++//                foreach (var curr in typeDef.Methods)
++//                {
++//                    if (curr.Body != null && curr.Body.Instructions.Count > 0)
++//                    {
++//                        var vmdefCurr = new VirtualMethodDefinition(curr, objRef);
++
++//                        if (vmdefCurr.Equals(vmdef))
++//                        {
++//                            retval = curr;
++//                            break;
++//                        }
++//                    }
++//                }
++
++//                if (retval != null)
++//                {
++//                    break;
++//                }
++//            }
++
++//            m_virtualMethodDefinitions.Add(vmdef, retval);
++
++//            return retval;
++//        }
++
++//        / <summary>
++//        / Search for a method definition by name in a referenced type.
++//        / </summary>
++//        / <remarks>
++//        / As explained in the IDefinitionProvider interface, this search is
++//        / always <b>approximate</b>, since we cannot compare the formal
++//        / parameter list. This means things may go wrong if someone defines
++//        / two method with the same name, which is very common in OO
++//        / programming. You have been warned.
++//        / </remarks>
++//        / <param name="name">The name of the method to look up.</param>
++//        / <param name="typeDef">Definition of the type to search in.</param>
++//        / <returns>A definition for the method to look for, or null if none was found.</returns>
++//        public MethodDefinition SearchMethod(string name, TypeDef typeDef)
++//        {
++//            var methodName = typeDef + "::" + name;
++
++//            if (m_methodDefinitionsByReference.TryGetValue(methodName, out var retval))
++//            {
++//                return retval;
++//            }
++
++//            if (name == ".cctor")
++//            {
++//                var cctor = typeDef.FindStaticConstructor();
++//                if (cctor != null)
++//                {
++//                    m_methodDefinitionsByReference.Add(methodName, cctor);
++//                    return cctor;
++//                }
++//            }
++
++//            throw new NotSupportedException("SearchMethod " + methodName);
++//        }
++
++//        public static FieldDefinition GetFieldDefinition(IField fieldRef)
++//        {
++//            if (fieldRef == null)
++//            {
++//                return null;
++//            }
++
++//            var fieldDefinition = fieldRef.ResolveFieldDef();
++//            if (!fieldDefinition.FieldOffset.HasValue)
++//            {
++//                var fields = fieldRef.DeclaringType.ResolveTypeDef().Fields;
++//                for (var i = 0; i < fields.Count; i++)
++//                {
++//                    if (fields[i] == fieldDefinition)
++//                    {
++//                        fieldDefinition.FieldOffset = (uint)i;
++//                        break;
++//                    }
++//                }
++//            }
++
++//            return fieldDefinition;
++//        }
++
++//        / <summary>Look up a field definition by name, in a type given by name.</summary>
++//        / <remarks>
++//        / The type name should be fully specified, i.e. with namespace.
++//        / </remarks>
++//        / <param name="declTypeName">Name of the type to look in.</param>
++//        / <param name="fieldName">Name of the field to look for.</param>
++//        / <returns>Definition of the field to look for, or null if none was found.</returns>
++//        public FieldDefinition GetFieldDefinition(string declTypeName, string fieldName)
++//        {
++//            var key = declTypeName + "::" + fieldName;
++//            if (!m_fieldDefinitions.TryGetValue(key, out var retval))
++//            {
++//                var declType = GetTypeDefinition(declTypeName);
++//                if (declType == null)
++//                {
++//                    throw new System.Exception($"Declaring type {declTypeName} not found");
++//                }
++//                else
++//                {
++//                    var equal = false;
++//                    var i = 0;
++//                    for (; !equal && i < declType.Fields.Count; ++i)
++//                    {
++//                        equal = declType.Fields[i].Name == fieldName;
++//                    }
++//                    if (equal)
++//                    {
++//                        retval = declType.Fields[i - 1];
++//                        retval.Offset = (uint)i - 1;
++//                    }
++//                }
++//                if (retval != null)
++//                {
++//                    m_fieldDefinitions[key] = retval;
++//                }
++//            }
++
++//            return GetFieldDefinition(retval);
++//        }
++
++//        / <summary>Get the number of static fields in a type definition.</summary>
++//        / <param name="typeDef">The definition of the type of which to count the static fields.</param>
++//        / <returns>The number of static fields.</returns>
++//        public int GetStaticFieldCount(TypeDef typeDef)
++//        {
++//            return typeDef.Fields.Count - GetNonStaticFieldCount(typeDef);
++//        }
++
++//        / <summary>Get the number of non-static fields in a type definition.</summary>
++//        / <param name="typeDef">The definition of the type of which to count the non-static fields.</param>
++//        / <returns>The number of non-static fields.</returns>
++//        public int GetNonStaticFieldCount(TypeDef typeDef)
++//        {
++//            var count = 0;
++//            foreach (var fld in typeDef.Fields)
++//            {
++//                if (!fld.IsStatic)
++//                {
++//                    ++count;
++//                }
++//            }
++//            return count;
++//        }
++
++//         ----------------------------------------------------------------------------------------------
++//        public static IDataElement GetNullValue(TypeSig typeSig)
++//        {
++//            return GetNullValue(typeSig.ToTypeDefOrRef());
++//        }
++
++//        public IDataElement GetParameterNullOrDefaultValue(Parameter parameter)
++//        {
++//            var methodDef = parameter.Method;
++//            if (parameter.IsHiddenThisParameter)
++//            {
++//                return ObjectReference.Null;
++//            }
++
++//            return GetNullValue(parameter.Type.ToTypeDefOrRef());
++//        }
++
++//        / <summary>
++//        / Get default(typeRef) of a type typeRef
++//        / i.e., the default type for representation in the state of a given type
++//        / </summary>
++//        public static IDataElement GetNullValue(ITypeDefOrRef typeRef)
++//        {
++//            var typeSig = typeRef.ToTypeSig();
++//            if (!typeSig.IsPrimitive)
++//            {
++//                return ObjectReference.Null;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.IntPtr == typeSig
++//                || typeRef.Module.CorLibTypes.Boolean == typeSig
++//                || typeRef.Module.CorLibTypes.Char == typeSig
++//                || typeRef.Module.CorLibTypes.Int16 == typeSig
++//                || typeRef.Module.CorLibTypes.Int32 == typeSig
++//                || typeRef.Module.CorLibTypes.SByte == typeSig
++//                || typeRef.Module.CorLibTypes.Byte == typeSig)
++//            {
++//                return Int4.Zero;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.Single == typeSig)
++//            {
++//                return Float4.Zero;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.Double == typeSig)
++//            {
++//                return Float8.Zero;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.UInt16 == typeSig
++//                || typeRef.Module.CorLibTypes.UInt32 == typeSig)
++//            {
++//                return UnsignedInt4.Zero;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.Int64 == typeSig)
++//            {
++//                return Int8.Zero;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.UInt64 == typeSig)
++//            {
++//                return UnsignedInt8.Zero;
++//            }
++
++//            if (typeRef.Module.CorLibTypes.UIntPtr == typeSig)
++//            {
++//                return UnsignedInt8.Zero;
++//            }
++
++//            throw new NotSupportedException("GetNullValue for " + typeRef.FullName);
++//        }
++
++//        public static DefinitionProvider Create(AssemblyLoader assemblyLoader)
++//        {
++//            return new DefinitionProvider(assemblyLoader);
++//        }
++
++//        public bool TryGetTypeHandle(ITypeDefOrRef typeRef, out RuntimeTypeHandle typeHandle)
++//        {
++//            var corLibType = AssemblyDefinition.CorLibTypes.GetCorLibTypeSig(typeRef);
++//            if (corLibType != null)
++//            {
++//                var typeSig = typeRef.ToTypeSig();
++//                if (corLibType == AssemblyDefinition.CorLibTypes.String)
++//                {
++//                    typeHandle = typeof(string).TypeHandle;
++//                    return true;
++//                }
++//            }
++
++//            typeHandle = default(RuntimeTypeHandle);
++//            return false;
++//        }
++
++//         ----------------------------------------------------------------------------------------------
++
++//        / <summary>Initialize a new HashedDefinitionProvider.</summary>
++//        / <remarks>
++//        / This initialized the hash tables, and load the referenced
++//        / assemblies. This loading is done in a terribly inefficient way. In
++//        / order to find the file name of a references assembly, we use Mono
++//        / reflection classes. These classes provide only constructor methods
++//        / that immediately load the whole thing into memory. All that just
++//        / for a file name. This is the reason MMC starts so slowly.
++//        / </remarks>
++//        / <param name="assemblyLoader">Assembly loader</param>
++//        private DefinitionProvider(AssemblyLoader assemblyLoader)
++//        {
++//            m_typeDefinitions = new Dictionary<string, TypeDef>();
++//            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
++//            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
++//            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
++
++//            /*
++//			 * We need to know the sizes in order to perform
++//			 * managed pointer arithmetica
++//			 */
++//            m_typeSizes = new Dictionary<string, int>
++//            {
++//                ["System.UInt16"] = sizeof(ushort),
++//                ["System.UInt32"] = sizeof(uint),
++//                ["System.UInt64"] = sizeof(ulong),
++//                ["System.Int16"] = sizeof(short),
++//                ["System.Int32"] = sizeof(int),
++//                ["System.Int64"] = sizeof(long),
++//                ["System.SByte"] = sizeof(sbyte),
++//                ["System.Byte"] = sizeof(byte),
++//                ["System.Boolean"] = sizeof(bool),
++//                ["System.Char"] = sizeof(char),
++//                ["System.Double"] = sizeof(double),
++//                ["System.Decimal"] = sizeof(decimal),
++//                ["System.Single"] = sizeof(float),
++//                ["System.IntPtr"] = IntPtr.Size,
++//                ["System.UIntPtr"] = UIntPtr.Size
++//            };
++
++//            AssemblyDefinition = assemblyLoader.GetModule();
++
++//            m_referencedAssemblies = assemblyLoader.GetReferencedModules(AssemblyDefinition);
++
++//            AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
++//        }
++
++//        internal DefinitionProvider(ModuleDef mainModule, ModuleDef[] referencedModules)
++//        {
++//            m_typeDefinitions = new Dictionary<string, TypeDef>();
++//            m_methodDefinitionsByReference = new Dictionary<string, MethodDefinition>();
++//            m_fieldDefinitions = new Dictionary<string, FieldDefinition>();
++//            m_virtualMethodDefinitions = new Dictionary<VirtualMethodDefinition, MethodDefinition>();
++
++//            /*
++//			 * We need to know the sizes in order to perform
++//			 * managed pointer arithmetica
++//			 */
++//            m_typeSizes = new Dictionary<string, int>
++//            {
++//                ["System.UInt16"] = sizeof(ushort),
++//                ["System.UInt32"] = sizeof(uint),
++//                ["System.UInt64"] = sizeof(ulong),
++//                ["System.Int16"] = sizeof(short),
++//                ["System.Int32"] = sizeof(int),
++//                ["System.Int64"] = sizeof(long),
++//                ["System.SByte"] = sizeof(sbyte),
++//                ["System.Byte"] = sizeof(byte),
++//                ["System.Boolean"] = sizeof(bool),
++//                ["System.Char"] = sizeof(char),
++//                ["System.Double"] = sizeof(double),
++//                ["System.Decimal"] = sizeof(decimal),
++//                ["System.Single"] = sizeof(float),
++//                ["System.IntPtr"] = IntPtr.Size,
++//                ["System.UIntPtr"] = UIntPtr.Size
++//            };
++
++//            AssemblyDefinition = mainModule;
++
++//            m_referencedAssemblies = referencedModules;
++
++//            AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
++//        }
++
++//        public IDataElement CreateDataElement(object value)
++//        {
++//            if (value is null)
++//            {
++//                return ObjectReference.Null;
++//            }
++
++//            var type = value.GetType();
++//            if (type.IsArray)
++//            {
++//                var array = value as Array;
++//                return new ArrayOf(array, GetTypeDefinition(type.GetElementType().FullName));
++//            }
++
++//            switch (Type.GetTypeCode(type))
++//            {
++//                case TypeCode.Boolean: return new Int4((Boolean)value ? 1 : 0);
++//                case TypeCode.Char: return new Int4((Char)value);
++//                case TypeCode.SByte: return new Int4((SByte)value);
++//                case TypeCode.Byte: return new Int4((Byte)value);
++//                case TypeCode.Int16: return new Int4((Int16)value);
++//                case TypeCode.UInt16: return new UnsignedInt4((UInt16)value);
++//                case TypeCode.Int32: return new Int4((Int32)value);
++//                case TypeCode.UInt32: return new UnsignedInt4((UInt32)value);
++//                case TypeCode.Int64: return new Int8((Int64)value);
++//                case TypeCode.UInt64: return new UnsignedInt8((UInt64)value);
++//                case TypeCode.Single: return new Float4((Single)value);
++//                case TypeCode.Double: return new Float8((Double)value);
++//                case TypeCode.String: return new ConstantString(value.ToString());
++//                default:
++//                    if (value is IntPtr ip)
++//                    {
++//                        return IntPtr.Size == 4 ? CreateDataElement(ip.ToInt32()) : CreateDataElement(ip.ToInt64());
++//                    }
++//                    if (value is UIntPtr up)
++//                    {
++//                        return IntPtr.Size == 4 ? CreateDataElement(up.ToUInt32()) : CreateDataElement(up.ToUInt64());
++//                    }
++
++//                     TODO: handle reference & complex types...
++//                    var typeName = type.FullName;
++
++//                    var typeDef = this.GetTypeDefinition(typeName);
++
++//                    throw new NotSupportedException("CreateDataElement for " + value.GetType());
++//                    return ObjectReference.Null;
++//            }
++//        }
++
++//        public TypeSig GetTypeSig(string typeName)
++//        {
++//            return GetTypeDefinition(typeName).ToTypeSig();
++//        }
++//    }
++//}
+diff --git a/dnWalker/DynamicAllocations.cs b/dnWalker/DynamicAllocations.cs
+index 657956d..1e0e3fe 100644
+--- a/dnWalker/DynamicAllocations.cs
++++ b/dnWalker/DynamicAllocations.cs
+@@ -21,6 +21,8 @@ namespace MMC.State {
+ 	using MMC.Exception;
+     using dnlib.DotNet;
+     using System.Collections.Generic;
++    using dnWalker;
++    using dnWalker.TypeSystem;
+ 
+     /// <summary>
+     /// An object instances on the heap.
+@@ -53,7 +55,7 @@ namespace MMC.State {
+                 var found = false;
+                 var i = 0;
+ 
+-                var typeDef = DefinitionProvider.GetTypeDefinition(Type);
++                var typeDef = Type.ResolveTypeDefThrow();
+ 
+                 for (; !found && i < typeDef.Fields.Count; ++i)
+                     found = typeDef.Fields[i].Name == VALUE_FIELD_NAME;
+@@ -102,7 +104,7 @@ namespace MMC.State {
+ 			 */
+             var fields = new List<FieldDef>();
+ 
+-            foreach (var typeDefOrRef in DefinitionProvider.InheritanceEnumerator(Type))
++            foreach (var typeDefOrRef in Type.InheritanceEnumerator())
+             {
+                 fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
+             }
+@@ -122,13 +124,13 @@ namespace MMC.State {
+             for (var i = 0; i < fields.Count; i++)
+             {
+                 //int fieldsOffset = typeOffset + i;
+-                var type = cur.DefinitionProvider.GetTypeDefinition(fields[i].FieldType);
++                var type = fields[i].FieldType.ToTypeDefOrRef();
+                 if (type == null && !fields[i].FieldType.IsPrimitive)
+                 {
+                     Fields[i] = ObjectReference.Null;
+                     continue;
+                 }
+-                Fields[i] = DefinitionProvider.GetNullValue(type);
++                Fields[i] = DataElement.GetNullValue(type.ToTypeSig());
+             }
+             //typeOffset += typeDef.Fields.Count; 			}
+         }
+@@ -148,7 +150,7 @@ namespace MMC.State {
+             }
+ 
+             var typeOffset = 0;
+-            foreach (var t in DefinitionProvider.InheritanceEnumerator(Type))
++            foreach (var t in Type.InheritanceEnumerator())
+             {
+                 var typeDef = t.ResolveTypeDef();
+                 sb.AppendFormat("{0}:{{", typeDef.Name);
+@@ -185,7 +187,7 @@ namespace MMC.State {
+ 
+         public override void ClearFields(ExplicitActiveState cur)
+         {
+-            var nullVal = DefinitionProvider.GetNullValue(Type);
++            var nullVal = DataElement.GetNullValue(Type.ToTypeSig());
+             for (var i = 0; i < Fields.Length; i++)
+                 Fields[i] = nullVal;
+         }
+diff --git a/dnWalker/Factories/InstructionFactory.cs b/dnWalker/Factories/InstructionFactory.cs
+index 155e239..051b309 100644
+--- a/dnWalker/Factories/InstructionFactory.cs
++++ b/dnWalker/Factories/InstructionFactory.cs
+@@ -97,16 +97,13 @@ namespace dnWalker.Factories
+             switch (operand)
+             {
+                 case ITypeDefOrRef typeDefOrRef:
+-                    operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef)
+-                        ?? throw new NullReferenceException("Type not resolved: " + operand);
++                    operand = typeDefOrRef.ResolveTypeDefThrow();
+                     break;
+                 case IMethod method:
+-                    operand = method.ResolveMethodDef()
+-                        ?? throw new NullReferenceException("Method not resolved: " + operand);
++                    operand = method.ResolveMethodDefThrow();
+                     break;
+                 case IField field:
+-                    operand = DefinitionProvider.GetFieldDefinition(field)
+-                        ?? throw new NullReferenceException("Field not resolved: " + operand);
++                    operand = field.ResolveFieldDefThrow();
+                     break;
+             }
+ 
+diff --git a/dnWalker/Instructions.cs b/dnWalker/Instructions.cs
+index 73dbe73..da7c743 100644
+--- a/dnWalker/Instructions.cs
++++ b/dnWalker/Instructions.cs
+@@ -33,6 +33,8 @@ namespace MMC.InstructionExec
+     using MMC.ICall;
+     using dnWalker;
+     using ThreadState = State.ThreadState;
++    using dnWalker.TypeSystem;
++    using System.Collections.Generic;
+ 
+     //using FieldDefinition = dnlib.DotNet.Var;
+ 
+@@ -655,7 +657,7 @@ namespace MMC.InstructionExec
+             var or = cur.EvalStack.Pop();
+             var method = Operand as MethodDefinition;
+ 
+-            var toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
++            var toCall = cur.FindVirtualMethod(method, or);
+             cur.EvalStack.Push(new MethodPointer(toCall));
+ 
+             return nextRetval;
+@@ -867,7 +869,7 @@ namespace MMC.InstructionExec
+             if (!cls.Initialized)
+             {
+                 cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
+-                var cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
++                var cctorDef = type.ResolveTypeDefThrow().FindStaticConstructor();
+                 if (cctorDef == null)
+                 {
+                     // Trivial case, no initializtion needed.
+@@ -948,14 +950,25 @@ namespace MMC.InstructionExec
+ 
+         public FieldDefinition GetFieldDefinition()
+         {
+-            var fld = Operand as FieldDefinition;
+-            // Lookup layout information if it's not available.
+-            if (!fld.HasLayoutInfo)
++            static void EnsureLayoutInfo(FieldDefinition fieldDef)
+             {
+-                fld = DefinitionProvider.GetFieldDefinition(fld);
+-                //throw new NotImplementedException("GetFieldDefinition");
++                if (!fieldDef.FieldOffset.HasValue)
++                {
++                    IList<FieldDefinition> fields = fieldDef.DeclaringType.Fields;
++                    for (var i = 0; i < fields.Count; i++)
++                    {
++                        if (fields[i] == fieldDef)
++                        {
++                            fieldDef.FieldOffset = (uint)i;
++                            break;
++                        }
++                    }
++                }
+             }
+ 
++            var fld = Operand as FieldDefinition;
++            EnsureLayoutInfo(fld);
++
+             return fld;
+         }
+ 
+@@ -978,17 +991,17 @@ namespace MMC.InstructionExec
+                 return m_offset;
+             }
+ 
+-            var fld = GetFieldDefinition();
+-            var typeOffset = 0;
+-            var matched = false;
+-            var retval = 0;
++            FieldDefinition fld = GetFieldDefinition();
++            int typeOffset = 0;
++            bool matched = false;
++            int retval = 0;
+ 
+-            foreach (TypeDefinition typeDef in DefinitionProvider.InheritanceEnumerator(superType))
++            foreach (TypeDefinition typeDef in superType.InheritanceEnumerator())
+             {
+                 /*
+-				 * We start searching for the right field from the declaringtype,
+-				 * it is possible that the declaring type does not define fld, therefore
+-				 * it might be possible that we have to search further for fld in
++				 * We start searching for the right field from the declaring type,
++				 * it is possible that the declaring type does not define field, therefore
++				 * it might be possible that we have to search further for field in
+ 				 * the inheritance tree, (hence matched), and this continues until
+ 				 * a field is found which has the same offset and the same name 
+ 				 */
+@@ -1004,7 +1017,7 @@ namespace MMC.InstructionExec
+                     matched = true;
+                 }
+ 
+-                if (typeDef.BaseType != null && typeDef.BaseType.FullName != "System.Object") // if base type is System.Object, stop
++                if (typeDef.BaseType != null && typeDef.BaseType.FullName != "System.Object") // if base type is System.Object, stop // TODO: make it so that it does not rely on full name check!!!!
+                 {
+                     typeOffset += Math.Max(0, typeDef.Fields.Count - 1);
+                 }
+@@ -2716,7 +2729,7 @@ namespace MMC.InstructionExec
+ 
+                 if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
+                 {
+-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(args[0].ToString()));
++                    cur.EvalStack.Push(DataElement.CreateDataElement(args[0].ToString(), cur.DefinitionProvider));
+                     return nextRetval;
+                 }
+ 
+@@ -2879,7 +2892,7 @@ namespace MMC.InstructionExec
+                 }
+                 else
+                 {
+-                    toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, args[0], cur);
++                    toCall = cur.FindVirtualMethod(methDef, args[0]);
+                 }
+ 
+                 cur.CurrentMethod.IsPrefixed = false;
+@@ -3387,7 +3400,7 @@ namespace MMC.InstructionExec
+                 if (a is Int4 i4)
+                 {
+                     var uintptr = (UIntPtr)a.ToUnsignedInt4(false).Value;
+-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(uintptr));
++                    cur.EvalStack.Push(DataElement.CreateDataElement(uintptr, cur.DefinitionProvider));
+                 }
+                 /*else if (a is Int8 i8)
+                 {
+@@ -3667,11 +3680,11 @@ namespace MMC.InstructionExec
+             {
+                 if (a is IRealElement r)
+                 {
+-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)r.ToFloat8(false).Value));
++                    cur.EvalStack.Push(DataElement.CreateDataElement((ushort)r.ToFloat8(false).Value, cur.DefinitionProvider));
+                     return nextRetval;
+                 }
+ 
+-                cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement((ushort)a.ToInt8(false).Value));
++                cur.EvalStack.Push(DataElement.CreateDataElement((ushort)a.ToInt8(false).Value, cur.DefinitionProvider));
+                 return nextRetval;
+             }
+             catch (OverflowException e)
+@@ -4018,11 +4031,11 @@ namespace MMC.InstructionExec
+             var type = (ITypeDefOrRef)Operand;
+             if (type.IsValueType)
+             {
+-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));
++                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.ToTypeSig())));
+             }
+             else
+             {
+-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf("System.IntPtr")));
++                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(cur.DefinitionProvider.BaseTypes.IntPtr)));
+             }
+ 
+             return nextRetval;
+diff --git a/dnWalker/Instructions/Instructions.cs b/dnWalker/Instructions/Instructions.cs
+index 9afc325..b90c05d 100644
+--- a/dnWalker/Instructions/Instructions.cs
++++ b/dnWalker/Instructions/Instructions.cs
+@@ -18,6 +18,8 @@ using MMC.InstructionExec;
+ using MMC;
+ 
+ using dnWalker.ChoiceGenerators;
++using dnWalker.TypeSystem;
++using System.Collections.Generic;
+ 
+ namespace dnWalker.Instructions
+ {
+@@ -246,11 +248,11 @@ namespace dnWalker.Instructions
+             ITypeDefOrRef type = (ITypeDefOrRef)Operand;
+             if (type.IsValueType)
+             {
+-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));
++                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.ToTypeSig())));
+             }
+             else
+             {
+-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf("System.IntPtr")));
++                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(cur.DefinitionProvider.BaseTypes.IntPtr)));
+             }
+ 
+             return nextRetval;
+@@ -871,7 +873,7 @@ namespace dnWalker.Instructions
+             IDataElement or = cur.EvalStack.Pop();
+             MethodDefinition method = Operand as MethodDefinition;
+ 
+-            MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
++            MethodDefinition toCall = cur.FindVirtualMethod(method, or);
+             cur.EvalStack.Push(new MethodPointer(toCall));
+ 
+             return nextRetval;
+@@ -1086,15 +1088,7 @@ namespace dnWalker.Instructions
+             {
+                 cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
+ 
+-                MethodDefinition cctorDef;
+-                try
+-                {
+-                    cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
+-                }
+-                catch (NotSupportedException e)
+-                {
+-                    cctorDef = null;
+-                }
++                MethodDefinition cctorDef = type.ResolveTypeDef()?.FindStaticConstructor();
+ 
+                 if (cctorDef == null)
+                 {
+@@ -1176,14 +1170,25 @@ namespace dnWalker.Instructions
+ 
+         public FieldDefinition GetFieldDefinition()
+         {
+-            FieldDefinition fld = Operand as FieldDefinition;
+-            // Lookup layout information if it's not available.
+-            if (!fld.HasLayoutInfo)
++            static void EnsureLayoutInfo(FieldDefinition fieldDef)
+             {
+-                fld = DefinitionProvider.GetFieldDefinition(fld);
+-                //throw new NotImplementedException("GetFieldDefinition");
++                if (!fieldDef.FieldOffset.HasValue)
++                {
++                    IList<FieldDefinition> fields = fieldDef.DeclaringType.Fields;
++                    for (var i = 0; i < fields.Count; i++)
++                    {
++                        if (fields[i] == fieldDef)
++                        {
++                            fieldDef.FieldOffset = (uint)i;
++                            break;
++                        }
++                    }
++                }
+             }
+ 
++            var fld = Operand as FieldDefinition;
++            EnsureLayoutInfo(fld);
++
+             return fld;
+         }
+ 
+@@ -1211,12 +1216,12 @@ namespace dnWalker.Instructions
+             bool matched = false;
+             int retval = 0;
+ 
+-            foreach (TypeDefinition typeDef in DefinitionProvider.InheritanceEnumerator(superType))
++            foreach (TypeDefinition typeDef in superType.InheritanceEnumerator())
+             {
+                 /*
+-				 * We start searching for the right field from the declaringtype,
+-				 * it is possible that the declaring type does not define fld, therefore
+-				 * it might be possible that we have to search further for fld in
++				 * We start searching for the right field from the declaring type,
++				 * it is possible that the declaring type does not define field, therefore
++				 * it might be possible that we have to search further for field in
+ 				 * the inheritance tree, (hence matched), and this continues until
+ 				 * a field is found which has the same offset and the same name 
+ 				 */
+@@ -2948,7 +2953,7 @@ namespace dnWalker.Instructions
+ 
+                 if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
+                 {
+-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(args[0].ToString()));
++                    cur.EvalStack.Push(DataElement.CreateDataElement(args[0].ToString(), cur.DefinitionProvider));
+                     return nextRetval;
+                 }
+ 
+@@ -3096,7 +3101,7 @@ namespace dnWalker.Instructions
+                 }
+                 else
+                 {
+-                    toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, args[0], cur);
++                    toCall = cur.FindVirtualMethod(methDef, args[0]);
+                 }
+ 
+                 cur.CurrentMethod.IsPrefixed = false;
+diff --git a/dnWalker/Main.cs b/dnWalker/Main.cs
+index a7d33f6..617a94e 100644
+--- a/dnWalker/Main.cs
++++ b/dnWalker/Main.cs
+@@ -28,6 +28,7 @@ namespace MMC
+     using System.Linq;
+     using MMC.Data;
+     using dnWalker;
++    using dnWalker.TypeSystem;
+ 
+     public interface IConfig
+     {
+@@ -438,14 +439,27 @@ Disabling/enabling features:
+             new MonoModelChecker().Go(args);
+         }
+ 
++
+         public void Go(string[] args)
+         {
++            static IDataElement[] StrArrToDataElements(string[] strArr)
++            {
++                IDataElement[] dataElements = new IDataElement[strArr.Length];
++
++                for (int i = 0; i < strArr.Length; ++i)
++                {
++                    dataElements[i] = new ConstantString(strArr[i]);
++                }
++
++                return dataElements;
++            }
++
+             Console.WriteLine(copyright + "\n");
+ 
+-            var config = GetConfigFromCommandLine(args);
++            IConfig config = GetConfigFromCommandLine(args);
+             config.SetCustomSetting("evaluateRandom", true);
+ 
+-            var logger = new Logger(config.LogFilter);
++            Logger logger = new Logger(config.LogFilter);
+             _logger = logger;
+ 
+             var dotFile = config.AssemblyToCheckFileName + ".dot";
+@@ -460,19 +474,16 @@ Disabling/enabling features:
+ 
+             PrintConfig(config, logger);
+ 
+-            var assemblyLoader = new dnWalker.AssemblyLoader();
+-            assemblyLoader.GetModuleDef(File.ReadAllBytes(config.AssemblyToCheckFileName));
+-
+-            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
++            IDefinitionProvider definitionProvider = new DefinitionProvider(DefinitionContext.LoadFromFile(config.AssemblyToCheckFileName));
+ 
+-            var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
++            StateSpaceSetup stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
+ 
+-            var methodArgs = config.RunTimeParameters.Select(a => new Arg<string>(a)).ToArray();
++            IDataElement[] methodArgs = StrArrToDataElements(config.RunTimeParameters);
+ 
+-            var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
+-            var statistics = new SimpleStatistics();            
++            ExplicitActiveState cur = stateSpaceSetup.CreateInitialState(definitionProvider.Context.MainModule.EntryPoint, methodArgs);
++            SimpleStatistics statistics = new SimpleStatistics();            
+ 
+-            var ex = new Explorer(
++            Explorer ex = new Explorer(
+                 cur,
+                 statistics,
+                 logger,
+@@ -482,12 +493,12 @@ Disabling/enabling features:
+             try
+             {
+                 statistics.Start();
+-                var noErrors = ex.Run();
++                bool noErrors = ex.Run();
+ 
+                 if (!noErrors && config.StopOnError && config.TraceOnError)
+                 {
+                     cur.Reset();
+-                    cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
++                    cur = stateSpaceSetup.CreateInitialState(definitionProvider.Context.MainModule.EntryPoint, methodArgs);
+ 
+                     var traceFile = config.AssemblyToCheckFileName + ".trace";
+                     File.Delete(traceFile);
+diff --git a/dnWalker/MemoisedGC.cs b/dnWalker/MemoisedGC.cs
+index f0fe2d6..ee7d05d 100644
+--- a/dnWalker/MemoisedGC.cs
++++ b/dnWalker/MemoisedGC.cs
+@@ -21,6 +21,7 @@ using MMC.Util;
+ using SGC = System.Collections.Generic;
+ using MMC.Data;
+ using C5;
++using dnWalker.TypeSystem;
+ 
+ namespace MMC.State
+ {
+@@ -401,7 +402,7 @@ namespace MMC.State
+     {
+         private readonly SGC.IDictionary<int, ObjectReferenceBag> parents;
+ 
+-        public ParentWatcher(IConfig config, DefinitionProvider definitionProvider)
++        public ParentWatcher(IConfig config, IDefinitionProvider definitionProvider)
+         {
+             parents = new SGC.Dictionary<int, ObjectReferenceBag>();
+ 
+diff --git a/dnWalker/MethodState.cs b/dnWalker/MethodState.cs
+index 3e91e59..4fc8a1c 100644
+--- a/dnWalker/MethodState.cs
++++ b/dnWalker/MethodState.cs
+@@ -22,6 +22,9 @@ namespace MMC.State
+     using System.Linq;
+     using dnlib.DotNet;
+     using dnlib.DotNet.Emit;
++
++    using dnWalker.TypeSystem;
++
+     using MMC.Data;
+ 
+     public delegate void MethodStateCallback(MethodState me);
+@@ -108,7 +111,9 @@ namespace MMC.State
+                     // First to encounter, or this EH has a smaller scope than
+                     // the previously found one.
+                     if (retval == null || retval.TryStart.Offset < eh.TryStart.Offset || retval.TryEnd.Offset > eh.TryEnd.Offset)
++                    { 
+                         retval = eh;
++                    }
+                 }
+             }
+ 
+@@ -268,7 +273,7 @@ namespace MMC.State
+                 Locals = cur.StorageFactory.CreateList(Definition.Body.Variables.Count);
+                 for (var i = 0; i < Locals.Length; ++i)
+                 {
+-                    Locals[i] = DefinitionProvider.GetNullValue(Definition.Body.Variables[i].Type);
++                    Locals[i] = DataElement.GetNullValue(Definition.Body.Variables[i].Type);
+                 }
+             }
+ 
+diff --git a/dnWalker/NativePeers/SystemEnvironment.cs b/dnWalker/NativePeers/SystemEnvironment.cs
+index 1c01873..f2f1670 100644
+--- a/dnWalker/NativePeers/SystemEnvironment.cs
++++ b/dnWalker/NativePeers/SystemEnvironment.cs
+@@ -30,7 +30,7 @@ namespace dnWalker.NativePeers
+             {
+                 case "GetResourceString":
+                     var resourceValue = GetResourceString(((ConstantString)args[0]).Value);
+-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(resourceValue));
++                    cur.EvalStack.Push(DataElement.CreateDataElement(resourceValue, cur.DefinitionProvider));
+                     iieReturnValue = InstructionExecBase.nextRetval;
+                     return true;
+             }
+diff --git a/dnWalker/NativePeers/SystemRuntimeFieldHandle.cs b/dnWalker/NativePeers/SystemRuntimeFieldHandle.cs
+index 62c99ea..b291394 100644
+--- a/dnWalker/NativePeers/SystemRuntimeFieldHandle.cs
++++ b/dnWalker/NativePeers/SystemRuntimeFieldHandle.cs
+@@ -20,7 +20,7 @@ namespace dnWalker.NativePeers
+                         args[0] = localVariablePointer.Value;
+                         return TryGetValue(method, args, cur, out iieReturnValue);
+                     case FieldHandle fieldHandle:
+-                        cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(fieldHandle.Value.GetHashCode()));
++                        cur.EvalStack.Push(DataElement.CreateDataElement(fieldHandle.Value.GetHashCode(), cur.DefinitionProvider));
+                         iieReturnValue = InstructionExecBase.nextRetval;
+                         return true;
+                     default:
+diff --git a/dnWalker/NativePeers/SystemRuntimeMethodHandle.cs b/dnWalker/NativePeers/SystemRuntimeMethodHandle.cs
+index a335a98..25a3f6d 100644
+--- a/dnWalker/NativePeers/SystemRuntimeMethodHandle.cs
++++ b/dnWalker/NativePeers/SystemRuntimeMethodHandle.cs
+@@ -23,7 +23,7 @@ namespace dnWalker.NativePeers
+                         args[0] = localVariablePointer.Value;
+                         return TryGetValue(method, args, cur, out iieReturnValue);
+                     case MethodPointer methodPointer:
+-                        cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(methodPointer.Value.MethodSig.GetHashCode()));
++                        cur.EvalStack.Push(DataElement.CreateDataElement(methodPointer.Value.MethodSig.GetHashCode(), cur.DefinitionProvider));
+                         iieReturnValue = InstructionExecBase.nextRetval;
+                         return true;
+                     default:
+diff --git a/dnWalker/NativePeers/SystemRuntimeTypeHandle.cs b/dnWalker/NativePeers/SystemRuntimeTypeHandle.cs
+index 4e3a961..844946f 100644
+--- a/dnWalker/NativePeers/SystemRuntimeTypeHandle.cs
++++ b/dnWalker/NativePeers/SystemRuntimeTypeHandle.cs
+@@ -4,6 +4,9 @@ using System.Linq;
+ using System.Text;
+ using System.Threading.Tasks;
+ using dnlib.DotNet;
++
++using dnWalker.TypeSystem;
++
+ using MMC.Data;
+ using MMC.InstructionExec;
+ using MMC.State;
+@@ -25,9 +28,9 @@ namespace dnWalker.NativePeers
+                         return TryGetValue(method, args, cur, out iieReturnValue);
+                     case TypePointer typePointer:
+                         var type = typePointer.Type;
+-                        if (cur.DefinitionProvider.TryGetTypeHandle(type, out var handle))
++                        if (type.TryGetTypeHandle(out var handle))
+                         {
+-                            cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(handle.Value));
++                            cur.EvalStack.Push(DataElement.CreateDataElement(handle.Value, cur.DefinitionProvider));
+                             iieReturnValue = InstructionExecBase.nextRetval;
+                             return true;
+                         }
+diff --git a/dnWalker/Setup.cs b/dnWalker/Setup.cs
+index 72fffb4..9bed1f0 100644
+--- a/dnWalker/Setup.cs
++++ b/dnWalker/Setup.cs
+@@ -25,10 +25,11 @@ namespace MMC
+     using dnWalker;
+     using System.Linq;
+     using dnWalker.Instructions.Extensions;
++    using dnWalker.TypeSystem;
+ 
+     public class StateSpaceSetup
+     {
+-        private readonly DefinitionProvider _definitionProvider;
++        private readonly IDefinitionProvider _definitionProvider;
+         private readonly IConfig _config;
+         private readonly Logger _logger;
+ 
+@@ -57,19 +58,13 @@ namespace MMC
+         //
+         // Nice.
+ 
+-        public StateSpaceSetup(DefinitionProvider definitionProvider, IConfig config, Logger logger)
++        public StateSpaceSetup(IDefinitionProvider definitionProvider, IConfig config, Logger logger)
+         {
+             _definitionProvider = definitionProvider;
+             _config = config;
+             _logger = logger;
+         }
+ 
+-        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IArg[] arguments = null)
+-        {
+-            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
+-            return CreateInitialState(entryPoint, args);
+-        }
+-
+ 
+         public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IDataElement[] arguments = null)
+         {
+@@ -168,6 +163,9 @@ namespace MMC
+             //   on Windows, using Mono 1.1.15, and when running without debug mode, the field
+             //   names are different for some reason.
+ 
++            TypeDef objectTypeDef = cur.DefinitionProvider.BaseTypes.Object.TypeDef;
++            TypeDef threadTypeDef = cur.DefinitionProvider.BaseTypes.Thread.TypeDef;
++
+             // 1
+             var mainMethodPtr = new MethodPointer(mainDefinition);
+             var mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
+@@ -178,7 +176,7 @@ namespace MMC
+             // 2
+             var threadObjectRef = cur.DynamicArea.AllocateObject(
+                 cur.DynamicArea.DeterminePlacement(false),
+-                cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));
++                threadTypeDef);
+ 
+             var threadObject =
+                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
+@@ -187,14 +185,14 @@ namespace MMC
+             // Note from corlib Thread.cs sources:
+             // Don't lock on synch_lock in managed code, since it can result in deadlocks
+             // What? Oh well, we'll just do what Mono does.
+-            var synch_lockField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "synch_lock");
++            var synch_lockField = threadTypeDef.GetField("synch_lock");
+ 
+             if (synch_lockField != null)
+             {
+                 // Simply skip if not found.
+                 var newObjectRef = cur.DynamicArea.AllocateObject(
+                     cur.DynamicArea.DeterminePlacement(false),
+-                    cur.DefinitionProvider.GetTypeDefinition("System.Object"));
++                    objectTypeDef);
+                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
+                 // TODO: HV for maintaining the parents references in the incremental heap visitor
+                 //cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
+@@ -207,7 +205,7 @@ namespace MMC
+ 
+             // 2c
+             // In Microsoft's .NET, the delegate is stored in m_Delegate
+-            var threadstartField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "threadstart");
++            var threadstartField = threadTypeDef.GetField("threadstart");
+             if (threadstartField != null)
+             {
+                 threadObject.Fields[(int)threadstartField.FieldOffset] = mainMethodDelegate;
+@@ -219,7 +217,7 @@ namespace MMC
+                 logger.Warning("No thread field found for storing Main delegate!");
+ 
+             // 3
+-            var stateField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "state");
++            var stateField = threadTypeDef.GetField("state");
+ 
+             if (stateField == null)
+             {
+diff --git a/dnWalker/StaticAllocations.cs b/dnWalker/StaticAllocations.cs
+index 37f70d4..9bce272 100644
+--- a/dnWalker/StaticAllocations.cs
++++ b/dnWalker/StaticAllocations.cs
+@@ -17,7 +17,7 @@
+ 
+ namespace MMC.State
+ {
+-
++    using dnlib.DotNet;
+ 
+     using MMC.Data;
+     using MMC.Util;
+@@ -169,7 +169,7 @@ namespace MMC.State
+             var sb = new System.Text.StringBuilder("c:");
+             sb.AppendFormat("{0} {1}", Type.Name, m_initData.ToString());
+ 
+-            var typeDef = DefinitionProvider.GetTypeDefinition(Type);
++            var typeDef = Type.ResolveTypeDefThrow();
+ 
+             var printed_a_field = false;
+             sb.Append(" flds: {");
+@@ -197,10 +197,10 @@ namespace MMC.State
+         public void ClearFields()
+         {
+             m_staticFieldCount = 0;
+-            var typeDef = DefinitionProvider.GetTypeDefinition(Type);
++            var typeDef = Type.ResolveTypeDefThrow();
+             for (var i = 0; i < m_fields.Length; ++i)
+             {
+-                m_fields[i] = DefinitionProvider.GetNullValue(typeDef.Fields[i].FieldType);
++                m_fields[i] = DataElement.GetNullValue(typeDef.Fields[i].FieldType);
+                 if (typeDef.Fields[i].IsStatic)
+                 {
+                     ++m_staticFieldCount;
+diff --git a/dnWalker/ThreadState.cs b/dnWalker/ThreadState.cs
+index b4b627d..2a72dfe 100644
+--- a/dnWalker/ThreadState.cs
++++ b/dnWalker/ThreadState.cs
+@@ -24,6 +24,7 @@ namespace MMC.State
+     using dnWalker.DataElements;
+     using MMC.InstructionExec;
+     using System;
++    using dnWalker.TypeSystem;
+ 
+     public delegate void ThreadStateChanged(ThreadState threadState, System.Threading.ThreadState state);
+ 
+@@ -82,15 +83,15 @@ namespace MMC.State
+             set
+             {
+                 _exceptionReference = value;
+-                if (ObjectReference.Null.Equals(_exceptionReference))
++                if (_exceptionReference.IsNull())
+                 {
+                     UnhandledException = null;
+                     return;
+                 }
+ 
+                 var exceptionObj = cur.DynamicArea.Allocations[_exceptionReference] as AllocatedObject;
+-                var messageField = cur.DefinitionProvider.GetFieldDefinition(typeof(System.Exception).FullName, "_message");
+-                string message = exceptionObj.Fields[(int)messageField.FieldOffset].ToString();
++                var messageField = cur.DefinitionProvider.BaseTypes.Exception.TypeDef.GetField("_message");
++                string message = exceptionObj.Fields[messageField.GetFieldOffset()].ToString();
+ 
+                 UnhandledException = new ExceptionInfo(exceptionObj.Type, message);
+             }

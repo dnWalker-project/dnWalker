@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class ExecutionParameterContext : ParameterContext, IExecutionParameterContext
+    public class ExecutionParameterSet : ParameterSet, IExecutionParameterSet
     {
-        private readonly IBaseParameterContext? _baseContext;
+        private readonly IBaseParameterSet? _baseSet;
 
-        public ExecutionParameterContext(IBaseParameterContext? baseContext)
+        public ExecutionParameterSet(IBaseParameterSet baseSet) : base(baseSet.Context)
         {
-            _baseContext = baseContext;
+            _baseSet = baseSet;
         }
 
-        public IBaseParameterContext? BaseContext
+        public IBaseParameterSet? BaseSet
         {
             get
             {
-                return _baseContext;
+                return _baseSet;
             }
         }
 

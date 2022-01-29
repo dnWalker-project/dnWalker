@@ -7,12 +7,12 @@ using System.Xml.Linq;
 
 using static dnWalker.Parameters.Xml.XmlTokens;
 
-namespace dnWalker.Parameters.Xml
+namespace dnWalker.Parameters.Serialization.Xml
 {
 
-    public static partial class XmlSerializer
+    public partial class XmlSerializer
     {
-        private static XElement ToXml(this IBooleanParameter parameter)
+        private XElement ToXml(IBooleanParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -21,7 +21,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IByteParameter parameter)
+        private XElement ToXml(IByteParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -30,7 +30,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this ISByteParameter parameter)
+        private XElement ToXml(ISByteParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -39,7 +39,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IInt16Parameter parameter)
+        private XElement ToXml(IInt16Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -48,7 +48,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IInt32Parameter parameter)
+        private XElement ToXml(IInt32Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -57,7 +57,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IInt64Parameter parameter)
+        private XElement ToXml(IInt64Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -66,7 +66,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IUInt16Parameter parameter)
+        private XElement ToXml(IUInt16Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -75,7 +75,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IUInt32Parameter parameter)
+        private XElement ToXml(IUInt32Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -84,7 +84,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IUInt64Parameter parameter)
+        private XElement ToXml(IUInt64Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -93,7 +93,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this ICharParameter parameter)
+        private XElement ToXml(ICharParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : CharToString(parameter.Value.Value);
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -102,7 +102,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this ISingleParameter parameter)
+        private XElement ToXml(ISingleParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : FloatToXml(parameter.Value.Value);
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -111,7 +111,7 @@ namespace dnWalker.Parameters.Xml
 
             return xml;
         }
-        private static XElement ToXml(this IDoubleParameter parameter)
+        private XElement ToXml(IDoubleParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : DoubleToXml(parameter.Value.Value);
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
@@ -166,5 +166,3 @@ namespace dnWalker.Parameters.Xml
         }
     }
 }
-
-

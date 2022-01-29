@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -43,7 +45,7 @@ namespace dnWalker.Parameters
         public static bool TryGetMethodResult(this IMethodResolverParameter methodResolver, MethodSignature methodSignature, int invocation, [NotNullWhen(true)] out IParameter? parameter)
         {
             if (methodResolver.TryGetMethodResult(methodSignature, invocation, out ParameterRef reference) &&
-                reference.TryResolve(methodResolver.Context, out parameter))
+                reference.TryResolve(methodResolver.Set, out parameter))
             {
                 return true;
             }
@@ -55,7 +57,7 @@ namespace dnWalker.Parameters
             where TParameter : class, IParameter
         {
             if (methodResolver.TryGetMethodResult(methodSignature, invocation, out ParameterRef reference) &&
-                reference.TryResolve(methodResolver.Context, out parameter))
+                reference.TryResolve(methodResolver.Set, out parameter))
             {
                 return true;
             }
@@ -73,7 +75,7 @@ namespace dnWalker.Parameters
         {
             IReadOnlyDictionary<MethodSignature, ParameterRef[]> refs = methodResolver.GetMethodResults();
 
-            return new Dictionary<MethodSignature, IParameter?[]>(refs.Select(p => KeyValuePair.Create(p.Key, p.Value.Select(r => r.Resolve(methodResolver.Context)).ToArray())));
+            return new Dictionary<MethodSignature, IParameter?[]>(refs.Select(p => KeyValuePair.Create(p.Key, p.Value.Select(r => r.Resolve(methodResolver.Set)).ToArray())));
         }
     }
 }

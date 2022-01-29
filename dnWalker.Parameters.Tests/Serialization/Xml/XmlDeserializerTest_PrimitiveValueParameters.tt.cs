@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 using dnWalker.Parameters;
-using dnWalker.Parameters.Xml;
+using dnWalker.Parameters.Serialization.Xml;
 
 using FluentAssertions;
 
 using Xunit;
 
-namespace dnWalker.Parameters.Tests.Xml
+namespace dnWalker.Parameters.Tests.Serialization.Xml
 {
-    public class XmlDeserializerTest_PrimitiveValueParameters
+    public class XmlDeserializerTest_PrimitiveValueParameters : TestBase
     {
 
         [Theory]  
@@ -24,9 +24,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IBooleanParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IBooleanParameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IBooleanParameter? p = des.ToParameter(XElement.Parse(xml), set) as IBooleanParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -43,9 +47,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            ICharParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ICharParameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            ICharParameter? p = des.ToParameter(XElement.Parse(xml), set) as ICharParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -60,9 +68,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IByteParameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IByteParameter? p = des.ToParameter(XElement.Parse(xml), set) as IByteParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -78,9 +90,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            ISByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISByteParameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            ISByteParameter? p = des.ToParameter(XElement.Parse(xml), set) as ISByteParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -96,9 +112,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt16Parameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IInt16Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IInt16Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -114,9 +134,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt32Parameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IInt32Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IInt32Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -132,9 +156,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt64Parameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IInt64Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IInt64Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -149,9 +177,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IUInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt16Parameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IUInt16Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IUInt16Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -166,9 +198,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IUInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt32Parameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IUInt32Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IUInt32Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -183,9 +219,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IUInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt64Parameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IUInt64Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IUInt64Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -201,9 +241,13 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            ISingleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISingleParameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            ISingleParameter? p = des.ToParameter(XElement.Parse(xml), set) as ISingleParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
@@ -219,23 +263,33 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterContext context = new ParameterContext(DefinitionProvider);
 
-            IDoubleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IDoubleParameter;
+            XmlDeserializer des = new XmlDeserializer(context);
+
+            IParameterSet set = new ParameterSet(context);
+
+            IDoubleParameter? p = des.ToParameter(XElement.Parse(xml), set) as IDoubleParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeTrue();
             p.Value.Value.Should().Be(value);
         }
+
+
         [Theory]
         [InlineData("<PrimitiveValue Type=\"System.Boolean\" Reference=\"0x00000000\" Value=\"Unknown\" />", 0, null)]
         public void TestNull_BooleanParameter(string xml, int intRef, bool value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IBooleanParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IBooleanParameter;
+            IBooleanParameter? p = des.ToParameter(XElement.Parse(xml), set) as IBooleanParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -246,10 +300,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_CharParameter(string xml, int intRef, char value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            ICharParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ICharParameter;
+            ICharParameter? p = des.ToParameter(XElement.Parse(xml), set) as ICharParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -260,10 +318,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_ByteParameter(string xml, int intRef, byte value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IByteParameter;
+            IByteParameter? p = des.ToParameter(XElement.Parse(xml), set) as IByteParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -274,10 +336,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_SByteParameter(string xml, int intRef, sbyte value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            ISByteParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISByteParameter;
+            ISByteParameter? p = des.ToParameter(XElement.Parse(xml), set) as ISByteParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -288,10 +354,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_Int16Parameter(string xml, int intRef, short value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt16Parameter;
+            IInt16Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IInt16Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -302,10 +372,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_Int32Parameter(string xml, int intRef, int value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt32Parameter;
+            IInt32Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IInt32Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -316,10 +390,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_Int64Parameter(string xml, int intRef, long value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IInt64Parameter;
+            IInt64Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IInt64Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -330,10 +408,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_UInt16Parameter(string xml, int intRef, ushort value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IUInt16Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt16Parameter;
+            IUInt16Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IUInt16Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -344,10 +426,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_UInt32Parameter(string xml, int intRef, uint value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IUInt32Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt32Parameter;
+            IUInt32Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IUInt32Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -358,10 +444,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_UInt64Parameter(string xml, int intRef, ulong value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IUInt64Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IUInt64Parameter;
+            IUInt64Parameter? p = des.ToParameter(XElement.Parse(xml), set) as IUInt64Parameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -372,10 +462,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_SingleParameter(string xml, int intRef, float value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            ISingleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as ISingleParameter;
+            ISingleParameter? p = des.ToParameter(XElement.Parse(xml), set) as ISingleParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();
@@ -386,10 +480,14 @@ namespace dnWalker.Parameters.Tests.Xml
         public void TestNull_DoubleParameter(string xml, int intRef, double value)
         {
             ParameterRef reference = intRef;
+            
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            
+            XmlDeserializer des = new XmlDeserializer(context);
 
-            IParameterContext ctx = new BaseParameterContext();
+            IParameterSet set = new ParameterSet(context);
 
-            IDoubleParameter? p = XElement.Parse(xml)?.ToParameter(ctx) as IDoubleParameter;
+            IDoubleParameter? p = des.ToParameter(XElement.Parse(xml), set) as IDoubleParameter;
             p.Should().NotBeNull();
             p.Reference.Should().Be(reference);
             p.Value.HasValue.Should().BeFalse();

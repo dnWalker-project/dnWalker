@@ -10,7 +10,7 @@ namespace dnWalker.TestGenerator.Parameters
 {
     public static class ParameterContextExtensions
     {
-        public static IEnumerable<IParameter> GetParametersSortedByDependency(this IParameterContext context)
+        public static IEnumerable<IParameter> GetParametersSortedByDependency(this IParameterSet context)
         {
             IParameter[] result = new IParameter[context.Parameters.Count];
 

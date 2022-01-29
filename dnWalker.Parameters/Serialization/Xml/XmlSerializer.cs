@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,41 +8,70 @@ using System.Xml.Linq;
 
 using static dnWalker.Parameters.Xml.XmlTokens;
 
-namespace dnWalker.Parameters.Xml
+namespace dnWalker.Parameters.Serialization.Xml
 {
-    public static partial class XmlSerializer
+    public partial class XmlSerializer : IParameterSerializer
     {
-        public static XElement ToXml(this IParameter parameter)
+        public XmlSerializer()
+        {
+        }
+
+        public void Serialize(IParameterSet parameterSet, Stream output)
+        {
+            XElement setXml = ToXml(parameterSet);
+            setXml.Save(output);
+        }
+
+        public XElement ToXml(IParameterSet parameterSet)
+        {
+            string xmlName = parameterSet switch
+            {
+                IBaseParameterSet => XmlBaseParameterSet,
+                IExecutionParameterSet => XmlExecutionParameterSet,
+
+                _ => throw new ArgumentException("Unexpected type", nameof(parameterSet)),
+            };
+            XElement setXml = new XElement(xmlName);
+
+            foreach (var p in parameterSet.Parameters.Values)
+            {
+                setXml.Add(ToXml(p));
+            }
+
+            return setXml;
+        }
+
+        public XElement ToXml(IParameter parameter)
         {
             XElement? xml;
 
             switch (parameter)
             {
-                case IBooleanParameter p: xml = p.ToXml(); break;
-                case ICharParameter p: xml = p.ToXml(); break;
-                case IByteParameter p: xml = p.ToXml(); break;
-                case ISByteParameter p: xml = p.ToXml(); break;
-                case IInt16Parameter p: xml = p.ToXml(); break;
-                case IInt32Parameter p: xml = p.ToXml(); break;
-                case IInt64Parameter p: xml = p.ToXml(); break;
-                case IUInt16Parameter p: xml = p.ToXml(); break;
-                case IUInt32Parameter p: xml = p.ToXml(); break;
-                case IUInt64Parameter p: xml = p.ToXml(); break;
-                case ISingleParameter p: xml = p.ToXml(); break;
-                case IDoubleParameter p: xml = p.ToXml(); break;
-                case IObjectParameter p: xml = p.ToXml(); break;
-                case IArrayParameter p: xml = p.ToXml(); break;
-                case IStructParameter p: xml = p.ToXml(); break;
+                case IBooleanParameter p: xml = ToXml(p); break;
+                case ICharParameter p: xml = ToXml(p); break;
+                case IByteParameter p: xml = ToXml(p); break;
+                case ISByteParameter p: xml = ToXml(p); break;
+                case IInt16Parameter p: xml = ToXml(p); break;
+                case IInt32Parameter p: xml = ToXml(p); break;
+                case IInt64Parameter p: xml = ToXml(p); break;
+                case IUInt16Parameter p: xml = ToXml(p); break;
+                case IUInt32Parameter p: xml = ToXml(p); break;
+                case IUInt64Parameter p: xml = ToXml(p); break;
+                case ISingleParameter p: xml = ToXml(p); break;
+                case IDoubleParameter p: xml = ToXml(p); break;
+                case IObjectParameter p: xml = ToXml(p); break;
+                case IArrayParameter p: xml = ToXml(p); break;
+                case IStructParameter p: xml = ToXml(p); break;
                 default:
                     throw new NotSupportedException();
             }
 
-            xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+            xml.Add(parameter.Accessors.Select(pa => ToXml(pa)));
 
             return xml;
         }
 
-        private static XElement ToXml(this IObjectParameter parameter)
+        private static XElement ToXml(IObjectParameter parameter)
         {
             bool? isNull = parameter.IsNull;
             XElement xml = new XElement(XmlObject, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlIsNull, isNull?.ToString() ?? XmlUnknown));
@@ -61,7 +91,7 @@ namespace dnWalker.Parameters.Xml
             return xml;
         }
 
-        private static XElement ToXml(this IStructParameter parameter)
+        private static XElement ToXml(IStructParameter parameter)
         {
             XElement xml = new XElement(XmlObject, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference));
 
@@ -69,12 +99,10 @@ namespace dnWalker.Parameters.Xml
             xml.Add(parameter.GetFields()
                                 .Select(p => new XElement(XmlField, new XAttribute(XmlName, p.Key), new XAttribute(XmlReference, p.Value))));
 
-            xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
-
             return xml;
         }
 
-        private static XElement ToXml(this IArrayParameter parameter)
+        private static XElement ToXml(IArrayParameter parameter)
         {
             bool? isNull = parameter.IsNull;
             int? length = parameter.Length;
@@ -87,12 +115,10 @@ namespace dnWalker.Parameters.Xml
                              .Where(tpl => tpl.item != ParameterRef.Empty)
                              .Select(tpl => new XElement(XmlItem, new XAttribute(XmlIndex, tpl.index), new XAttribute(XmlReference, tpl.item))));
 
-            //xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
-
             return xml;
         }
 
-        private static XElement ToXml(this ParameterAccessor accessor)
+        private static XElement ToXml(ParameterAccessor accessor)
         {
             switch (accessor)
             {
@@ -121,18 +147,6 @@ namespace dnWalker.Parameters.Xml
                     throw new NotSupportedException();
 
             }
-        }
-
-        public static XElement ToXml(this IBaseParameterContext store)
-        {
-            XElement storeXml = new XElement(XmlBaseParameterContext, store.Parameters.Values.Select(p => p.ToXml()));
-            return storeXml;
-        }
-
-        public static XElement ToXml(this IExecutionParameterContext store)
-        {
-            XElement storeXml = new XElement(XmlExecutionParameterContext, store.Parameters.Values.Select(p => p.ToXml()));
-            return storeXml;
         }
     }
 }
