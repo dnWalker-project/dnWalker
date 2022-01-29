@@ -71,11 +71,12 @@ namespace dnWalker.Parameters
 
             if (resultRef.TryResolve(_context, out IParameter? p))
             {
-                p.Accessor = new MethodResultParameterAccessor(methodSignature, invocation, _ownerRef);
+                //p.Accessor = new MethodResultParameterAccessor(methodSignature, invocation, _ownerRef);
+                p.Accessors.Add(new MethodResultParameterAccessor(methodSignature, invocation, _ownerRef));
             }
             else
             {
-                //throw new Exception("Trying to set method result with an unknown parameter!");
+                throw new Exception("Trying to set method result with an unknown parameter!");
             }
         }
 
@@ -88,7 +89,8 @@ namespace dnWalker.Parameters
             {
                 if (resultRefs[invocation].TryResolve(_context, out IParameter? resultParameter))
                 {
-                    resultParameter.Accessor = null;
+                    //resultParameter.Accessor = null;
+                    resultParameter.Accessors.RemoveAt(resultParameter.Accessors.IndexOf(pa => pa is MethodResultParameterAccessor mr && mr.ParentRef == _ownerRef && mr.Invocation == invocation && mr.MethodSignature == methodSignature));
                 }
 
                 resultRefs[invocation] = ParameterRef.Empty;

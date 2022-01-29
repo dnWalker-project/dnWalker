@@ -1,43 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public class ParameterContext : IParameterContext
+
+    public abstract class ParameterContext : IParameterContext
     {
         private readonly Dictionary<ParameterRef, IParameter> _parameters = new Dictionary<ParameterRef, IParameter>();
         private readonly Dictionary<string, ParameterRef> _roots = new Dictionary<string, ParameterRef>();
 
-        public ParameterContext() : this(0)
+        protected ParameterContext()
         {
         }
 
-        public ParameterContext(int generation)
-        {
-            Generation = generation;
-        }
 
-        private int _clonings = 0;
-
-        public int Generation 
-        {
-            get; 
-        }
-
-        public IParameterContext Clone()
-        {
-            ParameterContext newContext = new ParameterContext(_clonings++);
-
-            foreach (var p in _parameters)
-            {
-                newContext._parameters.Add(p.Key, p.Value.Clone(newContext));
-            }
-
-            return newContext;
-        }
+        public abstract ParameterRef GetParameterRef();
 
         public IDictionary<ParameterRef, IParameter> Parameters
         {

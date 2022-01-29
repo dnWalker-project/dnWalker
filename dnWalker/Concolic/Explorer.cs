@@ -95,6 +95,10 @@ namespace dnWalker.Concolic
         {
             ExplorationStarted(this, e);
         }
+        protected virtual void OnExplorationFinished(ExplorationFinishedEventArgs e)
+        {
+            ExplorationFinished(this, e);
+        }
         protected virtual void OnExplorationFailed(ExplorationFailedEventArgs e)
         {
             ExplorationFailed(this, e);
@@ -207,11 +211,12 @@ namespace dnWalker.Concolic
                     var path = _pathStore.CurrentPath;
                     PathExplored?.Invoke(path);
 
-                    if (entryPoint.HasReturnType)
-                    {
-                        ReturnValue retValue = (ReturnValue)cur.CurrentThread.RetValue;
-                        _parameterStore.SetReturnValue(retValue, cur);
-                    }
+                    // done by RET instruction extension
+                    //if (entryPoint.HasReturnType)
+                    //{
+                    //    IDataElement retValue = cur.CurrentThread.RetValue;
+                    //    _parameterStore.SetReturnValue(retValue, cur, entryPoint.ReturnType);
+                    //}
 
                     OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, _parameterStore, path));
 
@@ -239,6 +244,7 @@ namespace dnWalker.Concolic
 
             }
 
+            OnExplorationFinished(new ExplorationFinishedEventArgs());
         }
 
         public void Dispose()

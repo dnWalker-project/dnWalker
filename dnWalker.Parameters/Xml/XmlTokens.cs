@@ -27,12 +27,15 @@ namespace dnWalker.Parameters.Xml
         public const string XmlMethodSignature = "Signature";
         public const string XmlInvocation = "Invocation";
         public const string XmlUnknown = "Unknown";
-        public const string XmlParameterContext = "ParameterContext";
+        
+        public const string XmlBaseParameterContext = "BaseParameterContext";
+        public const string XmlExecutionParameterContext = "ExecutionParameterContext";
 
         public const string XmlAccessor = "Accessor";
         public const string XmlNoAccessor = "None";
         public const string XmlMethodArgumentRoot = "MethodArgument";
         public const string XmlStaticFieldRoot = "StaticField";
+        public const string XmlReturnValue = "ReturnValue";
 
         public const string XmlFullName = "FullName";
     }

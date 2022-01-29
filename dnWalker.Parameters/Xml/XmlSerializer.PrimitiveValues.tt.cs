@@ -12,100 +12,112 @@ namespace dnWalker.Parameters.Xml
 
     public static partial class XmlSerializer
     {
-        public static XElement ToXml(this IBooleanParameter parameter)
+        private static XElement ToXml(this IBooleanParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IByteParameter parameter)
+        private static XElement ToXml(this IByteParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this ISByteParameter parameter)
+        private static XElement ToXml(this ISByteParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IInt16Parameter parameter)
+        private static XElement ToXml(this IInt16Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IInt32Parameter parameter)
+        private static XElement ToXml(this IInt32Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IInt64Parameter parameter)
+        private static XElement ToXml(this IInt64Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IUInt16Parameter parameter)
+        private static XElement ToXml(this IUInt16Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IUInt32Parameter parameter)
+        private static XElement ToXml(this IUInt32Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IUInt64Parameter parameter)
+        private static XElement ToXml(this IUInt64Parameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : parameter.Value.ToString()!;
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this ICharParameter parameter)
+        private static XElement ToXml(this ICharParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : CharToString(parameter.Value.Value);
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this ISingleParameter parameter)
+        private static XElement ToXml(this ISingleParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : FloatToXml(parameter.Value.Value);
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
-        public static XElement ToXml(this IDoubleParameter parameter)
+        private static XElement ToXml(this IDoubleParameter parameter)
         {
             string valueXmlString = parameter.Value is null ? XmlUnknown : DoubleToXml(parameter.Value.Value);
             XElement xml = new XElement(XmlPrimitiveValue, new XAttribute(XmlType, parameter.Type), new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlValue, valueXmlString));
-            XElement accessorXml = parameter.Accessor.ToXml();
-            xml.Add(accessorXml);
+            
+            // xml.Add(parameter.Accessors.Select(pa => pa.ToXml()));
+
             return xml;
         }
  

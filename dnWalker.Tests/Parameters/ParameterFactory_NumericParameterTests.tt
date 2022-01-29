@@ -61,7 +61,7 @@ namespace dnWalker.Tests.Parameters
   #>
         public void Test_ParameterFor_<#= type #>_Is_<#= type #>Parameter()
         {
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
             IParameter p = ctx.CreateParameter(GetType("System.<#= type #>"));
             p.Should().BeOfType<<#= type #>Parameter>();
         }

@@ -47,7 +47,7 @@ namespace dnWalker.Parameters.Expressions
 
                 switch (exprString[0])
                 {
-                    case RefEqualsChar: expression = new RefEqualsParameterExpression(int.Parse(exprString.Slice(1)), int.Parse(exprString.Slice(9))); break;
+                    case RefEqualsChar: expression = new RefEqualsParameterExpression(lhsOperandRef, rhsOperandRef); break;
                     default: expression = null; break;
                 }
             }

@@ -14,40 +14,41 @@ using System.Threading.Tasks;
 
 using DnParameter = dnlib.DotNet.Parameter;
 
+using static dnWalker.Parameters.ParameterAccessor;
+
 namespace dnWalker.Parameters
 {
     public class ParameterStore
     {
-        public const string ThisName = "#__THIS__";
-        public const string ReturnValueName = "#__RETURN_VALUE__";
-
         private readonly MethodDef _entryPoint;
 
-        private readonly IParameterContext _baseContext;
-        private IParameterContext _executionContext;
+        private readonly IBaseParameterContext _baseContext;
+        private IExecutionParameterContext _executionContext;
 
         public ParameterStore(MethodDef entryPoint)
         {
-            _baseContext = new ParameterContext();
+            _baseContext = new BaseParameterContext();
 
             foreach (var arg in entryPoint.Parameters)
             {
                 IParameter parameter = _baseContext.CreateParameter(arg.Type);
-                parameter.Accessor = new MethodArgumentParameterAccessor(arg.Name);
+                parameter.Accessors.Add(new MethodArgumentParameterAccessor(arg.Name));
+                _baseContext.Roots.Add(arg.Name, parameter.Reference);
             }
             _entryPoint = entryPoint;
 
             if (entryPoint.HasThis)
             {
                 IParameter parameter = _baseContext.CreateParameter(entryPoint.DeclaringType.ToTypeSig());
-                parameter.Accessor = new MethodArgumentParameterAccessor(ThisName);
+                parameter.Accessors.Add(new MethodArgumentParameterAccessor(ThisName));
+                _baseContext.Roots.Add(ThisName, parameter.Reference);
             }
         }
 
         /// <summary>
         /// Gets the parameter context which describes input into the next execution.
         /// </summary>
-        public IParameterContext BaseContext
+        public IBaseParameterContext BaseContext
         {
             get 
             {
@@ -66,7 +67,7 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes current state.
         /// </summary>
-        public IParameterContext ExecutionContext
+        public IExecutionParameterContext ExecutionContext
         {
             get
             {
@@ -83,11 +84,12 @@ namespace dnWalker.Parameters
 
             int idx = 0;
 
-            IParameterContext ctx = _baseContext;
+            //IParameterContext ctx = _baseContext;
+            IParameterContext ctx = _executionContext;
 
             if (method.HasThis)
             {
-                IParameter thisParameter = ctx.Roots[ParameterStore.ThisName].Resolve(ctx);
+                IParameter thisParameter = ctx.Roots[ThisName].Resolve(ctx);
                 arguments[idx++] = thisParameter.AsDataElement(cur);
             }
 
@@ -105,12 +107,27 @@ namespace dnWalker.Parameters
         /// </summary>
         public void InitializeExecutionContext()
         {
-            _executionContext = _baseContext.Clone();
+            _executionContext = _baseContext.CreateExecutionContext();
         }
 
-        public void SetReturnValue(ReturnValue retValue, ExplicitActiveState cur)
-        {
+        private ParameterRef _returnValue;
 
+        public void SetReturnValue(IDataElement retValue, ExplicitActiveState cur, TypeSig retValueType)
+        {
+            IParameter parameter = retValue.GetOrCreateParameter(cur, retValueType);
+            parameter.Accessors.Add(new ReturnValueParameterAccessor());
+
+            _executionContext.Roots.Add(ReturnValueName, parameter.Reference);
+
+            _returnValue = parameter.Reference;
+        }
+
+        public ParameterRef ReturnValue
+        {
+            get
+            {
+                return _returnValue;
+            }
         }
 
         private class ExprSorter : IComparer<ParameterTrait>

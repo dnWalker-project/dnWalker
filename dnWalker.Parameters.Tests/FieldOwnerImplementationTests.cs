@@ -20,7 +20,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_SetField_TryGetField_WillOutputTheValue()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -37,7 +37,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void TryGetUninitializedField_ReturnsFalse()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
 
             fieldOwner.TryGetField(MyField, out _).Should().BeFalse();
@@ -46,7 +46,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void TryGetInitializedField_ReturnsTrue()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(5, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -60,7 +60,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void TryGetClearedField_ReturnsFalse()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -76,7 +76,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void GetFields_IsNotNull()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
 
             fieldOwner.GetFields().Should().NotBeNull();
@@ -85,7 +85,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_SetField_ValueWillBeInGetFieldsDictionary()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -99,7 +99,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_ClearField_ValueWillNotBeInGetFieldsDictionary()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -120,7 +120,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void After_SetField_FieldValueWillHave_FieldParameterAccess()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -128,15 +128,16 @@ namespace dnWalker.Parameters.Tests
 
             fieldOwner.TryGetField(MyField, out _).Should().BeTrue("Check assumptions.");
 
-            fieldValue.Accessor.Should().BeOfType<FieldParameterAccessor>();
-            ((FieldParameterAccessor)fieldValue.Accessor!).ParentRef.Should().Be(OwnerRef);
-            ((FieldParameterAccessor)fieldValue.Accessor!).FieldName.Should().Be(MyField);
+            fieldValue.Accessors.Should().HaveCountGreaterThanOrEqualTo(1);
+            fieldValue.Accessors[0].Should().BeOfType<FieldParameterAccessor>();
+            ((FieldParameterAccessor)fieldValue.Accessors[0]).ParentRef.Should().Be(OwnerRef);
+            ((FieldParameterAccessor)fieldValue.Accessors[0]).FieldName.Should().Be(MyField);
         }
 
         [Fact]
         public void Setting_MyField_ShouldNot_Set_OtherField()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter fieldValue = context.CreateInt32Parameter();
 
@@ -150,7 +151,7 @@ namespace dnWalker.Parameters.Tests
         [Fact]
         public void Clearing_MyField_ShouldNot_Clear_OtherField()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new BaseParameterContext();
             FieldOwnerImplementation fieldOwner = new FieldOwnerImplementation(OwnerRef, context);
             IParameter myFieldValue = context.CreateInt32Parameter();
             IParameter otherFieldValue = context.CreateInt32Parameter();

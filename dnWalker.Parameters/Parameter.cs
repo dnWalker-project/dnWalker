@@ -9,24 +9,16 @@ namespace dnWalker.Parameters
 {
     public abstract class Parameter : IParameter
     {
-        private static int _nextId = 1;
-        private static ParameterRef GetReferenceIdFor(IParameter instance)
-        {
-            // "random" ids => using the GetHashCode function
-            // return RuntimeHelpers.GetHashCode(instance);
-            return _nextId++;
-        }
-
-
         protected Parameter(IParameterContext context)
         {
             Context = context;
-            Reference = GetReferenceIdFor(this);
+            Reference = context.GetParameterRef();
         }
+
         protected Parameter(IParameterContext context, ParameterRef reference)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            Reference = reference == ParameterRef.Any ? GetReferenceIdFor(this) : reference;
+            Reference = reference;
         }
 
         public IParameterContext Context
@@ -39,31 +31,42 @@ namespace dnWalker.Parameters
             get;
         }
 
-        public abstract IParameter Clone(IParameterContext newContext);
+        public abstract IParameter CloneData(IParameterContext newContext);
 
-        private ParameterAccessor? _accessor = null;
 
-        public ParameterAccessor? Accessor
+        private readonly List<ParameterAccessor> _accessors = new List<ParameterAccessor>();
+
+        public IList<ParameterAccessor> Accessors
         {
             get
             {
-                return _accessor;
-            }
-            set
-            {
-                if (_accessor is RootParameterAccessor rOld)
-                {
-                    Context.Roots.Remove(rOld.Expression);
-                }
-
-                _accessor = value;
-
-                if (value is RootParameterAccessor rNew)
-                {
-                    Context.Roots.Add(rNew.Expression, Reference);
-                }
+                return _accessors;
             }
         }
+
+        //private ParameterAccessor? _accessor = null;
+
+        //public ParameterAccessor? Accessor
+        //{
+        //    get
+        //    {
+        //        return _accessor;
+        //    }
+        //    set
+        //    {
+        //        if (_accessor is RootParameterAccessor rOld)
+        //        {
+        //            Context.Roots.Remove(rOld.Expression);
+        //        }
+
+        //        _accessor = value;
+
+        //        if (value is RootParameterAccessor rNew)
+        //        {
+        //            Context.Roots.Add(rNew.Expression, Reference);
+        //        }
+        //    }
+        //}
 
     }
 }

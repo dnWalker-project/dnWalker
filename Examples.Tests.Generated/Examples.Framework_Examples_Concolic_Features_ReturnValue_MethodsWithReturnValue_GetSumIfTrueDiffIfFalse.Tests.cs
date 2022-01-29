@@ -13,9 +13,9 @@ using Xunit;
 
 using Moq;
 
-namespace Examples.Concolic.Features.Arrays.Tests
+namespace Examples.Concolic.Features.ReturnValue.Tests
 {
-	public class MethodsWithArrayParameter_Tests_BranchIfItemAtStaticIndexIsGreaterThan5
+	public class MethodsWithReturnValue_Tests_GetSumIfTrueDiffIfFalse
 	{
 		#region Test Methods
 
@@ -24,7 +24,11 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = null;
+			System.Int32 a =  default(System.Int32) ;
+			
+			System.Int32 b =  default(System.Int32) ;
+			
+			System.Boolean flag =  default(System.Boolean) ;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
@@ -33,10 +37,13 @@ namespace Examples.Concolic.Features.Arrays.Tests
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			var result = Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue.GetSumIfTrueDiffIfFalse(a, b, flag);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
+			System.Int32  retValue = 8;
+			Assert.Equal(result, retValue);
+
 
 
 		}
@@ -46,7 +53,11 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = Create_0x00000002(0);
+			System.Int32 a =  default(System.Int32) ;
+			
+			System.Int32 b = 10;
+			
+			System.Boolean flag = false;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
@@ -55,10 +66,13 @@ namespace Examples.Concolic.Features.Arrays.Tests
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			var result = Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue.GetSumIfTrueDiffIfFalse(a, b, flag);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
+			System.Int32  retValue = -16;
+			Assert.Equal(result, retValue);
+
 
 
 		}
@@ -68,27 +82,26 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = Create_0x00000002(4);
+			System.Int32 a =  default(System.Int32) ;
+			
+			System.Int32 b = 10;
+			
+			System.Boolean flag = true;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
 			
-			InitializeItems_0x00000002
-			(
-				array,
-				default(System.Double),
-				default(System.Double),
-				default(System.Double),
-				default(System.Double)
-			);
 			// execute the tested method
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			var result = Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue.GetSumIfTrueDiffIfFalse(a, b, flag);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
+			System.Int32  retValue = 18;
+			Assert.Equal(result, retValue);
+
 
 
 		}
@@ -98,29 +111,26 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		{
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
-			System.Double[]? array = Create_0x00000002(4);
+			System.Int32 a = 10;
 			
-			System.Double var_0x00000003 = 6;
+			System.Int32 b = 10;
+			
+			System.Boolean flag = true;
 			
 			// initialize all parameters which needs initialization
 			// TODO: initialize return value comparer instance
 			
-			InitializeItems_0x00000002
-			(
-				array,
-				default(System.Double),
-				default(System.Double),
-				default(System.Double),
-				var_0x00000003
-			);
 			// execute the tested method
 			// TODO: make assert for method exception
 			// TODO: make assert for method return values
 			// TODO: handle instance methods
-			Examples.Concolic.Features.Arrays.MethodsWithArrayParameter.BranchIfItemAtStaticIndexIsGreaterThan5(array);
+			var result = Examples.Concolic.Features.ReturnValue.MethodsWithReturnValue.GetSumIfTrueDiffIfFalse(a, b, flag);
 
 			// construct all output parameters which are used in the test
 			// 1. ret val if exists
+			System.Int32  retValue = 14;
+			Assert.Equal(result, retValue);
+
 
 
 		}
@@ -128,22 +138,11 @@ namespace Examples.Concolic.Features.Arrays.Tests
 
 		#region Parameter Creation Methods
 		// these methods constructs instances of parameters along with interfaces for their initialization
-		private System.Double[] Create_0x00000002(int length)
-		{
-			return new System.Double[length];
-		}
-		
 
 
 		#endregion Parameter Creation Methods
 
 		#region Parameter Initialization Methods
-		// initialize parameter 0x00000002
-		// - array
-		private void InitializeItems_0x00000002(System.Double[] array, params System.Double[] items)
-		{
-			items.CopyTo(array, System.Math.Min(items.Length, array.Length));
-		}
 		#endregion Parameter Initialization Methods
 	}
 }

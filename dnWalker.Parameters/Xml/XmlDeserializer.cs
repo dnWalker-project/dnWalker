@@ -97,14 +97,19 @@ namespace dnWalker.Parameters.Xml
                 default: throw new NotSupportedException(xml.ToString());
             }
 
-            XElement accessorElement = xml.Element(XmlAccessor) ?? throw new MissingElementException(nameof(IParameter), XmlAccessor);
+            foreach (XElement accessorElement in xml.Elements(XmlAccessor))
+            {
+                parameter.Accessors.Add(accessorElement.ToAccessor());
+            }
 
-            parameter.Accessor = accessorElement.ToAccessor();
+            //XElement accessorElement = xml.Element(XmlAccessor) ?? throw new MissingElementException(nameof(IParameter), XmlAccessor);
+
+            //parameter.Accessor = accessorElement.ToAccessor();
 
             return parameter;
         }
 
-        public static IObjectParameter ToObjectParameter(this XElement xml, IParameterContext context)
+        private static IObjectParameter ToObjectParameter(this XElement xml, IParameterContext context)
         {
             string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter), XmlType);
             bool? isNull = String2Bool(xml.Attribute(XmlIsNull)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter), XmlIsNull));
@@ -133,7 +138,7 @@ namespace dnWalker.Parameters.Xml
             return objectParameter;
         }
 
-        public static IStructParameter ToStructParameter(this XElement xml, IParameterContext context)
+        private static IStructParameter ToStructParameter(this XElement xml, IParameterContext context)
         {
             string type = xml.Attribute(XmlType)?.Value ?? throw new MissingAttributeException(nameof(IStructParameter), XmlType);
             ParameterRef reference = String2Ref(xml.Attribute(XmlReference)?.Value ?? throw new MissingAttributeException(nameof(IStructParameter), XmlReference));
@@ -151,7 +156,7 @@ namespace dnWalker.Parameters.Xml
             return structParameter;
         }
 
-        public static IArrayParameter ToArrayParameter(this XElement xml, IParameterContext context)
+        private static IArrayParameter ToArrayParameter(this XElement xml, IParameterContext context)
         {
             string type = xml.Attribute(XmlElementType)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlElementType);
             bool? isNull = String2Bool(xml.Attribute(XmlIsNull)?.Value ?? throw new MissingAttributeException(nameof(IArrayParameter), XmlIsNull));
@@ -173,7 +178,7 @@ namespace dnWalker.Parameters.Xml
             return arrayParameter;
         }
 
-        public static ParameterAccessor? ToAccessor(this XElement xml)
+        private static ParameterAccessor ToAccessor(this XElement xml)
         {
             string type = xml.Attribute(XmlType)?.Value ?? throw new Exception("Parameter accessor XML must contain 'Type' attribute.");
 
@@ -198,7 +203,7 @@ namespace dnWalker.Parameters.Xml
                         );
                     break;
 
-                case XmlIndex:
+                case XmlItem:
                     accessor = new ItemParameterAccessor
                         (
                             int.Parse(xml.Attribute(XmlIndex)?.Value ?? throw new MissingAttributeException(nameof(ItemParameterAccessor), XmlIndex)),
@@ -221,9 +226,13 @@ namespace dnWalker.Parameters.Xml
                         );
                     break;
 
-                case XmlNoAccessor:
-                    accessor = null;
+                case XmlReturnValue:
+                    accessor = new ReturnValueParameterAccessor();
                     break;
+
+                //case XmlNoAccessor:
+                //    accessor = null;
+                //    break;
 
                 default:
                     throw new NotSupportedException();
@@ -232,19 +241,41 @@ namespace dnWalker.Parameters.Xml
             return accessor;
         }
 
-        public static IParameterContext ToParameterContext(this XElement xml)
+        public static IBaseParameterContext ToBaseParameterContext(this XElement xml)
         {
             if (xml == null)
             {
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            if (xml.Name != XmlParameterContext)
+            if (xml.Name != XmlBaseParameterContext)
             {
                 throw new ArgumentException("Unexpected XML element.");
             }
 
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
+
+            foreach (XElement parameterXml in xml.Elements())
+            {
+                parameterXml.ToParameter(context);
+            }
+
+            return context;
+        }
+
+        public static IExecutionParameterContext ToExecutionParameterContext(this XElement xml)
+        {
+            if (xml == null)
+            {
+                throw new ArgumentNullException(nameof(xml));
+            }
+
+            if (xml.Name != XmlExecutionParameterContext)
+            {
+                throw new ArgumentException("Unexpected XML element.");
+            }
+
+            IExecutionParameterContext context = new ExecutionParameterContext(null);
 
             foreach (XElement parameterXml in xml.Elements())
             {

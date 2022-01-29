@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace dnWalker.Parameters
 {
@@ -26,13 +25,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override BooleanParameter Clone(IParameterContext context)
+        public override BooleanParameter CloneData(IParameterContext context)
         {
              BooleanParameter parameter = new BooleanParameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -62,13 +65,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override CharParameter Clone(IParameterContext context)
+        public override CharParameter CloneData(IParameterContext context)
         {
              CharParameter parameter = new CharParameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -98,13 +105,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override ByteParameter Clone(IParameterContext context)
+        public override ByteParameter CloneData(IParameterContext context)
         {
              ByteParameter parameter = new ByteParameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -134,13 +145,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override SByteParameter Clone(IParameterContext context)
+        public override SByteParameter CloneData(IParameterContext context)
         {
              SByteParameter parameter = new SByteParameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -170,13 +185,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override Int16Parameter Clone(IParameterContext context)
+        public override Int16Parameter CloneData(IParameterContext context)
         {
              Int16Parameter parameter = new Int16Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -206,13 +225,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override Int32Parameter Clone(IParameterContext context)
+        public override Int32Parameter CloneData(IParameterContext context)
         {
              Int32Parameter parameter = new Int32Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -242,13 +265,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override Int64Parameter Clone(IParameterContext context)
+        public override Int64Parameter CloneData(IParameterContext context)
         {
              Int64Parameter parameter = new Int64Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -278,13 +305,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override UInt16Parameter Clone(IParameterContext context)
+        public override UInt16Parameter CloneData(IParameterContext context)
         {
              UInt16Parameter parameter = new UInt16Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -314,13 +345,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override UInt32Parameter Clone(IParameterContext context)
+        public override UInt32Parameter CloneData(IParameterContext context)
         {
              UInt32Parameter parameter = new UInt32Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -350,13 +385,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override UInt64Parameter Clone(IParameterContext context)
+        public override UInt64Parameter CloneData(IParameterContext context)
         {
              UInt64Parameter parameter = new UInt64Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -386,13 +425,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override SingleParameter Clone(IParameterContext context)
+        public override SingleParameter CloneData(IParameterContext context)
         {
              SingleParameter parameter = new SingleParameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -422,13 +465,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override DoubleParameter Clone(IParameterContext context)
+        public override DoubleParameter CloneData(IParameterContext context)
         {
              DoubleParameter parameter = new DoubleParameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -442,7 +489,7 @@ namespace dnWalker.Parameters
     {
         public static IBooleanParameter CreateBooleanParameter(this IParameterContext context)
         {
-            return CreateBooleanParameter(context, ParameterRef.Any, null);
+            return CreateBooleanParameter(context, context.GetParameterRef(), null);
         }
         
         public static IBooleanParameter CreateBooleanParameter(this IParameterContext context, ParameterRef reference)
@@ -460,7 +507,7 @@ namespace dnWalker.Parameters
         }
         public static ICharParameter CreateCharParameter(this IParameterContext context)
         {
-            return CreateCharParameter(context, ParameterRef.Any, null);
+            return CreateCharParameter(context, context.GetParameterRef(), null);
         }
         
         public static ICharParameter CreateCharParameter(this IParameterContext context, ParameterRef reference)
@@ -478,7 +525,7 @@ namespace dnWalker.Parameters
         }
         public static IByteParameter CreateByteParameter(this IParameterContext context)
         {
-            return CreateByteParameter(context, ParameterRef.Any, null);
+            return CreateByteParameter(context, context.GetParameterRef(), null);
         }
         
         public static IByteParameter CreateByteParameter(this IParameterContext context, ParameterRef reference)
@@ -496,7 +543,7 @@ namespace dnWalker.Parameters
         }
         public static ISByteParameter CreateSByteParameter(this IParameterContext context)
         {
-            return CreateSByteParameter(context, ParameterRef.Any, null);
+            return CreateSByteParameter(context, context.GetParameterRef(), null);
         }
         
         public static ISByteParameter CreateSByteParameter(this IParameterContext context, ParameterRef reference)
@@ -514,7 +561,7 @@ namespace dnWalker.Parameters
         }
         public static IInt16Parameter CreateInt16Parameter(this IParameterContext context)
         {
-            return CreateInt16Parameter(context, ParameterRef.Any, null);
+            return CreateInt16Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IInt16Parameter CreateInt16Parameter(this IParameterContext context, ParameterRef reference)
@@ -532,7 +579,7 @@ namespace dnWalker.Parameters
         }
         public static IInt32Parameter CreateInt32Parameter(this IParameterContext context)
         {
-            return CreateInt32Parameter(context, ParameterRef.Any, null);
+            return CreateInt32Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IInt32Parameter CreateInt32Parameter(this IParameterContext context, ParameterRef reference)
@@ -550,7 +597,7 @@ namespace dnWalker.Parameters
         }
         public static IInt64Parameter CreateInt64Parameter(this IParameterContext context)
         {
-            return CreateInt64Parameter(context, ParameterRef.Any, null);
+            return CreateInt64Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IInt64Parameter CreateInt64Parameter(this IParameterContext context, ParameterRef reference)
@@ -568,7 +615,7 @@ namespace dnWalker.Parameters
         }
         public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context)
         {
-            return CreateUInt16Parameter(context, ParameterRef.Any, null);
+            return CreateUInt16Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context, ParameterRef reference)
@@ -586,7 +633,7 @@ namespace dnWalker.Parameters
         }
         public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context)
         {
-            return CreateUInt32Parameter(context, ParameterRef.Any, null);
+            return CreateUInt32Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context, ParameterRef reference)
@@ -604,7 +651,7 @@ namespace dnWalker.Parameters
         }
         public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context)
         {
-            return CreateUInt64Parameter(context, ParameterRef.Any, null);
+            return CreateUInt64Parameter(context, context.GetParameterRef(), null);
         }
         
         public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context, ParameterRef reference)
@@ -622,7 +669,7 @@ namespace dnWalker.Parameters
         }
         public static ISingleParameter CreateSingleParameter(this IParameterContext context)
         {
-            return CreateSingleParameter(context, ParameterRef.Any, null);
+            return CreateSingleParameter(context, context.GetParameterRef(), null);
         }
         
         public static ISingleParameter CreateSingleParameter(this IParameterContext context, ParameterRef reference)
@@ -640,7 +687,7 @@ namespace dnWalker.Parameters
         }
         public static IDoubleParameter CreateDoubleParameter(this IParameterContext context)
         {
-            return CreateDoubleParameter(context, ParameterRef.Any, null);
+            return CreateDoubleParameter(context, context.GetParameterRef(), null);
         }
         
         public static IDoubleParameter CreateDoubleParameter(this IParameterContext context, ParameterRef reference)

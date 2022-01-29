@@ -51,12 +51,17 @@ namespace dnWalker.Parameters
             get;
         }
 
-        public override StructParameter Clone(IParameterContext newContext)
+        public override StructParameter CloneData(IParameterContext newContext)
         {
             StructParameter structParameter = new StructParameter(newContext, Reference, Type);
             _fields.CopyTo(structParameter._fields);
 
-            structParameter.Accessor = Accessor?.Clone();
+            //structParameter.Accessor = Accessor?.Clone();
+
+            //foreach (var a in Accessors.Select(ac => ac.Clone()))
+            //{
+            //    structParameter.Accessors.Add(a);
+            //}
 
             return structParameter;
         }
@@ -71,7 +76,7 @@ namespace dnWalker.Parameters
     {
         public static IStructParameter CreateStructParameter(this IParameterContext context, string type)
         {
-            return CreateStructParameter(context, ParameterRef.Any, type);
+            return CreateStructParameter(context, context.GetParameterRef(), type);
         }
 
         public static IStructParameter CreateStructParameter(this IParameterContext context, ParameterRef reference, string type)

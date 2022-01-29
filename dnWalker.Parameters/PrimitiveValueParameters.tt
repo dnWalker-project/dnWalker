@@ -5,8 +5,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".tt.cs" #>
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace dnWalker.Parameters
 {
@@ -71,13 +70,17 @@ namespace dnWalker.Parameters
             set;
         }
 
-        public override <#= type #>Parameter Clone(IParameterContext context)
+        public override <#= type #>Parameter CloneData(IParameterContext context)
         {
              <#= type #>Parameter parameter = new <#= type #>Parameter(context, Reference, Value);
+             
 
-             parameter.Accessor = Accessor?.Clone();
+            // foreach (var a in Accessors.Select(ac => ac.Clone()))
+            // {
+            //     parameter.Accessors.Add(a);
+            // }
 
-             return parameter;
+            return parameter;
         }
 
         public override string ToString()
@@ -101,7 +104,7 @@ for (int i = 0; i < types.Length; ++i)
 #>
         public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context)
         {
-            return Create<#= type #>Parameter(context, ParameterRef.Any, null);
+            return Create<#= type #>Parameter(context, context.GetParameterRef(), null);
         }
         
         public static I<#= type #>Parameter Create<#= type #>Parameter(this IParameterContext context, ParameterRef reference)

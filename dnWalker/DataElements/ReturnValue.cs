@@ -58,6 +58,14 @@ namespace dnWalker.DataElements
             throw new NotImplementedException();
         }
 
+        public Allocation Allocation
+        {
+            get
+            {
+                return _allocatedObject;
+            }
+        }
+
         private class EqVisitor : IStorageVisitor
         {
             public object Result { get; private set; }
