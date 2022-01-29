@@ -73,7 +73,7 @@ namespace MMC {
                 var declType = cur.DefinitionProvider.GetTypeDefinition(typeName);
                 if (declType != null)
                 {
-                    bp.MethodDefinition = cur.DefinitionProvider.SearchMethod(methodName, declType);
+                    bp.MethodDefinition = cur.DefinitionProvider.GetMethodDefinition(methodFullName);
                 }
                 else
                 {

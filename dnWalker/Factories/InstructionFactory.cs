@@ -97,16 +97,13 @@ namespace dnWalker.Factories
             switch (operand)
             {
                 case ITypeDefOrRef typeDefOrRef:
-                    operand = DefinitionProvider.GetTypeDefinition(typeDefOrRef)
-                        ?? throw new NullReferenceException("Type not resolved: " + operand);
+                    operand = typeDefOrRef.ResolveTypeDefThrow();
                     break;
                 case IMethod method:
-                    operand = method.ResolveMethodDef()
-                        ?? throw new NullReferenceException("Method not resolved: " + operand);
+                    operand = method.ResolveMethodDefThrow();
                     break;
                 case IField field:
-                    operand = DefinitionProvider.GetFieldDefinition(field)
-                        ?? throw new NullReferenceException("Field not resolved: " + operand);
+                    operand = field.ResolveFieldDefThrow();
                     break;
             }
 

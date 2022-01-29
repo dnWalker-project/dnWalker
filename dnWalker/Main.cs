@@ -28,6 +28,7 @@ namespace MMC
     using System.Linq;
     using MMC.Data;
     using dnWalker;
+    using dnWalker.TypeSystem;
 
     public interface IConfig
     {
@@ -438,14 +439,27 @@ Disabling/enabling features:
             new MonoModelChecker().Go(args);
         }
 
+
         public void Go(string[] args)
         {
+            static IDataElement[] StrArrToDataElements(string[] strArr)
+            {
+                IDataElement[] dataElements = new IDataElement[strArr.Length];
+
+                for (int i = 0; i < strArr.Length; ++i)
+                {
+                    dataElements[i] = new ConstantString(strArr[i]);
+                }
+
+                return dataElements;
+            }
+
             Console.WriteLine(copyright + "\n");
 
-            var config = GetConfigFromCommandLine(args);
+            IConfig config = GetConfigFromCommandLine(args);
             config.SetCustomSetting("evaluateRandom", true);
 
-            var logger = new Logger(config.LogFilter);
+            Logger logger = new Logger(config.LogFilter);
             _logger = logger;
 
             var dotFile = config.AssemblyToCheckFileName + ".dot";
@@ -460,19 +474,16 @@ Disabling/enabling features:
 
             PrintConfig(config, logger);
 
-            var assemblyLoader = new dnWalker.AssemblyLoader();
-            assemblyLoader.GetModuleDef(File.ReadAllBytes(config.AssemblyToCheckFileName));
+            IDefinitionProvider definitionProvider = new DefinitionProvider(DefinitionContext.LoadFromFile(config.AssemblyToCheckFileName));
 
-            var definitionProvider = DefinitionProvider.Create(assemblyLoader);
+            StateSpaceSetup stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
 
-            var stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
+            IDataElement[] methodArgs = StrArrToDataElements(config.RunTimeParameters);
 
-            var methodArgs = config.RunTimeParameters.Select(a => new Arg<string>(a)).ToArray();
+            ExplicitActiveState cur = stateSpaceSetup.CreateInitialState(definitionProvider.Context.MainModule.EntryPoint, methodArgs);
+            SimpleStatistics statistics = new SimpleStatistics();            
 
-            var cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
-            var statistics = new SimpleStatistics();            
-
-            var ex = new Explorer(
+            Explorer ex = new Explorer(
                 cur,
                 statistics,
                 logger,
@@ -482,12 +493,12 @@ Disabling/enabling features:
             try
             {
                 statistics.Start();
-                var noErrors = ex.Run();
+                bool noErrors = ex.Run();
 
                 if (!noErrors && config.StopOnError && config.TraceOnError)
                 {
                     cur.Reset();
-                    cur = stateSpaceSetup.CreateInitialState(assemblyLoader.GetModule().EntryPoint, methodArgs);
+                    cur = stateSpaceSetup.CreateInitialState(definitionProvider.Context.MainModule.EntryPoint, methodArgs);
 
                     var traceFile = config.AssemblyToCheckFileName + ".trace";
                     File.Delete(traceFile);

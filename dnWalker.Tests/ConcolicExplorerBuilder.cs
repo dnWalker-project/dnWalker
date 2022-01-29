@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.TypeSystem;
 
 using MMC;
 
@@ -18,10 +19,10 @@ namespace dnWalker.Tests
 
 
         private Func<Logger> _provideLogger;
-        private Func<DefinitionProvider> _provideDefinitions;
+        private Func<IDefinitionProvider> _provideDefinitions;
         private Func<ISolver> _provideSolver;
 
-        public ConcolicExplorerBuilder(Func<Logger> provideLogger, Func<DefinitionProvider> provideDefinitions, Func<ISolver> provideSolver)
+        public ConcolicExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitions, Func<ISolver> provideSolver)
         {
             _provideLogger = provideLogger ?? throw new ArgumentNullException(nameof(provideLogger));
             _provideDefinitions = provideDefinitions ?? throw new ArgumentNullException(nameof(provideDefinitions));
@@ -46,7 +47,7 @@ namespace dnWalker.Tests
             return this;
         }
 
-        public IConcolicExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> definitionProviderFactory)
+        public IConcolicExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> definitionProviderFactory)
         {
             _provideDefinitions = definitionProviderFactory ?? throw new ArgumentNullException(nameof(definitionProviderFactory));
             return this;

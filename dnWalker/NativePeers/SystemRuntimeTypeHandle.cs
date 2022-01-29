@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
+
 using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
@@ -25,9 +28,9 @@ namespace dnWalker.NativePeers
                         return TryGetValue(method, args, cur, out iieReturnValue);
                     case TypePointer typePointer:
                         var type = typePointer.Type;
-                        if (cur.DefinitionProvider.TryGetTypeHandle(type, out var handle))
+                        if (type.TryGetTypeHandle(out var handle))
                         {
-                            cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(handle.Value));
+                            cur.EvalStack.Push(DataElement.CreateDataElement(handle.Value, cur.DefinitionProvider));
                             iieReturnValue = InstructionExecBase.nextRetval;
                             return true;
                         }

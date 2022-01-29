@@ -7,6 +7,7 @@ using dnWalker.Instructions.Extensions;
 using dnWalker.NativePeers;
 using dnWalker.Parameters;
 using dnWalker.Parameters.Expressions;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.Data;
@@ -31,7 +32,7 @@ namespace dnWalker.Concolic
         private readonly Config _config;
         private readonly Logger _logger;
         private readonly ISolver _solver;
-        private readonly DefinitionProvider _definitionProvider;
+        private readonly IDefinitionProvider _definitionProvider;
 
         private int _currentIteration;
         private PathStore _pathStore;
@@ -41,7 +42,7 @@ namespace dnWalker.Concolic
 
         private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
 
-        public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
+        public Explorer(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
             _definitionProvider = definitionProvider;
             _config = config;
