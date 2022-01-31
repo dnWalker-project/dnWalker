@@ -1,5 +1,7 @@
-﻿using dnWalker.Parameters;
-using dnWalker.TestGenerator.Reflection;
+﻿using dnlib.DotNet;
+
+using dnWalker.Parameters;
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
@@ -11,16 +13,20 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        protected Dictionary<ParameterRef, Type> VariableTypeLookup { get; } = new Dictionary<ParameterRef, Type>();
-        protected Dictionary<ParameterRef, string> VariableNameLookup { get; } = new Dictionary<ParameterRef, string>();
 
-        public void Initialize()
+        protected Dictionary<ParameterRef, TypeSignature> VariableTypeLookup { get; } = new Dictionary<ParameterRef, TypeSignature>();
+        protected Dictionary<ParameterRef, string> VariableNameLookup { get; } = new Dictionary<ParameterRef, string>();
+        protected TestGenerationContext? Context { get; set; }
+
+        public void Initialize(TestGenerationContext context)
         {
+            Context = context;
+
             VariableTypeLookup.Clear();
             VariableNameLookup.Clear();
         }
 
-        protected Type GetVariableType(IParameter parameter)
+        protected TypeSignature GetVariableType(IParameter parameter)
         {
             if (parameter is null)
             {
@@ -29,24 +35,23 @@ namespace dnWalker.TestGenerator.Templates
 
             ParameterRef reference = parameter.Reference;
 
-            if (VariableTypeLookup.TryGetValue(reference, out Type? type))
+            if (VariableTypeLookup.TryGetValue(reference, out TypeSignature type))
             {
                 return type;
             }
 
-            if (parameter is IPrimitiveValueParameter primitive)
+            if (parameter is IPrimitiveValueParameter)
             {
-                type = AppDomain.CurrentDomain.GetType(primitive.Type) ?? throw new Exception("Could not find the type!");
+                type = parameter.Type;
             }
-            else if (parameter is IObjectParameter obj)
+            else if (parameter is IObjectParameter)
             {
-                type = AppDomain.CurrentDomain.GetType(obj.Type) ?? throw new Exception("Could not find the type!");
+                type = parameter.Type;
             }
-            else if (parameter is IArrayParameter arr)
+            else if (parameter is IArrayParameter)
             {
-                type = AppDomain.CurrentDomain.GetType(arr.ElementType)?.MakeArrayType() ?? throw new Exception("Could not find the type!");
+                type = parameter.Type;
             }
-
             else
             {
                 throw new Exception("Unexpected parameter type!");
@@ -77,11 +82,11 @@ namespace dnWalker.TestGenerator.Templates
             return name;
         }
 
-        protected string GetExpression(IParameter parameter, Type type)
+        protected string GetExpression(IParameter parameter)
         {
             if (parameter is IPrimitiveValueParameter primitiveValue)
             {
-                return primitiveValue.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(type);
+                return primitiveValue.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(parameter.Type);
             }
             else if(parameter is IReferenceTypeParameter rp && rp.GetIsNull())
             {
@@ -93,7 +98,7 @@ namespace dnWalker.TestGenerator.Templates
             }
         }
 
-        protected void WriteJoint<T>(string separator, IEnumerable<T> items, Action<T> writeAction)
+        protected void WriteJoined<T>(string separator, IEnumerable<T> items, Action<T> writeAction)
         {
             {
                 T? item = items.FirstOrDefault();

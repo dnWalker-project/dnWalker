@@ -1,4 +1,7 @@
-﻿using dnWalker.TestGenerator.Templates;
+﻿using dnlib.DotNet;
+
+using dnWalker.TestGenerator.Templates;
+using dnWalker.TypeSystem;
 
 using FluentAssertions;
 
@@ -12,33 +15,8 @@ using Xunit;
 
 namespace dnWalker.TestGenerator.Tests.Templates
 {
-    public class TypeNameTemplateTests
+    public class TypeNameTemplateTests : TemplateTestBase
     {
-        public class TopLevel
-        {
-            public class SubLevel
-            {
-            }
-
-            public class GenericSubLevel<T>
-            {
-
-            }
-        }
-
-        public class GenericTopLevel<TTop>
-        {
-            public class SubLevel
-            {
-
-            }
-
-            public class GenericSubLevel<TSub>
-            {
-
-            }
-        }
-
         public class TypeNameTemplateTest : TemplateBase
         {
             public override string TransformText()
@@ -48,87 +26,99 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 return base.TransformText();
             }
 
-            private readonly Type _type;
+            private readonly TypeSignature _type;
 
-            public TypeNameTemplateTest(Type type)
+            public TypeNameTemplateTest(TypeSignature type)
             {
                 _type = type;
             }
         }
 
-        [Theory]
-        [InlineData(typeof(sbyte), "sbyte")]
-        [InlineData(typeof(short), "short")]
-        [InlineData(typeof(int), "int")]
-        [InlineData(typeof(long), "long")]
-        [InlineData(typeof(byte), "byte")]
-        [InlineData(typeof(ushort), "ushort")]
-        [InlineData(typeof(uint), "uint")]
-        [InlineData(typeof(ulong), "ulong")]
-        [InlineData(typeof(float), "float")]
-        [InlineData(typeof(double), "double")]
-        [InlineData(typeof(char), "char")]
-        [InlineData(typeof(bool), "bool")]
-        [InlineData(typeof(string), "string")]
-        public void BuildIns(Type type, string expected)
+        private readonly ITypeTranslator _translator;
+
+        public TypeNameTemplateTests()
         {
+            _translator = new TypeTranslator(DefinitionProvider);
+        }
+
+        [Theory]
+        [InlineData("System.SByte", "sbyte")]
+        [InlineData("System.Int16", "short")]
+        [InlineData("System.Int32", "int")]
+        [InlineData("System.Int64", "long")]
+        [InlineData("System.Byte", "byte")]
+        [InlineData("System.UInt16", "ushort")]
+        [InlineData("System.UInt32", "uint")]
+        [InlineData("System.UInt64", "ulong")]
+        [InlineData("System.Single", "float")]
+        [InlineData("System.Double", "double")]
+        [InlineData("System.Char", "char")]
+        [InlineData("System.Boolean", "bool")]
+        [InlineData("System.String", "string")]
+        public void BuildIns(string fullTypeName, string expected)
+        {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(typeof(UriFormat), "UriFormat")]
-        [InlineData(typeof(ResolveEventArgs), "ResolveEventArgs")]
-        public void NormalNonGenericTypes(Type type, string expected)
+        [InlineData("System.UriFormat", "UriFormat")]
+        [InlineData("System.ResolveEventArgs", "ResolveEventArgs")]
+        public void NormalNonGenericTypes(string fullTypeName, string expected)
         {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(typeof(int[]), "int[]")]
-        [InlineData(typeof(ResolveEventArgs[]), "ResolveEventArgs[]")]
-        public void ArrayTypes(Type type, string expected)
+        [InlineData("System.Int32[]", "int[]")]
+        [InlineData("System.ResolveEventArgs[]", "ResolveEventArgs[]")]
+        public void ArrayTypes(string fullTypeName, string expected)
         {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(typeof(List<int>), "List<int>")]
-        [InlineData(typeof(Dictionary<int, string>), "Dictionary<int, string>")]
-        public void SimpleGenericTypes(Type type, string expected)
+        [InlineData("System.Collections.Generic.List`1<System.Int32>", "List<int>")]
+        [InlineData("System.Collections.Generic.Dictionary`2<System.Int32,System.String>", "Dictionary<int, string>")]
+        public void SimpleGenericTypes(string fullTypeName, string expected)
         {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(typeof(List<Dictionary<int, Uri>>), "List<Dictionary<int, Uri>>")]
-        [InlineData(typeof(Dictionary<int, List<string>>), "Dictionary<int, List<string>>")]
-        public void NestedGenericTypes(Type type, string expected)
+        [InlineData("System.Collections.Generic.List`1<System.Collections.Generic.Dictionary`2<System.Int32, System.Uri>>", "List<Dictionary<int, Uri>>")]
+        [InlineData("System.Collections.Generic.Dictionary`2<System.Int32, System.Collections.Generic.List`1<System.String>>", "Dictionary<int, List<string>>")]
+        public void NestedGenericTypes(string fullTypeName, string expected)
         {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(typeof(List<Dictionary<int, Uri[]>>), "List<Dictionary<int, Uri[]>>")]
-        [InlineData(typeof(Dictionary<int, List<string>>[]), "Dictionary<int, List<string>>[]")]
-        public void ArrayGenericMixedTypes(Type type, string expected)
+        [InlineData("System.Collections.Generic.List`1<System.Collections.Generic.Dictionary`2<System.Int32,System.Uri[]>>", "List<Dictionary<int, Uri[]>>")]
+        [InlineData("System.Collections.Generic.Dictionary`2<System.Int32,System.Collections.Generic.List`1<System.String>>[]", "Dictionary<int, List<string>>[]")]
+        public void ArrayGenericMixedTypes(string fullTypeName, string expected)
         {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }
 
         //[Theory(Skip = "Still problem with nested types - buffer overflow!!!")]
         [Theory]
-        [InlineData(typeof(TopLevel.SubLevel), "TypeNameTemplateTests.TopLevel.SubLevel")]
-        [InlineData(typeof(TopLevel.GenericSubLevel<int>), "TypeNameTemplateTests.TopLevel.GenericSubLevel<int>")]
-        //[InlineData(typeof(GenericTopLevel<double>.SubLevel), "TypeNameTemplateTests.GenericTopLevel<double>.SubLevel")]
-        //[InlineData(typeof(GenericTopLevel<List<double>>.GenericSubLevel<int>), "TypeNameTemplateTests.GenericTopLevel<List<double>>.GenericSubLevel<int>")]
-        public void Nestedtypes(Type type, string expected)
+        [InlineData("dnWalker.TestGenerator.Tests.Templates.TopLevel/SubLevel", "TopLevel.SubLevel")]
+        [InlineData("dnWalker.TestGenerator.Tests.Templates.TopLevel/GenericSubLevel`1<System.Int32>", "TopLevel.GenericSubLevel<int>")]
+        public void Nestedtypes(string fullTypeName, string expected)
         {
+            TypeSignature type = _translator.FromString(fullTypeName);
             string result = new TypeNameTemplateTest(type).TransformText().Trim();
             result.Should().Be(expected);
         }

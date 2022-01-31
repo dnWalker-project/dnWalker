@@ -1,4 +1,5 @@
 ﻿using dnWalker.Tests.ExampleTests;
+using dnWalker.TypeSystem;
 
 using MMC;
 
@@ -18,7 +19,7 @@ namespace dnWalker.Tests.InterpreterTests
         //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
         protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\framework\Examples.Framework.exe";
 
-        protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(TestBase.GetAssemblyLoader(AssemblyFilePath)));
+        protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
 
         public ExamplesInterpreterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LazyDefinitionProvider.Value)
         {

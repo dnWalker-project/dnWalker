@@ -7,6 +7,32 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.Tests.Templates
 {
+    public class TopLevel
+    {
+        public class SubLevel
+        {
+        }
+
+        public class GenericSubLevel<T>
+        {
+
+        }
+    }
+
+    public class GenericTopLevel<TTop>
+    {
+        public class SubLevel
+        {
+
+        }
+
+        public class GenericSubLevel<TSub>
+        {
+
+        }
+    }
+
+
     internal class TestClass
     {
         public static void StaticNonGenericMethodWithPositionalAndOptionalArguments(int index, string message = null)

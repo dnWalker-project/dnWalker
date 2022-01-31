@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="dnlib" Version="3.4.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="QuikGraph" Version="2.3.0" />
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
@@ -24,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
+    <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,11 +37,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TemplateBase.tt</DependentUpon>
-    </Compile>
-    <Compile Update="XUnit\XUnitTestClassTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
     </Compile>
     <Compile Update="XUnit\XUnitTestProjectTemplate.tt.cs">
       <DesignTime>True</DesignTime>
@@ -75,10 +72,6 @@
     <None Update="Templates\TemplateBase.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TemplateBase.cs</LastGenOutput>
-    </None>
-    <None Update="XUnit\XUnitTestClassTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
     </None>
     <None Update="XUnit\XUnitTestProjectTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +11,11 @@ namespace dnWalker.Parameters
     internal class MethodResolverImplementation : IMethodResolver
     {
         private readonly ParameterRef _ownerRef;
-        private readonly IParameterContext _context;
+        private readonly IParameterSet _context;
 
         private readonly Dictionary<MethodSignature, ParameterRef[]> _results = new Dictionary<MethodSignature, ParameterRef[]>();
 
-        public MethodResolverImplementation(ParameterRef ownerRef, IParameterContext context)
+        public MethodResolverImplementation(ParameterRef ownerRef, IParameterSet context)
         {
             _ownerRef = ownerRef;
             _context = context;
@@ -76,7 +78,7 @@ namespace dnWalker.Parameters
             }
             else
             {
-                //throw new Exception("Trying to set method result with an unknown parameter!");
+                throw new Exception("Trying to set method result with an unknown parameter!");
             }
         }
 

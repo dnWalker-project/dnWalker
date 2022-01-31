@@ -59,6 +59,6 @@ namespace dnWalker.Parameters.Expressions
             return expression != null;
         }
 
-        public abstract void ApplyTo(IParameterContext ctx, object value);
+        public abstract void ApplyTo(IParameterSet ctx, object value);
     }
 }

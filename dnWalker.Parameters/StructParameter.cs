@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,16 +13,14 @@ namespace dnWalker.Parameters
     {
         private readonly FieldOwnerImplementation _fields;
 
-        internal StructParameter(IParameterContext context, string type) : base(context)
+        internal StructParameter(IParameterSet set, TypeSignature type) : base(set, type)
         {
-            _fields = new FieldOwnerImplementation(Reference, Context);
-            Type = type;
+            _fields = new FieldOwnerImplementation(Reference, Set);
         }
 
-        internal StructParameter(IParameterContext context, ParameterRef reference, string type) : base(context, reference)
+        internal StructParameter(IParameterSet set, TypeSignature type, ParameterRef reference) : base(set, type, reference)
         {
-            _fields = new FieldOwnerImplementation(Reference, Context);
-            Type = type;
+            _fields = new FieldOwnerImplementation(Reference, Set);
         }
 
 
@@ -46,14 +46,9 @@ namespace dnWalker.Parameters
         }
         #endregion IFieldOwner Members
 
-        public string Type
+        public override StructParameter CloneData(IParameterSet newContext)
         {
-            get;
-        }
-
-        public override StructParameter CloneData(IParameterContext newContext)
-        {
-            StructParameter structParameter = new StructParameter(newContext, Reference, Type);
+            StructParameter structParameter = new StructParameter(newContext, Type, Reference);
             _fields.CopyTo(structParameter._fields);
 
             //structParameter.Accessor = Accessor?.Clone();
@@ -74,14 +69,14 @@ namespace dnWalker.Parameters
 
     public static partial class ParameterContextExtensions
     {
-        public static IStructParameter CreateStructParameter(this IParameterContext context, string type)
+        public static IStructParameter CreateStructParameter(this IParameterSet context, TypeSignature type)
         {
-            return CreateStructParameter(context, ParameterRef.Any, type);
+            return CreateStructParameter(context, type, context.GetParameterRef());
         }
 
-        public static IStructParameter CreateStructParameter(this IParameterContext context, ParameterRef reference, string type)
+        public static IStructParameter CreateStructParameter(this IParameterSet context, TypeSignature type, ParameterRef reference)
         {
-            StructParameter parameter = new StructParameter(context, reference, type);
+            StructParameter parameter = new StructParameter(context, type, reference);
 
             context.Parameters.Add(parameter.Reference, parameter);
 

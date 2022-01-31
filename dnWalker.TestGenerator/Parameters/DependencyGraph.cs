@@ -54,16 +54,16 @@ namespace dnWalker.TestGenerator.Parameters
 
     public class DependencyGraph
     {
-        private readonly IReadOnlyParameterContext _context;
+        private readonly IReadOnlyParameterSet _context;
         private readonly AdjacencyGraph<Dependency, Edge<Dependency>> _graph;
 
-        private DependencyGraph(IReadOnlyParameterContext context, AdjacencyGraph<Dependency, Edge<Dependency>> graph) 
+        private DependencyGraph(IReadOnlyParameterSet context, AdjacencyGraph<Dependency, Edge<Dependency>> graph) 
         {
             _context = context;
             _graph = graph;
         }
 
-        public static DependencyGraph Build(IReadOnlyParameterContext context)
+        public static DependencyGraph Build(IReadOnlyParameterSet context)
         {
 
             Dictionary<ParameterRef, Dependency> lookup = context.Parameters

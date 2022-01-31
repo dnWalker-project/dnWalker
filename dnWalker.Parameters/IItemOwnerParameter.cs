@@ -54,7 +54,7 @@ namespace dnWalker.Parameters
         public static bool TryGetItem(this IItemOwnerParameter itemOwner, int index, [NotNullWhen(true)] out IParameter? parameter)
         {
             if (itemOwner.TryGetItem(index, out ParameterRef reference) &&
-                reference.TryResolve(itemOwner.Context, out parameter))
+                reference.TryResolve(itemOwner.Set, out parameter))
             {
                 return true;
             }
@@ -67,7 +67,7 @@ namespace dnWalker.Parameters
             where TParameter : class, IParameter
         {
             if (itemOwner.TryGetItem(index, out ParameterRef reference) &&
-                reference.TryResolve(itemOwner.Context, out parameter))
+                reference.TryResolve(itemOwner.Set, out parameter))
             {
                 return true;
             }
@@ -87,7 +87,7 @@ namespace dnWalker.Parameters
             IParameter?[] items = new IParameter[refs.Length];
 
             int i = 0;
-            foreach (IParameter? p in refs.Select(r => r.Resolve(itemOwner.Context)))
+            foreach (IParameter? p in refs.Select(r => r.Resolve(itemOwner.Set)))
             {
                 items[i] = p;
                 ++i;

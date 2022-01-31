@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace dnWalker.Parameters
     public interface IParameter
     {
 
-        IParameterContext Context { get; }
+        IParameterSet Set { get; }
 
         ParameterRef Reference { get; }
 
@@ -19,14 +21,14 @@ namespace dnWalker.Parameters
         /// </summary>
         /// <param name="newContext"></param>
         /// <returns></returns>
-        IParameter CloneData(IParameterContext newContext);
+        IParameter CloneData(IParameterSet newContext);
 
         /// <summary>
         /// Clones data and the accessors.
         /// </summary>
         /// <param name="newContext"></param>
         /// <returns></returns>
-        public IParameter Clone(IParameterContext newContext)
+        public IParameter Clone(IParameterSet newContext)
         {
             IParameter clone = CloneData(newContext);
             foreach (var a in this.Accessors)
@@ -37,6 +39,8 @@ namespace dnWalker.Parameters
         }
 
         IList<ParameterAccessor> Accessors { get; }
+
+        TypeSignature Type { get; }
     }
 
     public static class ParameterExtensions
@@ -63,7 +67,7 @@ namespace dnWalker.Parameters
         {
             HasAccessor(parameter, out FieldParameterAccessor[] fieldAccessors);
             
-            fieldOwners = fieldAccessors.Select(fa => fa.ParentRef.Resolve<IFieldOwnerParameter>(parameter.Context)!).ToArray();
+            fieldOwners = fieldAccessors.Select(fa => fa.ParentRef.Resolve<IFieldOwnerParameter>(parameter.Set)!).ToArray();
             fieldNames = fieldAccessors.Select(fa => fa.FieldName).ToArray();
 
             return fieldAccessors.Length > 0;
@@ -84,7 +88,7 @@ namespace dnWalker.Parameters
         {
             HasAccessor(parameter, out ItemParameterAccessor[] itemAccessors);
 
-            itemOwners = itemAccessors.Select(ia => ia.ParentRef.Resolve<IItemOwnerParameter>(parameter.Context)!).ToArray();
+            itemOwners = itemAccessors.Select(ia => ia.ParentRef.Resolve<IItemOwnerParameter>(parameter.Set)!).ToArray();
             indeces = itemAccessors.Select(ia => ia.Index).ToArray();
 
             return itemAccessors.Length > 0;
@@ -107,7 +111,7 @@ namespace dnWalker.Parameters
         {
             HasAccessor(parameter, out MethodResultParameterAccessor[] methodResultAccessors);
 
-            methodResolvers = methodResultAccessors.Select(mr => mr.ParentRef.Resolve<IMethodResolverParameter>(parameter.Context)!).ToArray();
+            methodResolvers = methodResultAccessors.Select(mr => mr.ParentRef.Resolve<IMethodResolverParameter>(parameter.Set)!).ToArray();
             methodSignatures = methodResultAccessors.Select(mr => mr.MethodSignature).ToArray();
             invocations = methodResultAccessors.Select(mr => mr.Invocation).ToArray();
 
@@ -135,7 +139,7 @@ namespace dnWalker.Parameters
             //return parameter.Accessor.GetAccessString(parameter.Context);
 
             // build access string for all accessor and pick the shortest non empty one
-            IEnumerable<string> accessStrings = parameter.Accessors.Select(a => a.GetAccessString(parameter.Context)).Where(s => !string.IsNullOrWhiteSpace(s));
+            IEnumerable<string> accessStrings = parameter.Accessors.Select(a => a.GetAccessString(parameter.Set)).Where(s => !string.IsNullOrWhiteSpace(s));
 
             string shortest = "";
             int lenght = int.MaxValue;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,6 @@ namespace dnWalker.Parameters
 {
     public interface IArrayParameter : IReferenceTypeParameter, IItemOwnerParameter
     {
-        string ElementType { get; }
+        TypeSignature ElementType { get; }
     }
 }

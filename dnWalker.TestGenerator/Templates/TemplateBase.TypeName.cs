@@ -1,4 +1,8 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,34 +12,34 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        protected void WriteTypeName(Type type)
+        protected void WriteTypeName(TypeSignature type)
         {
-            if (type.IsNested)
+            if (type.IsNested) // i.a. is nested
             {
-                WriteTypeName(type.DeclaringType ?? throw new Exception("Could not access the nested element declaring type."));
+                WriteTypeName(type.DeclaringType);
                 Write(TemplateHelpers.Dot);
             }
 
-            if (type.IsArray)
+            if (type.IsSZArray || type.IsArray)
             {
-                type = type.GetElementType() ?? throw new Exception("Could not access the array element type.");
+                type = type.ElementType;
                 WriteTypeName(type);
                 Write("[]");
             }
-            else if (type.IsGenericType)
+            else if (type.IsGenericInstance)
             {
                 Write(TemplateHelpers.WithoutGenerics(TemplateHelpers.GetTypeNameOrAlias(type)));
                 Write("<");
 
-                Type[] genericArgs = type.GetGenericArguments();
-                if (genericArgs.Length >= 1)
+                TypeSignature[] genericParams = type.GetGenericParameters();
+                if (genericParams.Length >= 1)
                 {
-                    WriteTypeName(genericArgs[0]);
+                    WriteTypeName(genericParams[0]);
 
-                    for (int i = 1; i < genericArgs.Length; ++i)
+                    for (int i = 1; i < genericParams.Length; ++i)
                     {
                         Write(TemplateHelpers.Coma);
-                        WriteTypeName(genericArgs[i]);
+                        WriteTypeName(genericParams[i]);
                     }
                 }
 
@@ -45,6 +49,13 @@ namespace dnWalker.TestGenerator.Templates
             {
                 Write(TemplateHelpers.GetTypeNameOrAlias(type));
             }
+        }
+
+        protected void WriteMockTypeName(TypeSignature type)
+        {
+            Write("Mock<");
+            WriteTypeName(type);
+            Write(">");
         }
     }
 }

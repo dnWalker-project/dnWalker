@@ -2989,7 +2989,7 @@ namespace MMC.Data
 
         public IAddElement Add(INumericElement a, bool checkOverflow)
         {
-            var ac = cur.StaticArea.GetClass(m_type);
+            AllocatedClass ac = cur.StaticArea.GetClass(m_type);
             /*
 			 * Note: the offset added to this pointer is in the amount of bytes.
 			 * The offset is dependent on the size of the datatype of the fields.
@@ -3008,15 +3008,15 @@ namespace MMC.Data
 			 * 
 			 * BTW, we only do (and allow) this to pass a few more Microsoft's IL_BVT tests :)
 			 */
-            var i = 0;
-            var byteOffset = a.ToInt4(false).Value;
+            int i = 0;
+            int byteOffset = a.ToInt4(false).Value;
 
-            var typeDef = DefinitionProvider.GetTypeDefinition(ac.Type);
-            foreach (var fld in typeDef.Fields)
+            TypeDef typeDef = ac.Type.ResolveTypeDefThrow();
+            foreach (FieldDef fld in typeDef.Fields)
             {
                 if (i >= fld.FieldOffset)
                 {
-                    byteOffset -= cur.DefinitionProvider.SizeOf(fld.FieldType.FullName);
+                    byteOffset -= cur.DefinitionProvider.SizeOf(fld.FieldType);
                 }
 
                 i++;

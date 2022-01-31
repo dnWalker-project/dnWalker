@@ -1,4 +1,6 @@
 ﻿using dnWalker.DataElements;
+using dnWalker.TypeSystem;
+
 using FluentAssertions;
 using MMC;
 using MMC.Data;
@@ -43,11 +45,11 @@ namespace dnWalker.Tests
 
         public ITestOutputHelper Output { get; }
 
-        public DefinitionProvider DefinitionProvider { get; }
+        public IDefinitionProvider DefinitionProvider { get; }
         public Logger Logger { get; }
 
         //private TextWriter _originalConsoleOut;
-        protected TestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider)
+        protected TestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider)
         {
             //var converter = new Converter(testOutputHelper);
             //_originalConsoleOut = Console.Out;
@@ -64,17 +66,26 @@ namespace dnWalker.Tests
             //Console.SetOut(_originalConsoleOut);
         }
 
-        public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
+        //public static AssemblyLoader GetAssemblyLoader(string assemblyFilename)
+        //{
+        //    var assemblyLoader = new AssemblyLoader();
+
+        //    var data = File.ReadAllBytes(assemblyFilename);
+
+        //    var moduleDef = assemblyLoader.GetModuleDef(data);
+
+        //    Assembly.LoadFrom(assemblyFilename);
+
+        //    return assemblyLoader;
+        //}
+
+        public static IDomain GetDefinitionContext(string assemblyFileName)
         {
-            var assemblyLoader = new AssemblyLoader();
+            IDomain definitionContext = Domain.LoadFromFile(assemblyFileName);
 
-            var data = File.ReadAllBytes(assemblyFilename);
+            Assembly.LoadFrom(assemblyFileName);
 
-            var moduleDef = assemblyLoader.GetModuleDef(data);
-
-            Assembly.LoadFrom(assemblyFilename);
-
-            return assemblyLoader;
+            return definitionContext;
         }
 
         private static readonly ISolver _solver = new Z3.Solver();

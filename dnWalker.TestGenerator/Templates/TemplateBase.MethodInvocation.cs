@@ -1,4 +1,8 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,20 +15,19 @@ namespace dnWalker.TestGenerator.Templates
     {
         protected void WriteStaticMethodInvocation(MethodInvocationData data)
         {
-            MethodInfo method = data.Method;
-            Type declaringType = method.DeclaringType ?? throw new Exception("Cannot access the declaring type!");
+            MethodSignature method = data.Method;
 
-            WriteTypeName(declaringType);
+            WriteTypeName(method.DeclaringType);
 
             Write(TemplateHelpers.Dot);
 
-            if (method.IsGenericMethod)
+            if (method.IsGenericInstance)
             {
-                Type[] genericParameters = method.GetGenericArguments();
+                TypeSignature[] genericParameters = method.GetGenericParameters();
                 Write(method.Name);
                 Write("<");
 
-                WriteJoint(TemplateHelpers.Coma, genericParameters, WriteTypeName);
+                WriteJoined(TemplateHelpers.Coma, genericParameters, WriteTypeName);
 
                 Write(">");
             }
@@ -37,7 +40,7 @@ namespace dnWalker.TestGenerator.Templates
 
             if (data.Arguments.Length > 0)
             {
-                WriteJoint(TemplateHelpers.Coma, data.Arguments, a => Write(a.Expression));
+                WriteJoined(TemplateHelpers.Coma, data.Arguments, a => Write(a.Expression));
             }
 
             Write(")");
@@ -45,19 +48,19 @@ namespace dnWalker.TestGenerator.Templates
 
         protected void WriteInstanceMethodInvocation(MethodInvocationData data)
         {
-            MethodInfo method = data.Method;
+            MethodSignature method = data.Method;
 
             Write(data.Instance);
 
             Write(TemplateHelpers.Dot);
 
-            if (method.IsGenericMethod)
+            if (method.IsGenericInstance)
             {
-                Type[] genericParameters = method.GetGenericArguments();
+                TypeSignature[] genericParameters = method.GetGenericParameters();
                 Write(method.Name);
                 Write("<");
 
-                WriteJoint(TemplateHelpers.Coma, genericParameters, WriteTypeName);
+                WriteJoined(TemplateHelpers.Coma, genericParameters, WriteTypeName);
 
                 Write(">");
             }
@@ -70,7 +73,7 @@ namespace dnWalker.TestGenerator.Templates
 
             if (data.Arguments.Length > 0)
             {
-                WriteJoint(TemplateHelpers.Coma, data.Arguments, a => Write(a.Expression));
+                WriteJoined(TemplateHelpers.Coma, data.Arguments, a => Write(a.Expression));
             }
 
             Write(")");

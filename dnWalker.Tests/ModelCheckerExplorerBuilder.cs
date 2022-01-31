@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Traversal;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.Data;
@@ -18,13 +19,13 @@ namespace dnWalker.Tests
     public class ModelCheckerExplorerBuilder : ConfigBuilder<IModelCheckerExplorerBuilder>, IModelCheckerExplorerBuilder
     {
         private Func<Logger> _provideLogger;
-        private Func<DefinitionProvider> _provideDefinitionProvider;
+        private Func<IDefinitionProvider> _provideDefinitionProvider;
         private Func<IStatistics> _provideStatistics;
 
         private string _methodName;
         private Func<ExplicitActiveState, IDataElement[]> _provideArgs = (cur) => Array.Empty<IDataElement>();
 
-        public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<DefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
+        public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
         {
             _provideLogger = provideLogger ?? throw new ArgumentNullException(nameof(provideLogger));
             _provideDefinitionProvider = provideDefinitionProvider ?? throw new ArgumentNullException(nameof(provideDefinitionProvider));
@@ -39,7 +40,7 @@ namespace dnWalker.Tests
             return this;
         }
 
-        public IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> provideDefinitionProvider)
+        public IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> provideDefinitionProvider)
         {
             _provideDefinitionProvider = provideDefinitionProvider ?? throw new ArgumentNullException(nameof(_provideDefinitionProvider));
             return this;
@@ -58,7 +59,7 @@ namespace dnWalker.Tests
                 throw new InvalidOperationException("Cannot initialize the ModelChecker without method name!");
             }
 
-            DefinitionProvider definitionProvider = _provideDefinitionProvider();
+            IDefinitionProvider definitionProvider = _provideDefinitionProvider();
 
             Logger logger = _provideLogger();
 

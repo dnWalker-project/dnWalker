@@ -1,4 +1,5 @@
 ﻿using dnWalker.Parameters;
+using dnWalker.Parameters.Serialization.Xml;
 using dnWalker.Parameters.Xml;
 
 using System;
@@ -100,10 +101,12 @@ namespace dnWalker.Concolic
 
         private void OnIterationStarted(object sender, IterationStartedEventArgs e)
         {
+            XmlSerializer serializer = new XmlSerializer();
+
             _currentIterationElement = new XElement("Iteration");
             _currentIterationElement.SetAttributeValue("Number", e.IterationNmber);
 
-            _currentIterationElement.Add(new XElement("StartingState", e.ParameterStore.BaseContext.ToXml()));
+            _currentIterationElement.Add(serializer.ToXml(e.ParameterStore.BaseSet));
 
 
             _currentExplorationElement.Add(_currentIterationElement);
@@ -113,7 +116,9 @@ namespace dnWalker.Concolic
 
         private void OnIterationFinished(object sender, IterationFinishedEventArgs e)
         {
-            _currentIterationElement.Add(new XElement("EndingState", e.ParameterStore.ExecutionContext.ToXml()));
+            XmlSerializer serializer = new XmlSerializer();
+
+            _currentIterationElement.Add(serializer.ToXml(e.ParameterStore.ExecutionSet));
 
             SaveData();
         }

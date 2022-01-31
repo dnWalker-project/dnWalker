@@ -25,10 +25,11 @@ namespace MMC
     using dnWalker;
     using System.Linq;
     using dnWalker.Instructions.Extensions;
+    using dnWalker.TypeSystem;
 
     public class StateSpaceSetup
     {
-        private readonly DefinitionProvider _definitionProvider;
+        private readonly IDefinitionProvider _definitionProvider;
         private readonly IConfig _config;
         private readonly Logger _logger;
 
@@ -57,17 +58,11 @@ namespace MMC
         //
         // Nice.
 
-        public StateSpaceSetup(DefinitionProvider definitionProvider, IConfig config, Logger logger)
+        public StateSpaceSetup(IDefinitionProvider definitionProvider, IConfig config, Logger logger)
         {
             _definitionProvider = definitionProvider;
             _config = config;
             _logger = logger;
-        }
-
-        public ExplicitActiveState CreateInitialState(MethodDef entryPoint, IArg[] arguments = null)
-        {
-            var args = arguments?.Select(a => a.AsDataElement(_definitionProvider)).ToArray() ?? new IDataElement[] { };
-            return CreateInitialState(entryPoint, args);
         }
 
 
@@ -168,6 +163,9 @@ namespace MMC
             //   on Windows, using Mono 1.1.15, and when running without debug mode, the field
             //   names are different for some reason.
 
+            TypeDef objectTypeDef = cur.DefinitionProvider.BaseTypes.Object.TypeDef;
+            TypeDef threadTypeDef = cur.DefinitionProvider.BaseTypes.Thread.TypeDef;
+
             // 1
             var mainMethodPtr = new MethodPointer(mainDefinition);
             var mainMethodDelegate = cur.DynamicArea.AllocateDelegate(
@@ -178,7 +176,7 @@ namespace MMC
             // 2
             var threadObjectRef = cur.DynamicArea.AllocateObject(
                 cur.DynamicArea.DeterminePlacement(false),
-                cur.DefinitionProvider.GetTypeDefinition("System.Threading.Thread"));
+                threadTypeDef);
 
             var threadObject =
                 cur.DynamicArea.Allocations[threadObjectRef] as AllocatedObject;
@@ -187,14 +185,14 @@ namespace MMC
             // Note from corlib Thread.cs sources:
             // Don't lock on synch_lock in managed code, since it can result in deadlocks
             // What? Oh well, we'll just do what Mono does.
-            var synch_lockField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "synch_lock");
+            var synch_lockField = threadTypeDef.GetField("synch_lock");
 
             if (synch_lockField != null)
             {
                 // Simply skip if not found.
                 var newObjectRef = cur.DynamicArea.AllocateObject(
                     cur.DynamicArea.DeterminePlacement(false),
-                    cur.DefinitionProvider.GetTypeDefinition("System.Object"));
+                    objectTypeDef);
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
                 // TODO: HV for maintaining the parents references in the incremental heap visitor
                 //cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
@@ -207,7 +205,7 @@ namespace MMC
 
             // 2c
             // In Microsoft's .NET, the delegate is stored in m_Delegate
-            var threadstartField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "threadstart");
+            var threadstartField = threadTypeDef.GetField("threadstart");
             if (threadstartField != null)
             {
                 threadObject.Fields[(int)threadstartField.FieldOffset] = mainMethodDelegate;
@@ -219,7 +217,7 @@ namespace MMC
                 logger.Warning("No thread field found for storing Main delegate!");
 
             // 3
-            var stateField = cur.DefinitionProvider.GetFieldDefinition("System.Threading.Thread", "state");
+            var stateField = threadTypeDef.GetField("state");
 
             if (stateField == null)
             {

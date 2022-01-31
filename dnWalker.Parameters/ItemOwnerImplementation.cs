@@ -10,11 +10,11 @@ namespace dnWalker.Parameters
     internal class ItemOwnerImplementation : IItemOwner
     {
         private readonly ParameterRef _ownerRef;
-        private readonly IParameterContext _context;
+        private readonly IParameterSet _context;
 
         private ParameterRef[] _items = ParameterRef.EmptyArray;
 
-        public ItemOwnerImplementation(ParameterRef ownerRef, IParameterContext context)
+        public ItemOwnerImplementation(ParameterRef ownerRef, IParameterSet context)
         {
             _ownerRef = ownerRef;
             _context = context;

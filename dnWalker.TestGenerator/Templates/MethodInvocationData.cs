@@ -1,8 +1,11 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,10 +35,10 @@ namespace dnWalker.TestGenerator.Templates
     public class MethodInvocationData
     {
 
-        private MethodInvocationData(MethodInfo method, string? instance, MethodArgument[]? arguments = null)
+        private MethodInvocationData(MethodSignature method, string? instance, MethodArgument[]? arguments = null)
         {
             Instance = instance;
-            Method = method ?? throw new ArgumentNullException(nameof(method));
+            Method = method;
             Arguments = arguments ?? Array.Empty<MethodArgument>();
         }
 
@@ -45,37 +48,32 @@ namespace dnWalker.TestGenerator.Templates
         /// </summary>
         public string? Instance { get; }
 
-        public MethodInfo Method { get; }
+        public MethodSignature Method { get; }
 
         public MethodArgument[] Arguments { get; }
 
 
         public class Builder
         {
-            private readonly MethodInfo _method;
+            private readonly MethodSignature _method;
             private readonly string? _instance;
 
             private readonly List<string> _positional = new List<string>();
             private readonly Dictionary<string, string> _optional = new Dictionary<string, string>();
 
-            private Builder(MethodInfo method, string? instance)
+            private Builder(MethodSignature method, string? instance)
             {
-                _method = method ?? throw new ArgumentNullException(nameof(method));
+                _method = method;
                 _instance = instance;
             }
 
-            public static Builder GetStatic(MethodInfo method)
+            public static Builder GetStatic(MethodSignature method)
             {
                 return new Builder(method, null);
             }
 
-            public static Builder GetInstance(MethodInfo method, string instance)
+            public static Builder GetInstance(MethodSignature method, string instance)
             {
-                if (method is null)
-                {
-                    throw new ArgumentNullException(nameof(method));
-                }
-
                 if (string.IsNullOrWhiteSpace(instance))
                 {
                     throw new ArgumentException($"'{nameof(instance)}' cannot be null or whitespace.", nameof(instance));

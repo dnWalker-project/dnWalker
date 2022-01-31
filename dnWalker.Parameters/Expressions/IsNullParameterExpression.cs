@@ -20,7 +20,7 @@ namespace dnWalker.Parameters.Expressions
             }
         }
 
-        public override void ApplyTo(IParameterContext ctx, object value)
+        public override void ApplyTo(IParameterSet ctx, object value)
         {
             bool? isNull = value as bool?;
 
