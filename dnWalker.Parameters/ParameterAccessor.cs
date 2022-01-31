@@ -103,7 +103,7 @@ namespace dnWalker.Parameters
         public override string GetAccessString(IParameterSet context)
         {
             context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
-            return $"{parent?.GetAccessString() ?? string.Empty}.{MethodSignature.Method.Name}({string.Join(',', MethodSignature.Method.MethodSig.Params.Select(p => p.FullName))})|{Invocation}|";
+            return $"{parent?.GetAccessString() ?? string.Empty}.{MethodSignature.Name}({string.Join(',', MethodSignature.Parameters.Select(p => p.FullName))})|{Invocation}|";
 
         }
 

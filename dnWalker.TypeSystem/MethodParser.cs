@@ -82,13 +82,13 @@ namespace dnWalker.TypeSystem
                     if (VerifyGenericSignature(method.MethodSig, methodParams, declTypeGenParams, methodGenParams))
                     {
                         // get method reference of the declaring type generic instance
-                        IMethod methodRef = new MemberRefUser(_definitionProvider.Context.MainModule, methodName, method.MethodSig, declType);
+                        IMethodDefOrRef methodRef = new MemberRefUser(_definitionProvider.Context.MainModule, methodName, method.MethodSig, declType);
 
                         if (methodGenParams.Length > 0)
                         {
                             // create generic instantiation of the method reference
                             GenericInstMethodSig genericMethodSig = new GenericInstMethodSig(methodGenParams);
-                            methodRef = new MethodSpecUser((IMethodDefOrRef)methodRef, genericMethodSig);
+                            return new MethodSpecUser(methodRef, genericMethodSig);
                         }
                         return methodRef;
                     }

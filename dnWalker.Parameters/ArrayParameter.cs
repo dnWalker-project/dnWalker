@@ -15,12 +15,12 @@ namespace dnWalker.Parameters
     {
         private ItemOwnerImplementation _items;
 
-        internal ArrayParameter(IParameterSet set, TypeSignature elementType) : base(set, elementType.MakeArray())
+        internal ArrayParameter(IParameterSet set, TypeSignature elementType) : base(set, elementType.CreateArray())
         {
             ElementType = elementType;
             _items = new ItemOwnerImplementation(Reference, Set);
         }
-        internal ArrayParameter(IParameterSet set, TypeSignature elementType, ParameterRef reference) : base(set, elementType.MakeArray(), reference)
+        internal ArrayParameter(IParameterSet set, TypeSignature elementType, ParameterRef reference) : base(set, elementType.CreateArray(), reference)
         {
             ElementType = elementType;
             _items = new ItemOwnerImplementation(Reference, Set);

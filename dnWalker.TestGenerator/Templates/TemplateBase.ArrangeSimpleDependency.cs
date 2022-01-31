@@ -1,11 +1,12 @@
-﻿using dnWalker.Parameters;
+﻿using dnlib.DotNet;
+
+using dnWalker.Parameters;
 using dnWalker.TestGenerator.Parameters;
-using dnWalker.TestGenerator.Reflection;
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace dnWalker.TestGenerator.Templates
         protected void WriteArrangeSimpleDepencency(SimpleDependency simpleDependency)
         {
             string varName = GetVariableName(simpleDependency.Parameter);
-            Type varType = GetVariableType(simpleDependency.Parameter);
+            TypeSignature varType = GetVariableType(simpleDependency.Parameter);
 
             IParameter p = simpleDependency.Parameter;
 
@@ -25,7 +26,7 @@ namespace dnWalker.TestGenerator.Templates
                 WriteVariableDeclaration(varType, varName);
                 Write(" = ");
 
-                Write(GetExpression(pp, varType));
+                Write(GetExpression(pp));
                 WriteLine(TemplateHelpers.Semicolon);
             }
             else if (p is IArrayParameter ap)
@@ -39,7 +40,7 @@ namespace dnWalker.TestGenerator.Templates
                 }
                 else
                 {
-                    Type elementType = varType.GetElementType() ?? throw new Exception("Could get the array element type");
+                    TypeSignature elementType = ap.ElementType.ElementType;
 
                     WriteVariableDeclaration(varType, varName);
                     Write(" = ");
@@ -53,7 +54,7 @@ namespace dnWalker.TestGenerator.Templates
                     if (ap.GetLength() > 0)
                     {
                         Write(" { ");
-                        WriteJoint(TemplateHelpers.Coma, ap.GetItems().Select(r => GetExpression(r.Resolve(ap.Context) ?? throw new Exception("Could not resolve the parameter."), elementType)), Write);
+                        WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
                         Write(" }");
                     }
                 }
@@ -88,21 +89,24 @@ namespace dnWalker.TestGenerator.Templates
                     string mockVarName = "mock_" + varName;
 
                     // initialize the mock variable
-                    Type mockType = typeof(Moq.Mock<>).MakeGenericType(varType);
-                    WriteVariableDeclaration(mockType, mockVarName);
+                    WriteMockTypeName(varType);
+                    Write(" ");
+                    Write(mockVarName);
                     Write(" = new ");
-                    WriteTypeName(mockType);
+                    WriteMockTypeName(varType);
                     Write("()"); // TODO: supply with arguments needed for non parameterless constructor
                     WriteLine(TemplateHelpers.Semicolon);
 
                     // do the set-up
                     foreach (KeyValuePair<MethodSignature, ParameterRef[]> resultInfo in methodResults)
                     {
-                        MethodInfo method = varType.GetMethodFromSignature(resultInfo.Key) ?? throw new Exception($"Could not find the method.");
+                        MethodSignature method = resultInfo.Key;
 
-                        string methodName = resultInfo.Key.MethodName;
+                        TypeSignature[] genericParameters = method.GetGenericParameters();
 
-                        Type returnType = method.ReturnType;
+                        string methodName = method.Name;
+
+                        TypeSignature returnType = method.ReturnType;
                         string defaultExpr = TemplateHelpers.GetDefaultLiteral(returnType);
 
                         string[] resultExprs = resultInfo.Value
@@ -115,8 +119,8 @@ namespace dnWalker.TestGenerator.Templates
                                 }
                                 else
                                 {
-                                    IParameter rp = r.Resolve(op.Context) ?? throw new Exception($"Could not resolve the parameter.");
-                                    return GetExpression(rp, returnType);
+                                    IParameter rp = r.Resolve(op.Set) ?? throw new Exception($"Could not resolve the parameter.");
+                                    return GetExpression(rp);
                                 }
                             })
                             .ToArray();
@@ -126,11 +130,18 @@ namespace dnWalker.TestGenerator.Templates
                         Write(mockVarName);
                         Write(".SetupSequence(o => o.");
                         Write(methodName);
+
+                        if (genericParameters.Count() > 0)
+                        {
+                            Write("<");
+                            WriteJoined(TemplateHelpers.Coma, genericParameters, WriteTypeName);
+                            Write(">");
+                        }
+
                         Write("(");
 
-                        WriteJoint(TemplateHelpers.Coma, method
-                            .GetParameters()
-                            .Select(static p => p.ParameterType), t =>
+                        WriteJoined(TemplateHelpers.Coma, method.Parameters, 
+                            t =>
                             {
                                 Write("It.Any<");
                                 WriteTypeName(t);
@@ -168,21 +179,24 @@ namespace dnWalker.TestGenerator.Templates
                     string mockVarName = "mock_" + varName;
 
                     // initialize the mock variable
-                    Type mockType = typeof(Moq.Mock<>).MakeGenericType(varType);
-                    WriteVariableDeclaration(mockType, mockVarName);
+                    WriteMockTypeName(varType);
+                    Write(" ");
+                    Write(mockVarName);
                     Write(" = new ");
-                    WriteTypeName(mockType);
+                    WriteMockTypeName(varType);
                     Write("()"); // TODO: supply with arguments needed for non parameterless constructor
                     WriteLine(TemplateHelpers.Semicolon);
 
                     // set-up the method results
                     foreach (KeyValuePair<MethodSignature, ParameterRef[]> resultInfo in methodResults)
                     {
-                        MethodInfo method = varType.GetMethodFromSignature(resultInfo.Key) ?? throw new Exception($"Could not find the method.");
+                        MethodSignature method = resultInfo.Key;
 
-                        string methodName = resultInfo.Key.MethodName;
+                        TypeSignature[] genericParameters = method.GetGenericParameters();
 
-                        Type returnType = method.ReturnType;
+                        string methodName = method.Name;
+
+                        TypeSignature returnType = method.ReturnType;
                         string defaultExpr = TemplateHelpers.GetDefaultLiteral(returnType);
 
                         string[] resultExprs = resultInfo.Value
@@ -195,7 +209,7 @@ namespace dnWalker.TestGenerator.Templates
                                     }
                                     else
                                     {
-                                        IParameter rp = r.Resolve(op.Context) ?? throw new Exception($"Could not resolve the parameter.");
+                                        IParameter rp = r.Resolve(op.Set) ?? throw new Exception($"Could not resolve the parameter.");
 
                                         if (rp is IPrimitiveValueParameter primitiveValue)
                                         {
@@ -216,9 +230,8 @@ namespace dnWalker.TestGenerator.Templates
                         Write(methodName);
                         Write("(");
 
-                        WriteJoint(TemplateHelpers.Coma, method
-                            .GetParameters()
-                            .Select(static p => p.ParameterType), t =>
+                        WriteJoined(TemplateHelpers.Coma, method.Parameters,
+                            t =>
                             {
                                 Write("It.Any<");
                                 WriteTypeName(t);
@@ -245,18 +258,17 @@ namespace dnWalker.TestGenerator.Templates
                     Write(".Object");
                     WriteLine(TemplateHelpers.Semicolon);
 
+
                     // set-up the fields
                     foreach (KeyValuePair<string, ParameterRef> field in fields)
                     {
-                        FieldInfo fieldInfo = varType.GetField(field.Key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new Exception($"Could not find the field.");
-
-                        IParameter fieldParameter = field.Value.Resolve(op.Context) ?? throw new Exception("Could not resolve the field parameter");
+                        IParameter fieldParameter = field.Value.Resolve(op.Set) ?? throw new Exception("Could not resolve the field parameter");
 
                         Write(varName);
                         Write(".SetPrivate(");
                         Write(field.Key);
                         Write(TemplateHelpers.Coma);
-                        Write(GetExpression(fieldParameter, fieldInfo.FieldType));
+                        Write(GetExpression(fieldParameter));
                         WriteLine(");");
                     }
                 }

@@ -39,12 +39,12 @@ namespace dnWalker.TypeSystem
             int genParamsStart = span.IndexOf(BeginGenArray);
             if (genParamsStart == -1)
             {
-                string typeName = new string(span);
+                string typeName = new string(span).Trim();
                 TypeSig resultSig = _definitionProvider.GetTypeDefinition(typeName).ToTypeSig();
                 return resultSig;
             }
 
-            ClassOrValueTypeSig genType = _definitionProvider.GetTypeDefinition(new string(span.Slice(0, genParamsStart)))
+            ClassOrValueTypeSig genType = _definitionProvider.GetTypeDefinition(new string(span.Slice(0, genParamsStart)).Trim())
                 .ToTypeSig()
                 .ToClassOrValueTypeSig();
 

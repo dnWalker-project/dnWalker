@@ -19,7 +19,7 @@ namespace dnWalker.TypeSystem
 
         public string GetString(TypeSignature value)
         {
-            return value.Type.FullName;
+            return value.ToString();
         }
 
         public TypeSignature FromString(string str)

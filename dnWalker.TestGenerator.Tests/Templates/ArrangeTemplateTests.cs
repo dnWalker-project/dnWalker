@@ -1,6 +1,7 @@
 ﻿using dnWalker.Parameters;
 using dnWalker.TestGenerator.Parameters;
 using dnWalker.TestGenerator.Templates;
+using dnWalker.TypeSystem;
 
 using FluentAssertions;
 
@@ -22,7 +23,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
         List<string> ComplexValue_Method();
     }
 
-    public class ArrangeTemplateTests
+    public class ArrangeTemplateTests : TemplateTestBase
     {
 
         private class SimpleDependencyArrangeTemplate : TemplateBase
@@ -42,6 +43,17 @@ namespace dnWalker.TestGenerator.Tests.Templates
             }
         }
 
+
+        private readonly MethodSignature Primitive_NoArgs;
+        private readonly MethodSignature Primitive_Args;
+        public ArrangeTemplateTests()
+        {
+            MethodTranslator methodTranslator = new MethodTranslator(DefinitionProvider);
+
+            Primitive_NoArgs = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.TestInterface::PrimitiveValue_Method()");
+            Primitive_Args = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.TestInterface::PrimitiveValue_Method(System.Double,System.String)");
+        }
+
         [Theory]
         [InlineData(null, "int var_0x00000001 = 0;")]
         [InlineData(10, "int var_0x00000001 = 10;")]
@@ -49,8 +61,10 @@ namespace dnWalker.TestGenerator.Tests.Templates
         [InlineData(0, "int var_0x00000001 = 0;")]
         public void Test_PrimitiveValueParameter(int? value, string expected)
         {
-            IParameterContext context = new ParameterContext();
-            var i1 = context.CreateInt32Parameter(0x00000001);
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            var i1 = set.CreateInt32Parameter(0x00000001);
             i1.Value = value;
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(i1)).TransformText();
@@ -63,13 +77,15 @@ namespace dnWalker.TestGenerator.Tests.Templates
         [InlineData(new double[] { -5, 0, 10 }, "double[] var_0x00000001 = new double[3] { -5, 0, 10 };")]
         public void Test_ArrayOfPrimitiveValueParameters(double[] srcArray, string expected)
         {
-            IParameterContext context = new ParameterContext();
-            var ap = context.CreateArrayParameter(0x00000001, "System.Double", srcArray == null, srcArray?.Length);
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            var ap = set.CreateArrayParameter(new TypeSignature(DefinitionProvider.BaseTypes.Double.TypeDefOrRef), 0x00000001, srcArray == null, srcArray?.Length);
             if (srcArray != null)
             {
                 for (int i = 0; i < srcArray.Length; ++i)
                 {
-                    var dp = context.CreateDoubleParameter(i + 16);
+                    var dp = set.CreateDoubleParameter(i + 16);
                     dp.Value = srcArray[i];
                     ap.SetItem(i, dp);
                 }
@@ -79,14 +95,13 @@ namespace dnWalker.TestGenerator.Tests.Templates
             result.Should().Be(expected);
         }
 
-        private static readonly MethodSignature Primitive_NoArgs = "System.Int32 dnWalker.TestGenerator.Tests.Templates.TestInterface::PrimitiveValue_Method()";
-        private static readonly MethodSignature Primitive_Args = "System.Int32 dnWalker.TestGenerator.Tests.Templates.TestInterface::PrimitiveValue_Method(System.Double,System.String)";
-
         [Fact]
         public void Test_InterfaceParameter_Null()
         {
-            IParameterContext context = new ParameterContext();
-            IObjectParameter op = context.CreateObjectParameter(0x00000001, "dnWalker.TestGenerator.Tests.Templates.TestInterface", isNull: true);
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 0x00000001, isNull: true);
             string expected = "TestInterface var_0x00000001 = null;";
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
@@ -96,8 +111,10 @@ namespace dnWalker.TestGenerator.Tests.Templates
         [Fact]
         public void Test_InterfaceParameter_NoMethods()
         {
-            IParameterContext context = new ParameterContext();
-            IObjectParameter op = context.CreateObjectParameter(0x00000001, "dnWalker.TestGenerator.Tests.Templates.TestInterface", isNull: false);
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 0x00000001, isNull: false);
             
             string expected =
 @"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
@@ -124,12 +141,14 @@ mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method())
 TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         public void Test_InterfaceParameter_PrimitiveReturn_NoArgs(int[] results, string expected)
         {
-            IParameterContext context = new ParameterContext();
-            IObjectParameter op = context.CreateObjectParameter(1, "dnWalker.TestGenerator.Tests.Templates.TestInterface", isNull: false);
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 1, isNull: false);
 
             for (int i = 0; i < results.Length; ++i)
             {
-                IInt32Parameter ip = context.CreateInt32Parameter(i + 10);
+                IInt32Parameter ip = set.CreateInt32Parameter(i + 10);
                 ip.Value = results[i];
 
                 op.SetMethodResult(Primitive_NoArgs, i, ip);
@@ -154,12 +173,14 @@ mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method(It.Any<double>(),
 TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         public void Test_InterfaceParameter_PrimitiveReturn_WithArgs(int[] results, string expected)
         {
-            IParameterContext context = new ParameterContext();
-            IObjectParameter op = context.CreateObjectParameter(1, "dnWalker.TestGenerator.Tests.Templates.TestInterface", isNull: false);
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 1, isNull: false);
 
             for (int i = 0; i < results.Length; ++i)
             {
-                IInt32Parameter ip = context.CreateInt32Parameter(i + 10);
+                IInt32Parameter ip = set.CreateInt32Parameter(i + 10);
                 ip.Value = results[i];
 
                 op.SetMethodResult(Primitive_Args, i, ip);

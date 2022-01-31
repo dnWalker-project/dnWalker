@@ -1,4 +1,8 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +12,9 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        protected void WriteVariableDeclaration(Type type, string name)
+        protected void WriteVariableDeclaration(TypeSignature type, string name)
         {
-            if (type == null)
+            if (type == TypeSignature.Empty)
             {
                 Write("var");
             }

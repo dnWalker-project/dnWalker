@@ -17,7 +17,7 @@ namespace dnWalker.TypeSystem
 
         public string GetString(MethodSignature value)
         {
-            return value.Method.FullName;
+            return value.ToString();
         }
 
         public MethodSignature FromString(string str)

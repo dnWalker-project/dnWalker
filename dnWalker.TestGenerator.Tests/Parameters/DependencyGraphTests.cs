@@ -1,5 +1,6 @@
 ﻿using dnWalker.Parameters;
 using dnWalker.TestGenerator.Parameters;
+using dnWalker.TypeSystem;
 
 using FluentAssertions;
 
@@ -18,18 +19,34 @@ namespace dnWalker.TestGenerator.Tests.Parameters
 {
     public class DependencyGraphTests
     {
+        private class TestClass
+        {
+
+        }
+
+        private readonly IDefinitionProvider _definitionProvider;
+        private readonly TypeSignature _testClass;
+
+        public DependencyGraphTests()
+        {
+            _definitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(typeof(DependencyGraphTests).Assembly));
+            _testClass = new TypeSignature(_definitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Parameters.DependencyGraphTests/TestClass"));
+        }
+
         [Fact]
         public void Test_Build_FromPrimitiveValues()
         {
-            IParameterContext context = new ParameterContext();
-            // five Int32 parameters, independent !!
-            context.CreateInt32Parameter();
-            context.CreateInt32Parameter();
-            context.CreateInt32Parameter();
-            context.CreateInt32Parameter();
-            context.CreateInt32Parameter();
+            IParameterContext context = new ParameterContext(_definitionProvider);
+            IParameterSet set = new ParameterSet(context);
 
-            DependencyGraph dependencyGraph = DependencyGraph.Build(context);
+            // five Int32 parameters, independent !!
+            set.CreateInt32Parameter();
+            set.CreateInt32Parameter();
+            set.CreateInt32Parameter();
+            set.CreateInt32Parameter();
+            set.CreateInt32Parameter();
+
+            DependencyGraph dependencyGraph = DependencyGraph.Build(set);
             dependencyGraph.GetDependencies().Should().HaveCount(5);
             dependencyGraph.GetDependencies().Should().BeEquivalentTo(dependencyGraph.GetRootDependencies());
         }
@@ -37,20 +54,21 @@ namespace dnWalker.TestGenerator.Tests.Parameters
         [Fact]
         public void Test_Build_NoComplex()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new ParameterContext(_definitionProvider);
+            IParameterSet set = new ParameterSet(context);
 
-            var i1 = context.CreateInt32Parameter();
-            var i2 = context.CreateInt32Parameter();
-            var a = context.CreateArrayParameter(nameof(Int32));
+            var i1 = set.CreateInt32Parameter();
+            var i2 = set.CreateInt32Parameter();
+            var a = set.CreateArrayParameter(new TypeSignature(_definitionProvider.BaseTypes.Int32.TypeDefOrRef));
             a.SetItem(0, i1);
             a.SetItem(1, i2);
 
-            var o = context.CreateObjectParameter("MyClass");
+            var o = set.CreateObjectParameter(_testClass);
             o.SetField("myField", i2);
 
             // i1 -> a <- i2 -> o
 
-            DependencyGraph dependencyGraph = DependencyGraph.Build(context);
+            DependencyGraph dependencyGraph = DependencyGraph.Build(set);
             dependencyGraph.GetDependencies()
                 .Should().HaveCount(4);
             
@@ -69,18 +87,20 @@ namespace dnWalker.TestGenerator.Tests.Parameters
         [Fact]
         public void Test_CycleWithTails()
         {
-            IParameterContext context = new ParameterContext();
-            var o1 = context.CreateObjectParameter("MyClass");
-            var o2 = context.CreateObjectParameter("MyClass");
-            var o3 = context.CreateObjectParameter("MyClass");
-            var o4 = context.CreateObjectParameter("MyClass");
+            IParameterContext context = new ParameterContext(_definitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            var o1 = set.CreateObjectParameter(_testClass);
+            var o2 = set.CreateObjectParameter(_testClass);
+            var o3 = set.CreateObjectParameter(_testClass);
+            var o4 = set.CreateObjectParameter(_testClass);
 
             o1.SetField("MyField", o2);
             o2.SetField("MyField", o3);
             o3.SetField("MyField", o1);
             o3.SetField("OtherField", o4);
 
-            DependencyGraph dependencyGraph = DependencyGraph.Build(context);
+            DependencyGraph dependencyGraph = DependencyGraph.Build(set);
             dependencyGraph.GetDependencies()
                 .Should().HaveCount(2);
 
@@ -98,20 +118,21 @@ namespace dnWalker.TestGenerator.Tests.Parameters
         [Fact]
         public void Test_Sort_NoComplex()
         {
-            IParameterContext context = new ParameterContext();
+            IParameterContext context = new ParameterContext(_definitionProvider);
+            IParameterSet set = new ParameterSet(context);
 
-            var i1 = context.CreateInt32Parameter();
-            var i2 = context.CreateInt32Parameter();
-            var a = context.CreateArrayParameter(nameof(Int32));
+            var i1 = set.CreateInt32Parameter();
+            var i2 = set.CreateInt32Parameter();
+            var a = set.CreateArrayParameter(new TypeSignature(_definitionProvider.BaseTypes.Int32.TypeDefOrRef));
             a.SetItem(0, i1);
             a.SetItem(1, i2);
 
-            var o = context.CreateObjectParameter("MyClass");
+            var o = set.CreateObjectParameter(_testClass);
             o.SetField("myField", i2);
 
             // i1 -> a <- i2 -> o
 
-            DependencyGraph dependencyGraph = DependencyGraph.Build(context);
+            DependencyGraph dependencyGraph = DependencyGraph.Build(set);
 
             Dictionary<ParameterRef, SimpleDependency> depLookup = dependencyGraph
                 .GetDependencies()

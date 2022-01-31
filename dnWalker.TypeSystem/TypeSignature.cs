@@ -14,19 +14,186 @@ namespace dnWalker.TypeSystem
 
         public static readonly TypeSignature Empty = default(TypeSignature);
 
-        public ITypeDefOrRef Type
-        {
-            get
-            {
-                return _type;
-            }
-        }
-
         public TypeSignature(ITypeDefOrRef type)
         {
             _type = type;
         }
 
+
+        public string Namespace
+        {
+            get
+            {
+                return _type.Namespace;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _type.Name;
+            }
+        }
+
+        public string FullName
+        {
+            get
+            {
+                return _type.FullName;
+            }
+        }
+
+        public TypeSignature CreateArray()
+        {
+            SZArraySig sig = new SZArraySig(_type.ToTypeSig());
+            return new TypeSignature(sig.ToTypeDefOrRef());
+        }
+
+        public TypeSignature CreateArray(int rank)
+        {
+            ArraySig sig = new ArraySig(_type.ToTypeSig(), rank);
+            return new TypeSignature(sig.ToTypeDefOrRef());
+        }
+
+        public TypeSignature CreateArray(int rank, IEnumerable<int> sizes, IEnumerable<int> lowerBounds)
+        {
+            ArraySig sig = new ArraySig(_type.ToTypeSig(), rank, sizes.Select(s => (uint)s), lowerBounds);
+            return new TypeSignature(sig.ToTypeDefOrRef());
+        }
+
+        public bool IsInterface
+        {
+            get
+            {
+                return _type.ResolveTypeDefThrow().IsInterface;
+            }
+        }
+
+        public bool IsAbstract
+        {
+            get
+            {
+                return _type.ResolveTypeDefThrow().IsAbstract;
+            }
+        }
+
+
+        /// <summary>
+        /// Determine whether this type is a generic type or generic instance.
+        /// </summary>
+        public bool IsGeneric
+        {
+            get
+            {
+                return _type.ResolveTypeDefThrow().HasGenericParameters;
+            }
+        }
+
+        public bool IsGenericInstance
+        {
+            get
+            {
+                return _type.ToTypeSig().ToGenericInstSig()  != null;
+            }
+        }
+
+        public TypeSignature[] GetGenericParameters()
+        {
+            TypeSig ts = _type.ToTypeSig();
+            GenericInstSig genInstTS = ts.ToGenericInstSig();
+            if (genInstTS != null)
+            {
+                var genArgs = genInstTS.GenericArguments;
+
+                return genArgs.Select(t => new TypeSignature(t.ToTypeDefOrRef())).ToArray();
+            }
+            return Array.Empty<TypeSignature>();
+        }
+
+        public TypeSignature CreateGenericInstance(params TypeSignature[] genericParameters)
+        {
+            TypeSpec genericType = new TypeSpecUser(new GenericInstSig(_type.ToTypeSig().ToClassOrValueTypeSig(), genericParameters.Select(ts => ts._type.ToTypeSig()).ToArray()));
+            return new TypeSignature(genericType);
+        }
+
+        public MethodSignature[] GetMethods()
+        {
+            TypeDef td = _type.ResolveTypeDefThrow();
+            IList<MethodDef> methods = td.Methods;
+            MethodSignature[] methodSigs = new MethodSignature[td.Methods.Count];
+            for (int i = 0; i < methodSigs.Length; ++i)
+            {
+                MemberRef methodRef = new MemberRefUser(_type.Module, methods[i].Name, methods[i].MethodSig, _type);
+                methodSigs[i] = new MethodSignature(methodRef);
+            }
+            return methodSigs;
+        }
+
+        public MethodSignature[] GetMethods(string methodName)
+        {
+            ITypeDefOrRef typeRef = _type;
+
+            TypeDef td = typeRef.ResolveTypeDefThrow();
+            IList<MethodDef> methods = td.Methods;
+            MethodSignature[] methodSigs = td.Methods
+                .Where(md => md.Name == methodName)
+                .Select(md => new MethodSignature(new MemberRefUser(typeRef.Module, md.Name, md.MethodSig, typeRef)))
+                .ToArray();
+
+            return methodSigs;
+        }
+
+        public bool IsNested
+        {
+            get
+            {
+                return _type.DeclaringType != null;
+            }
+        }
+
+        public bool IsArray
+        {
+            get
+            {
+                return _type.ToTypeSig().IsArray;
+            }
+        }
+
+        public bool IsSZArray
+        {
+            get
+            {
+                return _type.ToTypeSig().IsSZArray;
+            }
+        }
+
+        public TypeSignature DeclaringType
+        {
+            get
+            {
+                return new TypeSignature(_type.DeclaringType);
+            }
+        }
+
+        public TypeSignature ElementType
+        {
+            get
+            {
+                TypeSig ts = _type.ToTypeSig();
+                if (ts.IsSZArray)
+                {
+                    return new TypeSignature(ts.ToSZArraySig().Next.ToTypeDefOrRef());
+                }
+                else if (ts.IsArray)
+                {
+                    return new TypeSignature(ts.ToArraySig().Next.ToTypeDefOrRef());
+                }
+                throw new InvalidOperationException("The type is not an array.");
+            }
+        }
+
+        #region Equality & HashCode
         public override bool Equals(object? obj)
         {
             return obj is TypeSignature signature && Equals(signature);
@@ -55,12 +222,6 @@ namespace dnWalker.TypeSystem
             return !(left == right);
         }
 
-        public TypeSignature MakeArray()
-        {
-            SZArraySig sig = new SZArraySig(_type.ToTypeSig());
-            return new TypeSignature(sig.ToTypeDefOrRef());
-        }
-
         public ITypeDefOrRef ToTypeDefOrRef()
         {
             return _type;
@@ -70,5 +231,6 @@ namespace dnWalker.TypeSystem
         {
             return _type.FullName;
         }
+        #endregion Equality & HashCode
     }
 }

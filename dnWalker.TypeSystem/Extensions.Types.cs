@@ -8,8 +8,28 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TypeSystem
 {
-    public static class Extensions
+    public static partial class Extensions
     {
+        public static bool IsInterface(this TypeSig typeSig)
+        {
+            return typeSig.ToTypeDefOrRef().ResolveTypeDefThrow().IsInterface;
+        }
+
+        public static bool IsAbstract(this TypeSig typeSig)
+        {
+            return typeSig.ToTypeDefOrRef().ResolveTypeDefThrow().IsAbstract;
+        }
+
+        public static bool IsGeneric(this TypeSig typeSig)
+        {
+            return typeSig.IsGenericInstanceType;
+        }
+
+        public static IList<TypeSig> GetGenericParameters(this TypeSig typeSig)
+        {
+            return typeSig.ToGenericInstSig()?.GetGenericParameters() ?? Array.Empty<TypeSig>();
+        }
+
         public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(this ITypeDefOrRef type)
         {
             var currentType = type;
