@@ -100,16 +100,19 @@ namespace dnWalker.TestGenerator.Templates
 
         protected void WriteJoined<T>(string separator, IEnumerable<T> items, Action<T> writeAction)
         {
+            T[] itemsArray = items.ToArray();
+
+            if (itemsArray.Length == 0) return;
+
             {
-                T? item = items.FirstOrDefault();
-                if (item == null) return;
+                T item = itemsArray[0];
                 writeAction(item);
             }
 
-            foreach (T item in items.Skip(1))
+            for (int i = 1; i < itemsArray.Length; ++i)
             {
                 Write(separator);
-                writeAction(item);
+                writeAction(itemsArray[i]);
             }
         }
     }

@@ -16,266 +16,258 @@ namespace dnWalker.TestGenerator.Templates
     {
         protected void WriteArrangeSimpleDepencency(SimpleDependency simpleDependency)
         {
-            string varName = GetVariableName(simpleDependency.Parameter);
-            TypeSignature varType = GetVariableType(simpleDependency.Parameter);
-
             IParameter p = simpleDependency.Parameter;
 
             if (p is IPrimitiveValueParameter pp)
             {
-                WriteVariableDeclaration(varType, varName);
-                Write(" = ");
-
-                Write(GetExpression(pp));
-                WriteLine(TemplateHelpers.Semicolon);
+                WriteArrangePrimitiveValueParameter(pp);
             }
             else if (p is IArrayParameter ap)
             {
-                if (ap.GetIsNull())
-                {
-                    WriteVariableDeclaration(varType, varName);
-                    Write(" = ");
-
-                    Write(TemplateHelpers.Null);
-                }
-                else
-                {
-                    TypeSignature elementType = ap.ElementType.ElementType;
-
-                    WriteVariableDeclaration(varType, varName);
-                    Write(" = ");
-
-                    // array of primitive values => initialization using constants
-                    Write("new ");
-                    WriteTypeName(elementType);
-                    Write("[");
-                    Write((ap.GetLength()).ToString());
-                    Write("]");
-                    if (ap.GetLength() > 0)
-                    {
-                        Write(" { ");
-                        WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
-                        Write(" }");
-                    }
-                }
-                WriteLine(TemplateHelpers.Semicolon);
+                WriteArrangeArrayParameter(ap);
             }
             else if (p is IObjectParameter op)
             {
-                if (op.GetIsNull())
-                {
-                    WriteVariableDeclaration(varType, varName);
-                    Write(" = ");
+                WriteArrangeObjectParameter(op);
+            }
+        }
 
-                    Write(TemplateHelpers.Null);
-                    WriteLine(TemplateHelpers.Semicolon);
-                    return;
+        private void WriteArrangePrimitiveValueParameter(IPrimitiveValueParameter pp)
+        {
+            string varName = GetVariableName(pp);
+            TypeSignature varType = GetVariableType(pp);
+
+            WriteVariableDeclaration(varType, varName);
+            Write(" = ");
+
+            Write(GetExpression(pp));
+            WriteLine(TemplateHelpers.Semicolon);
+        }
+
+        private void WriteArrangeArrayParameter(IArrayParameter ap)
+        {
+            if (ap.GetIsNull())
+            {
+                WriteArrangeNull(ap);
+            }
+            else
+            {
+                string varName = GetVariableName(ap);
+                TypeSignature varType = GetVariableType(ap);
+
+                TypeSignature elementType = ap.ElementType;
+
+                WriteVariableDeclaration(varType, varName);
+                Write(" = ");
+
+                // array of primitive values => initialization using constants
+                Write("new ");
+                WriteTypeName(elementType);
+                Write("[");
+                Write((ap.GetLength()).ToString());
+                Write("]");
+                if (ap.GetLength() > 0)
+                {
+                    Write(" { ");
+                    WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
+                    Write(" }");
                 }
+                WriteLine(TemplateHelpers.Semicolon);
+            }
+        }
 
-                // check 3 possibilities
-                // 1) type is an interface || parameter has no fields defined
-                //    => create instance using mock, setup using mock.setup
-                // 2) type is a class and parameter has some fields && some method results defined
-                //    => create instance using mock, setup using mock.setup && private object
-                // 3) type is a class and parameter has only fields defined
-                //    => create the instance directly, setup using private object
+        private void WriteArrangeObjectParameter(IObjectParameter op)
+        {
+            if (op.GetIsNull())
+            {
+                WriteArrangeNull(op);
+                return;
+            }
 
-                IReadOnlyDictionary<string, ParameterRef> fields = op.GetFields();
-                IReadOnlyDictionary<MethodSignature, ParameterRef[]>? methodResults = op.GetMethodResults();
+            string varName = GetVariableName(op);
+            TypeSignature varType = GetVariableType(op);
 
-                if (varType.IsInterface || op.GetFields().Count == 0)
-                {
-                    // 1) choice
-                    string mockVarName = "mock_" + varName;
+            IReadOnlyDictionary<string, ParameterRef> fields = op.GetFields();
+            IReadOnlyDictionary<MethodSignature, ParameterRef[]>? methodResults = op.GetMethodResults();
 
-                    // initialize the mock variable
-                    WriteMockTypeName(varType);
-                    Write(" ");
-                    Write(mockVarName);
-                    Write(" = new ");
-                    WriteMockTypeName(varType);
-                    Write("()"); // TODO: supply with arguments needed for non parameterless constructor
-                    WriteLine(TemplateHelpers.Semicolon);
+            if (varType.IsInterface || 
+                varType.IsAbstract || 
+                // at least one method result
+                (methodResults.Count > 0 && !methodResults.Values.All(parr => parr == null || parr.Length == 0)))
+            {
+                WriteArrangeInterfaceAbstractOrMethodsOnly(op);
+            }
+            else
+            {
+                WriteArrangeFieldsOnlyAndNotAbstract(op);
+            }
+        }
 
-                    // do the set-up
-                    foreach (KeyValuePair<MethodSignature, ParameterRef[]> resultInfo in methodResults)
-                    {
-                        MethodSignature method = resultInfo.Key;
+        private void WriteArrangeNull(IReferenceTypeParameter rp)
+        {
+            string varName = GetVariableName(rp);
+            TypeSignature varType = GetVariableType(rp);
 
-                        TypeSignature[] genericParameters = method.GetGenericParameters();
+            WriteVariableDeclaration(varType, varName);
+            Write(" = ");
 
-                        string methodName = method.Name;
+            Write(TemplateHelpers.Null);
+            WriteLine(TemplateHelpers.Semicolon);
+        }
 
-                        TypeSignature returnType = method.ReturnType;
-                        string defaultExpr = TemplateHelpers.GetDefaultLiteral(returnType);
+        private void WriteArrangeInterfaceAbstractOrMethodsOnly(IObjectParameter op)
+        {
+            string varName = GetVariableName(op);
+            TypeSignature varType = GetVariableType(op);
 
-                        string[] resultExprs = resultInfo.Value
-                                .Select(r =>
-                                {
-                                if (r == ParameterRef.Empty)
-                                {
+            IReadOnlyDictionary<string, ParameterRef> fields = op.GetFields();
+            IReadOnlyDictionary<MethodSignature, ParameterRef[]>? methodResults = op.GetMethodResults();
+
+            string mockVarName = "mock_" + varName;
+
+            // initialize the mock variable
+            WriteMockTypeName(varType);
+            Write(" ");
+            Write(mockVarName);
+            Write(" = new ");
+            WriteMockTypeName(varType);
+            Write("()"); // TODO: supply with arguments needed for non parameterless constructor
+            WriteLine(TemplateHelpers.Semicolon);
+
+            // set-up the method results
+            foreach (KeyValuePair<MethodSignature, ParameterRef[]> resultInfo in methodResults)
+            {
+                MethodSignature method = resultInfo.Key;
+
+                //TypeSignature[] genericParameters = method.GetGenericParameters();
+
+                string methodName = method.Name;
+
+                TypeSignature returnType = method.ReturnType;
+                string defaultExpr = TemplateHelpers.GetDefaultLiteral(returnType);
+
+                string[] resultExprs = resultInfo.Value
+                        .Select(r =>
+                        {
+                            if (r == ParameterRef.Empty)
+                            {
                                     // not specified => return default expression
                                     return defaultExpr;
+                            }
+                            else
+                            {
+                                IParameter rp = r.Resolve(op.Set) ?? throw new Exception($"Could not resolve the parameter.");
+
+                                if (rp is IPrimitiveValueParameter primitiveValue)
+                                {
+                                    return primitiveValue.Value?.ToString() ?? defaultExpr;
                                 }
                                 else
                                 {
-                                    IParameter rp = r.Resolve(op.Set) ?? throw new Exception($"Could not resolve the parameter.");
-                                    return GetExpression(rp);
+                                    return GetVariableName(rp);
                                 }
-                            })
-                            .ToArray();
+                            }
+                        })
+                    .ToArray();
 
-                        if (resultExprs.Length == 0) continue;
+                if (resultExprs.Length == 0) continue;
 
-                        Write(mockVarName);
-                        Write(".SetupSequence(o => o.");
-                        Write(methodName);
+                Write(mockVarName);
+                Write(".SetupSequence(o => o.");
+                Write(methodName);
 
-                        if (genericParameters.Count() > 0)
-                        {
-                            Write("<");
-                            WriteJoined(TemplateHelpers.Coma, genericParameters, WriteTypeName);
-                            Write(">");
-                        }
-
-                        Write("(");
-
-                        WriteJoined(TemplateHelpers.Coma, method.Parameters, 
-                            t =>
-                            {
-                                Write("It.Any<");
-                                WriteTypeName(t);
-                                Write(">()");
-                            });
-
-                        Write("))");
-
-                        PushIndent("    ");
-                        foreach(string resultExpr in resultExprs)
-                        {
-                            WriteLine(string.Empty);
-                            Write(".Returns(");
-                            Write(resultExpr);
-                            Write(")");
-                        }
-                        PopIndent();
-                        WriteLine(TemplateHelpers.Semicolon);
-                    }
-
-
-                    // initialize the object variable
-                    WriteVariableDeclaration(varType, varName);
-                    Write(" = ");
-                    Write(mockVarName);
-                    Write(".Object");
-                    WriteLine(TemplateHelpers.Semicolon);
-                }
-                else if (varType.IsAbstract || 
-                         (fields.Count > 0 &&                                                    // any fields
-                          methodResults.Count() > 0 &&                                           // any methods
-                          !methodResults.Values.All(parr => parr == null || parr.Length == 0)))  // any method results
+                if (method.IsGenericInstance)
                 {
-                    // 2) choice
-                    string mockVarName = "mock_" + varName;
-
-                    // initialize the mock variable
-                    WriteMockTypeName(varType);
-                    Write(" ");
-                    Write(mockVarName);
-                    Write(" = new ");
-                    WriteMockTypeName(varType);
-                    Write("()"); // TODO: supply with arguments needed for non parameterless constructor
-                    WriteLine(TemplateHelpers.Semicolon);
-
-                    // set-up the method results
-                    foreach (KeyValuePair<MethodSignature, ParameterRef[]> resultInfo in methodResults)
-                    {
-                        MethodSignature method = resultInfo.Key;
-
-                        TypeSignature[] genericParameters = method.GetGenericParameters();
-
-                        string methodName = method.Name;
-
-                        TypeSignature returnType = method.ReturnType;
-                        string defaultExpr = TemplateHelpers.GetDefaultLiteral(returnType);
-
-                        string[] resultExprs = resultInfo.Value
-                                .Select(r =>
-                                {
-                                    if (r == ParameterRef.Empty)
-                                    {
-                                        // not specified => return default expression
-                                        return defaultExpr;
-                                    }
-                                    else
-                                    {
-                                        IParameter rp = r.Resolve(op.Set) ?? throw new Exception($"Could not resolve the parameter.");
-
-                                        if (rp is IPrimitiveValueParameter primitiveValue)
-                                        {
-                                            return primitiveValue.Value?.ToString() ?? defaultExpr;
-                                        }
-                                        else
-                                        {
-                                            return GetVariableName(rp);
-                                        }
-                                    }
-                                })
-                            .ToArray();
-
-                        if (resultExprs.Length == 0) continue;
-
-                        Write(mockVarName);
-                        Write(".SetupSequence(o => o.");
-                        Write(methodName);
-                        Write("(");
-
-                        WriteJoined(TemplateHelpers.Coma, method.Parameters,
-                            t =>
-                            {
-                                Write("It.Any<");
-                                WriteTypeName(t);
-                                Write(">()");
-                            });
-
-                        Write("))");
-
-                        PushIndent("    ");
-                        foreach (string resultExpr in resultExprs)
-                        {
-                            WriteLine(string.Empty);
-                            Write(".Returns(");
-                            Write(resultExpr);
-                            Write(")");
-                        }
-                        PopIndent();
-                        WriteLine(TemplateHelpers.Semicolon);
-                    }
-
-                    WriteVariableDeclaration(varType, varName);
-                    Write(" = ");
-                    Write(mockVarName);
-                    Write(".Object");
-                    WriteLine(TemplateHelpers.Semicolon);
-
-
-                    // set-up the fields
-                    foreach (KeyValuePair<string, ParameterRef> field in fields)
-                    {
-                        IParameter fieldParameter = field.Value.Resolve(op.Set) ?? throw new Exception("Could not resolve the field parameter");
-
-                        Write(varName);
-                        Write(".SetPrivate(");
-                        Write(field.Key);
-                        Write(TemplateHelpers.Coma);
-                        Write(GetExpression(fieldParameter));
-                        WriteLine(");");
-                    }
+                    Write("<");
+                    WriteJoined(TemplateHelpers.Coma, method.GetGenericParameters(), WriteTypeName);
+                    Write(">");
                 }
-                else
+
+                Write("(");
+
+                WriteJoined(TemplateHelpers.Coma, method.Parameters,
+                    t =>
+                    {
+                        Write("It.Any<");
+                        WriteTypeName(t);
+                        Write(">()");
+                    });
+
+                Write("))");
+
+                PushIndent("    ");
+                foreach (string resultExpr in resultExprs)
                 {
-                    // 3) choice
+                    WriteLine(string.Empty);
+                    Write(".Returns(");
+                    Write(resultExpr);
+                    Write(")");
                 }
+                PopIndent();
+                WriteLine(TemplateHelpers.Semicolon);
+            }
+
+            WriteVariableDeclaration(varType, varName);
+            Write(" = ");
+            Write(mockVarName);
+            Write(".Object");
+            WriteLine(TemplateHelpers.Semicolon);
+
+            // set-up the fields
+            foreach (KeyValuePair<string, ParameterRef> field in fields)
+            {
+                if (field.Value == ParameterRef.Empty)
+                {
+                    continue;
+                }
+
+                IParameter fieldParameter = field.Value.Resolve(op.Set) ?? throw new Exception("Could not resolve the field parameter");
+
+                Write(varName);
+                Write(".SetPrivate(");
+                Write("\"");
+                Write(field.Key);
+                Write("\"");
+                Write(TemplateHelpers.Coma);
+                Write(GetExpression(fieldParameter));
+                Write(")");
+                WriteLine(TemplateHelpers.Semicolon);
+            }
+        }
+        private void WriteArrangeFieldsOnlyAndNotAbstract(IObjectParameter op)
+        {
+            string varName = GetVariableName(op);
+            TypeSignature varType = GetVariableType(op);
+
+            IReadOnlyDictionary<string, ParameterRef> fields = op.GetFields();
+            IReadOnlyDictionary<MethodSignature, ParameterRef[]>? methodResults = op.GetMethodResults();
+
+            // TODO: use some method to guess the constructor or allow user to inject factory method
+            WriteVariableDeclaration(varType, varName);
+            Write(" = new ");
+            WriteTypeName(varType);
+            Write("()");
+            WriteLine(TemplateHelpers.Semicolon);
+
+            // set-up the fields
+            foreach (KeyValuePair<string, ParameterRef> field in fields)
+            {
+                if (field.Value == ParameterRef.Empty)
+                {
+                    continue;
+                }
+
+                IParameter fieldParameter = field.Value.Resolve(op.Set) ?? throw new Exception("Could not resolve the field parameter");
+
+                Write(varName);
+                Write(".SetPrivate(");
+                Write("\"");
+                Write(field.Key);
+                Write("\"");
+                Write(TemplateHelpers.Coma);
+                Write(GetExpression(fieldParameter));
+                Write(")");
+                WriteLine(TemplateHelpers.Semicolon);
             }
         }
     }

@@ -15,12 +15,28 @@ using Xunit;
 
 namespace dnWalker.TestGenerator.Tests.Templates
 {
-    public interface TestInterface
+    public interface ITestInterface
     {
         int PrimitiveValue_Method();
         int PrimitiveValue_Method(double dbl, string str);
         List<string> ComplexValue_Method(List<double> dbls);
         List<string> ComplexValue_Method();
+    }
+
+    public abstract class AbstractClass
+    {
+        private int _field1;
+        private int _field2;
+
+        public abstract int Method();
+    }
+
+    public class ConcreteClass
+    {
+        private int _field1;
+        private int _field2;
+
+        public virtual int Method() { return 0; }
     }
 
     public class ArrangeTemplateTests : TemplateTestBase
@@ -46,12 +62,40 @@ namespace dnWalker.TestGenerator.Tests.Templates
 
         private readonly MethodSignature Primitive_NoArgs;
         private readonly MethodSignature Primitive_Args;
+        private readonly MethodSignature Complex_NoArgs;
+        private readonly MethodSignature Complex_Args;
+
+        private readonly MethodSignature AbstractClass_Method;
+        private readonly MethodSignature ConcreteClass_Method;
+
+        private readonly TypeSignature TestInterfaceType;
+        private readonly TypeSignature DoubleListType;
+        private readonly TypeSignature DoubleType;
+        
+        private readonly TypeSignature AbstractClassType;
+        private readonly TypeSignature ConcreteClassType;
+
+
         public ArrangeTemplateTests()
         {
             MethodTranslator methodTranslator = new MethodTranslator(DefinitionProvider);
+            TypeTranslator typeTranslator = new TypeTranslator(DefinitionProvider);
 
-            Primitive_NoArgs = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.TestInterface::PrimitiveValue_Method()");
-            Primitive_Args = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.TestInterface::PrimitiveValue_Method(System.Double,System.String)");
+            TestInterfaceType = typeTranslator.FromString("dnWalker.TestGenerator.Tests.Templates.ITestInterface");
+            DoubleListType = typeTranslator.FromString("System.Collections.Generic.List`1<System.Double>");
+            DoubleType = typeTranslator.FromString("System.Double");
+
+            AbstractClassType = typeTranslator.FromString("dnWalker.TestGenerator.Tests.Templates.AbstractClass");
+            ConcreteClassType = typeTranslator.FromString("dnWalker.TestGenerator.Tests.Templates.ConcreteClass");
+
+            Primitive_NoArgs = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.ITestInterface::PrimitiveValue_Method()");
+            Primitive_Args = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.ITestInterface::PrimitiveValue_Method(System.Double,System.String)");
+
+            Complex_NoArgs = methodTranslator.FromString("System.Collections.Generic.List`1<System.String> dnWalker.TestGenerator.Tests.Templates.ITestInterface::ComplexValue_Method()");
+            Complex_Args =   methodTranslator.FromString("System.Collections.Generic.List`1<System.String> dnWalker.TestGenerator.Tests.Templates.ITestInterface::ComplexValue_Method(System.Collections.Generic.List`1<System.Double>)");
+
+            AbstractClass_Method = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.AbstractClass::Method()");
+            ConcreteClass_Method = methodTranslator.FromString("System.Int32 dnWalker.TestGenerator.Tests.Templates.ConcreteClass::Method()");
         }
 
         [Theory]
@@ -80,7 +124,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
             IParameterContext context = new ParameterContext(DefinitionProvider);
             IParameterSet set = new ParameterSet(context);
 
-            var ap = set.CreateArrayParameter(new TypeSignature(DefinitionProvider.BaseTypes.Double.TypeDefOrRef), 0x00000001, srcArray == null, srcArray?.Length);
+            var ap = set.CreateArrayParameter(DoubleType, 0x00000001, srcArray == null, srcArray?.Length);
             if (srcArray != null)
             {
                 for (int i = 0; i < srcArray.Length; ++i)
@@ -101,8 +145,8 @@ namespace dnWalker.TestGenerator.Tests.Templates
             IParameterContext context = new ParameterContext(DefinitionProvider);
             IParameterSet set = new ParameterSet(context);
 
-            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 0x00000001, isNull: true);
-            string expected = "TestInterface var_0x00000001 = null;";
+            IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 0x00000001, isNull: true);
+            string expected = "ITestInterface var_0x00000001 = null;";
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(expected);
@@ -114,11 +158,11 @@ namespace dnWalker.TestGenerator.Tests.Templates
             IParameterContext context = new ParameterContext(DefinitionProvider);
             IParameterSet set = new ParameterSet(context);
 
-            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 0x00000001, isNull: false);
+            IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 0x00000001, isNull: false);
             
             string expected =
-@"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
-TestInterface var_0x00000001 = mock_var_0x00000001.Object;";
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;";
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(expected);
@@ -126,25 +170,25 @@ TestInterface var_0x00000001 = mock_var_0x00000001.Object;";
 
         [Theory]
         [InlineData(new int[0],
-@"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
-TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         [InlineData(new int[] { 333 },
-@"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method())
     .Returns(333);
-TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         [InlineData(new int[] { 333, 444 },
-@"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method())
     .Returns(333)
     .Returns(444);
-TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         public void Test_InterfaceParameter_PrimitiveReturn_NoArgs(int[] results, string expected)
         {
             IParameterContext context = new ParameterContext(DefinitionProvider);
             IParameterSet set = new ParameterSet(context);
 
-            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 1, isNull: false);
+            IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 1, isNull: false);
 
             for (int i = 0; i < results.Length; ++i)
             {
@@ -161,22 +205,22 @@ TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
 
         [Theory]
         [InlineData(new int[] { 333 },
-@"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method(It.Any<double>(), It.Any<string>()))
     .Returns(333);
-TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         [InlineData(new int[] { 333, 444 },
-@"Mock<TestInterface> mock_var_0x00000001 = new Mock<TestInterface>();
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method(It.Any<double>(), It.Any<string>()))
     .Returns(333)
     .Returns(444);
-TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         public void Test_InterfaceParameter_PrimitiveReturn_WithArgs(int[] results, string expected)
         {
             IParameterContext context = new ParameterContext(DefinitionProvider);
             IParameterSet set = new ParameterSet(context);
 
-            IObjectParameter op = set.CreateObjectParameter(new TypeSignature(DefinitionProvider.GetTypeDefinition("dnWalker.TestGenerator.Tests.Templates.TestInterface")), 1, isNull: false);
+            IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 1, isNull: false);
 
             for (int i = 0; i < results.Length; ++i)
             {
@@ -189,6 +233,158 @@ TestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Test_InterfaceParameter_ComplexReturn_NoArgs()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 1, isNull: false);
+
+            int[] refs = new int[] { 0x10, 0x11, 0x12, 0x13, 0x14, 0x15 };
+
+            for (int i = 0; i < refs.Length; ++i)
+            {
+                IObjectParameter mr = set.CreateObjectParameter(DoubleListType, refs[i], isNull: false);
+                op.SetMethodResult(Complex_NoArgs, i, mr);
+            }
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be(
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+mock_var_0x00000001.SetupSequence(o => o.ComplexValue_Method())
+    .Returns(var_0x00000010)
+    .Returns(var_0x00000011)
+    .Returns(var_0x00000012)
+    .Returns(var_0x00000013)
+    .Returns(var_0x00000014)
+    .Returns(var_0x00000015);
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;");
+        }
+
+        [Fact]
+        public void Test_InterfaceParameter_ComplexReturn_WithArgs()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 1, isNull: false);
+
+            int[] refs = new int[] { 0x10, 0x11, 0x12, 0x13, 0x14, 0x15 };
+
+            for (int i = 0; i < refs.Length; ++i)
+            {
+                IObjectParameter mr = set.CreateObjectParameter(DoubleListType, refs[i], isNull: false);
+                op.SetMethodResult(Complex_Args, i, mr);
+            }
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be(
+@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+mock_var_0x00000001.SetupSequence(o => o.ComplexValue_Method(It.Any<List<double>>()))
+    .Returns(var_0x00000010)
+    .Returns(var_0x00000011)
+    .Returns(var_0x00000012)
+    .Returns(var_0x00000013)
+    .Returns(var_0x00000014)
+    .Returns(var_0x00000015);
+ITestInterface var_0x00000001 = mock_var_0x00000001.Object;");
+        }
+
+        [Fact]
+        public void Test_AbstractTypeUsesMock()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(AbstractClassType, 1, isNull: false);
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be(
+@"Mock<AbstractClass> mock_var_0x00000001 = new Mock<AbstractClass>();
+AbstractClass var_0x00000001 = mock_var_0x00000001.Object;");
+        }
+
+        [Fact]
+        public void Test_ConreteTypeWithoutMethodsIsCreatedDirectly()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(ConcreteClassType, 1, isNull: false);
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be("ConcreteClass var_0x00000001 = new ConcreteClass();");
+        }
+
+        [Fact]
+        public void Test_ConreteTypeWithMethodsUsesMock()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(ConcreteClassType, 1, isNull: false);
+
+            op.SetMethodResult(ConcreteClass_Method, 0, set.CreateInt32Parameter(0x10));
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be(
+@"Mock<ConcreteClass> mock_var_0x00000001 = new Mock<ConcreteClass>();
+mock_var_0x00000001.SetupSequence(o => o.Method())
+    .Returns(0);
+ConcreteClass var_0x00000001 = mock_var_0x00000001.Object;");
+        }
+
+        [Fact]
+        public void Test_ArrangeFields_ConcreteType()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(ConcreteClassType, 1, isNull: false);
+
+            IInt32Parameter i1 = set.CreateInt32Parameter(0x11);
+            i1.Value = 55;
+
+            IInt32Parameter i2 = set.CreateInt32Parameter(0x12);
+            i2.Value = 65;
+
+            op.SetField("_field1", i1);
+            op.SetField("_field2", i2);
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be(
+@"ConcreteClass var_0x00000001 = new ConcreteClass();
+var_0x00000001.SetPrivate(""_field1"", 55);
+var_0x00000001.SetPrivate(""_field2"", 65);");
+        }
+
+
+        [Fact]
+        public void Test_ArrangeFields_AbstractType()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            IObjectParameter op = set.CreateObjectParameter(AbstractClassType, 1, isNull: false);
+
+            IInt32Parameter i1 = set.CreateInt32Parameter(0x11);
+            i1.Value = 55;
+
+            IInt32Parameter i2 = set.CreateInt32Parameter(0x12);
+            i2.Value = 65;
+
+            op.SetField("_field1", i1);
+            op.SetField("_field2", i2);
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
+            result.Should().Be(
+@"Mock<AbstractClass> mock_var_0x00000001 = new Mock<AbstractClass>();
+AbstractClass var_0x00000001 = mock_var_0x00000001.Object;
+var_0x00000001.SetPrivate(""_field1"", 55);
+var_0x00000001.SetPrivate(""_field2"", 65);");
         }
     }
 }
