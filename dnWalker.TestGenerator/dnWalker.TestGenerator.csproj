@@ -38,6 +38,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TemplateBase.tt</DependentUpon>
     </Compile>
+    <Compile Update="XUnit\XUnitTestClassTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
+    </Compile>
     <Compile Update="XUnit\XUnitTestProjectTemplate.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -72,6 +77,10 @@
     <None Update="Templates\TemplateBase.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TemplateBase.cs</LastGenOutput>
+    </None>
+    <None Update="XUnit\XUnitTestClassTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
     </None>
     <None Update="XUnit\XUnitTestProjectTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

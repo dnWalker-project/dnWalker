@@ -29,14 +29,14 @@ namespace dnWalker.TestGenerator.XUnit
         public virtual string TransformText()
         {
             
-            #line 6 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 7 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
  ITestProjectContext context = Context; 
             
             #line default
             #line hidden
             this.Write("\r\n<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n    <PropertyGroup>\r\n");
             
-            #line 11 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 12 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	if (context.Targets.Count == 0)
 	{
@@ -46,14 +46,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("        <TargetFramework>");
             
-            #line 15 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 16 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FallbackTargetFramework));
             
             #line default
             #line hidden
             this.Write("</TargetFramework>\r\n");
             
-            #line 16 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 17 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 	else if (Context.Targets.Count == 1)
@@ -64,14 +64,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("        <TargetFramework>");
             
-            #line 21 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 22 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(context.Targets[0]));
             
             #line default
             #line hidden
             this.Write("</TargetFramework>\r\n");
             
-            #line 22 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 23 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 	else
@@ -82,14 +82,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("        <TargetFrameworks>");
             
-            #line 27 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 28 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(JoinTokens(context.Targets)));
             
             #line default
             #line hidden
             this.Write("</TargetFrameworks>\r\n");
             
-            #line 28 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 29 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 
@@ -98,14 +98,14 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("        <IsPackable>false</IsPackable>\r\n        <Nullable>");
             
-            #line 32 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 33 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(context.NullableEnable ? "enable" : "disable"));
             
             #line default
             #line hidden
             this.Write("</Nullable>\r\n    </PropertyGroup>\r\n\r\n");
             
-            #line 35 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 36 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
  
 	// package references 
 	if (BasePackages.Count > 0 || context.PackageReferencies.Count > 0)
@@ -116,7 +116,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("    <ItemGroup>\r\n");
             
-            #line 41 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 42 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		foreach (PackageReference p in BasePackages)
 		{
@@ -127,7 +127,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line default
             #line hidden
             
-            #line 47 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 48 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		foreach (PackageReference p in context.PackageReferencies)
 		{
@@ -139,7 +139,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("    </ItemGroup>\r\n\r\n");
             
-            #line 55 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 
@@ -152,7 +152,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("    <ItemGroup>\r\n");
             
-            #line 63 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 64 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		foreach (string project in context.ProjectReferencies)
 		{
@@ -164,7 +164,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("    </ItemGroup>\r\n\r\n");
             
-            #line 71 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 72 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 	// service references
@@ -176,7 +176,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("    <ItemGroup>\r\n");
             
-            #line 78 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 79 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		foreach (Guid s in BaseServices)
 		{
@@ -187,7 +187,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line default
             #line hidden
             
-            #line 84 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 85 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		foreach (Guid s in context.Services)
 		{
@@ -199,7 +199,7 @@ namespace dnWalker.TestGenerator.XUnit
             #line hidden
             this.Write("    </ItemGroup>\r\n");
             
-            #line 91 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+            #line 92 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 
@@ -210,7 +210,7 @@ namespace dnWalker.TestGenerator.XUnit
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 95 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 96 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	private static string JoinTokens(IEnumerable<string> tokens)
 	{
@@ -221,7 +221,7 @@ namespace dnWalker.TestGenerator.XUnit
         #line default
         #line hidden
         
-        #line 101 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 102 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	private void WritePackageReference(PackageReference p)
 	{
@@ -230,42 +230,42 @@ namespace dnWalker.TestGenerator.XUnit
         #line default
         #line hidden
         
-        #line 104 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 105 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("        <PackageReference Include=\"");
 
         
         #line default
         #line hidden
         
-        #line 105 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 106 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
 
         
         #line default
         #line hidden
         
-        #line 105 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 106 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("\" Version=\"");
 
         
         #line default
         #line hidden
         
-        #line 105 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 106 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(p.Version));
 
         
         #line default
         #line hidden
         
-        #line 105 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 106 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("\"");
 
         
         #line default
         #line hidden
         
-        #line 105 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 106 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		if (p.IncludeAssets.Count > 0 || p.ExcludeAssets.Count > 0 || p.PrivateAssets.Count > 0)
 		{
@@ -274,14 +274,14 @@ this.Write("\"");
         #line default
         #line hidden
         
-        #line 108 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 109 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(">\r\n");
 
         
         #line default
         #line hidden
         
-        #line 109 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 110 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 			if (p.IncludeAssets.Count > 0)
 			{
@@ -290,28 +290,28 @@ this.Write(">\r\n");
         #line default
         #line hidden
         
-        #line 112 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 113 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("            <IncludeAssets>");
 
         
         #line default
         #line hidden
         
-        #line 113 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 114 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(JoinTokens(p.IncludeAssets)));
 
         
         #line default
         #line hidden
         
-        #line 113 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 114 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("</IncludeAssets>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 114 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 115 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 			}
 			if (p.ExcludeAssets.Count > 0)
@@ -321,28 +321,28 @@ this.Write("</IncludeAssets>\r\n");
         #line default
         #line hidden
         
-        #line 118 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 119 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("            <ExcludeAssets>");
 
         
         #line default
         #line hidden
         
-        #line 119 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 120 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(JoinTokens(p.ExcludeAssets)));
 
         
         #line default
         #line hidden
         
-        #line 119 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 120 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("</ExcludeAssets>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 120 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 121 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 			}
 			if (p.PrivateAssets.Count > 0)
@@ -352,28 +352,28 @@ this.Write("</ExcludeAssets>\r\n");
         #line default
         #line hidden
         
-        #line 124 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 125 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("            <PrivateAssets>");
 
         
         #line default
         #line hidden
         
-        #line 125 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 126 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(JoinTokens(p.PrivateAssets)));
 
         
         #line default
         #line hidden
         
-        #line 125 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 126 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("</PrivateAssets>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 126 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 127 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 			}
 
@@ -381,14 +381,14 @@ this.Write("</PrivateAssets>\r\n");
         #line default
         #line hidden
         
-        #line 128 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 129 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("        </PackageReference>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 130 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 131 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		}
 		else
@@ -398,14 +398,14 @@ this.Write("        </PackageReference>\r\n");
         #line default
         #line hidden
         
-        #line 134 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 135 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(" />\r\n");
 
         
         #line default
         #line hidden
         
-        #line 135 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 136 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 		}
 	}
@@ -414,7 +414,7 @@ this.Write(" />\r\n");
         #line default
         #line hidden
         
-        #line 139 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 140 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	private void WriteProjectReference(string project)
 	{
@@ -423,28 +423,28 @@ this.Write(" />\r\n");
         #line default
         #line hidden
         
-        #line 142 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 143 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("        <ProjectReference Include=\"");
 
         
         #line default
         #line hidden
         
-        #line 143 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 144 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(project));
 
         
         #line default
         #line hidden
         
-        #line 143 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 144 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("\" />\r\n");
 
         
         #line default
         #line hidden
         
-        #line 144 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 145 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 
@@ -452,7 +452,7 @@ this.Write("\" />\r\n");
         #line default
         #line hidden
         
-        #line 147 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 148 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	private void WriteServiceReference(Guid serviceGuid)
 	{
@@ -461,28 +461,28 @@ this.Write("\" />\r\n");
         #line default
         #line hidden
         
-        #line 150 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 151 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("        <Service Include=\"{");
 
         
         #line default
         #line hidden
         
-        #line 151 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 152 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(serviceGuid));
 
         
         #line default
         #line hidden
         
-        #line 151 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 152 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 this.Write("}\" />\r\n");
 
         
         #line default
         #line hidden
         
-        #line 152 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
+        #line 153 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnit\XUnitTestProjectTemplate.tt"
 
 	}
 
