@@ -60,6 +60,9 @@ namespace MMC
 
         public StateSpaceSetup(IDefinitionProvider definitionProvider, IConfig config, Logger logger)
         {
+            // TODO: dirty trick, ensure the System.Delegate within AllocatedDelegate is set
+            AllocatedDelegate.DelegateTypeDef = definitionProvider.BaseTypes.Delegate.ToTypeDefOrRef().ResolveTypeDefThrow();
+
             _definitionProvider = definitionProvider;
             _config = config;
             _logger = logger;
