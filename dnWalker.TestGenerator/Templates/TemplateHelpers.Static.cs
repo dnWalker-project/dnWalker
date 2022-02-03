@@ -23,64 +23,61 @@ namespace dnWalker.TestGenerator.Templates
 
         public static string GetTypeNameOrAlias(TypeSignature typeSignature)
         {
-            TypeSig type = typeSignature.ToTypeDefOrRef().ToTypeSig();
-            ICorLibTypes types = type.Module.CorLibTypes;
-
-            if (TypeEqualityComparer.Instance.Equals(type, types.SByte))
+            if (typeSignature.IsSByte)
             {
                 return "sbyte";
             }
-            if (TypeEqualityComparer.Instance.Equals(type, types.Int16))
+            if (typeSignature.IsInt16)
             {
                 return "short";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Int32))
+            else if (typeSignature.IsInt32)
             {
                 return "int";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Int64))
+            else if (typeSignature.IsInt64)
             {
                 return "long";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Byte))
+            else if (typeSignature.IsByte)
             {
                 return "byte";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.UInt16))
+            else if (typeSignature.IsUInt16)
             {
                 return "ushort";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.UInt32))
+            else if (typeSignature.IsUInt32)
             {
                 return "uint";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.UInt64))
+            else if (typeSignature.IsUInt64)
             {
                 return "ulong";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Single))
+            else if (typeSignature.IsSingle)
             {
                 return "float";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Double))
+            else if (typeSignature.IsDouble)
             {
                 return "double";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Char))
+            else if (typeSignature.IsChar)
             {
                 return "char";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Boolean))
+            else if (typeSignature.IsBoolean)
             {
                 return "bool";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.String))
+            else if (typeSignature.IsString)
             {
                 return "string";
             }
             else
             {
-                return type.TypeName;
+                return typeSignature.Name;
             }
         }
 
@@ -94,62 +91,59 @@ namespace dnWalker.TestGenerator.Templates
 
         public static string GetDefaultLiteral(TypeSignature typeSignature)
         {
-            TypeSig type = typeSignature.ToTypeDefOrRef().ToTypeSig();
-            ICorLibTypes types = type.Module.CorLibTypes;
-
-            if (type.IsClassSig || type.IsArray || type.IsSZArray)
+            if (typeSignature.IsClass || typeSignature.IsArray || typeSignature.IsSZArray || typeSignature.IsInterface)
             {
                 return Null;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.SByte))
+            else if (typeSignature.IsSByte)
             {
                 return Zero;
             }
-            if (TypeEqualityComparer.Instance.Equals(type, types.Int16))
+            if (typeSignature.IsInt16)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Int32))
+            else if (typeSignature.IsInt32)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Int64))
+            else if (typeSignature.IsInt64)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Byte))
+            else if (typeSignature.IsByte)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.UInt16))
+            else if (typeSignature.IsUInt16)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.UInt32))
+            else if (typeSignature.IsUInt32)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.UInt64))
+            else if (typeSignature.IsUInt64)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Single))
+            else if (typeSignature.IsSingle)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Double))
+            else if (typeSignature.IsDouble)
             {
                 return Zero;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Char))
+            else if (typeSignature.IsChar)
             {
                 return @"'\0'";
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.Boolean))
+            else if (typeSignature.IsBoolean)
             {
                 return False;
             }
-            else if (TypeEqualityComparer.Instance.Equals(type, types.String))
+            else if (typeSignature.IsString)
             {
                 return Null;
             }
