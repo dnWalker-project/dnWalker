@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TypeSystem
 {
-    public readonly struct TypeSignature : IEquatable<TypeSignature>
+    public readonly partial struct TypeSignature : IEquatable<TypeSignature>
     {
         private readonly ITypeDefOrRef _type;
 
@@ -67,6 +67,30 @@ namespace dnWalker.TypeSystem
             get
             {
                 return _type.ResolveTypeDefThrow().IsInterface;
+            }
+        }
+
+        public bool IsClass
+        {
+            get
+            {
+                return _type.ResolveTypeDefThrow().IsClass;
+            }
+        }
+
+        public bool IsValueType
+        {
+            get
+            {
+                return _type.ResolveTypeDef().IsValueType;
+            }
+        }
+
+        public bool IsPrimitive
+        {
+            get
+            {
+                return _type.ResolveTypeDef().IsPrimitive;
             }
         }
 
