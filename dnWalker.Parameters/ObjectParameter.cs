@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,24 +14,16 @@ namespace dnWalker.Parameters
         private readonly FieldOwnerImplementation _fields;
         private readonly MethodResolverImplementation _methodResults;
 
-        internal ObjectParameter(IParameterContext context, string type) : base(context)
+        internal ObjectParameter(IParameterSet set, TypeSignature type) : base(set, type)
         {
-            Type = type;
-            _fields = new FieldOwnerImplementation(Reference, context);
-            _methodResults = new MethodResolverImplementation(Reference, context);
+            _fields = new FieldOwnerImplementation(Reference, set);
+            _methodResults = new MethodResolverImplementation(Reference, set);
         }
 
-        internal ObjectParameter(IParameterContext context, ParameterRef reference, string type) : base(context, reference)
+        internal ObjectParameter(IParameterSet set, TypeSignature type, ParameterRef reference) : base(set, type, reference)
         {
-            Type = type;
-            _fields = new FieldOwnerImplementation(Reference, context);
-            _methodResults = new MethodResolverImplementation(Reference, context);
-        }
-
-
-        public string Type
-        {
-            get;
+            _fields = new FieldOwnerImplementation(Reference, set);
+            _methodResults = new MethodResolverImplementation(Reference, set);
         }
 
         #region IFieldOwner Members
@@ -77,9 +71,9 @@ namespace dnWalker.Parameters
         #endregion IMethodResolver Members
 
 
-        public override ObjectParameter CloneData(IParameterContext newContext)
+        public override ObjectParameter CloneData(IParameterSet newContext)
         {
-            ObjectParameter objectParameter = new ObjectParameter(newContext, Reference, Type)
+            ObjectParameter objectParameter = new ObjectParameter(newContext, Type, Reference)
             {
                 IsNull = IsNull,
             };
@@ -103,19 +97,19 @@ namespace dnWalker.Parameters
 
     public static partial class ParameterContextExtensions
     {
-        public static IObjectParameter CreateObjectParameter(this IParameterContext context, string type, bool? isNull = null)
+        public static IObjectParameter CreateObjectParameter(this IParameterSet set, TypeSignature type, bool? isNull = null)
         {
-            return CreateObjectParameter(context, context.GetParameterRef(), type, isNull);
+            return CreateObjectParameter(set, type, set.GetParameterRef(), isNull);
         }
 
-        public static IObjectParameter CreateObjectParameter(this IParameterContext context, ParameterRef reference, string type, bool? isNull = null)
+        public static IObjectParameter CreateObjectParameter(this IParameterSet set, TypeSignature type, ParameterRef reference, bool? isNull = null)
         {
-            ObjectParameter parameter = new ObjectParameter(context, reference, type)
+            ObjectParameter parameter = new ObjectParameter(set, type, reference)
             {
                 IsNull = isNull
             };
 
-            context.Parameters.Add(parameter.Reference, parameter);
+            set.Parameters.Add(parameter.Reference, parameter);
 
             return parameter;
         }

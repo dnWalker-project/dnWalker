@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,31 +15,27 @@ namespace dnWalker.Parameters
     {
         private ItemOwnerImplementation _items;
 
-        internal ArrayParameter(IParameterContext context, string elementType) : base(context)
+        internal ArrayParameter(IParameterSet set, TypeSignature elementType) : base(set, elementType.CreateArray())
         {
             ElementType = elementType;
-            _items = new ItemOwnerImplementation(Reference, Context);
+            _items = new ItemOwnerImplementation(Reference, Set);
         }
-        internal ArrayParameter(IParameterContext context, ParameterRef reference, string elementType) : base(context, reference)
+        internal ArrayParameter(IParameterSet set, TypeSignature elementType, ParameterRef reference) : base(set, elementType.CreateArray(), reference)
         {
             ElementType = elementType;
-            _items = new ItemOwnerImplementation(Reference, Context);
+            _items = new ItemOwnerImplementation(Reference, Set);
         }
 
-        public string ElementType
+        public TypeSignature ElementType
         {
             get;
         }
 
-        public ICollection<string> ImplementedTypes
-        {
-            get;
-        } = new HashSet<string>();
 
 
-        public override ArrayParameter CloneData(IParameterContext newContext)
+        public override ArrayParameter CloneData(IParameterSet newContext)
         {
-            ArrayParameter arrayParameter = new ArrayParameter(newContext, Reference, ElementType)
+            ArrayParameter arrayParameter = new ArrayParameter(newContext, ElementType, Reference)
             {
                 IsNull = IsNull,
                 Length = Length,
@@ -96,20 +94,20 @@ namespace dnWalker.Parameters
 
     public static partial class ParameterContextExtensions
     {
-        public static IArrayParameter CreateArrayParameter(this IParameterContext context, string elementType, bool? isNull = null, int? length = null)
+        public static IArrayParameter CreateArrayParameter(this IParameterSet set, TypeSignature elementType, bool? isNull = null, int? length = null)
         {
-            return CreateArrayParameter(context, context.GetParameterRef(), elementType, isNull, length);
+            return CreateArrayParameter(set, elementType, set.GetParameterRef(), isNull, length);
         }
 
-        public static IArrayParameter CreateArrayParameter(this IParameterContext context, ParameterRef reference, string elementType, bool? isNull = null, int? length = null)
+        public static IArrayParameter CreateArrayParameter(this IParameterSet set, TypeSignature elementType, ParameterRef reference, bool? isNull = null, int? length = null)
         {
-            ArrayParameter parameter = new ArrayParameter(context, reference, elementType)
+            ArrayParameter parameter = new ArrayParameter(set, elementType, reference)
             {
                 IsNull = isNull,
                 Length = length
             };
 
-            context.Parameters.Add(parameter.Reference, parameter);
+            set.Parameters.Add(parameter.Reference, parameter);
 
             return parameter;
         }

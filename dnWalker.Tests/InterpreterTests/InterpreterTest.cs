@@ -24,6 +24,7 @@
 
 using dnWalker.Tests;
 using dnWalker.Tests.InterpreterTests;
+using dnWalker.TypeSystem;
 
 using MMC;
 using System;
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests
     {
         private const string AssemblyFilename = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
 
-        private static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => DefinitionProvider.Create(GetAssemblyLoader(AssemblyFilename)));
+        private static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilename)));
 
         public InterpreterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {

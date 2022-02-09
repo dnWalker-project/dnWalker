@@ -18,6 +18,8 @@ using MMC.InstructionExec;
 using MMC;
 
 using dnWalker.ChoiceGenerators;
+using dnWalker.TypeSystem;
+using System.Collections.Generic;
 
 namespace dnWalker.Instructions
 {
@@ -246,11 +248,11 @@ namespace dnWalker.Instructions
             ITypeDefOrRef type = (ITypeDefOrRef)Operand;
             if (type.IsValueType)
             {
-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.FullName)));
+                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(type.ToTypeSig())));
             }
             else
             {
-                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf("System.IntPtr")));
+                cur.EvalStack.Push(new Int4(cur.DefinitionProvider.SizeOf(cur.DefinitionProvider.BaseTypes.IntPtr)));
             }
 
             return nextRetval;
@@ -871,7 +873,7 @@ namespace dnWalker.Instructions
             IDataElement or = cur.EvalStack.Pop();
             MethodDefinition method = Operand as MethodDefinition;
 
-            MethodDefinition toCall = cur.DefinitionProvider.SearchVirtualMethod(method, or, cur);
+            MethodDefinition toCall = or.FindVirtualMethod(method, cur);
             cur.EvalStack.Push(new MethodPointer(toCall));
 
             return nextRetval;
@@ -1086,15 +1088,7 @@ namespace dnWalker.Instructions
             {
                 cur.Logger.Debug("thread {0} wants access to uninitialized public class {1}", me, type.Name);
 
-                MethodDefinition cctorDef;
-                try
-                {
-                    cctorDef = cur.DefinitionProvider.SearchMethod(".cctor", type);
-                }
-                catch (NotSupportedException e)
-                {
-                    cctorDef = null;
-                }
+                MethodDefinition cctorDef = type.ResolveTypeDef()?.FindStaticConstructor();
 
                 if (cctorDef == null)
                 {
@@ -1176,13 +1170,24 @@ namespace dnWalker.Instructions
 
         public FieldDefinition GetFieldDefinition()
         {
-            FieldDefinition fld = Operand as FieldDefinition;
-            // Lookup layout information if it's not available.
-            if (!fld.HasLayoutInfo)
+            static void EnsureLayoutInfo(FieldDefinition fieldDef)
             {
-                fld = DefinitionProvider.GetFieldDefinition(fld);
-                //throw new NotImplementedException("GetFieldDefinition");
+                if (!fieldDef.FieldOffset.HasValue)
+                {
+                    IList<FieldDefinition> fields = fieldDef.DeclaringType.Fields;
+                    for (var i = 0; i < fields.Count; i++)
+                    {
+                        if (fields[i] == fieldDef)
+                        {
+                            fieldDef.FieldOffset = (uint)i;
+                            break;
+                        }
+                    }
+                }
             }
+
+            var fld = Operand as FieldDefinition;
+            EnsureLayoutInfo(fld);
 
             return fld;
         }
@@ -1211,12 +1216,12 @@ namespace dnWalker.Instructions
             bool matched = false;
             int retval = 0;
 
-            foreach (TypeDefinition typeDef in DefinitionProvider.InheritanceEnumerator(superType))
+            foreach (TypeDefinition typeDef in superType.InheritanceEnumerator())
             {
                 /*
-				 * We start searching for the right field from the declaringtype,
-				 * it is possible that the declaring type does not define fld, therefore
-				 * it might be possible that we have to search further for fld in
+				 * We start searching for the right field from the declaring type,
+				 * it is possible that the declaring type does not define field, therefore
+				 * it might be possible that we have to search further for field in
 				 * the inheritance tree, (hence matched), and this continues until
 				 * a field is found which has the same offset and the same name 
 				 */
@@ -2948,7 +2953,7 @@ namespace dnWalker.Instructions
 
                 if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
                 {
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(args[0].ToString()));
+                    cur.EvalStack.Push(DataElement.CreateDataElement(args[0].ToString(), cur.DefinitionProvider));
                     return nextRetval;
                 }
 
@@ -3096,7 +3101,7 @@ namespace dnWalker.Instructions
                 }
                 else
                 {
-                    toCall = cur.DefinitionProvider.SearchVirtualMethod(methDef, args[0], cur);
+                    toCall = args[0].FindVirtualMethod(methDef, cur);
                 }
 
                 cur.CurrentMethod.IsPrefixed = false;

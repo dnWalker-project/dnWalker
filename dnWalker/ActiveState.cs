@@ -26,6 +26,7 @@ namespace MMC.State
     using dnWalker;
     using dnWalker.Traversal;
     using System;
+    using dnWalker.TypeSystem;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
@@ -119,7 +120,7 @@ namespace MMC.State
 
         internal ThreadObjectWatcher ThreadObjectWatcher { get; }
 
-        public DefinitionProvider DefinitionProvider { get; }
+        public IDefinitionProvider DefinitionProvider { get; }
 
         internal Collapser StateCollapser => m_stateConvertor;
 
@@ -152,7 +153,7 @@ namespace MMC.State
         {
             return CurrentMethod != null &&
                 (CurrentMethod.Definition.DeclaringType.Module == //.Assembly ==
-                 CurrentMethod.Cur.DefinitionProvider.AssemblyDefinition);
+                 CurrentMethod.Cur.DefinitionProvider.Context.MainModule);
         }
 
         public delegate void DoSharingAnalysisRequestHandle();
@@ -246,7 +247,7 @@ namespace MMC.State
         internal ExplicitActiveState(
             IConfig config,
             IInstructionExecProvider instructionExecProvider,
-            DefinitionProvider definitionProvider,
+            IDefinitionProvider definitionProvider,
             Logger logger)
         {
             DefinitionProvider = definitionProvider;

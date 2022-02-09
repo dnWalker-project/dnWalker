@@ -104,14 +104,14 @@ namespace dnWalker.Instructions.Extensions
                     // there is not any information about the element
                     // it is an uninitialized input
                     // => create a default parameter in base context
-                    IParameter baseItemParameter = store.BaseContext.CreateParameter(allocatedArray.Type.ToTypeSig());
+                    IParameter baseItemParameter = store.BaseSet.CreateParameter(allocatedArray.Type.ToTypeSig());
 
-                    IArrayParameter baseArrayParameter = arrayParameter.Reference.Resolve<IArrayParameter>(store.BaseContext);
+                    IArrayParameter baseArrayParameter = arrayParameter.Reference.Resolve<IArrayParameter>(store.BaseSet);
                     baseArrayParameter.SetItem(index, baseItemParameter);
 
                     // copy it into the execution context as well
-                    itemParameter = baseItemParameter.CloneData(store.ExecutionContext);
-                    store.ExecutionContext.Parameters.Add(itemParameter.Reference, itemParameter);
+                    itemParameter = baseItemParameter.CloneData(store.ExecutionSet);
+                    store.ExecutionSet.Parameters.Add(itemParameter.Reference, itemParameter);
                     arrayParameter.SetItem(index, itemParameter);
                 }
 

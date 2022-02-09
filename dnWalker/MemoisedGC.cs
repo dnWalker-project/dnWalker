@@ -21,6 +21,7 @@ using MMC.Util;
 using SGC = System.Collections.Generic;
 using MMC.Data;
 using C5;
+using dnWalker.TypeSystem;
 
 namespace MMC.State
 {
@@ -401,7 +402,7 @@ namespace MMC.State
     {
         private readonly SGC.IDictionary<int, ObjectReferenceBag> parents;
 
-        public ParentWatcher(IConfig config, DefinitionProvider definitionProvider)
+        public ParentWatcher(IConfig config, IDefinitionProvider definitionProvider)
         {
             parents = new SGC.Dictionary<int, ObjectReferenceBag>();
 

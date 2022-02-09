@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
+    <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
     <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj" />
   </ItemGroup>
 

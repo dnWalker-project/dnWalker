@@ -1,4 +1,5 @@
 ﻿using dnWalker.DataElements;
+using dnWalker.TypeSystem;
 
 using FluentAssertions;
 
@@ -19,7 +20,7 @@ namespace dnWalker.Tests.InterpreterTests
 {
     public class InterpreterTestBase : TestBase
     {
-        public InterpreterTestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
+        public InterpreterTestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
         {
         }
 

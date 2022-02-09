@@ -2,7 +2,6 @@
 
 using dnWalker.Parameters;
 using dnWalker.TestGenerator.Explorations.Xml;
-using dnWalker.TestGenerator.Reflection;
 using dnWalker.TestGenerator.XUnit;
 
 using System;
@@ -33,31 +32,31 @@ namespace dnWalker.TestGenerator
 
         private static void RunTestGenerator(CommandLineArguments args)
         {
-            if (!File.Exists(args.ExplorationDataFileName)) throw new FileNotFoundException("ExplorationData file was not found!");
+            //if (!File.Exists(args.ExplorationDataFileName)) throw new FileNotFoundException("ExplorationData file was not found!");
 
-            string outputDirectory = Path.GetFullPath(args.OutputDir!);
+            //string outputDirectory = Path.GetFullPath(args.OutputDir!);
 
-            IEnumerable<ExplorationData> explorations = XElement.Load(args.ExplorationDataFileName!).Elements("Exploration").Select(xe => xe.ToExplorationData());
+            //IEnumerable<ExplorationData> explorations = XElement.Load(args.ExplorationDataFileName!).Elements("Exploration").Select(xe => xe.ToExplorationData());
 
-            foreach (ExplorationData explorationData in explorations)
-            {
+            //foreach (ExplorationData explorationData in explorations)
+            //{
 
-                Assembly sutAssembly = Assembly.LoadFrom(explorationData.AssemblyFileName);
+            //    Assembly sutAssembly = Assembly.LoadFrom(explorationData.AssemblyFileName);
 
-                TestGeneratorContext testData = new TestGeneratorContext(sutAssembly, explorationData);
+            //    TestGeneratorContext testData = new TestGeneratorContext(sutAssembly, explorationData);
 
-                if (!string.IsNullOrWhiteSpace(outputDirectory))
-                {
-                    Directory.CreateDirectory(outputDirectory);
-                }
+            //    if (!string.IsNullOrWhiteSpace(outputDirectory))
+            //    {
+            //        Directory.CreateDirectory(outputDirectory);
+            //    }
 
-                string outputFile = Path.Combine(outputDirectory, $"{sutAssembly.GetName().Name}_{testData.SUTType.FullName!.Replace('.', '_')}_{testData.SUTMethod.Name}.Tests.cs");
+            //    string outputFile = Path.Combine(outputDirectory, $"{sutAssembly.GetName().Name}_{testData.SUTType.FullName!.Replace('.', '_')}_{testData.SUTMethod.Name}.Tests.cs");
 
-                using (XUnitTestClassWriter testWriter = new XUnitTestClassWriter(new StreamWriter(outputFile)))
-                {
-                    testWriter.Write(testData);
-                }
-            }
+            //    using (XUnitTestClassWriter testWriter = new XUnitTestClassWriter(new StreamWriter(outputFile)))
+            //    {
+            //        testWriter.Write(testData);
+            //    }
+            //}
         }
     }
 }

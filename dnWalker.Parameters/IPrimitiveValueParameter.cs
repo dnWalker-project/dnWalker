@@ -10,10 +10,6 @@ namespace dnWalker.Parameters
 {
     public interface IValueTypeParameter : IParameter
     {
-        string Type
-        {
-            get;
-        }
     }
 
     public interface IPrimitiveValueParameter : IValueTypeParameter
@@ -28,14 +24,6 @@ namespace dnWalker.Parameters
     public interface IPrimitiveValueParameter<T> : IPrimitiveValueParameter
         where T : struct
     {
-        string IValueTypeParameter.Type
-        {
-            get
-            {
-                return typeof(T).FullName!;
-            }
-        }
-
         new T? Value 
         {
             get; 

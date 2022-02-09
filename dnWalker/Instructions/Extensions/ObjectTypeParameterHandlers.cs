@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Parameters;
+using dnWalker.TypeSystem;
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -67,14 +68,14 @@ namespace dnWalker.Instructions.Extensions
                 {
                     // there is not information about the field
                     // => initialize a new parameter with default values within the base context
-                    IParameter baseFieldParameter = store.BaseContext.CreateParameter(field.FieldType);
+                    IParameter baseFieldParameter = store.BaseSet.CreateParameter(field.FieldType);
 
-                    IObjectParameter baseObjectParameter = objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext);
+                    IObjectParameter baseObjectParameter = objectParameter.Reference.Resolve<IObjectParameter>(store.BaseSet);
                     baseObjectParameter.SetField(field.Name, baseFieldParameter);
 
                     // copy it into the execution context as well
-                    fieldParameter = baseFieldParameter.CloneData(store.ExecutionContext);
-                    store.ExecutionContext.Parameters.Add(fieldParameter.Reference, fieldParameter);
+                    fieldParameter = baseFieldParameter.CloneData(store.ExecutionSet);
+                    store.ExecutionSet.Parameters.Add(fieldParameter.Reference, fieldParameter);
                     objectParameter.SetField(field.Name, baseFieldParameter);
                 }
 
@@ -130,7 +131,7 @@ namespace dnWalker.Instructions.Extensions
                 return true;
             }
 
-            MethodSignature signature = methodDefinition.FullName;
+            MethodSignature signature = new MethodSignature(methodDefinition);
             int invocation = cur.IncreaseInvocationCount(instance, signature);
 
 
@@ -141,15 +142,15 @@ namespace dnWalker.Instructions.Extensions
                 // there is not any information about the method result
                 // it is an uninitialized input
                 // => create a default parameter in base context
-                IParameter baseResultParameter = store.BaseContext.CreateParameter(methodDefinition.ReturnType);
+                IParameter baseResultParameter = store.BaseSet.CreateParameter(methodDefinition.ReturnType);
 
-                IObjectParameter baseObjectParameter = objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext);
+                IObjectParameter baseObjectParameter = objectParameter.Reference.Resolve<IObjectParameter>(store.BaseSet);
                 baseObjectParameter.SetMethodResult(signature, invocation, baseResultParameter);
 
 
                 // copy it into the execution context as well
-                resultParameter = baseResultParameter.CloneData(store.ExecutionContext);
-                store.ExecutionContext.Parameters.Add(resultParameter.Reference, resultParameter);
+                resultParameter = baseResultParameter.CloneData(store.ExecutionSet);
+                store.ExecutionSet.Parameters.Add(resultParameter.Reference, resultParameter);
                 objectParameter.SetMethodResult(signature, invocation, resultParameter);
             }
 

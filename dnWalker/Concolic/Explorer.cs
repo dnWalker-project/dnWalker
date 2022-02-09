@@ -7,6 +7,7 @@ using dnWalker.Instructions.Extensions;
 using dnWalker.NativePeers;
 using dnWalker.Parameters;
 using dnWalker.Parameters.Expressions;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.Data;
@@ -31,7 +32,7 @@ namespace dnWalker.Concolic
         private readonly Config _config;
         private readonly Logger _logger;
         private readonly ISolver _solver;
-        private readonly DefinitionProvider _definitionProvider;
+        private readonly IDefinitionProvider _definitionProvider;
 
         private int _currentIteration;
         private PathStore _pathStore;
@@ -41,7 +42,7 @@ namespace dnWalker.Concolic
 
         private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
 
-        public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
+        public Explorer(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
             _definitionProvider = definitionProvider;
             _config = config;
@@ -143,7 +144,7 @@ namespace dnWalker.Concolic
 
             _pathStore = new PathStore(entryPoint);
             // _parameterStore.BaseContext should contain default values for all input parameters
-            _parameterStore = new ParameterStore(entryPoint);
+            _parameterStore = new ParameterStore(entryPoint, _definitionProvider);
 
 
             var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
@@ -158,9 +159,9 @@ namespace dnWalker.Concolic
             // data contains start point information for PRIMITIVE ARGUMENTS ONLY
             foreach (KeyValuePair<string, object> kvp in data)
             {
-                if (_parameterStore.BaseContext.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
+                if (_parameterStore.BaseSet.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
                 {
-                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseContext);
+                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseSet);
                     p.Value = kvp.Value;
                 }
             }
