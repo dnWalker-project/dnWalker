@@ -7,6 +7,7 @@ using dnWalker.Instructions.Extensions;
 using dnWalker.NativePeers;
 using dnWalker.Parameters;
 using dnWalker.Parameters.Expressions;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.Data;
@@ -31,7 +32,7 @@ namespace dnWalker.Concolic
         private readonly Config _config;
         private readonly Logger _logger;
         private readonly ISolver _solver;
-        private readonly DefinitionProvider _definitionProvider;
+        private readonly IDefinitionProvider _definitionProvider;
 
         private int _currentIteration;
         private PathStore _pathStore;
@@ -41,7 +42,7 @@ namespace dnWalker.Concolic
 
         private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
 
-        public Explorer(DefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
+        public Explorer(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
             _definitionProvider = definitionProvider;
             _config = config;
@@ -95,6 +96,10 @@ namespace dnWalker.Concolic
         {
             ExplorationStarted(this, e);
         }
+        protected virtual void OnExplorationFinished(ExplorationFinishedEventArgs e)
+        {
+            ExplorationFinished(this, e);
+        }
         protected virtual void OnExplorationFailed(ExplorationFailedEventArgs e)
         {
             ExplorationFailed(this, e);
@@ -139,7 +144,7 @@ namespace dnWalker.Concolic
 
             _pathStore = new PathStore(entryPoint);
             // _parameterStore.BaseContext should contain default values for all input parameters
-            _parameterStore = new ParameterStore(entryPoint);
+            _parameterStore = new ParameterStore(entryPoint, _definitionProvider);
 
 
             var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
@@ -154,9 +159,9 @@ namespace dnWalker.Concolic
             // data contains start point information for PRIMITIVE ARGUMENTS ONLY
             foreach (KeyValuePair<string, object> kvp in data)
             {
-                if (_parameterStore.BaseContext.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
+                if (_parameterStore.BaseSet.Roots.TryGetValue(kvp.Key, out ParameterRef reference) && reference != ParameterRef.Empty)
                 {
-                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseContext);
+                    IPrimitiveValueParameter p = reference.Resolve<IPrimitiveValueParameter>(_parameterStore.BaseSet);
                     p.Value = kvp.Value;
                 }
             }
@@ -207,11 +212,12 @@ namespace dnWalker.Concolic
                     var path = _pathStore.CurrentPath;
                     PathExplored?.Invoke(path);
 
-                    if (entryPoint.HasReturnType)
-                    {
-                        ReturnValue retValue = (ReturnValue)cur.CurrentThread.RetValue;
-                        _parameterStore.SetReturnValue(retValue, cur);
-                    }
+                    // done by RET instruction extension
+                    //if (entryPoint.HasReturnType)
+                    //{
+                    //    IDataElement retValue = cur.CurrentThread.RetValue;
+                    //    _parameterStore.SetReturnValue(retValue, cur, entryPoint.ReturnType);
+                    //}
 
                     OnIterationFinished(new IterationFinishedEventArgs(_currentIteration, _parameterStore, path));
 
@@ -239,6 +245,7 @@ namespace dnWalker.Concolic
 
             }
 
+            OnExplorationFinished(new ExplorationFinishedEventArgs());
         }
 
         public void Dispose()

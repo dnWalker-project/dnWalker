@@ -10,11 +10,11 @@ namespace dnWalker.Parameters
     internal class ItemOwnerImplementation : IItemOwner
     {
         private readonly ParameterRef _ownerRef;
-        private readonly IParameterContext _context;
+        private readonly IParameterSet _context;
 
         private ParameterRef[] _items = ParameterRef.EmptyArray;
 
-        public ItemOwnerImplementation(ParameterRef ownerRef, IParameterContext context)
+        public ItemOwnerImplementation(ParameterRef ownerRef, IParameterSet context)
         {
             _ownerRef = ownerRef;
             _context = context;
@@ -93,7 +93,7 @@ namespace dnWalker.Parameters
 
             if (parameterRef.TryResolve(_context, out IParameter? itemParameter))
             {
-                itemParameter.Accessor = new ItemParameterAccessor(index, _ownerRef);
+                itemParameter.Accessors.Add(new ItemParameterAccessor(index, _ownerRef));
             }
             else
             {
@@ -107,7 +107,8 @@ namespace dnWalker.Parameters
 
             if (_items[index].TryResolve(_context, out IParameter? itemParameter))
             {
-                itemParameter.Accessor = null;
+                itemParameter.Accessors.RemoveAt(itemParameter.Accessors.IndexOf(pa => pa is ItemParameterAccessor ia && ia.ParentRef == _ownerRef && ia.Index == index));
+                //itemParameter.Accessor = null;
             }
 
             _items[index] = ParameterRef.Empty;

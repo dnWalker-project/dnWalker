@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.TypeSystem;
 
 using MMC;
 
@@ -17,7 +18,7 @@ namespace dnWalker.Tests
 
         IConcolicExplorerBuilder OverrideSolver(Func<ISolver> solverFactory);
         IConcolicExplorerBuilder OverrideLogger(Func<Logger> loggerFactory);
-        IConcolicExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> definitionProviderFactory);
+        IConcolicExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> definitionProviderFactory);
 
         IExplorer Build();
 

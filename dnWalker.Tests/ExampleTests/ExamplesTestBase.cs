@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 using dnWalker.Traversal;
+using dnWalker.TypeSystem;
+
 using MMC;
 using Xunit.Abstractions;
 
@@ -16,15 +18,15 @@ namespace dnWalker.Tests.ExampleTests
         //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
         protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\framework\Examples.Framework.exe";
 
-        protected ExamplesTestBase(ITestOutputHelper testOutputHelper, DefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
+        protected ExamplesTestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
         {
             string testClassName = typeof(ExamplesTestBase).Name;
             OverrideConcolicExplorerBuilderInitialization(b =>
             {
-                dnWalker.Concolic.XmlExplorationExporter xmlExporter = new dnWalker.Concolic.XmlExplorationExporter(testClassName + "{SUT}.xml");
+                //dnWalker.Concolic.XmlExplorationExporter xmlExporter = new dnWalker.Concolic.XmlExplorationExporter(testClassName + "{SUT}.xml");
                 dnWalker.Concolic.FlowGraphWriter graphExporter = new dnWalker.Concolic.FlowGraphWriter() { OutputFile = testClassName + "{SUT}.dot" };
 
-                b.With(xmlExporter);
+                //b.With(xmlExporter);
                 b.With(graphExporter);
             });
         }

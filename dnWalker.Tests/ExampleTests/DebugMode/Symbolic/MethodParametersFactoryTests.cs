@@ -36,7 +36,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
 
             paths.Count().Should().Be(5);
             //paths.Select(p => p.PathConstraintString)
-            paths.Select(p => p.GetConstraintStringWithAccesses(explorer.ParameterStore.BaseContext))
+            paths.Select(p => p.GetConstraintStringWithAccesses(explorer.ParameterStore.BaseSet))
                 .Should()
                 .BeEquivalentTo(
                     "((((x >= 0) And (y >= 0)) And (x >= y)) And (x != 0))",

@@ -1,38 +1,35 @@
-﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using dnWalker.TypeSystem;
+
+using System;
+using System.Linq;
 
 namespace dnWalker.Parameters
 {
 
     public class BooleanParameter : Parameter, IBooleanParameter
     {
-        internal BooleanParameter(IParameterContext context) : base(context)
+        internal BooleanParameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Boolean.TypeDefOrRef))
         {
         }
 
-        internal BooleanParameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal BooleanParameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Boolean.TypeDefOrRef), reference)
         {
         }
         
-        internal BooleanParameter(IParameterContext context, ParameterRef reference, bool? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public bool? Value
         {
             get;
             set;
         }
 
-        public override BooleanParameter Clone(IParameterContext context)
+        public override BooleanParameter CloneData(IParameterSet set)
         {
-             BooleanParameter parameter = new BooleanParameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             BooleanParameter parameter = new BooleanParameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -43,32 +40,28 @@ namespace dnWalker.Parameters
 
     public class CharParameter : Parameter, ICharParameter
     {
-        internal CharParameter(IParameterContext context) : base(context)
+        internal CharParameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Char.TypeDefOrRef))
         {
         }
 
-        internal CharParameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal CharParameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Char.TypeDefOrRef), reference)
         {
         }
         
-        internal CharParameter(IParameterContext context, ParameterRef reference, char? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public char? Value
         {
             get;
             set;
         }
 
-        public override CharParameter Clone(IParameterContext context)
+        public override CharParameter CloneData(IParameterSet set)
         {
-             CharParameter parameter = new CharParameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             CharParameter parameter = new CharParameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -79,32 +72,28 @@ namespace dnWalker.Parameters
 
     public class ByteParameter : Parameter, IByteParameter
     {
-        internal ByteParameter(IParameterContext context) : base(context)
+        internal ByteParameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Byte.TypeDefOrRef))
         {
         }
 
-        internal ByteParameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal ByteParameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Byte.TypeDefOrRef), reference)
         {
         }
         
-        internal ByteParameter(IParameterContext context, ParameterRef reference, byte? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public byte? Value
         {
             get;
             set;
         }
 
-        public override ByteParameter Clone(IParameterContext context)
+        public override ByteParameter CloneData(IParameterSet set)
         {
-             ByteParameter parameter = new ByteParameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             ByteParameter parameter = new ByteParameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -115,32 +104,28 @@ namespace dnWalker.Parameters
 
     public class SByteParameter : Parameter, ISByteParameter
     {
-        internal SByteParameter(IParameterContext context) : base(context)
+        internal SByteParameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.SByte.TypeDefOrRef))
         {
         }
 
-        internal SByteParameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal SByteParameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.SByte.TypeDefOrRef), reference)
         {
         }
         
-        internal SByteParameter(IParameterContext context, ParameterRef reference, sbyte? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public sbyte? Value
         {
             get;
             set;
         }
 
-        public override SByteParameter Clone(IParameterContext context)
+        public override SByteParameter CloneData(IParameterSet set)
         {
-             SByteParameter parameter = new SByteParameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             SByteParameter parameter = new SByteParameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -151,32 +136,28 @@ namespace dnWalker.Parameters
 
     public class Int16Parameter : Parameter, IInt16Parameter
     {
-        internal Int16Parameter(IParameterContext context) : base(context)
+        internal Int16Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Int16.TypeDefOrRef))
         {
         }
 
-        internal Int16Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal Int16Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Int16.TypeDefOrRef), reference)
         {
         }
         
-        internal Int16Parameter(IParameterContext context, ParameterRef reference, short? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public short? Value
         {
             get;
             set;
         }
 
-        public override Int16Parameter Clone(IParameterContext context)
+        public override Int16Parameter CloneData(IParameterSet set)
         {
-             Int16Parameter parameter = new Int16Parameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             Int16Parameter parameter = new Int16Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -187,32 +168,28 @@ namespace dnWalker.Parameters
 
     public class Int32Parameter : Parameter, IInt32Parameter
     {
-        internal Int32Parameter(IParameterContext context) : base(context)
+        internal Int32Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Int32.TypeDefOrRef))
         {
         }
 
-        internal Int32Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal Int32Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Int32.TypeDefOrRef), reference)
         {
         }
         
-        internal Int32Parameter(IParameterContext context, ParameterRef reference, int? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public int? Value
         {
             get;
             set;
         }
 
-        public override Int32Parameter Clone(IParameterContext context)
+        public override Int32Parameter CloneData(IParameterSet set)
         {
-             Int32Parameter parameter = new Int32Parameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             Int32Parameter parameter = new Int32Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -223,32 +200,28 @@ namespace dnWalker.Parameters
 
     public class Int64Parameter : Parameter, IInt64Parameter
     {
-        internal Int64Parameter(IParameterContext context) : base(context)
+        internal Int64Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Int64.TypeDefOrRef))
         {
         }
 
-        internal Int64Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal Int64Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Int64.TypeDefOrRef), reference)
         {
         }
         
-        internal Int64Parameter(IParameterContext context, ParameterRef reference, long? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public long? Value
         {
             get;
             set;
         }
 
-        public override Int64Parameter Clone(IParameterContext context)
+        public override Int64Parameter CloneData(IParameterSet set)
         {
-             Int64Parameter parameter = new Int64Parameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             Int64Parameter parameter = new Int64Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -259,32 +232,28 @@ namespace dnWalker.Parameters
 
     public class UInt16Parameter : Parameter, IUInt16Parameter
     {
-        internal UInt16Parameter(IParameterContext context) : base(context)
+        internal UInt16Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.UInt16.TypeDefOrRef))
         {
         }
 
-        internal UInt16Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal UInt16Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.UInt16.TypeDefOrRef), reference)
         {
         }
         
-        internal UInt16Parameter(IParameterContext context, ParameterRef reference, ushort? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public ushort? Value
         {
             get;
             set;
         }
 
-        public override UInt16Parameter Clone(IParameterContext context)
+        public override UInt16Parameter CloneData(IParameterSet set)
         {
-             UInt16Parameter parameter = new UInt16Parameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             UInt16Parameter parameter = new UInt16Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -295,32 +264,28 @@ namespace dnWalker.Parameters
 
     public class UInt32Parameter : Parameter, IUInt32Parameter
     {
-        internal UInt32Parameter(IParameterContext context) : base(context)
+        internal UInt32Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.UInt32.TypeDefOrRef))
         {
         }
 
-        internal UInt32Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal UInt32Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.UInt32.TypeDefOrRef), reference)
         {
         }
         
-        internal UInt32Parameter(IParameterContext context, ParameterRef reference, uint? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public uint? Value
         {
             get;
             set;
         }
 
-        public override UInt32Parameter Clone(IParameterContext context)
+        public override UInt32Parameter CloneData(IParameterSet set)
         {
-             UInt32Parameter parameter = new UInt32Parameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             UInt32Parameter parameter = new UInt32Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -331,32 +296,28 @@ namespace dnWalker.Parameters
 
     public class UInt64Parameter : Parameter, IUInt64Parameter
     {
-        internal UInt64Parameter(IParameterContext context) : base(context)
+        internal UInt64Parameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.UInt64.TypeDefOrRef))
         {
         }
 
-        internal UInt64Parameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal UInt64Parameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.UInt64.TypeDefOrRef), reference)
         {
         }
         
-        internal UInt64Parameter(IParameterContext context, ParameterRef reference, ulong? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public ulong? Value
         {
             get;
             set;
         }
 
-        public override UInt64Parameter Clone(IParameterContext context)
+        public override UInt64Parameter CloneData(IParameterSet set)
         {
-             UInt64Parameter parameter = new UInt64Parameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             UInt64Parameter parameter = new UInt64Parameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -367,32 +328,28 @@ namespace dnWalker.Parameters
 
     public class SingleParameter : Parameter, ISingleParameter
     {
-        internal SingleParameter(IParameterContext context) : base(context)
+        internal SingleParameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Single.TypeDefOrRef))
         {
         }
 
-        internal SingleParameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal SingleParameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Single.TypeDefOrRef), reference)
         {
         }
         
-        internal SingleParameter(IParameterContext context, ParameterRef reference, float? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public float? Value
         {
             get;
             set;
         }
 
-        public override SingleParameter Clone(IParameterContext context)
+        public override SingleParameter CloneData(IParameterSet set)
         {
-             SingleParameter parameter = new SingleParameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             SingleParameter parameter = new SingleParameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -403,32 +360,28 @@ namespace dnWalker.Parameters
 
     public class DoubleParameter : Parameter, IDoubleParameter
     {
-        internal DoubleParameter(IParameterContext context) : base(context)
+        internal DoubleParameter(IParameterSet set) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Double.TypeDefOrRef))
         {
         }
 
-        internal DoubleParameter(IParameterContext context, ParameterRef reference) : base(context, reference)
+        internal DoubleParameter(IParameterSet set, ParameterRef reference) : base(set, new TypeSignature(set.Context.DefinitionProvider.BaseTypes.Double.TypeDefOrRef), reference)
         {
         }
         
-        internal DoubleParameter(IParameterContext context, ParameterRef reference, double? value) : base(context, reference)
-        {
-            Value = value;
-        }
-
         public double? Value
         {
             get;
             set;
         }
 
-        public override DoubleParameter Clone(IParameterContext context)
+        public override DoubleParameter CloneData(IParameterSet set)
         {
-             DoubleParameter parameter = new DoubleParameter(context, Reference, Value);
-
-             parameter.Accessor = Accessor?.Clone();
-
-             return parameter;
+             DoubleParameter parameter = new DoubleParameter(set, Reference)
+             {
+                Value = this.Value
+             };
+             
+            return parameter;
         }
 
         public override string ToString()
@@ -440,219 +393,147 @@ namespace dnWalker.Parameters
 
     public static partial class ParameterContextExtensions
     {
-        public static IBooleanParameter CreateBooleanParameter(this IParameterContext context)
+        public static IBooleanParameter CreateBooleanParameter(this IParameterSet set)
         {
-            return CreateBooleanParameter(context, ParameterRef.Any, null);
+            return CreateBooleanParameter(set, set.GetParameterRef());
         }
         
-        public static IBooleanParameter CreateBooleanParameter(this IParameterContext context, ParameterRef reference)
+        public static IBooleanParameter CreateBooleanParameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateBooleanParameter(context, reference, null);
-        }
-        
-        public static IBooleanParameter CreateBooleanParameter(this IParameterContext context, ParameterRef reference, bool? value)
-        {
-            BooleanParameter parameter = new BooleanParameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            BooleanParameter parameter = new BooleanParameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static ICharParameter CreateCharParameter(this IParameterContext context)
+        public static ICharParameter CreateCharParameter(this IParameterSet set)
         {
-            return CreateCharParameter(context, ParameterRef.Any, null);
+            return CreateCharParameter(set, set.GetParameterRef());
         }
         
-        public static ICharParameter CreateCharParameter(this IParameterContext context, ParameterRef reference)
+        public static ICharParameter CreateCharParameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateCharParameter(context, reference, null);
-        }
-        
-        public static ICharParameter CreateCharParameter(this IParameterContext context, ParameterRef reference, char? value)
-        {
-            CharParameter parameter = new CharParameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            CharParameter parameter = new CharParameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IByteParameter CreateByteParameter(this IParameterContext context)
+        public static IByteParameter CreateByteParameter(this IParameterSet set)
         {
-            return CreateByteParameter(context, ParameterRef.Any, null);
+            return CreateByteParameter(set, set.GetParameterRef());
         }
         
-        public static IByteParameter CreateByteParameter(this IParameterContext context, ParameterRef reference)
+        public static IByteParameter CreateByteParameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateByteParameter(context, reference, null);
-        }
-        
-        public static IByteParameter CreateByteParameter(this IParameterContext context, ParameterRef reference, byte? value)
-        {
-            ByteParameter parameter = new ByteParameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            ByteParameter parameter = new ByteParameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static ISByteParameter CreateSByteParameter(this IParameterContext context)
+        public static ISByteParameter CreateSByteParameter(this IParameterSet set)
         {
-            return CreateSByteParameter(context, ParameterRef.Any, null);
+            return CreateSByteParameter(set, set.GetParameterRef());
         }
         
-        public static ISByteParameter CreateSByteParameter(this IParameterContext context, ParameterRef reference)
+        public static ISByteParameter CreateSByteParameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateSByteParameter(context, reference, null);
-        }
-        
-        public static ISByteParameter CreateSByteParameter(this IParameterContext context, ParameterRef reference, sbyte? value)
-        {
-            SByteParameter parameter = new SByteParameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            SByteParameter parameter = new SByteParameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IInt16Parameter CreateInt16Parameter(this IParameterContext context)
+        public static IInt16Parameter CreateInt16Parameter(this IParameterSet set)
         {
-            return CreateInt16Parameter(context, ParameterRef.Any, null);
+            return CreateInt16Parameter(set, set.GetParameterRef());
         }
         
-        public static IInt16Parameter CreateInt16Parameter(this IParameterContext context, ParameterRef reference)
+        public static IInt16Parameter CreateInt16Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateInt16Parameter(context, reference, null);
-        }
-        
-        public static IInt16Parameter CreateInt16Parameter(this IParameterContext context, ParameterRef reference, short? value)
-        {
-            Int16Parameter parameter = new Int16Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            Int16Parameter parameter = new Int16Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IInt32Parameter CreateInt32Parameter(this IParameterContext context)
+        public static IInt32Parameter CreateInt32Parameter(this IParameterSet set)
         {
-            return CreateInt32Parameter(context, ParameterRef.Any, null);
+            return CreateInt32Parameter(set, set.GetParameterRef());
         }
         
-        public static IInt32Parameter CreateInt32Parameter(this IParameterContext context, ParameterRef reference)
+        public static IInt32Parameter CreateInt32Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateInt32Parameter(context, reference, null);
-        }
-        
-        public static IInt32Parameter CreateInt32Parameter(this IParameterContext context, ParameterRef reference, int? value)
-        {
-            Int32Parameter parameter = new Int32Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            Int32Parameter parameter = new Int32Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IInt64Parameter CreateInt64Parameter(this IParameterContext context)
+        public static IInt64Parameter CreateInt64Parameter(this IParameterSet set)
         {
-            return CreateInt64Parameter(context, ParameterRef.Any, null);
+            return CreateInt64Parameter(set, set.GetParameterRef());
         }
         
-        public static IInt64Parameter CreateInt64Parameter(this IParameterContext context, ParameterRef reference)
+        public static IInt64Parameter CreateInt64Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateInt64Parameter(context, reference, null);
-        }
-        
-        public static IInt64Parameter CreateInt64Parameter(this IParameterContext context, ParameterRef reference, long? value)
-        {
-            Int64Parameter parameter = new Int64Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            Int64Parameter parameter = new Int64Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context)
+        public static IUInt16Parameter CreateUInt16Parameter(this IParameterSet set)
         {
-            return CreateUInt16Parameter(context, ParameterRef.Any, null);
+            return CreateUInt16Parameter(set, set.GetParameterRef());
         }
         
-        public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context, ParameterRef reference)
+        public static IUInt16Parameter CreateUInt16Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateUInt16Parameter(context, reference, null);
-        }
-        
-        public static IUInt16Parameter CreateUInt16Parameter(this IParameterContext context, ParameterRef reference, ushort? value)
-        {
-            UInt16Parameter parameter = new UInt16Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            UInt16Parameter parameter = new UInt16Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context)
+        public static IUInt32Parameter CreateUInt32Parameter(this IParameterSet set)
         {
-            return CreateUInt32Parameter(context, ParameterRef.Any, null);
+            return CreateUInt32Parameter(set, set.GetParameterRef());
         }
         
-        public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context, ParameterRef reference)
+        public static IUInt32Parameter CreateUInt32Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateUInt32Parameter(context, reference, null);
-        }
-        
-        public static IUInt32Parameter CreateUInt32Parameter(this IParameterContext context, ParameterRef reference, uint? value)
-        {
-            UInt32Parameter parameter = new UInt32Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            UInt32Parameter parameter = new UInt32Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context)
+        public static IUInt64Parameter CreateUInt64Parameter(this IParameterSet set)
         {
-            return CreateUInt64Parameter(context, ParameterRef.Any, null);
+            return CreateUInt64Parameter(set, set.GetParameterRef());
         }
         
-        public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context, ParameterRef reference)
+        public static IUInt64Parameter CreateUInt64Parameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateUInt64Parameter(context, reference, null);
-        }
-        
-        public static IUInt64Parameter CreateUInt64Parameter(this IParameterContext context, ParameterRef reference, ulong? value)
-        {
-            UInt64Parameter parameter = new UInt64Parameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            UInt64Parameter parameter = new UInt64Parameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static ISingleParameter CreateSingleParameter(this IParameterContext context)
+        public static ISingleParameter CreateSingleParameter(this IParameterSet set)
         {
-            return CreateSingleParameter(context, ParameterRef.Any, null);
+            return CreateSingleParameter(set, set.GetParameterRef());
         }
         
-        public static ISingleParameter CreateSingleParameter(this IParameterContext context, ParameterRef reference)
+        public static ISingleParameter CreateSingleParameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateSingleParameter(context, reference, null);
-        }
-        
-        public static ISingleParameter CreateSingleParameter(this IParameterContext context, ParameterRef reference, float? value)
-        {
-            SingleParameter parameter = new SingleParameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            SingleParameter parameter = new SingleParameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }
-        public static IDoubleParameter CreateDoubleParameter(this IParameterContext context)
+        public static IDoubleParameter CreateDoubleParameter(this IParameterSet set)
         {
-            return CreateDoubleParameter(context, ParameterRef.Any, null);
+            return CreateDoubleParameter(set, set.GetParameterRef());
         }
         
-        public static IDoubleParameter CreateDoubleParameter(this IParameterContext context, ParameterRef reference)
+        public static IDoubleParameter CreateDoubleParameter(this IParameterSet set, ParameterRef reference)
         {
-            return CreateDoubleParameter(context, reference, null);
-        }
-        
-        public static IDoubleParameter CreateDoubleParameter(this IParameterContext context, ParameterRef reference, double? value)
-        {
-            DoubleParameter parameter = new DoubleParameter(context, reference, value);
-            
-            context.Parameters.Add(parameter.Reference, parameter);
+            DoubleParameter parameter = new DoubleParameter(set, reference);
+            set.Parameters.Add(parameter.Reference, parameter);
             
             return parameter;
         }

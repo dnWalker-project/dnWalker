@@ -9,14 +9,14 @@ namespace dnWalker.Parameters
     internal class FieldOwnerImplementation : IFieldOwner
     {
         private readonly ParameterRef _ownerRef;
-        private readonly IParameterContext _context;
+        private readonly IParameterSet _set;
 
         private readonly Dictionary<string, ParameterRef> _fields = new Dictionary<string, ParameterRef>();
 
-        public FieldOwnerImplementation(ParameterRef ownerRef, IParameterContext context)
+        public FieldOwnerImplementation(ParameterRef ownerRef, IParameterSet context)
         {
             _ownerRef = ownerRef;
-            _context = context;
+            _set = context;
         }
 
         public IReadOnlyDictionary<string, ParameterRef> GetFields()
@@ -35,9 +35,9 @@ namespace dnWalker.Parameters
 
             _fields[fieldName] = fieldRef;
 
-            if (fieldRef.TryResolve(_context, out IParameter? p))
+            if (fieldRef.TryResolve(_set, out IParameter? p))
             {
-                p.Accessor = new FieldParameterAccessor(fieldName, _ownerRef);
+                p.Accessors.Add(new FieldParameterAccessor(fieldName, _ownerRef));
             }
             else
             {
@@ -48,9 +48,9 @@ namespace dnWalker.Parameters
         public void ClearField(string fieldName)
         {
             if (_fields.TryGetValue(fieldName, out ParameterRef fieldRef) &&
-                fieldRef.TryResolve(_context, out IParameter? fieldParameter))
+                fieldRef.TryResolve(_set, out IParameter? fieldParameter))
             {
-                fieldParameter.Accessor = null;
+                fieldParameter.Accessors.RemoveAt(fieldParameter.Accessors.IndexOf(pa => pa is FieldParameterAccessor fa && fa.ParentRef == _ownerRef && fa.FieldName == fieldName));
             }
             _fields[fieldName] = ParameterRef.Empty;
         }

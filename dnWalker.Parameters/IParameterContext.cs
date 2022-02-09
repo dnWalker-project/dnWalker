@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,36 +8,9 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public interface IParameterContext : ICloneable
+    public interface IParameterContext
     {
-        object ICloneable.Clone()
-        {
-            return Clone();
-        }
+        IDefinitionProvider DefinitionProvider { get; }
 
-        new IParameterContext Clone();
-
-        IDictionary<ParameterRef, IParameter> Parameters { get; }
-
-        IDictionary<string, ParameterRef> Roots { get; }
-
-    }
-
-    public static partial class ParameterContextExtensions
-    {
-        public static bool Remove(this IParameterContext context, ParameterRef reference)
-        {
-            if (reference.TryResolve(context, out IParameter? parameter))
-            {
-                context.Parameters.Remove(reference);
-                if (parameter.Accessor is RootParameterAccessor r)
-                {
-                    context.Roots.Remove(r.Expression);
-                }
-                return true;
-            }
-
-            return false;
-        }
     }
 }

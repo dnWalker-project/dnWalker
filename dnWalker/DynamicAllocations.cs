@@ -21,6 +21,8 @@ namespace MMC.State {
 	using MMC.Exception;
     using dnlib.DotNet;
     using System.Collections.Generic;
+    using dnWalker;
+    using dnWalker.TypeSystem;
 
     /// <summary>
     /// An object instances on the heap.
@@ -53,7 +55,7 @@ namespace MMC.State {
                 var found = false;
                 var i = 0;
 
-                var typeDef = DefinitionProvider.GetTypeDefinition(Type);
+                var typeDef = Type.ResolveTypeDefThrow();
 
                 for (; !found && i < typeDef.Fields.Count; ++i)
                     found = typeDef.Fields[i].Name == VALUE_FIELD_NAME;
@@ -102,7 +104,7 @@ namespace MMC.State {
 			 */
             var fields = new List<FieldDef>();
 
-            foreach (var typeDefOrRef in DefinitionProvider.InheritanceEnumerator(Type))
+            foreach (var typeDefOrRef in Type.InheritanceEnumerator())
             {
                 fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
             }
@@ -122,13 +124,13 @@ namespace MMC.State {
             for (var i = 0; i < fields.Count; i++)
             {
                 //int fieldsOffset = typeOffset + i;
-                var type = cur.DefinitionProvider.GetTypeDefinition(fields[i].FieldType);
+                var type = fields[i].FieldType.ToTypeDefOrRef();
                 if (type == null && !fields[i].FieldType.IsPrimitive)
                 {
                     Fields[i] = ObjectReference.Null;
                     continue;
                 }
-                Fields[i] = DefinitionProvider.GetNullValue(type);
+                Fields[i] = DataElement.GetNullValue(type.ToTypeSig());
             }
             //typeOffset += typeDef.Fields.Count; 			}
         }
@@ -148,7 +150,7 @@ namespace MMC.State {
             }
 
             var typeOffset = 0;
-            foreach (var t in DefinitionProvider.InheritanceEnumerator(Type))
+            foreach (var t in Type.InheritanceEnumerator())
             {
                 var typeDef = t.ResolveTypeDef();
                 sb.AppendFormat("{0}:{{", typeDef.Name);
@@ -185,7 +187,7 @@ namespace MMC.State {
 
         public override void ClearFields(ExplicitActiveState cur)
         {
-            var nullVal = DefinitionProvider.GetNullValue(Type);
+            var nullVal = DataElement.GetNullValue(Type.ToTypeSig());
             for (var i = 0; i < Fields.Length; i++)
                 Fields[i] = nullVal;
         }

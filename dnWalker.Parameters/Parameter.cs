@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,27 +11,21 @@ namespace dnWalker.Parameters
 {
     public abstract class Parameter : IParameter
     {
-        private static int _nextId = 1;
-        private static ParameterRef GetReferenceIdFor(IParameter instance)
+        protected Parameter(IParameterSet context, TypeSignature type)
         {
-            // "random" ids => using the GetHashCode function
-            // return RuntimeHelpers.GetHashCode(instance);
-            return _nextId++;
+            Set = context;
+            Type = type;
+            Reference = context.GetParameterRef();
         }
 
-
-        protected Parameter(IParameterContext context)
+        protected Parameter(IParameterSet context, TypeSignature type, ParameterRef reference)
         {
-            Context = context;
-            Reference = GetReferenceIdFor(this);
-        }
-        protected Parameter(IParameterContext context, ParameterRef reference)
-        {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
-            Reference = reference == ParameterRef.Any ? GetReferenceIdFor(this) : reference;
+            Set = context ?? throw new ArgumentNullException(nameof(context));
+            Type = type;
+            Reference = reference;
         }
 
-        public IParameterContext Context
+        public IParameterSet Set
         {
             get;
         }
@@ -39,31 +35,18 @@ namespace dnWalker.Parameters
             get;
         }
 
-        public abstract IParameter Clone(IParameterContext newContext);
+        public abstract IParameter CloneData(IParameterSet newContext);
 
-        private ParameterAccessor? _accessor = null;
 
-        public ParameterAccessor? Accessor
+        private readonly List<ParameterAccessor> _accessors = new List<ParameterAccessor>();
+
+        public IList<ParameterAccessor> Accessors
         {
             get
             {
-                return _accessor;
-            }
-            set
-            {
-                if (_accessor is RootParameterAccessor rOld)
-                {
-                    Context.Roots.Remove(rOld.Expression);
-                }
-
-                _accessor = value;
-
-                if (value is RootParameterAccessor rNew)
-                {
-                    Context.Roots.Add(rNew.Expression, Reference);
-                }
+                return _accessors;
             }
         }
-
+        public TypeSignature Type { get; }
     }
 }

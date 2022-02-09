@@ -14,7 +14,6 @@ namespace dnWalker.Parameters
         private readonly int _id;
 
         public static readonly ParameterRef Empty = new ParameterRef(0);
-        public static readonly ParameterRef Any = new ParameterRef(-1);
         public static readonly ParameterRef[] EmptyArray = new ParameterRef[0];
 
         public ParameterRef(int id)
@@ -22,7 +21,7 @@ namespace dnWalker.Parameters
             _id = id;
         }
 
-        public IParameter? Resolve(IParameterContext context)
+        public IParameter? Resolve(IParameterSet context)
         {
             if (context.Parameters.TryGetValue(this, out IParameter? value))
             {
@@ -31,7 +30,7 @@ namespace dnWalker.Parameters
             return null;
         }
 
-        public bool TryResolve(IParameterContext context, [NotNullWhen(true)] out IParameter? parameter)
+        public bool TryResolve(IParameterSet context, [NotNullWhen(true)] out IParameter? parameter)
         {
             if (_id <= 0)
             {
@@ -42,7 +41,7 @@ namespace dnWalker.Parameters
             return context.Parameters.TryGetValue(this, out parameter);
         }
 
-        public TParameter? Resolve<TParameter>(IParameterContext context)
+        public TParameter? Resolve<TParameter>(IParameterSet context)
             where TParameter : class, IParameter
         {
             if (context.Parameters.TryGetValue(this, out IParameter? value))
@@ -52,7 +51,7 @@ namespace dnWalker.Parameters
             return null;
         }
 
-        public bool TryResolve<TParameter>(IParameterContext context, [NotNullWhen(true)]out TParameter? parameter)
+        public bool TryResolve<TParameter>(IParameterSet context, [NotNullWhen(true)]out TParameter? parameter)
             where TParameter : class, IParameter
         {
             context.Parameters.TryGetValue(this, out IParameter? p);

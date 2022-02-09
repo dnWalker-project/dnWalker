@@ -20,7 +20,7 @@ namespace dnWalker.Parameters.Expressions
             }
         }
 
-        public override void ApplyTo(IParameterContext ctx, object value)
+        public override void ApplyTo(IParameterSet ctx, object value)
         {
             IPrimitiveValueParameter parameter = Operand.Resolve<IPrimitiveValueParameter>(ctx) ?? throw new Exception("Cannot resolve the operand.");
 

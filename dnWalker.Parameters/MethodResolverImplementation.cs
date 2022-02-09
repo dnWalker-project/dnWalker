@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +11,11 @@ namespace dnWalker.Parameters
     internal class MethodResolverImplementation : IMethodResolver
     {
         private readonly ParameterRef _ownerRef;
-        private readonly IParameterContext _context;
+        private readonly IParameterSet _context;
 
         private readonly Dictionary<MethodSignature, ParameterRef[]> _results = new Dictionary<MethodSignature, ParameterRef[]>();
 
-        public MethodResolverImplementation(ParameterRef ownerRef, IParameterContext context)
+        public MethodResolverImplementation(ParameterRef ownerRef, IParameterSet context)
         {
             _ownerRef = ownerRef;
             _context = context;
@@ -71,11 +73,12 @@ namespace dnWalker.Parameters
 
             if (resultRef.TryResolve(_context, out IParameter? p))
             {
-                p.Accessor = new MethodResultParameterAccessor(methodSignature, invocation, _ownerRef);
+                //p.Accessor = new MethodResultParameterAccessor(methodSignature, invocation, _ownerRef);
+                p.Accessors.Add(new MethodResultParameterAccessor(methodSignature, invocation, _ownerRef));
             }
             else
             {
-                //throw new Exception("Trying to set method result with an unknown parameter!");
+                throw new Exception("Trying to set method result with an unknown parameter!");
             }
         }
 
@@ -88,7 +91,8 @@ namespace dnWalker.Parameters
             {
                 if (resultRefs[invocation].TryResolve(_context, out IParameter? resultParameter))
                 {
-                    resultParameter.Accessor = null;
+                    //resultParameter.Accessor = null;
+                    resultParameter.Accessors.RemoveAt(resultParameter.Accessors.IndexOf(pa => pa is MethodResultParameterAccessor mr && mr.ParentRef == _ownerRef && mr.Invocation == invocation && mr.MethodSignature == methodSignature));
                 }
 
                 resultRefs[invocation] = ParameterRef.Empty;
