@@ -2,7 +2,7 @@
 {
     public interface IExplorationExtension
     {
-        void Register(Explorer explorer);
-        void Unregister(Explorer explorer);
+        void Register(IExplorer explorer);
+        void Unregister(IExplorer explorer);
     }
 }
