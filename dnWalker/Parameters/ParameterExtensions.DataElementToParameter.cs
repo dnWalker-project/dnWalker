@@ -17,7 +17,7 @@ namespace dnWalker.Parameters
 {
     public static partial class ParameterExtensions
     {
-        public static IParameter GetOrCreateParameter(this IDataElement dataElement, ExplicitActiveState cur, TypeSig expectedType)
+        public static IParameter GetOrCreateParameter(this IDataElement dataElement, ExplicitActiveState cur, TypeSignature expectedType)
         {
             if (dataElement.TryGetParameter(cur, out IParameter parameter))
             {
@@ -32,27 +32,29 @@ namespace dnWalker.Parameters
                 {
                     parameter = CreateNullParameter(expectedType, cur);
                 }
-
-                DynamicAllocation allocation = cur.DynamicArea.Allocations[objectReference];
-
-                if (allocation is AllocatedObject allocatedObject)
-                {
-                    parameter = CreateObjectParameter(allocatedObject, cur);
-                }
-                else if (allocation is AllocatedArray allocatedArray)
-                {
-                    parameter = CreateArrayParameter(allocatedArray, cur);
-                }
-                else if (allocation is AllocatedDelegate allocatedDelegate)
-                {
-                    // delegate parameters are not implemented right now => we cannot substitute 
-                    // throw new NotImplementedException("TODO: implement delegate parameter???");
-                    return null;
-                }
                 else
                 {
-                    //throw new NotSupportedException($"Cannot create parameter from allocation of type {allocation.GetType()}");
-                    return null;
+                    DynamicAllocation allocation = cur.DynamicArea.Allocations[objectReference];
+
+                    if (allocation is AllocatedArray allocatedArray)
+                    {
+                        parameter = CreateArrayParameter(allocatedArray, cur);
+                    }
+                    else if (allocation is AllocatedObject allocatedObject)
+                    {
+                        parameter = CreateObjectParameter(allocatedObject, cur);
+                    }
+                    else if (allocation is AllocatedDelegate allocatedDelegate)
+                    {
+                        // delegate parameters are not implemented right now => we cannot substitute 
+                        throw new NotImplementedException("TODO: implement delegate parameter???");
+                        //return null;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Cannot create parameter from allocation of type {allocation.GetType()}");
+                        //return null;
+                    }
                 }
             }
             else if (dataElement is INumericElement numeric)
@@ -73,7 +75,7 @@ namespace dnWalker.Parameters
             return parameter;
         }
 
-        private static IParameter CreateNullParameter(TypeSig expectedType, ExplicitActiveState cur)
+        private static IParameter CreateNullParameter(TypeSignature expectedType, ExplicitActiveState cur)
         {
             if (!cur.TryGetParameterStore(out ParameterStore store))
             {
@@ -83,16 +85,27 @@ namespace dnWalker.Parameters
             IParameterSet executionContext = store.ExecutionSet;
 
 
+            //if (expectedType.IsArray)
+            //{
+            //    var arraySig = expectedType.ToArraySig();
+                
+            //    return executionContext.CreateArrayParameter(new TypeSignature(arraySig.Next.ToTypeDefOrRef()), isNull: true);
+
+            //}
+            //else if (expectedType.IsSZArray)
+            //{
+            //    var arraySig = expectedType.ToSZArraySig();
+
+            //    return executionContext.CreateArrayParameter(new TypeSignature(arraySig.Next.ToTypeDefOrRef()), isNull: true);
+            //}
             if (expectedType.IsArray || expectedType.IsSZArray)
             {
-                var arraySig = expectedType.ToArraySig();
-                
-                return executionContext.CreateArrayParameter(new TypeSignature(arraySig.Next.ToTypeDefOrRef()), isNull: true);
-
+                // different parameter type for ARRAY and SZARRAY ? Or extend the IArrayParameter to work with multi dimensional arrays?
+                return executionContext.CreateArrayParameter(expectedType.ElementType, isNull: true);
             }
-            else if (expectedType.IsClassSig)
+            else if (expectedType.IsInterface || !expectedType.IsValueType)
             {
-                return executionContext.CreateObjectParameter(new TypeSignature(expectedType.ToTypeDefOrRef()), isNull: true);
+                return executionContext.CreateObjectParameter(expectedType, isNull: true);
             }
             else
             {
@@ -110,7 +123,7 @@ namespace dnWalker.Parameters
 
             IParameterSet context = store.ExecutionSet;
 
-            TypeSig elementSig = allocatedArray.Type.ToTypeSig();
+            TypeSignature elementSig = new TypeSignature(allocatedArray.Type);
 
             int length = allocatedArray.Fields.Length;
 
@@ -138,7 +151,7 @@ namespace dnWalker.Parameters
 
             for (int i = 0; i < fields.Count(); ++i)
             {
-                IParameter fieldParameter = GetOrCreateParameter(allocatedObject.Fields[i], cur, fields[i].FieldType);
+                IParameter fieldParameter = GetOrCreateParameter(allocatedObject.Fields[i], cur, new TypeSignature(fields[i].FieldType.ToTypeDefOrRef()));
 
                 objectParameter.SetField(fields[i].Name, fieldParameter);
             }

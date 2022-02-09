@@ -22,6 +22,7 @@ namespace dnWalker.Instructions.Extensions
 
             // object type parameter
             factory.RegisterExtension(new LDFLD_ParameterHandler());
+            factory.RegisterExtension(new STFLD_ParameterHandler());
             factory.RegisterExtension(new CALLVIRT_ParameterHandler());
 
             // return value initializer

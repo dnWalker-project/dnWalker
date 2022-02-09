@@ -86,13 +86,13 @@ namespace dnWalker.Instructions.Extensions
 
     public class CALLVIRT_ParameterHandler : ITryExecuteInstructionExtension
     {
-        private static readonly Type[] _insturctions = new Type[] { typeof(CALLVIRT) };
+        private static readonly Type[] _instructions = new Type[] { typeof(CALLVIRT) };
 
         public IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                return _insturctions;
+                return _instructions;
             }
         }
 
@@ -161,5 +161,41 @@ namespace dnWalker.Instructions.Extensions
             return true;
         }
 
+    }
+
+    public class STFLD_ParameterHandler : IPreExecuteInstructionExtension
+    {
+        private static readonly Type[] _instructions = new Type[] { typeof(STFLD) };
+
+        public IEnumerable<Type> SupportedInstructions
+        {
+            get
+            {
+                return _instructions;
+            }
+        }
+
+        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            if (cur.TryGetParameterStore(out ParameterStore store))
+            {
+                IDataElement val = cur.EvalStack.Peek();
+                IDataElement toChange = cur.EvalStack.Peek(1);
+
+                if (toChange is LocalVariablePointer lvp)
+                {
+                    toChange = lvp.Value;
+                }
+
+                if (toChange.TryGetParameter(cur, out IObjectParameter objParameter))
+                {
+                    if (instruction.Operand is IField fld)
+                    {
+                        IParameter valParameter = val.GetOrCreateParameter(cur, new TypeSignature(fld.FieldSig.GetFieldType().ToTypeDefOrRef()));
+                        objParameter.SetField(fld.Name, valParameter);
+                    }
+                }
+            }
+        }
     }
 }
