@@ -182,6 +182,15 @@ namespace dnWalker.Instructions.Extensions
                 IDataElement val = cur.EvalStack.Peek();
                 IDataElement toChange = cur.EvalStack.Peek(1);
 
+                if (val.Equals(ObjectReference.Null))
+                {
+                    // the val is the GLOBAL null => the GetOrCreate would actually associate the global NULL with one concrete parameter instance
+                    // we need to avoid this => pop it and push there a new NULL value
+                    val = new ObjectReference(0);
+                    cur.EvalStack.Pop();
+                    cur.EvalStack.Push(1);
+                }
+
                 if (toChange is LocalVariablePointer lvp)
                 {
                     toChange = lvp.Value;
