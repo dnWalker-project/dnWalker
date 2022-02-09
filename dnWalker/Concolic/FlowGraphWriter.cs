@@ -16,7 +16,7 @@ namespace dnWalker.Concolic
     {
         public string OutputFile { get; set; }
 
-        public void Register(Explorer explorer)
+        public void Register(IExplorer explorer)
         {
             explorer.ExplorationStarted += OnExplorationStarted;
         }
@@ -41,7 +41,7 @@ namespace dnWalker.Concolic
             }
         }
 
-        public void Unregister(Explorer explorer)
+        public void Unregister(IExplorer explorer)
         {
             explorer.ExplorationStarted -= OnExplorationStarted;
         }

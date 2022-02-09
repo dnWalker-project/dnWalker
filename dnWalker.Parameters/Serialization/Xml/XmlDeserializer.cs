@@ -13,7 +13,7 @@ using static dnWalker.Parameters.Xml.XmlTokens;
 
 namespace dnWalker.Parameters.Serialization.Xml
 {
-    public partial class XmlDeserializer : IParameterDeserializer
+    internal partial class XmlDeserializer
     {
         public class MissingElementException : Exception
         {
@@ -109,26 +109,14 @@ namespace dnWalker.Parameters.Serialization.Xml
             _methodTranslator = methodTranslator ?? throw new ArgumentNullException(nameof(methodTranslator));
         }
 
-        public IParameterSet Deserialize(Stream input)
-        {
-            XElement setXml = XElement.Load(input);
-
-            return ToParameterSet(setXml);
-        }
-
-        public IParameterSet ToParameterSet(XElement xml)
+        public IReadOnlyParameterSet ToParameterSet(XElement xml)
         {
             if (xml == null)
             {
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            IParameterSet set = xml.Name.LocalName switch
-            {
-                XmlBaseParameterSet => new BaseParameterSet(_context),
-                XmlExecutionParameterSet => new BaseParameterSet(_context),
-                _ => throw new ArgumentException("Invalid XML element name.")
-            };
+            IParameterSet set = new ParameterSet(_context);
 
             foreach (XElement parameterXml in xml.Elements())
             {
