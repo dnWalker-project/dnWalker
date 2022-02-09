@@ -17,7 +17,7 @@
 
 namespace MMC.State
 {
-
+    using dnlib.DotNet;
 
     using MMC.Data;
     using MMC.Util;
@@ -169,7 +169,7 @@ namespace MMC.State
             var sb = new System.Text.StringBuilder("c:");
             sb.AppendFormat("{0} {1}", Type.Name, m_initData.ToString());
 
-            var typeDef = DefinitionProvider.GetTypeDefinition(Type);
+            var typeDef = Type.ResolveTypeDefThrow();
 
             var printed_a_field = false;
             sb.Append(" flds: {");
@@ -197,10 +197,10 @@ namespace MMC.State
         public void ClearFields()
         {
             m_staticFieldCount = 0;
-            var typeDef = DefinitionProvider.GetTypeDefinition(Type);
+            var typeDef = Type.ResolveTypeDefThrow();
             for (var i = 0; i < m_fields.Length; ++i)
             {
-                m_fields[i] = DefinitionProvider.GetNullValue(typeDef.Fields[i].FieldType);
+                m_fields[i] = DataElement.GetNullValue(typeDef.Fields[i].FieldType);
                 if (typeDef.Fields[i].IsStatic)
                 {
                     ++m_staticFieldCount;

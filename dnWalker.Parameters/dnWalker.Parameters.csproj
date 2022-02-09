@@ -16,11 +16,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>PrimitiveValueParameters.tt</DependentUpon>
     </None>
-    <None Include="Xml\XmlSerializer.PrimitiveValues.tt.cs">
+    <None Include="Serialization\Xml\XmlDeserializer.PrimitiveParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XmlSerializer.PrimitiveValues.tt</DependentUpon>
+      <DependentUpon>XmlDeserializer.PrimitiveParameters.tt</DependentUpon>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,15 +42,20 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>PrimitiveValueParameters.tt</DependentUpon>
     </Compile>
-    <Compile Update="Xml\XmlDeserializer.PrimitiveValues.tt.cs">
+    <Compile Update="Serialization\Xml\XmlDeserializer.PrimitiveParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XmlDeserializer.PrimitiveValues.tt</DependentUpon>
+      <DependentUpon>XmlDeserializer.PrimitiveParameters.tt</DependentUpon>
     </Compile>
-    <Compile Update="Xml\XmlSerializer.PrimitiveValues.tt.cs">
+    <Compile Update="Serialization\Xml\XmlSerializer.PrimitiveParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XmlSerializer.PrimitiveValues.tt</DependentUpon>
+      <DependentUpon>XmlSerializer.PrimitiveParameters.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Serialization\Xml\XmlSerializer.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlSerializer.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -59,13 +68,13 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrimitiveValueParameters.tt.cs</LastGenOutput>
     </None>
-    <None Update="Xml\XmlDeserializer.PrimitiveValues.tt">
+    <None Update="Serialization\Xml\XmlDeserializer.PrimitiveParameters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlDeserializer.PrimitiveValues.tt.cs</LastGenOutput>
+      <LastGenOutput>XmlDeserializer.PrimitiveParameters.tt.cs</LastGenOutput>
     </None>
-    <None Update="Xml\XmlSerializer.PrimitiveValues.tt">
+    <None Update="Serialization\Xml\XmlSerializer.PrimitiveParameters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlSerializer.PrimitiveValues.tt.cs</LastGenOutput>
+      <LastGenOutput>XmlSerializer.PrimitiveParameters.tt.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

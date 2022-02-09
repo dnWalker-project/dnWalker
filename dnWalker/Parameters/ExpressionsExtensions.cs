@@ -31,22 +31,23 @@ namespace dnWalker.Parameters
 
             if (!lookup.TryGetValue(name, out ParameterExpression expression))
             {
-                Type parameterType = Type.GetTypeCode(Type.GetType(parameter.Type)) switch
+
+                Type parameterType = parameter switch
                 {
-                    TypeCode.SByte => typeof(sbyte),
-                    TypeCode.Int16 => typeof(short),
-                    TypeCode.Int32 => typeof(int),
-                    TypeCode.Int64 => typeof(long),
-                    TypeCode.Byte => typeof(byte),
-                    TypeCode.UInt16 => typeof(ushort),
-                    TypeCode.UInt32 => typeof(uint),
-                    TypeCode.UInt64 => typeof(ulong),
-                    TypeCode.Char => typeof(char),
+                    ISByteParameter => typeof(sbyte),
+                    IInt16Parameter => typeof(short),
+                    IInt32Parameter => typeof(int),
+                    IInt64Parameter => typeof(long),
+                    IByteParameter => typeof(byte),
+                    IUInt16Parameter => typeof(ushort),
+                    IUInt32Parameter => typeof(uint),
+                    IUInt64Parameter => typeof(ulong),
+                    ICharParameter => typeof(char),
 
-                    TypeCode.Boolean => typeof(bool),
+                    IBooleanParameter => typeof(bool),
 
-                    TypeCode.Double => typeof(double),
-                    TypeCode.Single => typeof(float),
+                    IDoubleParameter => typeof(double),
+                    ISingleParameter => typeof(float),
 
                     _ => throw new NotSupportedException()
                 };

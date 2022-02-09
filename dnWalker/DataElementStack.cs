@@ -67,7 +67,7 @@ namespace MMC.Data {
 
         public void Push(object o)
         {
-			Push(cur.DefinitionProvider.CreateDataElement(o));
+			Push(DataElement.CreateDataElement(o, cur.DefinitionProvider));
         }
 
         public virtual void Push(IDataElement e) {

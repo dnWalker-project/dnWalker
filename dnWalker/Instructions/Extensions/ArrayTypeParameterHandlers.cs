@@ -101,15 +101,18 @@ namespace dnWalker.Instructions.Extensions
 
                 if (!arrayParameter.TryGetItem(index, out itemParameter))
                 {
-                    // array parameter has no information about the item => create it with default value
-                    // create the parameter with execution context
-                    itemParameter = store.ExecutionContext.CreateParameter(allocatedArray.Type.ToTypeSig());
-                    arrayParameter.SetItem(index, itemParameter);
+                    // there is not any information about the element
+                    // it is an uninitialized input
+                    // => create a default parameter in base context
+                    IParameter baseItemParameter = store.BaseSet.CreateParameter(allocatedArray.Type.ToTypeSig());
 
-                    // add it to the base context as well => we are lazily initializing start state...
-                    IParameter baseItemParameter = itemParameter.Clone(store.BaseContext);
-                    store.BaseContext.Parameters.Add(baseItemParameter.Reference, baseItemParameter);
-                    arrayParameter.Reference.Resolve<IArrayParameter>(store.ExecutionContext).SetItem(index, baseItemParameter);
+                    IArrayParameter baseArrayParameter = arrayParameter.Reference.Resolve<IArrayParameter>(store.BaseSet);
+                    baseArrayParameter.SetItem(index, baseItemParameter);
+
+                    // copy it into the execution context as well
+                    itemParameter = baseItemParameter.CloneData(store.ExecutionSet);
+                    store.ExecutionSet.Parameters.Add(itemParameter.Reference, itemParameter);
+                    arrayParameter.SetItem(index, itemParameter);
                 }
 
                 allocatedArray.Fields[index] = itemParameter.AsDataElement(cur);

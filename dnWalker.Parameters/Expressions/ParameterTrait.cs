@@ -18,7 +18,7 @@ namespace dnWalker.Parameters.Expressions
         public object Value { get; }
 
 
-        public void ApplyTo(IParameterContext ctx)
+        public void ApplyTo(IParameterSet ctx)
         {
             if (ctx == null) throw new ArgumentNullException(nameof(ctx));
 

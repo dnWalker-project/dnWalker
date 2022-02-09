@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,9 +14,14 @@ namespace dnWalker.Parameters
     /// </summary>
     public abstract class ParameterAccessor
     {
-        public abstract string GetAccessString(IParameterContext context);
+        public abstract string GetAccessString(IParameterSet context);
 
         public abstract ParameterAccessor Clone();
+
+        public abstract void ChangeTarget(ParameterRef newTarget, IParameterSet context);
+
+        public const string ThisName = "#__THIS__";
+        public const string ReturnValueName = "#__RETURN_VALUE__";
     }
 
     public abstract class ParentChildParameterAccessor : ParameterAccessor
@@ -39,7 +46,7 @@ namespace dnWalker.Parameters
             FieldName = fieldName;
         }
 
-        public override string GetAccessString(IParameterContext context)
+        public override string GetAccessString(IParameterSet context)
         {
             context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
             return $"{parent?.GetAccessString() ?? string.Empty}.{FieldName}";
@@ -48,6 +55,11 @@ namespace dnWalker.Parameters
         public override FieldParameterAccessor Clone()
         {
             return new FieldParameterAccessor(FieldName, ParentRef);
+        }
+
+        public override void ChangeTarget(ParameterRef newTarget, IParameterSet context)
+        {
+            ParentRef.Resolve<IFieldOwnerParameter>(context)!.SetField(FieldName, newTarget);
         }
     }
 
@@ -60,7 +72,7 @@ namespace dnWalker.Parameters
             Index = index;
         }
 
-        public override string GetAccessString(IParameterContext context)
+        public override string GetAccessString(IParameterSet context)
         {
             context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
             return $"{parent?.GetAccessString() ?? string.Empty}[{Index}]";
@@ -69,6 +81,11 @@ namespace dnWalker.Parameters
         public override ItemParameterAccessor Clone()
         {
             return new ItemParameterAccessor(Index, ParentRef);
+        }
+
+        public override void ChangeTarget(ParameterRef newTarget, IParameterSet context)
+        {
+            ParentRef.Resolve<IItemOwnerParameter>(context)!.SetItem(Index, newTarget);
         }
     }
 
@@ -83,16 +100,21 @@ namespace dnWalker.Parameters
             Invocation = invocation;
         }
 
-        public override string GetAccessString(IParameterContext context)
+        public override string GetAccessString(IParameterSet context)
         {
             context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
-            return $"{parent?.GetAccessString() ?? string.Empty}.{MethodSignature.MethodName}({string.Join(',', MethodSignature.ArgumentTypeFullNames)})[{Invocation}]";
+            return $"{parent?.GetAccessString() ?? string.Empty}.{MethodSignature.Name}({string.Join(',', MethodSignature.Parameters.Select(p => p.FullName))})|{Invocation}|";
 
         }
 
         public override MethodResultParameterAccessor Clone()
         {
             return new MethodResultParameterAccessor(MethodSignature, Invocation, ParentRef);
+        }
+
+        public override void ChangeTarget(ParameterRef newTarget, IParameterSet context)
+        {
+            ParentRef.Resolve<IMethodResolverParameter>(context)!.SetMethodResult(MethodSignature, Invocation, newTarget);
         }
     }
 
@@ -105,11 +127,16 @@ namespace dnWalker.Parameters
             Expression = name;
         }
 
-        public override string GetAccessString(IParameterContext context)
+        public override string GetAccessString(IParameterSet context)
         {
             return Expression;
         }
 
+        public override void ChangeTarget(ParameterRef newTarget, IParameterSet context)
+        {
+            context.Roots[Expression] = newTarget;
+            newTarget.Resolve(context)!.Accessors.Add(this);
+        }
     }
 
     public class MethodArgumentParameterAccessor : RootParameterAccessor
@@ -143,7 +170,7 @@ namespace dnWalker.Parameters
 
     public class ReturnValueParameterAccessor : RootParameterAccessor
     {
-        public ReturnValueParameterAccessor() : base("RetVal")
+        public ReturnValueParameterAccessor() : base(ReturnValueName)
         {
         }
 

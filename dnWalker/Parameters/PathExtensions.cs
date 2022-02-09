@@ -17,10 +17,10 @@ namespace dnWalker.Parameters
     {
         private class SubstituteIdWithAccessVisitor : ExpressionVisitor
         {
-            private readonly IParameterContext _context;
+            private readonly IParameterSet _context;
 
 
-            public SubstituteIdWithAccessVisitor(IParameterContext context)
+            public SubstituteIdWithAccessVisitor(IParameterSet context)
             {
                 _context = context;
             }
@@ -58,12 +58,12 @@ namespace dnWalker.Parameters
                 return Expression.Parameter(type, name);
             }
         }
-        public static Expression SubstitueRefWithAccess(this Expression expression, IParameterContext context)
+        public static Expression SubstitueRefWithAccess(this Expression expression, IParameterSet context)
         {
             return new SubstituteIdWithAccessVisitor(context).Visit(expression);
         }
 
-        public static string GetConstraintStringWithAccesses(this Path path, IParameterContext context)
+        public static string GetConstraintStringWithAccesses(this Path path, IParameterSet context)
         {
             return path.PathConstraint.SubstitueRefWithAccess(context).ToString();
         }

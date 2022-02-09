@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -10,78 +12,148 @@ namespace dnWalker.Parameters
     public interface IParameter
     {
 
-        IParameterContext Context { get; }
+        IParameterSet Set { get; }
 
         ParameterRef Reference { get; }
 
-        IParameter Clone(IParameterContext newContext);
+        /// <summary>
+        /// Clones data only. Result has no accessors.
+        /// </summary>
+        /// <param name="newContext"></param>
+        /// <returns></returns>
+        IParameter CloneData(IParameterSet newContext);
 
-        ParameterAccessor? Accessor { get; set; }
+        /// <summary>
+        /// Clones data and the accessors.
+        /// </summary>
+        /// <param name="newContext"></param>
+        /// <returns></returns>
+        public IParameter Clone(IParameterSet newContext)
+        {
+            IParameter clone = CloneData(newContext);
+            foreach (var a in this.Accessors)
+            {
+                clone.Accessors.Add(a.Clone());
+            }
+            return clone;
+        }
+
+        IList<ParameterAccessor> Accessors { get; }
+
+        TypeSignature Type { get; }
     }
 
     public static class ParameterExtensions
     {
         public static bool IsRoot(this IParameter parameter)
         {
-            return parameter.Accessor is ParameterAccessor;
+            return parameter.Accessors.OfType<RootParameterAccessor>().Any();
         }
 
-        public static bool IsRoot<TAccessor>(this IParameter parameter, [NotNullWhen(true)] out TAccessor? rootAccessor)
+        public static bool IsRoot<TAccessor>(this IParameter parameter, out TAccessor[] rootAccessors)
             where TAccessor : ParameterAccessor
         {
-            rootAccessor = parameter.Accessor as TAccessor;
-            return rootAccessor != null;
+            rootAccessors = parameter.Accessors.OfType<TAccessor>().ToArray();
+            return rootAccessors.Length > 0;
         }
 
-        public static bool IsField(this IParameter parameter, [NotNullWhen(true)] out IFieldOwnerParameter? fieldOwner, [NotNullWhen(true)] out string? fieldName)
+        public static bool HasAccessor<TAccessor>(this IParameter parameter, out TAccessor[] accessors)
         {
-            if (parameter.Accessor is FieldParameterAccessor fieldAccessor &&
-                fieldAccessor.ParentRef.TryResolve(parameter.Context, out fieldOwner))
-            {
-                fieldName = fieldAccessor.FieldName;
-                return true;
-            }
-
-            fieldOwner = null;
-            fieldName = null;
-            return false;
+            accessors = parameter.Accessors.OfType<TAccessor>().ToArray(); 
+            return accessors.Length > 0;
         }
 
-        public static bool IsItem(this IParameter parameter, [NotNullWhen(true)] out IItemOwnerParameter? itemOwner, out int index)
+        public static bool IsField(this IParameter parameter, out IFieldOwnerParameter[] fieldOwners, out string[] fieldNames)
         {
-            if (parameter.Accessor is ItemParameterAccessor itemAccessor &&
-                itemAccessor.ParentRef.TryResolve(parameter.Context, out itemOwner))
-            {
-                index = itemAccessor.Index;
-                return true;
-            }
+            HasAccessor(parameter, out FieldParameterAccessor[] fieldAccessors);
+            
+            fieldOwners = fieldAccessors.Select(fa => fa.ParentRef.Resolve<IFieldOwnerParameter>(parameter.Set)!).ToArray();
+            fieldNames = fieldAccessors.Select(fa => fa.FieldName).ToArray();
 
-            itemOwner = null;
-            index = 0;
-            return false;
+            return fieldAccessors.Length > 0;
+
+            //if (parameter.Accessor is FieldParameterAccessor fieldAccessor &&
+            //    fieldAccessor.ParentRef.TryResolve(parameter.Context, out fieldOwner))
+            //{
+            //    fieldName = fieldAccessor.FieldName;
+            //    return true;
+            //}
+
+            //fieldOwner = null;
+            //fieldName = null;
+            //return false;
         }
 
-        public static bool IsMethodResult(this IParameter parameter, [NotNullWhen(true)] out IMethodResolverParameter? methodResolver, out MethodSignature methodSignature, out int invocation)
+        public static bool IsItem(this IParameter parameter, out IItemOwnerParameter[] itemOwners, out int[] indeces)
         {
-            if (parameter.Accessor is MethodResultParameterAccessor methodResultAccessor &&
-                methodResultAccessor.ParentRef.TryResolve(parameter.Context, out methodResolver))
-            {
-                invocation = methodResultAccessor.Invocation;
-                methodSignature = methodResultAccessor.MethodSignature;
-                return true;
-            }
+            HasAccessor(parameter, out ItemParameterAccessor[] itemAccessors);
 
-            methodResolver = null;
-            methodSignature = MethodSignature.Empty;
-            invocation = 0;
-            return false;
+            itemOwners = itemAccessors.Select(ia => ia.ParentRef.Resolve<IItemOwnerParameter>(parameter.Set)!).ToArray();
+            indeces = itemAccessors.Select(ia => ia.Index).ToArray();
+
+            return itemAccessors.Length > 0;
+
+
+
+            //if (parameter.Accessor is ItemParameterAccessor itemAccessor &&
+            //    itemAccessor.ParentRef.TryResolve(parameter.Context, out itemOwner))
+            //{
+            //    index = itemAccessor.Index;
+            //    return true;
+            //}
+
+            //itemOwner = null;
+            //index = 0;
+            //return false;
+        }
+
+        public static bool IsMethodResult(this IParameter parameter, out IMethodResolverParameter[] methodResolvers, out MethodSignature[] methodSignatures, out int[] invocations)
+        {
+            HasAccessor(parameter, out MethodResultParameterAccessor[] methodResultAccessors);
+
+            methodResolvers = methodResultAccessors.Select(mr => mr.ParentRef.Resolve<IMethodResolverParameter>(parameter.Set)!).ToArray();
+            methodSignatures = methodResultAccessors.Select(mr => mr.MethodSignature).ToArray();
+            invocations = methodResultAccessors.Select(mr => mr.Invocation).ToArray();
+
+            return methodResultAccessors.Length > 0;
+
+
+            //if (parameter.Accessor is MethodResultParameterAccessor methodResultAccessor &&
+            //    methodResultAccessor.ParentRef.TryResolve(parameter.Context, out methodResolver))
+            //{
+            //    invocation = methodResultAccessor.Invocation;
+            //    methodSignature = methodResultAccessor.MethodSignature;
+            //    return true;
+            //}
+
+            //methodResolver = null;
+            //methodSignature = MethodSignature.Empty;
+            //invocation = 0;
+            //return false;
         }
 
         public static string GetAccessString(this IParameter parameter)
         {
-            if (parameter.Accessor == null) return string.Empty;
+            //if (parameter.Accessor == null) return string.Empty;
 
-            return parameter.Accessor.GetAccessString(parameter.Context);
+            //return parameter.Accessor.GetAccessString(parameter.Context);
+
+            // build access string for all accessor and pick the shortest non empty one
+            IEnumerable<string> accessStrings = parameter.Accessors.Select(a => a.GetAccessString(parameter.Set)).Where(s => !string.IsNullOrWhiteSpace(s));
+
+            string shortest = "";
+            int lenght = int.MaxValue;
+
+            foreach (string accessString in accessStrings)
+            {
+                if (accessString.Length < lenght)
+                {
+                    shortest = accessString;
+                    lenght = accessString.Length;
+                }
+            }
+
+            return shortest;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace dnWalker.NativePeers
             {
                 case "GetResourceString":
                     var resourceValue = GetResourceString(((ConstantString)args[0]).Value);
-                    cur.EvalStack.Push(cur.DefinitionProvider.CreateDataElement(resourceValue));
+                    cur.EvalStack.Push(DataElement.CreateDataElement(resourceValue, cur.DefinitionProvider));
                     iieReturnValue = InstructionExecBase.nextRetval;
                     return true;
             }

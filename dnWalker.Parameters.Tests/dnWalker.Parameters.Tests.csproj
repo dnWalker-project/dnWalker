@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Xml\XmlDeserializerTest_PrimitiveValueParameters.tt.cs">
+    <None Include="Serialization\Xml\XmlDeserializerTest_PrimitiveValueParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>XmlDeserializerTest_PrimitiveValueParameters.tt</DependentUpon>
     </None>
-    <None Include="Xml\XmlSerializerTest_PrimitiveValueParameters.tt.cs">
+    <None Include="Serialization\Xml\XmlSerializerTest_PrimitiveValueParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>XmlSerializerTest_PrimitiveValueParameters.tt</DependentUpon>
@@ -45,12 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Xml\XmlDeserializerTest_PrimitiveValueParameters.tt.cs">
+    <Compile Update="Serialization\Xml\XmlDeserializerTest_PrimitiveValueParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>XmlDeserializerTest_PrimitiveValueParameters.tt</DependentUpon>
     </Compile>
-    <Compile Update="Xml\XmlSerializerTest_PrimitiveValueParameters.tt.cs">
+    <Compile Update="Serialization\Xml\XmlSerializerTest_PrimitiveValueParameters.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>XmlSerializerTest_PrimitiveValueParameters.tt</DependentUpon>
@@ -58,11 +58,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Xml\XmlDeserializerTest_PrimitiveValueParameters.tt">
+    <None Update="Serialization\Xml\XmlDeserializerTest_PrimitiveValueParameters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XmlDeserializerTest_PrimitiveValueParameters.tt.cs</LastGenOutput>
     </None>
-    <None Update="Xml\XmlSerializerTest_PrimitiveValueParameters.tt">
+    <None Update="Serialization\Xml\XmlSerializerTest_PrimitiveValueParameters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XmlSerializerTest_PrimitiveValueParameters.tt.cs</LastGenOutput>
     </None>

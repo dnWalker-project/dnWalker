@@ -14,6 +14,18 @@ namespace dnWalker.Parameters
         bool TryGetField(string fieldName, out ParameterRef fieldRef);
         void SetField(string fieldName, ParameterRef fieldRef);
         void ClearField(string fieldName);
+
+        void MoveTo(IFieldOwner other)
+        {
+            foreach(KeyValuePair<string, ParameterRef> kvp in GetFields().ToList())
+            {
+                if (kvp.Value == ParameterRef.Empty) continue;
+
+                // make copy of the fields because we might edit the returned dictionary
+                other.SetField(kvp.Key, kvp.Value);
+                ClearField(kvp.Key);
+            }
+        }
     }
 
     public interface IFieldOwnerParameter : IFieldOwner, IParameter
@@ -25,7 +37,7 @@ namespace dnWalker.Parameters
         public static bool TryGetField(this IFieldOwnerParameter fieldOwner, string fieldName, [NotNullWhen(true)] out IParameter? parameter)
         {
             if (fieldOwner.TryGetField(fieldName, out ParameterRef reference) &&
-                reference.TryResolve(fieldOwner.Context, out parameter))
+                reference.TryResolve(fieldOwner.Set, out parameter))
             {
                 return true;
             }
@@ -38,7 +50,7 @@ namespace dnWalker.Parameters
             where TParameter : class, IParameter
         {
             if (fieldOwner.TryGetField(fieldName, out ParameterRef reference) &&
-                reference.TryResolve(fieldOwner.Context, out parameter))
+                reference.TryResolve(fieldOwner.Set, out parameter))
             {
                 return true;
             }
@@ -56,7 +68,7 @@ namespace dnWalker.Parameters
         {
             IReadOnlyDictionary<string, ParameterRef> refs = fieldOwner.GetFields();
             
-            return new Dictionary<string, IParameter>(refs.Where(p => p.Value != ParameterRef.Empty).Select(p => KeyValuePair.Create(p.Key, p.Value.Resolve(fieldOwner.Context)!)));
+            return new Dictionary<string, IParameter>(refs.Where(p => p.Value != ParameterRef.Empty).Select(p => KeyValuePair.Create(p.Key, p.Value.Resolve(fieldOwner.Set)!)));
         }
     }
 }

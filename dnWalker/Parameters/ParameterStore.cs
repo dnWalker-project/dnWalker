@@ -14,44 +14,49 @@ using System.Threading.Tasks;
 
 using DnParameter = dnlib.DotNet.Parameter;
 
+using static dnWalker.Parameters.ParameterAccessor;
+using dnWalker.TypeSystem;
+
 namespace dnWalker.Parameters
 {
     public class ParameterStore
     {
-        public const string ThisName = "#__THIS__";
-        public const string ReturnValueName = "#__RETURN_VALUE__";
-
         private readonly MethodDef _entryPoint;
 
-        private readonly IParameterContext _baseContext;
-        private IParameterContext _executionContext;
+        private readonly IParameterContext _context;
 
-        public ParameterStore(MethodDef entryPoint)
+        private readonly IBaseParameterSet _baseSet;
+        private IExecutionParameterSet _executionSet;
+
+        public ParameterStore(MethodDef entryPoint, IDefinitionProvider definitionProvider)
         {
-            _baseContext = new ParameterContext();
+            _context = new ParameterContext(definitionProvider);
+            _baseSet = new BaseParameterSet(_context);
 
             foreach (var arg in entryPoint.Parameters)
             {
-                IParameter parameter = _baseContext.CreateParameter(arg.Type);
-                parameter.Accessor = new MethodArgumentParameterAccessor(arg.Name);
+                IParameter parameter = _baseSet.CreateParameter(arg.Type);
+                parameter.Accessors.Add(new MethodArgumentParameterAccessor(arg.Name));
+                _baseSet.Roots.Add(arg.Name, parameter.Reference);
             }
             _entryPoint = entryPoint;
 
             if (entryPoint.HasThis)
             {
-                IParameter parameter = _baseContext.CreateParameter(entryPoint.DeclaringType.ToTypeSig());
-                parameter.Accessor = new MethodArgumentParameterAccessor(ThisName);
+                IParameter parameter = _baseSet.CreateParameter(entryPoint.DeclaringType.ToTypeSig());
+                parameter.Accessors.Add(new MethodArgumentParameterAccessor(ThisName));
+                _baseSet.Roots.Add(ThisName, parameter.Reference);
             }
         }
 
         /// <summary>
         /// Gets the parameter context which describes input into the next execution.
         /// </summary>
-        public IParameterContext BaseContext
+        public IBaseParameterSet BaseSet
         {
             get 
             {
-                return _baseContext ?? throw new InvalidOperationException("Cannot access the 'BaseContext', the store is not initialized!");
+                return _baseSet ?? throw new InvalidOperationException("Cannot access the 'BaseContext', the store is not initialized!");
             }
         }
 
@@ -66,11 +71,11 @@ namespace dnWalker.Parameters
         /// <summary>
         /// Gets the parameter context which describes current state.
         /// </summary>
-        public IParameterContext ExecutionContext
+        public IExecutionParameterSet ExecutionSet
         {
             get
             {
-                return _executionContext ?? throw new InvalidOperationException("Cannot access the 'ExecutionContext', it is not initialized!");
+                return _executionSet ?? throw new InvalidOperationException("Cannot access the 'ExecutionContext', it is not initialized!");
             }
         }
 
@@ -83,11 +88,12 @@ namespace dnWalker.Parameters
 
             int idx = 0;
 
-            IParameterContext ctx = _baseContext;
+            //IParameterContext ctx = _baseContext;
+            IParameterSet ctx = _executionSet;
 
             if (method.HasThis)
             {
-                IParameter thisParameter = ctx.Roots[ParameterStore.ThisName].Resolve(ctx);
+                IParameter thisParameter = ctx.Roots[ThisName].Resolve(ctx);
                 arguments[idx++] = thisParameter.AsDataElement(cur);
             }
 
@@ -101,16 +107,39 @@ namespace dnWalker.Parameters
         }
 
         /// <summary>
-        /// Clears the <see cref="ParameterStore.ExecutionContext"/> and initializes a new <see cref="ParameterStore.ExecutionContext"/>.
+        /// Clears the <see cref="ParameterStore.ExecutionSet"/> and initializes a new <see cref="ParameterStore.ExecutionSet"/>.
         /// </summary>
         public void InitializeExecutionContext()
         {
-            _executionContext = _baseContext.Clone();
+            _executionSet = _baseSet.CreateExecutionSet();
         }
 
-        public void SetReturnValue(ReturnValue retValue, ExplicitActiveState cur)
-        {
+        private ParameterRef _returnValue;
 
+        public void SetReturnValue(IDataElement retValue, ExplicitActiveState cur, TypeSig retValueType)
+        {
+            IParameter parameter = retValue.GetOrCreateParameter(cur, retValueType);
+            parameter.Accessors.Add(new ReturnValueParameterAccessor());
+
+            _executionSet.Roots.Add(ReturnValueName, parameter.Reference);
+
+            _returnValue = parameter.Reference;
+        }
+
+        public ParameterRef ReturnValue
+        {
+            get
+            {
+                return _returnValue;
+            }
+        }
+
+        public IParameterContext Context
+        {
+            get
+            {
+                return _context;
+            }
         }
 
         private class ExprSorter : IComparer<ParameterTrait>
@@ -155,7 +184,7 @@ namespace dnWalker.Parameters
 
             for (int i = 0; i < traitsArray.Length; ++i)
             {
-                traitsArray[i].ApplyTo(_baseContext);
+                traitsArray[i].ApplyTo(_baseSet);
             }
         }
     }

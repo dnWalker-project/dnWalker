@@ -1,4 +1,6 @@
-﻿using MMC;
+﻿using dnWalker.TypeSystem;
+
+using MMC;
 using MMC.Data;
 using MMC.State;
 
@@ -13,7 +15,7 @@ namespace dnWalker.Tests
     public interface IModelCheckerExplorerBuilder : IConfigBuilder<IModelCheckerExplorerBuilder>
     {
         IModelCheckerExplorerBuilder OverrideLogger(Func<Logger> provideLogger);
-        IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<DefinitionProvider> provideDefinitionProvider);
+        IModelCheckerExplorerBuilder OverrideDefinitionProvider(Func<IDefinitionProvider> provideDefinitionProvider);
         IModelCheckerExplorerBuilder OverrideStatistics(Func<IStatistics> provideStatistics);
 
         //public string MethodName
