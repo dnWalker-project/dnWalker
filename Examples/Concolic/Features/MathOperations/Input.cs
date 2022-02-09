@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Examples.Concolic.Features.Math
+namespace Examples.Concolic.Features.MathOperations
 {
     public static class Ext
     {
