@@ -241,19 +241,41 @@ namespace dnWalker.Parameters.Xml
             return accessor;
         }
 
-        public static IParameterContext ToParameterContext(this XElement xml)
+        public static IBaseParameterContext ToBaseParameterContext(this XElement xml)
         {
             if (xml == null)
             {
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            if (xml.Name != XmlParameterContext)
+            if (xml.Name != XmlBaseParameterContext)
             {
                 throw new ArgumentException("Unexpected XML element.");
             }
 
-            IParameterContext context = new ParameterContext();
+            IBaseParameterContext context = new BaseParameterContext();
+
+            foreach (XElement parameterXml in xml.Elements())
+            {
+                parameterXml.ToParameter(context);
+            }
+
+            return context;
+        }
+
+        public static IExecutionParameterContext ToExecutionParameterContext(this XElement xml)
+        {
+            if (xml == null)
+            {
+                throw new ArgumentNullException(nameof(xml));
+            }
+
+            if (xml.Name != XmlExecutionParameterContext)
+            {
+                throw new ArgumentException("Unexpected XML element.");
+            }
+
+            IExecutionParameterContext context = new ExecutionParameterContext(null);
 
             foreach (XElement parameterXml in xml.Elements())
             {

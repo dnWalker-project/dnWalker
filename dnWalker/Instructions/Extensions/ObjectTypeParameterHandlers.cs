@@ -66,14 +66,16 @@ namespace dnWalker.Instructions.Extensions
                 if (!objectParameter.TryGetField(field.Name, out fieldParameter))
                 {
                     // there is not information about the field
-                    // => initialize a new parameter with default values
-                    fieldParameter = store.ExecutionContext.CreateParameter(field.FieldType);
-                    objectParameter.SetField(field.Name, fieldParameter);
+                    // => initialize a new parameter with default values within the base context
+                    IParameter baseFieldParameter = store.BaseContext.CreateParameter(field.FieldType);
 
-                    // add it to the base context as well => we are lazily initializing start state...
-                    IParameter baseFieldParameter = fieldParameter.CloneData(store.BaseContext);
-                    store.BaseContext.Parameters.Add(baseFieldParameter.Reference, baseFieldParameter);
-                    objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext).SetField(field.Name, baseFieldParameter);
+                    IObjectParameter baseObjectParameter = objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext);
+                    baseObjectParameter.SetField(field.Name, baseFieldParameter);
+
+                    // copy it into the execution context as well
+                    fieldParameter = baseFieldParameter.CloneData(store.ExecutionContext);
+                    store.ExecutionContext.Parameters.Add(fieldParameter.Reference, fieldParameter);
+                    objectParameter.SetField(field.Name, baseFieldParameter);
                 }
 
                 allocatedObject.Fields[fieldOffset] = fieldParameter.AsDataElement(cur);
@@ -135,15 +137,20 @@ namespace dnWalker.Instructions.Extensions
             if (!objectParameter.TryGetMethodResult(signature, invocation, out IParameter resultParameter))
             {
                 cur.TryGetParameterStore(out ParameterStore store);
-                // there is not information about the method result
-                // => initialize a new parameter with default values
-                resultParameter = store.ExecutionContext.CreateParameter(methodDefinition.ReturnType);
-                objectParameter.SetMethodResult(signature, invocation, resultParameter);
 
-                // add it to the base context as well => we are lazily initializing start state...
-                IParameter baseResultParameter = resultParameter.CloneData(store.BaseContext);
-                store.BaseContext.Parameters.Add(baseResultParameter.Reference, baseResultParameter);
-                objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext).SetMethodResult(signature, invocation, baseResultParameter);
+                // there is not any information about the method result
+                // it is an uninitialized input
+                // => create a default parameter in base context
+                IParameter baseResultParameter = store.BaseContext.CreateParameter(methodDefinition.ReturnType);
+
+                IObjectParameter baseObjectParameter = objectParameter.Reference.Resolve<IObjectParameter>(store.BaseContext);
+                baseObjectParameter.SetMethodResult(signature, invocation, baseResultParameter);
+
+
+                // copy it into the execution context as well
+                resultParameter = baseResultParameter.CloneData(store.ExecutionContext);
+                store.ExecutionContext.Parameters.Add(resultParameter.Reference, resultParameter);
+                objectParameter.SetMethodResult(signature, invocation, resultParameter);
             }
 
             IDataElement resultDataElement = resultParameter.AsDataElement(cur);

@@ -105,7 +105,7 @@ namespace dnWalker.Parameters
     {
         public static IObjectParameter CreateObjectParameter(this IParameterContext context, string type, bool? isNull = null)
         {
-            return CreateObjectParameter(context, ParameterRef.Any, type, isNull);
+            return CreateObjectParameter(context, context.GetParameterRef(), type, isNull);
         }
 
         public static IObjectParameter CreateObjectParameter(this IParameterContext context, ParameterRef reference, string type, bool? isNull = null)

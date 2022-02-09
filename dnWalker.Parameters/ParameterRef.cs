@@ -14,7 +14,6 @@ namespace dnWalker.Parameters
         private readonly int _id;
 
         public static readonly ParameterRef Empty = new ParameterRef(0);
-        public static readonly ParameterRef Any = new ParameterRef(-1);
         public static readonly ParameterRef[] EmptyArray = new ParameterRef[0];
 
         public ParameterRef(int id)

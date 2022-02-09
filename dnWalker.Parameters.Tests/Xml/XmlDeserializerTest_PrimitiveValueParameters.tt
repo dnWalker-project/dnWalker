@@ -109,7 +109,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             I<#= types[i] #>Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as I<#= types[i] #>Parameter;
             p.Should().NotBeNull();
@@ -132,7 +132,7 @@ namespace dnWalker.Parameters.Tests.Xml
         {
             ParameterRef reference = intRef;
 
-            IParameterContext ctx = new ParameterContext();
+            IParameterContext ctx = new BaseParameterContext();
 
             I<#= types[i] #>Parameter? p = XElement.Parse(xml)?.ToParameter(ctx) as I<#= types[i] #>Parameter;
             p.Should().NotBeNull();

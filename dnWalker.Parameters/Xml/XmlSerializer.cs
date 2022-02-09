@@ -123,9 +123,15 @@ namespace dnWalker.Parameters.Xml
             }
         }
 
-        public static XElement ToXml(this IParameterContext store)
+        public static XElement ToXml(this IBaseParameterContext store)
         {
-            XElement storeXml = new XElement(XmlParameterContext, store.Parameters.Values.Select(p => p.ToXml()));
+            XElement storeXml = new XElement(XmlBaseParameterContext, store.Parameters.Values.Select(p => p.ToXml()));
+            return storeXml;
+        }
+
+        public static XElement ToXml(this IExecutionParameterContext store)
+        {
+            XElement storeXml = new XElement(XmlExecutionParameterContext, store.Parameters.Values.Select(p => p.ToXml()));
             return storeXml;
         }
     }

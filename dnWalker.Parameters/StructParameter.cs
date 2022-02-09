@@ -76,7 +76,7 @@ namespace dnWalker.Parameters
     {
         public static IStructParameter CreateStructParameter(this IParameterContext context, string type)
         {
-            return CreateStructParameter(context, ParameterRef.Any, type);
+            return CreateStructParameter(context, context.GetParameterRef(), type);
         }
 
         public static IStructParameter CreateStructParameter(this IParameterContext context, ParameterRef reference, string type)

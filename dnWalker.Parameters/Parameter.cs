@@ -9,24 +9,16 @@ namespace dnWalker.Parameters
 {
     public abstract class Parameter : IParameter
     {
-        private static int _nextId = 1;
-        private static ParameterRef GetReferenceIdFor(IParameter instance)
-        {
-            // "random" ids => using the GetHashCode function
-            // return RuntimeHelpers.GetHashCode(instance);
-            return _nextId++;
-        }
-
-
         protected Parameter(IParameterContext context)
         {
             Context = context;
-            Reference = GetReferenceIdFor(this);
+            Reference = context.GetParameterRef();
         }
+
         protected Parameter(IParameterContext context, ParameterRef reference)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            Reference = reference == ParameterRef.Any ? GetReferenceIdFor(this) : reference;
+            Reference = reference;
         }
 
         public IParameterContext Context

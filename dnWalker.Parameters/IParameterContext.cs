@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Parameters
 {
-    public interface IParameterContext : ICloneable
+    /// <summary>
+    /// Represents a set of parameters. Provides resolution from <see cref="ParameterRef"/> to <see cref="IParameter"/>.
+    /// </summary>
+    public interface IParameterContext
     {
-        object ICloneable.Clone()
-        {
-            return Clone();
-        }
-
-        new IParameterContext Clone();
-
         IDictionary<ParameterRef, IParameter> Parameters { get; }
 
         IDictionary<string, ParameterRef> Roots { get; }
 
-        string Name { get; set; }
+        /// <summary>
+        /// Creates a new parameter reference based on the parameter context strategy.
+        /// </summary>
+        /// <returns></returns>
+        ParameterRef GetParameterRef();
     }
 
     public static partial class ParameterContextExtensions
