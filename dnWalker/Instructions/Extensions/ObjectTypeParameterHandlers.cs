@@ -180,7 +180,7 @@ namespace dnWalker.Instructions.Extensions
             if (cur.TryGetParameterStore(out ParameterStore store))
             {
                 IDataElement val = cur.EvalStack.Peek();
-                IDataElement toChange = cur.EvalStack.Peek(1);
+                IDataElement obj = cur.EvalStack.Peek(1);
 
                 if (val.Equals(ObjectReference.Null))
                 {
@@ -191,12 +191,12 @@ namespace dnWalker.Instructions.Extensions
                     cur.EvalStack.Push(1);
                 }
 
-                if (toChange is LocalVariablePointer lvp)
+                if (obj is LocalVariablePointer lvp)
                 {
-                    toChange = lvp.Value;
+                    obj = lvp.Value;
                 }
 
-                if (toChange.TryGetParameter(cur, out IObjectParameter objParameter))
+                if (obj.TryGetParameter(cur, out IObjectParameter objParameter))
                 {
                     if (instruction.Operand is IField fld)
                     {
