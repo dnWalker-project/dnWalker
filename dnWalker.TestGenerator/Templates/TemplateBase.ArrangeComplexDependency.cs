@@ -12,7 +12,7 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        protected void WriteArrangeComplesDepencency(ComplexDependency complexDependency)
+        private protected void WriteArrangeComplesDepencency(ComplexDependency complexDependency)
         {
             // there should be only:
             // - struct types
@@ -20,11 +20,25 @@ namespace dnWalker.TestGenerator.Templates
             // - class types
             // - arrays of struct, class, interface types
 
+            IParameter[] parameteres = complexDependency.GetParameters().ToArray();
+
+            if (parameteres.Length == 0) return;
+
+            // 0. write "header"
+            WriteLine("// Arrange variables:");
+            foreach (IParameter p in parameteres)
+            {
+                string varName = GetVariableName(p);
+                WriteLine($"//     {varName}");
+            }
+
             // 1. create the instances
-            foreach (IParameter p in complexDependency.GetParameters())
+            foreach (IParameter p in parameteres)
             {
                 TypeSignature varType = GetVariableType(p);
                 string varName = GetVariableName(p);
+
+                WriteLine($"// Create the instance of {varName}");
 
                 if (p is IArrayParameter ap)
                 {
@@ -75,13 +89,21 @@ namespace dnWalker.TestGenerator.Templates
                 {
                     throw new NotImplementedException("Implement the struct parameter");
                 }
+                else
+                {
+                    throw new NotSupportedException("Only object, struct and array parameters can be handled within a complex dependency.");
+                }
+
+                WriteLine(String.Empty);
             }
 
             // 2. initialize the instances
-            foreach (IParameter p in complexDependency.GetParameters())
+            foreach (IParameter p in parameteres)
             {
                 TypeSignature varType = GetVariableType(p);
                 string varName = GetVariableName(p);
+
+                WriteLine($"// Initialize the instance of {varName}");
 
                 if (p is IArrayParameter ap)
                 {
@@ -208,6 +230,12 @@ namespace dnWalker.TestGenerator.Templates
                 {
                     throw new NotImplementedException("Implement the struct parameter");
                 }
+                else
+                {
+                    throw new NotSupportedException("Only object, struct and array parameters can be handled within a complex dependency.");
+                }
+
+                WriteLine(String.Empty);
             }
         }
     }

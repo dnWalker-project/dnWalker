@@ -91,7 +91,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public static string GetDefaultLiteral(TypeSignature typeSignature)
         {
-            if (typeSignature.IsClass || typeSignature.IsArray || typeSignature.IsSZArray || typeSignature.IsInterface)
+            if (!typeSignature.IsValueType || typeSignature.IsArray || typeSignature.IsSZArray || typeSignature.IsInterface)
             {
                 return Null;
             }

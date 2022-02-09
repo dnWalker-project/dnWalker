@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.Parameters
 {
-    public abstract class Dependency
+    internal abstract class Dependency
     {
         protected Dependency()
         {
@@ -22,16 +22,16 @@ namespace dnWalker.TestGenerator.Parameters
 
     }
 
-    public class ComplexDependency : Dependency
+    internal class ComplexDependency : Dependency
     {
-        public ComplexDependency(IEnumerable<Dependency> innerDependencies)
+        internal ComplexDependency(IEnumerable<Dependency> innerDependencies)
         {
             InnerDependencies = innerDependencies.ToList(); ;
         }
 
-        public IReadOnlyList<Dependency> InnerDependencies { get; }
+        internal IReadOnlyList<Dependency> InnerDependencies { get; }
 
-        public IEnumerable<IParameter> GetParameters()
+        internal IEnumerable<IParameter> GetParameters()
         {
             return Enumerable.Concat
                 (
@@ -41,32 +41,32 @@ namespace dnWalker.TestGenerator.Parameters
         }
     }
 
-    public class SimpleDependency : Dependency
+    internal class SimpleDependency : Dependency
     {
 
-        public SimpleDependency(IParameter parameter)
+        internal SimpleDependency(IParameter parameter)
         {
             Parameter = parameter;
         }
-        public IParameter Parameter { get; }
+        internal IParameter Parameter { get; }
 
     }
 
-    public class DependencyGraph
+    internal class DependencyGraph
     {
-        private readonly IReadOnlyParameterSet _context;
+        private readonly IReadOnlyParameterSet _set;
         private readonly AdjacencyGraph<Dependency, Edge<Dependency>> _graph;
 
-        private DependencyGraph(IReadOnlyParameterSet context, AdjacencyGraph<Dependency, Edge<Dependency>> graph) 
+        private DependencyGraph(IReadOnlyParameterSet set, AdjacencyGraph<Dependency, Edge<Dependency>> graph) 
         {
-            _context = context;
+            _set = set;
             _graph = graph;
         }
 
-        public static DependencyGraph Build(IReadOnlyParameterSet context)
+        internal static DependencyGraph Build(IReadOnlyParameterSet set)
         {
 
-            Dictionary<ParameterRef, Dependency> lookup = context.Parameters
+            Dictionary<ParameterRef, Dependency> lookup = set.Parameters
 
                 // choose only non primitive value parameters - will be replaced by a constant dependency
                 .ToDictionary(p => p.Key, p => (Dependency) new SimpleDependency(p.Value));
@@ -78,7 +78,7 @@ namespace dnWalker.TestGenerator.Parameters
                 bigGraph.AddVertex(key.Value);
             }
 
-            foreach (var p in context.Parameters.Values)
+            foreach (var p in set.Parameters.Values)
             {
                 Dependency src = lookup[p.Reference];
                 // the parameter can depend on other parameters => normal behaviour
@@ -89,21 +89,21 @@ namespace dnWalker.TestGenerator.Parameters
                 }
             }
 
-            DependencyGraph dependencyGraph = new DependencyGraph(context, bigGraph.Condensate<Dependency, AdjacencyGraph<Dependency, Edge<Dependency>>>(static (cyclicDependencies) => new ComplexDependency(cyclicDependencies)));
+            DependencyGraph dependencyGraph = new DependencyGraph(set, bigGraph.Condensate<Dependency, AdjacencyGraph<Dependency, Edge<Dependency>>>(static (cyclicDependencies) => new ComplexDependency(cyclicDependencies)));
             return dependencyGraph;
         }
 
-        public IEnumerable<Dependency> GetRootDependencies()
+        internal IEnumerable<Dependency> GetRootDependencies()
         {
             return _graph.Roots();
         }
 
-        public IEnumerable<Dependency> GetDependencies()
+        internal IEnumerable<Dependency> GetDependencies()
         {
             return _graph.Vertices;
         }
 
-        public IEnumerable<Dependency> GetSortedDependencies()
+        internal IEnumerable<Dependency> GetSortedDependencies()
         {
             return _graph.TopologicalSort();
         }

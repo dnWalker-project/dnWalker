@@ -6,7 +6,6 @@ using dnWalker.TypeSystem;
 using FluentAssertions;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,31 +14,8 @@ using Xunit;
 
 namespace dnWalker.TestGenerator.Tests.Templates
 {
-    public interface ITestInterface
-    {
-        int PrimitiveValue_Method();
-        int PrimitiveValue_Method(double dbl, string str);
-        List<string> ComplexValue_Method(List<double> dbls);
-        List<string> ComplexValue_Method();
-    }
 
-    public abstract class AbstractClass
-    {
-        private int _field1;
-        private int _field2;
-
-        public abstract int Method();
-    }
-
-    public class ConcreteClass
-    {
-        private int _field1;
-        private int _field2;
-
-        public virtual int Method() { return 0; }
-    }
-
-    public class ArrangeTemplateTests : TemplateTestBase
+    public class SimpleDependency_ArrangeTemplateTests : TemplateTestBase
     {
 
         private class SimpleDependencyArrangeTemplate : TemplateBase
@@ -76,7 +52,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
         private readonly TypeSignature ConcreteClassType;
 
 
-        public ArrangeTemplateTests()
+        public SimpleDependency_ArrangeTemplateTests()
         {
             MethodTranslator methodTranslator = new MethodTranslator(DefinitionProvider);
             TypeTranslator typeTranslator = new TypeTranslator(DefinitionProvider);
@@ -99,10 +75,10 @@ namespace dnWalker.TestGenerator.Tests.Templates
         }
 
         [Theory]
-        [InlineData(null, "int var_0x00000001 = 0;")]
-        [InlineData(10, "int var_0x00000001 = 10;")]
-        [InlineData(-1, "int var_0x00000001 = -1;")]
-        [InlineData(0, "int var_0x00000001 = 0;")]
+        [InlineData(null, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = 0;")]
+        [InlineData(10, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = 10;")]
+        [InlineData(-1, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = -1;")]
+        [InlineData(0, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = 0;")]
         public void Test_PrimitiveValueParameter(int? value, string expected)
         {
             IParameterContext context = new ParameterContext(DefinitionProvider);
@@ -116,9 +92,9 @@ namespace dnWalker.TestGenerator.Tests.Templates
         }
 
         [Theory]
-        [InlineData(null, "double[] var_0x00000001 = null;")]
-        [InlineData(new double[0], "double[] var_0x00000001 = new double[0];")]
-        [InlineData(new double[] { -5, 0, 10 }, "double[] var_0x00000001 = new double[3] { -5, 0, 10 };")]
+        [InlineData(null, "// Arrange variable: var_0x00000001\r\ndouble[] var_0x00000001 = null;")]
+        [InlineData(new double[0], "// Arrange variable: var_0x00000001\r\ndouble[] var_0x00000001 = new double[0];")]
+        [InlineData(new double[] { -5, 0, 10 }, "// Arrange variable: var_0x00000001\r\ndouble[] var_0x00000001 = new double[3] { -5, 0, 10 };")]
         public void Test_ArrayOfPrimitiveValueParameters(double[] srcArray, string expected)
         {
             IParameterContext context = new ParameterContext(DefinitionProvider);
@@ -146,7 +122,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
             IParameterSet set = new ParameterSet(context);
 
             IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 0x00000001, isNull: true);
-            string expected = "ITestInterface var_0x00000001 = null;";
+            string expected = "// Arrange variable: var_0x00000001\r\nITestInterface var_0x00000001 = null;";
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(expected);
@@ -161,7 +137,8 @@ namespace dnWalker.TestGenerator.Tests.Templates
             IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 0x00000001, isNull: false);
             
             string expected =
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 ITestInterface var_0x00000001 = mock_var_0x00000001.Object;";
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
@@ -170,15 +147,18 @@ ITestInterface var_0x00000001 = mock_var_0x00000001.Object;";
 
         [Theory]
         [InlineData(new int[0],
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         [InlineData(new int[] { 333 },
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method())
     .Returns(333);
 ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         [InlineData(new int[] { 333, 444 },
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method())
     .Returns(333)
     .Returns(444);
@@ -205,12 +185,14 @@ ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
 
         [Theory]
         [InlineData(new int[] { 333 },
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method(It.Any<double>(), It.Any<string>()))
     .Returns(333);
 ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
         [InlineData(new int[] { 333, 444 },
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.PrimitiveValue_Method(It.Any<double>(), It.Any<string>()))
     .Returns(333)
     .Returns(444);
@@ -253,7 +235,8 @@ ITestInterface var_0x00000001 = mock_var_0x00000001.Object;")]
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.ComplexValue_Method())
     .Returns(var_0x00000010)
     .Returns(var_0x00000011)
@@ -282,7 +265,8 @@ ITestInterface var_0x00000001 = mock_var_0x00000001.Object;");
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(
-@"Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
+@"// Arrange variable: var_0x00000001
+Mock<ITestInterface> mock_var_0x00000001 = new Mock<ITestInterface>();
 mock_var_0x00000001.SetupSequence(o => o.ComplexValue_Method(It.Any<List<double>>()))
     .Returns(var_0x00000010)
     .Returns(var_0x00000011)
@@ -303,7 +287,8 @@ ITestInterface var_0x00000001 = mock_var_0x00000001.Object;");
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(
-@"Mock<AbstractClass> mock_var_0x00000001 = new Mock<AbstractClass>();
+@"// Arrange variable: var_0x00000001
+Mock<AbstractClass> mock_var_0x00000001 = new Mock<AbstractClass>();
 AbstractClass var_0x00000001 = mock_var_0x00000001.Object;");
         }
 
@@ -316,7 +301,7 @@ AbstractClass var_0x00000001 = mock_var_0x00000001.Object;");
             IObjectParameter op = set.CreateObjectParameter(ConcreteClassType, 1, isNull: false);
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
-            result.Should().Be("ConcreteClass var_0x00000001 = new ConcreteClass();");
+            result.Should().Be("// Arrange variable: var_0x00000001\r\nConcreteClass var_0x00000001 = new ConcreteClass();");
         }
 
         [Fact]
@@ -331,7 +316,8 @@ AbstractClass var_0x00000001 = mock_var_0x00000001.Object;");
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(
-@"Mock<ConcreteClass> mock_var_0x00000001 = new Mock<ConcreteClass>();
+@"// Arrange variable: var_0x00000001
+Mock<ConcreteClass> mock_var_0x00000001 = new Mock<ConcreteClass>();
 mock_var_0x00000001.SetupSequence(o => o.Method())
     .Returns(0);
 ConcreteClass var_0x00000001 = mock_var_0x00000001.Object;");
@@ -356,7 +342,8 @@ ConcreteClass var_0x00000001 = mock_var_0x00000001.Object;");
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(
-@"ConcreteClass var_0x00000001 = new ConcreteClass();
+@"// Arrange variable: var_0x00000001
+ConcreteClass var_0x00000001 = new ConcreteClass();
 var_0x00000001.SetPrivate(""_field1"", 55);
 var_0x00000001.SetPrivate(""_field2"", 65);");
         }
@@ -381,7 +368,8 @@ var_0x00000001.SetPrivate(""_field2"", 65);");
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(
-@"Mock<AbstractClass> mock_var_0x00000001 = new Mock<AbstractClass>();
+@"// Arrange variable: var_0x00000001
+Mock<AbstractClass> mock_var_0x00000001 = new Mock<AbstractClass>();
 AbstractClass var_0x00000001 = mock_var_0x00000001.Object;
 var_0x00000001.SetPrivate(""_field1"", 55);
 var_0x00000001.SetPrivate(""_field2"", 65);");

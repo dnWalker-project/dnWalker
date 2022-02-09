@@ -14,9 +14,13 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        protected void WriteArrangeSimpleDepencency(SimpleDependency simpleDependency)
+        private protected void WriteArrangeSimpleDepencency(SimpleDependency simpleDependency)
         {
             IParameter p = simpleDependency.Parameter;
+
+            string varName = GetVariableName(p);
+            WriteLine($"// Arrange variable: {varName}");
+
 
             if (p is IPrimitiveValueParameter pp)
             {

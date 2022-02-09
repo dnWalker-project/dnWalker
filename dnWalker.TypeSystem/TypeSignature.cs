@@ -70,6 +70,7 @@ namespace dnWalker.TypeSystem
             }
         }
 
+        [Obsolete("Does not work as expected...")]
         public bool IsClass
         {
             get
