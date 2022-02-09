@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator
+namespace dnWalker.TestGenerator.TestProjects
 {
     /// <summary>
     /// Provides methods for generating a project directory and file.
