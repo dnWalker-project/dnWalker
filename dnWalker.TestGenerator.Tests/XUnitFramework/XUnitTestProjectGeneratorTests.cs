@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.XUnitFramework;
+﻿using dnWalker.TestGenerator.TestProjects;
+using dnWalker.TestGenerator.XUnitFramework;
 
 using FluentAssertions;
 

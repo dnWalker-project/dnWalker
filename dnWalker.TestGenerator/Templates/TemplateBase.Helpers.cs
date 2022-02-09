@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Parameters;
+using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TypeSystem;
 
 using System;
@@ -14,16 +15,16 @@ namespace dnWalker.TestGenerator.Templates
     public partial class TemplateBase
     {
 
-        protected Dictionary<ParameterRef, TypeSignature> VariableTypeLookup { get; } = new Dictionary<ParameterRef, TypeSignature>();
-        protected Dictionary<ParameterRef, string> VariableNameLookup { get; } = new Dictionary<ParameterRef, string>();
-        protected TestGenerationContext? Context { get; set; }
+        private readonly Dictionary<ParameterRef, TypeSignature> _variableTypeLookup = new Dictionary<ParameterRef, TypeSignature>();
+        private readonly Dictionary<ParameterRef, string> _variableNameLookup = new Dictionary<ParameterRef, string>();
+        protected TestClassContext? Context { get; set; }
 
-        public void Initialize(TestGenerationContext context)
+        protected void Initialize(TestClassContext context)
         {
             Context = context;
 
-            VariableTypeLookup.Clear();
-            VariableNameLookup.Clear();
+            _variableTypeLookup.Clear();
+            _variableNameLookup.Clear();
         }
 
         protected TypeSignature GetVariableType(IParameter parameter)
@@ -35,7 +36,7 @@ namespace dnWalker.TestGenerator.Templates
 
             ParameterRef reference = parameter.Reference;
 
-            if (VariableTypeLookup.TryGetValue(reference, out TypeSignature type))
+            if (_variableTypeLookup.TryGetValue(reference, out TypeSignature type))
             {
                 return type;
             }
@@ -57,27 +58,59 @@ namespace dnWalker.TestGenerator.Templates
                 throw new Exception("Unexpected parameter type!");
             }
 
-            VariableTypeLookup[reference] = type;
+            _variableTypeLookup[reference] = type;
             return type;
         }
 
         protected string GetVariableName(IParameter parameter)
         {
+            void GetAccessors(out ReturnValueParameterAccessor? retVal, out MethodArgumentParameterAccessor? arg)
+            {
+                retVal = null;
+                arg = null;
+                foreach (ParameterAccessor acc in parameter.Accessors)
+                {
+                    if (acc is ReturnValueParameterAccessor rv)
+                    {
+                        retVal = rv;
+                    }
+                    if (acc is MethodArgumentParameterAccessor a)
+                    {
+                        arg = a;
+                        break;
+                    }
+                }
+            }
+
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
 
             ParameterRef reference = parameter.Reference;
 
-            if (VariableNameLookup.TryGetValue(reference, out string? name))
+            if (_variableNameLookup.TryGetValue(reference, out string? name))
             {
                 return name;
             }
 
             // do the name guessing
+            // 1) method argument => the name of the argument
+            // 2) return value => result
+            GetAccessors(out var retValue, out var arg);
 
+            if (arg != null)
+            {
+                name = arg.Expression;
+            }
+            else if (retValue != null)
+            {
+                // TODO: change it...
+                name = "result";
+            }
+            else
+            {
+                name = $"var_{reference}";
+            }
 
-            name = $"var_{reference}";
-
-            VariableNameLookup[reference] = name;
+            _variableNameLookup[reference] = name;
 
             return name;
         }

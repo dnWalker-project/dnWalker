@@ -11,54 +11,126 @@ namespace dnWalker.TestGenerator.TestClasses
 {
     public partial class TestClassContext
     {
+        private readonly int _iterationNumber;
+        private readonly MethodSignature _methodSignature;
+        private readonly string _assemblyName;
+        private readonly string _assemblyFileName;
+        private readonly IParameterContext _parameterContext;
+        private readonly IReadOnlyParameterSet _baseSet;
+        private readonly IReadOnlyParameterSet _executionSet;
+        private readonly string _pathConstraint;
+        private readonly string _standardOutput;
+        private readonly string _errorOutput;
+
+        public TestClassContext(int iterationNumber,
+                                MethodSignature methodSignature,
+                                string assemblyName,
+                                string assemblyFileName,
+                                IParameterContext parameterContext,
+                                IReadOnlyParameterSet baseSet,
+                                IReadOnlyParameterSet executionSet,
+                                string pathConstraint,
+                                string standardOutput,
+                                string errorOutput)
+        {
+            _iterationNumber = iterationNumber;
+            _methodSignature = methodSignature;
+            _assemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
+            _assemblyFileName = assemblyFileName ?? throw new ArgumentNullException(nameof(assemblyFileName));
+            _parameterContext = parameterContext ?? throw new ArgumentNullException(nameof(parameterContext));
+            _baseSet = baseSet ?? throw new ArgumentNullException(nameof(baseSet));
+            _executionSet = executionSet ?? throw new ArgumentNullException(nameof(executionSet));
+            _pathConstraint = pathConstraint ?? throw new ArgumentNullException(nameof(pathConstraint));
+            _standardOutput = standardOutput ?? throw new ArgumentNullException(nameof(standardOutput));
+            _errorOutput = errorOutput ?? throw new ArgumentNullException(nameof(errorOutput));
+        }
+
         public IDefinitionProvider DefinitionProvider
         {
-            get;
+            get
+            {
+                return _parameterContext.DefinitionProvider;
+            }
         }
 
         public int IterationNumber
         {
-            get;
+            get
+            {
+                return _iterationNumber;
+            }
         }
 
-        public MethodSignature Method
+        public MethodSignature MethodSignature
         {
-            get;
+            get
+            {
+                return _methodSignature;
+            }
         }
 
         public string AssemblyName
         {
-            get;
+            get
+            {
+                return _assemblyName;
+            }
         }
 
         public string AssemblyFileName
         {
-            get;
+            get
+            {
+                return _assemblyFileName;
+            }
         }
 
-        public IReadOnlyParameterSet BaseParameterSet
+        public IParameterContext ParameterContext
         {
-            get;
+            get
+            {
+                return _parameterContext;
+            }
         }
 
-        public IReadOnlyParameterSet ExecutionParameterSet
+        public IReadOnlyParameterSet BaseSet
         {
-            get;
+            get
+            {
+                return _baseSet;
+            }
+        }
+
+        public IReadOnlyParameterSet ExecutionSet
+        {
+            get
+            {
+                return _executionSet;
+            }
         }
 
         public string PathConstraint
         {
-            get;
+            get
+            {
+                return _pathConstraint;
+            }
         }
 
         public string StandardOutput
         {
-            get;
+            get
+            {
+                return _standardOutput;
+            }
         }
 
         public string ErrorOutput
         {
-            get;
+            get
+            {
+                return _errorOutput;
+            }
         }
     }
 }

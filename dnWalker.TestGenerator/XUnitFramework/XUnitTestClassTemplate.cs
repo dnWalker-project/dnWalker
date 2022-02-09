@@ -15,6 +15,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
     using dnWalker.TypeSystem;
     using dnWalker.Parameters;
     using dnWalker.TestGenerator.Parameters;
+    using dnWalker.TestGenerator.TestClasses;
     using System;
     
     /// <summary>
@@ -32,7 +33,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
         public override string TransformText()
         {
             
-            #line 10 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 11 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
             ExplorationIterationData iterationData = IterationData;
             ExplorationData explorationData = ExplorationData;
@@ -54,7 +55,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
             #line default
             #line hidden
             
-            #line 27 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 28 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
  
             // basic test namespaces
 
@@ -65,7 +66,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
                     "m.Text;\r\nusing System.Threading.Tasks;\r\nusing FluentAssertions;\r\nusing Xunit;\r\nu" +
                     "sing Moq;\r\n");
             
-            #line 38 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 39 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
             // include namespaces
             foreach (string namespaceName in namespaceNames)
@@ -76,14 +77,14 @@ namespace dnWalker.TestGenerator.XUnitFramework
             #line hidden
             this.Write("using ");
             
-            #line 43 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 44 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(namespaceName));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 44 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 45 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
             }
 
@@ -92,7 +93,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
             #line hidden
             this.Write("\r\n");
             
-            #line 48 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 49 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
             MethodSignature method = ExplorationData.MethodSignature;
             TypeSignature declaringType = method.DeclaringType;
@@ -102,14 +103,14 @@ namespace dnWalker.TestGenerator.XUnitFramework
             #line hidden
             this.Write("public class ");
             
-            #line 52 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 53 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(declaringType.Name));
             
             #line default
             #line hidden
             this.Write("_");
             
-            #line 52 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 53 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default

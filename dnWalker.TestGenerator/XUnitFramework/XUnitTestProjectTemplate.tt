@@ -3,6 +3,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="dnWalker.TestGenerator.TestProjects" #>
 <#@ output extension=".tt.cs" #>
 <# ITestProjectContext context = Context; #>
 

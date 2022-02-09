@@ -6,6 +6,7 @@
 <#@ import namespace="dnWalker.TypeSystem" #>
 <#@ import namespace="dnWalker.Parameters" #>
 <#@ import namespace="dnWalker.TestGenerator.Parameters" #>
+<#@ import namespace="dnWalker.TestGenerator.TestClasses" #>
 <#@ output extension=".tt.cs" #>
 <#
             ExplorationIterationData iterationData = IterationData;
