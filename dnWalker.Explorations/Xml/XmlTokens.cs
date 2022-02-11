@@ -24,5 +24,8 @@ namespace dnWalker.Explorations.Xml
 
         public const string PathConstraint = "PathConstraint";
         public const string Failed = "Failed";
+        public const string Exception = "Exception";
+        public const string StandardOutput = "StandardOutput";
+        public const string ErrorOutput = "ErrorOutput";
     }
 }

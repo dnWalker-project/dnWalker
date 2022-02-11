@@ -34,90 +34,197 @@ namespace dnWalker.TestGenerator.XUnitFramework
         {
             
             #line 11 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
-
-            ExplorationIterationData iterationData = IterationData;
-            ExplorationData explorationData = ExplorationData;
-
-            // setup the namespaces:
-            HashSet<string> namespaceNames = new HashSet<string>();
-
-            foreach (IParameter p in iterationData.StartingParameterSet.Parameters.Values)
-            {
-                namespaceNames.Add(p.Type.Namespace);
-            }
-            
-            foreach (IParameter p in iterationData.EndingParameterSet.Parameters.Values)
-            {
-                namespaceNames.Add(p.Type.Namespace);
-            }
-
-            
-            #line default
-            #line hidden
-            
-            #line 28 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
  
-            // basic test namespaces
+	// basic namespaces
 
             
             #line default
             #line hidden
             this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing System.Linq;\r\nusing Syste" +
-                    "m.Text;\r\nusing System.Threading.Tasks;\r\nusing FluentAssertions;\r\nusing Xunit;\r\nu" +
-                    "sing Moq;\r\n");
+                    "m.Text;\r\nusing System.Threading.Tasks;\r\n");
             
-            #line 39 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 19 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
-            // include namespaces
-            foreach (string namespaceName in namespaceNames)
-            {
+	// test namespaces
+
+            
+            #line default
+            #line hidden
+            this.Write("using FluentAssertions;\r\nusing Xunit;\r\nusing Moq;\r\n");
+            
+            #line 25 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+
+	// parameter namespaces
+	foreach (string nsName in Context.GetNamespaces())
+	{
 
             
             #line default
             #line hidden
             this.Write("using ");
             
-            #line 44 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(namespaceName));
+            #line 30 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(nsName));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 45 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 31 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
-            }
+	}
 
             
             #line default
             #line hidden
-            this.Write("\r\n");
             
-            #line 49 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            #line 34 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
 
-            MethodSignature method = ExplorationData.MethodSignature;
-            TypeSignature declaringType = method.DeclaringType;
+	// test class declaration
 
+            
+            #line default
+            #line hidden
+            this.Write("namespace ");
+            
+            #line 37 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Context.TestNamespaceName));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n{\r\n");
+            
+            #line 39 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ PushIndent(); 
             
             #line default
             #line hidden
             this.Write("public class ");
             
-            #line 53 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(declaringType.Name));
+            #line 40 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Context.TestClassName));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n{\r\n");
+            
+            #line 42 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ PushIndent(); 
+            
+            #line default
+            #line hidden
+            
+            #line 43 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+
+	// for each assertion schema generate a test method
+	int i = 1;
+	foreach (AssertionSchema schema in Context.GetSchemas())
+	{
+
+            
+            #line default
+            #line hidden
+            this.Write("[Fact]\r\npublic void Test_");
+            
+            #line 50 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(i));
             
             #line default
             #line hidden
             this.Write("_");
             
-            #line 53 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            #line 50 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetSchemaName(schema)));
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n\r\n}\r\n");
+            this.Write("()\r\n{\r\n");
+            
+            #line 52 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ PushIndent(); 
+            
+            #line default
+            #line hidden
+            this.Write("// arrange\r\n");
+            
+            #line 54 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ WriteArrange(schema); 
+            
+            #line default
+            #line hidden
+            this.Write("// act\r\n");
+            
+            #line 56 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ WriteAct(schema); 
+            
+            #line default
+            #line hidden
+            this.Write("// assert\r\n");
+            
+            #line 58 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ WriteAssert(schema); 
+            
+            #line default
+            #line hidden
+            
+            #line 59 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ PopIndent(); 
+            
+            #line default
+            #line hidden
+            this.Write("}\r\n");
+            
+            #line 61 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+
+		++i;
+	}
+
+            
+            #line default
+            #line hidden
+            
+            #line 65 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ PopIndent(); 
+            
+            #line default
+            #line hidden
+            this.Write("}\r\n");
+            
+            #line 67 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+ PopIndent(); 
+            
+            #line default
+            #line hidden
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
+        
+        #line 69 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator\XUnitFramework\XUnitTestClassTemplate.tt"
+
+        private static string GetSchemaName(AssertionSchema schema)
+        {
+            switch (schema)
+            {
+                case ExceptionSchema exception: 
+                    return "Exception";
+                
+                case ReturnValueSchema retValue: 
+                    return "ReturnValue";
+
+                case ArrayElementSchema arrayElement: 
+                    return $"ArrayElements_{arrayElement.InputState.Reference}";
+
+                case ObjectFieldSchema objectField: 
+                    return $"FieldValues_{objectField.InputState.Reference}";
+
+                default: 
+                    throw new ArgumentException($"Unexpected schema type: {schema.GetType().Name}", nameof(schema));
+            }
+    	}
+
+        
+        #line default
+        #line hidden
     }
     
     #line default

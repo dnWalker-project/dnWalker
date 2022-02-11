@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Examples.TestGeneration
 {
-    public class ClassReferencingAnotherClass
+    public class ExceptionSchema
     {
-        public ClassWithManyFields ManyFields;
-        public int IntegerField1;
-        public int IntegerField2;
+        public static void ThrowIfNull(ExceptionSchema instance)
+        {
+
+        }
     }
 }

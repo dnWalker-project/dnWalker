@@ -114,6 +114,10 @@ namespace dnWalker.Concolic
             _currentIteration.PathConstraint = e.ExploredPath.GetConstraintStringWithAccesses(e.ParameterStore.ExecutionSet);
             _currentIteration.End = DateTime.Now;
 
+            _currentIteration.StandardOutput = e.ExploredPath.Output ?? string.Empty;
+            _currentIteration.ErrorOutput = string.Empty;
+            _currentIteration.Exception = e.ExploredPath.Exception?.Type.FullName ?? string.Empty;
+
             _currentExploration.Iterations.Add(_currentIteration);
 
             TrySaveData();

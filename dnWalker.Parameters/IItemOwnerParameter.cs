@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -37,6 +39,7 @@ namespace dnWalker.Parameters
 
     public interface IItemOwnerParameter : IItemOwner, IParameter
     {
+        TypeSignature ElementType { get; }
     }
 
     public static class ItemOwnerParameterExtensions

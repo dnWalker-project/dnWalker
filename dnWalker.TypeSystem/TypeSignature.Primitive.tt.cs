@@ -101,5 +101,12 @@ namespace dnWalker.TypeSystem
                 return _type != null && new SigComparer().Equals(_type, _type.Module.CorLibTypes.Single);
             }
         }
+        public bool IsVoid
+        {
+            get
+            {
+                return _type != null && new SigComparer().Equals(_type, _type.Module.CorLibTypes.Void);
+            }
+        }
     }
 }

@@ -183,7 +183,7 @@ namespace dnWalker.TestGenerator.Templates
 
                         Write("(");
 
-                        WriteJoined(TemplateHelpers.Coma, method.Parameters,
+                        WriteJoined(TemplateHelpers.Coma, method.ParameterTypes,
                             t =>
                             {
                                 Write("It.Any<");

@@ -11,6 +11,22 @@ namespace dnWalker.TestGenerator.TestClasses
     {
         public class Builder
         {
+            internal static Builder NewEmpty()
+            {
+                Builder builder = new Builder();
+
+                builder._iterationNumber = 0;
+                builder._methodSignature = MethodSignature.Empty;
+                builder._assemblyName = string.Empty;
+                builder._assemblyFileName = string.Empty;
+                builder._pathConstraint = string.Empty;
+                builder._standardOutput = string.Empty;
+                builder._errorOutput = string.Empty;
+                builder._exception = TypeSignature.Empty;
+
+                return builder;
+            }
+
             private int _iterationNumber;
             private MethodSignature _methodSignature;
             private string? _assemblyName;
@@ -21,6 +37,7 @@ namespace dnWalker.TestGenerator.TestClasses
             private string? _pathConstraint;
             private string? _standardOutput;
             private string? _errorOutput;
+            private TypeSignature _exception;
 
             public int IterationNumber
             {
@@ -142,6 +159,17 @@ namespace dnWalker.TestGenerator.TestClasses
                     _errorOutput = value;
                 }
             }
+            public TypeSignature Exception
+            {
+                get
+                {
+                    return _exception;
+                }
+                set
+                {
+                    _exception = value;
+                }
+            }
 
             public TestClassContext Build()
             {
@@ -163,7 +191,8 @@ namespace dnWalker.TestGenerator.TestClasses
                                             _executionSet,
                                             _pathConstraint,
                                             _standardOutput,
-                                            _errorOutput);
+                                            _errorOutput,
+                                            _exception);
             }
 
         }
@@ -180,6 +209,7 @@ namespace dnWalker.TestGenerator.TestClasses
                 IParameterContext context = new ParameterContext(definitionProvider);
 
                 IMethodTranslator methodTranslator = new MethodTranslator(definitionProvider);
+                TypeTranslator typeTranslator = new TypeTranslator(definitionProvider);
                 MethodSignature methodSignature = methodTranslator.FromString(exploration.MethodSignature);
 
                 foreach (ConcolicExplorationIteration iteration in exploration.Iterations)
@@ -192,8 +222,9 @@ namespace dnWalker.TestGenerator.TestClasses
                         AssemblyName = exploration.AssemblyName,
                         BaseSet = iteration.BaseParameterSet.Construct(context),
                         ExecutionSet = iteration.ExecutionParameterSet.Construct(context),
-                        //ErrorOutput = iteration.ErrorOutput,
-                        //StandardOutput = iteration.StandardOutput,
+                        ErrorOutput = iteration.ErrorOutput ?? string.Empty,
+                        StandardOutput = iteration.StandardOutput ?? string.Empty,
+                        Exception = iteration.Exception == string.Empty ? TypeSignature.Empty : typeTranslator.FromString(iteration.Exception),
                     };
 
                     result.Add(builder.Build());

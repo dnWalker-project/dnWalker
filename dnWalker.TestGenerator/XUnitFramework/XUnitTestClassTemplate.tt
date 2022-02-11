@@ -8,49 +8,83 @@
 <#@ import namespace="dnWalker.TestGenerator.Parameters" #>
 <#@ import namespace="dnWalker.TestGenerator.TestClasses" #>
 <#@ output extension=".tt.cs" #>
-<#
-            ExplorationIterationData iterationData = IterationData;
-            ExplorationData explorationData = ExplorationData;
-
-            // setup the namespaces:
-            HashSet<string> namespaceNames = new HashSet<string>();
-
-            foreach (IParameter p in iterationData.StartingParameterSet.Parameters.Values)
-            {
-                namespaceNames.Add(p.Type.Namespace);
-            }
-            
-            foreach (IParameter p in iterationData.EndingParameterSet.Parameters.Values)
-            {
-                namespaceNames.Add(p.Type.Namespace);
-            }
-#>
 <# 
-            // basic test namespaces
+	// basic namespaces
 #>
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+<#
+	// test namespaces
+#>
 using FluentAssertions;
 using Xunit;
 using Moq;
 <#
-            // include namespaces
-            foreach (string namespaceName in namespaceNames)
-            {
+	// parameter namespaces
+	foreach (string nsName in Context.GetNamespaces())
+	{
 #>
-using <#= namespaceName #>;
+using <#= nsName #>;
 <#
-            }
+	}
 #>
-
 <#
-            MethodSignature method = ExplorationData.MethodSignature;
-            TypeSignature declaringType = method.DeclaringType;
+	// test class declaration
 #>
-public class <#= declaringType.Name #>_<#= method.Name #>
+namespace <#= Context.TestNamespaceName #>
 {
-
+<# PushIndent(); #>
+public class <#= Context.TestClassName #>
+{
+<# PushIndent(); #>
+<#
+	// for each assertion schema generate a test method
+	int i = 1;
+	foreach (AssertionSchema schema in Context.GetSchemas())
+	{
+#>
+[Fact]
+public void Test_<#= i #>_<#= GetSchemaName(schema) #>()
+{
+<# PushIndent(); #>
+// arrange
+<# WriteArrange(schema); #>
+// act
+<# WriteAct(schema); #>
+// assert
+<# WriteAssert(schema); #>
+<# PopIndent(); #>
 }
+<#
+		++i;
+	}
+#>
+<# PopIndent(); #>
+}
+<# PopIndent(); #>
+}
+<#+
+        private static string GetSchemaName(AssertionSchema schema)
+        {
+            switch (schema)
+            {
+                case ExceptionSchema exception: 
+                    return "Exception";
+                
+                case ReturnValueSchema retValue: 
+                    return "ReturnValue";
+
+                case ArrayElementSchema arrayElement: 
+                    return $"ArrayElements_{arrayElement.InputState.Reference}";
+
+                case ObjectFieldSchema objectField: 
+                    return $"FieldValues_{objectField.InputState.Reference}";
+
+                default: 
+                    throw new ArgumentException($"Unexpected schema type: {schema.GetType().Name}", nameof(schema));
+            }
+    	}
+#>

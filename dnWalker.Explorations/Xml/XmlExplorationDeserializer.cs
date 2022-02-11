@@ -100,6 +100,10 @@ namespace dnWalker.Explorations.Xml
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExplorationIteration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.PathConstraint = xml.Attribute(XmlTokens.PathConstraint)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExplorationIteration), XmlTokens.PathConstraint);
 
+            builder.Exception = xml.Attribute(XmlTokens.Exception)?.Value ?? string.Empty;
+            builder.StandardOutput = xml.Attribute(XmlTokens.StandardOutput)?.Value ?? string.Empty;
+            builder.ErrorOutput = xml.Attribute(XmlTokens.ErrorOutput)?.Value ?? string.Empty;
+
             XElement baseXml = xml.Element(XmlTokens.BaseSet)?.Element(Parameters.Xml.XmlTokens.XmlSet) ?? throw new MissingElementException(nameof(ConcolicExplorationIteration), $"{XmlTokens.BaseSet}/{Parameters.Xml.XmlTokens.XmlSet}");
             XElement execXml = xml.Element(XmlTokens.ExecutionSet)?.Element(Parameters.Xml.XmlTokens.XmlSet) ?? throw new MissingElementException(nameof(ConcolicExplorationIteration), $"{XmlTokens.ExecutionSet}/{Parameters.Xml.XmlTokens.XmlSet}");
 

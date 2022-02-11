@@ -41,6 +41,9 @@ namespace dnWalker.Explorations.Xml
             xml.SetAttributeValue(Start, iteration.Start.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
             xml.SetAttributeValue(End, iteration.End.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
             xml.SetAttributeValue(PathConstraint, iteration.PathConstraint);
+            xml.SetAttributeValue(XmlTokens.Exception, iteration.Exception);
+            xml.SetAttributeValue(StandardOutput, iteration.StandardOutput);
+            xml.SetAttributeValue(ErrorOutput, iteration.ErrorOutput);
 
             if (iteration.BaseParameterSet is not XmlParameterSetInfo baseInfo)
             {

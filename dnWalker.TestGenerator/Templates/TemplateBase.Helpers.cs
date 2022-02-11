@@ -16,15 +16,25 @@ namespace dnWalker.TestGenerator.Templates
     {
 
         private readonly Dictionary<ParameterRef, TypeSignature> _variableTypeLookup = new Dictionary<ParameterRef, TypeSignature>();
-        private readonly Dictionary<ParameterRef, string> _variableNameLookup = new Dictionary<ParameterRef, string>();
-        protected TestClassContext? Context { get; set; }
+        private readonly Dictionary<ParameterRef, string> _variableNameLookupBase = new Dictionary<ParameterRef, string>();
+        private readonly Dictionary<ParameterRef, string> _variableNameLookupExec = new Dictionary<ParameterRef, string>();
+
+        private TestClassContext? _context = null;
+        protected TestClassContext Context
+        {
+            get
+            {
+                return _context ?? throw new InvalidOperationException("The template is not initialized.");
+            }
+        }
 
         protected void Initialize(TestClassContext context)
         {
-            Context = context;
+            _context = context;
 
             _variableTypeLookup.Clear();
-            _variableNameLookup.Clear();
+            _variableNameLookupBase.Clear();
+            _variableNameLookupExec.Clear();
         }
 
         protected TypeSignature GetVariableType(IParameter parameter)
@@ -61,32 +71,46 @@ namespace dnWalker.TestGenerator.Templates
             _variableTypeLookup[reference] = type;
             return type;
         }
-
         protected string GetVariableName(IParameter parameter)
         {
-            void GetAccessors(out ReturnValueParameterAccessor? retVal, out MethodArgumentParameterAccessor? arg)
-            {
-                retVal = null;
-                arg = null;
-                foreach (ParameterAccessor acc in parameter.Accessors)
-                {
-                    if (acc is ReturnValueParameterAccessor rv)
-                    {
-                        retVal = rv;
-                    }
-                    if (acc is MethodArgumentParameterAccessor a)
-                    {
-                        arg = a;
-                        break;
-                    }
-                }
-            }
-
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
 
+            if (ReferenceEquals(parameter.Set, Context.BaseSet))
+            {
+                return GetInVariableName(parameter);
+            }
+            else if (ReferenceEquals(parameter.Set, Context.ExecutionSet))
+            {
+                return GetOutVariableName(parameter);
+            }
+            else
+            {
+                throw new Exception("THe parameter belongs to an unexpected set.");
+            }
+        }
+
+        private static void GetAccessors(IParameter parameter, out ReturnValueParameterAccessor? retVal, out MethodArgumentParameterAccessor? arg)
+        {
+            retVal = null;
+            arg = null;
+            foreach (ParameterAccessor acc in parameter.Accessors)
+            {
+                if (acc is ReturnValueParameterAccessor rv)
+                {
+                    retVal = rv;
+                }
+                if (acc is MethodArgumentParameterAccessor a)
+                {
+                    arg = a;
+                    //break;
+                }
+            }
+        }
+        private string GetInVariableName(IParameter parameter)
+        {
             ParameterRef reference = parameter.Reference;
 
-            if (_variableNameLookup.TryGetValue(reference, out string? name))
+            if (_variableNameLookupBase.TryGetValue(reference, out string? name))
             {
                 return name;
             }
@@ -94,23 +118,51 @@ namespace dnWalker.TestGenerator.Templates
             // do the name guessing
             // 1) method argument => the name of the argument
             // 2) return value => result
-            GetAccessors(out var retValue, out var arg);
+            GetAccessors(parameter, out var retValue, out var arg);
 
             if (arg != null)
             {
                 name = arg.Expression;
             }
-            else if (retValue != null)
-            {
-                // TODO: change it...
-                name = "result";
-            }
+            //else if (retValue != null)
+            //{
+            //    // TODO: change it...
+            //    name = "result";
+            //}
             else
             {
                 name = $"var_{reference}";
             }
 
-            _variableNameLookup[reference] = name;
+            _variableNameLookupBase[reference] = name;
+
+            return name;
+        }
+
+        private string GetOutVariableName(IParameter parameter)
+        {
+            ParameterRef reference = parameter.Reference;
+
+            if (_variableNameLookupExec.TryGetValue(reference, out string? name))
+            {
+                return name;
+            }
+
+            // do the name guessing
+            // 1) method argument => the name of the argument
+            // 2) return value => result
+            GetAccessors(parameter, out var retValue, out var arg);
+
+            if (arg != null)
+            {
+                name = $"out_{arg.Expression}";
+            }
+            else
+            {
+                name = $"var_out_{reference}";
+            }
+
+            _variableNameLookupExec[reference] = name;
 
             return name;
         }
@@ -147,6 +199,11 @@ namespace dnWalker.TestGenerator.Templates
                 Write(separator);
                 writeAction(itemsArray[i]);
             }
+        }
+
+        protected void PushIndent()
+        {
+            base.PushIndent(TemplateHelpers.Indent);
         }
     }
 }

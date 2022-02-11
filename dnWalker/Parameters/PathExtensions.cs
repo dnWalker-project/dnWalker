@@ -65,7 +65,9 @@ namespace dnWalker.Parameters
 
         public static string GetConstraintStringWithAccesses(this Path path, IParameterSet context)
         {
-            return path.PathConstraint.SubstitueRefWithAccess(context).ToString();
+            if (path.PathConstraint == null) return string.Empty;
+
+            return path.PathConstraint.SubstitueRefWithAccess(context)?.ToString();
         }
     }
 }

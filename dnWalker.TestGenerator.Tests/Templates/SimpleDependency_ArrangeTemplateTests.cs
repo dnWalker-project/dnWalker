@@ -1,6 +1,7 @@
 ﻿using dnWalker.Parameters;
 using dnWalker.TestGenerator.Parameters;
 using dnWalker.TestGenerator.Templates;
+using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TypeSystem;
 
 using FluentAssertions;
@@ -25,6 +26,9 @@ namespace dnWalker.TestGenerator.Tests.Templates
             public SimpleDependencyArrangeTemplate(SimpleDependency dependency)
             {
                 _dependency = dependency;
+
+                IParameter p = dependency.Parameter;
+                Initialize(BuildContext(p.Set.Context, p.Set, new ParameterSet(p.Set.Context)));
             }
 
             public override string TransformText()

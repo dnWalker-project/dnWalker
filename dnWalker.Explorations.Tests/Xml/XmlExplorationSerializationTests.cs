@@ -46,6 +46,9 @@ namespace dnWalker.Explorations.Tests.Xml
             iterBuilder.BaseParameterSet = XmlParameterSetInfo.FromSet(setMock.Object);
             iterBuilder.ExecutionParameterSet = XmlParameterSetInfo.FromSet(setMock.Object);
 
+            iterBuilder.Exception = "System.InvalidOperationException";
+            iterBuilder.StandardOutput = "Hello World!";
+            iterBuilder.ErrorOutput = "";
 
             explBuilder.Iterations.Add(iterBuilder);
 
@@ -76,6 +79,10 @@ namespace dnWalker.Explorations.Tests.Xml
 
             iteration.BaseParameterSet.Should().BeOfType<XmlParameterSetInfo>();
             iteration.ExecutionParameterSet.Should().BeOfType<XmlParameterSetInfo>();
+
+            iteration.Exception.Should().Be(iterBuilder.Exception);
+            iteration.StandardOutput.Should().Be(iterBuilder.StandardOutput);
+            iteration.ErrorOutput.Should().Be(iterBuilder.ErrorOutput);
 
             XmlParameterSetInfo baseSet = (XmlParameterSetInfo)iteration.BaseParameterSet;
             XmlParameterSetInfo execSet = (XmlParameterSetInfo)iteration.ExecutionParameterSet;
