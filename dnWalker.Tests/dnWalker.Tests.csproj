@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\dnWalker.TestGenerator\dnWalker.TestGenerator.csproj" />
         <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
         <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj" />
     </ItemGroup>

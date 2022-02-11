@@ -94,27 +94,6 @@ namespace dnWalker.Parameters
             }
         }
 
-        //private static IDataElement CreateDataElement(IInterfaceParameter interfaceParameter, ExplicitActiveState cur)
-        //{
-        //    if (!interfaceParameter.GetIsNull())
-        //    {
-        //        // initialize fake null reference
-        //        // cannot use ObjectReference.Null, because we need a unique data element
-        //        // in order to use cur.PathStore.CurrentPath... object attributes access
-        //        ObjectReference objectReference = new ObjectReference(0);
-        //        return objectReference;
-        //    }
-        //    else
-        //    {
-        //        // get ITypeOrDef
-        //        ITypeDefOrRef type = cur.DefinitionProvider.GetTypeDefinition(interfaceParameter.TypeName);
-
-        //        // create ObjectReference
-        //        ObjectReference interfaceReference = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(false), type);
-        //        return interfaceReference;
-        //    }
-        //}
-
         private static IDataElement CreateDataElement(IObjectParameter objectParameter, ExplicitActiveState cur)
         {
             bool isNull = objectParameter.IsNull ?? true;
@@ -136,19 +115,6 @@ namespace dnWalker.Parameters
                 return objectReference;
             }
         }
-
-        //private static IDataElement CreateDataElement(IStringParameter stringParameter)
-        //{
-        //    string value = stringParameter.CreateString();
-        //    if (value == null)
-        //    {
-        //        return ObjectReference.Null;
-        //    }
-        //    else
-        //    {
-        //        return new ConstantString(value);
-        //    }
-        //}
 
         private static IDataElement CreateDataElement<TValue>(IPrimitiveValueParameter<TValue> parameter) where TValue : struct
         {

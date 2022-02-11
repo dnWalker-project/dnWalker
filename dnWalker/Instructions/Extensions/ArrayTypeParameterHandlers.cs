@@ -121,4 +121,44 @@ namespace dnWalker.Instructions.Extensions
             return;
         }
     }
+
+    public class STELEM_ParameterHandler : IPreExecuteInstructionExtension
+    {
+        private static readonly Type[] _instructions = new Type[]
+        {
+            typeof(STELEM)
+        };
+
+        public IEnumerable<Type> SupportedInstructions
+        {
+            get
+            {
+                return _instructions;
+            }
+        }
+
+        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            if (cur.TryGetParameterStore(out ParameterStore store))
+            {
+                IDataElement val = cur.EvalStack.Peek();
+                int idx = ((Int4)cur.EvalStack.Peek(1)).Value;
+                ObjectReference array = (ObjectReference)cur.EvalStack.Peek(2);
+
+                if (val is ObjectReference or && or.HashCode == ObjectReference.Null.HashCode)
+                {
+                    // the val is the GLOBAL null => the GetOrCreate would actually associate the global NULL with one concrete parameter instance
+                    // we need to avoid this => pop it and push there a new NULL value
+                    val = new ObjectReference(0);
+                    cur.EvalStack.Pop();
+                    cur.EvalStack.Push(1);
+                }
+
+                if (array.TryGetParameter(cur, out IArrayParameter arrParameter))
+                {
+                    arrParameter.SetItem(idx, val.GetOrCreateParameter(cur, arrParameter.ElementType));
+                }
+            }
+        }
+    }
 }

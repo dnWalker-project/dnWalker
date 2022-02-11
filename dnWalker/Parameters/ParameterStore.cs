@@ -26,7 +26,7 @@ namespace dnWalker.Parameters
         private readonly IParameterContext _context;
 
         private readonly IBaseParameterSet _baseSet;
-        private IExecutionParameterSet _executionSet;
+        private readonly List<IExecutionParameterSet> _executionSets = new List<IExecutionParameterSet>();
 
         public ParameterStore(MethodDef entryPoint, IDefinitionProvider definitionProvider)
         {
@@ -75,7 +75,15 @@ namespace dnWalker.Parameters
         {
             get
             {
-                return _executionSet ?? throw new InvalidOperationException("Cannot access the 'ExecutionContext', it is not initialized!");
+                return _executionSets.Count > 0 ? _executionSets[_executionSets.Count - 1] : throw new InvalidOperationException("Cannot access the 'ExecutionContext', it is not initialized!");
+            }
+        }
+
+        public IReadOnlyList<IExecutionParameterSet> ExecutionSets
+        {
+            get
+            {
+                return _executionSets;
             }
         }
 
@@ -89,17 +97,17 @@ namespace dnWalker.Parameters
             int idx = 0;
 
             //IParameterContext ctx = _baseContext;
-            IParameterSet ctx = _executionSet;
+            IParameterSet set = ExecutionSet;
 
             if (method.HasThis)
             {
-                IParameter thisParameter = ctx.Roots[ThisName].Resolve(ctx);
+                IParameter thisParameter = set.Roots[ThisName].Resolve(set);
                 arguments[idx++] = thisParameter.AsDataElement(cur);
             }
 
             foreach (DnParameter p in method.Parameters)
             {
-                IParameter argParameter = ctx.Roots[p.Name].Resolve(ctx);
+                IParameter argParameter = set.Roots[p.Name].Resolve(set);
                 arguments[idx++] = argParameter.AsDataElement(cur);
             }
 
@@ -111,17 +119,17 @@ namespace dnWalker.Parameters
         /// </summary>
         public void InitializeExecutionContext()
         {
-            _executionSet = _baseSet.CreateExecutionSet();
+            _executionSets.Add(_baseSet.CreateExecutionSet());
         }
 
         private ParameterRef _returnValue;
 
         public void SetReturnValue(IDataElement retValue, ExplicitActiveState cur, TypeSig retValueType)
         {
-            IParameter parameter = retValue.GetOrCreateParameter(cur, retValueType);
+            IParameter parameter = retValue.GetOrCreateParameter(cur, new TypeSignature(retValueType.ToTypeDefOrRef()));
             parameter.Accessors.Add(new ReturnValueParameterAccessor());
 
-            _executionSet.Roots.Add(ReturnValueName, parameter.Reference);
+            ExecutionSet.Roots.Add(ReturnValueName, parameter.Reference);
 
             _returnValue = parameter.Reference;
         }

@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.TestGenerator\dnWalker.TestGenerator.csproj" />
-    <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +34,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>MethodInvocationDummy.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Integration\" />
   </ItemGroup>
 
 </Project>

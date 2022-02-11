@@ -86,13 +86,13 @@ namespace dnWalker.Instructions.Extensions
 
     public class CALLVIRT_ParameterHandler : ITryExecuteInstructionExtension
     {
-        private static readonly Type[] _insturctions = new Type[] { typeof(CALLVIRT) };
+        private static readonly Type[] _instructions = new Type[] { typeof(CALLVIRT) };
 
         public IEnumerable<Type> SupportedInstructions
         {
             get
             {
-                return _insturctions;
+                return _instructions;
             }
         }
 
@@ -161,5 +161,50 @@ namespace dnWalker.Instructions.Extensions
             return true;
         }
 
+    }
+
+    public class STFLD_ParameterHandler : IPreExecuteInstructionExtension
+    {
+        private static readonly Type[] _instructions = new Type[] { typeof(STFLD) };
+
+        public IEnumerable<Type> SupportedInstructions
+        {
+            get
+            {
+                return _instructions;
+            }
+        }
+
+        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            if (cur.TryGetParameterStore(out ParameterStore store))
+            {
+                IDataElement val = cur.EvalStack.Peek();
+                IDataElement obj = cur.EvalStack.Peek(1);
+
+                if (val.Equals(ObjectReference.Null))
+                {
+                    // the val is the GLOBAL null => the GetOrCreate would actually associate the global NULL with one concrete parameter instance
+                    // we need to avoid this => pop it and push there a new NULL value
+                    val = new ObjectReference(0);
+                    cur.EvalStack.Pop();
+                    cur.EvalStack.Push(1);
+                }
+
+                if (obj is LocalVariablePointer lvp)
+                {
+                    obj = lvp.Value;
+                }
+
+                if (obj.TryGetParameter(cur, out IObjectParameter objParameter))
+                {
+                    if (instruction.Operand is IField fld)
+                    {
+                        IParameter valParameter = val.GetOrCreateParameter(cur, new TypeSignature(fld.FieldSig.GetFieldType().ToTypeDefOrRef()));
+                        objParameter.SetField(fld.Name, valParameter);
+                    }
+                }
+            }
+        }
     }
 }

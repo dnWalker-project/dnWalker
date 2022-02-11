@@ -42,4 +42,13 @@ namespace dnWalker.Parameters
             }
         }
     }
+
+    public static class PrimitiveValueParameterExtensions
+    {
+        public static T GetValue<T>(this IPrimitiveValueParameter<T> primitiveValue)
+            where T : struct
+        {
+            return primitiveValue.Value ?? default(T);
+        }
+    }
 }

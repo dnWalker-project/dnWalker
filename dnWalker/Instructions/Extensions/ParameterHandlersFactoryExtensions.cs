@@ -19,9 +19,11 @@ namespace dnWalker.Instructions.Extensions
             // array type parameter
             factory.RegisterExtension(new LDLEN_ParameterHandler());
             factory.RegisterExtension(new LDELEM_ParameterHandler());
+            factory.RegisterExtension(new STELEM_ParameterHandler());
 
             // object type parameter
             factory.RegisterExtension(new LDFLD_ParameterHandler());
+            factory.RegisterExtension(new STFLD_ParameterHandler());
             factory.RegisterExtension(new CALLVIRT_ParameterHandler());
 
             // return value initializer
