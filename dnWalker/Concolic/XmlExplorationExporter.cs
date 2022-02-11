@@ -111,7 +111,7 @@ namespace dnWalker.Concolic
 
             _currentIteration.BaseParameterSet = baseSetInfo;
             _currentIteration.ExecutionParameterSet = execSetInfo;
-            _currentIteration.PathConstraint = e.ExploredPath.GetConstraintStringWithAccesses(e.ParameterStore.ExecutionSet);
+            _currentIteration.PathConstraint = e.ExploredPath.PathConstraintString; //GetConstraintStringWithAccesses(e.ParameterStore.ExecutionSet);
             _currentIteration.End = DateTime.Now;
 
             _currentIteration.StandardOutput = e.ExploredPath.Output ?? string.Empty;

@@ -30,7 +30,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
         public void PrimitiveValueReturn()
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("exception-method")
+                .ExportXmlData("test")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -52,7 +52,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
             rv0.Value.Should().Be(10);
             rv1.Value.Should().Be(-1);
 
-            string xmlData = System.IO.File.ReadAllText("exception-method.xml");
+            string xmlData = System.IO.File.ReadAllText("test.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -69,7 +69,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
         public void ArrayOfPrimitiveValuesReturn()
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("exception-method")
+                .ExportXmlData("test")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -83,7 +83,41 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
             paths[1].Exception.Should().BeNull();
             paths[2].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("exception-method.xml");
+            string xmlData = System.IO.File.ReadAllText("test.xml");
+
+            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+
+            IReadOnlyList<ITestClassContext> testContexts = TestClassContext.FromExplorationData(exploration);
+
+            XUnitTestClassGenerator testClassGenerator = new XUnitTestClassGenerator();
+
+            string[] testClasses = testContexts
+                .Select(ctx =>
+                {
+                    return testClassGenerator.GenerateTestClassFileContent(ctx);
+                })
+                .ToArray();
+        }
+
+        [Fact]
+        public void ReferenceTypeValuesReturn()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .ExportXmlData("test")
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.TestGeneration.ReturnValueSchema.ReferenceTypeValue");
+
+            var paths = explorer.PathStore.Paths;
+
+            paths.Should().HaveCount(3);
+
+            paths[0].Exception.Should().BeNull();
+            paths[1].Exception.Should().BeNull();
+            paths[2].Exception.Should().BeNull();
+
+            string xmlData = System.IO.File.ReadAllText("test.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
