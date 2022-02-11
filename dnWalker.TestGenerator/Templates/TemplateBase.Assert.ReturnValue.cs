@@ -76,7 +76,7 @@ namespace dnWalker.TestGenerator.Templates
                 }
 
                 // 4) the execution set parameter should be arranged... we can do the Should().BeEquivalentTo()....
-                WriteLine($"result.Should().BeEquivalentTo({GetExpression(reference.Resolve(Context.ExecutionSet)!)};");
+                WriteLine($"result.Should().BeEquivalentTo({GetExpression(reference.Resolve(Context.ExecutionSet)!)});");
                 
                 //if (refParam is IArrayParameter arrayParameter)
                 //{

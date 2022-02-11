@@ -171,7 +171,7 @@ namespace dnWalker.TestGenerator.TestClasses
                 }
             }
 
-            public TestClassContext Build()
+            public ITestClassContext Build()
             {
                 if (_assemblyName == null) throw new NullReferenceException("AssemblyName is NULL");
                 if (_assemblyFileName == null) throw new NullReferenceException("AssemblyFileName is NULL");
@@ -197,9 +197,9 @@ namespace dnWalker.TestGenerator.TestClasses
 
         }
 
-        public static IReadOnlyList<TestClassContext> FromExplorationData(params ConcolicExploration[] data)
+        public static IReadOnlyList<ITestClassContext> FromExplorationData(params ConcolicExploration[] data)
         {
-            List<TestClassContext> result = new List<TestClassContext>();
+            List<ITestClassContext> result = new List<ITestClassContext>();
 
             foreach (ConcolicExploration exploration in data)
             {
@@ -220,11 +220,13 @@ namespace dnWalker.TestGenerator.TestClasses
                         MethodSignature = methodSignature,
                         AssemblyFileName = exploration.AssemblyFileName,
                         AssemblyName = exploration.AssemblyName,
+                        ParameterContext = context,
                         BaseSet = iteration.BaseParameterSet.Construct(context),
                         ExecutionSet = iteration.ExecutionParameterSet.Construct(context),
                         ErrorOutput = iteration.ErrorOutput ?? string.Empty,
                         StandardOutput = iteration.StandardOutput ?? string.Empty,
                         Exception = iteration.Exception == string.Empty ? TypeSignature.Empty : typeTranslator.FromString(iteration.Exception),
+                        PathConstraint = iteration.PathConstraint ?? string.Empty,
                     };
 
                     result.Add(builder.Build());

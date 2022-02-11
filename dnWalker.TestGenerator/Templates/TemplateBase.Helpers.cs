@@ -19,8 +19,8 @@ namespace dnWalker.TestGenerator.Templates
         private readonly Dictionary<ParameterRef, string> _variableNameLookupBase = new Dictionary<ParameterRef, string>();
         private readonly Dictionary<ParameterRef, string> _variableNameLookupExec = new Dictionary<ParameterRef, string>();
 
-        private TestClassContext? _context = null;
-        protected TestClassContext Context
+        private ITestClassContext? _context = null;
+        protected ITestClassContext Context
         {
             get
             {
@@ -28,10 +28,11 @@ namespace dnWalker.TestGenerator.Templates
             }
         }
 
-        protected void Initialize(TestClassContext context)
+        protected void Initialize(ITestClassContext context)
         {
             _context = context;
 
+            GenerationEnvironment.Clear();
             _variableTypeLookup.Clear();
             _variableNameLookupBase.Clear();
             _variableNameLookupExec.Clear();

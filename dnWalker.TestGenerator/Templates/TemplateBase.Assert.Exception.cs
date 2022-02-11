@@ -1,4 +1,5 @@
 ﻿using dnWalker.TestGenerator.TestClasses;
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,19 @@ namespace dnWalker.TestGenerator.Templates
     {
         private void WriteExceptionAssert(ExceptionSchema schema)
         {
-            // act.Should().Throw<EXCEPTIONTYPE>();
-            Write("act.Should().Throw<");
-            WriteTypeName(schema.ExceptionType);
-            Write(">()");
-            WriteLine(TemplateHelpers.Semicolon);
+            if (schema.ExceptionType == TypeSignature.Empty)
+            {
+                Write("act.Should().NotThrow()");
+                WriteLine(TemplateHelpers.Semicolon);
+            }
+            else
+            {
+                // act.Should().Throw<EXCEPTIONTYPE>();
+                Write("act.Should().Throw<");
+                WriteTypeName(schema.ExceptionType);
+                Write(">()");
+                WriteLine(TemplateHelpers.Semicolon);
+            }
         }
     }
 }

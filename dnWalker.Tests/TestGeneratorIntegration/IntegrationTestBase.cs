@@ -17,7 +17,10 @@ namespace dnWalker.Tests.TestGeneratorIntegration
 
         public IntegrationTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)))
         {
-
+            OverrideConcolicExplorerBuilderInitialization(b =>
+            {
+                b.SetAssemblyFileName(AssemblyFilePath);
+            });
         }
 
 

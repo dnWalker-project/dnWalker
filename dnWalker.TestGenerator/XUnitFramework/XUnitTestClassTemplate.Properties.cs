@@ -12,7 +12,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
     internal partial class XUnitTestClassTemplate : TemplateBase
     {
 
-        public string GenerateContent(TestClassContext context)
+        public string GenerateContent(ITestClassContext context)
         {
             Initialize(context);
             return TransformText();

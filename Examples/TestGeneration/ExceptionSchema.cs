@@ -10,7 +10,7 @@ namespace Examples.TestGeneration
     {
         public static void ThrowIfNull(ExceptionSchema instance)
         {
-            if (instance == null) throw new ArgumentNullException(nameof(instance));
+            if (instance == null) throw new NullReferenceException(nameof(instance));
         }
     }
 }

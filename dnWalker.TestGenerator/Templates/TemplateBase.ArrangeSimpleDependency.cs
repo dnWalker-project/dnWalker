@@ -72,8 +72,12 @@ namespace dnWalker.TestGenerator.Templates
                 Write("]");
                 if (ap.GetLength() > 0)
                 {
+                    string defaultLiteral = TemplateHelpers.GetDefaultLiteral(elementType);
+
                     Write(" { ");
-                    WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
+                    WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => r == ParameterRef.Empty ?
+                     defaultLiteral : 
+                     GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
                     Write(" }");
                 }
                 WriteLine(TemplateHelpers.Semicolon);

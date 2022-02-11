@@ -74,7 +74,7 @@ namespace dnWalker.Parameters.Serialization.Xml
 
         private ParameterRef String2Ref(string pref)
         {
-            return Convert.ToInt32(pref.Substring(2), 16);
+            return Convert.ToInt32(pref, 16);
         }
 
         private MethodSignature String2Method(string methodString)
@@ -206,7 +206,12 @@ namespace dnWalker.Parameters.Serialization.Xml
 
             foreach (XElement accessorElement in xml.Elements(XmlAccessor))
             {
-                parameter.Accessors.Add(ToAccessor(accessorElement));
+                ParameterAccessor accessor = ToAccessor(accessorElement);
+                parameter.Accessors.Add(accessor);
+                if (accessor is RootParameterAccessor root)
+                {
+                    set.Roots.Add(root.Expression, parameter.Reference);
+                }
             }
 
             return parameter;

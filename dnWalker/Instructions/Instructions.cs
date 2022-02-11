@@ -1473,14 +1473,14 @@ namespace dnWalker.Instructions
             ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
             IIEReturnValue retval = nextRetval;
-            AllocatedArray theArray =
-                cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
-            if (theArray == null)
+            if (arrayRef.IsNull())
             {
                 return ThrowException(new System.NullReferenceException(), cur);
             }
-            else if (CheckBounds(theArray, idx))
+            
+            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            if (CheckBounds(theArray, idx))
             {
                 ObjectEscapePOR.UpdateReachability(theArray.ThreadShared, theArray.Fields[idx.Value], val, cur);
 

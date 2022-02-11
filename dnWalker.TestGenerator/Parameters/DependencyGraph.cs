@@ -135,6 +135,8 @@ namespace dnWalker.TestGenerator.Parameters
                     continue;
                 }
 
+                subGraph.AddVertex(d);
+
                 foreach (Edge<Dependency> inEdge in _graph.InEdges(d))
                 {
                     Dependency src = inEdge.Source;

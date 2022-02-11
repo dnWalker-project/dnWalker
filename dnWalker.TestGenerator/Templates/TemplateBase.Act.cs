@@ -68,7 +68,6 @@ namespace dnWalker.TestGenerator.Templates
             MethodSignature method = Context.MethodSignature;
 
             IReadOnlyParameterSet baseSet = Context.BaseSet;
-            IReadOnlyDictionary<string, ParameterRef> roots = baseSet.Roots;
 
             MethodInvocationData.Builder builder = method.IsStatic ?
                 MethodInvocationData.Builder.GetStatic(method) :

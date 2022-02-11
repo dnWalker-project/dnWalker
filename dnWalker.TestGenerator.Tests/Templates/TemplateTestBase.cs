@@ -19,7 +19,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
             DefinitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(typeof(TemplateTestBase).Assembly));
         }
 
-        protected static TestClassContext BuildContext(IParameterContext context, IReadOnlyParameterSet baseSet, IReadOnlyParameterSet execSet)
+        protected static ITestClassContext BuildContext(IParameterContext context, IReadOnlyParameterSet baseSet, IReadOnlyParameterSet execSet)
         {
             TestClassContext.Builder builder = TestClassContext.Builder.NewEmpty();
             builder.ParameterContext = context;
