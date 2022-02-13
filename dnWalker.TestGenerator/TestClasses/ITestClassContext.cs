@@ -9,6 +9,8 @@ namespace dnWalker.TestGenerator.TestClasses
 {
     public interface ITestClassContext
     {
+        ITestGeneratorConfiguration Configuration { get; }
+
         string AssemblyFileName { get; }
         string AssemblyName { get; }
         IReadOnlyParameterSet BaseSet { get; }

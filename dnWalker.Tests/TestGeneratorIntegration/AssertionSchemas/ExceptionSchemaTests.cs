@@ -45,7 +45,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
-            IReadOnlyList<ITestClassContext> testContexts = TestClassContext.FromExplorationData(exploration);
+            IReadOnlyList<ITestClassContext> testContexts = TestClassContext.FromExplorationData(GetConfiguration(), exploration);
 
             XUnitTestClassGenerator testClassGenerator = new XUnitTestClassGenerator();
 

@@ -1,4 +1,5 @@
-﻿using dnWalker.Tests.ExampleTests;
+﻿using dnWalker.TestGenerator;
+using dnWalker.Tests.ExampleTests;
 using dnWalker.TypeSystem;
 
 using System;
@@ -23,7 +24,13 @@ namespace dnWalker.Tests.TestGeneratorIntegration
             });
         }
 
-
+        protected ITestGeneratorConfiguration GetConfiguration()
+        {
+            return new TestGeneratorConfiguration()
+            {
+                PreferLiteralsOverVariables = true,
+            };
+        }
 
     }
 }

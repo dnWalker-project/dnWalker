@@ -28,7 +28,11 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 _dependency = dependency;
 
                 IParameter p = dependency.Parameter;
-                Initialize(BuildContext(p.Set.Context, p.Set, new ParameterSet(p.Set.Context)));
+                ITestClassContext context = BuildContext(p.Set.Context, p.Set, new ParameterSet(p.Set.Context));
+
+                context.Configuration.PreferLiteralsOverVariables = true;
+
+                Initialize(context);
             }
 
             public override string TransformText()

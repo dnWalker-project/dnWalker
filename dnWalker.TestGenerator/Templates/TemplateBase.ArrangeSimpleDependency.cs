@@ -44,7 +44,7 @@ namespace dnWalker.TestGenerator.Templates
             WriteVariableDeclaration(varType, varName);
             Write(" = ");
 
-            Write(GetExpression(pp));
+            Write(pp.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(pp.Type));
             WriteLine(TemplateHelpers.Semicolon);
         }
 

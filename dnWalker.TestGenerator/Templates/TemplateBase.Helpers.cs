@@ -170,18 +170,19 @@ namespace dnWalker.TestGenerator.Templates
 
         protected string GetExpression(IParameter parameter)
         {
-            if (parameter is IPrimitiveValueParameter primitiveValue)
+            if (Context.Configuration.PreferLiteralsOverVariables)
             {
-                return primitiveValue.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(parameter.Type);
+                if (parameter is IPrimitiveValueParameter primitiveValue)
+                {
+                    return primitiveValue.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(parameter.Type);
+                }
+                else if (parameter is IReferenceTypeParameter rp && rp.GetIsNull())
+                {
+                    return TemplateHelpers.Null;
+                }
             }
-            else if(parameter is IReferenceTypeParameter rp && rp.GetIsNull())
-            {
-                return TemplateHelpers.Null;
-            }
-            else
-            {
-                return GetVariableName(parameter);
-            }
+
+            return GetVariableName(parameter);
         }
 
         protected void WriteJoined<T>(string separator, IEnumerable<T> items, Action<T> writeAction)
