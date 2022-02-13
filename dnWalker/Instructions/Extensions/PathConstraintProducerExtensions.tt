@@ -79,6 +79,8 @@ namespace dnWalker.Instructions.Extensions
 
             if (IsSymbolic(cur, out Expression valueExpression))
             {
+                valueExpression = valueExpression.AsBoolean();
+
                 // we may branch based on a symbolic value => add the path constraint
                 Expression constraintExpression = CreatePathConstraintExpression(valueExpression, WillBranch(retValue));
                 AddPathConstraint(cur, constraintExpression);

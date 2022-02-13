@@ -9,7 +9,24 @@ namespace dnWalker
 {
     public static class SystemLinqExpressionExtensions
     {
+        private static readonly Dictionary<Type, object> _zeros = new Dictionary<Type, object>();
+        public static Expression AsBoolean(this Expression expression)
+        {
+            Type t = expression.Type;
+            if (t == typeof(bool)) return expression;
 
+            return Expression.NotEqual(expression, Expression.Constant(GetZero(t)));
+
+            static object GetZero(Type t)
+            {
+                if (!_zeros.TryGetValue(t, out object zero))
+                {
+                    zero = Convert.ChangeType(0, t);
+                    _zeros.Add(t, zero);
+                }
+                return zero;
+            }
+        }
 
         public static Expression Optimize(this Expression expression)
         {
