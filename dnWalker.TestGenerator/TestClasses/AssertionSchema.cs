@@ -3,6 +3,7 @@ using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,17 @@ namespace dnWalker.TestGenerator.TestClasses
     /// </summary>
     public abstract class AssertionSchema
     {
+        /// <summary>
+        /// Tries to determine a special name for the parameter
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public virtual bool TryGetName(IParameter parameter, [NotNullWhen(true)] out string? name)
+        {
+            name = null;
+            return false;
+        }
     }
 
     public class ExceptionSchema : AssertionSchema
@@ -30,14 +42,33 @@ namespace dnWalker.TestGenerator.TestClasses
 
     public class ReturnValueSchema : AssertionSchema
     {
-        public ReturnValueSchema(IParameter returnValueParameter)
+        public ReturnValueSchema(IParameter returnValueParameter, bool isInput)
         {
             ReturnValue = returnValueParameter ?? throw new ArgumentNullException(nameof(returnValueParameter));
+            IsInput = isInput;
+        }
+
+        /// <summary>
+        /// Indicates whether the return value is also an input value.
+        /// </summary>
+        public bool IsInput
+        {
+            get;
         }
 
         public IParameter ReturnValue
         {
             get;
+        }
+
+        public override bool TryGetName(IParameter parameter, [NotNullWhen(true)] out string? name)
+        {
+            if (ReturnValue.Reference == parameter.Reference && !IsInput)
+            {
+                name = "expectedResult";
+                return true;
+            }
+            return base.TryGetName(parameter, out name);
         }
     }
 
@@ -68,6 +99,33 @@ namespace dnWalker.TestGenerator.TestClasses
         {
             get { return _positions; }
         }
+
+        public override bool TryGetName(IParameter parameter, [NotNullWhen(true)] out string? name)
+        {
+            if (parameter.IsItem(out IItemOwnerParameter[] itemOwners, out int[] indeces))
+            {
+                IItemOwnerParameter? theOwner = null;
+                int theIndex = -1;
+                for (int i = 0; i < itemOwners.Length; ++i)
+                {
+                    if (itemOwners[i].Reference == _parameterRef)
+                    {
+                        theOwner = itemOwners[i];
+                        theIndex = indeces[i];
+                        break;
+                    }
+                }
+
+                if (theOwner != null)
+                {
+                    // the parameter is an element of the array we want to inspect
+                    name = $"expectedElement_{theIndex}";
+                    return true;
+                }
+            }
+
+            return base.TryGetName(parameter, out name);
+        }
     }
 
     public class ObjectFieldSchema : AssertionSchema
@@ -96,6 +154,33 @@ namespace dnWalker.TestGenerator.TestClasses
         public string[] Fields
         {
             get { return _fields; }
+        }
+
+        public override bool TryGetName(IParameter parameter, [NotNullWhen(true)] out string? name)
+        {
+            if (parameter.IsField(out IFieldOwnerParameter[] fieldOwners, out string[] fieldNames))
+            {
+                IFieldOwnerParameter? theOwner = null;
+                string? theField = null;
+                for (int i = 0; i < fieldOwners.Length; ++i)
+                {
+                    if (fieldOwners[i].Reference == _parameterRef)
+                    {
+                        theOwner = fieldOwners[i];
+                        theField = fieldNames[i];
+                        break;
+                    }
+                }
+
+                if (theOwner != null)
+                {
+                    // the parameter is an element of the array we want to inspect
+                    name = $"expectedField_{theField}";
+                    return true;
+                }
+            }
+
+            return base.TryGetName(parameter, out name);
         }
     }
 

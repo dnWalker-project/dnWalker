@@ -8,14 +8,6 @@
 <#@ import namespace="dnWalker.TestGenerator.Parameters" #>
 <#@ import namespace="dnWalker.TestGenerator.TestClasses" #>
 <#@ output extension=".tt.cs" #>
-<# 
-	// basic namespaces
-#>
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 <#
 	// test namespaces
 #>
@@ -34,6 +26,7 @@ using <#= nsName #>;
 <#
 	// test class declaration
 #>
+
 namespace <#= Context.TestNamespaceName #>
 {
 <# PushIndent(); #>
@@ -45,7 +38,10 @@ public class <#= Context.TestClassName #>
 	int i = 1;
 	foreach (AssertionSchema schema in Context.GetSchemas())
 	{
+        BeginSchema(schema);
+        // Write test method name (i, schema)...
 #>
+
 [Fact]
 public void Test_<#= i #>_<#= GetSchemaName(schema) #>()
 {
@@ -59,6 +55,7 @@ public void Test_<#= i #>_<#= GetSchemaName(schema) #>()
 <# PopIndent(); #>
 }
 <#
+        EndSchema();
 		++i;
 	}
 #>

@@ -18,9 +18,14 @@ namespace dnWalker.TestGenerator.Templates
         {
             IParameter p = simpleDependency.Parameter;
 
+            if (Context.Configuration.PreferLiteralsOverVariables && 
+                (p is IPrimitiveValueParameter || (p is IReferenceTypeParameter rp && rp.GetIsNull())))
+            {
+                return;
+            }
+
             string varName = GetVariableName(p);
             WriteLine($"// Arrange variable: {varName}");
-
 
             if (p is IPrimitiveValueParameter pp)
             {
@@ -34,6 +39,7 @@ namespace dnWalker.TestGenerator.Templates
             {
                 WriteArrangeObjectParameter(op);
             }
+            WriteLine(string.Empty);
         }
 
         private void WriteArrangePrimitiveValueParameter(IPrimitiveValueParameter pp)

@@ -31,7 +31,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
 
             public override string TransformText()
             {
-                WriteArrangeComplesDepencency(_dependency);
+                WriteArrangeComplexDepencency(_dependency);
 
                 return base.TransformText().Trim();
             }

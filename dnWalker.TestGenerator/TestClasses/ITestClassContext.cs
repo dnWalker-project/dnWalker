@@ -70,6 +70,9 @@ namespace dnWalker.TestGenerator.TestClasses
                 schemas.Add(ExceptionSchema.NoException);
             }
 
+            IReadOnlyParameterSet inSet = ctx.BaseSet;
+            IReadOnlyParameterSet outSet = ctx.ExecutionSet;
+
             // check the return type
             if (!ctx.MethodSignature.ReturnType.IsVoid && !ctx.IsFaulted)
             {
@@ -79,12 +82,9 @@ namespace dnWalker.TestGenerator.TestClasses
                 }
 
                 // there is a return value
-                schemas.Add(new ReturnValueSchema(rv));
+                schemas.Add(new ReturnValueSchema(rv, inSet.Parameters.ContainsKey(rv.Reference)));
 
             }
-
-            IReadOnlyParameterSet inSet = ctx.BaseSet;
-            IReadOnlyParameterSet outSet = ctx.ExecutionSet;
 
             foreach (ParameterRef r in inSet.Parameters.Keys)
             {

@@ -28,6 +28,23 @@ namespace dnWalker.TestGenerator.Templates
             }
         }
 
+        private AssertionSchema? _currentSchema = null;
+
+        protected void BeginSchema(AssertionSchema schema)
+        {
+            _currentSchema = schema;
+        }
+
+        protected void EndSchema()
+        {
+            _currentSchema = null;
+        }
+
+        protected AssertionSchema? CurrentSchema
+        {
+            get { return _currentSchema; }
+        }
+
         protected void Initialize(ITestClassContext context)
         {
             _context = context;
@@ -76,7 +93,17 @@ namespace dnWalker.TestGenerator.Templates
         {
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
 
-            if (ReferenceEquals(parameter.Set, Context.BaseSet))
+            if (_currentSchema != null && 
+                _currentSchema.TryGetName(parameter, out string name))
+            {
+                return name;
+            }
+
+            //if (ReferenceEquals(parameter.Set, Context.BaseSet) ||
+            //    parameter is IStringParameter ||
+            //    parameter is IPrimitiveValueParameter)
+            if (ReferenceEquals(parameter.Set, Context.BaseSet) || 
+                parameter is IPrimitiveValueParameter)
             {
                 return GetInVariableName(parameter);
             }
