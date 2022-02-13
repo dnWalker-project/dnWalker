@@ -73,15 +73,7 @@ namespace dnWalker.Instructions.Extensions
 
             if (IsSymbolic(cur, out Expression valueExpression))
             {
-                // TODO: handle direct optimized greater than zero / equality to zero comparisons...
-                if (valueExpression.Type == typeof(int))
-                {
-                    valueExpression = Expression.NotEqual(valueExpression, Expression.Constant(0));
-                }
-                else if (valueExpression.Type == typeof(uint))
-                {
-                    valueExpression = Expression.NotEqual(valueExpression, Expression.Constant(0U));
-                }
+                valueExpression = valueExpression.AsBoolean();
 
                 // we may branch based on a symbolic value => add the path constraint
                 Expression constraintExpression = CreatePathConstraintExpression(valueExpression, WillBranch(retValue));
