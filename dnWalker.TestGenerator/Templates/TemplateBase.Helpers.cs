@@ -94,7 +94,7 @@ namespace dnWalker.TestGenerator.Templates
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
 
             if (_currentSchema != null && 
-                _currentSchema.TryGetName(parameter, out string name))
+                _currentSchema.TryGetName(parameter, out string? name))
             {
                 return name;
             }
@@ -102,8 +102,7 @@ namespace dnWalker.TestGenerator.Templates
             //if (ReferenceEquals(parameter.Set, Context.BaseSet) ||
             //    parameter is IStringParameter ||
             //    parameter is IPrimitiveValueParameter)
-            if (ReferenceEquals(parameter.Set, Context.BaseSet) || 
-                parameter is IPrimitiveValueParameter)
+            if (ReferenceEquals(parameter.Set, Context.BaseSet))
             {
                 return GetInVariableName(parameter);
             }
@@ -183,11 +182,25 @@ namespace dnWalker.TestGenerator.Templates
 
             if (arg != null)
             {
-                name = $"out_{arg.Expression}";
+                if (parameter is IPrimitiveValueParameter)
+                {
+                    name = arg.Expression;
+                }
+                else
+                {
+                    name = $"out_{arg.Expression}";
+                }
             }
             else
             {
-                name = $"var_out_{reference}";
+                if (parameter is IPrimitiveValueParameter)
+                {
+                    name = $"var_{reference}";
+                }
+                else
+                {
+                    name = $"var_out_{reference}";
+                }
             }
 
             _variableNameLookupExec[reference] = name;
