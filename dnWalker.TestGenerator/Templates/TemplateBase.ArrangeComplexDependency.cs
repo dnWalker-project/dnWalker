@@ -12,7 +12,7 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        private protected void WriteArrangeComplexDepencency(ComplexDependency complexDependency)
+        private protected void WriteArrangeComplexDependency(ComplexDependency complexDependency)
         {
             // there should be only:
             // - struct types
