@@ -104,7 +104,7 @@ namespace dnWalker.TestGenerator.Templates
                 switch (dependency)
                 {
                     case SimpleDependency simple: WriteArrangeSimpleDepencency(simple); break;
-                    case ComplexDependency complex: WriteArrangeComplexDepencency(complex); break;
+                    case ComplexDependency complex: WriteArrangeComplexDependency(complex); break;
 
                     // in future - more dependency types, for example some kind of file system or interprocess/network IO
                     default: throw new NotSupportedException("Unexpected dependency.");
