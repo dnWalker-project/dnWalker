@@ -657,8 +657,8 @@ namespace TestNamespace
             // act
             ReturnValueSchema.ReferenceTypeValue(instance);
             // assert
-            instance.GetPrivate(ValueField).Should().Be(-1);
-            instance.GetPrivate(RefField).Should().BeSameAs(instance);
+            instance.GetPrivate(""ValueField"").Should().Be(-1);
+            instance.GetPrivate(""RefField"").Should().BeSameAs(instance);
         }
     }
 }",
@@ -816,8 +816,8 @@ namespace TestNamespace
             // act
             ReturnValueSchema.ReferenceTypeValue(instance);
             // assert
-            instance.GetPrivate(ValueField).Should().Be(expectedField_ValueField);
-            instance.GetPrivate(RefField).Should().BeSameAs(instance);
+            instance.GetPrivate(""ValueField"").Should().Be(expectedField_ValueField);
+            instance.GetPrivate(""RefField"").Should().BeSameAs(instance);
         }
     }
 }",

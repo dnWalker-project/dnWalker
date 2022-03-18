@@ -6,6 +6,7 @@ using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,12 +90,23 @@ namespace dnWalker.TestGenerator.Templates
             _variableTypeLookup[reference] = type;
             return type;
         }
+
+        private bool TryGetCachedVariableName(IParameter parameter, [NotNullWhen(true)]out string? name)
+        {
+            name = null;
+            return parameter is IPrimitiveValueParameter && _variableNameLookupBase.TryGetValue(parameter.Reference, out name);
+        }
+
         protected string GetVariableName(IParameter parameter)
         {
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
 
+            string? name = null;
+
+            if (TryGetCachedVariableName(parameter, out name)) return name;
+
             if (_currentSchema != null && 
-                _currentSchema.TryGetName(parameter, out string? name))
+                _currentSchema.TryGetName(parameter, out name))
             {
                 return name;
             }
