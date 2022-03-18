@@ -61,7 +61,7 @@ namespace dnWalker.TestGenerator.Templates
                     else
                     {
                         IReferenceTypeParameter p = pRef.Resolve<IReferenceTypeParameter>(set) ?? throw new Exception("Could not resolve the parameter.");
-                        if (p.GetIsNull())
+                        if (p.GetIsNull() && Context.Configuration.PreferLiteralsOverVariables)
                         {
                             WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().BeNull();");
                         }
@@ -71,8 +71,10 @@ namespace dnWalker.TestGenerator.Templates
                         }
                         else
                         {
-                            // a value created during runtime && not null
-                            WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().NotBeNull();");
+                            if (!p.GetIsNull())
+                            {
+                                WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().NotBeNull();");
+                            }
                             WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().BeEquivalentTo({GetExpression(p)});");
                         }
                     }

@@ -180,7 +180,7 @@ namespace TestNamespace
         public void PrimitiveValueReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("PrimitiveValueReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -202,7 +202,7 @@ namespace TestNamespace
             rv0.Value.Should().Be(10);
             rv1.Value.Should().Be(-1);
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("PrimitiveValueReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -531,7 +531,7 @@ namespace TestNamespace
         public void ArrayOfPrimitiveValuesReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("ArrayOfPrimitiveValuesReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -545,7 +545,7 @@ namespace TestNamespace
             paths[1].Exception.Should().BeNull();
             paths[2].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("ArrayOfPrimitiveValuesReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -873,7 +873,7 @@ namespace TestNamespace
         public void ReferenceTypeValuesReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("ReferenceTypeValuesReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -887,7 +887,7 @@ namespace TestNamespace
             paths[1].Exception.Should().BeNull();
             paths[2].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("ReferenceTypeValuesReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -1337,7 +1337,7 @@ namespace TestNamespace
         public void ReferenceTypeArrayValuesReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("ReferenceTypeArrayValuesReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -1352,7 +1352,7 @@ namespace TestNamespace
             paths[2].Exception.Should().BeNull();
             paths[3].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("ReferenceTypeArrayValuesReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
