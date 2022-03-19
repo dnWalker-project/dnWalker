@@ -60,6 +60,24 @@ namespace dnWalker.Parameters
             return expression;
         }
 
+        public static Expression GetValueExpression(this IStringParameter parameter, ExplicitActiveState cur)
+        {
+            IDictionary<string, ParameterExpression> lookup = GetExpressionLookup(cur);
+            string name = $"V{parameter.Reference}"; // VALUE parameter name in expression is in format V<ID AS HEX NUMBER>
+
+            if (!lookup.TryGetValue(name, out ParameterExpression expression))
+            {
+
+                Type parameterType = typeof(string);
+
+                expression = Expression.Parameter(parameterType, name);
+
+                lookup[name] = expression;
+            }
+
+            return expression;
+        }
+
         public static Expression GetIsNullExpression(this IReferenceTypeParameter parameter, ExplicitActiveState cur)
         {
             IDictionary<string, ParameterExpression> lookup = GetExpressionLookup(cur);

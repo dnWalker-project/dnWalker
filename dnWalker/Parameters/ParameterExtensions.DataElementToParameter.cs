@@ -59,6 +59,10 @@ namespace dnWalker.Parameters
             {
                 parameter = CreatePrimitiveValueParameter(numeric, expectedType.FullName, cur);
             }
+            else if (dataElement is ConstantString constantString)
+            {
+                parameter = CreateStringParameter(constantString, cur);
+            }
             else
             {
                 return null;
@@ -99,6 +103,21 @@ namespace dnWalker.Parameters
                 throw new NotSupportedException($"Unsupported TypeSig: {expectedType}");
             }
 
+        }
+
+        private static IParameter CreateStringParameter(ConstantString constantString, ExplicitActiveState cur)
+        {
+            if (!cur.TryGetParameterStore(out ParameterStore store))
+            {
+                throw new InvalidOperationException("Cannot create a new parameter without the parameter store!");
+            }
+
+            IParameterSet set = store.ExecutionSet;
+
+            IStringParameter stringParameter = set.CreateStringParameter(constantString.Value == null);
+            stringParameter.Value = constantString.Value;
+
+            return stringParameter;
         }
 
         private static IParameter CreateArrayParameter(AllocatedArray allocatedArray, ExplicitActiveState cur)

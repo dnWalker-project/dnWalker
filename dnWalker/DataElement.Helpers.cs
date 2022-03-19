@@ -70,6 +70,11 @@ namespace MMC.Data
 
         public static IDataElement GetNullValue(TypeSig typeSig)
         {
+            if (typeSig.Module.CorLibTypes.String == typeSig)
+            {
+                return new ConstantString(null);
+            }
+
             if (!typeSig.IsPrimitive)
             {
                 return ObjectReference.Null;

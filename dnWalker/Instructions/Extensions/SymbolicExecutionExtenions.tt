@@ -62,8 +62,15 @@ namespace dnWalker.Instructions.Extensions
 
         protected virtual bool IsSymbolic(ExplicitActiveState cur, out Expression lhsExpr, out Expression rhsExpr)
         {
+
             bool isLhsSymbolic = _lhs.TryGetExpression(cur, out lhsExpr);
             bool isRhsSymbolic = _rhs.TryGetExpression(cur, out rhsExpr);
+         
+            // blargh, dirty
+            if (_lhs is ConstantString && isLhsSymbolic)
+            {
+                return false;
+            }
 
             if (isRhsSymbolic || isLhsSymbolic)
             {

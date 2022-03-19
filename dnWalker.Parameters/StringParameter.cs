@@ -20,7 +20,11 @@ namespace dnWalker.Parameters
 
         public override IParameter CloneData(IParameterSet newSet)
         {
-            return new StringParameter(newSet, Reference);
+            return new StringParameter(newSet, Reference)
+            {
+                IsNull = IsNull,
+                Value = Value
+            };
         }
 
         public string? Value
@@ -39,10 +43,14 @@ namespace dnWalker.Parameters
 
         public static IStringParameter CreateStringParameter(this IParameterSet set, ParameterRef reference, bool? isNull = null)
         {
-            return new StringParameter(set, reference)
+            IStringParameter stringParameter = new StringParameter(set, reference)
             {
                 IsNull = isNull
             };
+
+            set.Parameters.Add(reference, stringParameter);
+
+            return stringParameter;
         }
     }
 }

@@ -37,6 +37,12 @@ namespace dnWalker.Parameters
                 Expression e = primitiveValueParameter.GetValueExpression(cur);
                 dataElement.SetExpression(e, cur);
             }
+            else if (parameter is IStringParameter stringParameter)
+            {
+                // set value parameter expression as well
+                Expression e = stringParameter.GetValueExpression(cur);
+                dataElement.SetExpression(e, cur);
+            }
         }
 
 

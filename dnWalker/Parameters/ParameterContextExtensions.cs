@@ -60,6 +60,10 @@ namespace dnWalker.Parameters
             {
                 return CreatePrimitiveValueParameter(type, set);
             }
+            else if (TypeEqualityComparer.Instance.Equals(type, type.Module.CorLibTypes.String))
+            {
+                return set.CreateStringParameter();
+            }
             // TODO we are working with value types - TODO
             else if (type.IsValueType)
             {

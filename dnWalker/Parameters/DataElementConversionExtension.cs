@@ -62,7 +62,7 @@ namespace dnWalker.Parameters
 
                 case IObjectParameter p: dataElement = CreateDataElement(p, cur); break;
                 //case IInterfaceParameter p: dataElement = CreateDataElement(p, cur); break;
-                //case IStringParameter p: dataElement = CreateDataElement(p); break;
+                case IStringParameter p: dataElement = CreateDataElement(p); break;
                 case IArrayParameter p: dataElement = CreateDataElement(p, cur); break;
                 default: throw new NotSupportedException();
             }
@@ -70,6 +70,20 @@ namespace dnWalker.Parameters
             dataElement.SetParameter(parameter, cur);
 
             return dataElement;
+        }
+
+        private static IDataElement CreateDataElement(IStringParameter stringParameter)
+        {
+            if (stringParameter.GetIsNull())
+            {
+                return new ConstantString(null);
+            }
+            else
+            {
+                return new ConstantString(stringParameter?.Value ?? string.Empty);
+            }
+            //ConstantString stringDataElement = new ConstantString(stringParameter?.Value);
+            //return stringDataElement;
         }
 
         private static IDataElement CreateDataElement(IArrayParameter arrayParameter, ExplicitActiveState cur)

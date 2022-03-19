@@ -29,19 +29,19 @@ namespace dnWalker.NativePeers
                 dataElement = new ConstantString(string.Format(format.Value, arg));
             }
 
-            if (method.FullName == "System.String System.String::Trim()")
+            else if (method.FullName == "System.String System.String::Trim()")
             {
                 var s = (ConstantString)args[0];
                 dataElement = new ConstantString(s.Value.Trim());
             }
 
-            if (method.FullName == "System.Int32 System.String::get_Length()")
+            else if (method.FullName == "System.Int32 System.String::get_Length()")
             {
                 var s = (ConstantString)args[0];
                 dataElement = new Int4(s.Value.Length);
             }
 
-            if (method.FullName.StartsWith("System.String System.String::Concat("))
+            else if (method.FullName.StartsWith("System.String System.String::Concat("))
             {
                 var sb = new StringBuilder();
                 foreach (var arg in args)
@@ -56,7 +56,37 @@ namespace dnWalker.NativePeers
                 dataElement = new ConstantString(sb.ToString());
             }
 
-            if (method.FullName == "System.Boolean System.String::IsNullOrEmpty(System.String)")
+            else if (method.FullName.StartsWith("System.Boolean System.String::StartsWith(System.String"))
+            {
+                bool result = ((ConstantString)args[0]).Value.StartsWith(((ConstantString)args[1]).Value);
+                dataElement = new Int4(result ? 1 : 0);
+            }
+
+            else if (method.FullName.StartsWith("System.Boolean System.String::EndsWith(System.String"))
+            {
+                bool result = ((ConstantString)args[0]).Value.EndsWith(((ConstantString)args[1]).Value);
+                dataElement = new Int4(result ? 1 : 0);
+            }
+
+            else if (method.FullName.StartsWith("System.Boolean System.String::Contains(System.String"))
+            {
+                bool result = ((ConstantString)args[0]).Value.Contains(((ConstantString)args[1]).Value);
+                dataElement = new Int4(result ? 1 : 0);
+            }
+
+            else if (method.FullName.StartsWith("System.Boolean System.String::Substring(System.Int32"))
+            {
+                string str = ((ConstantString)args[0]).Value;
+                int offset = ((INumericElement)args[1]).ToInt4(false).Value;
+
+                int length = (args.Length == 3) ? ((INumericElement)args[2]).ToInt4(false).Value : str.Length - offset;
+
+                str = str.Substring(offset, length);
+
+                dataElement = new ConstantString(str);
+            }
+
+            else if (method.FullName == "System.Boolean System.String::IsNullOrEmpty(System.String)")
             {
                 throw new System.Exception(method.FullName);
             }

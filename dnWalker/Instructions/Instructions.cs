@@ -3055,13 +3055,14 @@ namespace dnWalker.Instructions
             DataElementList args = CreateArgumentList(cur);
 
             IDataElement de = args[0];
-            if (de is not ObjectReference instance)
-            {
-                args.Dispose();
-                throw new InvalidOperationException($"Expected 'ObjectReference', not '{de.GetType()}'");
-            }
+            //if (de is not ObjectReference instance)
+            //{
+            //    args.Dispose();
+            //    throw new InvalidOperationException($"Expected 'ObjectReference', not '{de.GetType()}'");
+            //}
 
-            if (instance.IsNull())
+            if (de is ObjectReference instance && instance.IsNull() ||
+                de is ConstantString constString && constString.Value == null)
             {
                 args.Dispose();
                 return ThrowException(new NullReferenceException(), cur);

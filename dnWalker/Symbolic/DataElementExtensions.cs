@@ -22,7 +22,7 @@ namespace dnWalker.Symbolic
                 case UnsignedInt4 uint4: return Expression.Constant(uint4.Value, typeof(uint));
                 case Int8 int8: return Expression.Constant(int8.Value, typeof(long));
                 case UnsignedInt8 uint8: return Expression.Constant(uint8.Value, typeof(ulong));
-                case ConstantString s: return Expression.Constant(s, typeof(string));
+                case ConstantString s: return Expression.Constant(s.Value, typeof(string));
             }
 
             if (dataElement is INumericElement numericElement)
