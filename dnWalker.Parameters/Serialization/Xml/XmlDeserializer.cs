@@ -213,6 +213,7 @@ namespace dnWalker.Parameters.Serialization.Xml
                 case XmlArray: parameter = ToArrayParameter(xml, set); break;
                 case XmlPrimitiveValue: parameter = ToPrimitiveValueParameter(xml, set); break;
                 case XmlStruct: parameter = ToStructParameter(xml, set); break;
+                case XmlString: parameter = ToStringParameter(xml, set); break;
                 default: throw new NotSupportedException(xml.ToString());
             }
 
@@ -222,6 +223,17 @@ namespace dnWalker.Parameters.Serialization.Xml
             }
 
             return parameter;
+        }
+
+        private IStringParameter ToStringParameter(XElement xml, IParameterSet set)
+        {
+            bool? isNull = String2Bool(xml.Attribute(XmlIsNull)?.Value ?? throw new MissingAttributeException(nameof(IObjectParameter), XmlIsNull));
+            string? value = xml.Attribute(XmlValue)?.Value;
+
+            IStringParameter stringParameter = set.CreateStringParameter(isNull);
+            stringParameter.Value = value;
+
+            return stringParameter;
         }
 
         private IObjectParameter ToObjectParameter(XElement xml, IParameterSet set)

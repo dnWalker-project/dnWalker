@@ -62,6 +62,7 @@ namespace dnWalker.Parameters.Serialization.Xml
                 case IObjectParameter p: xml = ToXml(p); break;
                 case IArrayParameter p: xml = ToXml(p); break;
                 case IStructParameter p: xml = ToXml(p); break;
+                case IStringParameter p: xml = ToXml(p); break;
                 default:
                     throw new NotSupportedException();
             }
@@ -115,6 +116,16 @@ namespace dnWalker.Parameters.Serialization.Xml
                              .Where(tpl => tpl.item != ParameterRef.Empty)
                              .Select(tpl => new XElement(XmlItem, new XAttribute(XmlIndex, tpl.index), new XAttribute(XmlReference, tpl.item))));
 
+            return xml;
+        }
+
+        private static XElement ToXml(IStringParameter parameter)
+        {
+            XElement xml = new XElement(XmlString, new XAttribute(XmlReference, parameter.Reference), new XAttribute(XmlIsNull, parameter.IsNull?.ToString() ?? XmlUnknown));
+            if (parameter.Value is not null)
+            {
+                xml.SetAttributeValue(XmlValue, parameter.Value);
+            }
             return xml;
         }
 

@@ -13,6 +13,7 @@ namespace dnWalker.Parameters.Xml
         public const string XmlType = "Type";
         public const string XmlPrimitiveValue = "PrimitiveValue";
         public const string XmlStruct = "Struct";
+        public const string XmlString = "String";
 
         public const string XmlReference = "Reference";
         public const string XmlValue = "Value";
@@ -38,5 +39,6 @@ namespace dnWalker.Parameters.Xml
         public const string XmlReturnValue = "ReturnValue";
 
         public const string XmlFullName = "FullName";
+        
     }
 }
