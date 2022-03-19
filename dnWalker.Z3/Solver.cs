@@ -142,6 +142,11 @@ namespace dnWalker.Z3
                         return CreateBoolParameter(name);
 
                     // in types
+                    //case TypeCode.Char:
+                    //    // char as a single value (integer arithmetics) VS a single element string (theory of sequences)
+                    //    // the char sort exists within the Z3 => use it...
+                    //    _cache[node.Name] = node;
+                    //    return node;
                     case TypeCode.Char:
                         return CreateIntegerParameter(name, CharMin, CharMax);
 
@@ -179,6 +184,11 @@ namespace dnWalker.Z3
                     case TypeCode.Decimal:
                         return CreateRealParameter(name, DecimalMin, DecimalMax);
 
+                    case TypeCode.String:
+                        // no need to transform this parameter
+                        _cache[node.Name] = node;
+                        return node;
+
                     default:
                         throw new NotSupportedException();
                 }
@@ -192,6 +202,8 @@ namespace dnWalker.Z3
                         return BoolType;
 
                     case TypeCode.Char:
+                    //    return typeof(char);
+
                     case TypeCode.SByte:
                     case TypeCode.Byte:
                     case TypeCode.Int16:
@@ -206,6 +218,9 @@ namespace dnWalker.Z3
                     case TypeCode.Double:
                     case TypeCode.Decimal:
                         return RealType;
+
+                    case TypeCode.String:
+                        return typeof(string);
 
                     default:
                         throw new NotSupportedException();
