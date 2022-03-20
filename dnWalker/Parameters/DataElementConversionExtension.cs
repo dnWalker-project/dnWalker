@@ -80,7 +80,7 @@ namespace dnWalker.Parameters
             }
             else
             {
-                return new ConstantString(stringParameter?.Value ?? string.Empty);
+                return new ConstantString(stringParameter.Value ?? string.Empty);
             }
             //ConstantString stringDataElement = new ConstantString(stringParameter?.Value);
             //return stringDataElement;

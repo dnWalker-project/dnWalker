@@ -41,7 +41,8 @@ namespace dnWalker.Instructions.Extensions
             ["Concat"] = new ConcatHandler(),
             ["StartsWith"] = new StartsWithHandler(),
             ["EndsWith"] = new EndsWithHandler(),
-            ["Substring"] = new SubstringHandler()
+            ["Substring"] = new SubstringHandler(),
+            ["Contains"] = new ContainsHandler()
         };
 
         private ISymbolicMethodHandler _currentHandler;
@@ -182,8 +183,8 @@ namespace dnWalker.Instructions.Extensions
 
             public void PreExecute(CallInstructionExec instruction, ExplicitActiveState cur)
             {
-                _theString = (ConstantString)cur.EvalStack.Peek(0);
-                _prefix = (ConstantString)cur.EvalStack.Peek(1);
+                _theString = (ConstantString)cur.EvalStack.Peek(1);
+                _prefix = (ConstantString)cur.EvalStack.Peek(0);
             }
 
             public void PostExecute(CallInstructionExec instruction, ExplicitActiveState cur, MMC.InstructionExec.IIEReturnValue retValue)
@@ -209,8 +210,8 @@ namespace dnWalker.Instructions.Extensions
 
             public void PreExecute(CallInstructionExec instruction, ExplicitActiveState cur)
             {
-                _theString = (ConstantString)cur.EvalStack.Peek(0);
-                _suffix = (ConstantString)cur.EvalStack.Peek(1);
+                _theString = (ConstantString)cur.EvalStack.Peek(1);
+                _suffix = (ConstantString)cur.EvalStack.Peek(0);
             }
 
             public void PostExecute(CallInstructionExec instruction, ExplicitActiveState cur, MMC.InstructionExec.IIEReturnValue retValue)
@@ -229,7 +230,7 @@ namespace dnWalker.Instructions.Extensions
         private class SubstringHandler : ISymbolicMethodHandler
         {
             // defined for offset only & offset + length, handle the latter only
-            private static readonly System.Reflection.MethodInfo _substring = typeof(string).GetMethod("Substrins", new Type[] { typeof(int), typeof(int) });
+            private static readonly System.Reflection.MethodInfo _substring = typeof(string).GetMethod("Substring", new Type[] { typeof(int), typeof(int) });
 
             ConstantString _theString;
             IDataElement _offset;
@@ -237,9 +238,9 @@ namespace dnWalker.Instructions.Extensions
 
             public void PreExecute(CallInstructionExec instruction, ExplicitActiveState cur)
             {
-                _theString = (ConstantString)cur.EvalStack.Peek(0);
+                _theString = (ConstantString)cur.EvalStack.Peek(2);
                 _offset = cur.EvalStack.Peek(1);
-                _length = cur.EvalStack.Peek(2);
+                _length = cur.EvalStack.Peek(0);
             }
 
             public void PostExecute(CallInstructionExec instruction, ExplicitActiveState cur, MMC.InstructionExec.IIEReturnValue retValue)
@@ -256,6 +257,33 @@ namespace dnWalker.Instructions.Extensions
 
                     Expression substring = Expression.Call(stringExpression, _substring, offsetExpression, lengthExpression);
                     cur.EvalStack.Peek().SetExpression(substring, cur);
+                }
+            }
+        }
+
+        private class ContainsHandler : ISymbolicMethodHandler
+        {
+            // defined for string & char, handle the string only
+            private static readonly System.Reflection.MethodInfo _contains = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
+
+            ConstantString _theString;
+            ConstantString _containee;
+
+            public void PreExecute(CallInstructionExec instruction, ExplicitActiveState cur)
+            {
+                _theString = (ConstantString)cur.EvalStack.Peek(1);
+                _containee = (ConstantString)cur.EvalStack.Peek(0);
+            }
+
+            public void PostExecute(CallInstructionExec instruction, ExplicitActiveState cur, MMC.InstructionExec.IIEReturnValue retValue)
+            {
+                bool stringSymbolic = _theString.TryGetExpression(cur, out Expression stringExpression);
+                bool prefixSymbolic = _containee.TryGetExpression(cur, out Expression suffixExpression);
+
+                if (stringSymbolic || prefixSymbolic)
+                {
+                    Expression contains = Expression.Call(stringExpression ?? _theString.AsExpression(), _contains, suffixExpression ?? _containee.AsExpression());
+                    cur.EvalStack.Peek(0).SetExpression(contains, cur);
                 }
             }
         }

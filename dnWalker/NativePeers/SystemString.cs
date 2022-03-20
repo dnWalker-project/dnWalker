@@ -74,7 +74,7 @@ namespace dnWalker.NativePeers
                 dataElement = new Int4(result ? 1 : 0);
             }
 
-            else if (method.FullName.StartsWith("System.Boolean System.String::Substring(System.Int32"))
+            else if (method.FullName.StartsWith("System.String System.String::Substring(System.Int32"))
             {
                 string str = ((ConstantString)args[0]).Value;
                 int offset = ((INumericElement)args[1]).ToInt4(false).Value;

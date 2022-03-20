@@ -2558,6 +2558,26 @@ namespace MMC.Data
                 return 1;
             }
 
+            if (obj is ConstantString constString)
+            {
+                if (Value == null)
+                {
+                    if (constString.Value == null)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    return Value.CompareTo(constString.Value);
+                }
+            }
+
+            if (Value == null) return -1;
             return Value.CompareTo(((ConstantString)obj).Value);
         }
 

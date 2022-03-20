@@ -29,6 +29,7 @@ namespace dnWalker.Parameters.Expressions
             else if (Operand.TryResolve(ctx, out IStringParameter? stringValue))
             {
                 stringValue.Value = value.ToString();
+                stringValue.IsNull = false;
             }
             else
             {
