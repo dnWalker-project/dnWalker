@@ -2676,7 +2676,7 @@ namespace dnWalker.Instructions
         {
         }
 
-        protected MethodDefinition Method => Operand as MethodDefinition;
+        public MethodDefinition Method => Operand as MethodDefinition;
 
         /// <summary>Check if a method is empty, i.e. it has no code.</summary>
         /// <param name="meth">The method.</param>

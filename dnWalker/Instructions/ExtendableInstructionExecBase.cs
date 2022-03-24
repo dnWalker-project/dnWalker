@@ -13,19 +13,53 @@ namespace dnWalker.Instructions
 {
     public abstract class ExtendableInstructionExecBase : InstructionExecBase
     {
+        private class ExecutionPipeline
+        {
+            private readonly ExtendableInstructionExecBase _instruction;
+
+            public ExecutionPipeline(ExtendableInstructionExecBase instruction)
+            {
+                _instruction = instruction;
+            }
+
+            public IReadOnlyList<IInstructionExecutor> Executors { get; }
+
+            public ExecutionPipeline(IReadOnlyList<IInstructionExecutor> executors)
+            {
+                Executors = executors ?? throw new ArgumentNullException(nameof(executors));
+            }
+
+            private int _current = 0;
+
+            public IIEReturnValue Execute(ExplicitActiveState cur)
+            {
+                _current = 0;
+                return ExecuteNext(_instruction, cur);
+            }
+
+            private IIEReturnValue ExecuteNext(InstructionExecBase instruction, ExplicitActiveState cur)
+            {
+                IReadOnlyList<IInstructionExecutor> executors = Executors;
+                if (_current >= executors.Count)
+                {
+                    return _instruction.ExecuteCore(cur);
+                }
+
+                return Executors[_current++].Execute(instruction, cur, ExecuteNext);
+            }
+        }
+
+
         public ExtendableInstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr)
         {
         }
-        public ExtendableInstructionExecBase(Instruction instr, object operand, InstructionExecAttributes atr, IEnumerable<IInstructionExtension> extensions) : base(instr, operand, atr)
-        {
-        }
 
-        private IReadOnlyList<IInstructionExtension> _extensions = null;
+        private IReadOnlyList<IInstructionExecutor> _extensions = null;
 
         /// <summary>
         /// An ordered collection of extensions to use.
         /// </summary>
-        public IReadOnlyList<IInstructionExtension> Extensions
+        public IReadOnlyList<IInstructionExecutor> Extensions
         {
             get
             {
@@ -44,43 +78,18 @@ namespace dnWalker.Instructions
         /// <returns></returns>
         protected abstract IIEReturnValue ExecuteCore(ExplicitActiveState cur);
 
+
+
         public sealed override IIEReturnValue Execute(ExplicitActiveState cur)
         {
-            if (_extensions != null)
+            if (_extensions == null)
             {
-                // pre-execute
-                foreach (IPreExecuteInstructionExtension extension in _extensions.OfType<IPreExecuteInstructionExtension>())
-                {
-                    extension.PreExecute(this, cur);
-                }
-
-                // execute
-                IIEReturnValue retValue = null;
-                // in order to make sure that if extension fails to execute the instruction, the cur is not changed - ExplicitActiveState.MakeSavePoint() and ExpliciteActiveState.RestoreState(), and/or add trackin capabilities, e.g. evalstack.push(...) will be saved and we will be able to undo it...
-                foreach (ITryExecuteInstructionExtension extension in _extensions.OfType<ITryExecuteInstructionExtension>())
-                {
-                    if (extension.TryExecute(this, cur, out retValue))
-                    {
-                        break;
-                    }
-                }
-
-                if (retValue == null)
-                {
-                    retValue = ExecuteCore(cur);
-                }
-
-                // post-execute
-                foreach (IPostExecuteInstructionExtension extension in _extensions.OfType<IPostExecuteInstructionExtension>())
-                {
-                    extension.PostExecute(this, cur, retValue);
-                }
-
-                return retValue;
+                return ExecuteCore(cur);
             }
             else
             {
-                return ExecuteCore(cur);
+                ExecutionPipeline pipeline = new ExecutionPipeline(this);
+                return pipeline.Execute(cur);
             }
         }
     }

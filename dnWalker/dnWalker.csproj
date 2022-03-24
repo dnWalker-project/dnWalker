@@ -40,10 +40,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PathConstraintProducerExtensions.tt.cs</LastGenOutput>
     </None>
-    <None Update="Instructions\Extensions\SymbolicConversionExecutionExtensions.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SymbolicConversionExecutionExtensions.tt.cs</LastGenOutput>
-    </None>
     <None Update="Instructions\Extensions\SymbolicExecutionExtenions.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SymbolicExecutionExtenions.tt.cs</LastGenOutput>
@@ -59,11 +55,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>PathConstraintProducerExtensions.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Instructions\Extensions\SymbolicConversionExecutionExtensions.tt.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SymbolicConversionExecutionExtensions.tt</DependentUpon>
     </Compile>
     <Compile Update="Instructions\Extensions\SymbolicExecutionExtenions.tt.cs">
       <DesignTime>True</DesignTime>

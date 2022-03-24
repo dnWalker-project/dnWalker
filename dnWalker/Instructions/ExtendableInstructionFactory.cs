@@ -12,27 +12,27 @@ namespace dnWalker.Instructions
 {
     public class ExtendableInstructionFactory : dnWalker.Factories.InstructionFactory
     {        
-        public void RegisterExtension(IInstructionExtension instructionExtension)
+        public void RegisterExtension(IInstructionExecutor instructionExtension)
         {
-            foreach (Type supportedInstruction in instructionExtension.SupportedInstructions)
+            foreach (OpCode opCode in instructionExtension.SupportedOpCodes)
             {
-                ExtendPipeline(supportedInstruction, instructionExtension);
+                ExtendPipeline(opCode, instructionExtension);
             }
 
         }
 
-        private void ExtendPipeline(Type instructionType, IInstructionExtension extension)
+        private void ExtendPipeline(OpCode opCode, IInstructionExecutor extension)
         {
-            if (!_pipelines.TryGetValue(instructionType, out var pipeline))
+            if (!_pipelines.TryGetValue(opCode, out var pipeline))
             {
-                pipeline = new List<IInstructionExtension>();
-                _pipelines[instructionType] = pipeline;
+                pipeline = new List<IInstructionExecutor>();
+                _pipelines[opCode] = pipeline;
             }
 
             pipeline.Add(extension);
         }
 
-        private readonly Dictionary<Type, List<IInstructionExtension>> _pipelines = new Dictionary<Type, List<IInstructionExtension>>();
+        private readonly Dictionary<OpCode, List<IInstructionExecutor>> _pipelines = new Dictionary<OpCode, List<IInstructionExecutor>>();
 
 
         public override InstructionExecBase CreateInstructionExec(Instruction instr)
@@ -60,9 +60,9 @@ namespace dnWalker.Instructions
 
             if (iExec is ExtendableInstructionExecBase extendableInstructionExec)
             {
-                Type instructionType = extendableInstructionExec.GetType();
+                OpCode opCode = instr.OpCode;
 
-                if (_pipelines.TryGetValue(instructionType, out var pipeline))
+                if (_pipelines.TryGetValue(opCode, out var pipeline))
                 {
                     extendableInstructionExec.Extensions = pipeline;
                 }

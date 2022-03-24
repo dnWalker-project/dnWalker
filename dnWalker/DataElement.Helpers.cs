@@ -170,5 +170,25 @@ namespace MMC.Data
 
             return result;
         }
+
+        public static bool TryFindVirtualMethod(this IDataElement dataElement, MethodDef method, ExplicitActiveState cur, out MethodDef overload)
+        {
+            // TODO: change the FindVirtualMethod & TryFindVirtualMethod implementations,
+            // so that no try/catch block is necessary
+            try
+            {
+                overload = FindVirtualMethod(dataElement, method, cur);
+                return true;
+            }
+            catch (MemberNotFoundException)
+            {
+                overload = null;
+                return false;
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
     }
 }
