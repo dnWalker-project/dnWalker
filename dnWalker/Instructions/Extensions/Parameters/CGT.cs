@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Parameters
 {
-    public class CEQ : IInstructionExecutor
+    public class CGT : IInstructionExecutor
     {
-        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Ceq };
+        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Cgt, OpCodes.Cgt_Un };
 
         public virtual IEnumerable<OpCode> SupportedOpCodes
         {
@@ -31,7 +31,11 @@ namespace dnWalker.Instructions.Extensions.Parameters
         public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             // the problem is following:
-            // - we need for the CEQ result to have attached proper IsNull or SameAs expression
+            // - we handle the case when checking for not null
+            //   e.i.: 
+            //      ld... obj
+            //      ldnull
+            //      cgt
 
 
             IDataElement lhs = cur.EvalStack.Peek(1);
@@ -42,7 +46,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
             if (lhs is not ObjectReference lhsOR ||
                 rhs is not ObjectReference rhsOR)
             {
-                // we are checking only the object reference equality...
+                // we are checking only the object reference inequality...
                 return returnValue;
             }
 
@@ -60,29 +64,13 @@ namespace dnWalker.Instructions.Extensions.Parameters
             IDataElement resultDE = cur.EvalStack.Peek();
             bool result = resultDE.ToBool();
 
-            // we need to handle 2 situations:
-            // 1) null check, e.i.
-            //  ld... obj
-            //  ldnull
-            //  ceq
-            // 2) object identity, e.i.
-            //  ld...
-            //  ld...
-            //  ceq
-
             if (lhsParameter != null &&
                 rhsParameter == null &&
                 rhsOR.IsGlobalNull())
             {
                 // 1. situation
                 Expression isNull = lhsParameter.GetIsNullExpression(cur);
-                resultDE.SetExpression(result ? isNull : Expression.Not(isNull), cur);
-            }
-            else if (lhsParameter != null &&
-                     rhsParameter != null)
-            {
-                Expression refsEqual = lhsParameter.GetReferenceEqualsExpression(rhsParameter, cur);
-                resultDE.SetExpression(result ? refsEqual : Expression.Not(refsEqual), cur);
+                resultDE.SetExpression(result ? Expression.Not(isNull) : isNull, cur);
             }
 
             return returnValue;

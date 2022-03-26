@@ -15,8 +15,8 @@ namespace dnWalker.Instructions.Extensions
             // reference type parameter, ref/equal, is null?
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Parameters.BRTRUE());
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Parameters.BRFALSE());
-            factory.RegisterExtension(new CEQ_ReferenceTypeParameterHandler());
-            factory.RegisterExtension(new CNE_ReferenceTypeParameterHandler());
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Parameters.CEQ());
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Parameters.CGT());
 
             // array type parameter
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Parameters.LDLEN());

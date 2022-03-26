@@ -12,8 +12,6 @@ namespace dnWalker.Instructions.Extensions
         {
             factory.AddParameterHandlers();
             factory.AddSymbolicExecution();
-            factory.AddSymbolicConversionExecution();
-            factory.AddPathConstraintProducers();
 
             return factory;
         }

@@ -13,6 +13,15 @@ namespace dnWalker.Instructions.Extensions
             // conversion instructions
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.CONV());
 
+            // branching instruction
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryBranch());
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BRFALSE());
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BRTRUE());
+
+            // operations
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryOperation());
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.UnaryOperation());
+
             return factory;
         }
     }
