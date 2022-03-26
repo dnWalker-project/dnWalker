@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
   </ItemGroup>
@@ -37,6 +38,16 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TemplateBase.tt</DependentUpon>
+    </Compile>
+    <Compile Update="XUnitFramework\XUnitTestClassTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="XUnitFramework\XUnitTestProjectTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XUnitTestProjectTemplate.tt</DependentUpon>
     </Compile>
     <Compile Update="XUnit\XUnitTestClassTemplate.cs">
       <DesignTime>True</DesignTime>
@@ -77,6 +88,14 @@
     <None Update="Templates\TemplateBase.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TemplateBase.cs</LastGenOutput>
+    </None>
+    <None Update="XUnitFramework\XUnitTestClassTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
+    </None>
+    <None Update="XUnitFramework\XUnitTestProjectTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
     </None>
     <None Update="XUnit\XUnitTestClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

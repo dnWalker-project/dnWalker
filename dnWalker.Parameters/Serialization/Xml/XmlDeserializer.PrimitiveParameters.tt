@@ -65,7 +65,7 @@ using static dnWalker.Parameters.Xml.XmlTokens;
 
 namespace dnWalker.Parameters.Serialization.Xml
 {
-	public partial class XmlDeserializer
+	internal partial class XmlDeserializer
 	{
         public IPrimitiveValueParameter ToPrimitiveValueParameter(XElement xml, IParameterSet set)
         {

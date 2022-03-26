@@ -24,11 +24,14 @@ namespace dnWalker.TestGenerator.Tests.Templates
             public ComplexDependencyArrangeTemplate(ComplexDependency dependency)
             {
                 _dependency = dependency;
+
+                IParameter p = dependency.GetParameters().First();
+                Initialize(BuildContext(p.Set.Context, p.Set, new ParameterSet(p.Set.Context)));
             }
 
             public override string TransformText()
             {
-                WriteArrangeComplesDepencency(_dependency);
+                WriteArrangeComplexDependency(_dependency);
 
                 return base.TransformText().Trim();
             }

@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-		<OutputType>exe</OutputType>
-		<StartupObject>Examples.Program</StartupObject>
+        <TargetFrameworks>net5.0;net48</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>

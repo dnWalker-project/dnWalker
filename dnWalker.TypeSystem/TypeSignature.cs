@@ -169,6 +169,24 @@ namespace dnWalker.TypeSystem
             return methodSigs;
         }
 
+        public TypeSignature GetFieldType(string fieldName)
+        {
+            TypeDef td = _type.ResolveTypeDefThrow();
+            FieldDef fieldDef = td.GetField(fieldName);
+
+            TypeSig fieldTypeSig = fieldDef.FieldType;
+            if (fieldTypeSig.IsGenericTypeParameter)
+            {
+                GenericVar gv = fieldTypeSig.ToGenericVar();
+                int idx = (int)gv.Number;
+                return GetGenericParameters()[idx];
+            }
+            else
+            {
+                return new TypeSignature(fieldTypeSig.ToTypeDefOrRef());
+            }
+        }
+
         public bool IsNested
         {
             get

@@ -10,7 +10,7 @@ using static dnWalker.Parameters.Xml.XmlTokens;
 namespace dnWalker.Parameters.Serialization.Xml
 {
 
-    public partial class XmlSerializer
+    internal partial class XmlSerializer
     {
         private XElement ToXml(IBooleanParameter parameter)
         {

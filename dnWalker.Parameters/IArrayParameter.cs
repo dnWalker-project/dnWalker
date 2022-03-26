@@ -10,6 +10,5 @@ namespace dnWalker.Parameters
 {
     public interface IArrayParameter : IReferenceTypeParameter, IItemOwnerParameter
     {
-        TypeSignature ElementType { get; }
     }
 }

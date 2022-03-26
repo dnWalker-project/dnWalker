@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Parameters;
+using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TypeSystem;
 
 using System;
@@ -14,16 +15,44 @@ namespace dnWalker.TestGenerator.Templates
     public partial class TemplateBase
     {
 
-        protected Dictionary<ParameterRef, TypeSignature> VariableTypeLookup { get; } = new Dictionary<ParameterRef, TypeSignature>();
-        protected Dictionary<ParameterRef, string> VariableNameLookup { get; } = new Dictionary<ParameterRef, string>();
-        protected TestGenerationContext? Context { get; set; }
+        private readonly Dictionary<ParameterRef, TypeSignature> _variableTypeLookup = new Dictionary<ParameterRef, TypeSignature>();
+        private readonly Dictionary<ParameterRef, string> _variableNameLookupBase = new Dictionary<ParameterRef, string>();
+        private readonly Dictionary<ParameterRef, string> _variableNameLookupExec = new Dictionary<ParameterRef, string>();
 
-        public void Initialize(TestGenerationContext context)
+        private ITestClassContext? _context = null;
+        protected ITestClassContext Context
         {
-            Context = context;
+            get
+            {
+                return _context ?? throw new InvalidOperationException("The template is not initialized.");
+            }
+        }
 
-            VariableTypeLookup.Clear();
-            VariableNameLookup.Clear();
+        private AssertionSchema? _currentSchema = null;
+
+        protected void BeginSchema(AssertionSchema schema)
+        {
+            _currentSchema = schema;
+        }
+
+        protected void EndSchema()
+        {
+            _currentSchema = null;
+        }
+
+        protected AssertionSchema? CurrentSchema
+        {
+            get { return _currentSchema; }
+        }
+
+        protected void Initialize(ITestClassContext context)
+        {
+            _context = context;
+
+            GenerationEnvironment.Clear();
+            _variableTypeLookup.Clear();
+            _variableNameLookupBase.Clear();
+            _variableNameLookupExec.Clear();
         }
 
         protected TypeSignature GetVariableType(IParameter parameter)
@@ -35,7 +64,7 @@ namespace dnWalker.TestGenerator.Templates
 
             ParameterRef reference = parameter.Reference;
 
-            if (VariableTypeLookup.TryGetValue(reference, out TypeSignature type))
+            if (_variableTypeLookup.TryGetValue(reference, out TypeSignature type))
             {
                 return type;
             }
@@ -57,45 +86,143 @@ namespace dnWalker.TestGenerator.Templates
                 throw new Exception("Unexpected parameter type!");
             }
 
-            VariableTypeLookup[reference] = type;
+            _variableTypeLookup[reference] = type;
             return type;
         }
-
         protected string GetVariableName(IParameter parameter)
         {
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
 
+            if (_currentSchema != null && 
+                _currentSchema.TryGetName(parameter, out string? name))
+            {
+                return name;
+            }
+
+            //if (ReferenceEquals(parameter.Set, Context.BaseSet) ||
+            //    parameter is IStringParameter ||
+            //    parameter is IPrimitiveValueParameter)
+            if (ReferenceEquals(parameter.Set, Context.BaseSet))
+            {
+                return GetInVariableName(parameter);
+            }
+            else if (ReferenceEquals(parameter.Set, Context.ExecutionSet))
+            {
+                return GetOutVariableName(parameter);
+            }
+            else
+            {
+                throw new Exception("THe parameter belongs to an unexpected set.");
+            }
+        }
+
+        private static void GetAccessors(IParameter parameter, out ReturnValueParameterAccessor? retVal, out MethodArgumentParameterAccessor? arg)
+        {
+            retVal = null;
+            arg = null;
+            foreach (ParameterAccessor acc in parameter.Accessors)
+            {
+                if (acc is ReturnValueParameterAccessor rv)
+                {
+                    retVal = rv;
+                }
+                if (acc is MethodArgumentParameterAccessor a)
+                {
+                    arg = a;
+                    //break;
+                }
+            }
+        }
+        private string GetInVariableName(IParameter parameter)
+        {
             ParameterRef reference = parameter.Reference;
 
-            if (VariableNameLookup.TryGetValue(reference, out string? name))
+            if (_variableNameLookupBase.TryGetValue(reference, out string? name))
             {
                 return name;
             }
 
             // do the name guessing
+            // 1) method argument => the name of the argument
+            // 2) return value => result
+            GetAccessors(parameter, out var retValue, out var arg);
 
+            if (arg != null)
+            {
+                name = arg.Expression;
+            }
+            //else if (retValue != null)
+            //{
+            //    // TODO: change it...
+            //    name = "result";
+            //}
+            else
+            {
+                name = $"var_{reference}";
+            }
 
-            name = $"var_{reference}";
+            _variableNameLookupBase[reference] = name;
 
-            VariableNameLookup[reference] = name;
+            return name;
+        }
+
+        private string GetOutVariableName(IParameter parameter)
+        {
+            ParameterRef reference = parameter.Reference;
+
+            if (_variableNameLookupExec.TryGetValue(reference, out string? name))
+            {
+                return name;
+            }
+
+            // do the name guessing
+            // 1) method argument => the name of the argument
+            // 2) return value => result
+            GetAccessors(parameter, out var retValue, out var arg);
+
+            if (arg != null)
+            {
+                if (parameter is IPrimitiveValueParameter)
+                {
+                    name = arg.Expression;
+                }
+                else
+                {
+                    name = $"out_{arg.Expression}";
+                }
+            }
+            else
+            {
+                if (parameter is IPrimitiveValueParameter)
+                {
+                    name = $"var_{reference}";
+                }
+                else
+                {
+                    name = $"var_out_{reference}";
+                }
+            }
+
+            _variableNameLookupExec[reference] = name;
 
             return name;
         }
 
         protected string GetExpression(IParameter parameter)
         {
-            if (parameter is IPrimitiveValueParameter primitiveValue)
+            if (Context.Configuration.PreferLiteralsOverVariables)
             {
-                return primitiveValue.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(parameter.Type);
+                if (parameter is IPrimitiveValueParameter primitiveValue)
+                {
+                    return primitiveValue.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(parameter.Type);
+                }
+                else if (parameter is IReferenceTypeParameter rp && rp.GetIsNull())
+                {
+                    return TemplateHelpers.Null;
+                }
             }
-            else if(parameter is IReferenceTypeParameter rp && rp.GetIsNull())
-            {
-                return TemplateHelpers.Null;
-            }
-            else
-            {
-                return GetVariableName(parameter);
-            }
+
+            return GetVariableName(parameter);
         }
 
         protected void WriteJoined<T>(string separator, IEnumerable<T> items, Action<T> writeAction)
@@ -114,6 +241,11 @@ namespace dnWalker.TestGenerator.Templates
                 Write(separator);
                 writeAction(itemsArray[i]);
             }
+        }
+
+        protected void PushIndent()
+        {
+            base.PushIndent(TemplateHelpers.Indent);
         }
     }
 }
