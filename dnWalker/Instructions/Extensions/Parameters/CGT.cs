@@ -70,7 +70,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
             {
                 // 1. situation
                 Expression isNull = lhsParameter.GetIsNullExpression(cur);
-                resultDE.SetExpression(result ? Expression.Not(isNull) : isNull, cur);
+                resultDE.SetExpression(result ? isNull : Expression.Not(isNull), cur);
             }
 
             return returnValue;

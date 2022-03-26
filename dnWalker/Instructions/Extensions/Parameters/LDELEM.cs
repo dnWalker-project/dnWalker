@@ -17,7 +17,25 @@ namespace dnWalker.Instructions.Extensions.Parameters
 {
     public class LDELEM : IInstructionExecutor
     {
-        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Ldelem };
+        private static readonly OpCode[] _supportedCodes = new OpCode[] 
+        {
+            OpCodes.Ldelem,
+
+            OpCodes.Ldelem_I,
+            OpCodes.Ldelem_I1,
+            OpCodes.Ldelem_I2,
+            OpCodes.Ldelem_I4,
+            OpCodes.Ldelem_I8,
+
+            OpCodes.Ldelem_U1,
+            OpCodes.Ldelem_U2,
+            OpCodes.Ldelem_U4,
+            
+            OpCodes.Ldelem_R4,
+            OpCodes.Ldelem_R8,
+
+            OpCodes.Ldelem_Ref,
+        };
 
         public virtual IEnumerable<OpCode> SupportedOpCodes
         {

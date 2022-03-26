@@ -17,7 +17,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
 {
     public class LDELEMA : LDELEM
     {
-        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Ldelem };
+        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Ldelema };
 
         public override IEnumerable<OpCode> SupportedOpCodes
         {

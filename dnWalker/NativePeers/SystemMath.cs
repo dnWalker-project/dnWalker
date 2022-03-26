@@ -20,16 +20,17 @@ namespace dnWalker.NativePeers
             {
                 var dataElement = new Float8(Math.Ceiling(((Float8)args[0]).Value));
 
-                var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(args[0], "expression", out var expression);
-                if (symb)
-                {
-                    Expression ceilingExpression = Expression.Negate(
-                        Expression.Convert(
-                            Expression.Convert(
-                                Expression.Negate(expression), typeof(int)),
-                            typeof(double)));
-                    dataElement.SetExpression(ceilingExpression, cur);
-                }
+                //var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(args[0], "expression", out var expression);
+                //if (symb)
+                //{
+                //    Expression ceilingExpression = Expression.Negate(
+                //        Expression.Convert(
+                //            Expression.Convert(
+                //                Expression.Negate(expression), typeof(int)),
+                //            typeof(double)));
+                //    dataElement.SetExpression(ceilingExpression, cur);
+                //}
+
                 cur.EvalStack.Push(dataElement);
                 iieReturnValue = InstructionExecBase.nextRetval;
                 return true;
@@ -37,16 +38,24 @@ namespace dnWalker.NativePeers
 
             if (method.FullName == "System.Double System.Math::Sqrt(System.Double)")
             {
+                //var arg = (Float8)args[0];
+                //var value = arg.Value;
+                //var dataElement = new Float8(Math.Sqrt(value));
+                //// TODO sqrt should also result in an artificial path condition segment - value >= 0 or value < 0
+                //var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arg, "expression", out var expression);
+                //if (symb)
+                //{
+                //    Expression sqrtExpression = Expression.Call(typeof(Math).GetMethod("Sqrt"), expression);
+                //    dataElement.SetExpression(sqrtExpression, cur);
+                //}
+                //cur.EvalStack.Push(dataElement);
+                //iieReturnValue = InstructionExecBase.nextRetval;
+                //return true;
+
+
                 var arg = (Float8)args[0];
                 var value = arg.Value;
                 var dataElement = new Float8(Math.Sqrt(value));
-                // TODO sqrt should also result in an artificial path condition segment - value >= 0 or value < 0
-                var symb = cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(arg, "expression", out var expression);
-                if (symb)
-                {
-                    Expression sqrtExpression = Expression.Call(typeof(Math).GetMethod("Sqrt"), expression);
-                    dataElement.SetExpression(sqrtExpression, cur);
-                }
                 cur.EvalStack.Push(dataElement);
                 iieReturnValue = InstructionExecBase.nextRetval;
                 return true;

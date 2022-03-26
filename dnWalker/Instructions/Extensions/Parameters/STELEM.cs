@@ -18,7 +18,18 @@ namespace dnWalker.Instructions.Extensions.Parameters
 {
     public class STELEM : IInstructionExecutor
     {
-        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Stelem };
+        private static readonly OpCode[] _supportedCodes = new OpCode[] 
+        {
+            OpCodes.Stelem, 
+            OpCodes.Stelem_I, 
+            OpCodes.Stelem_I1, 
+            OpCodes.Stelem_I2, 
+            OpCodes.Stelem_I4, 
+            OpCodes.Stelem_I8, 
+            OpCodes.Stelem_R4, 
+            OpCodes.Stelem_R8, 
+            OpCodes.Stelem_Ref 
+        };
 
         public IEnumerable<OpCode> SupportedOpCodes
         {

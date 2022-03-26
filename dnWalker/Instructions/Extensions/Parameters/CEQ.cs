@@ -76,13 +76,15 @@ namespace dnWalker.Instructions.Extensions.Parameters
             {
                 // 1. situation
                 Expression isNull = lhsParameter.GetIsNullExpression(cur);
-                resultDE.SetExpression(result ? isNull : Expression.Not(isNull), cur);
+                //resultDE.SetExpression(result ? isNull : Expression.Not(isNull), cur);
+                resultDE.SetExpression(isNull, cur);
             }
             else if (lhsParameter != null &&
                      rhsParameter != null)
             {
                 Expression refsEqual = lhsParameter.GetReferenceEqualsExpression(rhsParameter, cur);
-                resultDE.SetExpression(result ? refsEqual : Expression.Not(refsEqual), cur);
+                //resultDE.SetExpression(result ? refsEqual : Expression.Not(refsEqual), cur);
+                resultDE.SetExpression(refsEqual, cur);
             }
 
             return returnValue;

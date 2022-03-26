@@ -59,7 +59,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(3);
+            paths.Should().HaveCount(4);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.Arrays
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(3);
+            paths.Should().HaveCount(4);
         }
     }
 }

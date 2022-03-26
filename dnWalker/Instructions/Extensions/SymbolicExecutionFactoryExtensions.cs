@@ -22,6 +22,9 @@ namespace dnWalker.Instructions.Extensions
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryOperation());
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.UnaryOperation());
 
+            // math methods
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.SystemMath());
+
             return factory;
         }
     }
