@@ -42,8 +42,8 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             Instruction nextInstruction = GetNextInstruction(retValue, cur);
 
-            // nextInstruction != null => will branch => the condition is FALSE => we need to negate it for the path constraint
-            Expression condition = nextInstruction != null ? Expression.Not(expression) : expression;
+            // nextInstruction == null => will NOT branch => the condition is FALSE => we need to negate it for the path constraint
+            Expression condition = nextInstruction == null ? Expression.Not(expression) : expression;
 
             SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
 

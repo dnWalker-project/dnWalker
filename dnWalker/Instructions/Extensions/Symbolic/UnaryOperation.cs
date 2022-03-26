@@ -43,7 +43,9 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IDataElement result = cur.EvalStack.Peek();
 
-            Expression resultExpression = Expression.MakeUnary(_operatorLookup[baseExecutor.Instruction.OpCode], expression, expression.Type);
+            ExpressionType op = _operatorLookup[baseExecutor.Instruction.OpCode];
+
+            Expression resultExpression = Expression.MakeUnary(op, expression, expression.Type);
             result.SetExpression(resultExpression, cur);
 
             return retValue;

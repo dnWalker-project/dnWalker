@@ -19,12 +19,14 @@ namespace dnWalker.Instructions.Extensions.Symbolic
     {
         private static readonly Dictionary<OpCode, Type> _resultTypes = new Dictionary<OpCode, Type>()
         {
+            // this should be based on the architecture... int vs long
             [OpCodes.Conv_I] = typeof(int),
             [OpCodes.Conv_I1] = typeof(sbyte),
             [OpCodes.Conv_I2] = typeof(short),
             [OpCodes.Conv_I4] = typeof(int),
             [OpCodes.Conv_I8] = typeof(long),
 
+            // this should be based on the architecture... int vs long
             [OpCodes.Conv_Ovf_I] = typeof(int),
             [OpCodes.Conv_Ovf_I_Un] = typeof(int),
             [OpCodes.Conv_Ovf_I1] = typeof(sbyte),
@@ -36,12 +38,14 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             [OpCodes.Conv_Ovf_I8] = typeof(long),
             [OpCodes.Conv_Ovf_I8_Un] = typeof(long),
 
+            // this should be based on the architecture... uint vs ulong
             [OpCodes.Conv_U] = typeof(uint),
             [OpCodes.Conv_U1] = typeof(byte),
             [OpCodes.Conv_U2] = typeof(ushort),
             [OpCodes.Conv_U4] = typeof(uint),
             [OpCodes.Conv_U8] = typeof(ulong),
 
+            // this should be based on the architecture... uint vs ulong
             [OpCodes.Conv_Ovf_U] = typeof(uint),
             [OpCodes.Conv_Ovf_U_Un] = typeof(uint),
             [OpCodes.Conv_Ovf_U1] = typeof(byte),
