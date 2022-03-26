@@ -16,17 +16,19 @@ namespace dnWalker.Instructions
         private class ExecutionPipeline
         {
             private readonly ExtendableInstructionExecBase _instruction;
+            private static readonly IInstructionExecutor[] _noExecutors = new IInstructionExecutor[0];
 
             public ExecutionPipeline(ExtendableInstructionExecBase instruction)
             {
                 _instruction = instruction;
             }
 
-            public IReadOnlyList<IInstructionExecutor> Executors { get; }
-
-            public ExecutionPipeline(IReadOnlyList<IInstructionExecutor> executors)
+            public IReadOnlyList<IInstructionExecutor> Executors
             {
-                Executors = executors ?? throw new ArgumentNullException(nameof(executors));
+                get
+                {
+                    return _instruction.Extensions ?? _noExecutors;
+                }
             }
 
             private int _current = 0;
@@ -42,6 +44,7 @@ namespace dnWalker.Instructions
                 IReadOnlyList<IInstructionExecutor> executors = Executors;
                 if (_current >= executors.Count)
                 {
+                    // we have executed all of the extensions, execute the default behaviour now
                     return _instruction.ExecuteCore(cur);
                 }
 

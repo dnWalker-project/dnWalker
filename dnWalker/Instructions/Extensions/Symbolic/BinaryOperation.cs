@@ -47,11 +47,13 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             // unary
             // [OpCodes.Neg] = ExpressionType.Negate,
-            
+
             [OpCodes.And] = ExpressionType.And,
+            //[OpCodes.And] = ExpressionType.AndAlso,
             // unary
             // [OpCodes.Not] = ExpressionType.Not,
             [OpCodes.Or] = ExpressionType.Or,
+            //[OpCodes.Or] = ExpressionType.OrElse,
             [OpCodes.Xor] = ExpressionType.ExclusiveOr,
             [OpCodes.Shl] = ExpressionType.LeftShift,
             [OpCodes.Shr] = ExpressionType.RightShift,
