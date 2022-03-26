@@ -38,7 +38,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
-            // TODO: add such extension method, already implemented in another branch... expression = expression.ToBooleanExpression();
+            expression = expression.AsBoolean();
 
             Instruction nextInstruction = GetNextInstruction(retValue, cur);
 

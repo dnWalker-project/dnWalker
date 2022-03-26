@@ -15,6 +15,12 @@ namespace dnWalker
             Type t = expression.Type;
             if (t == typeof(bool)) return expression;
 
+            if (expression is ConstantExpression constExpr)
+            {
+                int value = (int) Convert.ChangeType(constExpr.Value, typeof(int));
+                return Expression.Constant(value > 0 ? true : false);
+            }
+
             return Expression.NotEqual(expression, Expression.Constant(GetZero(t)));
 
             static object GetZero(Type t)

@@ -60,6 +60,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             [OpCodes.Shr_Un] = ExpressionType.RightShift,
         };
 
+
         public IEnumerable<OpCode> SupportedOpCodes
         {
             get
@@ -83,12 +84,34 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
+
             IDataElement result = cur.EvalStack.Peek();
 
-            Expression resultExpression = Expression.MakeBinary(_operatorLookup[baseExecutor.Instruction.OpCode], lhsExpression ?? lhs.AsExpression(), rhsExpression ?? rhs.AsExpression());
+            lhsExpression ??= lhs.AsExpression();
+            rhsExpression ??= rhs.AsExpression();
+
+            ExpressionType op = _operatorLookup[baseExecutor.Instruction.OpCode];
+
+            PreprocessBooleanExpressions(ref lhsExpression, ref rhsExpression);
+
+            Expression resultExpression = Expression.MakeBinary(op, lhsExpression, rhsExpression);
             result.SetExpression(resultExpression, cur);
             
             return retValue;
+        }
+
+        private static void PreprocessBooleanExpressions(ref Expression lhs, ref Expression rhs)
+        {
+            if (lhs.Type == typeof(bool))
+            {
+                // ensure rhs is also boolean
+                rhs = rhs.AsBoolean();
+            }
+            else if (rhs.Type == typeof(bool))
+            {
+                // ensure rhs is also boolean
+                lhs = lhs.AsBoolean();
+            }
         }
     }
 }

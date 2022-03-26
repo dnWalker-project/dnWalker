@@ -52,7 +52,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             {
                 ExpressionType.Equal => ExpressionType.NotEqual,
                 ExpressionType.GreaterThan => ExpressionType.LessThanOrEqual,
-                ExpressionType.GreaterThanOrEqual => ExpressionType.GreaterThan,
+                ExpressionType.GreaterThanOrEqual => ExpressionType.LessThan,
                 ExpressionType.LessThan => ExpressionType.GreaterThanOrEqual,
                 ExpressionType.LessThanOrEqual => ExpressionType.GreaterThan,
                 ExpressionType.NotEqual => ExpressionType.Equal,
