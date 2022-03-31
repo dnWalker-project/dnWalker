@@ -62,7 +62,7 @@ namespace dnWalker.Parameters
 
                 case IObjectParameter p: dataElement = CreateDataElement(p, cur); break;
                 //case IInterfaceParameter p: dataElement = CreateDataElement(p, cur); break;
-                case IStringParameter p: dataElement = CreateDataElement(p); break;
+                case IStringParameter p: dataElement = CreateDataElement(p, cur); break;
                 case IArrayParameter p: dataElement = CreateDataElement(p, cur); break;
                 default: throw new NotSupportedException();
             }
@@ -72,18 +72,33 @@ namespace dnWalker.Parameters
             return dataElement;
         }
 
-        private static IDataElement CreateDataElement(IStringParameter stringParameter)
+        private static IDataElement CreateDataElement(IStringParameter stringParameter, ExplicitActiveState cur)
         {
-            if (stringParameter.GetIsNull())
+            //if (stringParameter.GetIsNull())
+            //{
+            //    return new ConstantString(null);
+            //}
+            //else
+            //{
+            //    return new ConstantString(stringParameter.Value ?? string.Empty);
+            //}
+            //ConstantString stringDataElement = new ConstantString(stringParameter?.Value);
+            //return stringDataElement;
+
+            bool isNull = stringParameter.GetIsNull();
+            if (isNull)
             {
-                return new ConstantString(null);
+                ObjectReference objectReference = new ObjectReference(0);
+                return objectReference;
             }
             else
             {
-                return new ConstantString(stringParameter.Value ?? string.Empty);
+                ObjectReference stringReference = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(false), stringParameter.Type.ToTypeDefOrRef());
+                AllocatedObject stringObject = (AllocatedObject)cur.DynamicArea.Allocations[stringReference];
+                stringObject.Fields[0] = new Int4(stringParameter.Value?.Length ?? 0);
+                stringObject.Fields[1] = new ConstantString(stringParameter.Value);
+                return stringReference;
             }
-            //ConstantString stringDataElement = new ConstantString(stringParameter?.Value);
-            //return stringDataElement;
         }
 
         private static IDataElement CreateDataElement(IArrayParameter arrayParameter, ExplicitActiveState cur)
