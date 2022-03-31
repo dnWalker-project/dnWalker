@@ -1,7 +1,10 @@
-﻿using dnWalker.Concolic;
+﻿using dnlib.DotNet;
+
+using dnWalker.Concolic;
 using dnWalker.TypeSystem;
 
 using MMC;
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -70,6 +73,9 @@ namespace dnWalker.Tests
                 throw new InvalidOperationException("Solver provider is not set!");
             }
 
+            // curse of static data
+            IDefinitionProvider definitionProvider = _provideDefinitions();
+            AllocatedDelegate.DelegateTypeDef = definitionProvider.BaseTypes.Delegate.ToTypeDefOrRef();
             ConcolicExplorer explorer = new ConcolicExplorer(_provideDefinitions(), base.Config, _provideLogger(), _provideSolver());
 
             foreach (IExplorationExtension extension in _extensions)

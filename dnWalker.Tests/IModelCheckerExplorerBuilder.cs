@@ -1,4 +1,5 @@
-﻿using dnWalker.TypeSystem;
+﻿using dnWalker.Instructions;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.Data;
@@ -27,6 +28,9 @@ namespace dnWalker.Tests
         //{
         //    get; set;
         //}
+
+        IModelCheckerExplorerBuilder AddInstructionExecutor(IInstructionExecutor executor);
+
 
         IModelCheckerExplorerBuilder SetMethod(string methodName);
         IModelCheckerExplorerBuilder SetArgs(params IDataElement[] args);

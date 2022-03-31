@@ -111,13 +111,19 @@ namespace dnWalker.Z3
                 return parameter;
             }
 
+            protected override Expression VisitBinary(BinaryExpression node)
+            {
+                return node.Update(Visit(node.Left), VisitAndConvert(node.Conversion, nameof(VisitBinary)), Visit(node.Right));
+            }
 
             protected override Expression VisitConstant(ConstantExpression constant)
             {
                 Type type = constant.Type;
                 Type z3Type = GetZ3TypeFor(type);
                 if (z3Type == type) return constant;
-                return Expression.Constant(Convert.ChangeType(constant.Value, z3Type), z3Type);
+
+                object constValue = Convert.ChangeType(constant.Value, z3Type);
+                return Expression.Constant(constValue, z3Type);
             }
 
             protected override Expression VisitParameter(ParameterExpression node)

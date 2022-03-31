@@ -13,6 +13,12 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
+        protected void WriteMethodInvocation(MethodInvocationData data)
+        {
+            if (data.Instance == null) WriteStaticMethodInvocation(data);
+            else WriteInstanceMethodInvocation(data);
+        }
+
         protected void WriteStaticMethodInvocation(MethodInvocationData data)
         {
             MethodSignature method = data.Method;

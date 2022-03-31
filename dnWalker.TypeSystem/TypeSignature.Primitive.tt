@@ -19,7 +19,8 @@
         "UInt64",
         "Int64",
         "Double",
-        "Single"
+        "Single",
+        "Void"
     };
 #>
 using dnlib.DotNet;

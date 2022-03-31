@@ -97,12 +97,16 @@ namespace dnWalker.Factories
             switch (operand)
             {
                 case ITypeDefOrRef typeDefOrRef:
+                    // !!! looses generics info, ITypeDefOrRef may be the TypeSpec object...
                     operand = typeDefOrRef.ResolveTypeDefThrow();
                     break;
                 case IMethod method:
+                    // !!! looses generics info, IMethod may be the MethodSpec object...
                     operand = method.ResolveMethodDefThrow();
                     break;
                 case IField field:
+                    // !!! may loose the generics info??? probably not, because the field itself cannot be generic,
+                    // only via its declaring type
                     operand = field.ResolveFieldDefThrow();
                     break;
             }

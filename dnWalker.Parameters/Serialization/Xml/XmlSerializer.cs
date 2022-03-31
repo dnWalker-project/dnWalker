@@ -10,28 +10,17 @@ using static dnWalker.Parameters.Xml.XmlTokens;
 
 namespace dnWalker.Parameters.Serialization.Xml
 {
-    public partial class XmlSerializer : IParameterSerializer
+    internal partial class XmlSerializer
     {
         public XmlSerializer()
         {
         }
 
-        public void Serialize(IParameterSet parameterSet, Stream output)
-        {
-            XElement setXml = ToXml(parameterSet);
-            setXml.Save(output);
-        }
 
-        public XElement ToXml(IParameterSet parameterSet)
+        public XElement ToXml(IReadOnlyParameterSet parameterSet)
         {
-            string xmlName = parameterSet switch
-            {
-                IBaseParameterSet => XmlBaseParameterSet,
-                IExecutionParameterSet => XmlExecutionParameterSet,
+            XElement setXml = new XElement(XmlSet);
 
-                _ => throw new ArgumentException("Unexpected type", nameof(parameterSet)),
-            };
-            XElement setXml = new XElement(xmlName);
 
             foreach (var p in parameterSet.Parameters.Values)
             {

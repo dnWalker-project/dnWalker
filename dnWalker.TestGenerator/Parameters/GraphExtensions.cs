@@ -12,31 +12,31 @@ namespace dnWalker.TestGenerator.Parameters
     public static class GraphExtensions
     {
         public static TGraph Condensate<TVertex, TEdge, TGraph>(this TGraph graph, Func<IEnumerable<TVertex>, TVertex> mergeFunction, Func<TVertex, TVertex, TEdge> edgeFactory)
+            where TGraph : IMutableVertexAndEdgeListGraph<TVertex, TEdge>, new()
             where TVertex : notnull
             where TEdge : IEdge<TVertex>
-            where TGraph : IMutableVertexAndEdgeListGraph<TVertex, TEdge>, new()
         {
             return Condensate(graph, static () => new TGraph(), mergeFunction, edgeFactory);
         }
 
         public static TGraph Condensate<TVertex, TGraph>(this TGraph graph, Func<IEnumerable<TVertex>, TVertex> mergeFunction)
-            where TVertex : notnull
             where TGraph : IMutableVertexAndEdgeListGraph<TVertex, Edge<TVertex>>, new()
+            where TVertex : notnull
         {
             return Condensate(graph, static () => new TGraph(), mergeFunction, static (src, trg) => new Edge<TVertex>(src, trg));
         }
 
-        public static TGraph Condensate<TVertex, TGraph>(this TGraph graph, Func<TGraph> graphFactory, Func<IEnumerable<TVertex>, TVertex> mergeFunction)
-            where TVertex : notnull
-            where TGraph : IMutableVertexAndEdgeListGraph<TVertex, Edge<TVertex>>
-        {
-            return Condensate(graph, graphFactory, mergeFunction, static (src, trg) => new Edge<TVertex>(src, trg));
-        }
+        //public static TGraph Condensate<TVertex, TGraph>(this TGraph graph, Func<TGraph> graphFactory, Func<IEnumerable<TVertex>, TVertex> mergeFunction)
+        //    where TGraph : IMutableVertexAndEdgeListGraph<TVertex, Edge<TVertex>>
+        //    where TVertex : notnull
+        //{
+        //    return Condensate(graph, graphFactory, mergeFunction, static (src, trg) => new Edge<TVertex>(src, trg));
+        //}
 
         public static TGraph Condensate<TVertex, TEdge, TGraph>(this TGraph graph, Func<TGraph> graphFactory, Func<IEnumerable<TVertex>, TVertex> mergeFunction, Func<TVertex, TVertex, TEdge> edgeFactory)
+            where TGraph : IMutableVertexAndEdgeListGraph<TVertex, TEdge>
             where TVertex : notnull
             where TEdge : IEdge<TVertex>
-            where TGraph : IMutableVertexAndEdgeListGraph<TVertex, TEdge>
         {
 
             var sccAlg = new StronglyConnectedComponentsAlgorithm<TVertex, TEdge>(graph);

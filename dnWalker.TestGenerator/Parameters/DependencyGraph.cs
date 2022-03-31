@@ -55,12 +55,34 @@ namespace dnWalker.TestGenerator.Parameters
     internal class DependencyGraph
     {
         private readonly IReadOnlyParameterSet _set;
-        private readonly AdjacencyGraph<Dependency, Edge<Dependency>> _graph;
+        private readonly IBidirectionalGraph<Dependency, Edge<Dependency>> _graph;
+        private readonly IReadOnlyDictionary<ParameterRef, Dependency> _dependencyMapping;
 
-        private DependencyGraph(IReadOnlyParameterSet set, AdjacencyGraph<Dependency, Edge<Dependency>> graph) 
+
+        private DependencyGraph(IReadOnlyParameterSet set, 
+                                IBidirectionalGraph<Dependency, Edge<Dependency>> graph) 
         {
             _set = set;
             _graph = graph;
+
+            var depMapping = new Dictionary<ParameterRef, Dependency>();
+
+            foreach (Dependency dependency in _graph.Vertices)
+            {
+                switch (dependency)
+                {
+                    case SimpleDependency simple: depMapping[simple.Parameter.Reference] = simple; break;
+                    case ComplexDependency complex:
+                        foreach (IParameter p in complex.GetParameters())
+                        {
+                            depMapping[p.Reference] = complex;
+                        }
+                        break;
+                }
+
+            }
+
+            _dependencyMapping = depMapping;
         }
 
         internal static DependencyGraph Build(IReadOnlyParameterSet set)
@@ -89,8 +111,46 @@ namespace dnWalker.TestGenerator.Parameters
                 }
             }
 
-            DependencyGraph dependencyGraph = new DependencyGraph(set, bigGraph.Condensate<Dependency, AdjacencyGraph<Dependency, Edge<Dependency>>>(static (cyclicDependencies) => new ComplexDependency(cyclicDependencies)));
+            DependencyGraph dependencyGraph = new DependencyGraph(set, bigGraph.Condensate<Dependency, AdjacencyGraph<Dependency, Edge<Dependency>>>(static (cyclicDependencies) => new ComplexDependency(cyclicDependencies)).ToBidirectionalGraph());
             return dependencyGraph;
+        }
+
+        public DependencyGraph GetDependencySubGraph(IEnumerable<IParameter> parameters)
+        {
+            BidirectionalGraph<Dependency, Edge<Dependency>> subGraph = new BidirectionalGraph<Dependency, Edge<Dependency>>();
+
+            HashSet<Dependency> visited = new HashSet<Dependency>();
+            Stack<Dependency> frontier = new Stack<Dependency>();
+            
+            foreach (IParameter p in parameters)
+            {
+                frontier.Push(_dependencyMapping[p.Reference]);
+            }
+
+            while (frontier.Count > 0)
+            {
+                Dependency d = frontier.Pop();
+                if (!visited.Add(d))
+                {
+                    continue;
+                }
+
+                subGraph.AddVertex(d);
+
+                foreach (Edge<Dependency> inEdge in _graph.InEdges(d))
+                {
+                    Dependency src = inEdge.Source;
+                    subGraph.AddVertex(src);
+                    subGraph.AddEdge(new Edge<Dependency>(src, d));
+
+                    if (_graph.InDegree(src) > 0)
+                    {
+                        frontier.Push(src);
+                    }
+                }
+            }
+
+            return new DependencyGraph(_set, subGraph);
         }
 
         internal IEnumerable<Dependency> GetRootDependencies()

@@ -1473,14 +1473,14 @@ namespace dnWalker.Instructions
             ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
             IIEReturnValue retval = nextRetval;
-            AllocatedArray theArray =
-                cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
-            if (theArray == null)
+            if (arrayRef.IsNull())
             {
                 return ThrowException(new System.NullReferenceException(), cur);
             }
-            else if (CheckBounds(theArray, idx))
+            
+            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
+            if (CheckBounds(theArray, idx))
             {
                 ObjectEscapePOR.UpdateReachability(theArray.ThreadShared, theArray.Fields[idx.Value], val, cur);
 
@@ -2676,7 +2676,7 @@ namespace dnWalker.Instructions
         {
         }
 
-        protected MethodDefinition Method => Operand as MethodDefinition;
+        public MethodDefinition Method => Operand as MethodDefinition;
 
         /// <summary>Check if a method is empty, i.e. it has no code.</summary>
         /// <param name="meth">The method.</param>

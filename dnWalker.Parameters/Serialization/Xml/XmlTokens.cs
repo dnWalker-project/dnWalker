@@ -29,8 +29,7 @@ namespace dnWalker.Parameters.Xml
         public const string XmlInvocation = "Invocation";
         public const string XmlUnknown = "Unknown";
         
-        public const string XmlBaseParameterSet = "BaseParameterContext";
-        public const string XmlExecutionParameterSet = "ExecutionParameterContext";
+        public const string XmlSet = "Set";
 
         public const string XmlAccessor = "Accessor";
         public const string XmlNoAccessor = "None";

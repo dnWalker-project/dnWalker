@@ -16,7 +16,7 @@ namespace dnWalker.Tests.ExampleTests
     public abstract class ExamplesTestBase : InterpreterTests.InterpreterTestBase
     {
         //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
-        protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\framework\Examples.Framework.exe";
+        protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net48\Examples.dll";
 
         protected ExamplesTestBase(ITestOutputHelper testOutputHelper, IDefinitionProvider definitionProvider) : base(testOutputHelper, definitionProvider)
         {

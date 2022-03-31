@@ -20,6 +20,9 @@ namespace Examples.Concolic.Features.Objects
             _myField = myField;
         }
 
+        public TestClass[] RefArray;
+        public int[] PrimitiveArray;
+        public TestClass TCField;
         public double OtherField;
     }
 
@@ -201,6 +204,50 @@ namespace Examples.Concolic.Features.Objects
                 }
             }
 
+        }
+
+        public static void SetFieldValue_InputParameter(TestClass obj, double value)
+        {
+            if (obj == null) return;
+
+            obj.OtherField = value;
+        }
+
+        public static void SetFieldValue_ConstructedParameter_Primitive(TestClass obj, double value)
+        {
+            if (obj == null) return;
+
+            obj.OtherField = value * 2;
+        }
+
+        public static void SetFieldValue_ConstructedParameter_Object(TestClass obj)
+        {
+            if (obj == null) return;
+
+            obj.TCField = new TestClass();
+        }
+
+        public static void SetFieldValue_ConstructedParameter_PrimitiveArray(TestClass obj, int i)
+        {
+            if (obj == null) return;
+
+            obj.PrimitiveArray = new int[] {i, i - 1, i + 1};
+        }
+
+        public static void SetFieldValue_ConstructedParameter_RefArray(TestClass obj)
+        {
+            if (obj == null) return;
+
+            obj.RefArray = new TestClass[] { obj, null, new TestClass() };
+        }
+
+        public static void SetFieldValue_ConstructedParameter_Null(TestClass obj)
+        {
+            if (obj == null) return;
+
+            obj.PrimitiveArray = null;
+            obj.RefArray = null;
+            obj.TCField = null;
         }
     }
 }

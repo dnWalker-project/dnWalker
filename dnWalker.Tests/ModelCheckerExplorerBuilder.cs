@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Instructions;
+using dnWalker.Instructions.Extensions;
 using dnWalker.Traversal;
 using dnWalker.TypeSystem;
 
@@ -24,6 +26,8 @@ namespace dnWalker.Tests
 
         private string _methodName;
         private Func<ExplicitActiveState, IDataElement[]> _provideArgs = (cur) => Array.Empty<IDataElement>();
+
+        private readonly List<IInstructionExecutor> _executors = new List<IInstructionExecutor>();
 
         public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
         {
@@ -61,17 +65,32 @@ namespace dnWalker.Tests
 
             IDefinitionProvider definitionProvider = _provideDefinitionProvider();
 
+            // curse of static data
+            AllocatedDelegate.DelegateTypeDef = definitionProvider.BaseTypes.Delegate.ToTypeDefOrRef();
+
             Logger logger = _provideLogger();
 
-            StateSpaceSetup stateSpaaceSetup = new StateSpaceSetup(definitionProvider, Config, logger);
+            //StateSpaceSetup stateSpaaceSetup = new StateSpaceSetup(definitionProvider, Config, logger);
             MethodDef entryPoint = definitionProvider.GetMethodDefinition(_methodName) ?? throw new NullReferenceException($"Method {_methodName} not found");
 
             PathStore pathStore = new PathStore();
 
-            ExplicitActiveState cur = stateSpaaceSetup.CreateInitialState(entryPoint, _provideArgs ?? throw new NullReferenceException("Args is null!"));
+            //ExplicitActiveState cur = stateSpaaceSetup.CreateInitialState(entryPoint, _provideArgs ?? throw new NullReferenceException("Args is null!"));
+
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
+            IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(Config, f);
+
+            ExplicitActiveState cur = new ExplicitActiveState(Config, instructionExecProvider, definitionProvider, logger);
             cur.PathStore = pathStore;
 
+            IDataElement[] argsArray = _provideArgs(cur);
+            DataElementList arguments = cur.StorageFactory.CreateList(argsArray.Length);
+            for(int i = 0; i < argsArray.Length; i++) arguments[i] = argsArray[i];
 
+            MethodState mainState = new MethodState(entryPoint, arguments, cur);
+
+            cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, logger));
+            
 
             IStatistics statistics = _provideStatistics();
             Explorer explorer = new Explorer(cur, statistics, logger, Config, pathStore);
@@ -99,6 +118,13 @@ namespace dnWalker.Tests
         public IModelCheckerExplorerBuilder SetArgs(Func<ExplicitActiveState, IDataElement[]> args)
         {
             _provideArgs = args;
+            return this;
+        }
+
+        public IModelCheckerExplorerBuilder AddInstructionExecutor(IInstructionExecutor executor)
+        {
+            _executors.Add(executor);
+
             return this;
         }
     }

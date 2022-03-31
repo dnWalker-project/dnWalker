@@ -1,6 +1,7 @@
 ﻿using dnWalker.Parameters;
 using dnWalker.TestGenerator.Parameters;
 using dnWalker.TestGenerator.Templates;
+using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TypeSystem;
 
 using FluentAssertions;
@@ -22,9 +23,16 @@ namespace dnWalker.TestGenerator.Tests.Templates
         {
             private readonly SimpleDependency _dependency;
 
-            public SimpleDependencyArrangeTemplate(SimpleDependency dependency)
+            public SimpleDependencyArrangeTemplate(SimpleDependency dependency, bool preferLiteralsOverVariables = true)
             {
                 _dependency = dependency;
+
+                IParameter p = dependency.Parameter;
+                ITestClassContext context = BuildContext(p.Set.Context, p.Set, new ParameterSet(p.Set.Context));
+
+                context.Configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
+
+                Initialize(context);
             }
 
             public override string TransformText()
@@ -79,7 +87,24 @@ namespace dnWalker.TestGenerator.Tests.Templates
         [InlineData(10, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = 10;")]
         [InlineData(-1, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = -1;")]
         [InlineData(0, "// Arrange variable: var_0x00000001\r\nint var_0x00000001 = 0;")]
-        public void Test_PrimitiveValueParameter(int? value, string expected)
+        public void Test_PrimitiveValueParameter_WhenPreferingVariables_WriteDeclaration(int? value, string expected)
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            var i1 = set.CreateInt32Parameter(0x00000001);
+            i1.Value = value;
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(i1), preferLiteralsOverVariables: false).TransformText();
+            result.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(null, "")]
+        [InlineData(10, "")]
+        [InlineData(-1, "")]
+        [InlineData(0, "")]
+        public void Test_PrimitiveValueParameter_WhenPreferingLiteral_WritesNothing(int? value, string expected)
         {
             IParameterContext context = new ParameterContext(DefinitionProvider);
             IParameterSet set = new ParameterSet(context);
@@ -92,7 +117,6 @@ namespace dnWalker.TestGenerator.Tests.Templates
         }
 
         [Theory]
-        [InlineData(null, "// Arrange variable: var_0x00000001\r\ndouble[] var_0x00000001 = null;")]
         [InlineData(new double[0], "// Arrange variable: var_0x00000001\r\ndouble[] var_0x00000001 = new double[0];")]
         [InlineData(new double[] { -5, 0, 10 }, "// Arrange variable: var_0x00000001\r\ndouble[] var_0x00000001 = new double[3] { -5, 0, 10 };")]
         public void Test_ArrayOfPrimitiveValueParameters(double[] srcArray, string expected)
@@ -111,9 +135,22 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 }
             }
 
-            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(ap)).TransformText();
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(ap), preferLiteralsOverVariables: true).TransformText();
             result.Should().Be(expected);
         }
+
+        [Fact]
+        public void Test_ArrayOfPrimitiveValueParameters_Null_WhenPrefereingLiterals_WritesNothing()
+        {
+            IParameterContext context = new ParameterContext(DefinitionProvider);
+            IParameterSet set = new ParameterSet(context);
+
+            var ap = set.CreateArrayParameter(DoubleType, 0x00000001, isNull: true);
+
+            string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(ap), preferLiteralsOverVariables: true).TransformText();
+            result.Should().Be(string.Empty);
+        }
+
 
         [Fact]
         public void Test_InterfaceParameter_Null()
@@ -122,7 +159,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
             IParameterSet set = new ParameterSet(context);
 
             IObjectParameter op = set.CreateObjectParameter(TestInterfaceType, 0x00000001, isNull: true);
-            string expected = "// Arrange variable: var_0x00000001\r\nITestInterface var_0x00000001 = null;";
+            string expected = string.Empty;
 
             string result = new SimpleDependencyArrangeTemplate(new SimpleDependency(op)).TransformText();
             result.Should().Be(expected);
