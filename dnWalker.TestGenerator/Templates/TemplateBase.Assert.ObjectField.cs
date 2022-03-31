@@ -44,36 +44,38 @@ namespace dnWalker.TestGenerator.Templates
                 {
                     if (pRef == ParameterRef.Empty)
                     {
-                        WriteLine($"{objVar}.GetPrivate({fieldName}).Should().Be({TemplateHelpers.GetDefaultLiteral(fType)});");
+                        WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().Be({TemplateHelpers.GetDefaultLiteral(fType)});");
                     }
                     else
                     {
                         IParameter p = pRef.Resolve(set) ?? throw new Exception("Could not resolve the parameter.");
-                        WriteLine($"{objVar}.GetPrivate({fieldName}).Should().Be({GetExpression(p)});");
+                        WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().Be({GetExpression(p)});");
                     }
                 }
                 else if (!fType.IsValueType)
                 {
                     if (pRef == ParameterRef.Empty)
                     {
-                        WriteLine($"{objVar}.GetPrivate({fieldName}).Should().BeNull();");
+                        WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().BeNull();");
                     }
                     else
                     {
                         IReferenceTypeParameter p = pRef.Resolve<IReferenceTypeParameter>(set) ?? throw new Exception("Could not resolve the parameter.");
-                        if (p.GetIsNull())
+                        if (p.GetIsNull() && Context.Configuration.PreferLiteralsOverVariables)
                         {
-                            WriteLine($"{objVar}.GetPrivate({fieldName}).Should().BeNull();");
+                            WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().BeNull();");
                         }
                         else if (pRef.TryResolve(Context.BaseSet, out IParameter? baseFParam))
                         {
-                            WriteLine($"{objVar}.GetPrivate({fieldName}).Should().BeSameAs({GetExpression(baseFParam)});");
+                            WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().BeSameAs({GetExpression(baseFParam)});");
                         }
                         else
                         {
-                            // a value created during runtime && not null
-                            WriteLine($"{objVar}.GetPrivate({fieldName}).Should().NotBeNull();");
-                            WriteLine($"{objVar}.GetPrivate({fieldName}).Should().BeEquivalentTo({GetExpression(p)});");
+                            if (!p.GetIsNull())
+                            {
+                                WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().NotBeNull();");
+                            }
+                            WriteLine($"{objVar}.GetPrivate(\"{fieldName}\").Should().BeEquivalentTo({GetExpression(p)});");
                         }
                     }
                 }

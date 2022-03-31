@@ -4,6 +4,7 @@ using MMC.Data;
 using MMC.State;
 using System.Reflection;
 using System.Linq;
+using System;
 
 namespace dnWalker.NativePeers
 {
@@ -13,7 +14,9 @@ namespace dnWalker.NativePeers
 
         static SystemEnvironment()
         {
-            _getResourceStringMethodInfo = typeof(System.Environment)
+            Type systemResources = Type.GetType("System.SR");
+
+            _getResourceStringMethodInfo = systemResources
                 .GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Default)
                 .FirstOrDefault(m => m.Name == "GetResourceString" && m.GetParameters().Length == 1);
         }

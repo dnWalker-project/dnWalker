@@ -180,7 +180,7 @@ namespace TestNamespace
         public void PrimitiveValueReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("PrimitiveValueReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -202,7 +202,7 @@ namespace TestNamespace
             rv0.Value.Should().Be(10);
             rv1.Value.Should().Be(-1);
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("PrimitiveValueReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -384,26 +384,26 @@ namespace TestNamespace
             // Arrange variable: array
             int[] array = null;
 
-            // Arrange variable: var_0x7FFFFFF9
-            int var_0x7FFFFFF9 = 5;
+            // Arrange variable: int0
+            int int0 = 5;
 
-            // Arrange variable: var_0x7FFFFFFA
-            int var_0x7FFFFFFA = 4;
+            // Arrange variable: int1
+            int int1 = 4;
 
-            // Arrange variable: var_0x7FFFFFFB
-            int var_0x7FFFFFFB = 3;
+            // Arrange variable: int2
+            int int2 = 3;
 
-            // Arrange variable: var_0x7FFFFFFC
-            int var_0x7FFFFFFC = 2;
+            // Arrange variable: int3
+            int int3 = 2;
 
-            // Arrange variable: var_0x7FFFFFFD
-            int var_0x7FFFFFFD = 1;
+            // Arrange variable: int4
+            int int4 = 1;
 
-            // Arrange variable: var_0x7FFFFFFE
-            int var_0x7FFFFFFE = 0;
+            // Arrange variable: int5
+            int int5 = 0;
 
             // Arrange variable: expectedResult
-            int[] expectedResult = new int[6] { var_0x7FFFFFFE, var_0x7FFFFFFD, var_0x7FFFFFFC, var_0x7FFFFFFB, var_0x7FFFFFFA, var_0x7FFFFFF9 };
+            int[] expectedResult = new int[6] { int5, int4, int3, int2, int1, int0 };
 
             // act
             var result = ReturnValueSchema.ArrayOfPrimitives(array);
@@ -444,26 +444,26 @@ namespace TestNamespace
             // Arrange variable: array
             int[] array = new int[0];
 
-            // Arrange variable: var_0x7FFFFFF9
-            int var_0x7FFFFFF9 = 5;
+            // Arrange variable: int0
+            int int0 = 5;
 
-            // Arrange variable: var_0x7FFFFFFA
-            int var_0x7FFFFFFA = 4;
+            // Arrange variable: int1
+            int int1 = 4;
 
-            // Arrange variable: var_0x7FFFFFFB
-            int var_0x7FFFFFFB = 3;
+            // Arrange variable: int2
+            int int2 = 3;
 
-            // Arrange variable: var_0x7FFFFFFC
-            int var_0x7FFFFFFC = 2;
+            // Arrange variable: int3
+            int int3 = 2;
 
-            // Arrange variable: var_0x7FFFFFFD
-            int var_0x7FFFFFFD = 1;
+            // Arrange variable: int4
+            int int4 = 1;
 
-            // Arrange variable: var_0x7FFFFFFE
-            int var_0x7FFFFFFE = 0;
+            // Arrange variable: int5
+            int int5 = 0;
 
             // Arrange variable: expectedResult
-            int[] expectedResult = new int[6] { var_0x7FFFFFFE, var_0x7FFFFFFD, var_0x7FFFFFFC, var_0x7FFFFFFB, var_0x7FFFFFFA, var_0x7FFFFFF9 };
+            int[] expectedResult = new int[6] { int5, int4, int3, int2, int1, int0 };
 
             // act
             var result = ReturnValueSchema.ArrayOfPrimitives(array);
@@ -531,7 +531,7 @@ namespace TestNamespace
         public void ArrayOfPrimitiveValuesReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("ArrayOfPrimitiveValuesReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -545,7 +545,7 @@ namespace TestNamespace
             paths[1].Exception.Should().BeNull();
             paths[2].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("ArrayOfPrimitiveValuesReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -657,8 +657,8 @@ namespace TestNamespace
             // act
             ReturnValueSchema.ReferenceTypeValue(instance);
             // assert
-            instance.GetPrivate(ValueField).Should().Be(-1);
-            instance.GetPrivate(RefField).Should().BeSameAs(instance);
+            instance.GetPrivate(""ValueField"").Should().Be(-1);
+            instance.GetPrivate(""RefField"").Should().BeSameAs(instance);
         }
     }
 }",
@@ -734,16 +734,16 @@ namespace TestNamespace
             // Arrange variable: instance
             ReturnValueSchema instance = null;
 
-            // Arrange variable: var_out_0x7FFFFFFD
-            ReturnValueSchema var_out_0x7FFFFFFD = null;
+            // Arrange variable: returnValueSchema0
+            ReturnValueSchema returnValueSchema0 = null;
 
-            // Arrange variable: var_0x7FFFFFFE
-            int var_0x7FFFFFFE = 10;
+            // Arrange variable: int0
+            int int0 = 10;
 
             // Arrange variable: expectedResult
             ReturnValueSchema expectedResult = new ReturnValueSchema();
-            expectedResult.SetPrivate(""ValueField"", var_0x7FFFFFFE);
-            expectedResult.SetPrivate(""RefField"", var_out_0x7FFFFFFD);
+            expectedResult.SetPrivate(""ValueField"", int0);
+            expectedResult.SetPrivate(""RefField"", returnValueSchema0);
 
             // act
             var result = ReturnValueSchema.ReferenceTypeValue(instance);
@@ -768,12 +768,12 @@ namespace TestNamespace
         public void Test_1_Exception()
         {
             // arrange
-            // Arrange variable: var_0x00000002
-            int var_0x00000002 = 0;
+            // Arrange variable: int0
+            int int0 = 0;
 
             // Arrange variable: instance
             ReturnValueSchema instance = new ReturnValueSchema();
-            instance.SetPrivate(""ValueField"", var_0x00000002);
+            instance.SetPrivate(""ValueField"", int0);
 
             // act
             Action act = () => ReturnValueSchema.ReferenceTypeValue(instance);
@@ -785,12 +785,12 @@ namespace TestNamespace
         public void Test_2_ReturnValue()
         {
             // arrange
-            // Arrange variable: var_0x00000002
-            int var_0x00000002 = 0;
+            // Arrange variable: int0
+            int int0 = 0;
 
             // Arrange variable: instance
             ReturnValueSchema instance = new ReturnValueSchema();
-            instance.SetPrivate(""ValueField"", var_0x00000002);
+            instance.SetPrivate(""ValueField"", int0);
 
             // act
             var result = ReturnValueSchema.ReferenceTypeValue(instance);
@@ -803,12 +803,12 @@ namespace TestNamespace
         public void Test_3_FieldValues_0x00000001()
         {
             // arrange
-            // Arrange variable: expectedField_ValueField
-            int expectedField_ValueField = 0;
+            // Arrange variable: int0
+            int int0 = 0;
 
             // Arrange variable: instance
             ReturnValueSchema instance = new ReturnValueSchema();
-            instance.SetPrivate(""ValueField"", expectedField_ValueField);
+            instance.SetPrivate(""ValueField"", int0);
 
             // Arrange variable: expectedField_ValueField
             int expectedField_ValueField = -1;
@@ -816,8 +816,8 @@ namespace TestNamespace
             // act
             ReturnValueSchema.ReferenceTypeValue(instance);
             // assert
-            instance.GetPrivate(ValueField).Should().Be(expectedField_ValueField);
-            instance.GetPrivate(RefField).Should().BeSameAs(instance);
+            instance.GetPrivate(""ValueField"").Should().Be(expectedField_ValueField);
+            instance.GetPrivate(""RefField"").Should().BeSameAs(instance);
         }
     }
 }",
@@ -836,12 +836,12 @@ namespace TestNamespace
         public void Test_1_Exception()
         {
             // arrange
-            // Arrange variable: var_0x00000002
-            int var_0x00000002 = 5;
+            // Arrange variable: int0
+            int int0 = 5;
 
             // Arrange variable: instance
             ReturnValueSchema instance = new ReturnValueSchema();
-            instance.SetPrivate(""ValueField"", var_0x00000002);
+            instance.SetPrivate(""ValueField"", int0);
 
             // act
             Action act = () => ReturnValueSchema.ReferenceTypeValue(instance);
@@ -853,12 +853,12 @@ namespace TestNamespace
         public void Test_2_ReturnValue()
         {
             // arrange
-            // Arrange variable: var_0x00000002
-            int var_0x00000002 = 5;
+            // Arrange variable: int0
+            int int0 = 5;
 
             // Arrange variable: instance
             ReturnValueSchema instance = new ReturnValueSchema();
-            instance.SetPrivate(""ValueField"", var_0x00000002);
+            instance.SetPrivate(""ValueField"", int0);
 
             // Arrange variable: expectedResult
             ReturnValueSchema expectedResult = null;
@@ -873,7 +873,7 @@ namespace TestNamespace
         public void ReferenceTypeValuesReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("ReferenceTypeValuesReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -887,7 +887,7 @@ namespace TestNamespace
             paths[1].Exception.Should().BeNull();
             paths[2].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("ReferenceTypeValuesReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
@@ -910,7 +910,7 @@ namespace TestNamespace
 
         [Theory]
         [InlineData(new string[] 
-{ 
+{
 @"using FluentAssertions;
 using Xunit;
 using Moq;
@@ -936,18 +936,18 @@ namespace TestNamespace
         public void Test_2_ReturnValue()
         {
             // arrange
-            // Arrange variable: var_out_0x7FFFFFFB
-            ReturnValueSchema var_out_0x7FFFFFFB = new ReturnValueSchema();
-            var_out_0x7FFFFFFB.SetPrivate(""ValueField"", 5);
-            var_out_0x7FFFFFFB.SetPrivate(""RefField"", null);
+            // Arrange variable: returnValueSchema0
+            ReturnValueSchema returnValueSchema0 = new ReturnValueSchema();
+            returnValueSchema0.SetPrivate(""ValueField"", 5);
+            returnValueSchema0.SetPrivate(""RefField"", null);
 
-            // Arrange variable: var_out_0x7FFFFFFE
-            ReturnValueSchema var_out_0x7FFFFFFE = new ReturnValueSchema();
-            var_out_0x7FFFFFFE.SetPrivate(""ValueField"", 10);
-            var_out_0x7FFFFFFE.SetPrivate(""RefField"", null);
+            // Arrange variable: returnValueSchema1
+            ReturnValueSchema returnValueSchema1 = new ReturnValueSchema();
+            returnValueSchema1.SetPrivate(""ValueField"", 10);
+            returnValueSchema1.SetPrivate(""RefField"", null);
 
             // Arrange variable: expectedResult
-            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { var_out_0x7FFFFFFE, null, var_out_0x7FFFFFFB, null };
+            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { returnValueSchema1, null, returnValueSchema0, null };
 
             // act
             var result = ReturnValueSchema.ReferenceTypeArrayValue(null);
@@ -988,18 +988,18 @@ namespace TestNamespace
             // Arrange variable: array
             ReturnValueSchema[] array = new ReturnValueSchema[0];
 
-            // Arrange variable: var_out_0x7FFFFFFB
-            ReturnValueSchema var_out_0x7FFFFFFB = new ReturnValueSchema();
-            var_out_0x7FFFFFFB.SetPrivate(""ValueField"", 5);
-            var_out_0x7FFFFFFB.SetPrivate(""RefField"", null);
+            // Arrange variable: returnValueSchema0
+            ReturnValueSchema returnValueSchema0 = new ReturnValueSchema();
+            returnValueSchema0.SetPrivate(""ValueField"", 5);
+            returnValueSchema0.SetPrivate(""RefField"", null);
 
-            // Arrange variable: var_out_0x7FFFFFFE
-            ReturnValueSchema var_out_0x7FFFFFFE = new ReturnValueSchema();
-            var_out_0x7FFFFFFE.SetPrivate(""ValueField"", 10);
-            var_out_0x7FFFFFFE.SetPrivate(""RefField"", null);
+            // Arrange variable: returnValueSchema1
+            ReturnValueSchema returnValueSchema1 = new ReturnValueSchema();
+            returnValueSchema1.SetPrivate(""ValueField"", 10);
+            returnValueSchema1.SetPrivate(""RefField"", null);
 
             // Arrange variable: expectedResult
-            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { var_out_0x7FFFFFFE, null, var_out_0x7FFFFFFB, null };
+            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { returnValueSchema1, null, returnValueSchema0, null };
 
             // act
             var result = ReturnValueSchema.ReferenceTypeArrayValue(array);
@@ -1138,27 +1138,27 @@ namespace TestNamespace
             // Arrange variable: array
             ReturnValueSchema[] array = null;
 
-            // Arrange variable: var_0x7FFFFFFD
-            int var_0x7FFFFFFD = 10;
+            // Arrange variable: int0
+            int int0 = 10;
 
-            // Arrange variable: var_0x7FFFFFFA
-            int var_0x7FFFFFFA = 5;
+            // Arrange variable: int1
+            int int1 = 5;
 
-            // Arrange variable: var_out_0x7FFFFFFC
-            ReturnValueSchema var_out_0x7FFFFFFC = null;
+            // Arrange variable: returnValueSchema0
+            ReturnValueSchema returnValueSchema0 = null;
 
-            // Arrange variable: var_out_0x7FFFFFFB
-            ReturnValueSchema var_out_0x7FFFFFFB = new ReturnValueSchema();
-            var_out_0x7FFFFFFB.SetPrivate(""ValueField"", var_0x7FFFFFFA);
-            var_out_0x7FFFFFFB.SetPrivate(""RefField"", var_out_0x7FFFFFFC);
+            // Arrange variable: returnValueSchema1
+            ReturnValueSchema returnValueSchema1 = new ReturnValueSchema();
+            returnValueSchema1.SetPrivate(""ValueField"", int1);
+            returnValueSchema1.SetPrivate(""RefField"", returnValueSchema0);
 
-            // Arrange variable: var_out_0x7FFFFFFE
-            ReturnValueSchema var_out_0x7FFFFFFE = new ReturnValueSchema();
-            var_out_0x7FFFFFFE.SetPrivate(""ValueField"", var_0x7FFFFFFD);
-            var_out_0x7FFFFFFE.SetPrivate(""RefField"", var_out_0x7FFFFFFC);
+            // Arrange variable: returnValueSchema2
+            ReturnValueSchema returnValueSchema2 = new ReturnValueSchema();
+            returnValueSchema2.SetPrivate(""ValueField"", int0);
+            returnValueSchema2.SetPrivate(""RefField"", returnValueSchema0);
 
             // Arrange variable: expectedResult
-            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { var_out_0x7FFFFFFE, var_out_0x7FFFFFFC, var_out_0x7FFFFFFB, var_out_0x7FFFFFFC };
+            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { returnValueSchema2, returnValueSchema0, returnValueSchema1, returnValueSchema0 };
 
             // act
             var result = ReturnValueSchema.ReferenceTypeArrayValue(array);
@@ -1199,27 +1199,27 @@ namespace TestNamespace
             // Arrange variable: array
             ReturnValueSchema[] array = new ReturnValueSchema[0];
 
-            // Arrange variable: var_0x7FFFFFFD
-            int var_0x7FFFFFFD = 10;
+            // Arrange variable: int0
+            int int0 = 10;
 
-            // Arrange variable: var_0x7FFFFFFA
-            int var_0x7FFFFFFA = 5;
+            // Arrange variable: int1
+            int int1 = 5;
 
-            // Arrange variable: var_out_0x7FFFFFFC
-            ReturnValueSchema var_out_0x7FFFFFFC = null;
+            // Arrange variable: returnValueSchema0
+            ReturnValueSchema returnValueSchema0 = null;
 
-            // Arrange variable: var_out_0x7FFFFFFB
-            ReturnValueSchema var_out_0x7FFFFFFB = new ReturnValueSchema();
-            var_out_0x7FFFFFFB.SetPrivate(""ValueField"", var_0x7FFFFFFA);
-            var_out_0x7FFFFFFB.SetPrivate(""RefField"", var_out_0x7FFFFFFC);
+            // Arrange variable: returnValueSchema1
+            ReturnValueSchema returnValueSchema1 = new ReturnValueSchema();
+            returnValueSchema1.SetPrivate(""ValueField"", int1);
+            returnValueSchema1.SetPrivate(""RefField"", returnValueSchema0);
 
-            // Arrange variable: var_out_0x7FFFFFFE
-            ReturnValueSchema var_out_0x7FFFFFFE = new ReturnValueSchema();
-            var_out_0x7FFFFFFE.SetPrivate(""ValueField"", var_0x7FFFFFFD);
-            var_out_0x7FFFFFFE.SetPrivate(""RefField"", var_out_0x7FFFFFFC);
+            // Arrange variable: returnValueSchema2
+            ReturnValueSchema returnValueSchema2 = new ReturnValueSchema();
+            returnValueSchema2.SetPrivate(""ValueField"", int0);
+            returnValueSchema2.SetPrivate(""RefField"", returnValueSchema0);
 
             // Arrange variable: expectedResult
-            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { var_out_0x7FFFFFFE, var_out_0x7FFFFFFC, var_out_0x7FFFFFFB, var_out_0x7FFFFFFC };
+            ReturnValueSchema[] expectedResult = new ReturnValueSchema[4] { returnValueSchema2, returnValueSchema0, returnValueSchema1, returnValueSchema0 };
 
             // act
             var result = ReturnValueSchema.ReferenceTypeArrayValue(array);
@@ -1274,16 +1274,16 @@ namespace TestNamespace
             // Arrange variable: array
             ReturnValueSchema[] array = new ReturnValueSchema[1] { null };
 
-            // Arrange variable: var_out_0x7FFFFFFD
-            ReturnValueSchema var_out_0x7FFFFFFD = null;
+            // Arrange variable: returnValueSchema0
+            ReturnValueSchema returnValueSchema0 = null;
 
-            // Arrange variable: var_0x7FFFFFFE
-            int var_0x7FFFFFFE = -1;
+            // Arrange variable: int0
+            int int0 = -1;
 
             // Arrange variable: expectedElement_0
             ReturnValueSchema expectedElement_0 = new ReturnValueSchema();
-            expectedElement_0.SetPrivate(""ValueField"", var_0x7FFFFFFE);
-            expectedElement_0.SetPrivate(""RefField"", var_out_0x7FFFFFFD);
+            expectedElement_0.SetPrivate(""ValueField"", int0);
+            expectedElement_0.SetPrivate(""RefField"", returnValueSchema0);
 
             // act
             ReturnValueSchema.ReferenceTypeArrayValue(array);
@@ -1337,7 +1337,7 @@ namespace TestNamespace
         public void ReferenceTypeArrayValuesReturn(string[] expected, bool preferLiteralsOverVariables)
         {
             IExplorer explorer = GetConcolicExplorerBuilder()
-                .ExportXmlData("test")
+                .ExportXmlData("ReferenceTypeArrayValuesReturn")
                 .SetMaxIterations(10)
                 .Build();
 
@@ -1352,7 +1352,7 @@ namespace TestNamespace
             paths[2].Exception.Should().BeNull();
             paths[3].Exception.Should().BeNull();
 
-            string xmlData = System.IO.File.ReadAllText("test.xml");
+            string xmlData = System.IO.File.ReadAllText("ReferenceTypeArrayValuesReturn.xml");
 
             ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
 
