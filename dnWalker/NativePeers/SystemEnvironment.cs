@@ -23,7 +23,7 @@ namespace dnWalker.NativePeers
 
         public static string GetResourceString(string key)
         {
-            var resourceValue = _getResourceStringMethodInfo.Invoke(null, new object[] { key });
+            var resourceValue = _getResourceStringMethodInfo?.Invoke(null, new object[] { key });// ?? string.Empty;
             return (string)resourceValue;
         }
 
