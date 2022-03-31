@@ -74,31 +74,31 @@ namespace dnWalker.Parameters
 
         private static IDataElement CreateDataElement(IStringParameter stringParameter, ExplicitActiveState cur)
         {
-            //if (stringParameter.GetIsNull())
-            //{
-            //    return new ConstantString(null);
-            //}
-            //else
-            //{
-            //    return new ConstantString(stringParameter.Value ?? string.Empty);
-            //}
-            //ConstantString stringDataElement = new ConstantString(stringParameter?.Value);
-            //return stringDataElement;
-
-            bool isNull = stringParameter.GetIsNull();
-            if (isNull)
+            if (stringParameter.GetIsNull())
             {
-                ObjectReference objectReference = new ObjectReference(0);
-                return objectReference;
+                return new ConstantString(null);
             }
             else
             {
-                ObjectReference stringReference = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(false), stringParameter.Type.ToTypeDefOrRef());
-                AllocatedObject stringObject = (AllocatedObject)cur.DynamicArea.Allocations[stringReference];
-                stringObject.Fields[0] = new Int4(stringParameter.Value?.Length ?? 0);
-                stringObject.Fields[1] = new ConstantString(stringParameter.Value);
-                return stringReference;
+                return new ConstantString(stringParameter.Value ?? string.Empty);
             }
+            ConstantString stringDataElement = new ConstantString(stringParameter?.Value);
+            return stringDataElement;
+
+            //bool isNull = stringParameter.GetIsNull();
+            //if (isNull)
+            //{
+            //    ObjectReference objectReference = new ObjectReference(0);
+            //    return objectReference;
+            //}
+            //else
+            //{
+            //    ObjectReference stringReference = cur.DynamicArea.AllocateObject(cur.DynamicArea.DeterminePlacement(false), stringParameter.Type.ToTypeDefOrRef());
+            //    AllocatedObject stringObject = (AllocatedObject)cur.DynamicArea.Allocations[stringReference];
+            //    stringObject.Fields[0] = new Int4(stringParameter.Value?.Length ?? 0);
+            //    stringObject.Fields[1] = new ConstantString(stringParameter.Value);
+            //    return stringReference;
+            //}
         }
 
         private static IDataElement CreateDataElement(IArrayParameter arrayParameter, ExplicitActiveState cur)

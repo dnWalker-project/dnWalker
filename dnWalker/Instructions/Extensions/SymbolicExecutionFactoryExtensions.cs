@@ -25,6 +25,9 @@ namespace dnWalker.Instructions.Extensions
             // math methods
             factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.SystemMath());
 
+            // strings
+            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.SystemString());
+
             return factory;
         }
     }
