@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Math
+namespace dnWalker.Tests.ExampleTests.ReleaseMode.Features.MathOperations
 {
-    public class InputTests : DebugExamplesTestBase
+    public class InputTests : ReleaseExamplesTestBase
     {
         public InputTests(Xunit.Abstractions.ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
@@ -22,7 +22,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Math
         public void Foo()
         {
             IExplorer explorer = GetConcolicExplorerBuilder().Build();
-            explorer.Run("Examples.Concolic.Features.Math.Input.foo");
+            explorer.Run("Examples.Concolic.Features.MathOperations.Input.foo");
 
             var paths = explorer.PathStore.Paths;
 
@@ -42,7 +42,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Math
         public void Bar()
         {
             IExplorer explorer = GetConcolicExplorerBuilder().Build();
-            explorer.Run("Examples.Concolic.Features.Math.Input.bar");
+            explorer.Run("Examples.Concolic.Features.MathOperations.Input.bar");
 
             var paths = explorer.PathStore.Paths;
 

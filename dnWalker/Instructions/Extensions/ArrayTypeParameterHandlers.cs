@@ -121,4 +121,54 @@ namespace dnWalker.Instructions.Extensions
             return;
         }
     }
+
+    public class STELEM_ParameterHandler : IPreExecuteInstructionExtension
+    {
+        private static readonly Type[] _instructions = new Type[]
+        {
+            typeof(STELEM)
+        };
+
+        public IEnumerable<Type> SupportedInstructions
+        {
+            get
+            {
+                return _instructions;
+            }
+        }
+
+        public void PreExecute(InstructionExecBase instruction, ExplicitActiveState cur)
+        {
+            // check whether the there are any parametrized data
+            if (cur.TryGetParameterStore(out ParameterStore _))
+            {
+                // peek for the value to store, index and the array
+                IDataElement val = cur.EvalStack.Peek();
+                int idx = ((Int4)cur.EvalStack.Peek(1)).Value;
+                ObjectReference array = (ObjectReference)cur.EvalStack.Peek(2);
+                
+                if (array.IsNull())
+                {
+                    // the array itself is a null => return, let the default behaviour throw null reference.
+                    return;
+                }
+
+                // check whether the array is parametrized
+                if (array.TryGetParameter(cur, out IArrayParameter arrParameter))
+                {
+                    if (val is ObjectReference or && or.HashCode == ObjectReference.Null.HashCode)
+                    {
+                        // the val is the GLOBAL null (ObjectReference.Null) => the GetOrCreate would actually associate the global NULL with one concrete parameter instance
+                        // we need to avoid this => pop it and push there a new, unique NULL value
+                        val = new ObjectReference(0);
+                        cur.EvalStack.Pop();
+                        cur.EvalStack.Push(1);
+                    }
+
+                    // update the array parameter in the execution set
+                    arrParameter.SetItem(idx, val.GetOrCreateParameter(cur, arrParameter.ElementType));
+                }
+            }
+        }
+    }
 }
