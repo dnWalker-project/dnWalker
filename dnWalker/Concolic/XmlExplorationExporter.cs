@@ -1,4 +1,6 @@
-﻿using dnWalker.Parameters;
+﻿using dnWalker.Explorations;
+using dnWalker.Explorations.Xml;
+using dnWalker.Parameters;
 using dnWalker.Parameters.Serialization.Xml;
 using dnWalker.Parameters.Xml;
 
@@ -13,24 +15,21 @@ namespace dnWalker.Concolic
 {
     public class XmlExplorationExporter : IExplorationExtension
     {
-        private Explorer _explorer;
+        private IExplorer _explorer;
         private readonly string _file;
 
-        private readonly XElement _rootElement;
-        private XElement _currentExplorationElement;
-        private XElement _currentIterationElement;
+        private ConcolicExploration.Builder _currentExploration;
+        private ConcolicExplorationIteration.Builder _currentIteration;
 
-        private string _currentSUTName = "";
+        // TODO: disgusting hidden dependency!
+        private readonly XmlExplorationSerializer _serializer = new XmlExplorationSerializer();
 
         public XmlExplorationExporter(string file)
         {
             _file = file;
-
-
-            _rootElement = new XElement("Explorations");
         }
 
-        public void Register(Explorer explorer)
+        public void Register(IExplorer explorer)
         {
             _explorer = explorer;
             _explorer.ExplorationStarted += OnExplorationStarted;
@@ -41,7 +40,7 @@ namespace dnWalker.Concolic
             _explorer.IterationFinished += OnIterationFinished;
         }
 
-        public void Unregister(Explorer explorer)
+        public void Unregister(IExplorer explorer)
         {
             _explorer.ExplorationStarted -= OnExplorationStarted;
             _explorer.ExplorationFinished -= OnExplorationFinished;
@@ -51,76 +50,77 @@ namespace dnWalker.Concolic
             _explorer.IterationFinished -= OnIterationFinished;
         }
 
-
-        private void SaveData()
+        public bool SaveIntermidiateData
         {
-            string outFile = _file;
+            get;
+            set;
+        } = false;
 
-            // TODO: setup proper placeholders...
-            if (outFile.Contains('{'))
+        private void TrySaveData(bool fullData = false)
+        {
+            if (fullData || SaveIntermidiateData)
             {
-                outFile = outFile.Replace("{SUT}", _currentSUTName);
-            }
 
-            _rootElement.Save(outFile);
+                string outFile = _file;
+
+                _serializer.ToXml(_currentExploration.Build()).Save(outFile);
+            }
         }
 
         private void OnExplorationStarted(object sender, ExplorationStartedEventArgs e)
         {
-            _currentSUTName = e.Method.Name;
-
             // create a new exploration element
-            _currentExplorationElement = new XElement("Exploration");
-            _currentExplorationElement.SetAttributeValue("AssemblyName", e.AssemblyName);
-            _currentExplorationElement.SetAttributeValue("AssemblyFileName", e.AssemblyFileName);
-            _currentExplorationElement.SetAttributeValue("MethodSignature", e.MethodSignature);
-            _currentExplorationElement.SetAttributeValue("IsStatic", e.IsStatic);
-            _currentExplorationElement.SetAttributeValue("Solver", e.SolverType.FullName);
-            _currentExplorationElement.SetAttributeValue("StartedAt", DateTime.Now.ToString());
+            _currentExploration = new ConcolicExploration.Builder();
 
-            _rootElement.Add(_currentExplorationElement);
+            _currentExploration.AssemblyName = e.AssemblyName;
+            _currentExploration.AssemblyFileName = e.AssemblyFileName;
+            _currentExploration.MethodSignature = e.MethodSignature;
+            _currentExploration.Solver = e.SolverType.FullName;
+            _currentExploration.Start = DateTime.Now;
 
-            SaveData();
+            TrySaveData();
         }
 
         private void OnExplorationFinished(object sender, ExplorationFinishedEventArgs e)
         {
-            _currentExplorationElement.SetAttributeValue("FinishedAt", DateTime.Now.ToString());
-            SaveData();
-
-            _currentSUTName = "";
+            _currentExploration.End = DateTime.Now;
+            TrySaveData(true);
+            _currentExploration = null;
         }
 
         private void OnExplorationFailed(object sender, ExplorationFailedEventArgs e)
         {
-            _currentExplorationElement.SetAttributeValue("Failed", true);
-            SaveData();
-
-            _currentSUTName = "";
+            _currentExploration.Failed = true;
+            TrySaveData(true);
+            _currentExploration = null;
         }
 
         private void OnIterationStarted(object sender, IterationStartedEventArgs e)
         {
-            XmlSerializer serializer = new XmlSerializer();
+            _currentIteration = new ConcolicExplorationIteration.Builder();
+            _currentIteration.IterationNumber = e.IterationNmber;
+            _currentIteration.Start = DateTime.Now;
 
-            _currentIterationElement = new XElement("Iteration");
-            _currentIterationElement.SetAttributeValue("Number", e.IterationNmber);
-
-            _currentIterationElement.Add(serializer.ToXml(e.ParameterStore.BaseSet));
-
-
-            _currentExplorationElement.Add(_currentIterationElement);
-
-            SaveData();
+            TrySaveData();
         }
 
         private void OnIterationFinished(object sender, IterationFinishedEventArgs e)
         {
-            XmlSerializer serializer = new XmlSerializer();
+            XmlParameterSetInfo baseSetInfo = XmlParameterSetInfo.FromSet(e.ParameterStore.BaseSet);
+            XmlParameterSetInfo execSetInfo = XmlParameterSetInfo.FromSet(e.ParameterStore.ExecutionSet);
 
-            _currentIterationElement.Add(serializer.ToXml(e.ParameterStore.ExecutionSet));
+            _currentIteration.BaseParameterSet = baseSetInfo;
+            _currentIteration.ExecutionParameterSet = execSetInfo;
+            _currentIteration.PathConstraint = e.ExploredPath.PathConstraintString; //GetConstraintStringWithAccesses(e.ParameterStore.ExecutionSet);
+            _currentIteration.End = DateTime.Now;
 
-            SaveData();
+            _currentIteration.StandardOutput = e.ExploredPath.Output ?? string.Empty;
+            _currentIteration.ErrorOutput = string.Empty;
+            _currentIteration.Exception = e.ExploredPath.Exception?.Type.FullName ?? string.Empty;
+
+            _currentExploration.Iterations.Add(_currentIteration);
+
+            TrySaveData();
         }
     }
 

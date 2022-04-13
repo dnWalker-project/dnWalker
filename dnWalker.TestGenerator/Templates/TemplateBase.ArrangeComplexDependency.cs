@@ -12,7 +12,7 @@ namespace dnWalker.TestGenerator.Templates
 {
     public partial class TemplateBase
     {
-        private protected void WriteArrangeComplesDepencency(ComplexDependency complexDependency)
+        private protected void WriteArrangeComplexDependency(ComplexDependency complexDependency)
         {
             // there should be only:
             // - struct types
@@ -183,7 +183,7 @@ namespace dnWalker.TestGenerator.Templates
 
                         Write("(");
 
-                        WriteJoined(TemplateHelpers.Coma, method.Parameters,
+                        WriteJoined(TemplateHelpers.Coma, method.ParameterTypes,
                             t =>
                             {
                                 Write("It.Any<");
@@ -237,6 +237,8 @@ namespace dnWalker.TestGenerator.Templates
 
                 WriteLine(String.Empty);
             }
+
+            WriteLine(string.Empty);
         }
     }
 }

@@ -127,7 +127,7 @@ namespace dnWalker.Parameters
 
             int length = allocatedArray.Fields.Length;
 
-            IArrayParameter parameter = context.CreateArrayParameter(new TypeSignature(elementSig.ToTypeDefOrRef()), length, false);
+            IArrayParameter parameter = context.CreateArrayParameter(elementSig, isNull: false, length: length);
             for (int i = 0; i < length; ++i)
             {
                 parameter.SetItem(i, GetOrCreateParameter(allocatedArray.Fields[i], cur, elementSig));
@@ -178,68 +178,68 @@ namespace dnWalker.Parameters
                 throw new InvalidOperationException("Cannot create a new parameter without the parameter store!");
             }
 
-            IParameterSet context = store.ExecutionSet;
+            IParameterSet set = store.ExecutionSet;
             IPrimitiveValueParameter parameter;
 
             switch (expectedTypeName)
             {
                 case "System.Boolean":
-                    parameter = context.CreateBooleanParameter();
+                    parameter = set.CreateBooleanParameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.Byte":
-                    parameter = context.CreateByteParameter();
+                    parameter = set.CreateByteParameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.SByte":
-                    parameter = context.CreateSByteParameter();
+                    parameter = set.CreateSByteParameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.Int16":
-                    parameter = context.CreateInt16Parameter();
+                    parameter = set.CreateInt16Parameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.Int32":
-                    parameter = context.CreateInt32Parameter();
+                    parameter = set.CreateInt32Parameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.Int64":
-                    parameter = context.CreateInt64Parameter();
+                    parameter = set.CreateInt64Parameter();
                     parameter.Value = dataElement.ToInt8(false).Value;
                     break;
 
                 case "System.UInt16":
-                    parameter = context.CreateUInt16Parameter();
+                    parameter = set.CreateUInt16Parameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.UInt32":
-                    parameter = context.CreateUInt32Parameter();
+                    parameter = set.CreateUInt32Parameter();
                     parameter.Value = dataElement.ToUnsignedInt4(false).Value;
                     break;
 
                 case "System.UInt64":
-                    parameter = context.CreateUInt64Parameter();
+                    parameter = set.CreateUInt64Parameter();
                     parameter.Value = dataElement.ToUnsignedInt8(false).Value;
                     break;
 
                 case "System.Char":
-                    parameter = context.CreateCharParameter();
+                    parameter = set.CreateCharParameter();
                     parameter.Value = dataElement.ToInt4(false).Value;
                     break;
 
                 case "System.Single":
-                    parameter = context.CreateSingleParameter();
+                    parameter = set.CreateSingleParameter();
                     parameter.Value = dataElement.ToFloat4(false).Value;
                     break;
 
                 case "System.Double":
-                    parameter = context.CreateDoubleParameter();
+                    parameter = set.CreateDoubleParameter();
                     parameter.Value = dataElement.ToFloat8(false).Value;
                     break;
 

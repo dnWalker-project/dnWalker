@@ -132,28 +132,35 @@ namespace dnWalker.Parameters
             //return false;
         }
 
-        public static string GetAccessString(this IParameter parameter)
+        [Obsolete("Doesn't work with circular dependencies!!!!")]
+        public static string GetAccessString(this IParameter parameter, IDictionary<ParameterRef, string>? accessContext = null)
         {
+            if (accessContext == null) accessContext = new Dictionary<ParameterRef,string>();
+
+            if (accessContext.TryGetValue(parameter.Reference, out string? accessString)) return accessString;
+
             //if (parameter.Accessor == null) return string.Empty;
 
             //return parameter.Accessor.GetAccessString(parameter.Context);
 
             // build access string for all accessor and pick the shortest non empty one
-            IEnumerable<string> accessStrings = parameter.Accessors.Select(a => a.GetAccessString(parameter.Set)).Where(s => !string.IsNullOrWhiteSpace(s));
+            IEnumerable<string> accessStrings = parameter.Accessors.Select(a => a.GetAccessString(parameter.Set, accessContext)).Where(s => !string.IsNullOrWhiteSpace(s));
 
-            string shortest = "";
+            accessString = "";
             int lenght = int.MaxValue;
 
-            foreach (string accessString in accessStrings)
+            foreach (string acc in accessStrings)
             {
-                if (accessString.Length < lenght)
+                if (acc.Length < lenght)
                 {
-                    shortest = accessString;
-                    lenght = accessString.Length;
+                    accessString = acc;
+                    lenght = acc.Length;
                 }
             }
 
-            return shortest;
+            accessContext[parameter.Reference] = accessString;
+
+            return accessString;
         }
     }
 }

@@ -18,9 +18,14 @@ namespace dnWalker.TestGenerator.Templates
         {
             IParameter p = simpleDependency.Parameter;
 
+            if (Context.Configuration.PreferLiteralsOverVariables && 
+                (p is IPrimitiveValueParameter || (p is IReferenceTypeParameter rp && rp.GetIsNull())))
+            {
+                return;
+            }
+
             string varName = GetVariableName(p);
             WriteLine($"// Arrange variable: {varName}");
-
 
             if (p is IPrimitiveValueParameter pp)
             {
@@ -34,6 +39,7 @@ namespace dnWalker.TestGenerator.Templates
             {
                 WriteArrangeObjectParameter(op);
             }
+            WriteLine(string.Empty);
         }
 
         private void WriteArrangePrimitiveValueParameter(IPrimitiveValueParameter pp)
@@ -44,7 +50,7 @@ namespace dnWalker.TestGenerator.Templates
             WriteVariableDeclaration(varType, varName);
             Write(" = ");
 
-            Write(GetExpression(pp));
+            Write(pp.Value?.ToString() ?? TemplateHelpers.GetDefaultLiteral(pp.Type));
             WriteLine(TemplateHelpers.Semicolon);
         }
 
@@ -72,8 +78,12 @@ namespace dnWalker.TestGenerator.Templates
                 Write("]");
                 if (ap.GetLength() > 0)
                 {
+                    string defaultLiteral = TemplateHelpers.GetDefaultLiteral(elementType);
+
                     Write(" { ");
-                    WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
+                    WriteJoined(TemplateHelpers.Coma, ap.GetItems().Select(r => r == ParameterRef.Empty ?
+                     defaultLiteral : 
+                     GetExpression(r.Resolve(ap.Set) ?? throw new Exception("Could not resolve the parameter."))), Write);
                     Write(" }");
                 }
                 WriteLine(TemplateHelpers.Semicolon);
@@ -189,7 +199,7 @@ namespace dnWalker.TestGenerator.Templates
 
                 Write("(");
 
-                WriteJoined(TemplateHelpers.Coma, method.Parameters,
+                WriteJoined(TemplateHelpers.Coma, method.ParameterTypes,
                     t =>
                     {
                         Write("It.Any<");

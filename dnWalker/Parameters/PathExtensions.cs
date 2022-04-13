@@ -38,15 +38,15 @@ namespace dnWalker.Parameters
                             name = _context.Parameters[valueOfExpr.Operand].GetAccessString();
                             break;
 
-                        case IsNullParameterExpression isNullExpr: break;
+                        case IsNullParameterExpression isNullExpr:
                             name = _context.Parameters[isNullExpr.Operand].GetAccessString();
                             break;
 
-                        case LengthOfParameterExpression lengthOfExpr: break;
+                        case LengthOfParameterExpression lengthOfExpr:
                             name = _context.Parameters[lengthOfExpr.Operand].GetAccessString();
                             break;
 
-                        case RefEqualsParameterExpression refEqualsExpr: break;
+                        case RefEqualsParameterExpression refEqualsExpr:
                             Expression lhsExpr = Expression.Parameter(typeof(object), _context.Parameters[refEqualsExpr.LeftOperand].GetAccessString());
                             Expression rhsExpr = Expression.Parameter(typeof(object), _context.Parameters[refEqualsExpr.RightOperand].GetAccessString());
 
@@ -65,7 +65,9 @@ namespace dnWalker.Parameters
 
         public static string GetConstraintStringWithAccesses(this Path path, IParameterSet context)
         {
-            return path.PathConstraint.SubstitueRefWithAccess(context).ToString();
+            if (path.PathConstraint == null) return string.Empty;
+
+            return path.PathConstraint.SubstitueRefWithAccess(context)?.ToString();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace dnWalker.Parameters
     /// </summary>
     public abstract class ParameterAccessor
     {
-        public abstract string GetAccessString(IParameterSet context);
+        public abstract string GetAccessString(IParameterSet context, IDictionary<ParameterRef, string>? accessContext = null);
 
         public abstract ParameterAccessor Clone();
 
@@ -40,16 +40,23 @@ namespace dnWalker.Parameters
     {
         public string FieldName { get; }
 
+        
 
         public FieldParameterAccessor(string fieldName, ParameterRef parent) : base(parent)
         {
             FieldName = fieldName;
         }
 
-        public override string GetAccessString(IParameterSet context)
+        public override string GetAccessString(IParameterSet set, IDictionary<ParameterRef, string>? accessContext = null)
         {
-            context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
-            return $"{parent?.GetAccessString() ?? string.Empty}.{FieldName}";
+            accessContext = accessContext ?? new Dictionary<ParameterRef,string>();
+
+            if (!accessContext.TryGetValue(ParentRef, out string? parentAccess))
+            {
+                parentAccess = ParentRef.Resolve(set)?.GetAccessString(accessContext) ?? string.Empty;
+            }
+
+            return $"{parentAccess}.{FieldName}";
         }
 
         public override FieldParameterAccessor Clone()
@@ -72,10 +79,16 @@ namespace dnWalker.Parameters
             Index = index;
         }
 
-        public override string GetAccessString(IParameterSet context)
+        public override string GetAccessString(IParameterSet set, IDictionary<ParameterRef, string>? accessContext = null)
         {
-            context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
-            return $"{parent?.GetAccessString() ?? string.Empty}[{Index}]";
+            accessContext = accessContext ?? new Dictionary<ParameterRef, string>();
+
+            if (!accessContext.TryGetValue(ParentRef, out string? parentAccess))
+            {
+                parentAccess = ParentRef.Resolve(set)?.GetAccessString(accessContext) ?? string.Empty;
+            }
+
+            return $"{parentAccess}[{Index}]";
         }
 
         public override ItemParameterAccessor Clone()
@@ -100,10 +113,15 @@ namespace dnWalker.Parameters
             Invocation = invocation;
         }
 
-        public override string GetAccessString(IParameterSet context)
+        public override string GetAccessString(IParameterSet set, IDictionary<ParameterRef, string>? accessContext = null)
         {
-            context.Parameters.TryGetValue(ParentRef, out IParameter? parent);
-            return $"{parent?.GetAccessString() ?? string.Empty}.{MethodSignature.Name}({string.Join(',', MethodSignature.Parameters.Select(p => p.FullName))})|{Invocation}|";
+            accessContext = accessContext ?? new Dictionary<ParameterRef, string>();
+
+            if (!accessContext.TryGetValue(ParentRef, out string? parentAccess))
+            {
+                parentAccess = ParentRef.Resolve(set)?.GetAccessString(accessContext) ?? string.Empty;
+            }
+            return $"{parentAccess}.{MethodSignature.Name}({string.Join(',', MethodSignature.ParameterTypes.Select(p => p.FullName))})|{Invocation}|";
 
         }
 
@@ -127,7 +145,7 @@ namespace dnWalker.Parameters
             Expression = name;
         }
 
-        public override string GetAccessString(IParameterSet context)
+        public override string GetAccessString(IParameterSet context, IDictionary<ParameterRef, string>? accessContext = null)
         {
             return Expression;
         }

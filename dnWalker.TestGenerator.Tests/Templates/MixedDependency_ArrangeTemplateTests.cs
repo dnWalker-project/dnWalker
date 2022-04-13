@@ -23,6 +23,8 @@ namespace dnWalker.TestGenerator.Tests.Templates
             public MixedDependencyArrangeTemplate(IReadOnlyParameterSet set)
             {
                 _set = set;
+
+                Initialize(BuildContext(set.Context, set, new ParameterSet(set.Context)));
             }
 
             public override string TransformText()

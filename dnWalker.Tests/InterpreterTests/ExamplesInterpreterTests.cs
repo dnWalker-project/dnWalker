@@ -16,8 +16,8 @@ namespace dnWalker.Tests.InterpreterTests
     [Trait("Category", "Interpreter")]
     public class ExamplesInterpreterTests : InterpreterTestBase
     {
-        //protected const string ExamplesAssemblyFileFormat = @"..\..\..\..\Examples\bin\{0}\net5.0\Examples.dll";
-        protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\framework\Examples.Framework.exe";
+        //protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\net5.0\Examples.dll";
+        protected const string AssemblyFilePath = @"..\..\..\..\Examples\bin\Release\net48\Examples.dll";
 
         protected static Lazy<DefinitionProvider> LazyDefinitionProvider = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)));
 

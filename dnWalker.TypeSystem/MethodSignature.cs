@@ -51,6 +51,14 @@ namespace dnWalker.TypeSystem
             }
         }
 
+        public bool IsStatic
+        {
+            get
+            {
+                return _method.ResolveMethodDefThrow().IsStatic;
+            }
+        }
+
         public bool IsGenericInstance
         {
             get
@@ -108,11 +116,19 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        public TypeSignature[] Parameters
+        public TypeSignature[] ParameterTypes
         {
             get
             {
                 return _method.GetParams().Select(ts => new TypeSignature(ts.ToTypeDefOrRef())).ToArray();
+            }
+        }
+
+        public string[] ParameterNames
+        {
+            get
+            {
+                return _method.ResolveMethodDefThrow().Parameters.Select(p => p.Name).ToArray();
             }
         }
 

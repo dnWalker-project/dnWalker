@@ -18,3 +18,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("f86bd250-a1ec-463d-9ec8-b2802b52a50d")]
 
 [assembly: InternalsVisibleTo("dnWalker.TestGenerator.Tests")]
+[assembly: InternalsVisibleTo("dnWalker.Tests")]

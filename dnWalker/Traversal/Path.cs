@@ -210,7 +210,7 @@ namespace dnWalker.Traversal
             }
         }
 
-        public string Exception { get; private set; }
+        public ExceptionInfo Exception { get; private set; }
 
         public string StackTrace { get; private set; }
 
@@ -233,7 +233,7 @@ namespace dnWalker.Traversal
 
             if (threadState.UnhandledException != null)
             {
-                Exception = threadState.UnhandledException.Message;
+                Exception = threadState.UnhandledException;//.Message;
                 StackTrace = threadState.CallStack.ToString();
             }
 
