@@ -37,9 +37,12 @@ namespace dnWalker.Instructions.Extensions.Parameters
             IParameter valueParameter = null;
 
             // no parameter system is available or both the object and the value to store is not parametrized
-            if (!cur.TryGetParameterStore(out ParameterStore store) ||
-                (!objectReference.TryGetParameter(cur, out objectParameter) &&
-                 !valueToStore.TryGetParameter(cur, out valueParameter)))
+            cur.TryGetParameterStore(out ParameterStore store);
+            objectReference.TryGetParameter(cur, out objectParameter);
+            valueToStore.TryGetParameter(cur, out valueParameter);
+
+            if (store == null || 
+                (objectParameter == null && valueParameter == null))
             {
                 return next(instruction, cur);
             }

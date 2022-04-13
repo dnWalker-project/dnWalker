@@ -41,10 +41,11 @@ namespace dnWalker.Instructions.Extensions.Parameters
 
             if (cur.TryGetParameterStore(out ParameterStore store))
             {
-                dataElement.TryGetParameter(cur, out IArrayParameter arrayParameter);
-
-                IDataElement result = cur.EvalStack.Peek();
-                result.SetExpression(arrayParameter.GetLengthExpression(cur), cur);
+                if (dataElement.TryGetParameter(cur, out IArrayParameter arrayParameter))
+                {
+                    IDataElement result = cur.EvalStack.Peek();
+                    result.SetExpression(arrayParameter.GetLengthExpression(cur), cur);
+                }
             }
 
             return retValue;

@@ -31,8 +31,10 @@ namespace dnWalker.Instructions.Extensions.Parameters
         {
             ObjectReference objectReference = (ObjectReference)cur.EvalStack.Peek(0);
 
-            if (!cur.TryGetParameterStore(out ParameterStore store) ||
-                !objectReference.TryGetParameter(cur, out IObjectParameter objectParameter))
+            cur.TryGetParameterStore(out ParameterStore store);
+            objectReference.TryGetParameter(cur, out IObjectParameter objectParameter);
+
+            if (store == null || objectParameter == null)
             {
                 return next(instruction, cur);
             }
@@ -73,7 +75,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
                         IParameter baseFieldParameter = store.BaseSet.CreateParameter(field.FieldType);
                         baseObjectParameter.SetField(field.Name, baseFieldParameter);
 
-                        fieldParameter = baseFieldParameter.CloneData(store.ExecutionSet);
+                        fieldParameter = baseFieldParameter.Clone(store.ExecutionSet);
                     }
                     else
                     {

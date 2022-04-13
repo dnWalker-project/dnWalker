@@ -35,6 +35,11 @@ namespace dnWalker.Parameters
             {
                 clone.Accessors.Add(a.Clone());
             }
+            newContext.Parameters.Add(clone.Reference, clone);
+            foreach (var ra in this.Accessors.OfType<RootParameterAccessor>())
+            {
+                newContext.Roots[ra.Expression] = clone.Reference;
+            }
             return clone;
         }
 

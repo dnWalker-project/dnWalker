@@ -52,8 +52,11 @@ namespace dnWalker.Instructions.Extensions.Parameters
             ObjectReference arrayReference = (ObjectReference)cur.EvalStack.Peek(1);
 
             // no parameter system is available or the array is not parametrized
-            if (!cur.TryGetParameterStore(out ParameterStore store) ||
-                !arrayReference.TryGetParameter(cur, out IArrayParameter arrayParameter))
+            cur.TryGetParameterStore(out var store);
+            arrayReference.TryGetParameter(cur, out IArrayParameter arrayParameter);
+
+            if (store == null ||
+                arrayParameter == null)
             {
                 return next(instruction, cur);
             }
@@ -99,7 +102,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
                         IParameter baseItemParameter = store.BaseSet.CreateParameter(allocatedArray.Type.ToTypeSig());
                         baseArrayParameter.SetItem(index, baseItemParameter);
 
-                        itemParameter = baseItemParameter.CloneData(store.ExecutionSet);
+                        itemParameter = baseItemParameter.Clone(store.ExecutionSet);
                     }
                     else
                     {

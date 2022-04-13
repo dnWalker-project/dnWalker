@@ -50,7 +50,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
             }
 
             // check whether the instance has an overload for the method
-            if (!instance.TryFindVirtualMethod(method, cur, out _))
+            if (instance.TryFindVirtualMethod(method, cur, out _))
             {
                 return next(instruction, cur);
             }
@@ -89,7 +89,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
                     IParameter baseResultParameter = store.BaseSet.CreateParameter(method.ReturnType);
                     baseObjectParameter.SetMethodResult(signature, invocation, baseResultParameter);
 
-                    resultParameter = baseResultParameter.CloneData(store.ExecutionSet);
+                    resultParameter = baseResultParameter.Clone(store.ExecutionSet);
                 }
                 else
                 {

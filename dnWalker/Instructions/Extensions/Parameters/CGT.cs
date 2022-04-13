@@ -53,11 +53,15 @@ namespace dnWalker.Instructions.Extensions.Parameters
             IReferenceTypeParameter lhsParameter = null;
             IReferenceTypeParameter rhsParameter = null;
 
-            if (!cur.TryGetParameterStore(out ParameterStore store) ||
-                (!lhs.TryGetParameter(cur, out lhsParameter) &&
-                 !rhs.TryGetParameter(cur, out rhsParameter)))
+            cur.TryGetParameterStore(out ParameterStore store);
+            lhs.TryGetParameter(cur, out lhsParameter);
+            rhs.TryGetParameter(cur, out rhsParameter);
+
+            if (store == null ||
+                (lhsParameter == null && rhsParameter == null))
             {
-                // store is null OR (neither lhs nor rhs are reference type parameter)
+                // store is null
+                // neither lhs nor rhs are reference type parameter
                 return returnValue;
             }
 

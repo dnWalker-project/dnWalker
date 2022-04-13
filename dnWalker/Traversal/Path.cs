@@ -177,7 +177,7 @@ namespace dnWalker.Traversal
             PathConstraints.Select(p => p.Expression).Aggregate((a, b) => Expression.And(a, b)) :
             null;
 
-        public string PathConstraintString => PathConstraint?.ToString();
+        public string PathConstraintString => PathConstraint?.ToString() ?? "True"; // if no constraint, the expression is True
 
         public string GetPathInfo()
         {

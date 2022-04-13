@@ -50,9 +50,12 @@ namespace dnWalker.Instructions.Extensions.Parameters
             IParameter elementParameter = null;
 
             // no parameter system is available or both the array and the value to store is not parametrized
-            if (!cur.TryGetParameterStore(out ParameterStore store) ||
-                (!arrayReference.TryGetParameter(cur, out arrayParameter) &&
-                 !elementToStore.TryGetParameter(cur, out elementParameter)))
+            cur.TryGetParameterStore(out ParameterStore store);
+            arrayReference.TryGetParameter(cur, out arrayParameter);
+            elementToStore.TryGetParameter(cur, out elementParameter);
+
+            if (store == null ||
+                (arrayParameter == null && elementParameter == null))
             {
                 return next(instruction, cur); 
             }
