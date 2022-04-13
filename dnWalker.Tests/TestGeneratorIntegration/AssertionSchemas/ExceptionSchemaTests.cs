@@ -39,7 +39,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
 
             paths.Should().HaveCount(2);
 
-            paths[0].Exception.Type.Should().Be(DefinitionProvider.GetTypeDefinition("System.NullReferenceException"));
+            paths[0].Exception.Type.Should().Be(DefinitionProvider.GetTypeDefinition("System.ArgumentNullException"));
 
             string xmlData = System.IO.File.ReadAllText("exception-method.xml");
 
