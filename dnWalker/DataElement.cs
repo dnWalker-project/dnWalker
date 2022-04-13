@@ -2674,6 +2674,12 @@ namespace MMC.Data
             return Location == 0;
         }
 
+        [Obsolete("Dirty helper... the problems with 'global' null should be resolved in a different way !!")]
+        public bool IsGlobalNull()
+        {
+            return Location == 0 && HashCode == Null.HashCode;
+        }
+
         public int HashCode { get; }
 
         public string WrapperName { get; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -48,6 +49,11 @@ namespace dnWalker.Tests
             }
 
             return type.GetMethod(methodName.Substring(lastDot + 1));
+        }
+
+        public static string ThisMethodName([CallerMemberName]string methodName = null)
+        {
+            return methodName;
         }
     }
 }

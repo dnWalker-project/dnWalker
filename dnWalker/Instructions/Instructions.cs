@@ -1408,13 +1408,13 @@ namespace dnWalker.Instructions
             Int4 idx = (Int4)cur.EvalStack.Pop();
             ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
 
-            IIEReturnValue retval = nextRetval;
-            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
-            if (theArray == null)
+            if (arrayRef.IsNull())
             {
                 return ThrowException(new NullReferenceException(), cur);
             }
+
+            AllocatedArray theArray = cur.DynamicArea.Allocations[arrayRef] as AllocatedArray;
 
             if (CheckBounds(theArray, idx))
             {
@@ -1426,7 +1426,7 @@ namespace dnWalker.Instructions
                 return ThrowException(new IndexOutOfRangeException(), cur);
             }
 
-            return retval;
+            return nextRetval;
         }
 
         public override bool IsMultiThreadSafe(ExplicitActiveState cur)
@@ -2676,7 +2676,7 @@ namespace dnWalker.Instructions
         {
         }
 
-        protected MethodDefinition Method => Operand as MethodDefinition;
+        public MethodDefinition Method => Operand as MethodDefinition;
 
         /// <summary>Check if a method is empty, i.e. it has no code.</summary>
         /// <param name="meth">The method.</param>

@@ -47,12 +47,12 @@ namespace MMC.InstructionExec
     {
         // Static return types for next and no-increment. Those do not contain data,
         // so no need for more than one copy.
-        public static IIEReturnValue nextRetval = new NextReturnValue();
-        public static IIEReturnValue nincRetval = new NoIncrementReturnValue();
-        public static IIEReturnValue nincRetvalBreak = new NoIncrementReturnValue(false);
-        public static IIEReturnValue assertionViolatedRetval = new AssertionViolatedReturnValue();
-        public static IIEReturnValue ehLookupRetval = new ExceptionHandlerLookupReturnValue();
-        public static IIEReturnValue finallyLookupRetval = new ExceptionFinallyReturnValue();
+        public static readonly IIEReturnValue nextRetval = new NextReturnValue();
+        public static readonly IIEReturnValue nincRetval = new NoIncrementReturnValue();
+        public static readonly IIEReturnValue nincRetvalBreak = new NoIncrementReturnValue(false);
+        public static readonly IIEReturnValue assertionViolatedRetval = new AssertionViolatedReturnValue();
+        public static readonly IIEReturnValue ehLookupRetval = new ExceptionHandlerLookupReturnValue();
+        public static readonly IIEReturnValue finallyLookupRetval = new ExceptionFinallyReturnValue();
 
         // Boolean attributes.
         InstructionExecAttributes m_flags;

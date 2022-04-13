@@ -37,40 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Instructions\Extensions\PathConstraintProducerExtensions.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>PathConstraintProducerExtensions.tt.cs</LastGenOutput>
-    </None>
-    <None Update="Instructions\Extensions\SymbolicConversionExecutionExtensions.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SymbolicConversionExecutionExtensions.tt.cs</LastGenOutput>
-    </None>
-    <None Update="Instructions\Extensions\SymbolicExecutionExtenions.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SymbolicExecutionExtenions.tt.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Instructions\Extensions\PathConstraintProducerExtensions.tt.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>PathConstraintProducerExtensions.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Instructions\Extensions\SymbolicConversionExecutionExtensions.tt.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SymbolicConversionExecutionExtensions.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Instructions\Extensions\SymbolicExecutionExtenions.tt.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SymbolicExecutionExtenions.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

@@ -19,13 +19,15 @@ namespace dnWalker.Parameters
             IDictionary<ParameterRef, IParameter> parameters = newSet.Parameters;
             foreach (var p in Parameters)
             {
-                parameters.Add(p.Key, p.Value.Clone(newSet));
+                //parameters.Add(p.Key, p.Value.Clone(newSet));
+                // the clone method will already set the references & roots
+                p.Value.Clone(newSet);
             }
 
-            foreach (var r in Roots)
-            {
-                newSet.Roots.Add(r);
-            }
+            //foreach (var r in Roots)
+            //{
+            //    newSet.Roots.Add(r);
+            //}
 
             return newSet;
         }
