@@ -14,7 +14,7 @@ namespace dnWalker.Concolic.Traversal
 {
     public class MethodExplorer
     {
-        private readonly Graphs.ControlFlowGraph _cfg;
+        private readonly Graphs.ControlFlow.ExtendedControlFlowGraph _cfg;
         private readonly Dictionary<Instruction, int> _coverageMap;
         private readonly MethodDef _method;
         
@@ -22,7 +22,8 @@ namespace dnWalker.Concolic.Traversal
         {
             _coverageMap = method.Body.Instructions.ToDictionary(i => i, i => 0);
             _method = method;
-            _cfg = new Graphs.ControlFlowGraph(method);
+            // TODO: handle dependency on definition provider
+            _cfg = Graphs.ControlFlow.ExtendedControlFlowGraph.Build(method, definitionProvider);// new Graphs.ControlFlowGraph(method);
 
             //string graphAsSvg = _cfg.ToGraphviz();
 
@@ -39,21 +40,6 @@ namespace dnWalker.Concolic.Traversal
                     args.VertexFormat.Label = $"Vertex {args.Vertex}";
                 };
             });*/
-        }
-
-        public void OnInstructionExecuted(CILLocation location, Path path)
-        {
-            if (location.Method != _method)
-            {
-                return;
-            }
-
-            _coverageMap[location.Instruction]++;
-
-            var node = _cfg.GetNode(location.Instruction);
-            node.SetIsCovered();
-
-            path.AddVisitedNode(node);
         }
 
         public Expression Flip(PathConstraint pathConstraint)
@@ -146,59 +132,76 @@ namespace dnWalker.Concolic.Traversal
             //return pathConstraint.Expression;
         }
 
-        public void OnConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
+
+        public void OnInstructionExecuted(CILLocation location, Path path)
         {
-            var instruction = cur.CurrentLocation.Instruction;
-            //var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(instruction));
-            var node = _cfg.GetNode(instruction);
-            node.SetExpression(expression);
-            node.SetIsCovered(next, cur);
-            //_nodes[node] = true;
-            /*
-            var edges = node.GetOutgoingEdges();
-            if (!edges.Any())
+            if (location.Method != _method)
             {
                 return;
             }
 
-            if (next == null)
-            {
-                var edge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.FallThrough);
-                _edges[edge]++;
-            }
-            else
-            {
-                var edge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.Conditional && e.Target.Offset == next.Offset);
-                _edges[edge]++;
-            }*/
+            _coverageMap[location.Instruction]++;
+
+            var node = _cfg.GetNode(location.Instruction);
+            node.SetIsCovered();
+
+            path.AddVisitedNode(node);
+        }
+
+        public void OnConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
+        {
+            //var instruction = cur.CurrentLocation.Instruction;
+            ////var node = _cfg.Nodes.First(n => n.Contents.Instructions.Contains(instruction));
+            //var node = _cfg.GetNode(instruction);
+            //node.SetExpression(expression);
+            //node.SetIsCovered(next, cur);
+            ////_nodes[node] = true;
+            ///*
+            //var edges = node.GetOutgoingEdges();
+            //if (!edges.Any())
+            //{
+            //    return;
+            //}
+
+            //if (next == null)
+            //{
+            //    var edge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.FallThrough);
+            //    _edges[edge]++;
+            //}
+            //else
+            //{
+            //    var edge = edges.FirstOrDefault(e => e.Type == ControlFlowEdgeType.Conditional && e.Target.Offset == next.Offset);
+            //    _edges[edge]++;
+            //}*/
         }
 
         public Coverage GetCoverage()
         {
-            int nodeCount = 0;
-            int edgeCount = 0;
-            int coveredNodes = 0;
-            int coveredEdges = 0;
+            return _cfg.GetCoverage();
+            //int nodeCount = 0;
+            //int edgeCount = 0;
+            //int coveredNodes = 0;
+            //int coveredEdges = 0;
 
-            foreach (Graphs.Edge edge in _cfg.Edges)
-            {
-                edgeCount++;
-                if (edge.Tag.IsCovered)
-                {
-                    coveredEdges++;
-                }
-            }
+            //foreach (Graphs.Edge edge in _cfg.Edges)
+            //{
+            //    edgeCount++;
+            //    if (edge.Tag.IsCovered)
+            //    {
+            //        coveredEdges++;
+            //    }
+            //}
 
-            foreach (Graphs.Node node in _cfg.Vertices)
-            {
-                nodeCount++;
-                if (node.IsCovered)
-                {
-                    coveredNodes++;
-                }
-            }
+            //foreach (Graphs.Node node in _cfg.Vertices)
+            //{
+            //    nodeCount++;
+            //    if (node.IsCovered)
+            //    {
+            //        coveredNodes++;
+            //    }
+            //}
 
-            return new Coverage((double)coveredNodes / nodeCount, (double)coveredEdges / edgeCount);
+            //return new Coverage((double)coveredNodes / nodeCount, (double)coveredEdges / edgeCount);
         }
     }
 }
