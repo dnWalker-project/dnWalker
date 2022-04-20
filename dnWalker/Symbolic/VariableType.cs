@@ -77,6 +77,18 @@ namespace dnWalker.Symbolic
             }
         }
 
+        public static bool HasLength(this VariableType type)
+        {
+            switch (type)
+            {
+                case VariableType.String:
+                case VariableType.Array:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static bool IsReference(this VariableType type)
         {
             switch (type)

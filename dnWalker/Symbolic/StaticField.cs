@@ -10,39 +10,30 @@ namespace dnWalker.Symbolic
 {
     public readonly struct StaticFieldVar : IVariable, IEquatable<StaticFieldVar>
     {
-        public StaticFieldVar(string name, TypeSig type, TypeSig declaringType)
+        public StaticFieldVar(IField field)
         {
-            Name = name;
-            Type = type;
-            DeclaringType = declaringType;
-            VariableType = VariableTypeExtensions.ToVariableType(type);
+            Field = field;
+            VariableType = VariableTypeExtensions.ToVariableType(field.FieldSig.Type);
         }
 
-        public string Name { get; }
-        public TypeSig Type { get; }
-        public TypeSig DeclaringType { get; }
+        public IField Field { get; }
 
         public VariableType VariableType { get; }
 
         public bool Equals(IVariable other)
         {
-            return other is StaticFieldVar sf && 
-                sf.Name == Name && 
-                TypeEqualityComparer.Instance.Equals(sf.Type, Type) && 
-                TypeEqualityComparer.Instance.Equals(sf.DeclaringType, DeclaringType);
+            return other is StaticFieldVar sf &&
+                Equals(sf);
         }
 
         public bool Equals(StaticFieldVar other)
         {
-            return Name == other.Name &&
-                   TypeEqualityComparer.Instance.Equals(Type, other.Type) &&
-                   TypeEqualityComparer.Instance.Equals(DeclaringType, other.DeclaringType) &&
-                   VariableType == other.VariableType;
+            return FieldEqualityComparer.CaseInsensitiveCompareDeclaringTypes.Equals(Field, other.Field);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, Type, DeclaringType, VariableType);
+            return FieldEqualityComparer.CaseInsensitiveCompareDeclaringTypes.GetHashCode(Field);
         }
 
         public static bool operator ==(StaticFieldVar left, StaticFieldVar right)
@@ -58,6 +49,13 @@ namespace dnWalker.Symbolic
         public override bool Equals(object obj)
         {
             return obj is StaticFieldVar && Equals((StaticFieldVar)obj);
+        }
+
+        public override string ToString()
+        {
+            ITypeDefOrRef declaringType = Field.DeclaringType;
+            string name = Field.Name;
+            return $"{declaringType.FullName}->{name}";
         }
     }
 }

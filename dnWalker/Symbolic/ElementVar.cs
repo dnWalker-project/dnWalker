@@ -58,5 +58,10 @@ namespace dnWalker.Symbolic
         {
             return other is ElementVar ev && Equals(ev);
         }
+
+        public override string ToString()
+        {
+            return $"{Array}[{Index}]";
+        }
     }
 }

@@ -11,18 +11,16 @@ namespace dnWalker.Symbolic
 {
     public readonly struct InstanceFieldVar : IVariable, IEquatable<InstanceFieldVar>
     {
-        public InstanceFieldVar(string name, TypeSig type, Location instance)
+        public InstanceFieldVar(IField field, Location instance)
         {
             Debug.Assert(instance != Location.Null);
 
-            Name = name;
-            Type = type;
+            Field = field;
             Instance = instance;
-            VariableType = VariableTypeExtensions.ToVariableType(type);
+            VariableType = VariableTypeExtensions.ToVariableType(field.FieldSig.Type);
         }
 
-        public string Name { get; }
-        public TypeSig Type { get; }
+        public IField Field { get; }
         public Location Instance { get; }
 
         public VariableType VariableType { get; }
@@ -30,22 +28,18 @@ namespace dnWalker.Symbolic
         public bool Equals(IVariable other)
         {
             return other is InstanceFieldVar fld &&
-                fld.Name == Name &&
-                fld.Instance == Instance &&
-                TypeEqualityComparer.Instance.Equals(fld.Type, Type);
+                Equals(fld);
         }
 
         public bool Equals(InstanceFieldVar other)
         {
-            return Name == other.Name &&
-                   TypeEqualityComparer.Instance.Equals(Type, other.Type) &&
-                   Instance.Equals(other.Instance) &&
-                   VariableType == other.VariableType;
+            return Instance == other.Instance &&
+                FieldEqualityComparer.CaseInsensitiveCompareDeclaringTypes.Equals(other.Field, Field);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, Type, Instance, VariableType);
+            return HashCode.Combine(Instance, FieldEqualityComparer.CaseInsensitiveCompareDeclaringTypes.GetHashCode(Field));
         }
 
         public static bool operator ==(InstanceFieldVar left, InstanceFieldVar right)
@@ -61,6 +55,12 @@ namespace dnWalker.Symbolic
         public override bool Equals(object obj)
         {
             return obj is InstanceFieldVar && Equals((InstanceFieldVar)obj);
+        }
+
+        public override string ToString()
+        {
+            string name = Field.Name;
+            return $"{Instance}->{name}";
         }
     }
 }

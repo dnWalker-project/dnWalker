@@ -51,7 +51,12 @@ namespace dnWalker.Symbolic
 
         public override bool Equals(object obj)
         {
-            throw new NotImplementedException();
+            return obj is MethodArgVar ma && Equals(ma);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
