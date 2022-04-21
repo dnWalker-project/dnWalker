@@ -11,6 +11,7 @@ namespace dnWalker.Symbolic.Expressions
         public virtual Expression Visit(Expression expression) => expression.Accept(this);
 
         public virtual Expression VisitBooleanConstant(BooleanConstantExpression booleanConstantExpression) => booleanConstantExpression;
+        public virtual Expression VisitStringConstant(StringConstantExpression stringConstantExpression) => stringConstantExpression;
         public virtual Expression VisitIntegerConstant(IntegerConstantExpression integerConstantExpression) => integerConstantExpression;
         public virtual Expression VisitCharConstant(CharConstantExpression charConstantExpression) => charConstantExpression;
         public virtual Expression VisitRealConstant(RealConstantExpression realConstantExpression) => realConstantExpression;
@@ -36,5 +37,6 @@ namespace dnWalker.Symbolic.Expressions
         public virtual Expression VisitUnaryOperation(UnaryOperationExpression unaryOperationExpression, TState state) => unaryOperationExpression;
         public virtual Expression VisitVariable(VariableExpression variableExpression, TState state) => variableExpression;
         public virtual Expression VisitCharConstant(CharConstantExpression charConstantExpression, TState state) => charConstantExpression;
+        public virtual Expression VisitStringConstant(StringConstantExpression stringConstantExpression, TState state) => stringConstantExpression;
     }
 }

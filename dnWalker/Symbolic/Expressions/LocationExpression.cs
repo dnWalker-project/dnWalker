@@ -16,13 +16,16 @@ namespace dnWalker.Symbolic.Expressions
         public override Expression Accept(ExpressionVisitor visitor) => visitor.VisitLocation(this);
         public override Expression Accept<TState>(ExpressionVisitor<TState> visitor, TState state) => visitor.VisitLocation(this, state);
 
-        public IVariable Variable { get; }
+        public Expression Expression { get; }
 
-        public LocationExpression(IVariable variable)
+        public LocationExpression(Expression expression)
         {
-            Variable = variable ?? throw new ArgumentNullException(nameof(variable));
-            if (!Variable.VariableType.IsReference())
-                throw new ArgumentException("The variable must be of type Array or String.", nameof(variable));
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            ExpressionType type = expression.Type;
+
+            if (type != ExpressionType.String &&
+                type != ExpressionType.Location)
+                throw new ArgumentException("The expression must be of type Location.", nameof(expression));
         }
     }
 }

@@ -40,6 +40,8 @@ namespace dnWalker.Symbolic.Expressions
 
                 // TODO: resolve how to handle VariableType.String
                 case VariableType.String:
+                    return ExpressionType.String;
+
                 case VariableType.Object:
                 case VariableType.Array:
                     return ExpressionType.Location;
