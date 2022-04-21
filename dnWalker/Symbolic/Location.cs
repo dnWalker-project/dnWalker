@@ -58,5 +58,10 @@ namespace dnWalker.Symbolic
         {
             return new Location(Value);
         }
+
+        public override string ToString()
+        {
+            return $"@{Value:X8}";
+        }
     }
 }

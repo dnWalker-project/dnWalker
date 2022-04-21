@@ -18,6 +18,7 @@ namespace dnWalker.Symbolic
 
         public IField Field { get; }
 
+        public TypeSig Type => Field.FieldSig.Type;
         public VariableType VariableType { get; }
 
         public bool Equals(IVariable other)

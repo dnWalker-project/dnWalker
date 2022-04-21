@@ -33,5 +33,10 @@ namespace dnWalker.Symbolic.Expressions
             }
             throw new NotSupportedException("Unexpected resulting type.");
         }
+
+        public override string ToString()
+        {
+            return Utils.ExpressionWriter.ToString(this);
+        }
     }
 }

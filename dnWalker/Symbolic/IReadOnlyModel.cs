@@ -19,6 +19,6 @@ namespace dnWalker.Symbolic
 
         IReadOnlyHeapInfo HeapInfo { get; }
 
-        IReadOnlyList<IVariable> Variables { get; }
+        IReadOnlyCollection<IVariable> Variables { get; }
     }
 }

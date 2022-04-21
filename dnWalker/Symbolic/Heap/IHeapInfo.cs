@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +26,9 @@ namespace dnWalker.Symbolic.Heap
         {
             return GetNode(location);
         }
+
+        IObjectHeapNode InitializeObject(TypeSig type);
+        IArrayHeapNode InitializeArray(TypeSig elementType, int length);
+        // IStringHeapNode InitializeString(TypeSig stringType, string content);
     }
 }

@@ -32,14 +32,5 @@ namespace dnWalker.Symbolic
             }
         }
 
-        new IList<IVariable> Variables { get; }
-
-        IReadOnlyList<IVariable> IReadOnlyModel.Variables
-        {
-            get
-            {
-                return (IReadOnlyList<IVariable>)Variables;
-            }
-        }
     }
 }
