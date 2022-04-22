@@ -17,6 +17,7 @@ namespace dnWalker.Z3
         private readonly Dictionary<IVariable, Expr> _valueTraits = new Dictionary<IVariable, Expr>();
         private readonly Dictionary<IVariable, IntExpr> _lengthTraits = new Dictionary<IVariable, IntExpr>();
         private readonly Dictionary<IVariable, IntExpr> _locationTraits = new Dictionary<IVariable, IntExpr>();
+        private readonly Dictionary<uint, IntExpr> _constStringLocationTraits = new Dictionary<uint, IntExpr>();
 
         public Z3TranslatorContext(Context context)
         {
@@ -107,13 +108,18 @@ namespace dnWalker.Z3
             {
                 IntExpr locExpr = Context.MkIntConst(GetFreeSymbol());
                 _locationTraits[variable] = locExpr;
+                _valueTraits[variable] = locExpr;
+
                 _constraints.Add(CreateIntConstraint(locExpr, 0, long.MaxValue));
 
-                _lengthTraits[variable] = Context.MkIntConst(GetFreeSymbol());
+                IntExpr lengthExpr = Context.MkIntConst(GetFreeSymbol());
+                _lengthTraits[variable] = lengthExpr;
+
+                _constraints.Add(CreateIntConstraint(lengthExpr, 0, long.MaxValue));
 
                 BoolExpr constraint = Context.MkImplies(
-                    Context.MkEq(_locationTraits[variable], Context.MkInt(0)),  // location == 0 (is null
-                    Context.MkEq(_lengthTraits[variable], Context.MkInt(0))     // implies length == 0
+                    Context.MkEq(locExpr, NullExpr),  // location == 0 (is null
+                    Context.MkEq(lengthExpr, Context.MkInt(0))     // implies length == 0
                     );
                 _constraints.Add(constraint);
             }
@@ -125,6 +131,7 @@ namespace dnWalker.Z3
             {
                 IntExpr locExpr = Context.MkIntConst(GetFreeSymbol());
                 _locationTraits[variable] = locExpr;
+                _valueTraits[variable] = locExpr;
                 _constraints.Add(CreateIntConstraint(locExpr, 0, long.MaxValue));
             }
         }
@@ -194,7 +201,19 @@ namespace dnWalker.Z3
             }
         }
 
+        public IntExpr GetConstantStringLocationTrait(uint id)
+        {
+            if (!_constStringLocationTraits.TryGetValue(id, out IntExpr loc))
+            {
+                loc = Context.MkIntConst(GetFreeSymbol());
+                _constraints.Add(Context.MkGt(loc, NullExpr));
+                _constStringLocationTraits[id] = loc;
+            }
+            return loc;
+        }
+
         public IntExpr NullExpr { get; }
+
     }
 
 
@@ -261,7 +280,7 @@ namespace dnWalker.Z3
         {
             SeqExpr str = state.Context.MkString(stringConstantExpression.Value);
             state.Push(str);
-            return base.VisitStringConstant(stringConstantExpression, state);
+            return stringConstantExpression;
         }
 
         // binary and unary operations
@@ -300,10 +319,10 @@ namespace dnWalker.Z3
                     state.Push(state.Context.MkMod((IntExpr)left, (IntExpr)right));
                     break;
 
-                case Operator.Equals:
+                case Operator.Equal:
                     state.Push(state.Context.MkEq(left, right));
                     break;
-                case Operator.NotEquals:
+                case Operator.NotEqual:
                     state.Push(state.Context.MkNot(state.Context.MkEq(left, right)));
                     break;
                 case Operator.GreaterThan:
@@ -348,7 +367,7 @@ namespace dnWalker.Z3
             }
             else if (expression.Type != ExpressionType.String)
             {
-                // the string was created by some extract operation....
+                // a constant string or created by some extract operation
                 Visit(expression, state);
                 state.Push(state.Context.MkLength((SeqExpr)state.Pop()));
             }
@@ -372,8 +391,13 @@ namespace dnWalker.Z3
             }
             else if (expression.Type == ExpressionType.String)
             {
-                // a location of some 'extract' string => should not happen???
+                // a location of some 'extracted' or constant string
+                // we get the z3 expression and create a new location constant
                 Visit(locationExpression, state);
+                Expr strExpr = state.Pop();
+                uint id = strExpr.Id;
+                Expr locExpr = state.GetConstantStringLocationTrait(id);
+                state.Push(locExpr);
 
             }
 
@@ -382,7 +406,10 @@ namespace dnWalker.Z3
 
         public override Expression VisitVariable(VariableExpression variableExpression, Z3TranslatorContext state)
         {
-            return base.VisitVariable(variableExpression, state);
+            // this should happen ONLY if the variable expression is of a PrimitiveValue expression
+            state.Push(state.GetValueTrait(variableExpression.Variable));
+
+            return variableExpression;
         }
     }
 }

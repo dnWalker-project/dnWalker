@@ -8,7 +8,7 @@ namespace dnWalker.Symbolic.Expressions
 {
     public class VariableExpression : Expression
     {
-        internal VariableExpression(IVariable variable)
+        public VariableExpression(IVariable variable)
         {
             Variable = variable ?? throw new ArgumentNullException(nameof(variable));
             Type = GetExpressionType(variable.VariableType);
@@ -51,7 +51,7 @@ namespace dnWalker.Symbolic.Expressions
             }
         }
 
-        public IVariable Variable { get; }
+        public new IVariable Variable { get; }
         public override ExpressionType Type { get; }
 
         public override Expression Accept(ExpressionVisitor visitor) => visitor.VisitVariable(this);

@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet.Emit;
 
 using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -8,10 +9,6 @@ using MMC.State;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {

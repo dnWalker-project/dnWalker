@@ -1,7 +1,8 @@
 ﻿using MMC.Data;
 using MMC.State;
 using System;
-using System.Linq.Expressions;
+
+using dnWalker.Symbolic.Expressions;
 
 namespace dnWalker.Symbolic
 {
@@ -9,26 +10,17 @@ namespace dnWalker.Symbolic
     {
         public static Expression AsExpression(this IDataElement dataElement)
         {
-            if (dataElement is IIntegerElement integerElement)
-            {
-                return Expression.Constant(Convert.ChangeType(integerElement, typeof(int)), typeof(int));
-            }
-
             switch (dataElement)
             {
-                case Float8 float8: return Expression.Constant(float8.Value, typeof(double));
-                case Float4 float4: return Expression.Constant(float4.Value, typeof(float));
-                case Int4 int4: return Expression.Constant(int4.Value, typeof(int));
-                case UnsignedInt4 uint4: return Expression.Constant(uint4.Value, typeof(uint));
-                case Int8 int8: return Expression.Constant(int8.Value, typeof(long));
-                case UnsignedInt8 uint8: return Expression.Constant(uint8.Value, typeof(ulong));
-                case ConstantString s: return Expression.Constant(s, typeof(string));
+                case Float8 float8: return Expression.Constant(float8.Value);
+                case Float4 float4: return Expression.Constant(float4.Value);
+                case Int4 int4: return Expression.Constant(int4.Value);
+                case UnsignedInt4 uint4: return Expression.Constant(uint4.Value);
+                case Int8 int8: return Expression.Constant(int8.Value);
+                case UnsignedInt8 uint8: return Expression.Constant(uint8.Value);
+                case ConstantString s: return Expression.Constant(s.Value);
             }
 
-            if (dataElement is INumericElement numericElement)
-            {
-                return Expression.Constant(Convert.ChangeType(numericElement, typeof(int)), typeof(int));
-            }
 
             throw new NotSupportedException();
         }

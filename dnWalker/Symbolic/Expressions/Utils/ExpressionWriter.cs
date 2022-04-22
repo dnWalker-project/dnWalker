@@ -88,6 +88,14 @@ namespace dnWalker.Symbolic.Expressions.Utils
             return charConstantExpression;
         }
 
+        public override Expression VisitStringConstant(StringConstantExpression stringConstantExpression, StringBuilder state)
+        {
+            state.Append('\"');
+            state.Append(stringConstantExpression.Value);
+            state.Append('\"');
+            return stringConstantExpression;
+        }
+
         private static string GetUnaryOrBinarySymbol(Operator op)
         {
             return op switch
@@ -101,8 +109,8 @@ namespace dnWalker.Symbolic.Expressions.Utils
                 Operator.Divide => "/",
                 Operator.Remainder => "%",
                 Operator.Negate => "-",
-                Operator.Equals => "=",
-                Operator.NotEquals => "!=",
+                Operator.Equal => "=",
+                Operator.NotEqual => "!=",
                 Operator.GreaterThan => ">",
                 Operator.GreaterThanOrEqual => ">=",
                 Operator.LessThan => "<",
@@ -110,6 +118,22 @@ namespace dnWalker.Symbolic.Expressions.Utils
 
                 _ => throw new NotSupportedException(),
             };
+        }
+
+        public override Expression VisitIntegerToReal(IntegerToRealExpression integerToRealExpression, StringBuilder state)
+        {
+            state.Append("ToReal(");
+            Visit(integerToRealExpression.Inner, state);
+            state.Append(')');
+            return integerToRealExpression;
+        }
+
+        public override Expression VisitRealToInteger(RealToIntegerExpression realToIntegerExpression, StringBuilder state)
+        {
+            state.Append("ToInteger(");
+            Visit(realToIntegerExpression.Inner, state);
+            state.Append(')');
+            return realToIntegerExpression;
         }
 
         public static readonly string NullLiteral = "null";

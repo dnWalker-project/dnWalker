@@ -32,7 +32,7 @@ namespace dnWalker.Instructions.Extensions.Parameters
         {
             // the problem is following:
             // - we handle the case when checking for not null
-            //   e.i.: 
+            //   i.e.: 
             //      ld... obj
             //      ldnull
             //      cgt

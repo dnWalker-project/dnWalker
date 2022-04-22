@@ -33,7 +33,7 @@ namespace dnWalker.Symbolic.Expressions
         public override Expression Accept(ExpressionVisitor visitor) => visitor.VisitBinaryOperation(this);
         public override Expression Accept<TState>(ExpressionVisitor<TState> visitor, TState state) => visitor.VisitBinaryOperation(this, state);
 
-        internal BinaryOperationExpression(Operator op, Expression left, Expression right)
+        public BinaryOperationExpression(Operator op, Expression left, Expression right)
         {
             Operator = op;
             Left = left ?? throw new ArgumentNullException(nameof(left));

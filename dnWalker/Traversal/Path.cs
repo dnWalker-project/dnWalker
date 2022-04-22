@@ -35,6 +35,7 @@ namespace dnWalker.Traversal
         private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
         private IList<long> _visitedNodes = new List<long>();
         private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
+        private IDictionary<Allocation, IDictionary<string, object>> _allocationProperties = new Dictionary<Allocation, IDictionary<string, object>>();
         private CILLocation _lastLocation;
         private IDictionary<CILLocation, int> _counter = new Dictionary<CILLocation, int>();
 
@@ -45,22 +46,6 @@ namespace dnWalker.Traversal
             _segments.Add(new Segment(fromState, toState));
         }
 
-        //public T Get<T>(string name)
-        //{
-        //    if (_attributes.TryGetValue(name, out var o) && o is T t)
-        //    {
-        //        return t;
-        //    }
-
-        //    throw new ArgumentException(name);
-        //}
-
-        //public T SetObjectAttribute<T>(Allocation alloc, string attributeName, T attributeValue)
-        //{
-        //    var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
-        //    _attributes[key] = attributeValue;
-        //    return attributeValue;
-        //}
 
         public bool TryGetPathAttribute<T>(string name, [NotNullWhen(true)]out T attribute)
         {
@@ -114,6 +99,28 @@ namespace dnWalker.Traversal
             return true;
         }
 
+        public void SetAllocationAttribute<T>(Allocation allocation, string attributeName, T attributeValue)
+        {
+            if (!_allocationProperties.TryGetValue(allocation, out var dict))
+            {
+                dict = new Dictionary<string, object>();
+                _allocationProperties.Add(allocation, dict);
+            }
+            dict[attributeName]= attributeValue;
+        }
+
+        public bool TryGetAllocationAttribute<T>(Allocation allocation, string attributeName, out T attributeValue)
+        {
+            attributeValue = default;
+            if (!_allocationProperties.TryGetValue(allocation, out var dict) || !dict.TryGetValue(attributeName, out var value))
+            {
+                return false;
+            }
+
+            attributeValue = (T)value;
+            return true;
+        }
+
         public void AddVisitedNode(Node node)
         {
             if (!_visitedNodes.Contains(node.Offset))
@@ -135,18 +142,6 @@ namespace dnWalker.Traversal
             };
         }
 
-        public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
-        {
-            var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
-            if (_attributes.TryGetValue(key, out var o) && o is T t)
-            {
-                attributeValue = t;
-                return true;
-            }
-
-            attributeValue = default;
-            return false;
-        }
 
         public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
         {

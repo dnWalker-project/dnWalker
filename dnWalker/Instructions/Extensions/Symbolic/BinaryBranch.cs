@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet.Emit;
 
 using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -8,61 +9,57 @@ using MMC.State;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
     public class BinaryBranch : Branch
     {
-        private static readonly Dictionary<OpCode, ExpressionType> _operatorLookup = new Dictionary<OpCode, ExpressionType>()
+        private static readonly Dictionary<OpCode, Operator> _operatorLookup = new Dictionary<OpCode, Operator>()
         {
-            [OpCodes.Beq] = ExpressionType.Equal,
-            [OpCodes.Beq_S] = ExpressionType.Equal,
+            [OpCodes.Beq] = Operator.Equal,
+            [OpCodes.Beq_S] = Operator.Equal,
 
-            [OpCodes.Bgt] = ExpressionType.GreaterThan,
-            [OpCodes.Bgt_S] = ExpressionType.GreaterThan,
-            [OpCodes.Bgt_Un] = ExpressionType.GreaterThan,
-            [OpCodes.Bgt_Un_S] = ExpressionType.GreaterThan,
+            [OpCodes.Bgt] = Operator.GreaterThan,
+            [OpCodes.Bgt_S] = Operator.GreaterThan,
+            [OpCodes.Bgt_Un] = Operator.GreaterThan,
+            [OpCodes.Bgt_Un_S] = Operator.GreaterThan,
 
-            [OpCodes.Bge] = ExpressionType.GreaterThanOrEqual,
-            [OpCodes.Bge_S] = ExpressionType.GreaterThanOrEqual,
-            [OpCodes.Bge_Un] = ExpressionType.GreaterThanOrEqual,
-            [OpCodes.Bge_Un_S] = ExpressionType.GreaterThanOrEqual,
+            [OpCodes.Bge] = Operator.GreaterThanOrEqual,
+            [OpCodes.Bge_S] = Operator.GreaterThanOrEqual,
+            [OpCodes.Bge_Un] = Operator.GreaterThanOrEqual,
+            [OpCodes.Bge_Un_S] = Operator.GreaterThanOrEqual,
 
-            [OpCodes.Blt] = ExpressionType.LessThan,
-            [OpCodes.Blt_S] = ExpressionType.LessThan,
-            [OpCodes.Blt_Un] = ExpressionType.LessThan,
-            [OpCodes.Blt_Un_S] = ExpressionType.LessThan,
+            [OpCodes.Blt] = Operator.LessThan,
+            [OpCodes.Blt_S] = Operator.LessThan,
+            [OpCodes.Blt_Un] = Operator.LessThan,
+            [OpCodes.Blt_Un_S] = Operator.LessThan,
 
-            [OpCodes.Ble] = ExpressionType.LessThanOrEqual,
-            [OpCodes.Ble_S] = ExpressionType.LessThanOrEqual,
-            [OpCodes.Ble_Un] = ExpressionType.LessThanOrEqual,
-            [OpCodes.Ble_Un_S] = ExpressionType.LessThanOrEqual,
+            [OpCodes.Ble] = Operator.LessThanOrEqual,
+            [OpCodes.Ble_S] = Operator.LessThanOrEqual,
+            [OpCodes.Ble_Un] = Operator.LessThanOrEqual,
+            [OpCodes.Ble_Un_S] = Operator.LessThanOrEqual,
 
-            [OpCodes.Bne_Un] = ExpressionType.NotEqual,
-            [OpCodes.Bne_Un_S] = ExpressionType.NotEqual,
+            [OpCodes.Bne_Un] = Operator.NotEqual,
+            [OpCodes.Bne_Un_S] = Operator.NotEqual,
         };
 
-        private static ExpressionType Negate(ExpressionType expressionType)
+        private static Operator Negate(Operator expressionType)
         {
             return expressionType switch
             {
-                ExpressionType.Equal => ExpressionType.NotEqual,
-                ExpressionType.GreaterThan => ExpressionType.LessThanOrEqual,
-                ExpressionType.GreaterThanOrEqual => ExpressionType.LessThan,
-                ExpressionType.LessThan => ExpressionType.GreaterThanOrEqual,
-                ExpressionType.LessThanOrEqual => ExpressionType.GreaterThan,
-                ExpressionType.NotEqual => ExpressionType.Equal,
+                Operator.Equal => Operator.NotEqual,
+                Operator.GreaterThan => Operator.LessThanOrEqual,
+                Operator.GreaterThanOrEqual => Operator.LessThan,
+                Operator.LessThan => Operator.GreaterThanOrEqual,
+                Operator.LessThanOrEqual => Operator.GreaterThan,
+                Operator.NotEqual => Operator.Equal,
                 _ => throw new NotSupportedException(),
             };
         }
 
         private static Expression BuildExpression(OpCode operation, bool isTrue, Expression lhs, Expression rhs)
         {
-            ExpressionType op = _operatorLookup[operation];
+            Operator op = _operatorLookup[operation];
             if (!isTrue) op = Negate(op);
 
             return Expression.MakeBinary(op, lhs, rhs);

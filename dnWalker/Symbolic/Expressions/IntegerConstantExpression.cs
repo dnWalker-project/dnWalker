@@ -8,7 +8,7 @@ namespace dnWalker.Symbolic.Expressions
 {
     public class IntegerConstantExpression : ConstantExpression<long>
     {
-        internal IntegerConstantExpression(long value) : base(value)
+        public IntegerConstantExpression(long value) : base(value)
         {
         }
 
@@ -16,5 +16,10 @@ namespace dnWalker.Symbolic.Expressions
 
         public override Expression Accept(ExpressionVisitor visitor) => visitor.VisitIntegerConstant(this);
         public override Expression Accept<TState>(ExpressionVisitor<TState> visitor, TState state) => visitor.VisitIntegerConstant(this, state);
+
+        public override Expression AsBoolean()
+        {
+            return Value != 0 ? True : False;
+        }
     }
 }

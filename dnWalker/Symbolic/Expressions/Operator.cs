@@ -22,8 +22,8 @@ namespace dnWalker.Symbolic.Expressions
         Negate,
 
         // comparison operators
-        Equals,
-        NotEquals,
+        Equal,
+        NotEqual,
         GreaterThan,
         GreaterThanOrEqual,
         LessThan,
@@ -56,8 +56,8 @@ namespace dnWalker.Symbolic.Expressions
                 case Operator.Remainder:
 
                 // comparison bin operators
-                case Operator.Equals:
-                case Operator.NotEquals:
+                case Operator.Equal:
+                case Operator.NotEqual:
                 case Operator.GreaterThan:
                 case Operator.GreaterThanOrEqual:
                 case Operator.LessThan:
@@ -86,8 +86,8 @@ namespace dnWalker.Symbolic.Expressions
         {
             switch (op)
             {
-                case Operator.Equals:
-                case Operator.NotEquals:
+                case Operator.Equal:
+                case Operator.NotEqual:
                 case Operator.GreaterThan:
                 case Operator.GreaterThanOrEqual:
                 case Operator.LessThan:

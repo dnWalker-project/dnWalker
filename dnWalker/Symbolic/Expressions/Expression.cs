@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Symbolic.Expressions
 {
-    public abstract class Expression
+    public abstract partial class Expression
     {
         public abstract ExpressionType Type { get; }
 
@@ -15,7 +15,7 @@ namespace dnWalker.Symbolic.Expressions
 
 
         public static readonly Expression False = new BooleanConstantExpression(false);
-        public static readonly Expression True = new BooleanConstantExpression(false);
+        public static readonly Expression True = new BooleanConstantExpression(true);
         public static readonly Expression RealZero = new RealConstantExpression(0.0);
         public static readonly Expression IntegerZero = new IntegerConstantExpression(0);
         public static readonly Expression Null = new NullExpression();
@@ -26,9 +26,9 @@ namespace dnWalker.Symbolic.Expressions
             switch (type)
             {
                 case ExpressionType.Boolean: return this;
-                case ExpressionType.Integer: return new BinaryOperationExpression(Operator.NotEquals, this, Expression.IntegerZero);
-                case ExpressionType.Real: return new BinaryOperationExpression(Operator.NotEquals, this, Expression.RealZero);
-                case ExpressionType.Location: return new BinaryOperationExpression(Operator.NotEquals, this, Expression.Null);
+                case ExpressionType.Integer: return new BinaryOperationExpression(Operator.NotEqual, this, Expression.IntegerZero);
+                case ExpressionType.Real: return new BinaryOperationExpression(Operator.NotEqual, this, Expression.RealZero);
+                case ExpressionType.Location: return new BinaryOperationExpression(Operator.NotEqual, this, Expression.Null);
                 case ExpressionType.String: return True;
             }
             throw new NotSupportedException("Unexpected resulting type.");
@@ -38,5 +38,6 @@ namespace dnWalker.Symbolic.Expressions
         {
             return Utils.ExpressionWriter.ToString(this);
         }
+
     }
 }

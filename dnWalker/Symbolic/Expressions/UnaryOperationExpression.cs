@@ -12,7 +12,7 @@ namespace dnWalker.Symbolic.Expressions
         public override Expression Accept<TState>(ExpressionVisitor<TState> visitor, TState state) => visitor.VisitUnaryOperation(this, state);
 
 
-        internal UnaryOperationExpression(Operator op, Expression operand)
+        public UnaryOperationExpression(Operator op, Expression operand)
         {
             Operator = op;
             Operand = operand ?? throw new ArgumentNullException(nameof(operand));

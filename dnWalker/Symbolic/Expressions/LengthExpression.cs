@@ -31,5 +31,6 @@ namespace dnWalker.Symbolic.Expressions
                 throw new ArgumentException("The expression must be of Array or String.", nameof(expression));
             }
         }
+
     }
 }
