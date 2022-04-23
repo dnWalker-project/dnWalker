@@ -35,5 +35,18 @@ namespace dnWalker.Symbolic
             }
             return valuations;
         }
+
+        public static void Update(this IModel model, Valuation valuation)
+        {
+            model.SetValue(valuation.Variable, valuation.Value);
+        }
+
+        public static void Update(this IModel model, IEnumerable<Valuation> valuations)
+        {
+            foreach (Valuation valuation in valuations)
+            {
+                model.SetValue(valuation.Variable, valuation.Value);
+            }
+        }
     }
 }

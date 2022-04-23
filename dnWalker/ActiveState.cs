@@ -31,6 +31,15 @@ namespace MMC.State
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
     /// <summary>
+    /// Represents a service which may be attached to <see cref="ExplicitActiveState"/>.
+    /// </summary>
+    public interface IActiveStateService
+    {
+        void Attach(ExplicitActiveState cur);
+        void Detach(ExplicitActiveState cur);
+    }
+
+    /// <summary>
     /// An implementation of the active state of the virtual machine.
     /// </summary>
     public class ExplicitActiveState : IStorageVisitable, ICleanable
@@ -139,7 +148,7 @@ namespace MMC.State
         }
 
         public Logger Logger { get; internal set; }
-        
+
         internal StateStorage StateStorage { get; set; }
 
         public PathStore PathStore { get; set; }
@@ -271,7 +280,7 @@ namespace MMC.State
         }
 
         private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
-        
+
         internal IChoiceStrategy ChoiceStrategy { get; set; }
 
         public IChoiceGenerator ChoiceGenerator => ChoiceStrategy.ChoiceGenerator;
@@ -355,7 +364,7 @@ namespace MMC.State
 
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
         {
-            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);            
+            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);
         }
 
         public bool Break()
@@ -372,5 +381,27 @@ namespace MMC.State
         {
             return PathStore.CurrentPath.SetObjectAttribute(alloc, name, attributeValue);
         }*/
+    }
+
+    [Obsolete("These method should be included in the ExplicitActiveState + they should be recoverable from the cur.")]
+    public static class ExplicitActiveStateExtensions
+    {
+        public static void AttachService<TService>(this ExplicitActiveState cur)
+            where TService : IActiveStateService, new()
+        {
+            cur.AttachService(new TService());
+        }
+
+        public static void AttachService<TService>(this ExplicitActiveState cur, TService service)
+            where TService : IActiveStateService
+        {
+            service.Attach(cur);
+        }
+
+        public static void DetachService<TService>(this ExplicitActiveState cur, TService service)
+            where TService : IActiveStateService
+        {
+            service.Detach(cur);
+        }
     }
 }

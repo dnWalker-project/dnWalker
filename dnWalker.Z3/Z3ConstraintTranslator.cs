@@ -13,6 +13,7 @@ namespace dnWalker.Z3
     {
         private readonly Stack<Expr> _operands = new Stack<Expr>();
         private readonly List<BoolExpr> _constraints = new List<BoolExpr>();
+        private readonly HashSet<IVariable> _variables = new HashSet<IVariable>();
 
         private readonly Dictionary<IVariable, Expr> _valueTraits = new Dictionary<IVariable, Expr>();
         private readonly Dictionary<IVariable, IntExpr> _lengthTraits = new Dictionary<IVariable, IntExpr>();
@@ -24,6 +25,9 @@ namespace dnWalker.Z3
             Context = context;
             NullExpr = Context.MkInt(0);
         }
+
+        public IReadOnlyCollection<IVariable> Variables => _variables;
+
 
         public Context Context { get; }
         public Expr Result => _operands.Peek();
@@ -54,6 +58,12 @@ namespace dnWalker.Z3
 
         public void SetupTraits(IVariable variable)
         {
+            if (!_variables.Add(variable))
+            {
+                // already added => skip
+                return;
+            }
+
             switch (variable.VariableType)
             {
                 case VariableType.UInt8:

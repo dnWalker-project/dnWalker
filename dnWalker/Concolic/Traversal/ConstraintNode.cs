@@ -12,20 +12,21 @@ namespace dnWalker.Concolic.Traversal
     /// <summary>
     /// A node within the constraint tree.
     /// </summary>
-    public class ConstraintTreeNode
+    public class ConstraintNode
     {
         private readonly IModel _inputModel;
-        private readonly ConstraintTreeNode _parent;
-        private IReadOnlyList<ConstraintTreeNode> _children = Array.Empty<ConstraintTreeNode>();
+        private readonly ConstraintNode _parent;
+        private IReadOnlyList<ConstraintNode> _children = Array.Empty<ConstraintNode>();
 
         private List<Expression> _ancestorConstraints = null;
+        private bool _explored;
 
-        public ConstraintTreeNode(ConstraintTreeNode parent, IModel inputModel)
+        public ConstraintNode(ConstraintNode parent, IModel inputModel)
         {
             _parent = parent;
             _inputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
         }
-        public ConstraintTreeNode(ConstraintTreeNode parent) : this(parent, new Model())
+        public ConstraintNode(ConstraintNode parent) : this(parent, new Model())
         {
         }
 
@@ -43,8 +44,27 @@ namespace dnWalker.Concolic.Traversal
         /// <summary>
         /// Gets the parent node.
         /// </summary>
-        public ConstraintTreeNode Parent => _parent;
+        public ConstraintNode Parent => _parent;
         public bool IsRoot => _parent == null;
+
+        public IReadOnlyList<ConstraintNode> Children => _children;
+
+        public bool IsExpanded => _children != null && _children.Count > 0;
+
+        public bool IsExplored => _explored;
+
+        public void MarkExplored() => _explored = true;
+
+        public void Expand(params Expression[] choices)
+        {
+            DecisionNode[] children = new DecisionNode[choices.Length];
+            for (int i = 0; i < choices.Length; ++i)
+            {
+                DecisionNode child = new DecisionNode(this, _inputModel, choices[i]);
+                children[i] = child;
+            }
+            _children = children;
+        }
 
         /// <summary>
         /// Gets the precondition associated with this node
@@ -55,7 +75,7 @@ namespace dnWalker.Concolic.Traversal
             if (_ancestorConstraints == null)
             {
                 List<Expression> _ancestorConstraints = new List<Expression>();
-                ConstraintTreeNode current = this;
+                ConstraintNode current = this;
                 while (current != null)
                 {
                     Expression expression = current.Constraint;

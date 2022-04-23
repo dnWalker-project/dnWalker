@@ -26,7 +26,12 @@ namespace dnWalker.Symbolic
             // apply the valuation & the traits on the _baseModel.Clone()
             // return the result
 
-            return _baseModel.Clone();
+            IEnumerable<Valuation> valuations = solver.Solve(_constraints);
+            IModel model = _baseModel.Clone();
+
+            model.Update(valuations);
+
+            return model;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.Symbolic;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,6 +12,7 @@ namespace dnWalker
 {
     public interface ISolver
     {
-        Dictionary<string, object> Solve(Expression expression, IList<ParameterExpression> parameters);
+        Dictionary<string, object> Solve(Expression expression, IList<ParameterExpression> parameters);// => new Dictionary<string, object>();
+        IEnumerable<Valuation> Solve(IEnumerable<dnWalker.Symbolic.Expressions.Expression> constraints) => Enumerable.Empty<Valuation>();
     }
 }

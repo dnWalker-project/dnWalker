@@ -11,5 +11,11 @@ namespace dnWalker.Concolic.Traversal
     /// </summary>
     public class ConstraintTree
     {
+        public ConstraintTree()
+        {
+            Root = new ConstraintNode(null);
+        }
+
+        public ConstraintNode Root { get; }
     }
 }

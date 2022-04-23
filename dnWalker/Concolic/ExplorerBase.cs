@@ -1,10 +1,14 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Instructions;
+using dnWalker.Instructions.Extensions;
 using dnWalker.Parameters;
 using dnWalker.TypeSystem;
 
 using MMC;
+using MMC.InstructionExec;
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +25,8 @@ namespace dnWalker.Concolic
         private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
         private readonly Logger _logger;
         private readonly ISolver _solver;
+
+        private readonly IInstructionExecProvider _instructionExecProvider;
 
         private PathStore _pathStore;
         private int _currentIteration;
@@ -60,7 +66,12 @@ namespace dnWalker.Concolic
             IterationFinished(this, e);
         }
 
+        protected IInstructionExecProvider ExecutorProvider => _instructionExecProvider;
 
+        protected ExplicitActiveState CreateActiveState()
+        {
+            return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+        }
 
         public ExplorerBase(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
@@ -68,6 +79,9 @@ namespace dnWalker.Concolic
             _config = config;
             _logger = logger;
             _solver = solver;
+
+            ExtendableInstructionFactory f = new ExtendableInstructionFactory().AddStandardExtensions();
+            _instructionExecProvider = InstructionExecProvider.Get(config, f);
         }
 
         public void AddExtension(IExplorationExtension extension)
@@ -131,6 +145,22 @@ namespace dnWalker.Concolic
             get { return _currentIteration; }
         }
         public int MaxIterations { get; set; }
+
+        public ISolver Solver
+        {
+            get
+            {
+                return _solver;
+            }
+        }
+
+        public Logger Logger
+        {
+            get
+            {
+                return _logger;
+            }
+        }
 
         protected void ResetIterations()
         {
