@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet.Emit;
 
+using dnWalker.Concolic.Traversal;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
@@ -57,12 +58,13 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             };
         }
 
-        private static Expression BuildExpression(OpCode operation, bool isTrue, Expression lhs, Expression rhs)
+        private static (Expression fallThrough, Expression branch) BuildChoices(OpCode operation, Expression lhs, Expression rhs)
         {
             Operator op = _operatorLookup[operation];
-            if (!isTrue) op = Negate(op);
+            Expression fallThrough = Expression.MakeBinary(Negate(op), lhs, rhs);
+            Expression branch = Expression.MakeBinary(op, lhs, rhs);
 
-            return Expression.MakeBinary(op, lhs, rhs);
+            return (fallThrough, branch);
         }
 
         public override IEnumerable<OpCode> SupportedOpCodes
@@ -90,9 +92,12 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
 
             Instruction nextInstruction = GetNextInstruction(retValue, cur);
-            Expression condition = BuildExpression(baseExecutor.Instruction.OpCode, nextInstruction != null, lhsExpression ?? lhs.AsExpression(), rhsExpression ?? rhs.AsExpression());
 
-            SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
+            (Expression fallThrough, Expression branch) = BuildChoices(baseExecutor.Instruction.OpCode, lhsExpression ?? lhs.AsExpression(), rhsExpression ?? rhs.AsExpression());
+
+            cur.GetConstraintTree().MakeDecision(nextInstruction != null ? 1 : 0, fallThrough, branch);
+
+            //SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
 
             return retValue;
         }

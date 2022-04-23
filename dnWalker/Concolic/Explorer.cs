@@ -171,7 +171,7 @@ namespace dnWalker.Concolic
             // run iteration
             while (true)
             {
-                SystemConsole.OutTextWriterRef = ObjectReference.Null;
+                //SystemConsole.OutTextWriterRef = ObjectReference.Null;
 
                 try
                 {

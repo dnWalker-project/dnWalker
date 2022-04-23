@@ -2,6 +2,7 @@
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
+using dnWalker.Traversal;
 
 using MMC.State;
 
@@ -17,6 +18,7 @@ namespace dnWalker.Concolic.Traversal
 {
     public class ConstraintTreeExplorer : IActiveStateService
     {
+        private readonly dnWalker.Traversal.PathStore _pathStore;
         private readonly ConstraintTree _tree;
         private readonly Stack<ConstraintNode> _frontier;
 
@@ -26,11 +28,12 @@ namespace dnWalker.Concolic.Traversal
 
         // private readonly Dictionary<> _conditionCoverage // a more complex structure will be needed
 
-        public ConstraintTreeExplorer() : this(new ConstraintTree())
+        public ConstraintTreeExplorer(dnWalker.Traversal.PathStore pathStore) : this(pathStore, new ConstraintTree())
         { }
 
-        public ConstraintTreeExplorer(ConstraintTree tree)
+        public ConstraintTreeExplorer(dnWalker.Traversal.PathStore pathStore, ConstraintTree tree)
         {
+            _pathStore = pathStore;
             _tree = tree ?? throw new ArgumentNullException(nameof(tree));
             _frontier = new Stack<ConstraintNode>();
             _frontier.Push(tree.Root);
@@ -42,8 +45,10 @@ namespace dnWalker.Concolic.Traversal
         void IActiveStateService.Attach(ExplicitActiveState cur)
         {
             _cur = cur;
+            _cur.SetConstraintTree(this);
+
             // should be invoked just before the execution => move current to root
-            _current = _tree.Root;
+            SetCurrent(_tree.Root);
         }
         void IActiveStateService.Detach(ExplicitActiveState cur)
         {
@@ -84,13 +89,14 @@ namespace dnWalker.Concolic.Traversal
             // create the decision nodes and select the correct one
             if (!current.IsExpanded)
             {
-                current.Expand();
-                foreach (ConstraintNode expansionNode in current.Children)
+                current.Expand(choices);
+                for (int i = 0; i < current.Children.Count; ++i)
                 {
-                    _frontier.Push(expansionNode);
+                    if (i == decision) continue;
+                    _frontier.Push(current.Children[i]);
                 }
 
-                _current = current.Children[decision];
+                SetCurrent(current.Children[decision]);
             }
             // case 2
             // current node is already expanded
@@ -99,10 +105,16 @@ namespace dnWalker.Concolic.Traversal
             else
             {
                 Debug.Assert(current.Children.Count == choices.Length);
-                _current = current.Children[decision];
+                SetCurrent(current.Children[decision]);
             }
             // in any case, once we visit the node, we can mark it explored
             _current.MarkExplored();
+        }
+
+        private void SetCurrent(ConstraintNode node)
+        {
+            _current = node;
+            _pathStore.CurrentPath.SetPathAttribute("current-node", node);
         }
 
         /// <summary>
@@ -116,6 +128,7 @@ namespace dnWalker.Concolic.Traversal
             {
                 if (!node.IsExplored)
                 {
+                    node.MarkExplored(); // we will either explore it right now or deem it unsatisfiable.
                     return node.GetPrecondition();
                 }
             }
@@ -127,6 +140,34 @@ namespace dnWalker.Concolic.Traversal
         {
             precondition = GetNextPrecondition();
             return precondition != null;
+        }
+    }
+
+    public static class ConstraintTreeExplorerExtensions
+    {
+        public static void SetConstraintTree(this ExplicitActiveState cur, ConstraintTreeExplorer explorer)
+        {
+            cur.PathStore.CurrentPath.SetPathAttribute("constraint-tree", explorer);
+        }
+        public static ConstraintTreeExplorer GetConstraintTree(this ExplicitActiveState cur)
+        {
+            if (!cur.PathStore.CurrentPath.TryGetPathAttribute("constraint-tree", out ConstraintTreeExplorer explorer))
+            {
+                explorer = new ConstraintTreeExplorer(cur.PathStore);
+                cur.AttachService(explorer);
+            }
+
+
+            return explorer;
+        }
+
+        public static Expression GetPathConstraint(this Path path)
+        {
+            if (path.TryGetPathAttribute("current-node", out ConstraintNode node))
+            {
+                return node.GetConstraints().Aggregate((e1, e2) => Expression.And(e1, e2));
+            }
+            return Expression.True;
         }
     }
 }

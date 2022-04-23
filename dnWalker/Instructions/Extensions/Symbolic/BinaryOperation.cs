@@ -47,10 +47,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             [OpCodes.Or] = Operator.Or,
             //TODO: add these operators
-            //[OpCodes.Xor] = Operator.ExclusiveOr,
-            //[OpCodes.Shl] = Operator.LeftShift,
-            //[OpCodes.Shr] = Operator.RightShift,
-            //[OpCodes.Shr_Un] = Operator.RightShift,
+            [OpCodes.Xor] = Operator.Xor,
+            [OpCodes.Shl] = Operator.ShiftLeft,
+            [OpCodes.Shr] = Operator.ShiftRight,
+            [OpCodes.Shr_Un] = Operator.ShiftRight,
         };
 
 
@@ -102,7 +102,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 // ensure rhs is also boolean
                 rhs = rhs.AsBoolean();
             }
-            else if (lhs.Type == ExpressionType.Boolean)
+            else if (rhs.Type == ExpressionType.Boolean)
             {
                 // ensure rhs is also boolean
                 lhs = lhs.AsBoolean();

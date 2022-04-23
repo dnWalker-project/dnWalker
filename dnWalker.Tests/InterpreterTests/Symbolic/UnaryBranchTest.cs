@@ -28,7 +28,7 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
         [Theory]
         [InlineData(false, null, null)]
         [InlineData(true, null, null)]
-        [InlineData(false, "x", "Not(x)")]
+        [InlineData(false, "x", "!x")]
         [InlineData(true, "x", "x")]
         public void Test_BRFALSE__Int32_AsBoolean(bool arg, string name, string pathCondition)
         {
@@ -48,7 +48,7 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
         [Theory]
         [InlineData(false, null, null)]
         [InlineData(true, null, null)]
-        [InlineData(false, "x", "Not(x)")]
+        [InlineData(false, "x", "!x")]
         [InlineData(true, "x", "x")]
         public void Test_BRTRUE__Int32_AsBoolean(bool arg, string name, string pathCondition)
         {

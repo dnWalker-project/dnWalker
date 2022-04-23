@@ -205,9 +205,9 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
 
         [Theory]
         [InlineData(true, false, null, null, null)]
-        [InlineData(true, false, "x", null, "(x And False)")]
-        [InlineData(true, false, null, "y", "(True And y)")]
-        [InlineData(true, false, "x", "y", "(x And y)")]
+        [InlineData(true, false, "x", null, "(x & False)")]
+        [InlineData(true, false, null, "y", "(True & y)")]
+        [InlineData(true, false, "x", "y", "(x & y)")]
         public void Test_AND__Int32_AsBoolean(bool arg0, bool arg1, string name0, string name1, string result)
         {
             Test("Test_AND__Int32", new (object, string)[] { (arg0, name0), (arg1, name1) }, null, result);
@@ -226,9 +226,9 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
 
         [Theory]
         [InlineData(true, false, null, null, null)]
-        [InlineData(true, false, "x", null, "(x Or False)")]
-        [InlineData(true, false, null, "y", "(True Or y)")]
-        [InlineData(true, false, "x", "y", "(x Or y)")]
+        [InlineData(true, false, "x", null, "(x | False)")]
+        [InlineData(true, false, null, "y", "(True | y)")]
+        [InlineData(true, false, "x", "y", "(x | y)")]
         public void Test_OR__Int32_AsBooleans(bool arg0, bool arg1, string name0, string name1, string result)
         {
             Test("Test_OR__Int32", new (object, string)[] { (arg0, name0), (arg1, name1) }, null, result);

@@ -29,6 +29,11 @@ namespace dnWalker.Traversal
             _paths.Add(_currentPath);
         }
 
+        public void ResetPath(bool checkTermination)
+        {
+            if (!checkTermination || _currentPath.IsTerminated) ResetPath();
+        }
+
         public void BacktrackStart(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
         {
         }

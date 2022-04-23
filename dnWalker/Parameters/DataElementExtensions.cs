@@ -34,8 +34,8 @@ namespace dnWalker.Parameters
             if (parameter is IPrimitiveValueParameter primitiveValueParameter)
             {
                 // set value parameter expression as well
-                Expression e = primitiveValueParameter.GetValueExpression(cur);
-                dataElement.SetExpression(e, cur);
+                //Expression e = primitiveValueParameter.GetValueExpression(cur);
+                //dataElement.SetExpression(e, cur);
             }
         }
 
@@ -57,7 +57,7 @@ namespace dnWalker.Parameters
         {
             bool isNotNull = !referenceTypeParameter.GetIsNull();
             Int4 de = new Int4(isNotNull ? 1 : 0);
-            de.SetExpression(Expression.Not(referenceTypeParameter.GetIsNullExpression(cur)), cur);
+            //de.SetExpression(Expression.Not(referenceTypeParameter.GetIsNullExpression(cur)), cur);
             return de;
         }
 
@@ -65,7 +65,7 @@ namespace dnWalker.Parameters
         {
             bool isNull = referenceTypeParameter.GetIsNull();
             Int4 de = new Int4(isNull ? 1 : 0);
-            de.SetExpression(referenceTypeParameter.GetIsNullExpression(cur), cur);
+            //de.SetExpression(referenceTypeParameter.GetIsNullExpression(cur), cur);
             return de;
         }
 
@@ -77,7 +77,7 @@ namespace dnWalker.Parameters
             }
 
             Int4 de = new Int4(lhs.Reference == rhs.Reference ? 1 : 0);
-            de.SetExpression(lhs.GetReferenceEqualsExpression(rhs, cur), cur);
+            //de.SetExpression(lhs.GetReferenceEqualsExpression(rhs, cur), cur);
             return de;
         }
 
@@ -87,7 +87,7 @@ namespace dnWalker.Parameters
 
             Expression lengthExpression = array.GetLengthExpression(cur);
 
-            de.SetExpression(lengthExpression, cur);
+            //de.SetExpression(lengthExpression, cur);
 
             // removed - do this magic in the Z3Solver...
             //// Z3 can't work with unsigned integers => all int parameters are signed and amended by GreaterThanOrEqual constraint

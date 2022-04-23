@@ -27,9 +27,25 @@ namespace dnWalker.Symbolic.Expressions
         }
         public static Expression Not(Expression operand)
         {
+            return Not(operand, false);
+        }
+        public static Expression Not(Expression operand, bool optimize)
+        {
+            if (optimize)
+            {
+                if (operand is UnaryOperationExpression unary && unary.Operator == Operator.Not)
+                {
+                    // Not(Not(expr))
+                    return unary.Operand;
+                }
+
+                if (operand is BinaryOperationExpression binary && binary.Operator.IsComparison())
+                {
+                    return new BinaryOperationExpression(binary.Operator.Negate(), binary.Left, binary.Right);
+                }
+            }
             return new UnaryOperationExpression(Operator.Not, operand);
         }
-
 
         public static Expression Add(Expression left, Expression right)
         {
@@ -155,13 +171,13 @@ namespace dnWalker.Symbolic.Expressions
         }
 
 
-        public static Expression IntegerToReal(Expression expression)
+        public static Expression ToReal(Expression expression)
         {
-            return new IntegerToRealExpression(expression);
+            return expression.Type == ExpressionType.Real ? expression : new ToRealExpression(expression);
         }
-        public static Expression RealToInteger(Expression expression)
+        public static Expression ToInteger(Expression expression)
         {
-            return new RealToIntegerExpression(expression);
+            return expression.Type == ExpressionType.Integer ? expression : new ToIntegerExpression(expression);
         }
     }
 }

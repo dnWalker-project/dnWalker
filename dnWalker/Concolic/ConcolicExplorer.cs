@@ -30,14 +30,21 @@ namespace dnWalker.Concolic
 
         protected override void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null)
         {
-            ConstraintTreeExplorer constraintTreeExplorer = new ConstraintTreeExplorer();
+            ConstraintTreeExplorer constraintTreeExplorer = new ConstraintTreeExplorer(PathStore);
 
             while (constraintTreeExplorer.TryGetNextPrecondition(out IPrecondition precondition))
             {
                 // get the input model
                 IModel model = precondition.Solve(Solver);
 
+                if (model == null)
+                {
+                    // unsat
+                    continue;
+                }
+
                 // setup explicit active state
+                PathStore.ResetPath(true);
                 ExplicitActiveState cur = CreateActiveState();
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
@@ -62,8 +69,6 @@ namespace dnWalker.Concolic
 
                 // TODO: remove the ParameterStore and use Model
                 // OnIterationFinished(new IterationFinishedEventArgs(IterationCount, ParameterStore, PathStore.CurrentPath));
-
-                PathStore.ResetPath();
             }
 
         }

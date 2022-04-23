@@ -1,32 +1,32 @@
-﻿using dnlib.DotNet;
-using dnlib.DotNet.Emit;
+﻿//using dnlib.DotNet;
+//using dnlib.DotNet.Emit;
 
-using dnWalker.Parameters;
+//using dnWalker.Parameters;
 
-using MMC.Data;
-using MMC.InstructionExec;
-using MMC.State;
+//using MMC.Data;
+//using MMC.InstructionExec;
+//using MMC.State;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace dnWalker.Instructions.Extensions.Parameters
-{
-    public class LDELEMA : LDELEM
-    {
-        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Ldelema };
+//namespace dnWalker.Instructions.Extensions.Parameters
+//{
+//    public class LDELEMA : LDELEM
+//    {
+//        private static readonly OpCode[] _supportedCodes = new OpCode[] { OpCodes.Ldelema };
 
-        public override IEnumerable<OpCode> SupportedOpCodes
-        {
-            get
-            {
-                return _supportedCodes;
-            }
-        }
+//        public override IEnumerable<OpCode> SupportedOpCodes
+//        {
+//            get
+//            {
+//                return _supportedCodes;
+//            }
+//        }
 
-        // does the same as LDELEM, e.i. lazily initialize the data element whose address will be returned...
-    }
-}
+//        // does the same as LDELEM, e.i. lazily initialize the data element whose address will be returned...
+//    }
+//}

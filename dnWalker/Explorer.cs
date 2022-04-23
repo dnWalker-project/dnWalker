@@ -351,7 +351,7 @@ namespace MMC
 
         private void InitializeStaticGlobals(ExplicitActiveState cur)
         {
-            dnWalker.NativePeers.SystemConsole.Init(cur);
+            //dnWalker.NativePeers.SystemConsole.Init(cur);
         }
 
         private void Advance()

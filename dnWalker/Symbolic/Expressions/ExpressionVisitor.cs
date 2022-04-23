@@ -20,28 +20,29 @@ namespace dnWalker.Symbolic.Expressions
 
         public virtual Expression VisitNull(NullExpression nullExpression) => nullExpression;
 
-        public virtual Expression VisitRealToInteger(RealToIntegerExpression realToIntegerExpression)
+
+        public virtual Expression VisitToReal(ToRealExpression toRealExpression)
         {
-            Expression inner = Visit(realToIntegerExpression.Inner);
-            if (ReferenceEquals(inner, realToIntegerExpression.Inner))
+            Expression inner = Visit(toRealExpression.Inner);
+            if (ReferenceEquals(inner, toRealExpression.Inner))
             {
-                return realToIntegerExpression;
+                return toRealExpression;
             }
             else
             {
-                return new RealToIntegerExpression(inner);
+                return new ToRealExpression(inner);
             }
         }
-        public virtual Expression VisitIntegerToReal(IntegerToRealExpression integerToRealExpression)
+        public virtual Expression VisitToInteger(ToIntegerExpression toIntegerExpression)
         {
-            Expression inner = Visit(integerToRealExpression.Inner);
-            if (ReferenceEquals(inner, integerToRealExpression.Inner))
+            Expression inner = Visit(toIntegerExpression.Inner);
+            if (ReferenceEquals(inner, toIntegerExpression.Inner))
             {
-                return integerToRealExpression;
+                return toIntegerExpression;
             }
             else
             {
-                return new IntegerToRealExpression(inner);
+                return new ToRealExpression(inner);
             }
         }
         public virtual Expression VisitLength(LengthExpression lengthExpression)
@@ -111,31 +112,6 @@ namespace dnWalker.Symbolic.Expressions
 
         public virtual Expression VisitVariable(VariableExpression variableExpression, TState state) => variableExpression;
 
-        public virtual Expression VisitRealToInteger(RealToIntegerExpression realToIntegerExpression, TState state)
-        {
-            Expression inner = Visit(realToIntegerExpression.Inner, state);
-            if (ReferenceEquals(inner, realToIntegerExpression.Inner))
-            {
-                return realToIntegerExpression;
-            }
-            else
-            {
-                return new RealToIntegerExpression(inner);
-            }
-        }
-        public virtual Expression VisitIntegerToReal(IntegerToRealExpression integerToRealExpression, TState state)
-        {
-            Expression inner = Visit(integerToRealExpression.Inner, state);
-            if (ReferenceEquals(inner, integerToRealExpression.Inner))
-            {
-                return integerToRealExpression;
-            }
-            else
-            {
-                return new IntegerToRealExpression(inner);
-            }
-        }
-
         public virtual Expression VisitLength(LengthExpression lengthExpression, TState state)
         {
             Expression expression = Visit(lengthExpression.Expression, state);
@@ -184,6 +160,31 @@ namespace dnWalker.Symbolic.Expressions
             else
             {
                 return unaryOperationExpression;
+            }
+        }
+
+        public virtual Expression VisitToReal(ToRealExpression toRealExpression, TState state)
+        {
+            Expression inner = Visit(toRealExpression.Inner, state);
+            if (ReferenceEquals(inner, toRealExpression.Inner))
+            {
+                return toRealExpression;
+            }
+            else
+            {
+                return new ToRealExpression(inner);
+            }
+        }
+        public virtual Expression VisitToInteger(ToIntegerExpression toIntegerExpression, TState state)
+        {
+            Expression inner = Visit(toIntegerExpression.Inner, state);
+            if (ReferenceEquals(inner, toIntegerExpression.Inner))
+            {
+                return toIntegerExpression;
+            }
+            else
+            {
+                return new ToRealExpression(inner);
             }
         }
     }

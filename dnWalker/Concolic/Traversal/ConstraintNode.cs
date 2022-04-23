@@ -66,15 +66,11 @@ namespace dnWalker.Concolic.Traversal
             _children = children;
         }
 
-        /// <summary>
-        /// Gets the precondition associated with this node
-        /// </summary>
-        /// <returns></returns>
-        public IPrecondition GetPrecondition()
+        public IEnumerable<Expression> GetConstraints()
         {
             if (_ancestorConstraints == null)
             {
-                List<Expression> _ancestorConstraints = new List<Expression>();
+                _ancestorConstraints = new List<Expression>();
                 ConstraintNode current = this;
                 while (current != null)
                 {
@@ -83,8 +79,17 @@ namespace dnWalker.Concolic.Traversal
                     current = current.Parent;
                 }
             }
+            return _ancestorConstraints;
+        }
 
-            return new Precondition(_inputModel, _ancestorConstraints);
+        /// <summary>
+        /// Gets the precondition associated with this node
+        /// </summary>
+        /// <returns></returns>
+        public IPrecondition GetPrecondition()
+        {
+
+            return new Precondition(_inputModel, GetConstraints());
         }
     }
 }

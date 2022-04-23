@@ -1,5 +1,8 @@
 ﻿using dnlib.DotNet.Emit;
 
+using dnWalker.Concolic.Traversal;
+using dnWalker.Symbolic;
+
 using MMC.InstructionExec;
 using MMC.State;
 
@@ -22,6 +25,12 @@ namespace dnWalker.Instructions.Extensions.Symbolic
         protected static void SetPathConstraint(InstructionExecBase currentInstruction, Instruction nextInstruction, ExplicitActiveState cur, Expression condition)
         {
             cur.PathStore.AddPathConstraint(condition, nextInstruction, cur);
+        }
+
+        protected static void MakeDecision(ExplicitActiveState cur, int decision, params dnWalker.Symbolic.Expressions.Expression[] choices)
+        {
+            ConstraintTreeExplorer ct = cur.GetConstraintTree();
+            ct.MakeDecision(decision, choices);
         }
 
         protected static Instruction GetNextInstruction(IIEReturnValue retValue, ExplicitActiveState cur)

@@ -12,6 +12,7 @@ namespace dnWalker.Symbolic.Expressions
         And,
         Or,
         Not,
+        Xor,
 
         // arithmetic operators
         Add,
@@ -20,6 +21,8 @@ namespace dnWalker.Symbolic.Expressions
         Divide,
         Remainder,
         Negate,
+        ShiftLeft,
+        ShiftRight,
 
         // comparison operators
         Equal,
@@ -47,6 +50,7 @@ namespace dnWalker.Symbolic.Expressions
                 // logical bin operators
                 case Operator.And:
                 case Operator.Or:
+                case Operator.Xor:
 
                 // arithmetic bin operators
                 case Operator.Add:
@@ -54,6 +58,9 @@ namespace dnWalker.Symbolic.Expressions
                 case Operator.Multiply:
                 case Operator.Divide:
                 case Operator.Remainder:
+                case Operator.ShiftLeft:
+                case Operator.ShiftRight:
+
 
                 // comparison bin operators
                 case Operator.Equal:
@@ -98,6 +105,21 @@ namespace dnWalker.Symbolic.Expressions
             }
         }
 
+        public static Operator Negate(this Operator op)
+        {
+            switch (op)
+            {
+                case Operator.Equal: return Operator.NotEqual;
+                case Operator.NotEqual: return Operator.Equal;
+                case Operator.GreaterThan: return Operator.LessThanOrEqual;
+                case Operator.GreaterThanOrEqual: return Operator.LessThan;
+                case Operator.LessThan: return Operator.GreaterThanOrEqual;
+                case Operator.LessThanOrEqual: return Operator.GreaterThan;
+                default:
+                    throw new NotSupportedException("Unsupported operation, cannot be negated.");
+            }
+        }
+
         public static bool IsLogical(this Operator op)
         {
             switch (op)
@@ -105,6 +127,7 @@ namespace dnWalker.Symbolic.Expressions
                 case Operator.And:
                 case Operator.Or:
                 case Operator.Not:
+                case Operator.Xor:
                     return true;
 
                 default:
@@ -122,6 +145,8 @@ namespace dnWalker.Symbolic.Expressions
                 case Operator.Divide:
                 case Operator.Remainder:
                 case Operator.Negate:
+                case Operator.ShiftLeft:
+                case Operator.ShiftRight:
                     return true;
 
                 default:

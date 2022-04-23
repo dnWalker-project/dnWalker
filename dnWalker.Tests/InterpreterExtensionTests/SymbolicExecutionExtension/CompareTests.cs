@@ -1,4 +1,5 @@
 ﻿using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
 
 using FluentAssertions;
 
@@ -10,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +26,6 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
         }
 
 
-
         [Theory, CombinatorialData]
         public void Test_CGT([CombinatorialValues(5, 10)] int x, [CombinatorialValues(5, 10)] int y, [CombinatorialValues(true, false)] bool isXSymb, [CombinatorialValues(true, false)] bool isYSymb)
         {
@@ -40,8 +39,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
-            if (isYSymb) yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
+            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
+            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
 
             explorer.Run();
 
@@ -68,8 +67,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
-            if (isYSymb) yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
+            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
+            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
 
             explorer.Run();
 
@@ -96,8 +95,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(Expression.Parameter(typeof(int), "x"), state);
-            if (isYSymb) yDE.SetExpression(Expression.Parameter(typeof(int), "y"), state);
+            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
+            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
 
             explorer.Run();
 

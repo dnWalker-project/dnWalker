@@ -102,14 +102,20 @@ namespace dnWalker.Symbolic.Expressions.Utils
             {
                 Operator.And => "&",
                 Operator.Or => "|",
+                Operator.Xor => "^",
                 Operator.Not => "!",
+
                 Operator.Add => "+",
                 Operator.Subtract => "-",
                 Operator.Multiply => "*",
                 Operator.Divide => "/",
                 Operator.Remainder => "%",
+                Operator.ShiftLeft => "<<",
+                Operator.ShiftRight => ">>",
+
+
                 Operator.Negate => "-",
-                Operator.Equal => "=",
+                Operator.Equal => "==",
                 Operator.NotEqual => "!=",
                 Operator.GreaterThan => ">",
                 Operator.GreaterThanOrEqual => ">=",
@@ -120,20 +126,21 @@ namespace dnWalker.Symbolic.Expressions.Utils
             };
         }
 
-        public override Expression VisitIntegerToReal(IntegerToRealExpression integerToRealExpression, StringBuilder state)
-        {
-            state.Append("ToReal(");
-            Visit(integerToRealExpression.Inner, state);
-            state.Append(')');
-            return integerToRealExpression;
-        }
 
-        public override Expression VisitRealToInteger(RealToIntegerExpression realToIntegerExpression, StringBuilder state)
+        public override Expression VisitToInteger(ToIntegerExpression toIntegerExpression, StringBuilder state)
         {
             state.Append("ToInteger(");
-            Visit(realToIntegerExpression.Inner, state);
+            Visit(toIntegerExpression.Inner, state);
             state.Append(')');
-            return realToIntegerExpression;
+            return toIntegerExpression;
+        }
+
+        public override Expression VisitToReal(ToRealExpression toRealExpression, StringBuilder state)
+        {
+            state.Append("ToReal(");
+            Visit(toRealExpression.Inner, state);
+            state.Append(')');
+            return toRealExpression;
         }
 
         public static readonly string NullLiteral = "null";

@@ -21,5 +21,10 @@ namespace dnWalker.Concolic.Traversal
         private readonly Expression _constraint;
 
         public override Expression Constraint => _constraint;
+
+        public override string ToString()
+        {
+            return $"Condition: {Constraint}";
+        }
     }
 }

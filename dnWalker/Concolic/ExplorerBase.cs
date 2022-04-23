@@ -70,7 +70,9 @@ namespace dnWalker.Concolic
 
         protected ExplicitActiveState CreateActiveState()
         {
-            return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+            ExplicitActiveState state = new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+            state.PathStore = _pathStore;
+            return state;
         }
 
         public ExplorerBase(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
@@ -115,6 +117,7 @@ namespace dnWalker.Concolic
             {
                 _logger.Log(LogPriority.Fatal, e.Message);
                 OnExplorationFailed(new ExplorationFailedEventArgs(e));
+                throw;
             }
         }
 

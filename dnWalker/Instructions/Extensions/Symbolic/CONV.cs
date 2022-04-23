@@ -89,11 +89,11 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                 if (outType != inType)
                 {
-                    expression = (inType, outType) switch
+                    expression = outType switch
                     {
-                        (ExpressionType.Integer, ExpressionType.Real) => Expression.IntegerToReal(expression),
-                        (ExpressionType.Real, ExpressionType.Real) => Expression.RealToInteger(expression),
-                        _ => throw new InvalidOperationException("Unexpected expression types. The CONV instruction should accept only integer and real values!!!")
+                        ExpressionType.Real => Expression.ToReal(expression),
+                        ExpressionType.Integer => Expression.ToInteger(expression),
+                        _ => throw new InvalidOperationException("Unexpected expression types. The CONV instruction should output only integer and real values!!!")
                     };
                 }
 

@@ -1,4 +1,6 @@
-﻿using dnWalker.TypeSystem;
+﻿using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
+using dnWalker.TypeSystem;
 
 using MMC;
 using MMC.Data;
@@ -23,5 +25,17 @@ namespace dnWalker.Tests.InterpreterExtensionTests
         {
         }
 
+        protected VariableExpression NamedInt(string name)
+        {
+            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Int32, name));
+        }
+        protected VariableExpression NamedDouble(string name)
+        {
+            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Double, name));
+        }
+        protected VariableExpression NamedBoolean(string name)
+        {
+            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Boolean, name));
+        }
     }
 }

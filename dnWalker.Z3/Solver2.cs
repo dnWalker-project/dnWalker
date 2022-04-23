@@ -20,7 +20,7 @@ namespace dnWalker.Z3
             return new Solver().Solve(expression, parameters);
         }
 
-        public IEnumerable<Valuation> Solve(IEnumerable<Expression> constraints)
+        public SolverResult Solve(IEnumerable<Expression> constraints)
         {
             Context z3 = new Context();
             Z3TranslatorContext translatorContext = Z3ConstraintTranslator.Translate(z3, constraints.ToList());
@@ -29,13 +29,13 @@ namespace dnWalker.Z3
 
             Microsoft.Z3.Solver solver = z3.MkSolver();
             solver.Assert(translatorContext.Constraints.Append((BoolExpr)constraint).ToArray());
-            Status status = solver.Check();
+            Microsoft.Z3.Status status = solver.Check();
 
-            if (status == Status.UNSATISFIABLE)
+            if (status == Microsoft.Z3.Status.UNSATISFIABLE)
             {
                 // TODO: custom exception
                 // OR make it part of the return value
-                throw new Exception("Unsatisfiable");
+                return SolverResult.Unsatisfiable;
             }
             else
             {
@@ -115,7 +115,7 @@ namespace dnWalker.Z3
                     valuations.Add(new Valuation(variable, value));
                 }
 
-                return valuations;
+                return SolverResult.Satisfiable(valuations);
             }
         }
 

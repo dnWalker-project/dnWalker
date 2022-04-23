@@ -234,27 +234,25 @@ namespace dnWalker.Traversal
 
             _segments.Add(segment);
 
-            if (SystemConsole.OutTextWriterRef.Equals(ObjectReference.Null))
+            if (SystemConsole.TryGetConsoleOut(threadState.Cur, out ObjectReference consoleOut))
             {
-                return;
-            }
-
-            if (threadState.Cur.DynamicArea.Allocations[SystemConsole.OutTextWriterRef] is AllocatedObject theObject)
-            {
-                var field = theObject.Fields[0];
-                if (field.Equals(ObjectReference.Null))
+                if (threadState.Cur.DynamicArea.Allocations[consoleOut] is AllocatedObject theObject)
                 {
-                    return;
+                    var field = theObject.Fields[0];
+                    if (field.Equals(ObjectReference.Null))
+                    {
+                        return;
 
-                }
+                    }
 
-                if (field is IConvertible c)
-                {
-                    Output = c.ToString(System.Globalization.CultureInfo.CurrentCulture);
-                }
-                else
-                {
-                    throw new Exception(field.WrapperName);
+                    if (field is IConvertible c)
+                    {
+                        Output = c.ToString(System.Globalization.CultureInfo.CurrentCulture);
+                    }
+                    else
+                    {
+                        throw new Exception(field.WrapperName);
+                    }
                 }
             }
         }

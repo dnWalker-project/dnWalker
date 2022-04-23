@@ -12,7 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using ConcolicExplorer = dnWalker.Concolic.Explorer;
+//using ConcolicExplorer = dnWalker.Concolic.Explorer;
+using ConcolicExplorer = dnWalker.Concolic.ConcolicExplorer;
 
 namespace dnWalker.Tests
 {

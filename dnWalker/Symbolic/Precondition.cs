@@ -25,11 +25,15 @@ namespace dnWalker.Symbolic
             // that will give valuation of primitive variables & valuation of heap node traits
             // apply the valuation & the traits on the _baseModel.Clone()
             // return the result
+            SolverResult result = solver.Solve(_constraints);
+            if (result.Status == Status.Unsatisfiable)
+            {
+                return null;
+            }
 
-            IEnumerable<Valuation> valuations = solver.Solve(_constraints);
             IModel model = _baseModel.Clone();
 
-            model.Update(valuations);
+            model.Update(result.Valuations);
 
             return model;
         }

@@ -35,14 +35,22 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
-            expression = expression.AsBoolean();
-
             Instruction nextInstruction = GetNextInstruction(retValue, cur);
+            bool willJump = nextInstruction != null;
+
+            expression = expression.AsBoolean();
+            Expression not = Expression.Not(expression, true);
+
+            //  willJump => expression is not valid => PathConstraint := Not(expression)
+            // !willJump => expression is valid     => PathConstraint := expression
+            int decision = willJump ? 1 : 0;
+
+            MakeDecision(cur, decision, expression, not);
 
             // nextInstruction != null => WILL branch => the condition is FALSE => we need to negate it for the path constraint
-            Expression condition = nextInstruction != null ? Expression.Not(expression) : expression;
+            //Expression condition = nextInstruction != null ? Expression.Not(expression) : expression;
 
-            SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
+            //SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
 
             return retValue;
         }

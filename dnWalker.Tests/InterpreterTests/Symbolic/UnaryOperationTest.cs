@@ -18,8 +18,8 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
         [Theory]
         [InlineData(0, null, null)]
         [InlineData(1, null, null)]
-        [InlineData(0, "x", "Not(x)")]
-        [InlineData(1, "x", "Not(x)")]
+        [InlineData(0, "x", "!x")]
+        [InlineData(1, "x", "!x")]
         public void Test_NOT__Int32_AsBitVector(int arg, string name, string result)
         {
             Test("Test_NOT__Int32", new (object, string)[] { (arg, name) }, null, result);
@@ -28,8 +28,8 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
         [Theory]
         [InlineData(false, null, null)]
         [InlineData(true, null, null)]
-        [InlineData(false, "x", "Not(x)")]
-        [InlineData(true, "x", "Not(x)")]
+        [InlineData(false, "x", "!x")]
+        [InlineData(true, "x", "!x")]
         public void Test_NOT__Int32_AsBoolean(bool arg, string name, string result)
         {
             Test("Test_NOT__Int32", new (object, string)[] { (arg, name) }, null, result);
