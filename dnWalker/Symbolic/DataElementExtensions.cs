@@ -34,5 +34,13 @@ namespace dnWalker.Symbolic
         {
             return cur.PathStore.CurrentPath.TryGetObjectAttribute<Expression>(dataElement, nameof(expression), out expression);
         }
+
+        public static IDataElement AsDataElement(this IValue value)
+        {
+            switch (value)
+            {
+                case Location location:
+            }
+        }
     }
 }

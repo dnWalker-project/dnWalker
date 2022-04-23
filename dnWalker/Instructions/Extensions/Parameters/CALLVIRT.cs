@@ -2,6 +2,8 @@
 using dnlib.DotNet.Emit;
 
 using dnWalker.Parameters;
+using dnWalker.Symbolic;
+using dnWalker.Symbolic.Heap;
 using dnWalker.TypeSystem;
 
 using MMC.Data;
@@ -42,10 +44,10 @@ namespace dnWalker.Instructions.Extensions.Parameters
 
             // check whether we can use the parameter system
             ObjectReference instance = (ObjectReference)cur.EvalStack.Peek(method.GetParamCount());
-            if (!cur.TryGetParameterStore(out ParameterStore store) ||
-                !instance.TryGetParameter(cur, out IObjectParameter objectParameter))
+            Allocation allocation = cur.DynamicArea.Allocations[instance];
+            if (!allocation.TryGetHeapNode(cur, out IHeapNode heapNode))
             {
-                // the parameter system is not available OR the instance itself is not a parameter
+                //  the instance itself is not a parameter
                 return next(instruction, cur);
             }
 
@@ -73,11 +75,23 @@ namespace dnWalker.Instructions.Extensions.Parameters
             // during the instruction executor creation the IMethod type is transformed into MethodDef
             // IMethod may be in fact a MethodSpec instance, which is a generic instantiation of a generic MethodDef
             // in such a case, the CallInstructionExec.Method is actually a generic method without the specified generic arguments !!!
-            MethodSignature signature = new MethodSignature(method);
-            int invocation = cur.IncreaseInvocationCount(instance, signature);
+            
+            //int invocation = cur.IncreaseInvocationCount(instance, signature);
+            int invocation = 0; // TODO - where should it be stored?? as the allocation attribute?
+
+            IObjectHeapNode objNode = heapNode as IObjectHeapNode;
+            if (objNode == null) throw new InvalidOperationException("A non object heap node is attached to a object allocation!!");
 
             // ensure that the objectParameter has this invocation specified, if not, create a default
-            if (!objectParameter.TryGetMethodResult(signature, invocation, out IParameter resultParameter))
+            IValue symResult = objNode.GetMethodResult(method, invocation);
+            // either symResult was specified => some value
+            // OR it was not specified and a default value was returned, either way, there is NO NEED TO EDIT THE HEAP MODEL
+            // which is great!!
+
+
+
+
+            if (!objNode.GetMethodResult .TryGetMethodResult(method, invocation, out IParameter resultParameter))
             {
                 // there is not any information about the method result
                 // 2 options:
