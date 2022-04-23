@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,11 +21,14 @@ namespace dnWalker.Symbolic.Heap
             return Clone();
         }
 
-        new IHeapNode GetNode(Location location);
+        bool TryGetNode(Location location, [NotNullWhen(true)] out IHeapNode node);
 
-        IReadOnlyHeapNode IReadOnlyHeapInfo.GetNode(Location location)
+        bool IReadOnlyHeapInfo.TryGetNode(Location location, [NotNullWhen(true)] out IReadOnlyHeapNode node)
         {
-            return GetNode(location);
+            TryGetNode(location, out IHeapNode n);
+            node = n;
+            return true;
+            //return GetNode(location);
         }
 
         IObjectHeapNode InitializeObject(TypeSig type);

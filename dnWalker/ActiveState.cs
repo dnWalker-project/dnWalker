@@ -37,7 +37,7 @@ namespace MMC.State
     {
 
         DynamicArea m_dyn;
-        IStaticArea m_stat;
+        StaticArea m_stat;
         ThreadPool m_tp;
         IGarbageCollector m_gc;
         private readonly Collapser m_stateConvertor;
@@ -55,7 +55,7 @@ namespace MMC.State
         /// <summary>
         /// Loaded classes reside here, i.e. the static part.
         /// </summary>
-        public IStaticArea StaticArea
+        public StaticArea StaticArea
         {
             get { return m_stat; }
         }

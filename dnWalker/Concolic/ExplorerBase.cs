@@ -104,7 +104,7 @@ namespace dnWalker.Concolic
             }
         }
 
-        protected abstract void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null)
+        protected abstract void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null);
 
 
         public PathStore PathStore

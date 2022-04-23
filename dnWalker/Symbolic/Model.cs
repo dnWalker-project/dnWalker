@@ -40,14 +40,16 @@ namespace dnWalker.Symbolic
             return new Model(this);
         }
 
-        public IValue GetValue(IVariable variable)
+        public bool TryGetValue(IVariable variable, out IValue value)
         {
-            if (!_values.TryGetValue(variable, out IValue value))
-            {
-                value = ValueFactory.GetDefault(variable.Type);
-                _values.Add(variable, value);
-            }
-            return value;
+            return _values.TryGetValue(variable, out value);
+
+            //if (!_values.TryGetValue(variable, out IValue value))
+            //{
+            //    value = ValueFactory.GetDefault(variable.Type);
+            //    _values.Add(variable, value);
+            //}
+            //return value;
         }
 
         public void SetValue(IVariable variable, IValue value)

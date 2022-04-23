@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,18 @@ namespace dnWalker.Symbolic.Heap
         /// Gets heap node associated with the specified location.
         /// </summary>
         /// <param name="location"></param>
+        /// <param name="node"></param>
         /// <returns></returns>
-        IReadOnlyHeapNode GetNode(Location location);
+        bool TryGetNode(Location location, [NotNullWhen(true)] out IReadOnlyHeapNode node);
+
+        /// <summary>
+        /// Gets the locations.
+        /// </summary>
+        IReadOnlyCollection<Location> Locations { get; }
+        
+        /// <summary>
+        /// Gets the heap nodes.
+        /// </summary>
+        IReadOnlyCollection<IHeapNode> Nodes { get; }
     }
 }

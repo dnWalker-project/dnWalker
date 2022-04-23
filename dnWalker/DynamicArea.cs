@@ -34,7 +34,7 @@ namespace MMC.State {
 		ObjectReference AllocateObject(int location, ITypeDefOrRef type);
 		ObjectReference AllocateArray(int location, ITypeDefOrRef elementType, int length);
 
-        int DeterminePlacement();
+        int DeterminePlacement(bool enableSymetryReduction = false);
 
 		AllocationList Allocations { get; }
 
@@ -231,6 +231,15 @@ namespace MMC.State {
         /// <seealso cref="DeterminePlacement"/>
         /// <returns>A reference to the newly created object.</returns>
         public ObjectReference AllocateObject(ITypeDefOrRef typeDef) => AllocateObject(DeterminePlacement(), typeDef);
+
+        /// <summary>
+        /// Allocate a new array of the given type and length.
+        /// </summary>
+        /// <param name="typeDef">The element type of the array.</param>
+        /// <param name="length">The length of the array.</param>
+        /// <seealso cref="DeterminePlacement"/>
+        /// <returns>A reference to the newly created array.</returns>
+        public ObjectReference AllocateArray(ITypeDefOrRef typeDef, int length) => AllocateArray(DeterminePlacement(), typeDef, length);
 
         /// <summary>
         /// Allocate a new array of the given type and length at the given place.

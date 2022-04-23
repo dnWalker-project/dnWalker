@@ -15,7 +15,8 @@ namespace dnWalker.Symbolic
     {
         IReadOnlyModel Clone();
 
-        IValue GetValue(IVariable variable);
+        //IValue GetValue(IVariable variable);
+        bool TryGetValue(IVariable variable, out IValue value);
 
         IReadOnlyHeapInfo HeapInfo { get; }
 

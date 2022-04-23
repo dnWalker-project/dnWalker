@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,11 +32,12 @@ namespace dnWalker.Symbolic.Heap
         IHeapInfo IHeapInfo.Clone() => Clone();
         IReadOnlyHeapInfo IReadOnlyHeapInfo.Clone() => Clone();
 
-        public IHeapNode GetNode(Location location)
-        {
-            if (_nodes.TryGetValue(location, out IHeapNode node)) return node;
+        public IReadOnlyCollection<Location> Locations => _nodes.Keys;
+        public IReadOnlyCollection<IHeapNode> Nodes => _nodes.Values;
 
-            throw new Exception("Invalid location.");
+        public bool TryGetNode(Location location, [NotNullWhen(true)]out IHeapNode node)
+        {
+            return _nodes.TryGetValue(location, out node);
         }
 
         public IObjectHeapNode InitializeObject(TypeSig type)
