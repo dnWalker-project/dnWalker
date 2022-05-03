@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic;
+using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 
 using MMC;

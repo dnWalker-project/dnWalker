@@ -1,7 +1,9 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
+using dnWalker.TypeSystem;
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -14,49 +16,25 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 {
     public class CONV : IInstructionExecutor
     {
-        private static readonly Dictionary<OpCode, ExpressionType> _resultTypes = new Dictionary<OpCode, ExpressionType>()
+        private static readonly Dictionary<OpCode, TypeCode> _resultTypes = new Dictionary<OpCode, TypeCode>()
         {
             // this should be based on the architecture... int vs long
-            [OpCodes.Conv_I] = ExpressionType.Integer,
-            [OpCodes.Conv_I1] = ExpressionType.Integer,
-            [OpCodes.Conv_I2] = ExpressionType.Integer,
-            [OpCodes.Conv_I4] = ExpressionType.Integer,
-            [OpCodes.Conv_I8] = ExpressionType.Integer,
-
-            // this should be based on the architecture... int vs long
-            [OpCodes.Conv_Ovf_I] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I1] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I1_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I2] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I2_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I4] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I4_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I8] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_I8_Un] = ExpressionType.Integer,
+            [OpCodes.Conv_I] = TypeCode.Int32,
+            [OpCodes.Conv_I1] = TypeCode.SByte,
+            [OpCodes.Conv_I2] = TypeCode.Int16,
+            [OpCodes.Conv_I4] = TypeCode.Int32,
+            [OpCodes.Conv_I8] = TypeCode.Int64,
 
             // this should be based on the architecture... uint vs ulong
-            [OpCodes.Conv_U] = ExpressionType.Integer,
-            [OpCodes.Conv_U1] = ExpressionType.Integer,
-            [OpCodes.Conv_U2] = ExpressionType.Integer,
-            [OpCodes.Conv_U4] = ExpressionType.Integer,
-            [OpCodes.Conv_U8] = ExpressionType.Integer,
+            [OpCodes.Conv_U] = TypeCode.UInt32,
+            [OpCodes.Conv_U1] = TypeCode.Byte,
+            [OpCodes.Conv_U2] = TypeCode.UInt16,
+            [OpCodes.Conv_U4] = TypeCode.UInt32,
+            [OpCodes.Conv_U8] = TypeCode.UInt64,
 
-            // this should be based on the architecture... uint vs ulong
-            [OpCodes.Conv_Ovf_U] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U1] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U1_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U2] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U2_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U4] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U4_Un] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U8] = ExpressionType.Integer,
-            [OpCodes.Conv_Ovf_U8_Un] = ExpressionType.Integer,
-
-            [OpCodes.Conv_R_Un] = ExpressionType.Real,
-            [OpCodes.Conv_R4] = ExpressionType.Real,
-            [OpCodes.Conv_R8] = ExpressionType.Real,
+            [OpCodes.Conv_R_Un] = TypeCode.Double,
+            [OpCodes.Conv_R4] = TypeCode.Single,
+            [OpCodes.Conv_R8] = TypeCode.Double,
         };
 
         public IEnumerable<OpCode> SupportedOpCodes
@@ -84,30 +62,16 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             if (operand.TryGetExpression(cur, out Expression expression))
             {
-                ExpressionType outType = _resultTypes[baseExecutor.Instruction.OpCode];
-                ExpressionType inType = expression.Type;
+                TypeCode outType = _resultTypes[baseExecutor.Instruction.OpCode];
+                TypeCode inType = expression.Type.GetTypeCode();
 
                 if (outType != inType)
                 {
-                    expression = outType switch
-                    {
-                        ExpressionType.Real => Expression.ToReal(expression),
-                        ExpressionType.Integer => Expression.ToInteger(expression),
-                        _ => throw new InvalidOperationException("Unexpected expression types. The CONV instruction should output only integer and real values!!!")
-                    };
+                    TypeSig targetType = cur.DefinitionProvider.GetTypeSig(outType);
+                    expression = Expression.MakeConvert(targetType, expression);
                 }
 
-                if (baseExecutor.CheckOverflow)
-                {
-                    // TODO: add exception constraint 
-                    // i.e. - get limits based on the OpCode and enforce the in expression be within them
-
-                    result.SetExpression(expression, cur);
-                }
-                else
-                {
-                    result.SetExpression(expression, cur);
-                }
+                result.SetExpression(cur, expression);
             }
 
             return returnValue;

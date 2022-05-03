@@ -30,7 +30,7 @@ namespace dnWalker.Tests
         //}
 
         IModelCheckerExplorerBuilder AddInstructionExecutor(IInstructionExecutor executor);
-
+        IModelCheckerExplorerBuilder AddService<TService>(TService service);
 
         IModelCheckerExplorerBuilder SetMethod(string methodName);
         IModelCheckerExplorerBuilder SetArgs(params IDataElement[] args);

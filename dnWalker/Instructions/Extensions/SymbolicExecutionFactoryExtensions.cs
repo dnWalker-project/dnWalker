@@ -8,24 +8,34 @@ namespace dnWalker.Instructions.Extensions
 {
     public static partial class Extensions
     {
+
+
         public static ExtendableInstructionFactory AddSymbolicExecution(this ExtendableInstructionFactory factory)
         {
-            // conversion instructions
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.CONV());
+            const string SymbolicExtensionsNamespace = "dnWalker.Instructions.Extensions.Symbolic";
+            return factory.RegisterExtensionsFrom(SymbolicExtensionsNamespace);
 
-            // branching instruction
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryBranch());
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BRFALSE());
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BRTRUE());
 
-            // operations
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryOperation());
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.UnaryOperation());
+            //    // conversion instructions
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.LDARG());
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.LDARGA());
 
-            // math methods
-            factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.SystemMath());
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.CONV());
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.CONV_OVF());
 
-            return factory;
+            //    // branching instruction
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryBranch());
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BRFALSE());
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BRTRUE());
+
+            //    // operations
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.BinaryOperation());
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.UnaryOperation());
+
+            //    // math methods
+            //    factory.RegisterExtension(new dnWalker.Instructions.Extensions.Symbolic.SystemMath());
+
+            //    return factory;
         }
     }
 }

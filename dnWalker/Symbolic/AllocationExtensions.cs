@@ -3,7 +3,6 @@
 using dnWalker.Symbolic.Heap;
 
 using MMC.State;
-using System.Linq.Expressions;
 
 namespace dnWalker.Symbolic
 {

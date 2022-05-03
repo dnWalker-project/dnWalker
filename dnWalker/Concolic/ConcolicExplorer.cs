@@ -30,30 +30,42 @@ namespace dnWalker.Concolic
 
         protected override void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null)
         {
-            ConstraintTreeExplorer constraintTreeExplorer = new ConstraintTreeExplorer(PathStore);
+            // TODO gather precondition for the entry point
+            // unfold it into multiple constraint objects
+            // IEnumerable<Constraint> unfoledPreconditions = entryPoint.GetPrecondition().Unfold();
+            // ConstraintTreeExplorer constraintTree = new ConstraintTree(unfoldedPreconditions);
+            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer();
+            
+            ExplicitActiveState cur = CreateActiveState();
+            cur.Services.RegisterService(constraintTree);
 
-            while (constraintTreeExplorer.TryGetNextPrecondition(out IPrecondition precondition))
+            PathStore pathStore = PathStore;
+
+            while (constraintTree.TryGetNextPrecondition(out Constraint precondition))
             {
                 // get the input model
-                IModel model = precondition.Solve(Solver);
+                IModel model = Solver.Solve(precondition);
 
                 if (model == null)
                 {
-                    // unsat
+                    // UNSAT => try another precondition
                     continue;
                 }
 
+                // SAT => start the execution
+                // TODO: just restore cur up until the decision point & update values per the expressions and model
+
+                // new execution path
+                pathStore.ResetPath(true);
+
                 // setup explicit active state
-                PathStore.ResetPath(true);
-                ExplicitActiveState cur = CreateActiveState();
+                cur.Reset();
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
                 cur.CurrentThread.InstructionExecuted += PathStore.OnInstructionExecuted;
 
                 // setup input variables & attach model
                 cur.Initialize(model);
-
-                cur.AttachService(constraintTreeExplorer);
 
                 // run the model checker
                 SimpleStatistics statistics = new SimpleStatistics();

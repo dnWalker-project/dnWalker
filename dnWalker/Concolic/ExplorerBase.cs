@@ -4,6 +4,7 @@ using dnWalker.Concolic.Traversal;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Parameters;
+using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 
 using MMC;
@@ -162,6 +163,14 @@ namespace dnWalker.Concolic
             get
             {
                 return _logger;
+            }
+        }
+
+        public IDefinitionProvider DefinitionProvider
+        {
+            get
+            {
+                return _definitionProvider;
             }
         }
 

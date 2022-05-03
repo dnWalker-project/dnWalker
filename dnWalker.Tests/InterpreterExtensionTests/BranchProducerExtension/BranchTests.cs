@@ -24,6 +24,12 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
     {
         public BranchTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
+            this.OverrideModelCheckerExplorerBuilderInitialization(bld =>
+            {
+                ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer();
+                _ = constraintTree.GetNextPrecondition();
+                bld.AddService(constraintTree);
+            });
         }
 
 
@@ -43,8 +49,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -54,7 +60,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb || isYSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
 
                 if (isXSymb && isYSymb) constraint.Should().Be(shouldBranch ? $"(x == y)" : $"(x != y)");
                 if (isXSymb && !isYSymb) constraint.Should().Be(shouldBranch ? $"(x == {y})" : $"(x != {y})");
@@ -76,8 +82,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -87,7 +93,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb || isYSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
 
                 if (isXSymb && isYSymb) constraint.Should().Be(shouldBranch ? $"(x >= y)" : $"(x < y)");
                 if (isXSymb && !isYSymb) constraint.Should().Be(shouldBranch ? $"(x >= {y})" : $"(x < {y})");
@@ -109,8 +115,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -120,7 +126,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb || isYSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
 
                 if (isXSymb && isYSymb) constraint.Should().Be(shouldBranch ? $"(x > y)" : $"(x <= y)");
                 if (isXSymb && !isYSymb) constraint.Should().Be(shouldBranch ? $"(x > {y})" : $"(x <= {y})");
@@ -142,8 +148,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -153,7 +159,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb || isYSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
 
                 if (isXSymb && isYSymb) constraint.Should().Be(shouldBranch ? $"(x <= y)" : $"(x > y)");
                 if (isXSymb && !isYSymb) constraint.Should().Be(shouldBranch ? $"(x <= {y})" : $"(x > {y})");
@@ -175,8 +181,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -186,7 +192,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb || isYSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
 
                 if (isXSymb && isYSymb) constraint.Should().Be(shouldBranch ? $"(x < y)" : $"(x >= y)");
                 if (isXSymb && !isYSymb) constraint.Should().Be(shouldBranch ? $"(x < {y})" : $"(x >= {y})");
@@ -208,8 +214,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -219,7 +225,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb || isYSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
 
                 if (isXSymb && isYSymb) constraint.Should().Be(shouldBranch ? $"(x != y)" : $"(x == y)");
                 if (isXSymb && !isYSymb) constraint.Should().Be(shouldBranch ? $"(x != {y})" : $"(x == {y})");
@@ -240,7 +246,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedBoolean("x"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedBoolean("x"));
 
             explorer.Run();
 
@@ -250,7 +256,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
                 constraint.Should().Be(shouldBranch ? $"!x" : $"x");
             }
         }
@@ -268,7 +274,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedBoolean("x"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedBoolean("x"));
 
             explorer.Run();
 
@@ -278,7 +284,7 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
 
             if (isXSymb)
             {
-                string constraint = explorer.PathStore.CurrentPath.GetPathConstraint().ToString();
+                string constraint = explorer.cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition().ToString();
                 constraint.Should().Be(shouldBranch ? $"x" : $"!x");
             }
         }

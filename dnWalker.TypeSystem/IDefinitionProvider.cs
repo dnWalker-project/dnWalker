@@ -92,5 +92,27 @@ namespace dnWalker.TypeSystem
 
             return typeOffset + retval;
         }
+
+        public static TypeSig GetTypeSig(this IDefinitionProvider definitionProvider, TypeCode typeCode)
+        {
+            return typeCode switch
+            {
+                TypeCode.Object => definitionProvider.BaseTypes.Object,
+                TypeCode.Boolean => definitionProvider.BaseTypes.Boolean,
+                TypeCode.Char => definitionProvider.BaseTypes.Char,
+                TypeCode.SByte => definitionProvider.BaseTypes.SByte,
+                TypeCode.Byte => definitionProvider.BaseTypes.Byte,
+                TypeCode.Int16 => definitionProvider.BaseTypes.Int16,
+                TypeCode.UInt16 => definitionProvider.BaseTypes.UInt16,
+                TypeCode.Int32 => definitionProvider.BaseTypes.Int32,
+                TypeCode.UInt32 => definitionProvider.BaseTypes.UInt32,
+                TypeCode.Int64 => definitionProvider.BaseTypes.Int64,
+                TypeCode.UInt64 => definitionProvider.BaseTypes.UInt64,
+                TypeCode.Single => definitionProvider.BaseTypes.Single,
+                TypeCode.Double => definitionProvider.BaseTypes.Double,
+                TypeCode.String => definitionProvider.BaseTypes.String,
+                _ => throw new NotSupportedException()
+            };
+        }
     }
 }

@@ -15,5 +15,26 @@ namespace dnWalker.Instructions.Extensions
 
             return factory;
         }
+
+        private static IEnumerable<Type> GetExtensions(string ns)
+        {
+            return typeof(Extensions)
+                .Assembly
+                .GetTypes()
+                .Where(t => 
+                    t.Namespace == ns && 
+                    !t.IsAbstract && 
+                    t.IsAssignableTo(typeof(IInstructionExecutor)));
+        }
+
+        private static ExtendableInstructionFactory RegisterExtensionsFrom(this ExtendableInstructionFactory factory, string ns)
+        {
+            foreach(Type extensionType in GetExtensions(ns))
+            {
+                factory.RegisterExtension((IInstructionExecutor)Activator.CreateInstance(extensionType));
+            }
+
+            return factory;
+        }
     }
 }

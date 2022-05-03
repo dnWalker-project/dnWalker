@@ -1,8 +1,11 @@
 ﻿using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
+using MMC.Util;
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,32 +17,64 @@ namespace dnWalker.Concolic.Traversal
     /// </summary>
     public class ConstraintNode
     {
-        private readonly IModel _inputModel;
         private readonly ConstraintNode _parent;
+        private readonly Expression _condition;
+        private readonly CILLocation _location;
+        private readonly ConstraintTree _tree;
+        
         private IReadOnlyList<ConstraintNode> _children = Array.Empty<ConstraintNode>();
 
-        private List<Expression> _ancestorConstraints = null;
         private bool _explored;
 
-        public ConstraintNode(ConstraintNode parent, IModel inputModel)
+        protected ConstraintNode(ConstraintTree tree, ConstraintNode parent)
         {
+            _tree = tree ?? throw new ArgumentNullException(nameof(tree));
             _parent = parent;
-            _inputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
+            _location = CILLocation.None;
+            _condition = null;
         }
-        public ConstraintNode(ConstraintNode parent) : this(parent, new Model())
+        public ConstraintNode(ConstraintTree tree, ConstraintNode parent, CILLocation location, Expression condition)
         {
+            _tree = tree ?? throw new ArgumentNullException(nameof(tree));
+            _parent = parent;
+            _location = location;
+            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
         }
 
         /// <summary>
         /// Gets the constraint associated with this node.
         /// If null, the node is unconstrained, (the expression is TRUE)
         /// </summary>
-        public virtual Expression Constraint => null;
+        public virtual Constraint GetPrecondition()
+        {
+            ConstraintNode cn = this;
+            List<Expression> conditions = new List<Expression>();
+            while (!cn.IsRoot)
+            {
+                Expression conditionExpression = cn._condition;
+                if (conditionExpression != null)
+                {
+                    conditions.Add(conditionExpression);
+                }
+                cn = cn.Parent;
+            }
+
+            Debug.Assert(!ReferenceEquals(this, cn));
+
+            // cn is the root node, should be PreconditionNode
+            Constraint precondition = cn.GetPrecondition().Clone();
+            foreach (Expression condition in conditions)
+            {
+                precondition.AddExpressionConstraint(condition);
+            }
+
+            return precondition;
+        }
         
-        /// <summary>
-        /// Gets the least specified input model needed to reach this constraint node.
-        /// </summary>
-        public IModel InputModel => _inputModel;
+        public Expression Condition
+        {
+            get { return _condition; }
+        }
 
         /// <summary>
         /// Gets the parent node.
@@ -53,43 +88,21 @@ namespace dnWalker.Concolic.Traversal
 
         public bool IsExplored => _explored;
 
+        public CILLocation Location => _location;
+
+        public ConstraintTree Tree => _tree;
+
         public void MarkExplored() => _explored = true;
 
-        public void Expand(params Expression[] choices)
+        public void Expand(CILLocation location, params Expression[] choices)
         {
-            DecisionNode[] children = new DecisionNode[choices.Length];
+            ConstraintNode[] children = new ConstraintNode[choices.Length];
             for (int i = 0; i < choices.Length; ++i)
             {
-                DecisionNode child = new DecisionNode(this, _inputModel, choices[i]);
+                ConstraintNode child = new ConstraintNode(_tree, this, location, choices[i]);
                 children[i] = child;
             }
             _children = children;
-        }
-
-        public IEnumerable<Expression> GetConstraints()
-        {
-            if (_ancestorConstraints == null)
-            {
-                _ancestorConstraints = new List<Expression>();
-                ConstraintNode current = this;
-                while (current != null)
-                {
-                    Expression expression = current.Constraint;
-                    if (expression != null) _ancestorConstraints.Add(expression);
-                    current = current.Parent;
-                }
-            }
-            return _ancestorConstraints;
-        }
-
-        /// <summary>
-        /// Gets the precondition associated with this node
-        /// </summary>
-        /// <returns></returns>
-        public IPrecondition GetPrecondition()
-        {
-
-            return new Precondition(_inputModel, GetConstraints());
         }
     }
 }

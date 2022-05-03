@@ -24,6 +24,7 @@ namespace MMC.Data
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using dnWalker;
+    using System.Numerics;
 
     public interface IDataElement : IComparable
     {

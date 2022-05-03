@@ -29,8 +29,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
         protected static void MakeDecision(ExplicitActiveState cur, int decision, params dnWalker.Symbolic.Expressions.Expression[] choices)
         {
-            ConstraintTreeExplorer ct = cur.GetConstraintTree();
-            ct.MakeDecision(decision, choices);
+            cur.Services.GetService<ConstraintTreeExplorer>().MakeDecision(cur, decision, choices);
         }
 
         protected static Instruction GetNextInstruction(IIEReturnValue retValue, ExplicitActiveState cur)

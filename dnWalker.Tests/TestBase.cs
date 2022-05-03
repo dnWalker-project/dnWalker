@@ -1,4 +1,5 @@
 ﻿using dnWalker.DataElements;
+using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 
 using FluentAssertions;
@@ -88,7 +89,7 @@ namespace dnWalker.Tests
             return definitionContext;
         }
 
-        private static readonly ISolver _solver = new Z3.Solver2();
+        private static readonly ISolver _solver = new Z3.Z3Solver();
 
 
         private readonly List<Action<IConcolicExplorerBuilder>> _initializeConcolicExplorerBuilder = new List<Action<IConcolicExplorerBuilder>>();

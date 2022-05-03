@@ -44,24 +44,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             [OpCodes.Bne_Un_S] = Operator.NotEqual,
         };
 
-        private static Operator Negate(Operator expressionType)
-        {
-            return expressionType switch
-            {
-                Operator.Equal => Operator.NotEqual,
-                Operator.GreaterThan => Operator.LessThanOrEqual,
-                Operator.GreaterThanOrEqual => Operator.LessThan,
-                Operator.LessThan => Operator.GreaterThanOrEqual,
-                Operator.LessThanOrEqual => Operator.GreaterThan,
-                Operator.NotEqual => Operator.Equal,
-                _ => throw new NotSupportedException(),
-            };
-        }
-
         private static (Expression fallThrough, Expression branch) BuildChoices(OpCode operation, Expression lhs, Expression rhs)
         {
             Operator op = _operatorLookup[operation];
-            Expression fallThrough = Expression.MakeBinary(Negate(op), lhs, rhs);
+            Expression fallThrough = Expression.MakeBinary(op.Negate(), lhs, rhs);
             Expression branch = Expression.MakeBinary(op, lhs, rhs);
 
             return (fallThrough, branch);
@@ -93,9 +79,9 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             Instruction nextInstruction = GetNextInstruction(retValue, cur);
 
-            (Expression fallThrough, Expression branch) = BuildChoices(baseExecutor.Instruction.OpCode, lhsExpression ?? lhs.AsExpression(), rhsExpression ?? rhs.AsExpression());
+            (Expression fallThrough, Expression branch) = BuildChoices(baseExecutor.Instruction.OpCode, lhsExpression ?? lhs.AsExpression(cur), rhsExpression ?? rhs.AsExpression(cur));
 
-            cur.GetConstraintTree().MakeDecision(nextInstruction != null ? 1 : 0, fallThrough, branch);
+            MakeDecision(cur, nextInstruction != null ? 1 : 0, fallThrough, branch);
 
             //SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
 

@@ -1,6 +1,7 @@
 ﻿using dnWalker.Concolic.Traversal;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
+using dnWalker.Symbolic.Variables;
 using dnWalker.Traversal;
 using dnWalker.TypeSystem;
 
@@ -34,7 +35,7 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
             OverrideModelCheckerExplorerBuilderInitialization(c => c.SetStateStorageSize(5));
         }
 
-        private VariableExpression CreateVariableExpression(Type type, string name)
+        private Expression CreateExpression(Type type, string name)
         {
             switch (Type.GetTypeCode(type))
             {
@@ -54,58 +55,58 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
             throw new NotSupportedException("Unsupported type.");
         }
 
-        private VariableExpression NamedUInt(string name)
+        private Expression NamedUInt(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.UInt32, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.UInt32, name));
         }
 
-        private VariableExpression NamedUShort(string name)
+        private Expression NamedUShort(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.UInt16, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.UInt16, name));
         }
 
-        private VariableExpression NamedShort(string name)
+        private Expression NamedShort(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Int16, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Int16, name));
         }
 
-        private VariableExpression NamedSByte(string name)
+        private Expression NamedSByte(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.SByte, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.SByte, name));
         }
 
-        private VariableExpression NamedByte(string name)
+        private Expression NamedByte(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Byte, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Byte, name));
         }
 
-        private VariableExpression NamedSingle(string name)
+        private Expression NamedSingle(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Single, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Single, name));
         }
 
-        private VariableExpression NamedULong(string name)
+        private Expression NamedULong(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.UInt64, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.UInt64, name));
         }
 
-        private VariableExpression NamedLong(string name)
+        private Expression NamedLong(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Int64, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Int64, name));
         }
 
-        private VariableExpression NamedBoolean(string name)
+        private Expression NamedBoolean(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Boolean, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Boolean, name));
         }
-        private VariableExpression NamedDouble(string name)
+        private Expression NamedDouble(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Double, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Double, name));
         }
 
-        private VariableExpression NamedInt(string name)
+        private Expression NamedInt(string name)
         {
-            return new VariableExpression(new NamedVar(DefinitionProvider.BaseTypes.Int32, name));
+            return Expression.MakeVariable(new NamedVariable(DefinitionProvider.BaseTypes.Int32, name));
         }
 
         protected void Test(string methodName, (object arg, string name)[] args , string pathCondition, string retValueExpression)
@@ -123,8 +124,8 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
                     argDE[i] = DataElement.CreateDataElement(args[i].arg, cur.DefinitionProvider);
                     if (!string.IsNullOrWhiteSpace(args[i].name))
                     {
-                        Expression argExpr = CreateVariableExpression(args[i].arg.GetType(), args[i].name);
-                        argDE[i].SetExpression(argExpr, cur);
+                        Expression argExpr = CreateExpression(args[i].arg.GetType(), args[i].name);
+                        argDE[i].SetExpression(cur, argExpr);
                     }
                 }
                 return argDE;
@@ -138,9 +139,11 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
             PathStore pathStore = cur.PathStore;
             IDataElement retValue = cur.CurrentThread.RetValue;
 
+
             if (pathCondition != null)
             {
-                pathStore.CurrentPath.GetPathConstraint().ToString().Should().Be(pathCondition);
+                Constraint currentPathConstraint = cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition();
+                currentPathConstraint.ToString().Should().Be(pathCondition);
             }
 
             if (retValueExpression != null)

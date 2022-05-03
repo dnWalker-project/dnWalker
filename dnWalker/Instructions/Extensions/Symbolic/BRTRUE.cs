@@ -39,7 +39,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             bool willJump = nextInstruction != null;
 
             expression = expression.AsBoolean();
-            Expression not = Expression.Not(expression, true);
+            Expression not = Expression.MakeNot(expression);
 
             //  willJump => expression is     valid => PathConstraint := expression
             // !willJump => expression is not valid => PathConstriant := Not(expression)

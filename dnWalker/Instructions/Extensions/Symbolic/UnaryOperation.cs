@@ -46,7 +46,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 
             Expression resultExpression = Expression.MakeUnary(op, expression);
-            result.SetExpression(resultExpression, cur);
+            result.SetExpression(cur, resultExpression);
 
             return retValue;
         }

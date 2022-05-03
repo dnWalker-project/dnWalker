@@ -39,8 +39,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -67,8 +67,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 
@@ -95,8 +95,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.SymbolicExecutionExtension
                 .Build();
 
             ExplicitActiveState state = explorer.ActiveState;
-            if (isXSymb) xDE.SetExpression(NamedInt("x"), state);
-            if (isYSymb) yDE.SetExpression(NamedInt("y"), state);
+            if (isXSymb) xDE.SetExpression(state, NamedInt("x"));
+            if (isYSymb) yDE.SetExpression(state, NamedInt("y"));
 
             explorer.Run();
 

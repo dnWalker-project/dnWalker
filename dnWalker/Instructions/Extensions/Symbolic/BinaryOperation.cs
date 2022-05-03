@@ -2,6 +2,7 @@
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
+using dnWalker.Symbolic.Utils;
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -35,8 +36,8 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             [OpCodes.Mul_Ovf] = Operator.Multiply, //Checked?
             [OpCodes.Mul_Ovf_Un] = Operator.Multiply, //Checked?
 
-            [OpCodes.Rem] = Operator.Remainder,
-            [OpCodes.Rem_Un] = Operator.Remainder,
+            [OpCodes.Rem] = Operator.Modulo,
+            [OpCodes.Rem_Un] = Operator.Modulo,
 
             [OpCodes.Sub] = Operator.Subtract,
             [OpCodes.Sub_Ovf] = Operator.Subtract, //Checked?
@@ -80,15 +81,15 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IDataElement result = cur.EvalStack.Peek();
 
-            lhsExpression ??= lhs.AsExpression();
-            rhsExpression ??= rhs.AsExpression();
+            lhsExpression ??= lhs.AsExpression(cur);
+            rhsExpression ??= rhs.AsExpression(cur);
 
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 
             PreprocessBooleanExpressions(ref lhsExpression, ref rhsExpression);
 
             Expression resultExpression = Expression.MakeBinary(op, lhsExpression, rhsExpression);
-            result.SetExpression(resultExpression, cur);
+            result.SetExpression(cur, resultExpression);
             
             return retValue;
         }
@@ -97,12 +98,12 @@ namespace dnWalker.Instructions.Extensions.Symbolic
         {
             // ensure both are the same 
 
-            if (lhs.Type == ExpressionType.Boolean)
+            if (lhs.Type.IsBoolean())
             {
                 // ensure rhs is also boolean
                 rhs = rhs.AsBoolean();
             }
-            else if (rhs.Type == ExpressionType.Boolean)
+            else if (rhs.Type.IsBoolean())
             {
                 // ensure rhs is also boolean
                 lhs = lhs.AsBoolean();

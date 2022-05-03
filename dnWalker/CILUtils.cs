@@ -23,12 +23,15 @@ namespace MMC.Util
     using TypeReference = dnlib.DotNet.TypeDef;
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using dnlib.DotNet;
+    using System;
 
-    public struct CILLocation : System.IComparable
+    public readonly struct CILLocation : IEquatable<CILLocation>
     {
 
-        Instruction m_instr;
-        MethodDefinition m_meth;
+        private readonly Instruction m_instr;
+        private readonly MethodDefinition m_meth;
+
+        public static readonly CILLocation None = new CILLocation();
 
         public Instruction Instruction
         {
@@ -42,20 +45,9 @@ namespace MMC.Util
             get { return m_meth; }
         }
 
-        public int CompareTo(object other)
-        {
-
-            var o = (CILLocation)other;
-            var retval = CILMethodDefinitionComparer.CompareMethodDefinitions(m_meth, o.Method);
-            if (retval == 0)
-                retval = CILInstructionComparer.CompareInstructions(m_instr, o.Instruction);
-            return retval;
-        }
-
         // TODO: use better hashing
         public override int GetHashCode()
         {
-
             var retval = CILElementHashCodeProvider.CalcCILHashCode(m_instr);
             retval ^= MMC.HashMasks.MASK2;
             retval += CILElementHashCodeProvider.CalcCILHashCode(m_meth);
@@ -65,7 +57,7 @@ namespace MMC.Util
         public override bool Equals(object other)
         {
 
-            return CompareTo(other) == 0;
+            return other is CILLocation location && Equals(location);
         }
 
         public override string ToString()
@@ -75,13 +67,36 @@ namespace MMC.Util
 
         public CILLocation(Instruction instr, MethodDefinition meth)
         {
+            m_instr = instr ?? throw new ArgumentNullException(nameof(instr));
+            m_meth = meth ?? throw new ArgumentNullException(nameof(meth));
+        }
 
-            m_instr = instr;
-            m_meth = meth;
+        public static bool operator ==(CILLocation left, CILLocation right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CILLocation left, CILLocation right)
+        {
+            return !(left == right);
+        }
+
+        public bool Equals(CILLocation other)
+        {
+            if (other.m_instr == null && m_instr == null &&
+                other.m_meth == null && m_meth == null) return true; // both are None
+
+            if (m_meth == null && m_instr == null) return false; // this is None
+            if (other.m_meth == null && other.m_instr == null) return false; // other is None
+
+            int retval = CILMethodDefinitionComparer.CompareMethodDefinitions(m_meth, other.Method);
+            if (retval == 0)
+                retval = CILInstructionComparer.CompareInstructions(m_instr, other.Instruction);
+            return retval == 0;
         }
     }
 
-    class CILInstructionComparer : System.Collections.IComparer
+    class CILInstructionComparer : System.Collections.IComparer, System.Collections.Generic.IComparer<Instruction>
     {
 
         public static int CompareInstructions(Instruction a, Instruction b)
@@ -105,6 +120,11 @@ namespace MMC.Util
         {
 
             return CompareInstructions(a as Instruction, b as Instruction);
+        }
+
+        public int Compare(Instruction x, Instruction y)
+        {
+            return CompareInstructions(x, y);
         }
     }
 

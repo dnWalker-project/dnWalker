@@ -28,6 +28,7 @@ namespace dnWalker.Tests
         private Func<ExplicitActiveState, IDataElement[]> _provideArgs = (cur) => Array.Empty<IDataElement>();
 
         private readonly List<IInstructionExecutor> _executors = new List<IInstructionExecutor>();
+        private readonly List<(Type, object)> _services = new List<(Type, object)>();
 
         public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
         {
@@ -53,6 +54,12 @@ namespace dnWalker.Tests
         public IModelCheckerExplorerBuilder OverrideStatistics(Func<IStatistics> provideStatistics)
         {
             _provideStatistics = provideStatistics ?? throw new ArgumentNullException(nameof(provideStatistics));
+            return this;
+        }
+
+        public IModelCheckerExplorerBuilder AddService<TService>(TService service)
+        {
+            _services.Add((typeof(TService), service));
             return this;
         }
 
@@ -82,6 +89,10 @@ namespace dnWalker.Tests
 
             ExplicitActiveState cur = new ExplicitActiveState(Config, instructionExecProvider, definitionProvider, logger);
             cur.PathStore = pathStore;
+            foreach ((Type type, object service) in _services)
+            {
+                cur.Services.RegisterService(type, type.FullName!, service);
+            }
 
             IDataElement[] argsArray = _provideArgs(cur);
             DataElementList arguments = cur.StorageFactory.CreateList(argsArray.Length);

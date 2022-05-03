@@ -13,6 +13,7 @@ using dnWalker.Symbolic;
 using System.Reflection;
 
 using static dnWalker.Symbolic.Expressions.Expression;
+using dnWalker.Symbolic.Variables;
 
 namespace dnWalker.Tests.Symbolic.Expressions
 {
@@ -35,32 +36,32 @@ namespace dnWalker.Tests.Symbolic.Expressions
 
             // arithmetics
             {
-                data.Add(Add(Constant(5), Variable(new NamedVar(types.Int32, "x"))), "(5 + x)");
-                data.Add(Subtract(Constant(5), Variable(new NamedVar(types.Int32, "x"))), "(5 - x)");
-                data.Add(Multiply(Constant(5), Variable(new NamedVar(types.Int32, "x"))), "(5 * x)");
-                data.Add(Divide(Constant(5), Variable(new NamedVar(types.Int32, "x"))), "(5 / x)");
-                data.Add(Remainder(Constant(5), Variable(new NamedVar(types.Int32, "x"))), "(5 % x)");
-                data.Add(Negate(Variable(new NamedVar(types.Int32, "x"))), "-x");
+                data.Add(MakeAdd(MakeConstant(types.Int32, 5), MakeVariable(new NamedVariable(types.Int32, "x"))), "(5 + x)");
+                data.Add(MakeSubtract(MakeConstant(types.Int32, 5), MakeVariable(new NamedVariable(types.Int32, "x"))), "(5 - x)");
+                data.Add(MakeMultiply(MakeConstant(types.Int32, 5), MakeVariable(new NamedVariable(types.Int32, "x"))), "(5 * x)");
+                data.Add(MakeDivide(MakeConstant(types.Int32, 5), MakeVariable(new NamedVariable(types.Int32, "x"))), "(5 / x)");
+                data.Add(MakeRemainder(MakeConstant(types.Int32, 5), MakeVariable(new NamedVariable(types.Int32, "x"))), "(5 % x)");
+                data.Add(MakeNegate(MakeVariable(new NamedVariable(types.Int32, "x"))), "-x");
 
-                data.Add(Add(Multiply(Constant(3.14), Variable(new NamedVar(types.Double, "x"))), Constant(4.0)), "((3.14 * x) + 4)");
+                data.Add(MakeAdd(MakeMultiply(MakeConstant(types.Double, 3.14), MakeVariable(new NamedVariable(types.Double, "x"))), MakeConstant(types.Double, 4.0)), "((3.14 * x) + 4)");
             }
             // logic
             {
-                data.Add(And(True, False), "(True & False)");
-                data.Add(Or(True, Variable(new NamedVar(types.Boolean, "x"))), "(True | x)");
-                data.Add(Not(True), "!True");
+                data.Add(MakeAnd(MakeConstant(types.Boolean, true), MakeConstant(types.Boolean, false)), "(True & False)");
+                data.Add(MakeOr(MakeConstant(types.Boolean, true), MakeVariable(new NamedVariable(types.Boolean, "x"))), "(True | x)");
+                data.Add(MakeNot(MakeConstant(types.Boolean, true)), "!True");
             }
 
             // null expression
             {
-                data.Add(Null, "null");
-                data.Add(NotEquals(Variable(new NamedVar(types.Object, "instance")), Null), "(instance != null)");
+                data.Add(MakeConstant(types.Object, null), "null");
+                data.Add(MakeNotEqual(MakeVariable(new NamedVariable(types.Object, "instance")), MakeConstant(types.Object, null)), "(instance != null)");
             }
 
-            // length
-            {
-                data.Add(Length(Constant("HelloWorld!")), "Length(\"HelloWorld!\")");
-            }
+            //// length
+            //{
+            //    data.Add(Length(Constant("HelloWorld!")), "Length(\"HelloWorld!\")");
+            //}
 
             return data;
         }
