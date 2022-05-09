@@ -5,6 +5,7 @@ using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Parameters;
 using dnWalker.Symbolic;
+using dnWalker.Traversal;
 using dnWalker.TypeSystem;
 
 using MMC;
@@ -39,7 +40,7 @@ namespace dnWalker.Concolic
             ExplicitActiveState cur = CreateActiveState();
             cur.Services.RegisterService(constraintTree);
 
-            PathStore pathStore = PathStore;
+            Traversal.PathStore pathStore = PathStore;
 
             while (constraintTree.TryGetNextPrecondition(out Constraint precondition))
             {
@@ -62,7 +63,6 @@ namespace dnWalker.Concolic
                 cur.Reset();
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
-                cur.CurrentThread.InstructionExecuted += PathStore.OnInstructionExecuted;
 
                 // setup input variables & attach model
                 cur.Initialize(model);
@@ -77,7 +77,12 @@ namespace dnWalker.Concolic
                 explorer.Run();
                 explorer.InstructionExecuted -= PathStore.OnInstructionExecuted;
 
-                OnPathExplored(PathStore.CurrentPath);
+                Path currentPath = pathStore.CurrentPath;
+                ConstraintNode node = constraintTree.Current;
+                OnPathExplored(currentPath);
+
+                currentPath.Model = model;
+                currentPath.PathConstraint = node.GetPrecondition();
 
                 // TODO: remove the ParameterStore and use Model
                 // OnIterationFinished(new IterationFinishedEventArgs(IterationCount, ParameterStore, PathStore.CurrentPath));

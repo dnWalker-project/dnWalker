@@ -32,7 +32,13 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
         public SymbolicInterpreterTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {
             //_config.StateStorageSize = 5;
-            OverrideModelCheckerExplorerBuilderInitialization(c => c.SetStateStorageSize(5));
+            OverrideModelCheckerExplorerBuilderInitialization(c =>
+            {
+                c.SetStateStorageSize(5);
+                ConstraintTreeExplorer tree = new ConstraintTreeExplorer();
+                tree.GetNextPrecondition();
+                c.AddService(tree);
+            });
         }
 
         private Expression CreateExpression(Type type, string name)

@@ -66,7 +66,7 @@ namespace dnWalker.Symbolic.Expressions.Utils
         private static bool ConstantEquals(ConstantExpression constX, ConstantExpression constY)
         {
             return TypeEqualityComparer.Instance.Equals(constX.Type, constY.Type) &&
-                constX.Equals(constY.Type);
+                Equals(constX.Value, constY.Value);
         }
     }
 }

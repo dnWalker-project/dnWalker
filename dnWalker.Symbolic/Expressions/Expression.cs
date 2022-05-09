@@ -19,7 +19,7 @@ namespace dnWalker.Symbolic.Expressions
         public virtual Expression AsBoolean()
         {
             if (Type.IsBoolean()) return this;
-            if (Type.IsNumber()) return new BinaryExpression(Operator.GreaterThan, this, new ConstantExpression(Type.Module.CorLibTypes.Int32, 0));
+            if (Type.IsNumber()) return new BinaryExpression(Operator.NotEqual, this, new ConstantExpression(Type.Module.CorLibTypes.Int32, 0));
             if (Type.IsString()) return new BinaryExpression(Operator.NotEqual, this, new ConstantExpression(Type.Module.CorLibTypes.String, null));
             if (!Type.IsPrimitive) return new BinaryExpression(Operator.NotEqual, this, new ConstantExpression(Type.Module.CorLibTypes.Object, null));
 

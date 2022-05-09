@@ -20,34 +20,15 @@ namespace dnWalker.Concolic.Traversal
 
         public PathStore(MethodDef entryPoint)
         {
-            _methodExlorers = new Dictionary<MethodDef, MethodExplorer>();
+            _methodExlorers = new Dictionary<MethodDef, MethodExplorer>(MethodEqualityComparer.CompareDeclaringTypes);
             _entryPoint = entryPoint;
-        }
-
-        public override void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
-        {
-            base.AddPathConstraint(expression, next, cur);
-
-            GetMethodExplorer(cur.CurrentLocation).OnConstraint(expression, next, cur);
         }
 
         public void OnInstructionExecuted(CILLocation location)
         {
             GetMethodExplorer(location).OnInstructionExecuted(location, CurrentPath);
 
-            CurrentPath.OnInstructionExecuted(location);            
-
-            /*if (location.Method != entryPoint)
-            {
-                return;
-            }
-
-            if (prev.Instruction != null)
-            {
-
-            }
-
-            prev = location;*/
+            CurrentPath.OnInstructionExecuted(location);
         }
 
         [DebuggerStepThrough]
@@ -65,7 +46,7 @@ namespace dnWalker.Concolic.Traversal
 
         private Coverage GetCodeCoverage()
         {
-            var methodExplorer = GetMethodExplorer(new CILLocation(null, _entryPoint));
+            var methodExplorer = GetMethodExplorer(new CILLocation(_entryPoint.Body.Instructions[0], _entryPoint));
             return methodExplorer.GetCoverage();
         }
     }

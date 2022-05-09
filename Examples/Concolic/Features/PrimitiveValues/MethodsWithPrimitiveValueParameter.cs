@@ -80,5 +80,40 @@ namespace Examples.Concolic.Features.PrimitiveValues
                 }
             }
         }
+
+        public static void MultipleBranchingWithStateChanges(int x, int y)
+        {
+            if (x < 0)
+            {
+                x += 10;
+                Console.Out.WriteLine("x < 0 => x = x + 10");
+            }
+
+            if (x < y)
+            {
+                Console.Out.WriteLine("x < y");
+            }
+            else
+            {
+                Console.Out.WriteLine("x >= y");
+            }
+        }
+
+        public static void MultipleBranchingWithoutStateChanges(int x, int y)
+        {
+            if (x < 0)
+            {
+                Console.Out.WriteLine("x < 0");
+            }
+
+            if (x < y)
+            {
+                Console.Out.WriteLine("x < y");
+            }
+            else
+            {
+                Console.Out.WriteLine("x >= y");
+            }
+        }
     }
 }

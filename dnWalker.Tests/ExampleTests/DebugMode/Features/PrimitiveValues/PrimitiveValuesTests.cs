@@ -87,5 +87,35 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
             pathStore.Paths[1].Output.Trim().Should().Be("(x <= 0)\r\n(x < -3)");
             pathStore.Paths[2].Output.Trim().Should().Be("(x > 0)\r\n(x >= -5)");
         }
+
+        [Fact]
+        public void Test_MultipleBranchingWithStateChanges()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.MultipleBranchingWithStateChanges");
+
+            PathStore pathStore = explorer.PathStore;
+
+            pathStore.Paths.Should().HaveCount(4);
+
+        }
+
+        [Fact]
+        public void Test_MultipleBranchingWithoutStateChanges()
+        {
+            IExplorer explorer = GetConcolicExplorerBuilder()
+                .SetMaxIterations(10)
+                .Build();
+
+            explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.MultipleBranchingWithoutStateChanges");
+
+            PathStore pathStore = explorer.PathStore;
+
+            pathStore.Paths.Should().HaveCount(3);
+
+        }
     }
 }

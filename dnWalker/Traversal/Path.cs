@@ -4,6 +4,7 @@ using dnWalker.Concolic;
 using dnWalker.Graphs;
 using dnWalker.NativePeers;
 using dnWalker.Parameters;
+using dnWalker.Symbolic;
 
 using Echo.ControlFlow;
 using MMC.Data;
@@ -32,7 +33,7 @@ namespace dnWalker.Traversal
     {
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
         private IList<Segment> _segments = new List<Segment>();
-        private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
+
         private IList<long> _visitedNodes = new List<long>();
         private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
         private IDictionary<Allocation, IDictionary<string, object>> _allocationProperties = new Dictionary<Allocation, IDictionary<string, object>>();
@@ -142,37 +143,10 @@ namespace dnWalker.Traversal
             };
         }
 
+        public Constraint PathConstraint { get; set; }
+        public IModel Model { get; set; }
 
-        public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
-        {
-            //try
-            //{
-            //    expression = ExpressionOptimizer.visit(expression);
-            //}
-            //catch
-            //{
-            //    // exception is ignored, 3rd party 
-            //}
-
-            expression = expression.Optimize().Simplify();
-
-            _pathConstraints.Add(
-                new PathConstraint
-                {
-                    Expression = expression,
-                    Location = new CILLocation(cur.CurrentLocation.Instruction, cur.CurrentLocation.Method),
-                    Next = next
-                });
-        }
-
-        public IReadOnlyCollection<PathConstraint> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(_pathConstraints);
-
-        public Expression PathConstraint =>
-            _pathConstraints.Any() ? 
-            PathConstraints.Select(p => p.Expression).Aggregate((a, b) => Expression.And(a, b)) :
-            null;
-
-        public string PathConstraintString => PathConstraint?.ToString() ?? "True"; // if no constraint, the expression is True
+        public string PathConstraintString => PathConstraint.ToString() ?? "True"; // if no constraint, the expression is True
 
         public string GetPathInfo()
         {
@@ -263,7 +237,6 @@ namespace dnWalker.Traversal
             {
                 _attributes = new Dictionary<string, object>(_attributes),
                 _segments = new List<Segment>(_segments),
-                _pathConstraints = new List<PathConstraint>(_pathConstraints),
                 _visitedNodes = new List<long>(_visitedNodes),
                 _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties),
                 _lastLocation = _lastLocation

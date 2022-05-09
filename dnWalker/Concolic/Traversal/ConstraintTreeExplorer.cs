@@ -158,11 +158,13 @@ namespace dnWalker.Concolic.Traversal
                     _conditionCoverage[location] = coverage;
                 }
 
-                if (coverage.TryGetValue(node.Condition, out bool covered) &&
-                    covered)
+                if (coverage.TryGetValue(node.Condition, out bool covered))
                 {
-                    node.MarkExplored();
-                    return true;
+                    if (covered)
+                    {
+                        node.MarkExplored();
+                        return true;
+                    }
                 }                
             }
             return false;

@@ -28,10 +28,26 @@ namespace dnWalker.Symbolic.Expressions
         public static Expression MakeVariable(IVariable variable) => new VariableExpression(variable);
 
 
-        public static Expression MakeNot(Expression inner) => MakeUnary(Operator.Not, inner);
+        public static Expression MakeNot(Expression inner)
+        {
+            if (inner is BinaryExpression bin &&
+                bin.Operator.IsComparison())
+            {
+                // !(x != y) = (x == y)
+                return new BinaryExpression(bin.Operator.Negate(), bin.Left, bin.Right);
+            }
+            else if (inner is UnaryExpression un &&
+                un.Operator == Operator.Not)
+            {
+                // !!x = x
+                return un.Inner;
+            }
+            return MakeUnary(Operator.Not, inner);
+        }
+
         public static Expression MakeAnd(Expression left, Expression right) => MakeBinary(Operator.And, left, right);
-        public static Expression MakeOr(Expression left, Expression right) => MakeBinary(Operator.And, left, right);
-        public static Expression MakeXor(Expression left, Expression right) => MakeBinary(Operator.And, left, right);
+        public static Expression MakeOr(Expression left, Expression right) => MakeBinary(Operator.Or, left, right);
+        public static Expression MakeXor(Expression left, Expression right) => MakeBinary(Operator.Xor, left, right);
 
 
         public static Expression MakeAdd(Expression left, Expression right) => MakeBinary(Operator.Add, left, right);

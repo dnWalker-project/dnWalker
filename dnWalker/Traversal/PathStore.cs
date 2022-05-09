@@ -29,9 +29,10 @@ namespace dnWalker.Traversal
             _paths.Add(_currentPath);
         }
 
-        public void ResetPath(bool checkTermination)
+        public Path ResetPath(bool checkTermination)
         {
             if (!checkTermination || _currentPath.IsTerminated) ResetPath();
+            return _currentPath;
         }
 
         public void BacktrackStart(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
@@ -41,11 +42,6 @@ namespace dnWalker.Traversal
         public void StateConstructed(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
             _currentPath.Extend(sd.ID);
-        }
-
-        public virtual void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
-        {
-            _currentPath.AddPathConstraint(expression, next, cur);
         }
 
         public void BacktrackStop(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)
