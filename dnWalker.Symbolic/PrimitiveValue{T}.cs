@@ -54,5 +54,10 @@ namespace dnWalker.Symbolic
             return value.Value;
         }
 
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using dnWalker.Concolic.Traversal;
+﻿using dnWalker.Concolic;
+using dnWalker.Concolic.Traversal;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Variables;
@@ -35,8 +36,8 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
             OverrideModelCheckerExplorerBuilderInitialization(c =>
             {
                 c.SetStateStorageSize(5);
-                ConstraintTreeExplorer tree = new ConstraintTreeExplorer();
-                tree.GetNextPrecondition();
+                ConstraintTreeExplorer tree = new ConstraintTreeExplorer(new AllPathsCoverage());
+                tree.GetNextConstraintNode();
                 c.AddService(tree);
             });
         }

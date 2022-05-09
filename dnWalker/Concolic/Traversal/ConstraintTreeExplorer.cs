@@ -19,7 +19,8 @@ namespace dnWalker.Concolic.Traversal
     /// </summary>
     public class ConstraintTreeExplorer
     {
-        private readonly Dictionary<CILLocation, Dictionary<Expression, bool>> _conditionCoverage = new Dictionary<CILLocation, Dictionary<Expression, bool>>();
+        private readonly IExplorationStrategy _strategy;
+
         private readonly List<ConstraintTree> _trees;
 
         private readonly Stack<ConstraintNode> _frontier;
@@ -28,21 +29,28 @@ namespace dnWalker.Concolic.Traversal
         /// <summary>
         /// Initializes a new constraint tree explorer without any preconditions, e.i. TRUE precondition.
         /// </summary>
-        public ConstraintTreeExplorer() : this(new Constraint[] { new Constraint() })
+        public ConstraintTreeExplorer(IExplorationStrategy strategy) : this(strategy, new Constraint[] { new Constraint() })
         {
         }
 
         /// <summary>
         /// Initializes a new constraint tree explorer with a preconditions.
         /// </summary>
-        public ConstraintTreeExplorer(IEnumerable<Constraint> preconditions)
+        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<Constraint> preconditions)
         {
+            _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
+
             _trees = new List<ConstraintTree>(preconditions.Select(static pc => new ConstraintTree(pc)));
             _frontier = new Stack<ConstraintNode>(_trees.Select(static ct => ct.Root));
         }
 
 
         public ConstraintNode Current => _current;
+
+        public IList<ConstraintTree> Trees
+        {
+            get { return _trees; }
+        }
 
         /// <summary>
         /// Invoked by an instruction executor which enforces some constraint.
@@ -70,22 +78,19 @@ namespace dnWalker.Concolic.Traversal
         {
             Debug.Assert(decision >= 0);
             Debug.Assert(decision < choices.Length);
-            //uint offset = _cur.CurrentMethod.ProgramCounter.Offset;
-            //MethodDef method = _cur.CurrentMethod.Definition;
-            ConstraintNode current = _current;
 
             // we are making a decision from the current node => we can mark it covered
-            MarkCovered(current);
+            OnNodeExplored(_current);
 
             // case 1
             // the node is not yet expanded (node.Children.Count == 0)
             // create the decision nodes and select the correct one
-            if (!current.IsExpanded)
+            if (!_current.IsExpanded)
             {
                 CILLocation location = cur.CurrentLocation;
 
-                current.Expand(location, choices);
-                for (int i = 0; i < current.Children.Count; ++i)
+                _current.Expand(location, choices);
+                for (int i = 0; i < _current.Children.Count; ++i)
                 {
                     if (i == decision)
                     {
@@ -93,16 +98,13 @@ namespace dnWalker.Concolic.Traversal
                         continue;
                     }
 
-                    if (CheckExplored(current.Children[i]))
+                    if (ShouldBeExplored(_current.Children[i]))
                     {
-                        // we have already explored this choice => no need to add into the frontier
-                        continue;
+                        _frontier.Push(_current.Children[i]);
                     }
-
-                    _frontier.Push(current.Children[i]);
                 }
 
-                _current = current.Children[decision];
+                _current = _current.Children[decision];
             }
             // case 2
             // current node is already expanded
@@ -110,8 +112,8 @@ namespace dnWalker.Concolic.Traversal
             // set current node based on the decision
             else
             {
-                Debug.Assert(current.Children.Count == choices.Length);
-                _current = current.Children[decision];
+                Debug.Assert(_current.Children.Count == choices.Length);
+                _current = _current.Children[decision];
             }
         }
 
@@ -120,71 +122,38 @@ namespace dnWalker.Concolic.Traversal
         /// Null if exploration is finished.
         /// </summary>
         /// <returns></returns>
-        public Constraint GetNextPrecondition()
+        public ConstraintNode GetNextConstraintNode()
         {
             // this will be invoked by the concolic explorer before a new execution
             // should mark the last constraint node as covered
-            if (_current != null) MarkCovered(_current);
+            if (_current != null) OnNodeExplored(_current);
 
             while (_frontier.TryPop(out ConstraintNode node))
             {
-                if (!CheckExplored(node))
+                if (ShouldBeExplored(node))
                 {
                     _current = node.Tree.Root;
-                    return node.GetPrecondition();
+                    return node;
                 }
             }
 
             return null;
         }
 
-        public bool TryGetNextPrecondition([NotNullWhen(true)] out Constraint precondition)
+        public bool TryGetNextConstraintNode([NotNullWhen(true)] out ConstraintNode constraintNode)
         {
-            precondition = GetNextPrecondition();
-            return precondition != null;
+            constraintNode = GetNextConstraintNode();
+            return constraintNode != null;
         }
 
-        private bool CheckExplored(ConstraintNode node)
+        private bool ShouldBeExplored(ConstraintNode node)
         {
-            if (node.IsExplored) return true;
-
-            // check for the condition coverage
-            CILLocation location = node.Location;
-            if (location != CILLocation.None)
-            {
-                if (!_conditionCoverage.TryGetValue(location, out Dictionary<Expression, bool> coverage))
-                {
-                    coverage = new Dictionary<Expression, bool>();
-                    _conditionCoverage[location] = coverage;
-                }
-
-                if (coverage.TryGetValue(node.Condition, out bool covered))
-                {
-                    if (covered)
-                    {
-                        node.MarkExplored();
-                        return true;
-                    }
-                }                
-            }
-            return false;
+            return _strategy.ShouldBeExplored(node);
         }
 
-        private void MarkCovered(ConstraintNode node)
+        private void OnNodeExplored(ConstraintNode node)
         {
-            if (!node.IsExplored)
-            {
-                node.MarkExplored();
-
-                Expression condition = node.Condition;
-                if (condition != null)
-                {
-                    CILLocation currentLocation = node.Location;
-                    Dictionary<Expression, bool> coverage = _conditionCoverage[currentLocation];
-
-                    coverage[condition] = true;
-                }
-            }
+            _strategy.OnNodeExplored(node);
         }
     }
 }

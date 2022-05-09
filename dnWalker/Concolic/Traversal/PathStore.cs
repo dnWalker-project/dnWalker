@@ -26,13 +26,11 @@ namespace dnWalker.Concolic.Traversal
 
         public void OnInstructionExecuted(CILLocation location)
         {
-            GetMethodExplorer(location).OnInstructionExecuted(location, CurrentPath);
-
             CurrentPath.OnInstructionExecuted(location);
         }
 
         [DebuggerStepThrough]
-        private MethodExplorer GetMethodExplorer(CILLocation location)
+        public MethodExplorer GetMethodExplorer(CILLocation location)
         {
             var method = location.Method;
             if (!_methodExlorers.TryGetValue(method, out var explorer))

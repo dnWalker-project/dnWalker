@@ -317,15 +317,17 @@ namespace MMC.State
                 logger.Trace($"[{thread.Id}] {currentInstrExec}");
                 ier = currentInstrExec.Execute(cur);
 
-                InstructionExecuted?.Invoke(location);
-
+                // update the program counter & cur.CurrentMethod before invoking the InstructionExecuted event
                 currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
-
+                
                 /* if a RET was performed, currentMethod.ProgramCounter is null
 				 * and the PC should be set to programcounter of the current method, i.e.,
 				 * the method jumped to
 				 */
                 currentMethod = cur.CurrentMethod;
+
+                InstructionExecuted?.Invoke(location);
+
                 continueExploration = ier.ContinueExploration(currentMethod);
 
                 if (cur.Break())

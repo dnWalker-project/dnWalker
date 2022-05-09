@@ -20,21 +20,12 @@ using System.Text;
 
 namespace dnWalker.Traversal
 {
-    [DebuggerDisplay("{Expression}")]
-    public class PathConstraint
-    {
-        public Instruction Next { get; set; }
-        public CILLocation Location { get; set; }
-        public Expression Expression { get; set; }
-    }
-
-
     public class Path : ICloneable
     {
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
         private IList<Segment> _segments = new List<Segment>();
 
-        private IList<long> _visitedNodes = new List<long>();
+        private IList<CILLocation> _visitedNodes = new List<CILLocation>();
         private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
         private IDictionary<Allocation, IDictionary<string, object>> _allocationProperties = new Dictionary<Allocation, IDictionary<string, object>>();
         private CILLocation _lastLocation;
@@ -122,13 +113,6 @@ namespace dnWalker.Traversal
             return true;
         }
 
-        public void AddVisitedNode(Node node)
-        {
-            if (!_visitedNodes.Contains(node.Offset))
-            {
-                _visitedNodes.Add(node.Offset);
-            }
-        }
 
         public Path BacktrackTo(int id)
         {
@@ -146,7 +130,7 @@ namespace dnWalker.Traversal
         public Constraint PathConstraint { get; set; }
         public IModel Model { get; set; }
 
-        public string PathConstraintString => PathConstraint.ToString() ?? "True"; // if no constraint, the expression is True
+        public string PathConstraintString => PathConstraint?.ToString() ?? "True"; // if no constraint, the expression is True
 
         public string GetPathInfo()
         {
@@ -177,6 +161,8 @@ namespace dnWalker.Traversal
             {
                 _counter[location] = 1;
             }
+
+            _visitedNodes.Add(location);
         }
 
         public ExceptionInfo Exception { get; private set; }
@@ -237,7 +223,7 @@ namespace dnWalker.Traversal
             {
                 _attributes = new Dictionary<string, object>(_attributes),
                 _segments = new List<Segment>(_segments),
-                _visitedNodes = new List<long>(_visitedNodes),
+                _visitedNodes = new List<CILLocation>(_visitedNodes),
                 _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties),
                 _lastLocation = _lastLocation
             };

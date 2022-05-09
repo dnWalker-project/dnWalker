@@ -25,6 +25,7 @@ namespace dnWalker.Concolic.Traversal
         private IReadOnlyList<ConstraintNode> _children = Array.Empty<ConstraintNode>();
 
         private bool _explored;
+        private bool _unsatisfiable;
 
         protected ConstraintNode(ConstraintTree tree, ConstraintNode parent)
         {
@@ -76,6 +77,11 @@ namespace dnWalker.Concolic.Traversal
             get { return _condition; }
         }
 
+        public override string ToString()
+        {
+            return _condition?.ToString() ?? "True";
+        }
+
         /// <summary>
         /// Gets the parent node.
         /// </summary>
@@ -87,12 +93,14 @@ namespace dnWalker.Concolic.Traversal
         public bool IsExpanded => _children != null && _children.Count > 0;
 
         public bool IsExplored => _explored;
+        public bool IsSatisfiable => !_unsatisfiable;
 
         public CILLocation Location => _location;
 
         public ConstraintTree Tree => _tree;
 
         public void MarkExplored() => _explored = true;
+        public void MarkUnsatisfiable() => _unsatisfiable = true;
 
         public void Expand(CILLocation location, params Expression[] choices)
         {

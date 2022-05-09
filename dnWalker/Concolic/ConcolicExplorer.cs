@@ -35,21 +35,25 @@ namespace dnWalker.Concolic
             // unfold it into multiple constraint objects
             // IEnumerable<Constraint> unfoledPreconditions = entryPoint.GetPrecondition().Unfold();
             // ConstraintTreeExplorer constraintTree = new ConstraintTree(unfoldedPreconditions);
-            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer();
-            
+
+            // TODO: handle via configuration
+            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(new AllPathsCoverage());
+            //ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(new AllConditionsCoverage());
+
             ExplicitActiveState cur = CreateActiveState();
             cur.Services.RegisterService(constraintTree);
 
             Traversal.PathStore pathStore = PathStore;
 
-            while (constraintTree.TryGetNextPrecondition(out Constraint precondition))
+            while (constraintTree.TryGetNextConstraintNode(out ConstraintNode currentConstraintNode))
             {
                 // get the input model
-                IModel model = Solver.Solve(precondition);
+                IModel model = Solver.Solve(currentConstraintNode.GetPrecondition());
 
                 if (model == null)
                 {
                     // UNSAT => try another precondition
+                    currentConstraintNode.MarkUnsatisfiable();
                     continue;
                 }
 
@@ -61,16 +65,20 @@ namespace dnWalker.Concolic
 
                 // setup explicit active state
                 cur.Reset();
+                
+                SimpleStatistics statistics = new SimpleStatistics();
+                // creating the explorer before main thread is created
+                // - no need to do explicit (a.k.a. error prone) registration of events
+                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, GetConfiguration(), PathStore);
+
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
 
                 // setup input variables & attach model
                 cur.Initialize(model);
 
-                // run the model checker
-                SimpleStatistics statistics = new SimpleStatistics();
-                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, GetConfiguration(), PathStore);
 
+                // run the model checker
                 // TODO: remove the ParameterStore and use Model
                 // OnIterationStarted(new IterationStartedEventArgs(IterationCount, ParameterStore));
                 explorer.InstructionExecuted += PathStore.OnInstructionExecuted;
@@ -88,6 +96,8 @@ namespace dnWalker.Concolic
                 // OnIterationFinished(new IterationFinishedEventArgs(IterationCount, ParameterStore, PathStore.CurrentPath));
             }
 
+            // TODO: make it as a explorer extension...
+            ConstraintTreeExplorerWriter.Write(constraintTree, "constraintTree.dot");
         }
     }
 }

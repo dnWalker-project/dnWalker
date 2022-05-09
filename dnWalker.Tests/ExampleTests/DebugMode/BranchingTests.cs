@@ -107,9 +107,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
             
             pathConstraints[0].Should().Be(@"(x == 5)");
             pathConstraints[1].Should().Be(@"(x != 5)");
@@ -127,9 +127,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x != 5)");
             pathConstraints[1].Should().Be(@"(x == 5)");
@@ -147,9 +147,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x != 5)");
             pathConstraints[1].Should().Be(@"(x == 5)");
@@ -167,9 +167,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x == 5)");
             pathConstraints[1].Should().Be(@"(x != 5)");
@@ -187,9 +187,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x > 5)");
             pathConstraints[1].Should().Be(@"(x <= 5)");
@@ -208,9 +208,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x <= 5)");
             pathConstraints[1].Should().Be(@"(x > 5)");
@@ -228,9 +228,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x >= 5)");
             pathConstraints[1].Should().Be(@"(x < 5)");
@@ -248,9 +248,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x < 5)");
             pathConstraints[1].Should().Be(@"(x >= 5)");
@@ -268,9 +268,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x < 5)");
             pathConstraints[1].Should().Be(@"(x >= 5)");
@@ -288,9 +288,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x >= 5)");
             pathConstraints[1].Should().Be(@"(x < 5)");
@@ -308,9 +308,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x <= 5)");
             pathConstraints[1].Should().Be(@"(x > 5)");
@@ -328,9 +328,9 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
             PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
-            ParameterStore store = explorer.ParameterStore;
+            
 
-            String[] pathConstraints = pathStore.Paths.Select(p => p.GetConstraintStringWithAccesses(store.BaseSet)).ToArray();
+            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
 
             pathConstraints[0].Should().Be(@"(x > 5)");
             pathConstraints[1].Should().Be(@"(x <= 5)");

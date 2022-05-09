@@ -181,8 +181,8 @@ namespace MMC
             cur.ThreadPool.OnNewThreadSpawned += _pathStore.NewThreadSpawned;
             cur.ThreadPool.OnNewThreadSpawned += threadState => threadState.InstructionExecuted += InstructionExecuted;
 
-            // TODO CurrentThread was created in advance, explicit event registration/firing
-            _pathStore.NewThreadSpawned(cur.CurrentThread);            
+            //// TODO CurrentThread was created in advance, explicit event registration/firing
+            //_pathStore.NewThreadSpawned(cur.CurrentThread);
 
             if (!double.IsInfinity(config.MaxExploreInMinutes))
             {
@@ -235,8 +235,6 @@ namespace MMC
             _strategy.RegisterChoiceGenerator(schedulingChoiceGenerator);
 
             cur.ChoiceStrategy = _strategy;
-
-            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
         }
 
         public IConfig Config { get; }
@@ -275,6 +273,8 @@ namespace MMC
 
         public bool Run()
         {
+            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
+
             var logAssert = false;
             var logDeadlock = false;
             var noErrors = false;

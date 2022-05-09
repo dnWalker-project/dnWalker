@@ -34,6 +34,15 @@ namespace dnWalker.Symbolic
             throw new NotSupportedException();
         }
 
+        public static IValue GetValueOrDefault(this IReadOnlyModel model, IVariable variable)
+        {
+            if (model.TryGetValue(variable, out IValue? value))
+            {
+                return value;
+            }
+            return ValueFactory.GetDefault(variable.Type);
+        }
+
         /// <summary>
         /// Tries to get the value for the variable by walking the heap using the variable chain.
         /// </summary>

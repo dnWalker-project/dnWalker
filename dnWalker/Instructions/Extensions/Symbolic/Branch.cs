@@ -22,11 +22,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
         public abstract IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next);
 
-        protected static void SetPathConstraint(InstructionExecBase currentInstruction, Instruction nextInstruction, ExplicitActiveState cur, Expression condition)
-        {
-            cur.PathStore.AddPathConstraint(condition, nextInstruction, cur);
-        }
-
         protected static void MakeDecision(ExplicitActiveState cur, int decision, params dnWalker.Symbolic.Expressions.Expression[] choices)
         {
             cur.Services.GetService<ConstraintTreeExplorer>().MakeDecision(cur, decision, choices);

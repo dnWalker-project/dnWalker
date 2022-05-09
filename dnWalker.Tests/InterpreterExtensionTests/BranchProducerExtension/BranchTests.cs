@@ -1,4 +1,5 @@
-﻿using dnWalker.Concolic.Traversal;
+﻿using dnWalker.Concolic;
+using dnWalker.Concolic.Traversal;
 using dnWalker.Symbolic;
 
 using FluentAssertions;
@@ -26,8 +27,8 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
         {
             this.OverrideModelCheckerExplorerBuilderInitialization(bld =>
             {
-                ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer();
-                _ = constraintTree.GetNextPrecondition();
+                ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(new AllPathsCoverage());
+                _ = constraintTree.GetNextConstraintNode();
                 bld.AddService(constraintTree);
             });
         }
