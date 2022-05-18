@@ -36,8 +36,8 @@ namespace dnWalker.Z3
             // variables: { x.a.b, x, y.z.r.t, x.a, y, y.z.r, y.z }
             // sorted:    { x, y, y.z, x.a, x.a.b, y.z.r, y.z.r.t }
             // ??can we assume that each "prefix" will be among the variables?? - does it matter???
-            List<IVariable> variables = varLookup.Keys.ToList();
-            variables.Sort(static (v1, v2) => GetDepth(v1).CompareTo(GetDepth(v2)));
+            IVariable[] variables = varLookup.Keys.ToArray();
+            Array.Sort(variables, static (v1, v2) => GetDepth(v1).CompareTo(GetDepth(v2)));
 
             foreach (IVariable variable in variables)
             {
@@ -59,9 +59,9 @@ namespace dnWalker.Z3
                             ((IObjectHeapNode)parentNode).SetField(instField.Field, value);
                             break;
 
-                        //case MethodResultVariable methodResult:
-                        //    ((IObjectHeapNode)parentNode).SetMethodResult(methodResult.method, methodResult.Invocation, value);
-                        //    break;
+                        case MethodResultVariable methodResult:
+                            ((IObjectHeapNode)parentNode).SetMethodResult(methodResult.Method, methodResult.Invocation, value);
+                            break;
 
                         case ArrayElementVariable arrayElement:
                             ((IArrayHeapNode)parentNode).SetElement(arrayElement.Index, value);
@@ -188,7 +188,7 @@ namespace dnWalker.Z3
             static int GetDepth(IVariable v)
             {
                 if (v is IRootVariable) return 0;
-                return GetDepth((IMemberVariable)v) + 1;
+                return GetDepth(((IMemberVariable)v).Parent) + 1;
             }
         }
     }

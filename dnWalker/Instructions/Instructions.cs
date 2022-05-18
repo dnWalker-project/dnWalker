@@ -2829,7 +2829,7 @@ namespace dnWalker.Instructions
         /// with elements popped off the eval stack (in right to left order).
         /// </remarks>
         /// <returns>A list containing the arguments.</returns>
-        protected DataElementList CreateArgumentList(ExplicitActiveState cur)
+        public DataElementList CreateArgumentList(ExplicitActiveState cur)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.ParamDefs.Count + (methDef.HasThis ? 1 : 0);
@@ -2842,7 +2842,7 @@ namespace dnWalker.Instructions
             return retval;
         }
 
-        protected DataElementList CopyArgumentList(ExplicitActiveState cur, ThreadState thread)
+        public DataElementList CopyArgumentList(ExplicitActiveState cur, ThreadState thread)
         {
             MethodDefinition methDef = Operand as MethodDefinition;
             int size = methDef.Parameters.Count;// + (methDef.HasThis ? 1 : 0);

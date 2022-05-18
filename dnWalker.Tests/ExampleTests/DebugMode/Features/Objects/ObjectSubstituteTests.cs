@@ -1,5 +1,10 @@
-﻿using dnWalker.Concolic;
+﻿using dnlib.DotNet;
+
+using dnWalker.Concolic;
+using dnWalker.Concolic.Traversal;
 using dnWalker.Parameters;
+using dnWalker.Symbolic;
+using dnWalker.Symbolic.Heap;
 using dnWalker.Tests.ExampleTests;
 using dnWalker.Traversal;
 
@@ -34,6 +39,11 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             var paths = explorer.PathStore.Paths;
 
+            foreach (var path in paths)
+            {
+                Output.WriteLine(path.GetPathInfo());
+            }
+
             paths.Count().Should().Be(2);
         }
 
@@ -48,6 +58,11 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull");
 
             var paths = explorer.PathStore.Paths;
+
+            foreach (var path in paths)
+            {
+                Output.WriteLine(path.GetPathInfo());
+            }
 
             paths.Count().Should().Be(2);
         }
@@ -158,13 +173,15 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
         [Fact]
         public void Test_StoreField_NotCreatingNewParameter()
         {
+
             IExplorer explorer = GetConcolicExplorerBuilder()
                 .SetMaxIterations(10)
                 .Build();
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_InputParameter");
 
-            var paths = explorer.PathStore.Paths;
+            MethodDef method = explorer.EntryPoint.ResolveMethodDef();
+            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
 
             foreach (var p in paths)
             {
@@ -173,21 +190,52 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(2);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[1];
+            // tested method
+            // public static void SetFieldValue_InputParameter(TestClass obj, double value)
+            // {
+            //    if (obj == null) return;
+            //    obj.OtherField = value;
+            // }
 
-            // there should be exactly 2 parameters
-            // 0x00000001 - object, type signature = TestClass
-            // 0x00000002 - double, value = unspecified
-            // 0x0...01 - field OtherField should have value of 0x0...02
+            {
+                // first iteration
+                // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
+                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
 
-            IObjectParameter objParam = execSet.Parameters[0x00000001] as IObjectParameter;
-            objParam.Should().NotBeNull();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
 
-            objParam.TryGetField("OtherField", out IParameter fp).Should().BeTrue();
+                objValue.Should().Be(Location.Null);
+            }
+            {
+                // second iteration
+                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
+                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
 
-            IDoubleParameter dbl = fp as IDoubleParameter;
-            dbl.Should().NotBeNull();
-            dbl.Reference.Should().Be((ParameterRef)0x00000002);
+                // there should be 2 initialized variables
+                // "obj" - @1
+                // "value" - double
+                // output model: @1 should point to a node which have defined field "OtherField"
+
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out IValue valueValue).Should().BeTrue();
+
+                objValue.Should().NotBe(Location.Null);
+                valueValue.Should().Be(PrimitiveValue<double>.Default);
+
+                outputModel.HeapInfo.TryGetNode((Location)objValue, out var node).Should().BeTrue();
+                node.Should().BeOfType<IReadOnlyObjectHeapNode>();
+                IReadOnlyObjectHeapNode objNode = (IReadOnlyObjectHeapNode)node;
+
+                objNode.Fields.Should().HaveCount(1);
+
+                IField fld = objNode.Fields.First();
+                fld.Name.Should().Be("OtherField");
+
+                objNode.GetField(fld).Should().Be(PrimitiveValue<double>.Default);
+
+                // we have lost information - the obj.OtherField := value -> should be provided within post condition or something...
+            }
         }
 
         [Fact]
@@ -199,7 +247,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_Primitive");
 
-            var paths = explorer.PathStore.Paths;
+            MethodDef method = explorer.EntryPoint.ResolveMethodDef();
+            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
 
             foreach (var p in paths)
             {
@@ -208,23 +257,52 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(2);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[1];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            //public static void SetFieldValue_ConstructedParameter_Primitive(TestClass obj, double value)
+            //{
+            //    if (obj == null) return;
 
-            // there should be exactly 2 parameters
-            // 0x00000001 - object, type signature = TestClass
-            // 0x00000002 - double, value = unspecified
-            // 0x0...01 - field OtherField should have value of 0x0...02
+            //    obj.OtherField = value * 2;
+            //}
 
-            IObjectParameter objParam = execSet.Parameters[0x00000001] as IObjectParameter;
-            objParam.Should().NotBeNull();
+            {
+                // first iteration
+                // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
+                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
 
-            objParam.TryGetField("OtherField", out IParameter fp).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
 
-            IDoubleParameter dbl = fp as IDoubleParameter;
-            dbl.Should().NotBeNull();
-            dbl.Reference.Should().NotBe((ParameterRef)0x00000002);
-            baseSet.Parameters.Should().NotContainKey(dbl.Reference);
+                objValue.Should().Be(Location.Null);
+            }
+            {
+                // second iteration
+                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
+                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+
+                // there should be 2 initialized variables
+                // "obj" - @1
+                // "value" - double
+                // output model: @1 should point to a node which have defined field "OtherField"
+
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out IValue valueValue).Should().BeTrue();
+
+                objValue.Should().NotBe(Location.Null);
+                valueValue.Should().Be(PrimitiveValue<double>.Default);
+
+                outputModel.HeapInfo.TryGetNode((Location)objValue, out var node).Should().BeTrue();
+                node.Should().BeOfType<IReadOnlyObjectHeapNode>();
+                IReadOnlyObjectHeapNode objNode = (IReadOnlyObjectHeapNode)node;
+
+                objNode.Fields.Should().HaveCount(1);
+
+                IField fld = objNode.Fields.First();
+                fld.Name.Should().Be("OtherField");
+
+                objNode.GetField(fld).Should().Be(PrimitiveValue<double>.Default);
+
+                // we have lost information - the obj.OtherField := value -> should be provided within post condition or something...
+            }
         }
 
         [Fact]
@@ -236,7 +314,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_Object");
 
-            var paths = explorer.PathStore.Paths;
+            MethodDef method = explorer.EntryPoint.ResolveMethodDef();
+            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
 
             foreach (var p in paths)
             {
@@ -245,17 +324,47 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(2);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[1];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            //public static void SetFieldValue_ConstructedParameter_Object(TestClass obj)
+            //{
+            //    if (obj == null) return;
 
-            IObjectParameter objParam = execSet.Parameters[0x00000001] as IObjectParameter;
-            objParam.Should().NotBeNull();
+            //    obj.TCField = new TestClass();
+            //}
 
-            objParam.TryGetField("TCField", out IObjectParameter fp).Should().BeTrue();
+            {
+                // first iteration
+                // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
+                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
 
-            fp.GetIsNull().Should().BeFalse();
-            
-            baseSet.Parameters.Should().NotContainKey(fp.Reference);
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
+
+                objValue.Should().Be(Location.Null);
+            }
+            {
+                // second iteration
+                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
+                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+
+                // there should be 2 initialized variables
+                // "obj" - @1
+                // output model: @1 should point to a node which have defined field "TCField" with value @2
+
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+
+                objValue.Should().NotBe(Location.Null);
+
+                outputModel.HeapInfo.TryGetNode((Location)objValue, out IReadOnlyHeapNode objNode).Should().BeTrue();
+
+                TypeDef objType = objNode.Type.ToTypeDefOrRef().ResolveTypeDefThrow();
+                IField tcField = objType.Fields.First(f => f.Name == "TCField");
+
+                IValue tcFieldValue = ((IReadOnlyObjectHeapNode)objNode).GetField(tcField);
+                tcFieldValue.Should().BeOfType<Location>().And.NotBe(Location.Null);
+
+                outputModel.HeapInfo.TryGetNode((Location)tcFieldValue, out IReadOnlyHeapNode newNode).Should().BeTrue();
+                newNode.Should().BeOfType<IReadOnlyObjectHeapNode>();
+            }
         }
 
         [Fact]
@@ -267,7 +376,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_PrimitiveArray");
 
-            var paths = explorer.PathStore.Paths;
+            MethodDef method = explorer.EntryPoint.ResolveMethodDef();
+            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
 
             foreach (var p in paths)
             {
@@ -276,34 +386,50 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(2);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[1];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            //public static void SetFieldValue_ConstructedParameter_PrimitiveArray(TestClass obj, int i)
+            //{
+            //    if (obj == null) return;
 
+            //    obj.PrimitiveArray = new int[] { i, i - 1, i + 1 };
+            //}
 
-            IObjectParameter objParam = execSet.Parameters[0x00000001] as IObjectParameter;
-            objParam.Should().NotBeNull();
+            {
+                // first iteration
+                // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
+                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
 
-            objParam.TryGetField("PrimitiveArray", out IArrayParameter fp).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
 
-            fp.GetIsNull().Should().BeFalse();
+                objValue.Should().Be(Location.Null);
+            }
+            {
+                // second iteration
+                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
+                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
 
-            baseSet.Parameters.Should().NotContainKey(fp.Reference);
+                // there should be 2 initialized variables
+                // "obj" - @1
+                // output model: @1 should point to a node which have defined field "PrimitiveArray" with value @2
+                // obj.PrimitiveArray[0] :=  0
+                // obj.PrimitiveArray[1] := -1
+                // obj.PrimitiveArray[2] :=  1
 
-            fp.Type.IsSZArray.Should().BeTrue();
-            fp.Type.ElementType.IsInt32.Should().BeTrue();
-            fp.GetLength().Should().Be(3);
-            fp.TryGetItem(0, out IInt32Parameter i0).Should().BeTrue();
-            fp.TryGetItem(1, out IInt32Parameter i1).Should().BeTrue();
-            fp.TryGetItem(2, out IInt32Parameter i2).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
 
+                objValue.Should().NotBe(Location.Null);
 
-            baseSet.Parameters.Should().ContainKey(i0.Reference);
-            baseSet.Parameters.Should().NotContainKey(i1.Reference);
-            baseSet.Parameters.Should().NotContainKey(i2.Reference);
+                outputModel.HeapInfo.TryGetNode((Location)objValue, out IReadOnlyHeapNode objNode).Should().BeTrue();
 
-            i0.GetValue().Should().Be(0);
-            i1.GetValue().Should().Be(-1);
-            i2.GetValue().Should().Be(1);
+                Location newArrLoc = (Location)((IReadOnlyObjectHeapNode)objNode).GetField(((IReadOnlyObjectHeapNode)objNode).Fields.First());
+
+                IReadOnlyArrayHeapNode newArrNode = (IReadOnlyArrayHeapNode)outputModel.HeapInfo.GetNode(newArrLoc);
+
+                newArrNode.Length.Should().Be(3);
+                newArrNode.GetElement(0).Should().Be(new PrimitiveValue<int>(0));
+                newArrNode.GetElement(1).Should().Be(new PrimitiveValue<int>(-1));
+                newArrNode.GetElement(2).Should().Be(new PrimitiveValue<int>(1));
+            }
 
         }
 
@@ -316,7 +442,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_RefArray");
 
-            var paths = explorer.PathStore.Paths;
+            MethodDef method = explorer.EntryPoint.ResolveMethodDef();
+            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
 
             foreach (var p in paths)
             {
@@ -325,23 +452,51 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(2);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[1];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            //public static void SetFieldValue_ConstructedParameter_RefArray(TestClass obj)
+            //{
+            //    if (obj == null) return;
 
-            IObjectParameter objParam = execSet.Parameters[0x00000001] as IObjectParameter;
-            objParam.Should().NotBeNull();
+            //    obj.RefArray = new TestClass[] { obj, null, new TestClass() };
+            //}
 
-            objParam.TryGetField("RefArray", out IArrayParameter fp).Should().BeTrue();
-            fp.GetIsNull().Should().BeFalse();
-            fp.GetLength().Should().Be(3);
-            fp.TryGetItem(0, out IObjectParameter o0).Should().BeTrue();
-            fp.TryGetItem(1, out IObjectParameter o1).Should().BeTrue();
-            fp.TryGetItem(2, out IObjectParameter o2).Should().BeTrue();
+            {
+                // first iteration
+                // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
+                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
 
-            o0.Should().BeSameAs(objParam);
-            o1.GetIsNull().Should().BeTrue();
-            o2.GetIsNull().Should().BeFalse();
-            baseSet.Parameters.Should().NotContainKey(o2.Reference);
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
+
+                objValue.Should().Be(Location.Null);
+            }
+            {
+                // second iteration
+                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
+                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+
+                // there should be 2 initialized variables
+                // "obj" - @1
+                // output model: @1 should point to a node which have defined field "RefArray" with value @2
+                //               @3 should point to a fresh node
+                // obj.PrimitiveArray[0] := @1
+                // obj.PrimitiveArray[1] := null
+                // obj.PrimitiveArray[2] := @3
+
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+
+                objValue.Should().NotBe(Location.Null);
+
+                outputModel.HeapInfo.TryGetNode((Location)objValue, out IReadOnlyHeapNode objNode).Should().BeTrue();
+
+                Location newArrLoc = (Location)((IReadOnlyObjectHeapNode)objNode).GetField(((IReadOnlyObjectHeapNode)objNode).Fields.First());
+
+                IReadOnlyArrayHeapNode newArrNode = (IReadOnlyArrayHeapNode)outputModel.HeapInfo.GetNode(newArrLoc);
+
+                newArrNode.Length.Should().Be(3);
+                newArrNode.GetElement(0).Should().Be(objValue);
+                newArrNode.GetElement(1).Should().Be(Location.Null);
+                newArrNode.GetElement(2).Should().Be(outputModel.HeapInfo.Locations.First(l => l != (Location)objValue && l != newArrLoc));
+            }
         }
 
         [Fact]
@@ -353,7 +508,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_Null");
 
-            var paths = explorer.PathStore.Paths;
+            MethodDef method = explorer.EntryPoint.ResolveMethodDef();
+            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
 
             foreach (var p in paths)
             {
@@ -362,23 +518,52 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
 
             paths.Count().Should().Be(2);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[1];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            //public static void SetFieldValue_ConstructedParameter_Null(TestClass obj)
+            //{
+            //    if (obj == null) return;
 
-            IObjectParameter objParam = execSet.Parameters[0x00000001] as IObjectParameter;
-            objParam.Should().NotBeNull();
+            //    obj.PrimitiveArray = null;
+            //    obj.RefArray = null;
+            //    obj.TCField = null;
+            //}
 
-            objParam.TryGetField("PrimitiveArray", out IArrayParameter primitiveArray).Should().BeTrue();
-            objParam.TryGetField("RefArray", out IArrayParameter refArray).Should().BeTrue();
-            objParam.TryGetField("TCField", out IObjectParameter o).Should().BeTrue();
+            {
+                // first iteration
+                // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
+                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
 
-            primitiveArray.GetIsNull().Should().BeTrue();
-            refArray.GetIsNull().Should().BeTrue();
-            o.GetIsNull().Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
 
-            baseSet.Parameters.Should().NotContainKey(primitiveArray.Reference);
-            baseSet.Parameters.Should().NotContainKey(refArray.Reference);
-            baseSet.Parameters.Should().NotContainKey(o.Reference);
+                objValue.Should().Be(Location.Null);
+            }
+            {
+                // second iteration
+                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
+                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+
+                // there should be 2 initialized variables
+                // "obj" - @1
+                // output model: @1 should point to a node which have defined field "RefArray" with value @2
+                //               @3 should point to a fresh node
+                // obj.PrimitiveArray[0] := @1
+                // obj.PrimitiveArray[1] := null
+                // obj.PrimitiveArray[2] := @3
+
+                inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
+
+                objValue.Should().NotBe(Location.Null);
+
+                outputModel.HeapInfo.TryGetNode((Location)objValue, out IReadOnlyHeapNode objNode).Should().BeTrue();
+
+                IReadOnlyObjectHeapNode node = (IReadOnlyObjectHeapNode)objNode;
+                node.Fields.Should().HaveCount(3);
+                foreach (IField fld in node.Fields)
+                {
+                    node.GetField(fld).Should().Be(Location.Null);
+                }
+
+            }
         }
     }
 }

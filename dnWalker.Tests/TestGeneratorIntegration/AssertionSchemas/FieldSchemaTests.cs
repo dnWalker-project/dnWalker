@@ -134,7 +134,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("PrimitiveValueChanged_Fresh.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -252,7 +252,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("PrimitiveValueChanged_Input.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -363,7 +363,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("RefFieldChanged_Input.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -493,7 +493,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("RefFieldChanged_Fresh.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -623,7 +623,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("RefFieldChanged_Null.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;

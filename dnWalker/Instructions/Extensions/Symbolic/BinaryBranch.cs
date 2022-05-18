@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet.Emit;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
@@ -13,7 +14,7 @@ using System.Collections.Generic;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class BinaryBranch : Branch
+    public class BinaryBranch : DecisionMaker
     {
         private static readonly Dictionary<OpCode, Operator> _operatorLookup = new Dictionary<OpCode, Operator>()
         {
@@ -61,7 +62,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
         }
 
-
         public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             IDataElement lhs = cur.EvalStack.Peek(1);
@@ -69,21 +69,41 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IIEReturnValue retValue = next(baseExecutor, cur);
 
-            bool lhsSymbolic = lhs.TryGetExpression(cur, out Expression lhsExpression);
-            bool rhsSymbolic = rhs.TryGetExpression(cur, out Expression rhsExpression);
-
-            if (!lhsSymbolic && !rhsSymbolic)
+            if (!ExpressionUtls.GetExpressions(cur, lhs, rhs, out Expression lhsExpression, out Expression rhsExpression))
             {
                 return retValue;
             }
 
-            Instruction nextInstruction = GetNextInstruction(retValue, cur);
+            //bool lhsSymbolic = lhs.TryGetExpression(cur, out Expression lhsExpression);
+            //bool rhsSymbolic = rhs.TryGetExpression(cur, out Expression rhsExpression);
 
-            (Expression fallThrough, Expression branch) = BuildChoices(baseExecutor.Instruction.OpCode, lhsExpression ?? lhs.AsExpression(cur), rhsExpression ?? rhs.AsExpression(cur));
+            //if (!lhsSymbolic && !rhsSymbolic)
+            //{
+            //    return retValue;
+            //}
 
-            MakeDecision(cur, nextInstruction != null ? 1 : 0, fallThrough, branch);
+            Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
+            MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
+                edge switch
+                {
+                    // the fall-through option => the (left [op] right) fails => negate the operator
+                    NextEdge _ => Expression.MakeBinary(op.Negate(), left, right),
 
-            //SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
+                    // the jump option => the (left [op] right) succeeds => use the operator directly
+                    JumpEdge _ => Expression.MakeBinary(op, left, right),
+
+                    _ => throw new InvalidOperationException("Only Next or Jump edge can be used within BinaryBranch executor.")
+                }, lhsExpression, rhsExpression, op);
+
+            //InstructionBlockNode currentNode = GetControlFlowNode(cur);
+
+            //Instruction nextInstruction = GetNextInstruction(retValue, cur);
+
+            //(Expression fallThrough, Expression branch) = BuildChoices(baseExecutor.Instruction.OpCode, lhsExpression ?? lhs.AsExpression(cur), rhsExpression ?? rhs.AsExpression(cur));
+
+            //MakeDecision(cur, nextInstruction != null ? 1 : 0, fallThrough, branch);
+
+            ////SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
 
             return retValue;
         }

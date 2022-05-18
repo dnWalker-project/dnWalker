@@ -3,10 +3,8 @@ using dnlib.DotNet.Emit;
 
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Traversal;
-using Echo.Platforms.Dnlib;
 using MMC.State;
 using MMC.Util;
-using QuikGraph.Graphviz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +24,20 @@ namespace dnWalker.Concolic.Traversal
             _cfg = ControlFlowGraph.Build(method);
         }
 
+        private Instruction _lastInstruction;
 
+        public Instruction LastInstruction => _lastInstruction;
+
+        public void OnInstructionExecuted(Instruction instruction)
+        {
+            _lastInstruction = instruction;
+        }
 
         public Coverage GetCoverage()
         {
             return _cfg.GetCoverage();
         }
+
+        public ControlFlowGraph Graph => _cfg;
     }
 }

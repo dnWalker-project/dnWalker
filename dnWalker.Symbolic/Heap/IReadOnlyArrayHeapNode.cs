@@ -12,6 +12,8 @@
         /// <returns></returns>
         IValue GetElement(int index);
 
+        IEnumerable<int> Indeces { get; }
+
         int Length { get; }
     }
 }

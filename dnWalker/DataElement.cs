@@ -2694,7 +2694,7 @@ namespace MMC.Data
 
         public string ToString(IFormatProvider provider)
         {
-            return Value.ToString(provider);
+            return Value?.ToString(provider);
         }
 
         public object ToType(Type conversionType, IFormatProvider provider)

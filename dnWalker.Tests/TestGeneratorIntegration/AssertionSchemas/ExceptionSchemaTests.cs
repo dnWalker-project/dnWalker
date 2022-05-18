@@ -43,7 +43,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration.AssertionSchemas
 
             string xmlData = System.IO.File.ReadAllText("exception-method.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             IReadOnlyList<ITestClassContext> testContexts = TestClassContext.FromExplorationData(GetConfiguration(), exploration);
 

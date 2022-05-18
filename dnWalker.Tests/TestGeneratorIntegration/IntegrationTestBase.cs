@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator;
+﻿using dnWalker.Explorations.Xml;
+using dnWalker.TestGenerator;
 using dnWalker.Tests.ExampleTests;
 using dnWalker.TypeSystem;
 
@@ -15,6 +16,8 @@ namespace dnWalker.Tests.TestGeneratorIntegration
     public class IntegrationTestBase : ExamplesTestBase
     {
         protected static readonly string AssemblyFilePath = string.Format(ExamplesAssemblyFileFormat, "Release");
+        private readonly XmlExplorationSerializer _serializer;
+        private readonly XmlExplorationDeserializer _deserializer;
 
         public IntegrationTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilePath)))
         {
@@ -22,6 +25,12 @@ namespace dnWalker.Tests.TestGeneratorIntegration
             {
                 b.SetAssemblyFileName(AssemblyFilePath);
             });
+
+
+            IMethodTranslator methodTranslator = new MethodTranslator(DefinitionProvider);
+            ITypeTranslator typeTranslator = new TypeTranslator(DefinitionProvider);
+            _serializer = new XmlExplorationSerializer(new XmlModelSerializer(typeTranslator, methodTranslator));
+            _deserializer = new XmlExplorationDeserializer(methodTranslator, new XmlModelDeserializer(typeTranslator, methodTranslator));
         }
 
         protected ITestGeneratorConfiguration GetConfiguration()
@@ -32,5 +41,7 @@ namespace dnWalker.Tests.TestGeneratorIntegration
             };
         }
 
+        protected XmlExplorationSerializer Serializer => _serializer;
+        protected XmlExplorationDeserializer Deserializer => _deserializer;
     }
 }

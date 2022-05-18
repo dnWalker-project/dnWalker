@@ -1,8 +1,6 @@
 ﻿using dnWalker.Explorations;
 using dnWalker.Explorations.Xml;
-using dnWalker.Parameters;
-using dnWalker.Parameters.Serialization.Xml;
-using dnWalker.Parameters.Xml;
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
@@ -22,7 +20,7 @@ namespace dnWalker.Concolic
         private ConcolicExplorationIteration.Builder _currentIteration;
 
         // TODO: disgusting hidden dependency!
-        private readonly XmlExplorationSerializer _serializer = new XmlExplorationSerializer();
+        private XmlExplorationSerializer _serializer;
 
         public XmlExplorationExporter(string file)
         {
@@ -38,6 +36,8 @@ namespace dnWalker.Concolic
 
             _explorer.IterationStarted += OnIterationStarted;
             _explorer.IterationFinished += OnIterationFinished;
+
+            _serializer = new XmlExplorationSerializer(new XmlModelSerializer(new TypeTranslator(explorer.DefinitionProvider), new MethodTranslator(explorer.DefinitionProvider)));
         }
 
         public void Unregister(IExplorer explorer)
@@ -106,11 +106,8 @@ namespace dnWalker.Concolic
 
         private void OnIterationFinished(object sender, IterationFinishedEventArgs e)
         {
-            XmlParameterSetInfo baseSetInfo = XmlParameterSetInfo.FromSet(e.ParameterStore.BaseSet);
-            XmlParameterSetInfo execSetInfo = XmlParameterSetInfo.FromSet(e.ParameterStore.ExecutionSet);
-
-            _currentIteration.BaseParameterSet = baseSetInfo;
-            _currentIteration.ExecutionParameterSet = execSetInfo;
+            _currentIteration.InputModel = e.SymbolicContext.InputModel;
+            _currentIteration.OutputModel = e.SymbolicContext.OutputModel;
             _currentIteration.PathConstraint = e.ExploredPath.PathConstraintString; //GetConstraintStringWithAccesses(e.ParameterStore.ExecutionSet);
             _currentIteration.End = DateTime.Now;
 

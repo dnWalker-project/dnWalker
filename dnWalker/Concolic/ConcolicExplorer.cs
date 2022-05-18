@@ -1,9 +1,9 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Graphs.ControlFlow;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
-using dnWalker.Parameters;
 using dnWalker.Symbolic;
 using dnWalker.Traversal;
 using dnWalker.TypeSystem;
@@ -37,13 +37,19 @@ namespace dnWalker.Concolic
             // ConstraintTreeExplorer constraintTree = new ConstraintTree(unfoldedPreconditions);
 
             // TODO: handle via configuration
-            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(new AllPathsCoverage());
-            //ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(new AllConditionsCoverage());
+            IExplorationStrategy strategy = new AllEdgesCoverage();
+            //IExplorationStrategy strategy = new AllPathsCoverage();
+            //IExplorationStrategy strategy = new AllConditionsCoverage();
+            //IExplorationStrategy strategy = new AllNodesCoverage();
+
+            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy);
 
             ExplicitActiveState cur = CreateActiveState();
             cur.Services.RegisterService(constraintTree);
 
-            Traversal.PathStore pathStore = PathStore;
+            strategy.Initialize(cur, entryPoint);
+
+            Traversal.ConcolicPathStore pathStore = PathStore;
 
             while (constraintTree.TryGetNextConstraintNode(out ConstraintNode currentConstraintNode))
             {
@@ -54,18 +60,26 @@ namespace dnWalker.Concolic
                 {
                     // UNSAT => try another precondition
                     currentConstraintNode.MarkUnsatisfiable();
+                    strategy.OnUnsatisfiableNodePruned(currentConstraintNode);
                     continue;
                 }
+
+                // TODO: make it somehow better...
+                currentConstraintNode.MarkPreconditionSource();
 
                 // SAT => start the execution
                 // TODO: just restore cur up until the decision point & update values per the expressions and model
 
                 // new execution path
-                pathStore.ResetPath(true);
+                Path currentPath = pathStore.ResetPath(true);
 
                 // setup explicit active state
                 cur.Reset();
-                
+
+                strategy.NewIteration();
+
+                OnIterationStarted(new IterationStartedEventArgs(IterationCount, ((ConcolicPath)currentPath).SymbolicContext));
+
                 SimpleStatistics statistics = new SimpleStatistics();
                 // creating the explorer before main thread is created
                 // - no need to do explicit (a.k.a. error prone) registration of events
@@ -85,19 +99,20 @@ namespace dnWalker.Concolic
                 explorer.Run();
                 explorer.InstructionExecuted -= PathStore.OnInstructionExecuted;
 
-                Path currentPath = pathStore.CurrentPath;
+                // the path may have changed??
+                currentPath = pathStore.CurrentPath;
                 ConstraintNode node = constraintTree.Current;
                 OnPathExplored(currentPath);
 
                 currentPath.Model = model;
                 currentPath.PathConstraint = node.GetPrecondition();
 
-                // TODO: remove the ParameterStore and use Model
-                // OnIterationFinished(new IterationFinishedEventArgs(IterationCount, ParameterStore, PathStore.CurrentPath));
+                OnIterationFinished(new IterationFinishedEventArgs(IterationCount, ((ConcolicPath)PathStore.CurrentPath).SymbolicContext, PathStore.CurrentPath));
             }
 
             // TODO: make it as a explorer extension...
             ConstraintTreeExplorerWriter.Write(constraintTree, "constraintTree.dot");
+            ControlFlowGraphWriter.Write(ControlFlowGraph.Build(entryPoint), "cfg.dot");
         }
     }
 }

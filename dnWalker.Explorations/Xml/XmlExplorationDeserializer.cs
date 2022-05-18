@@ -1,4 +1,6 @@
-﻿using dnWalker.Parameters.Serialization.Xml;
+﻿using dnlib.DotNet;
+
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
@@ -13,60 +15,16 @@ namespace dnWalker.Explorations.Xml
 {
     public class XmlExplorationDeserializer
     {
-        public class MissingElementException : Exception
+        private readonly IMethodTranslator _methodTranslator;
+        private readonly XmlModelDeserializer _modelDeserializer;
+
+        public XmlExplorationDeserializer(IMethodTranslator methodTranslator, XmlModelDeserializer modelDeserializer)
         {
-            public MissingElementException(string context, string elementName)
-            {
-                ElementName = elementName;
-                Context = context;
-            }
-
-            protected MissingElementException(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-                ElementName = info.GetString(nameof(ElementName)) ?? string.Empty;
-                Context = info.GetString(nameof(Context)) ?? string.Empty;
-            }
-
-            public string ElementName { get; }
-
-            public string Context { get; }
-
-            public override string Message
-            {
-                get
-                {
-                    return $"'{Context}' XML must contain an '{ElementName}' element.";
-                }
-            }
-        }
-        public class MissingAttributeException : Exception
-        {
-            public MissingAttributeException(string context, string attributeName)
-            {
-                AttributeName = attributeName;
-                Context = context;
-            }
-
-            protected MissingAttributeException(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-                AttributeName = info.GetString(nameof(AttributeName)) ?? string.Empty;
-                Context = info.GetString(nameof(Context)) ?? string.Empty;
-            }
-
-            public string AttributeName { get; }
-
-            public string Context { get; }
-
-            public override string Message
-            {
-                get
-                {
-                    return $"'{Context}' XML must contain an '{AttributeName}' attribute.";
-                }
-            }
+            _methodTranslator = methodTranslator;
+            _modelDeserializer = modelDeserializer;
         }
 
-        public ConcolicExploration GetExploration(XElement xml)
+        public ConcolicExploration FromXml(XElement xml)
         {
             return GetExplorationBuilder(xml).Build();
         }
@@ -83,15 +41,17 @@ namespace dnWalker.Explorations.Xml
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.Failed = bool.Parse(xml.Attribute(XmlTokens.Failed)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Failed));
 
+            IMethod method = _methodTranslator.FromString(builder.MethodSignature).ToMethod();
+
             foreach (XElement iterationXml in xml.Elements(XmlTokens.Iteration))
             {
-                builder.Iterations.Add(GetIterationBuilder(iterationXml));
+                builder.Iterations.Add(GetIterationBuilder(iterationXml, method));
             }
 
             return builder;
         }
 
-        internal ConcolicExplorationIteration.Builder GetIterationBuilder(XElement xml)
+        internal ConcolicExplorationIteration.Builder GetIterationBuilder(XElement xml, IMethod method)
         {
             ConcolicExplorationIteration.Builder builder = new ConcolicExplorationIteration.Builder();
 
@@ -104,11 +64,11 @@ namespace dnWalker.Explorations.Xml
             builder.StandardOutput = xml.Attribute(XmlTokens.StandardOutput)?.Value ?? string.Empty;
             builder.ErrorOutput = xml.Attribute(XmlTokens.ErrorOutput)?.Value ?? string.Empty;
 
-            XElement baseXml = xml.Element(XmlTokens.BaseSet)?.Element(Parameters.Xml.XmlTokens.XmlSet) ?? throw new MissingElementException(nameof(ConcolicExplorationIteration), $"{XmlTokens.BaseSet}/{Parameters.Xml.XmlTokens.XmlSet}");
-            XElement execXml = xml.Element(XmlTokens.ExecutionSet)?.Element(Parameters.Xml.XmlTokens.XmlSet) ?? throw new MissingElementException(nameof(ConcolicExplorationIteration), $"{XmlTokens.ExecutionSet}/{Parameters.Xml.XmlTokens.XmlSet}");
+            XElement inputModelXml = xml.Element(XmlTokens.InputModel) ?? throw new MissingElementException(nameof(ConcolicExplorationIteration), $"{XmlTokens.InputModel}");
+            XElement outputModelXml = xml.Element(XmlTokens.OutputModel) ?? throw new MissingElementException(nameof(ConcolicExplorationIteration), $"{XmlTokens.OutputModel}");
 
-            builder.BaseParameterSet = new XmlParameterSetInfo(baseXml);
-            builder.ExecutionParameterSet = new XmlParameterSetInfo(execXml);
+            builder.InputModel = _modelDeserializer.FromXml(inputModelXml, method);
+            builder.OutputModel = _modelDeserializer.FromXml(outputModelXml, method);
 
             return builder;
         }

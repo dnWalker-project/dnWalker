@@ -69,5 +69,21 @@ namespace dnWalker.Symbolic.Heap
         {
             return new Location(_freeLocation++);
         }
+
+        public bool AddNode(IHeapNode node)
+        {
+            Location location = node.Location;
+            if (_nodes.ContainsKey(location)) return false; // already occupied => do nothing...
+
+            uint intLoc = location.Value;
+            if (intLoc > _freeLocation)
+            {
+                _freeLocation = intLoc + 1;
+            }
+
+            _nodes[location] = node;
+
+            return true;
+        }
     }
 }

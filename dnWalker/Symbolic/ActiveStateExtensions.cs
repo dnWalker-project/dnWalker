@@ -14,6 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
+using dnWalker.Concolic.Traversal;
+using dnWalker.Traversal;
 
 namespace dnWalker.Symbolic
 {
@@ -24,7 +26,16 @@ namespace dnWalker.Symbolic
         public static void Initialize(this ExplicitActiveState cur, IModel inputModel)
         {
             SymbolicContext context = SymbolicContext.Create(inputModel, cur);
-            cur.PathStore.CurrentPath.SetPathAttribute(SymbolicContextAttribute, context);
+            Path currentPath = cur.PathStore.CurrentPath;
+            if (currentPath is ConcolicPath concolicPath)
+            {
+                concolicPath.SymbolicContext = context;
+            }
+            else
+            {
+                currentPath.SetPathAttribute(SymbolicContextAttribute, context);
+            }
+            
         }
 
         public static ExpressionFactory GetExpressionFactory(this ExplicitActiveState cur)
@@ -41,7 +52,16 @@ namespace dnWalker.Symbolic
 
         public static bool TryGetSymbolicContext(this ExplicitActiveState cur, [NotNullWhen(true)]out SymbolicContext symbolicContext)
         {
-            return cur.PathStore.CurrentPath.TryGetPathAttribute(SymbolicContextAttribute, out symbolicContext);
+            Path currentPath = cur.PathStore.CurrentPath;
+            if (currentPath is ConcolicPath concolicPath)
+            {
+                symbolicContext = concolicPath.SymbolicContext;
+                return symbolicContext != null;
+            }
+            else
+            {
+                return cur.PathStore.CurrentPath.TryGetPathAttribute(SymbolicContextAttribute, out symbolicContext);
+            }
         }
     }
 }

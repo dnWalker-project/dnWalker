@@ -78,5 +78,9 @@ namespace dnWalker.Symbolic.Heap
 
             _methods[(method, invocation)] = value;
         }
+
+        public IEnumerable<IField> Fields => _fields.Keys;
+
+        public IEnumerable<(IMethod method, int invocation)> MethodInvocations => _methods.Keys;
     }
 }

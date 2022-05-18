@@ -1,6 +1,4 @@
-﻿using dnWalker.Parameters.Serialization.Xml;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,6 +12,13 @@ namespace dnWalker.Explorations.Xml
 {
     public class XmlExplorationSerializer
     {
+        private readonly XmlModelSerializer _modelSerializer;
+
+        public XmlExplorationSerializer(XmlModelSerializer modelSerializer)
+        {
+            _modelSerializer = modelSerializer;
+        }
+
         public XElement ToXml(ConcolicExploration exploration)
         {
             XElement xml = new XElement(Exploration);
@@ -33,7 +38,7 @@ namespace dnWalker.Explorations.Xml
             return xml;
         }
 
-        private XElement ToXml(ConcolicExplorationIteration iteration)
+        internal XElement ToXml(ConcolicExplorationIteration iteration)
         {
             XElement xml = new XElement(Iteration);
 
@@ -45,20 +50,11 @@ namespace dnWalker.Explorations.Xml
             xml.SetAttributeValue(StandardOutput, iteration.StandardOutput);
             xml.SetAttributeValue(ErrorOutput, iteration.ErrorOutput);
 
-            if (iteration.BaseParameterSet is not XmlParameterSetInfo baseInfo)
-            {
-                throw new InvalidOperationException("Cannot serialize this IParameterSetInfo into XML. Expected XmlParameterSetInfo.");
-            }
-            if (iteration.ExecutionParameterSet is not XmlParameterSetInfo execInfo)
-            {
-                throw new InvalidOperationException("Cannot serialize this IParameterSetInfo into XML. Expected XmlParameterSetInfo.");
-            }
+            XElement inputModelXml = _modelSerializer.ToXml(iteration.InputModel, InputModel);
+            xml.Add(inputModelXml);
 
-            XElement baseXml = new XElement(BaseSet, baseInfo.Xml);
-            xml.Add(baseXml);
-
-            XElement execXml = new XElement(ExecutionSet, execInfo.Xml);
-            xml.Add(execXml);
+            XElement outputModelXml = _modelSerializer.ToXml(iteration.OutputModel, OutputModel);
+            xml.Add(outputModelXml);
 
             return xml;
         }

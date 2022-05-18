@@ -23,7 +23,7 @@ namespace dnWalker.Symbolic.Heap
 
         bool TryGetNode(Location location, [NotNullWhen(true)] out IHeapNode? node);
 
-        IHeapNode GetNode(Location location);
+        new IHeapNode GetNode(Location location);
 
         bool IReadOnlyHeapInfo.TryGetNode(Location location, [NotNullWhen(true)] out IReadOnlyHeapNode? node)
         {
@@ -37,6 +37,6 @@ namespace dnWalker.Symbolic.Heap
 
         IObjectHeapNode InitializeObject(TypeSig type);
         IArrayHeapNode InitializeArray(TypeSig elementType, int length);
-        // IStringHeapNode InitializeString(TypeSig stringType, string content);
+        bool AddNode(IHeapNode node);
     }
 }

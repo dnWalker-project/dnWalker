@@ -9,6 +9,8 @@ namespace dnWalker.Symbolic
     public readonly struct PrimitiveValue<T> : IValue, IEquatable<PrimitiveValue<T>>
         where T : struct
     {
+        public static readonly PrimitiveValue<T> Default = new PrimitiveValue<T>(default(T));
+
         public T Value { get; }
 
         public PrimitiveValue(T value)
@@ -56,7 +58,7 @@ namespace dnWalker.Symbolic
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString()!;
         }
 
     }

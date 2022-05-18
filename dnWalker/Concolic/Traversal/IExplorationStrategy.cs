@@ -1,4 +1,7 @@
-﻿using dnWalker.Concolic.Traversal;
+﻿
+using dnlib.DotNet;
+
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.Concolic
+namespace dnWalker.Concolic.Traversal
 {
     public interface IExplorationStrategy
     {
@@ -22,5 +25,11 @@ namespace dnWalker.Concolic
         /// </summary>
         /// <param name="constraintNode"></param>
         void OnNodeExplored(ConstraintNode constraintNode);
+
+        void OnUnsatisfiableNodePruned(ConstraintNode constraintNode);
+
+        void NewIteration();
+
+        void Initialize(ExplicitActiveState activeState, MethodDef entryPoint);
     }
 }

@@ -48,10 +48,11 @@ namespace MMC.Util
         // TODO: use better hashing
         public override int GetHashCode()
         {
-            var retval = CILElementHashCodeProvider.CalcCILHashCode(m_instr);
-            retval ^= MMC.HashMasks.MASK2;
-            retval += CILElementHashCodeProvider.CalcCILHashCode(m_meth);
-            return retval;
+            //var retval = CILElementHashCodeProvider.CalcCILHashCode(m_instr);
+            //retval ^= MMC.HashMasks.MASK2;
+            //retval += CILElementHashCodeProvider.CalcCILHashCode(m_meth);
+            //return retval;
+            return HashCode.Combine(m_instr, MethodEqualityComparer.CompareDeclaringTypes.GetHashCode(m_meth));
         }
 
         public override bool Equals(object other)
@@ -62,6 +63,7 @@ namespace MMC.Util
 
         public override string ToString()
         {
+            if (this == None) return "Empty";
             return string.Format("{0}:{1:X4}", m_meth.Name, m_instr.Offset);
         }
 

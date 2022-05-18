@@ -1,4 +1,6 @@
-﻿using dnWalker.Symbolic.Heap;
+﻿using dnlib.DotNet;
+
+using dnWalker.Symbolic.Heap;
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,6 @@ namespace dnWalker.Symbolic
 
         IReadOnlyHeapInfo HeapInfo { get; }
 
-        //IReadOnlyCollection<IVariable> Variables { get; }
+        IReadOnlyCollection<IRootVariable> Variables { get; }
     }
 }

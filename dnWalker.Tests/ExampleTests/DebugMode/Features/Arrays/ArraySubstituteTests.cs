@@ -34,6 +34,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             var paths = explorer.PathStore.Paths;
 
             paths.Count().Should().Be(2);
+
+            Fail("Check the input/output models.");
         }
 
         [Fact]
@@ -48,6 +50,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             var paths = explorer.PathStore.Paths;
 
             paths.Count().Should().Be(2);
+
+            Fail("Check the input/output models.");
         }
 
         [Fact]
@@ -62,6 +66,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             var paths = explorer.PathStore.Paths;
 
             paths.Count().Should().Be(3);
+
+            Fail("Check the input/output models.");
         }
 
         [Fact]
@@ -76,6 +82,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             var paths = explorer.PathStore.Paths;
 
             paths.Count().Should().Be(3);
+
+            Fail("Check the input/output models.");
         }
 
         [Fact]
@@ -90,6 +98,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             var paths = explorer.PathStore.Paths;
 
             paths.Count().Should().Be(4);
+
+            Fail("Check the input/output models.");
         }
 
         [Fact]
@@ -109,6 +119,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
             }
 
             paths.Count().Should().Be(4);
+
+            Fail("Check the input/output models.");
         }
 
         [Fact]
@@ -129,16 +141,18 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
 
             paths.Count().Should().Be(3);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            Fail("Check the input/output models.");
 
-            IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
-            array.Should().NotBeNull();
-            array.GetIsNull().Should().BeFalse();
-            array.GetLength().Should().Be(3);
+            //IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
+            //IBaseParameterSet baseSet = execSet.BaseSet;
 
-            array.TryGetItem(2, out IObjectParameter o2).Should().BeTrue();
-            o2.Reference.Should().Be((ParameterRef)0x00000002);
+            //IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
+            //array.Should().NotBeNull();
+            //array.GetIsNull().Should().BeFalse();
+            //array.GetLength().Should().Be(3);
+
+            //array.TryGetItem(2, out IObjectParameter o2).Should().BeTrue();
+            //o2.Reference.Should().Be((ParameterRef)0x00000002);
         }
 
         [Fact]
@@ -159,16 +173,18 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
 
             paths.Count().Should().Be(3);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            Fail("Check the input/output models.");
 
-            IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
-            array.Should().NotBeNull();
-            array.GetIsNull().Should().BeFalse();
-            array.GetLength().Should().Be(3);
+            //IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
+            //IBaseParameterSet baseSet = execSet.BaseSet;
 
-            array.TryGetItem(2, out IObjectParameter o2).Should().BeTrue();
-            baseSet.Parameters.Should().NotContainKey(o2.Reference);
+            //IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
+            //array.Should().NotBeNull();
+            //array.GetIsNull().Should().BeFalse();
+            //array.GetLength().Should().Be(3);
+
+            //array.TryGetItem(2, out IObjectParameter o2).Should().BeTrue();
+            //baseSet.Parameters.Should().NotContainKey(o2.Reference);
         }
 
         [Fact]
@@ -189,21 +205,23 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
 
             paths.Count().Should().Be(3);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            Fail("Check the input/output models.");
 
-            IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
-            array.Should().NotBeNull();
-            array.GetIsNull().Should().BeFalse();
-            array.GetLength().Should().Be(3);
+            //IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
+            //IBaseParameterSet baseSet = execSet.BaseSet;
 
-            array.TryGetItem(0, out IInt32Parameter i0).Should().BeTrue();
-            array.TryGetItem(1, out IInt32Parameter i1).Should().BeTrue();
-            array.TryGetItem(2, out IInt32Parameter i2).Should().BeTrue();
+            //IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
+            //array.Should().NotBeNull();
+            //array.GetIsNull().Should().BeFalse();
+            //array.GetLength().Should().Be(3);
+
+            //array.TryGetItem(0, out IInt32Parameter i0).Should().BeTrue();
+            //array.TryGetItem(1, out IInt32Parameter i1).Should().BeTrue();
+            //array.TryGetItem(2, out IInt32Parameter i2).Should().BeTrue();
             
-            baseSet.Parameters.Should().NotContainKey(i0.Reference);
-            baseSet.Parameters.Should().NotContainKey(i1.Reference);
-            baseSet.Parameters.Should().NotContainKey(i2.Reference);
+            //baseSet.Parameters.Should().NotContainKey(i0.Reference);
+            //baseSet.Parameters.Should().NotContainKey(i1.Reference);
+            //baseSet.Parameters.Should().NotContainKey(i2.Reference);
         }
 
         [Fact]
@@ -224,20 +242,22 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
 
             paths.Count().Should().Be(3);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            Fail("Check the input/output models.");
 
-            IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
-            array.Should().NotBeNull();
-            array.GetIsNull().Should().BeFalse();
-            array.GetLength().Should().Be(3);
+            //IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
+            //IBaseParameterSet baseSet = execSet.BaseSet;
+
+            //IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
+            //array.Should().NotBeNull();
+            //array.GetIsNull().Should().BeFalse();
+            //array.GetLength().Should().Be(3);
 
 
-            array.TryGetItem(2, out IArrayParameter a2).Should().BeTrue();
+            //array.TryGetItem(2, out IArrayParameter a2).Should().BeTrue();
 
-            baseSet.Parameters.Should().NotContainKey(a2.Reference);
-            a2.GetIsNull().Should().BeFalse();
-            a2.GetLength().Should().Be(5);
+            //baseSet.Parameters.Should().NotContainKey(a2.Reference);
+            //a2.GetIsNull().Should().BeFalse();
+            //a2.GetLength().Should().Be(5);
         }
 
         [Fact]
@@ -258,19 +278,21 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Arrays
 
             paths.Count().Should().Be(3);
 
-            IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
-            IBaseParameterSet baseSet = execSet.BaseSet;
+            Fail("Check the input/output models.");
 
-            IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
-            array.Should().NotBeNull();
-            array.GetIsNull().Should().BeFalse();
-            array.GetLength().Should().Be(3);
+            //IExecutionParameterSet execSet = explorer.ParameterStore.ExecutionSets[2];
+            //IBaseParameterSet baseSet = execSet.BaseSet;
+
+            //IArrayParameter array = execSet.Parameters[0x00000001] as IArrayParameter;
+            //array.Should().NotBeNull();
+            //array.GetIsNull().Should().BeFalse();
+            //array.GetLength().Should().Be(3);
 
 
-            array.TryGetItem(1, out IObjectParameter o1).Should().BeTrue();
+            //array.TryGetItem(1, out IObjectParameter o1).Should().BeTrue();
 
-            baseSet.Parameters.Should().NotContainKey(o1.Reference);
-            o1.GetIsNull().Should().BeTrue();
+            //baseSet.Parameters.Should().NotContainKey(o1.Reference);
+            //o1.GetIsNull().Should().BeTrue();
         }
     }
 }

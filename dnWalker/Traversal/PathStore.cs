@@ -17,15 +17,20 @@ namespace dnWalker.Traversal
 
         public PathStore()
         {
-            _currentPath = new Path();
+            _currentPath = CreatePath();
             _paths.Add(_currentPath);
         }
 
         public Path CurrentPath => _currentPath;
 
+        protected virtual Path CreatePath()
+        {
+            return new Path();
+        }
+
         public void ResetPath()
         {
-            _currentPath = new Path();
+            _currentPath = CreatePath();
             _paths.Add(_currentPath);
         }
 

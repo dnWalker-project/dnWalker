@@ -1,4 +1,6 @@
-﻿using dnWalker.Symbolic.Expressions;
+﻿using dnlib.DotNet;
+
+using dnWalker.Symbolic.Expressions;
 
 using MMC.Data;
 using MMC.State;
@@ -26,7 +28,7 @@ namespace dnWalker.Symbolic
         }
 
         public IModel InputModel => _inputModel;
-        public IModel ExecModel => _execModel;
+        public IModel OutputModel => _execModel;
 
 
         public static SymbolicContext Create(IModel model, MMC.State.ExplicitActiveState cur)
@@ -63,5 +65,27 @@ namespace dnWalker.Symbolic
                 _ => throw new InvalidOperationException("Unexpected variable type.")
             };
         }
+
+        private readonly IDictionary<Location, IDictionary<IMethod, int>> _invocationCounter = new Dictionary<Location, IDictionary<IMethod, int>>();
+
+        public int GetInvocation(Location symbolicLocation, IMethod method)
+        {
+            if (!_invocationCounter.TryGetValue(symbolicLocation, out IDictionary<IMethod, int> methodCounter))
+            {
+                methodCounter = new Dictionary<IMethod, int>(MethodEqualityComparer.CompareDeclaringTypes);
+                _invocationCounter.Add(symbolicLocation, methodCounter);
+            }
+
+            if (!methodCounter.ContainsKey(method))
+            {
+                methodCounter[method] = 1;
+                return 1;
+            }
+            else
+            {
+                return ++methodCounter[method];
+            }
+        }
+
     }
 }

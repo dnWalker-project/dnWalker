@@ -10,9 +10,10 @@ namespace dnWalker.Concolic.Traversal
     public static class ConstraintTreeExplorerWriter
     {
         const string Begin = "digraph G {\n";
-        const string Node = "\t{0} [label=\"{1}\"];";
-        const string NodeDUP = "\t{0} [label=\"{1}, DUPL\"];";
-        const string NodeUNSAT = "\t{0} [label=\"{1}, UNSAT\"];";
+        const string Node = "\t{0} [label=\"{1}, {2}\"];";
+        const string NodeDUP = "\t{0} [label=\"{1}, {2}, DUPL\"];";
+        const string NodeUNSAT = "\t{0} [label=\"{1}, {2}, UNSAT\"];";
+
         const string Edge = "\t{0} -> {1};";
         const string btedge = "\t{0} -> {1} [label=\"bt\",style=dotted];";
         const string End = "}";
@@ -24,6 +25,7 @@ namespace dnWalker.Concolic.Traversal
             // dirty way for setting node ids...
             Dictionary<ConstraintNode, int> idLookup = new Dictionary<ConstraintNode, int>();
             int lastId = 0;
+            int currentId = 0;
 
             using (StreamWriter writer = new StreamWriter(file))
             {
@@ -34,21 +36,11 @@ namespace dnWalker.Concolic.Traversal
                 frontier.Push(tree.Root);
                 while (frontier.TryPop(out ConstraintNode node))
                 {
-                    int currentId = lastId++;
+                    currentId = lastId++;
                     idLookup.Add(node, currentId);
 
-                    if (!node.IsSatisfiable)
-                    {
-                        writer.WriteLine(NodeUNSAT, currentId, node.Condition?.ToString() ?? "TRUE");
-                    }
-                    else if (!node.IsExplored)
-                    {
-                        writer.WriteLine(NodeDUP, currentId, node.Condition?.ToString() ?? "TRUE");
-                    }
-                    else
-                    {
-                        writer.WriteLine(Node, currentId, node.Condition?.ToString() ?? "TRUE");
-                    }
+                    WriteNode(node);
+
 
                     if (!node.IsRoot)
                     {
@@ -63,7 +55,40 @@ namespace dnWalker.Concolic.Traversal
 
                 // footer
                 writer.WriteLine(End);
+
+                void WriteNode(ConstraintNode node)
+                {
+                    writer.Write($"\t{currentId}[");
+
+                    writer.Write($"style=filled ");
+                    writer.Write($"label=\"{GetLabel(node)}\" ");
+                    writer.Write($"fillcolor={GetColor(node)} ");
+
+                    writer.WriteLine("];");
+                }
             }
+        }
+
+        static string GetColor(ConstraintNode node)
+        {
+            if (node.IsPreconditionSource)
+            {
+                return "greenyellow";
+            }
+            if (node.IsExplored)
+            {
+                return "lightblue";
+            }
+            if (!node.IsSatisfiable)
+            {
+                return "orangered";
+            }
+            return "white";
+        }
+
+        static string GetLabel(ConstraintNode node)
+        {
+            return $"{node.Condition?.ToString() ?? "true"}, {node.Location}, ({string.Join(", ", node.Iterations)})";
         }
     }
 }

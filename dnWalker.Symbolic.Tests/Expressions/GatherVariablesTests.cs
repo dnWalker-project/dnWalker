@@ -17,7 +17,7 @@ using Xunit;
 
 using IVariable = dnWalker.Symbolic.IVariable;
 
-namespace dnWalker.Tests.Symbolic.Expressions
+namespace dnWalker.Symbolic.Tests.Expressions
 {
     public class GatherVariablesTests
     {

@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
+    <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
+    <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
   </ItemGroup>
 
 </Project>

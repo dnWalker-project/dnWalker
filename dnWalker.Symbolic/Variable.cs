@@ -28,5 +28,10 @@ namespace dnWalker.Symbolic
         {
             return new ArrayElementVariable(array, index);
         }
+
+        public static IVariable MethodResult(IVariable instance, IMethod method, int invocation)
+        {
+            return new MethodResultVariable(instance, method, invocation);
+        }
     }
 }

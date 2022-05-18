@@ -1,4 +1,7 @@
-﻿using dnWalker.Symbolic;
+﻿using dnlib.DotNet.Emit;
+
+using dnWalker.Graphs.ControlFlow;
+using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
 using MMC.State;
@@ -74,22 +77,22 @@ namespace dnWalker.Concolic.Traversal
         ///         (arr != null && len(arr) \leq idx),  // index out of range exc, idx >= arr.Length
         ///     }
         /// </example>
-        public void MakeDecision(ExplicitActiveState cur, int decision, params Expression[] choices)
+        public void MakeDecision(ExplicitActiveState cur, int decision, ControlFlowNode[] choiceTargets, Expression[] choiceExpressions)
         {
             Debug.Assert(decision >= 0);
-            Debug.Assert(decision < choices.Length);
+            Debug.Assert(decision < choiceTargets.Length);
+            Debug.Assert(choiceTargets.Length == choiceExpressions.Length);
 
             // we are making a decision from the current node => we can mark it covered
             OnNodeExplored(_current);
+
 
             // case 1
             // the node is not yet expanded (node.Children.Count == 0)
             // create the decision nodes and select the correct one
             if (!_current.IsExpanded)
             {
-                CILLocation location = cur.CurrentLocation;
-
-                _current.Expand(location, choices);
+                _current.Expand(choiceTargets, choiceExpressions);
                 for (int i = 0; i < _current.Children.Count; ++i)
                 {
                     if (i == decision)
@@ -112,7 +115,7 @@ namespace dnWalker.Concolic.Traversal
             // set current node based on the decision
             else
             {
-                Debug.Assert(_current.Children.Count == choices.Length);
+                Debug.Assert(_current.Children.Count == choiceTargets.Length);
                 _current = _current.Children[decision];
             }
         }

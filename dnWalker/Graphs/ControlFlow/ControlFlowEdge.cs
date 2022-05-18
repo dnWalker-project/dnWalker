@@ -11,28 +11,49 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Graphs.ControlFlow
 {
-    public class ControlFlowEdge : QuikGraph.Edge<ControlFlowNode>
+    public abstract class ControlFlowEdge
     {
-        public ControlFlowEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target) : base(source, target)
-        {
+        private bool _isCovered;
+        private bool _isUnreachable;
+        private readonly ControlFlowNode _source;
+        private readonly ControlFlowNode _target;
 
+        protected ControlFlowEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target)
+        {
+            _source = source ?? throw new ArgumentNullException(nameof(source));
+            _target = target ?? throw new ArgumentNullException(nameof(target));
         }
 
-        private readonly List<Constraint> _reachabilityProofs = new List<Constraint>();
-        private readonly List<Constraint> _unreachabilityProofs = new List<Constraint>();
 
-        public void MarkCovered(Constraint proof)
+        public void MarkCovered()
         {
-            _reachabilityProofs.Add(proof);
+            _isCovered = true;
         }
 
-        public void MarkUnreachable(Constraint proof)
+        public void MarkUnreachable()
         {
-            _unreachabilityProofs.Add(proof);
+            _isUnreachable = true;
         }
 
-        public bool IsCovered => _reachabilityProofs.Count > 0;
-        public bool IsReachable => _reachabilityProofs.Count > 0 || _unreachabilityProofs.Count == 0;
+        public bool IsCovered => _isCovered;
+        public bool IsReachable => !_isUnreachable;
+
+        public ControlFlowNode Source => _source;
+        public ControlFlowNode Target => _target;
+    }
+
+    public class NextEdge : ControlFlowEdge
+    {
+        public NextEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target) : base(source, target)
+        {
+        }
+    }
+
+    public class JumpEdge : ControlFlowEdge
+    {
+        public JumpEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target) : base(source, target)
+        {
+        }
     }
 
     public class ExceptionEdge : ControlFlowEdge

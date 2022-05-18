@@ -30,7 +30,7 @@ namespace dnWalker.Z3
         private static void AssertTypes(Constraint constraint, ref SolverContext context)
         {
             Dictionary<IVariable, Expr> varLookup = context.VariableMapping;
-            Dictionary<TypeSig, List<IVariable>> groups = new Dictionary<TypeSig, List<IVariable>>();
+            Dictionary<TypeSig, List<IVariable>> groups = new Dictionary<TypeSig, List<IVariable>>(TypeEqualityComparer.Instance);
             Solver solver = context.Solver;
             Context z3 = context.Z3;
             Expr nullExpr = context.NullExpr;

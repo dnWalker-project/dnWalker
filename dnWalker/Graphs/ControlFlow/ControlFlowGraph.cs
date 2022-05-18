@@ -4,8 +4,6 @@ using dnlib.DotNet.Emit;
 using dnWalker.Concolic;
 using dnWalker.Symbolic;
 
-using QuikGraph;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -17,106 +15,87 @@ namespace dnWalker.Graphs.ControlFlow
 {
     public partial class ControlFlowGraph
     {
-        private readonly BidirectionalGraph<ControlFlowNode, ControlFlowEdge> _graph;
-        private readonly InstructionBlockNode[] _instructionBlocks;
+        private readonly IReadOnlyList<InstructionBlockNode> _instructionBlockNodes;
+        private readonly IReadOnlyDictionary<TypeDef, VirtualExceptionHandlerNode> _exceptionNodes;
 
-        private ControlFlowGraph([NotNull] BidirectionalGraph<ControlFlowNode, ControlFlowEdge> graph)
+        private readonly IReadOnlyList<ControlFlowNode> _nodes;
+        private readonly IReadOnlyList<ControlFlowEdge> _edges;
+
+
+        private ControlFlowGraph(
+            [NotNull] IReadOnlyList<ControlFlowNode> nodes, 
+            [NotNull] IReadOnlyList<InstructionBlockNode> instructionBlockNodes,
+            [NotNull] IReadOnlyDictionary<TypeDef, VirtualExceptionHandlerNode> exceptionNodes)
         {
-            _graph = graph;
-            _instructionBlocks = graph.Vertices.OfType<InstructionBlockNode>().ToArray();
-            Array.Sort(_instructionBlocks, (a, b) => (int)(a.Header.Offset - (long)b.Header.Offset));
+            _nodes = nodes;
+            _edges = _nodes.SelectMany(static n => n.OutEdges).ToList();
+
+            _instructionBlockNodes = instructionBlockNodes;
+
+            _exceptionNodes = exceptionNodes;
         }
 
-        public void MarkCovered(Instruction current, Instruction next, Constraint proof)
-        {
-            InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlocks, current);
-            InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlocks, next);
-            if (!_graph.TryGetEdge(sourceNode, targetNode, out ControlFlowEdge edge)) throw new InvalidOperationException($"Cannot mark edge between '{current}' and '{next}' as it does not exist.");
+        public IReadOnlyCollection<ControlFlowNode> Nodes => _nodes;
+        public IReadOnlyCollection<ControlFlowEdge> Edges => _edges;
 
-            edge.MarkCovered(proof);
+        public InstructionBlockNode GetInstructionNode(Instruction instruction)
+        {
+            return ControlFlowUtils.GetNode(_instructionBlockNodes, instruction);
         }
 
-        public void MarkUnreachable(Instruction current, Instruction next, Constraint proof)
+        public VirtualExceptionHandlerNode GetExceptionNode(TypeDef exceptionType)
         {
-            InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlocks, current);
-            InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlocks, next);
-            if (!_graph.TryGetEdge(sourceNode, targetNode, out ControlFlowEdge edge)) throw new InvalidOperationException($"Cannot mark edge between '{current}' and '{next}' as it does not exist.");
-
-            MarkUnreachable(edge, proof);
+            return _exceptionNodes[exceptionType];
         }
 
-        public void MarkCovered(Instruction current, TypeDef exception, Constraint proof)
+        public IEnumerable<ControlFlowNode> GetSuccessors(Instruction instruction)
         {
-            InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlocks, current);
-
-            if (!_graph.TryGetOutEdges(sourceNode, out IEnumerable<ControlFlowEdge> edges)) throw new InvalidOperationException($"Cannot mark exception for '{exception.Name}' edge from '{current}', because it does not exists.");
-
-            foreach (ExceptionEdge eEdge in edges.OfType<ExceptionEdge>())
-            {
-                if (TypeEqualityComparer.Instance.Equals(eEdge.ExceptionType, exception))
-                {
-                    eEdge.MarkCovered(proof);
-                    return;
-                }
-            }
-
-            throw new InvalidOperationException($"Cannot mark exception for '{exception.Name}' edge from '{current}', because it does not exists.");
-
+            return GetInstructionNode(instruction)?.Successors ?? Array.Empty<ControlFlowNode>();
         }
 
-        public void MarkUnreachable(Instruction current, TypeDef exception, Constraint proof)
+        public void MarkCovered(Instruction current, Instruction next)
         {
-            InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlocks, current);
+            InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlockNodes, current);
+            InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlockNodes, next);
 
-            if (!_graph.TryGetOutEdges(sourceNode, out IEnumerable<ControlFlowEdge> edges)) throw new InvalidOperationException($"Cannot mark exception for '{exception.Name}' edge from '{current}', because it does not exists.");
-
-            foreach (ExceptionEdge exceptionEdge in edges.OfType<ExceptionEdge>())
-            {
-                if (TypeEqualityComparer.Instance.Equals(exceptionEdge.ExceptionType, exception))
-                {
-                    MarkUnreachable(exceptionEdge, proof);
-                    return;
-                }
-            }
-
-            throw new InvalidOperationException($"Cannot mark exception for '{exception.Name}' edge from '{current}', because it does not exists.");
+            ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+            edge.MarkCovered();
         }
 
-
-        
-        private void MarkUnreachable(ControlFlowEdge edge, Constraint proof)
+        public void MarkUnreachable(Instruction current, Instruction next)
         {
-            edge.MarkUnreachable(proof);
+            InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlockNodes, current);
+            InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlockNodes, next);
 
-            ControlFlowNode target = edge.Target;
-            if (_graph.TryGetInEdges(target, out IEnumerable<ControlFlowEdge> inEdges))
-            {
-                if (inEdges.All(static e => !e.IsReachable))
-                {
-                    // every in edge is marked as unreachable => we can marking every out edge in same manner
-                    if (_graph.TryGetOutEdges(target, out IEnumerable<ControlFlowEdge> outEdges))
-                    {
-                        foreach (ControlFlowEdge outEdge in outEdges)
-                        {
-                            MarkUnreachable(outEdge, proof);
-                        }
-                    }
-                }
-            }
+            ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+            ControlFlowUtils.MarkUnreachable(edge);
+        }
+
+        public void MarkCovered(Instruction current, TypeDef exception)
+        {
+            InstructionBlockNode sourceNode = GetInstructionNode(current);
+            VirtualExceptionHandlerNode targetNode = GetExceptionNode(exception);
+
+            ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+            edge.MarkCovered();
+        }
+
+        public void MarkUnreachable(Instruction current, TypeDef exception)
+        {
+            InstructionBlockNode sourceNode = GetInstructionNode(current);
+            VirtualExceptionHandlerNode targetNode = GetExceptionNode(exception);
+
+            ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+            ControlFlowUtils.MarkUnreachable(edge);
         }
 
         public Coverage GetCoverage()
         {
-            int reachableNodes = _graph.Vertices.Count(v =>
-            {
-                _graph.TryGetInEdges(v, out IEnumerable<ControlFlowEdge> inEdges);
-                return inEdges != null && inEdges.Any(static e => e.IsReachable);
-            });
+            int reachableNodes = _nodes.Count(static n => n.InEdges.Any(static e => e.IsReachable));
+            int coveredNodes = _nodes.Count(static n => n.IsCovered);
 
-            int coveredNodes = _graph.Vertices.Count(static v => v.IsCovered);
-            
-            int reachableEdges = _graph.Edges.Count(static e => e.IsReachable);
-            int coveredEdges = _graph.Edges.Count(v => v.IsCovered);
+            int reachableEdges = _edges.Count(static e => e.IsReachable);
+            int coveredEdges = _edges.Count(static e => e.IsCovered);
 
             return new Coverage(coveredEdges / (double)reachableEdges, coveredNodes / (double)reachableNodes);
         }

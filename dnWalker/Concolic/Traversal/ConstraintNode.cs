@@ -1,4 +1,5 @@
-﻿using dnWalker.Symbolic;
+﻿using dnWalker.Graphs.ControlFlow;
+using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
 using MMC.Util;
@@ -19,22 +20,22 @@ namespace dnWalker.Concolic.Traversal
     {
         private readonly ConstraintNode _parent;
         private readonly Expression _condition;
-        private readonly CILLocation _location;
+        private readonly ControlFlowNode _location;
         private readonly ConstraintTree _tree;
-        
+        private readonly List<int> _iterations = new List<int>();
         private IReadOnlyList<ConstraintNode> _children = Array.Empty<ConstraintNode>();
 
-        private bool _explored;
         private bool _unsatisfiable;
+        private bool _isPreconditionSource;
 
         protected ConstraintNode(ConstraintTree tree, ConstraintNode parent)
         {
             _tree = tree ?? throw new ArgumentNullException(nameof(tree));
             _parent = parent;
-            _location = CILLocation.None;
+            _location = null;
             _condition = null;
         }
-        public ConstraintNode(ConstraintTree tree, ConstraintNode parent, CILLocation location, Expression condition)
+        public ConstraintNode(ConstraintTree tree, ConstraintNode parent, ControlFlowNode location, Expression condition)
         {
             _tree = tree ?? throw new ArgumentNullException(nameof(tree));
             _parent = parent;
@@ -92,22 +93,38 @@ namespace dnWalker.Concolic.Traversal
 
         public bool IsExpanded => _children != null && _children.Count > 0;
 
-        public bool IsExplored => _explored;
+        public bool IsExplored => _iterations.Count > 0;
         public bool IsSatisfiable => !_unsatisfiable;
+        public bool IsPreconditionSource => _isPreconditionSource;
 
-        public CILLocation Location => _location;
+        public ControlFlowNode Location => _location;
 
         public ConstraintTree Tree => _tree;
 
-        public void MarkExplored() => _explored = true;
-        public void MarkUnsatisfiable() => _unsatisfiable = true;
+        public void MarkExplored(int iteration)
+        {
+            _iterations.Add(iteration);
+        }
+        public IReadOnlyList<int> Iterations => _iterations;
 
-        public void Expand(CILLocation location, params Expression[] choices)
+        public void MarkUnsatisfiable()
+        {
+            _unsatisfiable = true;
+            // at this time, children should be empty, but just in case...
+            foreach (ConstraintNode child in Children)
+            {
+                child.MarkUnsatisfiable();
+            }
+        }
+
+        public void MarkPreconditionSource() => _isPreconditionSource = true;
+
+        public void Expand(ControlFlowNode[] locations, Expression[] choices)
         {
             ConstraintNode[] children = new ConstraintNode[choices.Length];
             for (int i = 0; i < choices.Length; ++i)
             {
-                ConstraintNode child = new ConstraintNode(_tree, this, location, choices[i]);
+                ConstraintNode child = new ConstraintNode(_tree, this, locations[i], choices[i]);
                 children[i] = child;
             }
             _children = children;

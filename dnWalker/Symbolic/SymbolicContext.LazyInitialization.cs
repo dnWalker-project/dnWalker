@@ -121,7 +121,7 @@ namespace dnWalker.Symbolic
 
         private readonly Dictionary<Location, uint> _locationMapping = new Dictionary<Location, uint>();
 
-        private IDataElement LazyInitialize(IVariable variable, ExplicitActiveState cur)
+        public IDataElement LazyInitialize(IVariable variable, ExplicitActiveState cur)
         {
             IDataElement result;
             if (!_inputModel.TryGetValue(variable, out IValue value))

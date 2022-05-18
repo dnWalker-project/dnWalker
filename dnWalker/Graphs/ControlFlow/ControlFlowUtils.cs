@@ -76,7 +76,9 @@ namespace dnWalker.Graphs.ControlFlow
             return
                 instruction.OpCode.Code == Code.Ret ||
                 instruction.OpCode.Code == Code.Throw ||
-                instruction.OpCode.Code == Code.Rethrow;
+                instruction.OpCode.Code == Code.Rethrow ||
+                instruction.OpCode.Code == Code.Br ||
+                instruction.OpCode.Code == Code.Br_S;
         }
 
         public static bool HasMultipleSuccessors(Instruction instruction)
@@ -286,7 +288,7 @@ namespace dnWalker.Graphs.ControlFlow
                 case Code.Callvirt:
                     // if static => next only
                     // if not static => next, null reference exception
-                    return ((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic ? 2 : 1;
+                    return ((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic ? 1 : 2;
 
                 case Code.Ret:
                     return 0;
@@ -308,20 +310,22 @@ namespace dnWalker.Graphs.ControlFlow
 
             Debug.Assert(context != null);
 
-            ModuleDef cm = context.CorLibTypes.Boolean.Module;
-
             TypeDef GetException(string exceptionTypeName)
             {
+                AssemblyDef corAssembly = context.Context.AssemblyResolver.Resolve(context.CorLibTypes.AssemblyRef, null);
                 if (exceptionCache != null)
                 {
                     if (!exceptionCache.TryGetValue(exceptionTypeName, out TypeDef exceptionType))
                     {
-                        exceptionType = cm.Types.First(t => t.Name == exceptionTypeName);
+                        exceptionType = corAssembly.Modules[0].Types.First(t => t.Name == exceptionTypeName);
+
+                        //exceptionType = context.Context.Resolver.Resolve(new TypeRefUser(null, "System", exceptionTypeName), null);
+                        //TypeRef typeRef = new TypeRefUser(cm, "System", exceptionTypeName);
                         exceptionCache[exceptionTypeName] = exceptionType;
                     }
                     return exceptionType;
                 }
-                return cm.Types.First(t => t.Name == exceptionTypeName);
+                return corAssembly.Modules[0].Types.First(t => t.Name == exceptionTypeName);
             }
 
 
@@ -445,17 +449,24 @@ namespace dnWalker.Graphs.ControlFlow
                     {
                         return SuccessorInfo.NextInstructionArray;
                     }
-                    else return new SuccessorInfo[]
+                    else
                     {
-                        SuccessorInfo.NextInstruction,
-                        SuccessorInfo.ExceptionHandler(GetException(NullReference))
-                    };
+                        return new SuccessorInfo[]
+                        {
+                            SuccessorInfo.NextInstruction,
+                            SuccessorInfo.ExceptionHandler(GetException(NullReference))
+                        };
+                    }
 
                 case Code.Ret:
                     return SuccessorInfo.EmptyArray;
 
                 case Code.Switch:
                     throw new NotSupportedException();
+
+                case Code.Br:
+                case Code.Br_S:
+                    return new SuccessorInfo[] { SuccessorInfo.Branch((Instruction)instruction.Operand) };
 
                 default:
                     return SuccessorInfo.NextInstructionArray;
@@ -478,9 +489,9 @@ namespace dnWalker.Graphs.ControlFlow
                 if (cmpResult == 0)
                     return block;
                 else if (cmpResult < 0)
-                    l = m + 1;
-                else // if (cmpResult > 0)
                     h = m - 1;
+                else // if (cmpResult > 0)
+                    l = m + 1;
             }
 
             return null;
@@ -502,6 +513,66 @@ namespace dnWalker.Graphs.ControlFlow
             // TODO: search for the exception handlers within method.Body
             handlerHeader = null;
             return false;
+        }
+
+        public static ControlFlowEdge CreateEdge(ControlFlowNode source, ControlFlowNode target, TypeDef exception = null)
+        {
+            ControlFlowEdge edge;
+            if (exception != null)
+            {
+                edge = new ExceptionEdge(exception, source, target);
+            }
+            else
+            {
+                InstructionBlockNode sourceBlock = source as InstructionBlockNode;
+                InstructionBlockNode targetBlock = target as InstructionBlockNode;
+                if (sourceBlock == null || targetBlock == null) throw new InvalidOperationException("Both source and target must be instruction block nodes.");
+
+                if (sourceBlock.Footer.Offset + sourceBlock.Footer.GetSize() ==
+                    targetBlock.Header.Offset)
+                {
+                    // target block is just after source block => next edge
+                    edge = new NextEdge(source, target);
+                }
+                else
+                {
+                    edge = new JumpEdge(source, target);
+                }
+            }
+
+            EnsureConnected(edge);
+            return edge;
+        }
+
+        public static ControlFlowEdge GetOrCreateEdge(ControlFlowNode source, ControlFlowNode target)
+        {
+            if (source.Successors.Contains(target))
+            {
+                return source.GetEdgeTo(target);
+            }
+
+            return CreateEdge(source, target);
+        }
+
+        private static void EnsureConnected(ControlFlowEdge edge)
+        {
+            edge.Source.AddEdgeTo(edge.Target, edge);
+            edge.Target.AddEdgeFrom(edge.Source, edge);
+        }
+
+        public static void MarkUnreachable(ControlFlowEdge edge)
+        {
+            edge.MarkUnreachable();
+
+            ControlFlowNode target = edge.Target;
+            if (target.InEdges.All(static e => !e.IsReachable))
+            {
+                // every in edge is marked as unreachable => we can marking every out edge in same manner
+                foreach (ControlFlowEdge outEdge in target.OutEdges)
+                {
+                    MarkUnreachable(outEdge);
+                }
+            }
         }
     }
 }

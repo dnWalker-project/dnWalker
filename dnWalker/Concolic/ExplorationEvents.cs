@@ -1,6 +1,6 @@
 ﻿using dnlib.DotNet;
 
-using dnWalker.Parameters;
+using dnWalker.Symbolic;
 using dnWalker.Traversal;
 
 using System;
@@ -57,27 +57,27 @@ namespace dnWalker.Concolic
 
     public class IterationStartedEventArgs : EventArgs
     {
-        public IterationStartedEventArgs(int iterationNmber, ParameterStore parameterStore)
+        public IterationStartedEventArgs(int iterationNmber, SymbolicContext symbolicContext)
         {
             IterationNmber = iterationNmber;
-            ParameterStore = parameterStore;
+            SymbolicContext = symbolicContext;
         }
 
         public int IterationNmber { get; }
-        public ParameterStore ParameterStore { get; }
+        public SymbolicContext SymbolicContext { get; }
     }
 
     public class IterationFinishedEventArgs : EventArgs
     {
-        public IterationFinishedEventArgs(int iterationNumber, ParameterStore parameterStore, Path exploredPath)
+        public IterationFinishedEventArgs(int iterationNumber, SymbolicContext symbolicContext, Path exploredPath)
         {
             IterationNumber = iterationNumber;
-            ParameterStore = parameterStore;
+            SymbolicContext = symbolicContext;
             ExploredPath = exploredPath;
         }
 
         public int IterationNumber { get; }
-        public ParameterStore ParameterStore { get; }
+        public SymbolicContext SymbolicContext { get; }
         public Path ExploredPath { get; }
     }
 }

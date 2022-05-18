@@ -4,7 +4,6 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".tt.cs" #>
-using dnWalker.Parameters;
 
 using FluentAssertions;
 
@@ -18,8 +17,8 @@ using Xunit;
 
 namespace dnWalker.Tests.Parameters
 {
-    public class ParameterFactory_NumericParameterTests : dnlibTypeTestBase
-    {
+    // public class ParameterFactory_NumericParameterTests : dnlibTypeTestBase
+    // {
 <#
  string[] types = 
  {
@@ -58,18 +57,18 @@ namespace dnWalker.Tests.Parameters
     string type = types[i];
     string alias = aliases[i];
 
-  #>
-        public void Test_ParameterFor_<#= type #>_Is_<#= type #>Parameter()
-        {
-            IParameterContext ctx = new ParameterContext(DefinitionProvider);
-            IParameterSet set = new ParameterSet(ctx);
-            IParameter p = set.CreateParameter(GetType("System.<#= type #>"));
-            p.Should().BeOfType<<#= type #>Parameter>();
-        }
+#>
+        // public void Test_ParameterFor_<#= type #>_Is_<#= type #>Parameter()
+        // {
+        //     IParameterContext ctx = new ParameterContext(DefinitionProvider);
+        //     IParameterSet set = new ParameterSet(ctx);
+        //     IParameter p = set.CreateParameter(GetType("System.<#= type #>"));
+        //     p.Should().BeOfType<<#= type #>Parameter>();
+        // }
  
 <#
  }
 
- #>
-    }
+#>
+    // }
 }

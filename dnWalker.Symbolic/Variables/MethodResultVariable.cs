@@ -32,7 +32,7 @@ namespace dnWalker.Symbolic.Variables
                 throw new InvalidOperationException("Cannot create this instance method result variable. The method declaring type is incompatible with the parent type.");
             }
         }
-        public string Name => $"{_parent.Name}::{_method.FullName}";
+        public string Name => $"{_parent.Name}.{_method.Name}({_invocation})";
         public TypeSig Type => _method.MethodSig.RetType;
         public IVariable Parent => _parent;
         public IMethod Method => _method;

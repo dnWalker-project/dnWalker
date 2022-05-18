@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Concolic.Traversal;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Traversal;
@@ -80,7 +81,8 @@ namespace dnWalker.Tests
             //StateSpaceSetup stateSpaaceSetup = new StateSpaceSetup(definitionProvider, Config, logger);
             MethodDef entryPoint = definitionProvider.GetMethodDefinition(_methodName) ?? throw new NullReferenceException($"Method {_methodName} not found");
 
-            PathStore pathStore = new PathStore();
+            // a bit dirty...
+            PathStore pathStore = new ConcolicPathStore(entryPoint);
 
             //ExplicitActiveState cur = stateSpaaceSetup.CreateInitialState(entryPoint, _provideArgs ?? throw new NullReferenceException("Args is null!"));
 

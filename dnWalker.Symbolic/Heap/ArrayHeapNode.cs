@@ -17,7 +17,7 @@ namespace dnWalker.Symbolic.Heap
             _elements = new Dictionary<int, IValue>(other._elements);
         }
 
-        public ArrayHeapNode(Location location, TypeSig type, int lenght) : base(location, type)
+        public ArrayHeapNode(Location location, TypeSig elementType, int lenght) : base(location, elementType)
         {
             Length = lenght;
         }
@@ -44,5 +44,7 @@ namespace dnWalker.Symbolic.Heap
             get;
             set;
         }
+
+        public IEnumerable<int> Indeces => _elements.Keys;
     }
 }

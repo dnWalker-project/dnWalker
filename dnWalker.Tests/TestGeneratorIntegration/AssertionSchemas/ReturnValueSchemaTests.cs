@@ -5,6 +5,7 @@ using dnWalker.Parameters;
 using dnWalker.TestGenerator;
 using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TestGenerator.XUnitFramework;
+using dnWalker.TypeSystem;
 
 using FluentAssertions;
 
@@ -193,18 +194,9 @@ namespace TestNamespace
             paths[0].Exception.Should().BeNull();
             paths[1].Exception.Should().BeNull();
 
-            // path 0 - return 10
-            // path 1 - return -1
-
-            explorer.ParameterStore.ExecutionSets[0].TryGetReturnValue(out IInt32Parameter? rv0).Should().BeTrue();
-            explorer.ParameterStore.ExecutionSets[1].TryGetReturnValue(out IInt32Parameter? rv1).Should().BeTrue();
-
-            rv0.Value.Should().Be(10);
-            rv1.Value.Should().Be(-1);
-
             string xmlData = System.IO.File.ReadAllText("PrimitiveValueReturn.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -547,7 +539,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("ArrayOfPrimitiveValuesReturn.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -889,7 +881,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("ReferenceTypeValuesReturn.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -1354,7 +1346,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("ReferenceTypeArrayValuesReturn.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;

@@ -3,7 +3,6 @@
 using dnWalker.Concolic.Traversal;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
-using dnWalker.Parameters;
 using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 
@@ -27,9 +26,11 @@ namespace dnWalker.Concolic
         private readonly Logger _logger;
         private readonly ISolver _solver;
 
+        private IMethod _entryPoint;
+
         private readonly IInstructionExecProvider _instructionExecProvider;
 
-        private PathStore _pathStore;
+        private ConcolicPathStore _pathStore;
         private int _currentIteration;
 
         public event Action<dnWalker.Traversal.Path> PathExplored = delegate { };
@@ -103,10 +104,14 @@ namespace dnWalker.Concolic
 
         public IReadOnlyCollection<IExplorationExtension> Extensions { get { return _extensions; } }
 
+
+        public IMethod EntryPoint => _entryPoint;
+
         public void Run(string methodName, IDictionary<string, object> data = null)
         {
             MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
             _pathStore = CreatePathStore(entryPoint);
+            _entryPoint = entryPoint;
 
             try
             {
@@ -125,23 +130,14 @@ namespace dnWalker.Concolic
         protected abstract void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null);
 
 
-        public PathStore PathStore
+        public ConcolicPathStore PathStore
         {
          
             get { return _pathStore; }
         }
-        protected virtual PathStore CreatePathStore(MethodDef entryPoint)
+        protected virtual ConcolicPathStore CreatePathStore(MethodDef entryPoint)
         {
-            return new PathStore(entryPoint);
-        }
-
-        [Obsolete("Not using the parameter store anymore, switching to IModel & IHeapInfo")]
-        public ParameterStore ParameterStore
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            return new ConcolicPathStore(entryPoint);
         }
 
         public int IterationCount

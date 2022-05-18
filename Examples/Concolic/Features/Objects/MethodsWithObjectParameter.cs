@@ -185,22 +185,22 @@ namespace Examples.Concolic.Features.Objects
 
             if (identical < 0)
             {
-                Console.WriteLine("obj1 or obj2 is null");
+                Console.Out.WriteLine("obj1 or obj2 is null");
                 return;
             }
             else 
             {
-                Console.WriteLine("obj1 and obj2 != null");
+                Console.Out.WriteLine("obj1 and obj2 != null");
 
 
                 if (obj1.OtherField < 3)
                 {
-                    Console.WriteLine("obj1.OtherField < 3");
+                    Console.Out.WriteLine("obj1.OtherField < 3");
                 }
 
                 if (identical == 1)
                 {
-                    Console.WriteLine("obj1 == obj2");
+                    Console.Out.WriteLine("obj1 == obj2");
                 }
             }
 

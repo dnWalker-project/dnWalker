@@ -1,8 +1,5 @@
 ﻿using dnlib.DotNet.Emit;
 
-using Echo.ControlFlow.Serialization.Dot;
-using Echo.Platforms.Dnlib;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,14 +28,16 @@ namespace dnWalker.Concolic
                 outFile = outFile.Replace("{SUT}", e.Method.Name);
             }
 
-            using (TextWriter writer = File.CreateText(outFile))
-            {
-                var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
-                dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
-                dotWriter.NodeAdorner = new ControlFlowNodeAdorner<Instruction>();
-                dotWriter.EdgeAdorner = new ControlFlowEdgeAdorner<Instruction>();
-                dotWriter.Write(e.Method.ConstructStaticFlowGraph());
-            }
+            //using (TextWriter writer = File.CreateText(outFile))
+            //{
+            //    var dotWriter = new Echo.Core.Graphing.Serialization.Dot.DotWriter(writer);
+            //    dotWriter.SubGraphAdorner = new ExceptionHandlerAdorner<Instruction>();
+            //    dotWriter.NodeAdorner = new ControlFlowNodeAdorner<Instruction>();
+            //    dotWriter.EdgeAdorner = new ControlFlowEdgeAdorner<Instruction>();
+            //    dotWriter.Write(e.Method.ConstructStaticFlowGraph());
+            //}
+
+
         }
 
         public void Unregister(IExplorer explorer)

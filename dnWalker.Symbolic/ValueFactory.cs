@@ -16,8 +16,6 @@ namespace dnWalker.Symbolic
         {
             if (type.IsPrimitive)
             {
-                ICorLibTypes corTypes = type.Module.CorLibTypes;
-                TypeEqualityComparer ec = TypeEqualityComparer.Instance;
                 if (type.IsBoolean())
                 {
                     return new PrimitiveValue<bool>(false);

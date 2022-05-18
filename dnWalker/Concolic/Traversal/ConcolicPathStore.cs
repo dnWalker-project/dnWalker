@@ -11,22 +11,31 @@ using System.Linq.Expressions;
 
 namespace dnWalker.Concolic.Traversal
 {
-    public class PathStore : dnWalker.Traversal.PathStore
+    public class ConcolicPathStore : PathStore
     {
         private readonly IDictionary<MethodDef, MethodExplorer> _methodExlorers;
         private readonly MethodDef _entryPoint;
 
         public Coverage Coverage => GetCodeCoverage();
 
-        public PathStore(MethodDef entryPoint)
+        public ConcolicPathStore(MethodDef entryPoint)
         {
             _methodExlorers = new Dictionary<MethodDef, MethodExplorer>(MethodEqualityComparer.CompareDeclaringTypes);
             _entryPoint = entryPoint;
         }
 
+        protected override ConcolicPath CreatePath()
+        {
+            return new ConcolicPath();
+        }
+
         public void OnInstructionExecuted(CILLocation location)
         {
             CurrentPath.OnInstructionExecuted(location);
+
+            MethodExplorer methodExplorer = GetMethodExplorer(location);
+
+            methodExplorer.OnInstructionExecuted(location.Instruction);
         }
 
         [DebuggerStepThrough]

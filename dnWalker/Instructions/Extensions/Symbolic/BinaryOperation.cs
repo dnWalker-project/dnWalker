@@ -87,11 +87,26 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 
             PreprocessBooleanExpressions(ref lhsExpression, ref rhsExpression);
+            if (lhs is IReferenceType)
+                PreprocessReferenceComparison(ref op);
 
             Expression resultExpression = Expression.MakeBinary(op, lhsExpression, rhsExpression);
             result.SetExpression(cur, resultExpression);
             
             return retValue;
+        }
+
+        private static void PreprocessReferenceComparison(ref Operator op)
+        {
+            // if the result should be comparison between two references, we need to change 
+            // <,> to !=
+            switch (op)
+            {
+                case Operator.LessThan:
+                case Operator.GreaterThan:
+                    op = Operator.NotEqual;
+                    break;
+            }
         }
 
         private static void PreprocessBooleanExpressions(ref Expression lhs, ref Expression rhs)

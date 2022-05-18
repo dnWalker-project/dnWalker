@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using Xunit;
 using Xunit.Abstractions;
 
 namespace dnWalker.Tests
@@ -135,5 +136,9 @@ namespace dnWalker.Tests
             return builder;
         }
 
+        protected void Fail(string reason = null)
+        {
+            Assert.False(true, reason);
+        }
     }
 }

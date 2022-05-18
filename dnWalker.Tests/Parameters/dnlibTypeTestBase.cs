@@ -1,101 +1,101 @@
-﻿using dnlib.DotNet;
+﻿//using dnlib.DotNet;
 
-using dnWalker.Instructions.Extensions;
-using dnWalker.TypeSystem;
+//using dnWalker.Instructions.Extensions;
+//using dnWalker.TypeSystem;
 
-using MMC;
-using MMC.InstructionExec;
-using MMC.State;
+//using MMC;
+//using MMC.InstructionExec;
+//using MMC.State;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace dnWalker.Tests.Parameters
-{
-    public abstract class dnlibTypeTestBase
-    {
-        private static readonly IConfig _config;
-        private static readonly Logger _logger;
+//namespace dnWalker.Tests.Parameters
+//{
+//    public abstract class dnlibTypeTestBase
+//    {
+//        private static readonly IConfig _config;
+//        private static readonly Logger _logger;
 
-        private static readonly IInstructionExecProvider _instructionExecProvider;
-        private static readonly IDefinitionProvider _definitionProvider;
+//        private static readonly IInstructionExecProvider _instructionExecProvider;
+//        private static readonly IDefinitionProvider _definitionProvider;
 
-        protected static ExplicitActiveState CreateState()
-        {
+//        protected static ExplicitActiveState CreateState()
+//        {
 
-            return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
-        }
+//            return new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+//        }
 
-        protected static IDefinitionProvider DefinitionProvider
-        {
-            get { return _definitionProvider; }
-        }
-
-
-        static dnlibTypeTestBase()
-        {
-            _config = new Config();
-            _logger = new Logger();
-
-            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
+//        protected static IDefinitionProvider DefinitionProvider
+//        {
+//            get { return _definitionProvider; }
+//        }
 
 
-            _instructionExecProvider = InstructionExecProvider.Get(_config, f);
+//        static dnlibTypeTestBase()
+//        {
+//            _config = new Config();
+//            _logger = new Logger();
+
+//            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
 
 
-            _definitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(typeof(dnlibTypeTestBase).Assembly));
-        }
+//            _instructionExecProvider = InstructionExecProvider.Get(_config, f);
 
-        public static TypeSig GetType(string typeName)
-        {
-            if (typeName.EndsWith("[]"))
-            {
-                return GetArrayType(typeName.Substring(0, typeName.Length - 2));
-            }
 
-            //TypeSig type = _modules
-            //    .SelectMany(m => m.Types)
-            //    .FirstOrDefault(t => t.ReflectionFullName == typeName)
-            //    .ToTypeSig();
+//            _definitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(typeof(dnlibTypeTestBase).Assembly));
+//        }
 
-            var type = _definitionProvider.GetTypeDefinition(typeName).ToTypeSig();
+//        public static TypeSig GetType(string typeName)
+//        {
+//            if (typeName.EndsWith("[]"))
+//            {
+//                return GetArrayType(typeName.Substring(0, typeName.Length - 2));
+//            }
 
-            if (type == null) throw new Exception("Could not resolve type: " + typeName);
+//            //TypeSig type = _modules
+//            //    .SelectMany(m => m.Types)
+//            //    .FirstOrDefault(t => t.ReflectionFullName == typeName)
+//            //    .ToTypeSig();
 
-            return type;
-        }
+//            var type = _definitionProvider.GetTypeDefinition(typeName).ToTypeSig();
 
-        public static TypeSig GetArrayType(string elementTypeName)
-        {
-            var elementType = GetType(elementTypeName);
+//            if (type == null) throw new Exception("Could not resolve type: " + typeName);
 
-            //ArraySig array = new ArraySig(elementType.ToTypeSig());
-            var array = new SZArraySig(elementType);
+//            return type;
+//        }
 
-            if (array == null)
-            {
-                throw new Exception("ArraySig is a null!");
-            }
+//        public static TypeSig GetArrayType(string elementTypeName)
+//        {
+//            var elementType = GetType(elementTypeName);
 
-            return array;
-        }
+//            //ArraySig array = new ArraySig(elementType.ToTypeSig());
+//            var array = new SZArraySig(elementType);
 
-        public static TypeSig GetType(Type type)
-        {
-            if (type.IsArray)
-            {
-                return GetArrayType(type.GetElementType());
-            }
+//            if (array == null)
+//            {
+//                throw new Exception("ArraySig is a null!");
+//            }
 
-            return GetType(type.FullName);
-        }
+//            return array;
+//        }
 
-        public static TypeSig GetArrayType(Type elementType)
-        {
-            return GetArrayType(elementType.FullName);
-        }
-    }
-}
+//        public static TypeSig GetType(Type type)
+//        {
+//            if (type.IsArray)
+//            {
+//                return GetArrayType(type.GetElementType());
+//            }
+
+//            return GetType(type.FullName);
+//        }
+
+//        public static TypeSig GetArrayType(Type elementType)
+//        {
+//            return GetArrayType(elementType.FullName);
+//        }
+//    }
+//}

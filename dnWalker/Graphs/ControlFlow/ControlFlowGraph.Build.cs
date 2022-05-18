@@ -1,8 +1,6 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-using QuikGraph;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +13,7 @@ namespace dnWalker.Graphs.ControlFlow
     {
         public static ControlFlowGraph Build(MethodDef method)
         {
-            BidirectionalGraph<ControlFlowNode, ControlFlowEdge> graph = new BidirectionalGraph<ControlFlowNode, ControlFlowEdge>();
+            List<ControlFlowNode> nodes = new List<ControlFlowNode>();
 
             // build the instruction block nodes
             List<InstructionBlockNode> blockNodes = new List<InstructionBlockNode>();
@@ -33,7 +31,7 @@ namespace dnWalker.Graphs.ControlFlow
                     currentBlock = new List<Instruction>();
                 }
             }
-            graph.AddVertexRange(blockNodes);
+            nodes.AddRange(blockNodes);
 
             // connect the instruction block nodes
             Dictionary<TypeDef, VirtualExceptionHandlerNode> exceptionHandlerLookup = new Dictionary<TypeDef, VirtualExceptionHandlerNode>(TypeEqualityComparer.Instance);
@@ -47,38 +45,55 @@ namespace dnWalker.Graphs.ControlFlow
 
                 foreach (ControlFlowUtils.SuccessorInfo info in successors)
                 {
+                    ControlFlowNode srcNode;
+                    ControlFlowNode trgNode;
+                    TypeDef exceptionType = null;
+
                     if (info == ControlFlowUtils.SuccessorInfo.NextInstruction)
                     {
                         // this should always happen iff (i < blockNodes.Count - 1) as the last instruction is RET
-                        graph.AddEdge(new ControlFlowEdge(blockNodes[i], blockNodes[i + 1]));
+                        srcNode = blockNodes[i];
+                        trgNode = blockNodes[i + 1];
                     }
                     else if (info.Instruction != null)
                     {
                         // branch to specific instruction
-                        graph.AddEdge(new ControlFlowEdge(blockNodes[i], ControlFlowUtils.GetNode(blockNodes, info.Instruction)));
+                        srcNode = blockNodes[i];
+                        trgNode = ControlFlowUtils.GetNode(blockNodes, info.Instruction);
                     }
                     else
                     {
-                        // branch to a (virtual) exception handler
+                        // TODO: not yet implemented... branch to a concrete, known, exception handler - within this method
                         if (ControlFlowUtils.TryGetHandler(last, info.ExceptionType, method, out Instruction handlerHeader))
                         {
-                            graph.AddEdge(new ExceptionEdge(info.ExceptionType, blockNodes[i], ControlFlowUtils.GetNode(blockNodes, handlerHeader)));
+                            exceptionType = info.ExceptionType;
+                            srcNode = blockNodes[i];
+                            trgNode = ControlFlowUtils.GetNode(blockNodes, handlerHeader);
                         }
+                        // branch to a virtual exception handler
                         else
                         {
                             if (!exceptionHandlerLookup.TryGetValue(info.ExceptionType, out VirtualExceptionHandlerNode handlerNode))
                             {
                                 handlerNode = new VirtualExceptionHandlerNode(info.ExceptionType);
                                 exceptionHandlerLookup.Add(info.ExceptionType, handlerNode);
+                                nodes.Add(handlerNode);
                             }
-                            graph.AddEdge(new ExceptionEdge(info.ExceptionType, blockNodes[i], handlerNode));
+                            srcNode = blockNodes[i];
+                            trgNode = handlerNode;
+                            exceptionType = info.ExceptionType;
                         }
                     }
+
+                    ControlFlowUtils.CreateEdge(srcNode, trgNode, exceptionType);
                 }
 
             }
 
-            return new ControlFlowGraph(graph);
+            return new ControlFlowGraph(
+                nodes,
+                blockNodes,
+                exceptionHandlerLookup);
         }
     }
 }

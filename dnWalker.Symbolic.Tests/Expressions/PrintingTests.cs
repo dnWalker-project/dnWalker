@@ -15,7 +15,7 @@ using System.Reflection;
 using static dnWalker.Symbolic.Expressions.Expression;
 using dnWalker.Symbolic.Variables;
 
-namespace dnWalker.Tests.Symbolic.Expressions
+namespace dnWalker.Symbolic.Tests.Expressions
 {
     public class PrintingTests
     {

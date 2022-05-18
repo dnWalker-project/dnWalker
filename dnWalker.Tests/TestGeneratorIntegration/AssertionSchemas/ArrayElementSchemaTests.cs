@@ -134,7 +134,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("test.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -267,7 +267,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("test.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -391,7 +391,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("test.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -505,7 +505,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("test.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;
@@ -638,7 +638,7 @@ namespace TestNamespace
 
             string xmlData = System.IO.File.ReadAllText("test.xml");
 
-            ConcolicExploration exploration = new XmlExplorationDeserializer().GetExploration(XElement.Parse(xmlData));
+            ConcolicExploration exploration = Deserializer.FromXml(XElement.Parse(xmlData));
 
             ITestGeneratorConfiguration configuration = GetConfiguration();
             configuration.PreferLiteralsOverVariables = preferLiteralsOverVariables;

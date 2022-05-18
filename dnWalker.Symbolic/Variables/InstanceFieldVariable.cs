@@ -31,7 +31,7 @@ namespace dnWalker.Symbolic.Variables
                 throw new InvalidOperationException("Cannot create this instance field variable. The field declaring type is incompatible with the parent type.");
             }
         }
-        public string Name => $"{_parent.Name}::{_field.FullName}";
+        public string Name => $"{_parent.Name}.{_field.Name}";
         public TypeSig Type => _field.FieldSig.Type;
         public IVariable Parent => _parent;
         public IField Field => _field;
