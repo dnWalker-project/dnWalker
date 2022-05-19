@@ -131,16 +131,9 @@ namespace dnWalker.Traversal
             };
         }
 
-        // TODO remove them?
-        public Constraint PathConstraint { get; set; }
-        public IModel Model { get; set; }
-
-        public string PathConstraintString => PathConstraint?.ToString() ?? "True"; // if no constraint, the expression is True
-
         public string GetPathInfo()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Path constraint: " + PathConstraintString);
             sb.AppendLine("Input:");
             sb.AppendLine("Output:");
             sb.AppendLine(Output);
@@ -180,6 +173,9 @@ namespace dnWalker.Traversal
         public int Length => _segments.Count;
 
         public bool IsTerminated { get; private set; }
+
+        public IList<Segment> Segments => _segments;
+        public IList<CILLocation> VisitedNodes => _visitedNodes;
 
         public void Terminate(MMC.State.ThreadState threadState)
         {

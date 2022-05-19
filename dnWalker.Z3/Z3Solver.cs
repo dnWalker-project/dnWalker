@@ -76,7 +76,7 @@ namespace dnWalker.Z3
 
                 if (context.CheckSat())
                 {
-                    return BuildModel(ref context);
+                    return BuildModel(constraint, ref context);
                 }
                 else
                 {

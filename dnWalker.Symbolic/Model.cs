@@ -15,17 +15,20 @@ namespace dnWalker.Symbolic
 {
     public class Model : IModel
     {
+        private readonly Constraint _precondition;
         private readonly Dictionary<IRootVariable, IValue> _values;
         private readonly IHeapInfo _heapInfo;
 
-        public Model()
+        public Model(Constraint precondition)
         {
+            _precondition = precondition ?? new Constraint();
             _values = new Dictionary<IRootVariable, IValue>();
             _heapInfo = new HeapInfo();
         }
 
         public Model(Model model)
         {
+            _precondition = model._precondition;
             _values = new Dictionary<IRootVariable, IValue>(model._values.Select(p => KeyValuePair.Create(p.Key, p.Value)));
             _heapInfo = model._heapInfo;
         }
@@ -59,6 +62,6 @@ namespace dnWalker.Symbolic
 
         public IReadOnlyCollection<IRootVariable> Variables => _values.Keys;
 
-
+        public Constraint Precondition => _precondition;
     }
 }

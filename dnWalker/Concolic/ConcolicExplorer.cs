@@ -29,32 +29,27 @@ namespace dnWalker.Concolic
         {
         }
 
-        protected override void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null)
+        protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null)
         {
-            // TODO gather precondition for the entry point
-            // unfold it into multiple constraint objects
-            // IEnumerable<Constraint> unfoledPreconditions = entryPoint.GetPrecondition().Unfold();
-            // ConstraintTreeExplorer constraintTree = new ConstraintTree(unfoldedPreconditions);
+            IConfig configuration = GetConfiguration();
+            List<ExplorationIterationResult> iterationResults = new List<ExplorationIterationResult>();
 
-            // TODO: handle via configuration
-            IExplorationStrategy strategy = new AllEdgesCoverage();
-            //IExplorationStrategy strategy = new AllPathsCoverage();
-            //IExplorationStrategy strategy = new AllConditionsCoverage();
-            //IExplorationStrategy strategy = new AllNodesCoverage();
+            IExplorationStrategy strategy = GetStrategy(configuration);
 
+            ControlFlowGraph entryCfg = cur.PathStore.ControlFlowGraphProvider.Get(entryPoint);
+            IReadOnlyList<ConstraintTree> constraintTrees = ConstraintTree.UnfoldConstraints(entryPoint, entryCfg.EntryPoint);
+            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, constraintTrees);
 
-
-            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, ConstraintTree.UnfoldConstraints(entryPoint, ControlFlowGraphProvider.Get(entryPoint).EntryPoint));
-
-            ExplicitActiveState cur = CreateActiveState();
             cur.Services.RegisterService(constraintTree);
 
             strategy.Initialize(cur, entryPoint);
 
-            PathStore pathStore = PathStore;
-
+            int currentIteration = 0;
+            int maxIterations = configuration.MaxIterations;
             while (constraintTree.TryGetNextInputModel(Solver, out IModel inputModel))
             {
+                NextIterationOrThrow(ref currentIteration, maxIterations);
+
                 // SAT => start the execution
                 // TODO: just restore cur up until the decision point & update values per the expressions and model
 
@@ -67,7 +62,7 @@ namespace dnWalker.Concolic
                 SimpleStatistics statistics = new SimpleStatistics();
                 // creating the explorer before main thread is created
                 // - no need to do explicit (a.k.a. error prone) registration of events
-                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, GetConfiguration(), PathStore);
+                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, GetConfiguration(), pathStore);
 
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
@@ -75,7 +70,7 @@ namespace dnWalker.Concolic
                 // setup input variables & attach model
                 cur.Initialize(inputModel);
 
-                OnIterationStarted(new IterationStartedEventArgs(IterationCount, currentPath.GetSymbolicContext()));
+                OnIterationStarted(new IterationStartedEventArgs(currentIteration, inputModel));
 
 
                 // run the model checker
@@ -83,18 +78,43 @@ namespace dnWalker.Concolic
 
                 // the path may have changed??
                 currentPath = pathStore.CurrentPath;
-                ConstraintNode node = constraintTree.Current;
                 OnPathExplored(currentPath);
+                
+                // build iteration result
+                ConstraintNode node = constraintTree.Current;
+                Constraint preCondition = inputModel.Precondition;
+                Constraint postCondition = node.GetPrecondition();
+                SymbolicContext symbolicContext = currentPath.GetSymbolicContext();
 
-                currentPath.Model = inputModel;
-                currentPath.PathConstraint = node.GetPrecondition();
+                ExplorationIterationResult iterationResult = new ExplorationIterationResult(currentIteration, currentPath, symbolicContext, preCondition, postCondition);
+                iterationResults.Add(iterationResult);
 
-                OnIterationFinished(new IterationFinishedEventArgs(IterationCount, currentPath.GetSymbolicContext(), currentPath));
+                OnIterationFinished(new IterationFinishedEventArgs(iterationResult, currentPath));
             }
 
             // TODO: make it as a explorer extension...
             ConstraintTreeExplorerWriter.Write(constraintTree, "constraintTree.dot");
             ControlFlowGraphWriter.Write(ControlFlowGraph.Build(entryPoint), "cfg.dot");
+
+            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees, entryCfg);
+            return result;
+
+            static void NextIterationOrThrow(ref int currentIteration, int maxIterations)
+            {
+                if (currentIteration >= maxIterations) throw new MaxIterationsExceededException(currentIteration);
+                currentIteration++;
+            }
+        }
+
+        private static IExplorationStrategy GetStrategy(IConfig configuration)
+        {
+            return configuration.GetCustomSetting<string>("strategy") switch
+            {
+                "AllNodes" => new AllNodesCoverage(),
+                "AllEdges" => new AllEdgesCoverage(),
+                "AllPaths" => new AllPathsCoverage(),
+                _ => new AllEdgesCoverage()
+            };
         }
     }
 }

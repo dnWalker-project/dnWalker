@@ -28,14 +28,14 @@ namespace dnWalker.Concolic
         private readonly Logger _logger;
         private readonly ISolver _solver;
 
-        private IMethod _entryPoint;
+        //private IMethod _entryPoint;
 
         private readonly IInstructionExecProvider _instructionExecProvider;
 
-        private PathStore _pathStore;
-        private int _currentIteration;
+        //private PathStore _pathStore;
+        //private int _currentIteration;
 
-        private ControlFlowGraphProvider _cfgProvider = new ControlFlowGraphProvider();
+        //private ControlFlowGraphProvider _cfgProvider = new ControlFlowGraphProvider();
 
         public event Action<dnWalker.Traversal.Path> PathExplored = delegate { };
         public event EventHandler<ExplorationStartedEventArgs> ExplorationStarted = delegate { };
@@ -74,12 +74,12 @@ namespace dnWalker.Concolic
 
         protected IInstructionExecProvider ExecutorProvider => _instructionExecProvider;
 
-        protected ExplicitActiveState CreateActiveState()
-        {
-            ExplicitActiveState state = new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
-            state.PathStore = _pathStore;
-            return state;
-        }
+        //protected ExplicitActiveState CreateActiveState()
+        //{
+        //    ExplicitActiveState state = new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
+        //    state.PathStore = _pathStore;
+        //    return state;
+        //}
 
         public ExplorerBase(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
         {
@@ -109,20 +109,25 @@ namespace dnWalker.Concolic
         public IReadOnlyCollection<IExplorationExtension> Extensions { get { return _extensions; } }
 
 
-        public IMethod EntryPoint => _entryPoint;
+        //public IMethod EntryPoint => _entryPoint;
 
-        public void Run(string methodName, IDictionary<string, object> data = null)
+        public ExplorationResult Run(string methodName, IDictionary<string, object> data = null)
         {
             MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
-            _cfgProvider = new ControlFlowGraphProvider();
-            _pathStore = new PathStore(entryPoint, _cfgProvider);
-            _entryPoint = entryPoint;
+            ControlFlowGraphProvider _cfgProvider = new ControlFlowGraphProvider();
+            PathStore pathStore = new PathStore(entryPoint, _cfgProvider);
 
             try
             {
+                ExplicitActiveState cur = new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger) 
+                {
+                    PathStore = pathStore 
+                };
+
                 OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint, _solver?.GetType()));
-                RunCore(entryPoint, data);
-                OnExplorationFinished(new ExplorationFinishedEventArgs());
+                ExplorationResult result = RunCore(entryPoint, pathStore, cur, data);
+                OnExplorationFinished(new ExplorationFinishedEventArgs(result));
+                return result;
             }
             catch (Exception e)
             {
@@ -132,20 +137,20 @@ namespace dnWalker.Concolic
             }
         }
 
-        protected abstract void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null);
+        protected abstract ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null);
 
 
-        public PathStore PathStore
-        {
+        //public PathStore PathStore
+        //{
          
-            get { return _pathStore; }
-        }
+        //    get { return _pathStore; }
+        //}
 
-        public int IterationCount
-        {
-            get { return _currentIteration; }
-        }
-        public int MaxIterations { get; set; }
+        //public int IterationCount
+        //{
+        //    get { return _currentIteration; }
+        //}
+        //public int MaxIterations { get; set; }
 
         public ISolver Solver
         {
@@ -171,27 +176,27 @@ namespace dnWalker.Concolic
             }
         }
 
-        public ControlFlowGraphProvider ControlFlowGraphProvider
-        {
-            get
-            {
-                return _cfgProvider;
-            }
-        }
+        //public ControlFlowGraphProvider ControlFlowGraphProvider
+        //{
+        //    get
+        //    {
+        //        return _cfgProvider;
+        //    }
+        //}
 
-        protected void ResetIterations()
-        {
-            _currentIteration = 0;
-        }
-        protected void NextIterationOrThrow()
-        {
-            int maxIterations = MaxIterations;
-            if (maxIterations > 0 && _currentIteration >= maxIterations)
-            {
-                throw new MaxIterationsExceededException(_currentIteration);
-            }
-            ++_currentIteration;
-        }
+        //protected void ResetIterations()
+        //{
+        //    _currentIteration = 0;
+        //}
+        //protected void NextIterationOrThrow()
+        //{
+        //    int maxIterations = MaxIterations;
+        //    if (maxIterations > 0 && _currentIteration >= maxIterations)
+        //    {
+        //        throw new MaxIterationsExceededException(_currentIteration);
+        //    }
+        //    ++_currentIteration;
+        //}
 
         public IConfig GetConfiguration() => _config;
 

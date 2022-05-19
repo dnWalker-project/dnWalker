@@ -25,7 +25,7 @@ namespace dnWalker.Symbolic
 
         public static void Initialize(this ExplicitActiveState cur, IModel inputModel)
         {
-            SymbolicContext context = SymbolicContext.Create(inputModel, cur);
+            SymbolicContext context = SymbolicContext.Create(inputModel);
             Path currentPath = cur.PathStore.CurrentPath;
 
             currentPath.SetPathAttribute(SymbolicContextAttribute, context);

@@ -20,13 +20,9 @@ namespace dnWalker.Concolic
 
         void AddExtension(IExplorationExtension extension);
         void RemoveExtension(IExplorationExtension extension);
-        void Run(string methodName, IDictionary<string, object> data = null);
-
-        public PathStore PathStore { get; }
-        public int IterationCount { get; }
+        ExplorationResult Run(string methodName, IDictionary<string, object> data = null);
 
         public IDefinitionProvider DefinitionProvider { get; }
-        public IMethod EntryPoint { get; }
         public IConfig GetConfiguration();
     }
 

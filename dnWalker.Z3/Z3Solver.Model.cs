@@ -20,10 +20,10 @@ namespace dnWalker.Z3
     public partial class Z3Solver
     {
 
-        private static IModel BuildModel(ref SolverContext context)
+        private static IModel BuildModel(Constraint constraint, ref SolverContext context)
         {
             Z3Model z3Model = context.Solver.Model;
-            Model result = new Model();
+            Model result = new Model(constraint);
             Dictionary<IVariable, Expr> varLookup = context.VariableMapping;
             Expr nullExpr = context.NullExpr;
             Expr stringNullExpr = context.StringNullExpr;

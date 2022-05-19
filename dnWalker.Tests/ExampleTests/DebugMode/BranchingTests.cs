@@ -32,16 +32,16 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(1)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.NoBranching", Args().Set("x", 10));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.NoBranching", Args().Set("x", 10));
 
-            var paths = explorer.PathStore.Paths;
+            var iterations = result.Iterations;
 
-            foreach (var p in paths)
+            foreach (var p in iterations)
             {
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(1);
+            iterations.Count().Should().Be(1);
         }
 
         [Fact]
@@ -51,17 +51,17 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(2)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.SingleBranching", Args().Set("x", 10));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.SingleBranching", Args().Set("x", 10));
 
             //explorer.GetUnhandledException().Should().BeNull();
-            var paths = explorer.PathStore.Paths;
+            var iterations = result.Iterations;
 
-            foreach (var p in paths)
+            foreach (var p in iterations)
             {
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count().Should().Be(2);
+            iterations.Count().Should().Be(2);
         }
 
         [Fact]
@@ -71,16 +71,16 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(2)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.SingleBranchingWithModification", Args().Set("x", 10));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.SingleBranchingWithModification", Args().Set("x", 10));
 
-            var paths = explorer.PathStore.Paths;
+            var iterations = result.Iterations;
 
-            foreach (var p in paths)
+            foreach (var p in iterations)
             {
                 Output.WriteLine(p.GetPathInfo());
             }
 
-            paths.Count.Should().Be(2);
+            iterations.Count.Should().Be(2);
         }
 
         [Fact]
@@ -103,14 +103,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 5));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 5));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
             
             pathConstraints[0].Should().Be(@"(x == 5)");
             pathConstraints[1].Should().Be(@"(x != 5)");
@@ -123,14 +119,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 4));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 4));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x != 5)");
             pathConstraints[1].Should().Be(@"(x == 5)");
@@ -143,14 +135,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 4));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 4));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x != 5)");
             pathConstraints[1].Should().Be(@"(x == 5)");
@@ -163,14 +151,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 5));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 5));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x == 5)");
             pathConstraints[1].Should().Be(@"(x != 5)");
@@ -183,14 +167,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 7));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 7));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x > 5)");
             pathConstraints[1].Should().Be(@"(x <= 5)");
@@ -204,14 +184,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 4));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 4));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x <= 5)");
             pathConstraints[1].Should().Be(@"(x > 5)");
@@ -224,14 +200,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 7));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 7));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x >= 5)");
             pathConstraints[1].Should().Be(@"(x < 5)");
@@ -244,14 +216,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 4));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 4));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x < 5)");
             pathConstraints[1].Should().Be(@"(x >= 5)");
@@ -264,14 +232,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 4));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 4));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x < 5)");
             pathConstraints[1].Should().Be(@"(x >= 5)");
@@ -284,14 +248,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 7));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 7));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x >= 5)");
             pathConstraints[1].Should().Be(@"(x < 5)");
@@ -304,14 +264,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 4));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 4));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x <= 5)");
             pathConstraints[1].Should().Be(@"(x > 5)");
@@ -324,14 +280,10 @@ namespace dnWalker.Tests.ExampleTests.DebugMode
                 .SetMaxIterations(5)
                 .Build();
 
-            explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 7));
+            ExplorationResult result = explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 7));
 
-            PathStore pathStore = explorer.PathStore;
-            pathStore.Paths.Count().Should().Be(2);
-
-            
-
-            String[] pathConstraints = pathStore.Paths.Select(p => p.PathConstraintString).ToArray();
+            result.Iterations.Count.Should().Be(2);
+            string[] pathConstraints = result.Iterations.Select(p => p.PostCondition.ToString()).ToArray();
 
             pathConstraints[0].Should().Be(@"(x > 5)");
             pathConstraints[1].Should().Be(@"(x <= 5)");

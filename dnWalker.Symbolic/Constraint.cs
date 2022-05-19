@@ -64,7 +64,6 @@ namespace dnWalker.Symbolic
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
             if (_pureTerms.Count > 0 && _heapTerms.Count > 0)
             {
                 return $"({string.Join(" && ", _pureTerms)}) && ({string.Join(" * ", _heapTerms)})";

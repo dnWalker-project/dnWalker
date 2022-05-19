@@ -58,6 +58,7 @@ namespace dnWalker.Concolic.Traversal
 
             // cn is the root node, should be PreconditionNode
             Constraint precondition = cn.GetPrecondition().Clone();
+
             foreach (Expression condition in conditions)
             {
                 precondition.AddExpressionConstraint(condition);

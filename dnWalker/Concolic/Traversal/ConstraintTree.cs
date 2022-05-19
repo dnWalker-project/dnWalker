@@ -30,7 +30,7 @@ namespace dnWalker.Concolic.Traversal
 
         public ConstraintNode Root => _root;
 
-        public static IEnumerable<ConstraintTree> UnfoldConstraints(MethodDef entryPoint, ControlFlowNode entryNode)
+        public static IReadOnlyList<ConstraintTree> UnfoldConstraints(MethodDef entryPoint, ControlFlowNode entryNode)
         {
             // infer preconditions, for example from attributes over arguments
             // ensure 'this' is not null

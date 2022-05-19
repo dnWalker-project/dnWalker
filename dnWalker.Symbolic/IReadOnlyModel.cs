@@ -16,6 +16,8 @@ namespace dnWalker.Symbolic
     /// </summary>
     public interface IReadOnlyModel
     {
+        Constraint Precondition { get; }
+
         IReadOnlyModel Clone();
 
         //IValue GetValue(IVariable variable);

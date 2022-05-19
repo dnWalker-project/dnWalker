@@ -31,7 +31,8 @@ namespace dnWalker.Explorations.Xml
 
         public IReadOnlyModel FromXml(XElement xml, IMethod method)
         {
-            Model model = new Model();
+            Constraint constraint = new Constraint();//Constraint.Parse(GetAttribute(xml, "Constraint"));
+            Model model = new Model(constraint);
 
             {
                 // variables

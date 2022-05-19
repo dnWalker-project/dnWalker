@@ -16,29 +16,26 @@ namespace dnWalker.Symbolic
     public partial class SymbolicContext
     {
         private readonly IModel _inputModel;
-        private readonly IModel _execModel;
+        private readonly IModel _outputModel;
 
-        private readonly MMC.State.ExplicitActiveState _state;
-
-        private SymbolicContext(IModel inputModel, IModel execModel, MMC.State.ExplicitActiveState cur)
+        private SymbolicContext(IModel inputModel, IModel outputModel)
         {
             _inputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
-            _execModel = execModel ?? throw new ArgumentNullException(nameof(execModel));
-            _state = cur;
+            _outputModel = outputModel ?? throw new ArgumentNullException(nameof(outputModel));
         }
 
         public IModel InputModel => _inputModel;
-        public IModel OutputModel => _execModel;
+        public IModel OutputModel => _outputModel;
 
 
-        public static SymbolicContext Create(IModel model, MMC.State.ExplicitActiveState cur)
+        public static SymbolicContext Create(IModel model)
         {
-            return new SymbolicContext(model, model.Clone(), cur);
+            return new SymbolicContext(model, model.Clone());
         }
 
         public Expression ProcessExistingObject(ObjectReference objRef)
         {
-            // this should not be executed...
+            // this should not be executed... yet
             throw new NotImplementedException();
         }
 
