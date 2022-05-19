@@ -22,7 +22,7 @@ namespace dnWalker.Concolic
         void RemoveExtension(IExplorationExtension extension);
         void Run(string methodName, IDictionary<string, object> data = null);
 
-        public dnWalker.Concolic.Traversal.ConcolicPathStore PathStore { get; }
+        public PathStore PathStore { get; }
         public int IterationCount { get; }
 
         public IDefinitionProvider DefinitionProvider { get; }

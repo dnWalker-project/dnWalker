@@ -26,25 +26,21 @@ namespace dnWalker.Concolic.Traversal
 
         private readonly List<ConstraintTree> _trees;
 
-        private readonly Stack<ConstraintNode> _frontier;
         private ConstraintNode _current;
-
-        /// <summary>
-        /// Initializes a new constraint tree explorer without any preconditions, e.i. TRUE precondition.
-        /// </summary>
-        public ConstraintTreeExplorer(IExplorationStrategy strategy) : this(strategy, new Constraint[] { new Constraint() })
-        {
-        }
 
         /// <summary>
         /// Initializes a new constraint tree explorer with a preconditions.
         /// </summary>
-        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<Constraint> preconditions)
+        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<ConstraintTree> trees)
         {
             _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
 
-            _trees = new List<ConstraintTree>(preconditions.Select(static pc => new ConstraintTree(pc)));
-            _frontier = new Stack<ConstraintNode>(_trees.Select(static ct => ct.Root));
+            _trees = new List<ConstraintTree>(trees);
+
+            foreach (ConstraintTree ct in _trees)
+            {
+                strategy.AddDiscoveredNode(ct.Root);
+            }
         }
 
 
@@ -79,12 +75,14 @@ namespace dnWalker.Concolic.Traversal
         /// </example>
         public void MakeDecision(ExplicitActiveState cur, int decision, ControlFlowNode[] choiceTargets, Expression[] choiceExpressions)
         {
+            if (_current == null) _current = _trees[0].Root;
+
             Debug.Assert(decision >= 0);
             Debug.Assert(decision < choiceTargets.Length);
             Debug.Assert(choiceTargets.Length == choiceExpressions.Length);
 
             // we are making a decision from the current node => we can mark it covered
-            OnNodeExplored(_current);
+            _strategy.AddExploredNode(_current);
 
 
             // case 1
@@ -95,15 +93,9 @@ namespace dnWalker.Concolic.Traversal
                 _current.Expand(choiceTargets, choiceExpressions);
                 for (int i = 0; i < _current.Children.Count; ++i)
                 {
-                    if (i == decision)
+                    if (i != decision)
                     {
-                        // we are exploring this choice right now => no need to add into the frontier
-                        continue;
-                    }
-
-                    if (ShouldBeExplored(_current.Children[i]))
-                    {
-                        _frontier.Push(_current.Children[i]);
+                        _strategy.AddDiscoveredNode(_current.Children[i]);
                     }
                 }
 
@@ -120,43 +112,17 @@ namespace dnWalker.Concolic.Traversal
             }
         }
 
-        /// <summary>
-        /// Finds the next constraint to solve in order to advance the exploration.
-        /// Null if exploration is finished.
-        /// </summary>
-        /// <returns></returns>
-        public ConstraintNode GetNextConstraintNode()
+        public bool TryGetNextInputModel(ISolver solver, [NotNullWhen(true)] out IModel inputModel)
         {
-            // this will be invoked by the concolic explorer before a new execution
-            // should mark the last constraint node as covered
-            if (_current != null) OnNodeExplored(_current);
-
-            while (_frontier.TryPop(out ConstraintNode node))
+            if (_strategy.TryGetNextSatisfiableNode(solver, out ConstraintNode node, out inputModel))
             {
-                if (ShouldBeExplored(node))
-                {
-                    _current = node.Tree.Root;
-                    return node;
-                }
+                // a new iteration will be run => reset
+
+                _current = node.Tree.Root;
+
+                return true;
             }
-
-            return null;
-        }
-
-        public bool TryGetNextConstraintNode([NotNullWhen(true)] out ConstraintNode constraintNode)
-        {
-            constraintNode = GetNextConstraintNode();
-            return constraintNode != null;
-        }
-
-        private bool ShouldBeExplored(ConstraintNode node)
-        {
-            return _strategy.ShouldBeExplored(node);
-        }
-
-        private void OnNodeExplored(ConstraintNode node)
-        {
-            _strategy.OnNodeExplored(node);
+            return false;
         }
     }
 }

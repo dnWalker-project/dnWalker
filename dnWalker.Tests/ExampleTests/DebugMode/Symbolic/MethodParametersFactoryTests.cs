@@ -53,7 +53,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
             IExplorer explorer = GetConcolicExplorerBuilder().SetMaxIterations(10).Build();
             explorer.Run("Examples.Concolic.Simple.Branches.Branch", Args().Set("x", 10).Set("y", 2));
 
-            explorer.PathStore.Coverage.Edges.Should().Be(1d);
+            explorer.PathStore.GetCoverage().Edges.Should().Be(1d);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Symbolic
             IExplorer explorer = GetConcolicExplorerBuilder().SetMaxIterations(10).Build();
             explorer.Run("Examples.Concolic.Simple.Branches.Branch", Args().Set("x", 10).Set("y", 2));
 
-            explorer.PathStore.Coverage.Nodes.Should().Be(1d);
+            explorer.PathStore.GetCoverage().Nodes.Should().Be(1d);
         }
     }
 }

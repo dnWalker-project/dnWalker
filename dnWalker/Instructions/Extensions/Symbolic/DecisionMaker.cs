@@ -30,8 +30,9 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
         private static InstructionBlockNode GetControlFlowNode(ExplicitActiveState cur)
         {
-            MethodExplorer explorer = ((ConcolicPathStore)cur.PathStore).GetMethodExplorer(cur.CurrentLocation);
-            return explorer.Graph.GetInstructionNode(cur.CurrentLocation.Instruction);
+            //ControlFlowGraph graph = ;
+            //explorer.Graph.GetInstructionNode(cur.CurrentLocation.Instruction);
+            return cur.PathStore.ControlFlowGraphProvider.Get(cur.CurrentLocation.Method).GetInstructionNode(cur.CurrentLocation.Instruction); 
         }
 
         /// <summary>

@@ -1,4 +1,7 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+
+using dnWalker.Graphs.ControlFlow;
 
 using MMC.Data;
 using MMC.State;
@@ -15,8 +18,15 @@ namespace dnWalker.Traversal
         private Path _currentPath;
         private IList<Path> _paths = new List<Path>();
 
-        public PathStore()
+        private readonly ICache<MethodDef, MethodTracer> _methodTracers;
+        private readonly MethodDef _entryPoint;
+        private readonly ICache<MethodDef, ControlFlowGraph> _cfgProvider;
+
+        public PathStore(MethodDef entryPoint, ICache<MethodDef, ControlFlowGraph> cfgProvider)
         {
+            _entryPoint = entryPoint ?? throw new ArgumentNullException(nameof(entryPoint));
+            _cfgProvider = cfgProvider;
+            _methodTracers = new DelegateCache<MethodDef, MethodTracer>(method => new MethodTracer(method, _cfgProvider.Get(method)));
             _currentPath = CreatePath();
             _paths.Add(_currentPath);
         }
@@ -25,7 +35,7 @@ namespace dnWalker.Traversal
 
         protected virtual Path CreatePath()
         {
-            return new Path();
+            return new Path(_methodTracers);
         }
 
         public void ResetPath()
@@ -62,6 +72,18 @@ namespace dnWalker.Traversal
         }
 
         public IReadOnlyList<Path> Paths => new ReadOnlyCollection<Path>(_paths);
+
+        public ICache<MethodDef, ControlFlowGraph> ControlFlowGraphProvider => _cfgProvider;
+
+        public MethodDef EntryPoint
+        {
+            get
+            {
+                return _entryPoint;
+            }
+        }
+
+        public Coverage GetCoverage() => _methodTracers.Get(_entryPoint).GetCoverage();
 
         public void NewThreadSpawned(ThreadState threadState)
         {

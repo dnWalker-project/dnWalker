@@ -69,8 +69,8 @@ namespace MMC.Util
 
         public CILLocation(Instruction instr, MethodDefinition meth)
         {
-            m_instr = instr ?? throw new ArgumentNullException(nameof(instr));
-            m_meth = meth ?? throw new ArgumentNullException(nameof(meth));
+            m_instr = instr;
+            m_meth = meth;
         }
 
         public static bool operator ==(CILLocation left, CILLocation right)

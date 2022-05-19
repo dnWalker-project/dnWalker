@@ -1,4 +1,7 @@
-﻿using dnWalker.Symbolic;
+﻿using dnlib.DotNet;
+
+using dnWalker.Graphs.ControlFlow;
+using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
 using MMC.State;
@@ -20,12 +23,24 @@ namespace dnWalker.Concolic.Traversal
     {
         private readonly ConstraintNode _root;
 
-        public ConstraintTree(Constraint precondition)
+        public ConstraintTree(Constraint precondition, ControlFlowNode entryNode)
         {
-            _root = new PreconditionNode(this, precondition);
+            _root = new PreconditionNode(this, precondition, entryNode);
         }
 
         public ConstraintNode Root => _root;
 
+        public static IEnumerable<ConstraintTree> UnfoldConstraints(MethodDef entryPoint, ControlFlowNode entryNode)
+        {
+            // infer preconditions, for example from attributes over arguments
+            // ensure 'this' is not null
+            // etc
+
+            ConstraintTree[] trees = new ConstraintTree[1];
+
+            trees[0] = new ConstraintTree(new Constraint(), entryNode);
+
+            return trees;
+        }
     }
 }

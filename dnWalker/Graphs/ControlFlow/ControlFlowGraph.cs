@@ -1,7 +1,6 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-using dnWalker.Concolic;
 using dnWalker.Symbolic;
 
 using System;
@@ -37,6 +36,8 @@ namespace dnWalker.Graphs.ControlFlow
 
         public IReadOnlyCollection<ControlFlowNode> Nodes => _nodes;
         public IReadOnlyCollection<ControlFlowEdge> Edges => _edges;
+
+        public ControlFlowNode EntryPoint => _instructionBlockNodes[0];
 
         public InstructionBlockNode GetInstructionNode(Instruction instruction)
         {

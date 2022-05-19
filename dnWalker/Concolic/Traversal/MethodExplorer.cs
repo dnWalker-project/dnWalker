@@ -3,8 +3,10 @@ using dnlib.DotNet.Emit;
 
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Traversal;
+
 using MMC.State;
 using MMC.Util;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

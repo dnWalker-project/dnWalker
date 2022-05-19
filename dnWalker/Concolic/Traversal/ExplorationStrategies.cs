@@ -2,6 +2,7 @@
 
 using dnWalker.Concolic.Traversal;
 using dnWalker.Graphs.ControlFlow;
+using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
 using MMC.State;
@@ -16,12 +17,7 @@ namespace dnWalker.Concolic.Traversal
 {
     public abstract class ExplorationStrategyBase : IExplorationStrategy
     {
-        public virtual bool ShouldBeExplored(ConstraintNode constraintNode) => true;
-
-        public virtual void OnNodeExplored(ConstraintNode constraintNode) { }
-        public virtual void OnUnsatisfiableNodePruned(ConstraintNode constraintNode) { }
-
-        public virtual void NewIteration()
+        protected virtual void NewIteration()
         {
             _currentIteration++;
         }
@@ -41,144 +37,168 @@ namespace dnWalker.Concolic.Traversal
         public ExplicitActiveState ActiveState => _activeState;
         public MethodDef EntryPoint => _entryPoint;
 
+        public abstract bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel);
+
+        public abstract void AddDiscoveredNode(ConstraintNode node);
+        public virtual void AddExploredNode(ConstraintNode node) => node.MarkExplored(_currentIteration);
+
     }
 
     public class AllPathsCoverage : ExplorationStrategyBase
     {
-        public override bool ShouldBeExplored(ConstraintNode constraintNode)
+        private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
+
+        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
         {
-            return !constraintNode.IsExplored;
-        }
-
-        public override void OnNodeExplored(ConstraintNode constraintNode)
-        {
-            constraintNode.MarkExplored(CurrentIteration);
-        }
-    }
-
-    public class AllConditionsCoverage : ExplorationStrategyBase
-    {
-        private readonly Dictionary<ControlFlowNode, Dictionary<Expression, bool>> _conditionCoverage = new Dictionary<ControlFlowNode, Dictionary<Expression, bool>>();
-
-        public override bool ShouldBeExplored(ConstraintNode constraintNode)
-        {
-            if (constraintNode.IsExplored) return false;
-
-            // check for the condition coverage
-            ControlFlowNode location = constraintNode.Location;
-            if (location != null)
+            while (_frontier.TryPop(out node))
             {
-                if (!_conditionCoverage.TryGetValue(location, out Dictionary<Expression, bool> coverage))
-                {
-                    coverage = new Dictionary<Expression, bool>();
-                    _conditionCoverage[location] = coverage;
-                }
+                if (node.IsExplored) continue;
 
-                if (coverage.TryGetValue(constraintNode.Condition, out bool covered))
+                inputModel = solver.Solve(node.GetPrecondition());
+                if (inputModel != null)
                 {
-                    if (covered)
-                    {
-                        //constraintNode.MarkExplored();
-                        return false;
-                    }
+                    NewIteration();
+                    node.MarkPreconditionSource();
+                    return true;
+                }
+                else
+                {
+                    // UNSAT
+                    node.MarkUnsatisfiable();
                 }
             }
-            return true;
+            inputModel = null;
+            return false;
         }
 
-        public override void OnNodeExplored(ConstraintNode constraintNode)
+        public override void AddDiscoveredNode(ConstraintNode node)
         {
-
-            if (!constraintNode.IsExplored)
-            {
-                constraintNode.MarkExplored(CurrentIteration);
-
-                Expression condition = constraintNode.Condition;
-                if (condition != null)
-                {
-                    ControlFlowNode currentLocation = constraintNode.Location;
-                    Dictionary<Expression, bool> coverage = _conditionCoverage[currentLocation];
-
-                    coverage[condition] = true;
-                }
-            }
-        }
-
-        public override void Initialize(ExplicitActiveState activeState, MethodDef entryPoint)
-        {
-            _conditionCoverage.Clear();
-            base.Initialize(activeState, entryPoint);
+            _frontier.Push(node);
         }
     }
 
     public class AllEdgesCoverage : ExplorationStrategyBase
     {
+        private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
         private readonly Dictionary<(ControlFlowNode src, ControlFlowNode trg), bool> _coverage = new Dictionary<(ControlFlowNode src, ControlFlowNode trg), bool>();
-        private ExplicitActiveState _activeState;
 
-        public override bool ShouldBeExplored(ConstraintNode constraintNode)
+        public override void AddExploredNode(ConstraintNode node)
         {
-            if (constraintNode.IsExplored) return false;
-
-            if (constraintNode.IsRoot) return true;
-
-            (ControlFlowNode src, ControlFlowNode dst) edge = (constraintNode.Parent.Location, constraintNode.Location);
-            if (_coverage.TryGetValue(edge, out bool isCovered) && isCovered)
-            {
-                return false;
-            }
-            return true;
+            base.AddExploredNode(node);
+            SetEdgeCovered(node);
         }
 
-        public override void OnNodeExplored(ConstraintNode constraintNode)
+        public override void AddDiscoveredNode(ConstraintNode node)
         {
-            constraintNode.MarkExplored(CurrentIteration);
-
-            if (constraintNode.IsRoot) return;
-
-            (ControlFlowNode src, ControlFlowNode dst) edge = (constraintNode.Parent.Location, constraintNode.Location);
-            _coverage[edge] = true;
+            _frontier.Push(node);
         }
 
         public override void Initialize(ExplicitActiveState activeState, MethodDef entryPoint)
         {
-            _activeState = activeState;
-
             _coverage.Clear();
             base.Initialize(activeState, entryPoint);
+        }
+
+        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
+        {
+            while (_frontier.TryPop(out node))
+            {
+                if (node.IsExplored) continue;
+
+                if (GetEdgeCovered(node)) continue;
+
+                inputModel = solver.Solve(node.GetPrecondition());
+                if (inputModel != null)
+                {
+                    NewIteration();
+                    node.MarkPreconditionSource();
+                    return true;
+                }
+                else
+                {
+                    // UNSAT
+                    node.MarkUnsatisfiable();
+                }
+            }
+            inputModel = null;
+            return false;
+        }
+
+        private void SetEdgeCovered(ConstraintNode node)
+        {
+
+            if (node.IsRoot) return;
+
+            ControlFlowNode src = node.Parent.Location;
+            ControlFlowNode trg = node.Location;
+
+            // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
+            _coverage[(src, trg)] = true;
+        }
+
+        private bool GetEdgeCovered(ConstraintNode node)
+        {
+            if (node.IsRoot)
+            {
+                // by default the root node is not covered this way, as it would disqualify it from the exploration
+                return false;
+            }
+
+            ControlFlowNode src = node.Parent.Location;
+            ControlFlowNode trg = node.Location;
+
+            // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
+            return _coverage.TryGetValue((src, trg), out bool covered) && covered;
         }
     }
 
     public class AllNodesCoverage : ExplorationStrategyBase
     {
-        private readonly Dictionary<ControlFlowNode, bool> _coverage = new Dictionary<ControlFlowNode, bool>();
+        private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
 
-        public override bool ShouldBeExplored(ConstraintNode constraintNode)
+        public override void AddExploredNode(ConstraintNode node)
         {
-            //return !constraintNode.IsExplored ||
-            //    !constraintNode.Location.IsCovered;
-
-            if (constraintNode == null) return false;
-
-            if (_coverage.TryGetValue(constraintNode.Location, out bool isCovered) && isCovered)
-            {
-                return false;
-            }
-
-            return true;
+            base.AddExploredNode(node);
         }
 
-        public override void OnNodeExplored(ConstraintNode constraintNode)
+        public override void AddDiscoveredNode(ConstraintNode node)
         {
-            constraintNode.MarkExplored(CurrentIteration);
-
-            _coverage[constraintNode.Location] = true;
+            _frontier.Push(node);
         }
 
         public override void Initialize(ExplicitActiveState activeState, MethodDef entryPoint)
         {
-            _coverage.Clear();
             base.Initialize(activeState, entryPoint);
         }
+
+        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
+        {
+            while (_frontier.TryPop(out node))
+            {
+                if (node.IsExplored) continue;
+
+                if (node.Location.IsCovered)
+                {
+                    // use the global CFG tracing done by the MMC
+                    continue;
+                }
+
+                inputModel = solver.Solve(node.GetPrecondition());
+                if (inputModel != null)
+                {
+                    NewIteration();
+                    node.MarkPreconditionSource();
+                    return true;
+                }
+                else
+                {
+                    // UNSAT
+                    node.MarkUnsatisfiable();
+                }
+            }
+            inputModel = null;
+            return false;
+        }
+
     }
 }

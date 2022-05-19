@@ -1,5 +1,9 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
+using dnWalker.Traversal;
+
+using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
 
@@ -85,15 +89,37 @@ namespace dnWalker.Instructions
 
         public sealed override IIEReturnValue Execute(ExplicitActiveState cur)
         {
+            IIEReturnValue retValue;
+
             if (_extensions == null)
             {
-                return ExecuteCore(cur);
+                retValue = ExecuteCore(cur);
             }
             else
             {
                 ExecutionPipeline pipeline = new ExecutionPipeline(this);
-                return pipeline.Execute(cur);
+                retValue = pipeline.Execute(cur);
             }
+
+            // track execution
+            Path currentPath = cur.PathStore.CurrentPath;
+            if (retValue == ehLookupRetval)
+            {
+                currentPath.OnExceptionThrown(cur.CurrentLocation, GetCurrentExceptionType(cur));
+            }
+            else
+            {
+                currentPath.OnInstructionExecuted(cur.CurrentLocation);
+            }
+
+            return retValue;
+        }
+
+        private static TypeDef GetCurrentExceptionType(ExplicitActiveState cur)
+        {
+            ObjectReference er = cur.CurrentThread.ExceptionReference;
+            AllocatedObject allocatedException = (AllocatedObject)cur.DynamicArea.Allocations[er];
+            return allocatedException.Type.ResolveTypeDefThrow();
         }
     }
 }

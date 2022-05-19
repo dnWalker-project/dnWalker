@@ -1,4 +1,5 @@
-﻿using dnWalker.Symbolic;
+﻿using dnWalker.Graphs.ControlFlow;
+using dnWalker.Symbolic;
 
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ namespace dnWalker.Concolic.Traversal
     {
         private Constraint _precondition;
 
-        public PreconditionNode(ConstraintTree tree) : this(tree, new Constraint())
+        public PreconditionNode(ConstraintTree tree, ControlFlowNode location) : this(tree, new Constraint(), location)
         {
         }
 
-        public PreconditionNode(ConstraintTree tree, Constraint precondtion) : base(tree, null)
+        public PreconditionNode(ConstraintTree tree, Constraint precondtion, ControlFlowNode location) : base(tree, null, location, null)
         {
             _precondition = precondtion;
         }

@@ -36,9 +36,6 @@ namespace dnWalker.Tests.InterpreterTests.Symbolic
             OverrideModelCheckerExplorerBuilderInitialization(c =>
             {
                 c.SetStateStorageSize(5);
-                ConstraintTreeExplorer tree = new ConstraintTreeExplorer(new AllPathsCoverage());
-                tree.GetNextConstraintNode();
-                c.AddService(tree);
             });
         }
 

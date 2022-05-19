@@ -29,6 +29,8 @@ namespace MMC
     using MMC.Data;
     using dnWalker;
     using dnWalker.TypeSystem;
+    using dnWalker.Graphs.ControlFlow;
+    using dnWalker.Traversal;
 
     public interface IConfig
     {
@@ -487,7 +489,8 @@ Disabling/enabling features:
                 cur,
                 statistics,
                 logger,
-                config);
+                config,
+                new dnWalker.Traversal.PathStore(definitionProvider.Context.MainModule.EntryPoint, new ControlFlowGraphProvider()));
 
             TextWriter tw = null;
             try
@@ -504,7 +507,7 @@ Disabling/enabling features:
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
-                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, logger, config);
+                    ex = new TracingExplorer(cur, statistics, ex.GetErrorTrace(), tw, logger, config, new PathStore(definitionProvider.Context.MainModule.EntryPoint, new ControlFlowGraphProvider()));
                     ex.Run();
                     tw.WriteLine(cur.ToString());
                 }

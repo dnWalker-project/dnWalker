@@ -181,7 +181,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_InputParameter");
 
             MethodDef method = explorer.EntryPoint.ResolveMethodDef();
-            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
+            IReadOnlyList<Path> paths = explorer.PathStore.Paths;
 
             foreach (var p in paths)
             {
@@ -200,7 +200,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             {
                 // first iteration
                 // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
-                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
+                IReadOnlyModel inputModel = paths[0].GetSymbolicContext().InputModel;
 
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
@@ -209,8 +209,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             }
             {
                 // second iteration
-                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
-                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+                IReadOnlyModel inputModel = paths[1].GetSymbolicContext().InputModel;
+                IReadOnlyModel outputModel = paths[1].GetSymbolicContext().OutputModel;
 
                 // there should be 2 initialized variables
                 // "obj" - @1
@@ -248,7 +248,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_Primitive");
 
             MethodDef method = explorer.EntryPoint.ResolveMethodDef();
-            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
+            IReadOnlyList<Path> paths = explorer.PathStore.Paths;
 
             foreach (var p in paths)
             {
@@ -267,7 +267,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             {
                 // first iteration
                 // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
-                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
+                IReadOnlyModel inputModel = paths[0].GetSymbolicContext().InputModel;
 
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
@@ -276,8 +276,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             }
             {
                 // second iteration
-                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
-                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+                IReadOnlyModel inputModel = paths[1].GetSymbolicContext().InputModel;
+                IReadOnlyModel outputModel = paths[1].GetSymbolicContext().OutputModel;
 
                 // there should be 2 initialized variables
                 // "obj" - @1
@@ -315,7 +315,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_Object");
 
             MethodDef method = explorer.EntryPoint.ResolveMethodDef();
-            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
+            IReadOnlyList<Path> paths = explorer.PathStore.Paths;
 
             foreach (var p in paths)
             {
@@ -334,7 +334,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             {
                 // first iteration
                 // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
-                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
+                IReadOnlyModel inputModel = paths[0].GetSymbolicContext().InputModel;
 
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
@@ -343,8 +343,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             }
             {
                 // second iteration
-                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
-                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+                IReadOnlyModel inputModel = paths[1].GetSymbolicContext().InputModel;
+                IReadOnlyModel outputModel = paths[1].GetSymbolicContext().OutputModel;
 
                 // there should be 2 initialized variables
                 // "obj" - @1
@@ -377,7 +377,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_PrimitiveArray");
 
             MethodDef method = explorer.EntryPoint.ResolveMethodDef();
-            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
+            IReadOnlyList<Path> paths = explorer.PathStore.Paths;
 
             foreach (var p in paths)
             {
@@ -396,7 +396,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             {
                 // first iteration
                 // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
-                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
+                IReadOnlyModel inputModel = paths[0].GetSymbolicContext().InputModel;
 
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
@@ -405,8 +405,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             }
             {
                 // second iteration
-                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
-                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+                IReadOnlyModel inputModel = paths[1].GetSymbolicContext().InputModel;
+                IReadOnlyModel outputModel = paths[1].GetSymbolicContext().OutputModel;
 
                 // there should be 2 initialized variables
                 // "obj" - @1
@@ -443,7 +443,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_RefArray");
 
             MethodDef method = explorer.EntryPoint.ResolveMethodDef();
-            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
+            IReadOnlyList<Path> paths = explorer.PathStore.Paths;
 
             foreach (var p in paths)
             {
@@ -462,7 +462,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             {
                 // first iteration
                 // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
-                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
+                IReadOnlyModel inputModel = paths[0].GetSymbolicContext().InputModel;
 
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
@@ -471,8 +471,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             }
             {
                 // second iteration
-                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
-                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+                IReadOnlyModel inputModel = paths[1].GetSymbolicContext().InputModel;
+                IReadOnlyModel outputModel = paths[1].GetSymbolicContext().OutputModel;
 
                 // there should be 2 initialized variables
                 // "obj" - @1
@@ -509,7 +509,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             explorer.Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.SetFieldValue_ConstructedParameter_Null");
 
             MethodDef method = explorer.EntryPoint.ResolveMethodDef();
-            List<ConcolicPath> paths = explorer.PathStore.Paths.Cast<ConcolicPath>().ToList();
+            IReadOnlyList<Path> paths = explorer.PathStore.Paths;
 
             foreach (var p in paths)
             {
@@ -530,7 +530,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             {
                 // first iteration
                 // there should be only 1 initialized variable - "obj" as the parameter "value" has never been loaded
-                IReadOnlyModel inputModel = paths[0].SymbolicContext.InputModel;
+                IReadOnlyModel inputModel = paths[0].GetSymbolicContext().InputModel;
 
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[0]), out IValue objValue).Should().BeTrue();
                 inputModel.TryGetValue(Variable.MethodArgument(method.Parameters[1]), out _).Should().BeFalse();
@@ -539,8 +539,8 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.Objects
             }
             {
                 // second iteration
-                IReadOnlyModel inputModel = paths[1].SymbolicContext.InputModel;
-                IReadOnlyModel outputModel = paths[1].SymbolicContext.OutputModel;
+                IReadOnlyModel inputModel = paths[1].GetSymbolicContext().InputModel;
+                IReadOnlyModel outputModel = paths[1].GetSymbolicContext().OutputModel;
 
                 // there should be 2 initialized variables
                 // "obj" - @1

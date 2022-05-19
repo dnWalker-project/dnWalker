@@ -3,6 +3,7 @@ using dnWalker.Concolic.Traversal;
 using dnWalker.Parameters;
 using dnWalker.Symbolic;
 using dnWalker.Tests.ExampleTests;
+using dnWalker.Traversal;
 
 using FluentAssertions;
 
@@ -106,7 +107,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 5));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -126,7 +127,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_Equals", Args().Set("x", 4));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -146,7 +147,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 4));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -166,7 +167,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_NotEquals", Args().Set("x", 5));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -186,7 +187,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 7));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -207,7 +208,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThan", Args().Set("x", 4));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -227,7 +228,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 7));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -247,7 +248,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_GreaterThanOrEquals", Args().Set("x", 4));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -267,7 +268,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 4));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -287,7 +288,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThan", Args().Set("x", 7));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -307,7 +308,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 4));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             
@@ -327,7 +328,7 @@ namespace dnWalker.Tests.ExampleTests.ReleaseMode
 
             explorer.Run("Examples.Concolic.Simple.Branches.Branch_LowerThanOrEquals", Args().Set("x", 7));
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
             pathStore.Paths.Count().Should().Be(2);
 
             

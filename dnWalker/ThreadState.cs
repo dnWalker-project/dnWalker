@@ -65,7 +65,7 @@ namespace MMC.State
         {
             get
             {
-                return new CILLocation(CurrentMethod.ProgramCounter, CurrentMethod.Definition);
+                return new CILLocation(CurrentMethod?.ProgramCounter, CurrentMethod?.Definition);
             }
         }
 

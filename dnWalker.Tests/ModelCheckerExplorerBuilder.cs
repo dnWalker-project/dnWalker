@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Graphs.ControlFlow;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Traversal;
@@ -29,7 +30,7 @@ namespace dnWalker.Tests
         private Func<ExplicitActiveState, IDataElement[]> _provideArgs = (cur) => Array.Empty<IDataElement>();
 
         private readonly List<IInstructionExecutor> _executors = new List<IInstructionExecutor>();
-        private readonly List<(Type, object)> _services = new List<(Type, object)>();
+        private readonly List<(Type, Func<Explorer, object>)> _services = new List<(Type, Func<Explorer, object>)>();
 
         public ModelCheckerExplorerBuilder(Func<Logger> provideLogger, Func<IDefinitionProvider> provideDefinitionProvider, Func<IStatistics> provideStatistics, string methodName = null)
         {
@@ -58,7 +59,7 @@ namespace dnWalker.Tests
             return this;
         }
 
-        public IModelCheckerExplorerBuilder AddService<TService>(TService service)
+        public IModelCheckerExplorerBuilder AddService<TService>(Func<Explorer, object> service)
         {
             _services.Add((typeof(TService), service));
             return this;
@@ -82,7 +83,7 @@ namespace dnWalker.Tests
             MethodDef entryPoint = definitionProvider.GetMethodDefinition(_methodName) ?? throw new NullReferenceException($"Method {_methodName} not found");
 
             // a bit dirty...
-            PathStore pathStore = new ConcolicPathStore(entryPoint);
+            PathStore pathStore = new PathStore(entryPoint, new ControlFlowGraphProvider());
 
             //ExplicitActiveState cur = stateSpaaceSetup.CreateInitialState(entryPoint, _provideArgs ?? throw new NullReferenceException("Args is null!"));
 
@@ -91,11 +92,6 @@ namespace dnWalker.Tests
 
             ExplicitActiveState cur = new ExplicitActiveState(Config, instructionExecProvider, definitionProvider, logger);
             cur.PathStore = pathStore;
-            foreach ((Type type, object service) in _services)
-            {
-                cur.Services.RegisterService(type, type.FullName!, service);
-            }
-
             IDataElement[] argsArray = _provideArgs(cur);
             DataElementList arguments = cur.StorageFactory.CreateList(argsArray.Length);
             for(int i = 0; i < argsArray.Length; i++) arguments[i] = argsArray[i];
@@ -107,6 +103,15 @@ namespace dnWalker.Tests
 
             IStatistics statistics = _provideStatistics();
             Explorer explorer = new Explorer(cur, statistics, logger, Config, pathStore);
+
+            foreach ((Type type, Func<Explorer, object> service) in _services)
+            {
+                cur.Services.RegisterService(type, type.FullName!, service(explorer));
+            }
+
+
+
+
             //explorer.Run();
             return explorer;
         }

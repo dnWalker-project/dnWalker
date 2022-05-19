@@ -27,15 +27,9 @@ namespace dnWalker.Symbolic
         {
             SymbolicContext context = SymbolicContext.Create(inputModel, cur);
             Path currentPath = cur.PathStore.CurrentPath;
-            if (currentPath is ConcolicPath concolicPath)
-            {
-                concolicPath.SymbolicContext = context;
-            }
-            else
-            {
-                currentPath.SetPathAttribute(SymbolicContextAttribute, context);
-            }
-            
+
+            currentPath.SetPathAttribute(SymbolicContextAttribute, context);
+
         }
 
         public static ExpressionFactory GetExpressionFactory(this ExplicitActiveState cur)
@@ -53,15 +47,19 @@ namespace dnWalker.Symbolic
         public static bool TryGetSymbolicContext(this ExplicitActiveState cur, [NotNullWhen(true)]out SymbolicContext symbolicContext)
         {
             Path currentPath = cur.PathStore.CurrentPath;
-            if (currentPath is ConcolicPath concolicPath)
-            {
-                symbolicContext = concolicPath.SymbolicContext;
-                return symbolicContext != null;
-            }
-            else
-            {
-                return cur.PathStore.CurrentPath.TryGetPathAttribute(SymbolicContextAttribute, out symbolicContext);
-            }
+
+            return currentPath.TryGetSymbolicContext(out symbolicContext);
+        }
+
+        public static bool TryGetSymbolicContext(this Path path, [NotNullWhen(true)] out SymbolicContext symbolicContext)
+        {
+            return path.TryGetPathAttribute(SymbolicContextAttribute, out symbolicContext);
+        }
+
+        public static SymbolicContext GetSymbolicContext(this Path path)
+        {
+            if (path.TryGetSymbolicContext(out var symbolicContext)) return symbolicContext;
+            throw new Exception("The symbolic context is not available.");
         }
     }
 }

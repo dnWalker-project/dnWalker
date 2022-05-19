@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.Concolic;
 using dnWalker.Graphs;
@@ -26,8 +27,13 @@ namespace dnWalker.Traversal
         private IList<CILLocation> _visitedNodes = new List<CILLocation>();
         private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
         private IDictionary<Allocation, IDictionary<string, object>> _allocationProperties = new Dictionary<Allocation, IDictionary<string, object>>();
-        private CILLocation _lastLocation;
-        private IDictionary<CILLocation, int> _counter = new Dictionary<CILLocation, int>();
+        
+        private readonly ICache<MethodDef, MethodTracer> _methodTracers;
+
+        public Path(ICache<MethodDef, MethodTracer> methodTracers)
+        {
+            _methodTracers = methodTracers ?? throw new ArgumentNullException(nameof(methodTracers));
+        }
 
         public void Extend(int toState)
         {
@@ -119,12 +125,13 @@ namespace dnWalker.Traversal
                 return null;
             }
 
-            return new Path
+            return new Path(_methodTracers)
             {
                 _segments = _segments.TakeWhile(s => s.ToState != id).Union(_segments.Where(s => s.ToState == id)).ToList()
             };
         }
 
+        // TODO remove them?
         public Constraint PathConstraint { get; set; }
         public IModel Model { get; set; }
 
@@ -149,19 +156,20 @@ namespace dnWalker.Traversal
 
         public void OnInstructionExecuted(CILLocation location)
         {
-            _lastLocation = location;
-
-            if (_counter.ContainsKey(location))
-            {
-                _counter[location]++;
-            }
-            else
-            {
-                _counter[location] = 1;
-            }
+            if (location == CILLocation.None) return;
 
             _visitedNodes.Add(location);
+            _methodTracers.Get(location.Method).OnInstructionExecuted(location.Instruction);
         }
+
+        public void OnExceptionThrown(CILLocation location, TypeDef exceptionType)
+        {
+            if (location == CILLocation.None) return;
+
+            _visitedNodes.Add(location);
+            _methodTracers.Get(location.Method).OnExceptionThrown(location.Instruction, exceptionType);
+        }
+
 
         public ExceptionInfo Exception { get; private set; }
 
@@ -217,13 +225,12 @@ namespace dnWalker.Traversal
 
         object ICloneable.Clone()
         {
-            return new Path
+            return new Path(_methodTracers)
             {
                 _attributes = new Dictionary<string, object>(_attributes),
                 _segments = new List<Segment>(_segments),
                 _visitedNodes = new List<CILLocation>(_visitedNodes),
-                _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties),
-                _lastLocation = _lastLocation
+                _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties)
             };
         }
     }

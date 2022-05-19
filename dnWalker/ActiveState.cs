@@ -432,26 +432,4 @@ namespace MMC.State
             services[name] = service;
         }
     }
-
-    [Obsolete("These method should be included in the ExplicitActiveState + they should be recoverable from the cur.")]
-    public static class ExplicitActiveStateExtensions
-    {
-        public static void AttachService<TService>(this ExplicitActiveState cur)
-            where TService : IActiveStateService, new()
-        {
-            cur.AttachService(new TService());
-        }
-
-        public static void AttachService<TService>(this ExplicitActiveState cur, TService service)
-            where TService : IActiveStateService
-        {
-            service.Attach(cur);
-        }
-
-        public static void DetachService<TService>(this ExplicitActiveState cur, TService service)
-            where TService : IActiveStateService
-        {
-            service.Detach(cur);
-        }
-    }
 }

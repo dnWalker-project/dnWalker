@@ -29,6 +29,7 @@ namespace MMC
     using dnWalker.ChoiceGenerators;
     using dnWalker;
     using dnWalker.Traversal;
+    using dnWalker.Graphs.ControlFlow;
 
     /// <summary>
     /// Handler for events that indicate the exploration of a state.
@@ -117,7 +118,7 @@ namespace MMC
         private IChoiceStrategy _strategy;
         private readonly PathStore _pathStore;
 
-        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config, PathStore pathStore = null)
+        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config, PathStore pathStore)
         {
             Statistics = statistics;
             this.Logger = Logger;
@@ -134,7 +135,7 @@ namespace MMC
             _explorationLogger = new ExplorationLogger(Statistics, this);
             var el = _explorationLogger;
 
-            _pathStore = pathStore ?? new PathStore();
+            _pathStore = pathStore;
 
             /*
 			 * Logging

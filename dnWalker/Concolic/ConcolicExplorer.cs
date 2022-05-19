@@ -42,31 +42,19 @@ namespace dnWalker.Concolic
             //IExplorationStrategy strategy = new AllConditionsCoverage();
             //IExplorationStrategy strategy = new AllNodesCoverage();
 
-            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy);
+
+
+            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, ConstraintTree.UnfoldConstraints(entryPoint, ControlFlowGraphProvider.Get(entryPoint).EntryPoint));
 
             ExplicitActiveState cur = CreateActiveState();
             cur.Services.RegisterService(constraintTree);
 
             strategy.Initialize(cur, entryPoint);
 
-            Traversal.ConcolicPathStore pathStore = PathStore;
+            PathStore pathStore = PathStore;
 
-            while (constraintTree.TryGetNextConstraintNode(out ConstraintNode currentConstraintNode))
+            while (constraintTree.TryGetNextInputModel(Solver, out IModel inputModel))
             {
-                // get the input model
-                IModel model = Solver.Solve(currentConstraintNode.GetPrecondition());
-
-                if (model == null)
-                {
-                    // UNSAT => try another precondition
-                    currentConstraintNode.MarkUnsatisfiable();
-                    strategy.OnUnsatisfiableNodePruned(currentConstraintNode);
-                    continue;
-                }
-
-                // TODO: make it somehow better...
-                currentConstraintNode.MarkPreconditionSource();
-
                 // SAT => start the execution
                 // TODO: just restore cur up until the decision point & update values per the expressions and model
 
@@ -75,10 +63,6 @@ namespace dnWalker.Concolic
 
                 // setup explicit active state
                 cur.Reset();
-
-                strategy.NewIteration();
-
-                OnIterationStarted(new IterationStartedEventArgs(IterationCount, ((ConcolicPath)currentPath).SymbolicContext));
 
                 SimpleStatistics statistics = new SimpleStatistics();
                 // creating the explorer before main thread is created
@@ -89,25 +73,23 @@ namespace dnWalker.Concolic
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
 
                 // setup input variables & attach model
-                cur.Initialize(model);
+                cur.Initialize(inputModel);
+
+                OnIterationStarted(new IterationStartedEventArgs(IterationCount, currentPath.GetSymbolicContext()));
 
 
                 // run the model checker
-                // TODO: remove the ParameterStore and use Model
-                // OnIterationStarted(new IterationStartedEventArgs(IterationCount, ParameterStore));
-                explorer.InstructionExecuted += PathStore.OnInstructionExecuted;
                 explorer.Run();
-                explorer.InstructionExecuted -= PathStore.OnInstructionExecuted;
 
                 // the path may have changed??
                 currentPath = pathStore.CurrentPath;
                 ConstraintNode node = constraintTree.Current;
                 OnPathExplored(currentPath);
 
-                currentPath.Model = model;
+                currentPath.Model = inputModel;
                 currentPath.PathConstraint = node.GetPrecondition();
 
-                OnIterationFinished(new IterationFinishedEventArgs(IterationCount, ((ConcolicPath)PathStore.CurrentPath).SymbolicContext, PathStore.CurrentPath));
+                OnIterationFinished(new IterationFinishedEventArgs(IterationCount, currentPath.GetSymbolicContext(), currentPath));
             }
 
             // TODO: make it as a explorer extension...

@@ -1,5 +1,6 @@
 ﻿using dnWalker.Concolic;
 using dnWalker.Concolic.Traversal;
+using dnWalker.Traversal;
 
 using FluentAssertions;
 
@@ -31,7 +32,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
 
             explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.NoBranch");
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
 
             pathStore.Paths.Should().HaveCount(1);
             pathStore.Paths[0].Output.Trim().Should().Be("no branching");
@@ -46,7 +47,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
 
             explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.BranchIfPositive");
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
 
             pathStore.Paths.Should().HaveCount(2);
             pathStore.Paths[0].Output.Trim().Should().Be("x <= 0");
@@ -62,7 +63,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
 
             explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.NestedBranching");
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
 
             pathStore.Paths.Should().HaveCount(4);
             pathStore.Paths[0].Output.Trim().Should().Be("(x <= 0)\r\n(x >= -3)");
@@ -80,7 +81,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
 
             explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.NestedBranchingUnsat");
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
 
             pathStore.Paths.Should().HaveCount(3);
             pathStore.Paths[0].Output.Trim().Should().Be("(x <= 0)\r\n(x >= -3)");
@@ -97,7 +98,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
 
             explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.MultipleBranchingWithStateChanges");
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
 
             pathStore.Paths.Should().HaveCount(4);
 
@@ -112,7 +113,7 @@ namespace dnWalker.Tests.ExampleTests.DebugMode.Features.PrimitiveValues
 
             explorer.Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.MultipleBranchingWithoutStateChanges");
 
-            ConcolicPathStore pathStore = explorer.PathStore;
+            PathStore pathStore = explorer.PathStore;
 
             pathStore.Paths.Should().HaveCount(3);
 

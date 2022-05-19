@@ -21,5 +21,10 @@ namespace dnWalker.Graphs.ControlFlow
 
         public Instruction Header => _instructions[0];
         public Instruction Footer => _instructions[^1];
+
+        public override string ToString()
+        {
+            return $"Instructions: {Header} ... {Footer}";
+        }
     }
 }

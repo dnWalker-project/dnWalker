@@ -28,19 +28,12 @@ namespace dnWalker.Concolic.Traversal
         private bool _unsatisfiable;
         private bool _isPreconditionSource;
 
-        protected ConstraintNode(ConstraintTree tree, ConstraintNode parent)
-        {
-            _tree = tree ?? throw new ArgumentNullException(nameof(tree));
-            _parent = parent;
-            _location = null;
-            _condition = null;
-        }
         public ConstraintNode(ConstraintTree tree, ConstraintNode parent, ControlFlowNode location, Expression condition)
         {
             _tree = tree ?? throw new ArgumentNullException(nameof(tree));
             _parent = parent;
             _location = location;
-            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
+            _condition = condition;
         }
 
         /// <summary>
@@ -119,7 +112,7 @@ namespace dnWalker.Concolic.Traversal
 
         public void MarkPreconditionSource() => _isPreconditionSource = true;
 
-        public void Expand(ControlFlowNode[] locations, Expression[] choices)
+        public IReadOnlyList<ConstraintNode> Expand(ControlFlowNode[] locations, Expression[] choices)
         {
             ConstraintNode[] children = new ConstraintNode[choices.Length];
             for (int i = 0; i < choices.Length; ++i)
@@ -128,6 +121,7 @@ namespace dnWalker.Concolic.Traversal
                 children[i] = child;
             }
             _children = children;
+            return children;
         }
     }
 }

@@ -25,12 +25,6 @@ namespace dnWalker.Tests.InterpreterExtensionTests.BranchProducerExtension
     {
         public BranchTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
-            this.OverrideModelCheckerExplorerBuilderInitialization(bld =>
-            {
-                ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(new AllPathsCoverage());
-                _ = constraintTree.GetNextConstraintNode();
-                bld.AddService(constraintTree);
-            });
         }
 
 

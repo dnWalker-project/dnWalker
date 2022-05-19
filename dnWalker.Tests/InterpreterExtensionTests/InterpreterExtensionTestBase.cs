@@ -1,4 +1,8 @@
-﻿using dnWalker.Symbolic;
+﻿using dnlib.DotNet;
+
+using dnWalker.Concolic.Traversal;
+using dnWalker.Graphs.ControlFlow;
+using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Variables;
 using dnWalker.TypeSystem;
@@ -24,6 +28,16 @@ namespace dnWalker.Tests.InterpreterExtensionTests
         protected static Lazy<DefinitionProvider> Lazy = new Lazy<DefinitionProvider>(() => new DefinitionProvider(TestBase.GetDefinitionContext(AssemblyFilename)));
         public InterpreterExtensionTestBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper, Lazy.Value)
         {
+            OverrideModelCheckerExplorerBuilderInitialization(mmcBuilder =>
+            {
+                mmcBuilder.AddService<ConstraintTreeExplorer>(e =>
+                {
+                    MethodDef entryPoint = e.PathStore.EntryPoint;
+                    ControlFlowGraph entryGraph = e.PathStore.ControlFlowGraphProvider.Get(entryPoint);
+
+                    return new ConstraintTreeExplorer(new AllPathsCoverage(), ConstraintTree.UnfoldConstraints(entryPoint, entryGraph.EntryPoint));
+                });
+            });
         }
 
         protected Expression NamedInt(string name)

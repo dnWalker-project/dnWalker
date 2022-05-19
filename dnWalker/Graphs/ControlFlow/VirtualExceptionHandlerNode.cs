@@ -18,5 +18,11 @@ namespace dnWalker.Graphs.ControlFlow
         }
 
         public TypeDef ExceptionType => _exceptionType;
+
+
+        public override string ToString()
+        {
+            return $"Exception handler for: '{_exceptionType}'";
+        }
     }
 }

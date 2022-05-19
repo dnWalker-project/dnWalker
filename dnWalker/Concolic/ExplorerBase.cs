@@ -1,9 +1,11 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Graphs.ControlFlow;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Symbolic;
+using dnWalker.Traversal;
 using dnWalker.TypeSystem;
 
 using MMC;
@@ -30,8 +32,10 @@ namespace dnWalker.Concolic
 
         private readonly IInstructionExecProvider _instructionExecProvider;
 
-        private ConcolicPathStore _pathStore;
+        private PathStore _pathStore;
         private int _currentIteration;
+
+        private ControlFlowGraphProvider _cfgProvider = new ControlFlowGraphProvider();
 
         public event Action<dnWalker.Traversal.Path> PathExplored = delegate { };
         public event EventHandler<ExplorationStartedEventArgs> ExplorationStarted = delegate { };
@@ -110,7 +114,8 @@ namespace dnWalker.Concolic
         public void Run(string methodName, IDictionary<string, object> data = null)
         {
             MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
-            _pathStore = CreatePathStore(entryPoint);
+            _cfgProvider = new ControlFlowGraphProvider();
+            _pathStore = new PathStore(entryPoint, _cfgProvider);
             _entryPoint = entryPoint;
 
             try
@@ -130,14 +135,10 @@ namespace dnWalker.Concolic
         protected abstract void RunCore(MethodDef entryPoint, IDictionary<string, object> data = null);
 
 
-        public ConcolicPathStore PathStore
+        public PathStore PathStore
         {
          
             get { return _pathStore; }
-        }
-        protected virtual ConcolicPathStore CreatePathStore(MethodDef entryPoint)
-        {
-            return new ConcolicPathStore(entryPoint);
         }
 
         public int IterationCount
@@ -167,6 +168,14 @@ namespace dnWalker.Concolic
             get
             {
                 return _definitionProvider;
+            }
+        }
+
+        public ControlFlowGraphProvider ControlFlowGraphProvider
+        {
+            get
+            {
+                return _cfgProvider;
             }
         }
 
