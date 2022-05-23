@@ -70,6 +70,12 @@ namespace dnWalker.Z3
                 RationalNumber ratValue = RationalNumber.FromDouble(dblValue);
                 _operands.Push(_z3.MkReal(ratValue.Numerator, ratValue.Denominator));
             }
+            else if (type.IsBoolean())
+            {
+                Debug.Assert(value != null);
+                bool boolValue = (bool)value;
+                _operands.Push(_z3.MkBool(boolValue));
+            }
 
             return constant;
         }

@@ -30,6 +30,8 @@ namespace dnWalker.Tests.Examples
             string assembly = GetExamplesAssembly(buildConfiguration, buildTarget);
             if (!_definitionProviders.TryGetValue(assembly, out IDefinitionProvider? definitionProvider))
             {
+                System.Diagnostics.Debug.WriteLine($"Building definition provider for: '{assembly}'");
+
                 definitionProvider = new DefinitionProvider(Domain.LoadFromFile(assembly));
                 _definitionProviders.TryAdd(assembly, definitionProvider);
             }

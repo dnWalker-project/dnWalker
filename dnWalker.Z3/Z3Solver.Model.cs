@@ -68,7 +68,7 @@ namespace dnWalker.Z3
                             break;
 
                         case ArrayLengthVariable arrayLength:
-                            ((IArrayHeapNode)parentNode).Length = (int)((PrimitiveValue<uint>)value).Value;
+                            ((IArrayHeapNode)parentNode).Length = (int)(((PrimitiveValue<uint>)value).Value);
                             break;
                     }
                 }

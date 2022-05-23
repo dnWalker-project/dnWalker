@@ -115,5 +115,30 @@ namespace Examples.Concolic.Features.PrimitiveValues
                 Console.Out.WriteLine("x >= y");
             }
         }
+
+        public static void DivideByZero(int x)
+        {
+            if ((60 / x) > 10)
+            {
+                Console.Out.WriteLine("60 / x > 10");
+            }
+            else
+            {
+                Console.Out.WriteLine("60 / x <= 10");
+            }
+        }
+
+        public static void RemainderOfZero(int x)
+        {
+            if ((60 % x) > 3)
+            {
+                Console.Out.WriteLine("60 % x > 3");
+            }
+            else
+            {
+                Console.Out.WriteLine("60 % x <= 3");
+            }
+        }
+
     }
 }

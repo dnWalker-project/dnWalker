@@ -69,18 +69,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IIEReturnValue retValue = next(baseExecutor, cur);
 
-            if (!ExpressionUtls.GetExpressions(cur, lhs, rhs, out Expression lhsExpression, out Expression rhsExpression))
+            if (!ExpressionUtils.GetExpressions(cur, lhs, rhs, out Expression lhsExpression, out Expression rhsExpression))
             {
                 return retValue;
             }
-
-            //bool lhsSymbolic = lhs.TryGetExpression(cur, out Expression lhsExpression);
-            //bool rhsSymbolic = rhs.TryGetExpression(cur, out Expression rhsExpression);
-
-            //if (!lhsSymbolic && !rhsSymbolic)
-            //{
-            //    return retValue;
-            //}
 
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
             MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
@@ -94,16 +86,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                     _ => throw new InvalidOperationException("Only Next or Jump edge can be used within BinaryBranch executor.")
                 }, lhsExpression, rhsExpression, op);
-
-            //InstructionBlockNode currentNode = GetControlFlowNode(cur);
-
-            //Instruction nextInstruction = GetNextInstruction(retValue, cur);
-
-            //(Expression fallThrough, Expression branch) = BuildChoices(baseExecutor.Instruction.OpCode, lhsExpression ?? lhs.AsExpression(cur), rhsExpression ?? rhs.AsExpression(cur));
-
-            //MakeDecision(cur, nextInstruction != null ? 1 : 0, fallThrough, branch);
-
-            ////SetPathConstraint(baseExecutor, nextInstruction, cur, condition);
 
             return retValue;
         }

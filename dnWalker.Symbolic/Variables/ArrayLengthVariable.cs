@@ -11,11 +11,12 @@ namespace dnWalker.Symbolic.Variables
     public readonly struct ArrayLengthVariable : IMemberVariable, IEquatable<ArrayLengthVariable>
     {
         private readonly IVariable _parent;
+        private readonly TypeSig _type;
 
         public ArrayLengthVariable(IVariable parent)
         {
             _parent = parent ?? throw new ArgumentNullException(nameof(parent));
-
+            
             TypeSig parentType = parent.Type;
             if (!parentType.IsArray &&
                 !parentType.IsSZArray &&
@@ -23,9 +24,11 @@ namespace dnWalker.Symbolic.Variables
             {
                 throw new ArgumentException("The parent is not array type. Cannot make index access variable.");
             }
+
+            _type = parentType.Module.CorLibTypes.UInt32;
         }
 
-        public TypeSig Type => _parent.Type.Next;
+        public TypeSig Type => _type;
         public IVariable Parent => _parent;
 
         public string Name => $"{_parent.Name}.Length";

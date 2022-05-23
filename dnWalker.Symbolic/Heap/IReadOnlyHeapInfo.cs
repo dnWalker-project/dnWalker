@@ -37,4 +37,12 @@ namespace dnWalker.Symbolic.Heap
         /// </summary>
         IReadOnlyCollection<IHeapNode> Nodes { get; }
     }
+
+    public static class HeapInfoExtensions
+    {
+        public static bool IsEmpty(this IReadOnlyHeapInfo self)
+        {
+            return self.Locations.Count == 0;
+        }
+    }
 }

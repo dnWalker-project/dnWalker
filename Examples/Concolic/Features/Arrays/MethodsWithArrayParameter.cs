@@ -43,15 +43,15 @@ namespace Examples.Concolic.Features.Arrays
             }
         }
 
-        public static void BranchIfLengthLowerThan5(int[] instance)
+        public static void BranchIfLengthLessThan5(int[] instance)
         {
             if (instance != null && instance.Length < 5)
             {
-                Console.Out.WriteLine("instance is not null && length is lower than 5");
+                Console.Out.WriteLine("instance is not null && length is less than 5");
                 return;
             }
 
-            Console.Out.WriteLine("instance is null || length is lower than 5");
+            Console.Out.WriteLine("instance is null || length is greater than 5");
         }
 
         public static void BranchIfLengthGreaterThan5(int[] instance)
@@ -62,7 +62,7 @@ namespace Examples.Concolic.Features.Arrays
                 return;
             }
 
-            Console.Out.WriteLine("instance is null || length is greater than 5");
+            Console.Out.WriteLine("instance is null || length is less than 5");
         }
 
         public static void BranchIfItemAtStaticIndexIsGreaterThan5(double[] array)

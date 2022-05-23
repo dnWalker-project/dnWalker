@@ -31,6 +31,5 @@ namespace dnWalker.Symbolic
                 return HeapInfo;
             }
         }
-
     }
 }

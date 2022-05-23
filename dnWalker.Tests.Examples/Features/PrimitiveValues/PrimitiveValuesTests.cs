@@ -1,5 +1,8 @@
-﻿using dnWalker.Concolic;
+﻿using dnlib.DotNet;
+
+using dnWalker.Concolic;
 using dnWalker.Concolic.Traversal;
+using dnWalker.Symbolic;
 using dnWalker.Traversal;
 
 using FluentAssertions;
@@ -88,6 +91,49 @@ namespace dnWalker.Tests.Examples.Features.PrimitiveValues
             result.Iterations[1].Output.Trim().Should().Be("x < y");
             result.Iterations[2].Output.Trim().Should().Be("x < 0\r\nx < y");
             result.Iterations[3].Output.Trim().Should().Be("x < 0\r\nx >= y");
+        }
+
+        [ExamplesTest]
+        public void DivideByZero(BuildInfo buildInfo)
+        {
+            ExplorationResult result = CreateExplorer(buildInfo).Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.DivideByZero");
+
+            MethodDef entryPoint = result.EntryPoint;
+
+            result.Iterations.Should().HaveCount(3);
+            result.Iterations[0].SymbolicContext.InputModel.TryGetValue(Variable.MethodArgument(entryPoint.Parameters[0]), out IValue? xValue).Should().BeTrue();
+            xValue.Should().BeOfType<PrimitiveValue<int>>();
+            ((PrimitiveValue<int>)xValue!).Value.Should().Be(0);
+            result.Iterations[0].Exception.Type.FullName.Should().Be("System.DivideByZeroException");
+
+            result.Iterations[1].SymbolicContext.InputModel.TryGetValue(Variable.MethodArgument(entryPoint.Parameters[0]), out xValue).Should().BeTrue();
+            xValue.Should().BeOfType<PrimitiveValue<int>>();
+            ((PrimitiveValue<int>)xValue!).Value.Should().NotBe(0);
+            
+            result.Iterations[1].Output.Trim().Should().Be("60 / x <= 10");
+            result.Iterations[2].Output.Trim().Should().Be("60 / x > 10");
+        }
+
+        [ExamplesTest]
+        public void RemainderOfZero(BuildInfo buildInfo)
+        {
+            ExplorationResult result = CreateExplorer(buildInfo).Run("Examples.Concolic.Features.PrimitiveValues.MethodsWithPrimitiveValueParameter.RemainderOfZero");
+
+            MethodDef entryPoint = result.EntryPoint;
+
+            result.Iterations.Should().HaveCount(3);
+            result.Iterations[0].SymbolicContext.InputModel.TryGetValue(Variable.MethodArgument(entryPoint.Parameters[0]), out IValue? xValue).Should().BeTrue();
+            xValue.Should().BeOfType<PrimitiveValue<int>>();
+            ((PrimitiveValue<int>)xValue!).Value.Should().Be(0);
+            result.Iterations[0].Exception.Type.FullName.Should().Be("System.DivideByZeroException");
+
+            result.Iterations[1].SymbolicContext.InputModel.TryGetValue(Variable.MethodArgument(entryPoint.Parameters[0]), out xValue).Should().BeTrue();
+            xValue.Should().BeOfType<PrimitiveValue<int>>();
+            ((PrimitiveValue<int>)xValue!).Value.Should().NotBe(0);
+
+            result.Iterations[1].Output.Trim().Should().Be("60 % x > 3");
+            result.Iterations[2].Output.Trim().Should().Be("60 % x <= 3");
+
         }
     }
 }

@@ -92,6 +92,7 @@ namespace dnWalker.Concolic.Traversal
             if (v == null) return "true";
 
             return v
+                .Replace("&", "&amp;")
                 .Replace("<", "&lt;")
                 .Replace(">", "&gt;");
         }

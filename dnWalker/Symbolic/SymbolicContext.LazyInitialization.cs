@@ -73,7 +73,12 @@ namespace dnWalker.Symbolic
 
             Location parentLocation = (Location)parent;
 
+            if (parentLocation == Location.Null) return false;
+
             AllocatedArray parentArray = (AllocatedArray)cur.DynamicArea.Allocations[(int)_locationMapping[parentLocation]];
+
+            if (index < 0 || index >= parentArray.Fields.Length) return false;
+            
             IDataElement de = parentArray.Fields[index];
 
             if (de.TryGetExpression(cur, out Expression elemExpr))

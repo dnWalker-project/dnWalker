@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public static class ExpressionUtls
+    public static class ExpressionUtils
     {
         public static bool GetExpressions(ExplicitActiveState cur, IDataElement dataElement, out Expression expression)
         {

@@ -137,5 +137,11 @@ namespace dnWalker.Symbolic
             throw new InvalidOperationException("Unexpected variable type.");
 
         }
+
+        public static bool IsEmpty(this IReadOnlyModel self)
+        {
+            return self.Variables.Count == 0 &&
+                self.HeapInfo.IsEmpty();
+        }
     }
 }

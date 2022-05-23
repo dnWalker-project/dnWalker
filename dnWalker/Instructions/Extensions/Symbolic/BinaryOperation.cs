@@ -70,19 +70,12 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IIEReturnValue retValue = next(baseExecutor, cur);
 
-            bool lhsSymbolic = lhs.TryGetExpression(cur, out Expression lhsExpression);
-            bool rhsSymbolic = rhs.TryGetExpression(cur, out Expression rhsExpression);
-
-            if (!lhsSymbolic && !rhsSymbolic)
+            if (!ExpressionUtils.GetExpressions(cur, lhs, rhs, out Expression lhsExpression, out Expression rhsExpression))
             {
                 return retValue;
             }
 
-
             IDataElement result = cur.EvalStack.Peek();
-
-            lhsExpression ??= lhs.AsExpression(cur);
-            rhsExpression ??= rhs.AsExpression(cur);
 
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 

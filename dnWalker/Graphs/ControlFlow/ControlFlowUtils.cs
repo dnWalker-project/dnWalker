@@ -253,6 +253,12 @@ namespace dnWalker.Graphs.ControlFlow
                     // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
                     return 2;
 
+                case Code.Rem:
+                case Code.Rem_Un:
+                    // next, divide by zero exception
+                    // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
+                    return 2;
+
                 case Code.Ldelem:
                 case Code.Ldelem_I:
                 case Code.Ldelem_I1:
@@ -408,6 +414,26 @@ namespace dnWalker.Graphs.ControlFlow
                     {
                         SuccessorInfo.NextInstruction,
                         SuccessorInfo.ExceptionHandler(GetException(Overflow))
+                    };
+
+                case Code.Div:
+                case Code.Div_Un:
+                    // next, divide by zero exception
+                    // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
+                    return new SuccessorInfo[]
+                    {
+                        SuccessorInfo.NextInstruction,
+                        SuccessorInfo.ExceptionHandler(GetException(DivideByZero))
+                    };
+
+                case Code.Rem:
+                case Code.Rem_Un:
+                    // next, divide by zero exception
+                    // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
+                    return new SuccessorInfo[]
+                    {
+                        SuccessorInfo.NextInstruction,
+                        SuccessorInfo.ExceptionHandler(GetException(DivideByZero))
                     };
 
                 case Code.Ldelem:
