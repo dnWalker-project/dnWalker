@@ -60,9 +60,6 @@ namespace MMC
 
         public StateSpaceSetup(IDefinitionProvider definitionProvider, IConfig config, Logger logger)
         {
-            // TODO: dirty trick, ensure the System.Delegate within AllocatedDelegate is set
-            AllocatedDelegate.DelegateTypeDef = definitionProvider.BaseTypes.Delegate.ToTypeDefOrRef().ResolveTypeDefThrow();
-
             _definitionProvider = definitionProvider;
             _config = config;
             _logger = logger;
@@ -166,8 +163,8 @@ namespace MMC
             //   on Windows, using Mono 1.1.15, and when running without debug mode, the field
             //   names are different for some reason.
 
-            TypeDef objectTypeDef = cur.DefinitionProvider.BaseTypes.Object.TypeDef;
-            TypeDef threadTypeDef = cur.DefinitionProvider.BaseTypes.Thread.TypeDef;
+            TypeDef objectTypeDef = cur.DefinitionProvider.BaseTypes.Object.ToTypeDefOrRef().ResolveTypeDefThrow();
+            TypeDef threadTypeDef = cur.DefinitionProvider.BaseTypes.Thread.ToTypeDefOrRef().ResolveTypeDefThrow();
 
             // 1
             var mainMethodPtr = new MethodPointer(mainDefinition);

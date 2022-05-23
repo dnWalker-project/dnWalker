@@ -78,7 +78,12 @@ namespace dnWalker.Graphs.ControlFlow
                 instruction.OpCode.Code == Code.Throw ||
                 instruction.OpCode.Code == Code.Rethrow ||
                 instruction.OpCode.Code == Code.Br ||
-                instruction.OpCode.Code == Code.Br_S;
+                instruction.OpCode.Code == Code.Br_S ||
+
+                // all kinds of CALL instruction should end the block - may throw arbitrary exception...
+                instruction.OpCode.Code == Code.Call ||
+                instruction.OpCode.Code == Code.Calli ||
+                instruction.OpCode.Code == Code.Callvirt;
         }
 
         public static bool HasMultipleSuccessors(Instruction instruction)

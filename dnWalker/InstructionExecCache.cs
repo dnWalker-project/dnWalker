@@ -35,7 +35,7 @@ namespace MMC.InstructionExec
     /// <summary>
     /// Singleton accessor for instruction executor provider.
     /// </summary>
-    internal static class InstructionExecProvider
+    public static class InstructionExecProvider
     {
         /// <summary>
         /// The singleton instruction executor provider.

@@ -67,7 +67,7 @@ namespace MMC.State
         /// <summary>
         /// Constructor
         /// </summary>
-        internal ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, IDefinitionProvider definitionProvider, Logger logger)
+        public ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, IDefinitionProvider definitionProvider, Logger logger)
         {
             DefinitionProvider = definitionProvider;
             Logger = logger;

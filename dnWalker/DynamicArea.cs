@@ -266,7 +266,7 @@ namespace MMC.State {
 		/// \sa DeterminePlacement
 		public ObjectReference AllocateDelegate(int loc, ObjectReference obj, MethodPointer ptr)
         {
-			m_alloc[loc] = new AllocatedDelegate(obj, ptr, _cur.Configuration);
+			m_alloc[loc] = new AllocatedDelegate(_cur.DefinitionProvider.BaseTypes.Delegate.ToTypeDefOrRef(), obj, ptr, _cur.Configuration);
 			var newDelRef = new ObjectReference(loc + 1);
 			_cur.ParentWatcher.AddParentToChild(newDelRef, obj, _cur.Configuration.MemoisedGC);
 			return newDelRef;

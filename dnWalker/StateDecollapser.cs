@@ -191,7 +191,7 @@ namespace MMC.State
             }
             else
             {
-                alloc = new AllocatedDelegate(obj_ref, meth_ptr, cur.Configuration);
+                alloc = new AllocatedDelegate(cur.DefinitionProvider.BaseTypes.Delegate.ToTypeDefOrRef(), obj_ref, meth_ptr, cur.Configuration);
             }
 
             return alloc;

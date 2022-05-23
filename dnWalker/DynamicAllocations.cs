@@ -222,7 +222,7 @@ namespace MMC.State {
     {
         bool m_isDirty;
 
-        public static ITypeDefOrRef DelegateTypeDef { get; set; }//= new Lazy<TypeDef>(() => DefinitionProvider.GetTypeDefinition("System.Delegate"));
+        //public static ITypeDefOrRef DelegateTypeDef { get; set; }//= new Lazy<TypeDef>(() => DefinitionProvider.GetTypeDefinition("System.Delegate"));
 
         public override AllocationType AllocationType
         {
@@ -270,13 +270,13 @@ namespace MMC.State {
 			return "delegate:" + Object.ToString() + "." + Method.Value.Name;
 		}
 
-		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(DelegateTypeDef, config.UseRefCounting, config.MemoisedGC)
+		public AllocatedDelegate(ITypeDefOrRef delegateTypeDef, ObjectReference obj, MethodPointer ptr, IConfig config) : base(delegateTypeDef, config.UseRefCounting, config.MemoisedGC)
         {
 			Object = obj;
 			Method = ptr;
 			m_isDirty = true;
         }
-        public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, bool useRefCounting, bool memoisedGC) : base(DelegateTypeDef, useRefCounting, memoisedGC)
+        public AllocatedDelegate(ITypeDefOrRef delegateTypeDef, ObjectReference obj, MethodPointer ptr, bool useRefCounting, bool memoisedGC) : base(delegateTypeDef, useRefCounting, memoisedGC)
         {
             Object = obj;
             Method = ptr;

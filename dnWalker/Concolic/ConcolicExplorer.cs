@@ -32,21 +32,14 @@ namespace dnWalker.Concolic
         protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null)
         {
             IConfig configuration = GetConfiguration();
+
+            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, GetStrategy(configuration));
+
+
             List<ExplorationIterationResult> iterationResults = new List<ExplorationIterationResult>();
-
-            IExplorationStrategy strategy = GetStrategy(configuration);
-
-            ControlFlowGraph entryCfg = cur.PathStore.ControlFlowGraphProvider.Get(entryPoint);
-            IReadOnlyList<ConstraintTree> constraintTrees = ConstraintTree.UnfoldConstraints(entryPoint, entryCfg.EntryPoint);
-            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, constraintTrees);
-
-            cur.Services.RegisterService(constraintTree);
-
-            strategy.Initialize(cur, entryPoint);
-
             int currentIteration = 0;
-            int maxIterations = configuration.MaxIterations;
-            while (constraintTree.TryGetNextInputModel(Solver, out IModel inputModel))
+            int maxIterations = GetMaxIterations(configuration);
+            while (constraintTrees.TryGetNextInputModel(Solver, out IModel inputModel))
             {
                 NextIterationOrThrow(ref currentIteration, maxIterations);
 
@@ -81,7 +74,7 @@ namespace dnWalker.Concolic
                 OnPathExplored(currentPath);
                 
                 // build iteration result
-                ConstraintNode node = constraintTree.Current;
+                ConstraintNode node = constraintTrees.Current;
                 Constraint preCondition = inputModel.Precondition;
                 Constraint postCondition = node.GetPrecondition();
                 SymbolicContext symbolicContext = currentPath.GetSymbolicContext();
@@ -93,16 +86,23 @@ namespace dnWalker.Concolic
             }
 
             // TODO: make it as a explorer extension...
-            ConstraintTreeExplorerWriter.Write(constraintTree, "constraintTree.dot");
+            ConstraintTreeExplorerWriter.Write(constraintTrees, "constraintTree.dot");
             ControlFlowGraphWriter.Write(ControlFlowGraph.Build(entryPoint), "cfg.dot");
 
-            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees, entryCfg);
+            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.ControlFlowGraphProvider.Get(entryPoint));
             return result;
 
             static void NextIterationOrThrow(ref int currentIteration, int maxIterations)
             {
                 if (currentIteration >= maxIterations) throw new MaxIterationsExceededException(currentIteration);
                 currentIteration++;
+            }
+
+            static int GetMaxIterations(IConfig config)
+            {
+                int maxIterations = config.MaxIterations;
+                if (maxIterations <= 0) return int.MaxValue;
+                return maxIterations;
             }
         }
 

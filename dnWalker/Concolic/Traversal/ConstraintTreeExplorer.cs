@@ -46,7 +46,7 @@ namespace dnWalker.Concolic.Traversal
 
         public ConstraintNode Current => _current;
 
-        public IList<ConstraintTree> Trees
+        public IReadOnlyList<ConstraintTree> Trees
         {
             get { return _trees; }
         }
