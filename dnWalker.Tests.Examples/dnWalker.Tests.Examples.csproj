@@ -28,4 +28,8 @@
     <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Interfaces\" />
+  </ItemGroup>
+
 </Project>

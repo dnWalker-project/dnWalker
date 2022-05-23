@@ -117,19 +117,19 @@ namespace Examples.Concolic.Features.Arrays
             }
         }
 
-        public static void SetElement_InputParameter(TestClass[] arr, TestClass value)
+        public static void SetElementToInput(TestClass[] arr, TestClass value)
         {
             if (arr == null || arr.Length < 3) return;
             arr[2] = value;
         }
 
-        public static void SetElement_ConstructParameter_Object(TestClass[] arr)
+        public static void SetElementToFreshObject(TestClass[] arr)
         {
             if (arr == null || arr.Length < 3) return;
             arr[2] = new TestClass();
         }
 
-        public static void SetElement_ConstructParameter_Primitive(int[] arr)
+        public static void SetElementToFreshPrimitive(int[] arr)
         {
             if (arr == null || arr.Length < 3) return;
             arr[0] = 2;
@@ -137,7 +137,7 @@ namespace Examples.Concolic.Features.Arrays
             arr[2] = 5;
         }
 
-        public static void SetElement_ConstructParameter_Array(TestClass[][] arr2D)
+        public static void SetElementToFreshArray(TestClass[][] arr2D)
         {
             if (arr2D == null || arr2D.Length < 3) return;
 
@@ -145,7 +145,7 @@ namespace Examples.Concolic.Features.Arrays
             arr2D[2] = arr;
         }
 
-        public static void SetElement_ConstructParameter_Null(TestClass[] arr)
+        public static void SetElementToNull(TestClass[] arr)
         {
             if (arr == null || arr.Length < 3) return;
             arr[1] = null;

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class LDARG : Load
+    public class LDARG : IInstructionExecutor
     {
         private readonly OpCode[] _supportedCodes = new OpCode[]
         {
@@ -27,7 +27,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             OpCodes.Ldarg_S
         };
 
-        public override IEnumerable<OpCode> SupportedOpCodes => _supportedCodes;
+        public IEnumerable<OpCode> SupportedOpCodes => _supportedCodes;
 
         private static Parameter GetParameter(InstructionExecBase baseExecutor, MethodDef method)
         {
@@ -43,7 +43,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
         }
 
-        public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
+        public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             if (cur.TryGetSymbolicContext(out SymbolicContext context))
             {
