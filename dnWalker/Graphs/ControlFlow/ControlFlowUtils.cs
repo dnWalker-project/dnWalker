@@ -293,6 +293,14 @@ namespace dnWalker.Graphs.ControlFlow
                 case Code.Callvirt:
                     // if static => next only
                     // if not static => next, null reference exception
+                    //{
+                    //    MethodDef md = ((IMethod)instruction.Operand).ResolveMethodDef();
+                    //    if (md != null)
+                    //    {
+                    //        return md.IsStatic ? 1 : 2;
+                    //    }
+                    //    throw new Exception("Could not resolve method!");
+                    //}
                     return ((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic ? 1 : 2;
 
                 case Code.Ret:
@@ -308,21 +316,22 @@ namespace dnWalker.Graphs.ControlFlow
 
         internal static SuccessorInfo[] GetSuccessors(Instruction instruction, ModuleDef context, IDictionary<string, TypeDef> exceptionCache = null)
         {
-            const string NullReference = nameof(NullReferenceException);
-            const string DivideByZero = nameof(DivideByZeroException);
-            const string IndexOutOfRange = nameof(IndexOutOfRangeException);
-            const string Overflow = nameof(OverflowException);
+            const string NullReference = "NullReferenceException";
+            const string DivideByZero = "DivideByZeroException";
+            const string IndexOutOfRange = "IndexOutOfRangeException";
+            const string Overflow = "OverflowException";
 
             Debug.Assert(context != null);
 
             TypeDef GetException(string exceptionTypeName)
             {
-                AssemblyDef corAssembly = context.Context.AssemblyResolver.Resolve(context.CorLibTypes.AssemblyRef, null);
+                IResolver resolver = context.Context.Resolver;
+                //AssemblyDef corAssembly = context.Context.AssemblyResolver.Resolve(context.CorLibTypes.AssemblyRef, null);
                 if (exceptionCache != null)
                 {
                     if (!exceptionCache.TryGetValue(exceptionTypeName, out TypeDef exceptionType))
                     {
-                        exceptionType = corAssembly.Modules[0].Types.First(t => t.Name == exceptionTypeName);
+                        exceptionType = resolver.Resolve(new TypeRefUser(context, "System", exceptionTypeName), context);
 
                         //exceptionType = context.Context.Resolver.Resolve(new TypeRefUser(null, "System", exceptionTypeName), null);
                         //TypeRef typeRef = new TypeRefUser(cm, "System", exceptionTypeName);
@@ -330,7 +339,7 @@ namespace dnWalker.Graphs.ControlFlow
                     }
                     return exceptionType;
                 }
-                return corAssembly.Modules[0].Types.First(t => t.Name == exceptionTypeName);
+                return resolver.Resolve(new TypeRefUser(context, exceptionTypeName));
             }
 
 

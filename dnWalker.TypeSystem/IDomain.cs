@@ -11,8 +11,10 @@ namespace dnWalker.TypeSystem
     public interface IDomain
     {
         IReadOnlyCollection<ModuleDef> Modules { get; }
-        IReadOnlyCollection<AssemblyDef> Assemblies { get; }
+        //IReadOnlyCollection<AssemblyDef> Assemblies { get; }
         ModuleDef MainModule { get; }
         ModuleContext ModuleContext { get; }
+
+        IResolver Resolver { get; }
     }
 }
