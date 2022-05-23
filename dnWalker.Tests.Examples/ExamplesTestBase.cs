@@ -66,6 +66,9 @@ namespace dnWalker.Tests.Examples
         }
 
         protected virtual void SetupLogging(Logger logger) { }
-        protected virtual void SetupConfiguration(Config configuration) { }
+        protected virtual void SetupConfiguration(Config configuration) 
+        {
+            configuration.SetCustomSetting("strategy", "AllPaths");
+        }
     }
 }

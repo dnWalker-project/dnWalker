@@ -22,6 +22,11 @@ namespace dnWalker.Graphs.ControlFlow
         public Instruction Header => _instructions[0];
         public Instruction Footer => _instructions[^1];
 
+        public bool Contains(Instruction instruction)
+        {
+            return Header.Offset <= instruction.Offset && Footer.Offset >= instruction.Offset;
+        }
+
         public override string ToString()
         {
             return $"Instructions: {Header} ... {Footer}";

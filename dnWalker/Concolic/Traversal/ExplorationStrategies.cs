@@ -75,7 +75,7 @@ namespace dnWalker.Concolic.Traversal
                 if (inputModel != null)
                 {
                     NewIteration();
-                    node.MarkPreconditionSource();
+                    node.MarkPreconditionSource(CurrentIteration);
                     return true;
                 }
                 else
@@ -128,7 +128,7 @@ namespace dnWalker.Concolic.Traversal
                 if (inputModel != null)
                 {
                     NewIteration();
-                    node.MarkPreconditionSource();
+                    node.MarkPreconditionSource(CurrentIteration);
                     return true;
                 }
                 else
@@ -204,7 +204,7 @@ namespace dnWalker.Concolic.Traversal
                 if (inputModel != null)
                 {
                     NewIteration();
-                    node.MarkPreconditionSource();
+                    node.MarkPreconditionSource(CurrentIteration);
                     return true;
                 }
                 else

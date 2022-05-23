@@ -39,7 +39,18 @@ namespace dnWalker.Graphs.ControlFlow
 
                 void WriteEdge(ControlFlowEdge edge)
                 {
-                    writer.WriteLine($"\t{GetId(edge.Source)} -> {GetId(edge.Target)}");
+                    writer.WriteLine($"\t{GetId(edge.Source)} -> {GetId(edge.Target)}[label=\"{GetEdgeLabel(edge)}\"]");
+                }
+
+                static string GetEdgeLabel(ControlFlowEdge edge)
+                {
+                    return edge switch
+                    {
+                        NextEdge => "Next",
+                        JumpEdge j => $"Jump To: '{((InstructionBlockNode)j.Target).Header}'",
+                        ExceptionEdge e => $"Exception: '{e.ExceptionType.FullName}'",
+                        _ => "ERROR"
+                    };
                 }
 
                 void WriteBlockNode(InstructionBlockNode block)

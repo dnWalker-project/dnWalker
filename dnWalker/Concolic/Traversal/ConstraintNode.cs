@@ -26,7 +26,7 @@ namespace dnWalker.Concolic.Traversal
         private IReadOnlyList<ConstraintNode> _children = Array.Empty<ConstraintNode>();
 
         private bool _unsatisfiable;
-        private bool _isPreconditionSource;
+        private int _sourceNodeIteration;
 
         public ConstraintNode(ConstraintTree tree, ConstraintNode parent, ControlFlowNode location, Expression condition)
         {
@@ -89,7 +89,7 @@ namespace dnWalker.Concolic.Traversal
 
         public bool IsExplored => _iterations.Count > 0;
         public bool IsSatisfiable => !_unsatisfiable;
-        public bool IsPreconditionSource => _isPreconditionSource;
+        public bool IsPreconditionSource => _sourceNodeIteration > 0;
 
         public ControlFlowNode Location => _location;
 
@@ -111,7 +111,7 @@ namespace dnWalker.Concolic.Traversal
             }
         }
 
-        public void MarkPreconditionSource() => _isPreconditionSource = true;
+        public void MarkPreconditionSource(int iteration) => _sourceNodeIteration = iteration;
 
         public IReadOnlyList<ConstraintNode> Expand(ControlFlowNode[] locations, Expression[] choices)
         {

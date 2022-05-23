@@ -59,7 +59,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return (edge, returnValue) switch
                 {
                     (NextEdge _, NextReturnValue _) => true,
-                    (JumpEdge je, JumpReturnValue jrv) => ((InstructionBlockNode)je.Target).Header.Offset == jrv.Target.Offset,
+                    (JumpEdge je, JumpReturnValue jrv) => ((InstructionBlockNode)je.Target).Contains(jrv.Target),
                     (ExceptionEdge ex, ExceptionHandlerLookupReturnValue _) =>
                         dnlib.DotNet.TypeEqualityComparer.Instance.Equals(
                             ((AllocatedObject)cur.DynamicArea.Allocations[cur.CurrentThread.ExceptionReference]).Type,

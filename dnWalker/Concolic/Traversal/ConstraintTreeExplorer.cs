@@ -114,6 +114,12 @@ namespace dnWalker.Concolic.Traversal
 
         public bool TryGetNextInputModel(ISolver solver, [NotNullWhen(true)] out IModel inputModel)
         {
+            // we have finished exploration of the last node
+            if (_current != null)
+            {
+                _strategy.AddExploredNode(_current);
+            }
+
             if (_strategy.TryGetNextSatisfiableNode(solver, out ConstraintNode node, out inputModel))
             {
                 // a new iteration will be run => reset

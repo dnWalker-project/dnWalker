@@ -35,6 +35,9 @@ namespace dnWalker.Concolic
 
             ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, GetStrategy(configuration));
 
+            // TODO: make it as a explorer extension...
+            ConstraintTreeExplorerWriter.Write(constraintTrees, "constraintTree.dot");
+            ControlFlowGraphWriter.Write(ControlFlowGraph.Build(entryPoint), "cfg.dot");
 
             List<ExplorationIterationResult> iterationResults = new List<ExplorationIterationResult>();
             int currentIteration = 0;

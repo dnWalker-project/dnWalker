@@ -10,12 +10,8 @@ namespace dnWalker.Concolic.Traversal
     public static class ConstraintTreeExplorerWriter
     {
         const string Begin = "digraph G {\n";
-        const string Node = "\t{0} [label=\"{1}, {2}\"];";
-        const string NodeDUP = "\t{0} [label=\"{1}, {2}, DUPL\"];";
-        const string NodeUNSAT = "\t{0} [label=\"{1}, {2}, UNSAT\"];";
 
         const string Edge = "\t{0} -> {1};";
-        const string btedge = "\t{0} -> {1} [label=\"bt\",style=dotted];";
         const string End = "}";
 
         public static void Write(ConstraintTreeExplorer explorer, string file)
@@ -61,7 +57,7 @@ namespace dnWalker.Concolic.Traversal
                     writer.Write($"\t{currentId}[");
 
                     writer.Write($"style=filled ");
-                    writer.Write($"label=\"{GetLabel(node)}\" ");
+                    writer.Write($"label=<{GetLabel(node)}> ");
                     writer.Write($"fillcolor={GetColor(node)} ");
 
                     writer.WriteLine("];");
@@ -88,7 +84,16 @@ namespace dnWalker.Concolic.Traversal
 
         static string GetLabel(ConstraintNode node)
         {
-            return $"{node.Condition?.ToString() ?? "true"}, {node.Location}, ({string.Join(", ", node.Iterations)})";
+            return $"{ToHtmlString(node.Condition?.ToString())}<br/> {node.Location} <br/> ({string.Join(", ", node.Iterations)})";
+        }
+
+        private static string ToHtmlString(string v)
+        {
+            if (v == null) return "true";
+
+            return v
+                .Replace("<", "&lt;")
+                .Replace(">", "&gt;");
         }
     }
 }
