@@ -65,6 +65,19 @@ namespace dnWalker.Concolic.Traversal
             }
         }
 
+        public static bool TryWrite(ConstraintTreeExplorer explorer, string file)
+        {
+            try
+            {
+                Write(explorer, file);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         static string GetColor(ConstraintNode node)
         {
             if (node.IsPreconditionSource)

@@ -77,6 +77,18 @@ namespace Examples.Concolic.Features.Objects
             }
         }
 
+        public static void InvokeMethodWithFieldAccessWithoutNullCheck(TestClass instance)
+        {
+            if (instance.GetMyFieldValue() == 3)
+            {
+                Console.Out.WriteLine("instance:_myField == 3");
+            }
+            else
+            {
+                Console.Out.WriteLine("instance:_myField != 3");
+            }
+        }
+
         public static void BranchIfNull(TestClass instance)
         {
             if (instance == null)
@@ -101,7 +113,7 @@ namespace Examples.Concolic.Features.Objects
             }
         }
 
-        public static void AbstractClass_ConcreteMethod(AbstractClass instance)
+        public static void InvokeConcreteMethodOnAbstractClass(AbstractClass instance)
         {
             if (instance == null)
             {
@@ -119,7 +131,7 @@ namespace Examples.Concolic.Features.Objects
             }
         }
 
-        public static void AbstractClass_AbstractMethod(AbstractClass instance)
+        public static void InvokeAbstractMethodOnAbstractClass(AbstractClass instance)
         {
             if (instance == null)
             {
@@ -206,42 +218,42 @@ namespace Examples.Concolic.Features.Objects
 
         }
 
-        public static void SetFieldValue_InputParameter(TestClass obj, double value)
+        public static void SetFieldToInput(TestClass obj, double value)
         {
             if (obj == null) return;
 
             obj.OtherField = value;
         }
 
-        public static void SetFieldValue_ConstructedParameter_Primitive(TestClass obj, double value)
+        public static void SetFieldToFreshInput(TestClass obj, double value)
         {
             if (obj == null) return;
 
             obj.OtherField = value * 2;
         }
 
-        public static void SetFieldValue_ConstructedParameter_Object(TestClass obj)
+        public static void SetFieldToFreshObject(TestClass obj)
         {
             if (obj == null) return;
 
             obj.TCField = new TestClass();
         }
 
-        public static void SetFieldValue_ConstructedParameter_PrimitiveArray(TestClass obj, int i)
+        public static void SetFieldToFreshPrimitiveArray(TestClass obj, int i)
         {
             if (obj == null) return;
 
             obj.PrimitiveArray = new int[] {i, i - 1, i + 1};
         }
 
-        public static void SetFieldValue_ConstructedParameter_RefArray(TestClass obj)
+        public static void SetFieldToFreshRefArray(TestClass obj)
         {
             if (obj == null) return;
 
             obj.RefArray = new TestClass[] { obj, null, new TestClass() };
         }
 
-        public static void SetFieldValue_ConstructedParameter_Null(TestClass obj)
+        public static void SetFieldToNull(TestClass obj)
         {
             if (obj == null) return;
 

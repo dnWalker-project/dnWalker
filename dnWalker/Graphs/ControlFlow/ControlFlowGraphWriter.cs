@@ -76,5 +76,18 @@ namespace dnWalker.Graphs.ControlFlow
                 }
             }
         }
+
+        public static bool TryWrite(ControlFlowGraph cfg, string file)
+        {
+            try
+            {
+                Write(cfg, file);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

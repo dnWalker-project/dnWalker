@@ -10,7 +10,7 @@ namespace dnWalker.Tests.Examples
 {
     [XunitTestCaseDiscoverer("dnWalker.Tests.Examples.ExamplesDiscoverer", "dnWalker.Tests.Examples")]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class ExamplesTest : FactAttribute
+    public class ExamplesTestAttribute : FactAttribute
     {
     }
 }

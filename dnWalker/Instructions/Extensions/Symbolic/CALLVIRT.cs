@@ -17,19 +17,13 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class CALLVIRT : IInstructionExecutor
+    public class CALLVIRT : DecisionMaker
     {
         private static readonly OpCode[] _supportedOpCodes = new OpCode[] { OpCodes.Callvirt };
 
-        public IEnumerable<OpCode> SupportedOpCodes
-        {
-            get
-            {
-                return _supportedOpCodes;
-            }
-        }
+        public override IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
 
-        public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
+        public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             // 1st, we check whether the operand (method) is one we can substitute
             CallInstructionExec callModel = (CallInstructionExec)baseExecutor;
@@ -67,7 +61,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
 
             return next(baseExecutor, cur);
-            
         }
     }
 }

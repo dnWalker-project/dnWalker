@@ -64,7 +64,8 @@ namespace dnWalker.Tests.Examples
             List<IXunitTestCase> results = new List<IXunitTestCase>();
             foreach (BuildInfo build in builds)
             {
-                results.Add(new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod, new[] { build }));
+                XunitTestCase tc = new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod, new[] { build });
+                results.Add(tc);
             }
             return results;
         }
@@ -99,7 +100,7 @@ namespace dnWalker.Tests.Examples
 
         private IEnumerable<IXunitTestCase> CreateTestCasesForSkip(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute, string skipReason)
         {
-            throw new NotImplementedException();
+            return new[] { new XunitTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod) };
         }
     }
 }

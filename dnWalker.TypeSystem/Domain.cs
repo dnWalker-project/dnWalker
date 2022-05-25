@@ -66,7 +66,10 @@ namespace dnWalker.TypeSystem
             foreach (AssemblyRef ar in refs)
             {
                 AssemblyDef refAssembly = _moduleContext.AssemblyResolver.Resolve(ar, module);
-                Load(refAssembly);
+                if (refAssembly != null)
+                {
+                    Load(refAssembly);
+                }
             }
         }
 
