@@ -3107,7 +3107,7 @@ namespace dnWalker.Instructions
                 cur.CurrentMethod.IsPrefixed = false;
                 cur.CurrentMethod.Constrained = null;
 
-                MethodState called = new MethodState(toCall, args, cur);
+                MethodState called = toCall == null ? null : new MethodState(toCall, args, cur);
                 this.CheckTailCall();
                 cur.CallStack.Push(called);
 

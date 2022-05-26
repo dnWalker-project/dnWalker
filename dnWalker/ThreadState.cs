@@ -1,4 +1,4 @@
-/*
+﻿/*
  *   Copyright 2007 University of Twente, Formal Methods and Tools group
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -316,6 +316,7 @@ namespace MMC.State
 
                 logger.Trace($"[{thread.Id}] {currentInstrExec}");
                 ier = currentInstrExec.Execute(cur);
+                InstructionExecuted?.Invoke(location);
 
                 // update the program counter & cur.CurrentMethod before invoking the InstructionExecuted event
                 currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
@@ -325,9 +326,7 @@ namespace MMC.State
 				 * the method jumped to
 				 */
                 currentMethod = cur.CurrentMethod;
-
-                InstructionExecuted?.Invoke(location);
-
+                
                 continueExploration = ier.ContinueExploration(currentMethod);
 
                 if (cur.Break())

@@ -171,7 +171,8 @@ namespace MMC.Data
                 }
                 else
                 {
-                    throw new MemberNotFoundException(type.FullName, key.name);
+                    // throw new MemberNotFoundException(type.FullName, key.name);
+                    return null;
                 }
             }
 
