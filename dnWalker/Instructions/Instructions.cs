@@ -1788,6 +1788,11 @@ namespace dnWalker.Instructions
             // This is somewhat rancid, but for now we'll do it like this.
             if (toChange is ObjectReference objectReference)
             {
+                if (objectReference.IsNull())
+                {
+                    return ThrowException(new NullReferenceException(), cur);
+                }
+
                 // Change a field of an object.
                 AllocatedObject theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
@@ -1837,9 +1842,8 @@ namespace dnWalker.Instructions
             int length = des.Length;
             IDataElement toChange = des[length - 2];
 
-            if (toChange is ObjectReference)
+            if (toChange is ObjectReference or && !or.IsNull())
             {
-                ObjectReference or = (ObjectReference)toChange;
                 //FieldDefinition fld = GetFieldDefinition();
                 AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
                 int offset = GetFieldOffset(ao.Type);

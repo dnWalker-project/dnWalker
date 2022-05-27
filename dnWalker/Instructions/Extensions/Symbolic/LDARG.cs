@@ -45,7 +45,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
         public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
-            if (cur.TryGetSymbolicContext(out SymbolicContext context))
+            // perform initialization using symbolic context iff the method is the entry point, i.e. call stack has single method on it...
+
+            if (cur.CallStack.StackPointer == 1 &&
+                cur.TryGetSymbolicContext(out SymbolicContext context))
             {
                 MethodDef method = cur.CurrentMethod.Definition;
                 Parameter parameter = GetParameter(baseExecutor, method);

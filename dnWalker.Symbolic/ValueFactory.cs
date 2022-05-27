@@ -76,5 +76,11 @@ namespace dnWalker.Symbolic
                 return Location.Null;
             }
         }
+
+        public static IValue GetValue<T>(T value)
+            where T : struct
+        {
+            return new PrimitiveValue<T>(value);
+        }
     }
 }

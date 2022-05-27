@@ -27,7 +27,8 @@ namespace dnWalker
         {
             if (typeDef.FullName == "System.Object") return 0;
 
-            uint? fOffset = typeDef.Fields[0].FieldOffset;
+            // does it actually work?
+            uint? fOffset = typeDef.Fields.Count == 0 ? null : typeDef.Fields[0].FieldOffset;
             if (fOffset.HasValue)
             {
                 // already initialized => skip it & reuse

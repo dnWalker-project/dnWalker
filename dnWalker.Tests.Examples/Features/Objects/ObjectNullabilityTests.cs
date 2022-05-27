@@ -39,7 +39,7 @@ namespace dnWalker.Tests.Examples.Features.Objects
         [ExamplesTest]
         public void InvokeMethodWithFieldAccessWithoutNullCheck(BuildInfo buildInfo)
         {
-            ExplorationResult result = CreateExplorer(buildInfo).Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.BranchIfNotNull");
+            ExplorationResult result = CreateExplorer(buildInfo).Run("Examples.Concolic.Features.Objects.MethodsWithObjectParameter.InvokeMethodWithFieldAccessWithoutNullCheck");
 
             result.Iterations.Should().HaveCount(3);
             result.Iterations[0].Exception.Type.FullName.Should().Be("System.NullReferenceException");

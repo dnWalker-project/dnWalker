@@ -53,10 +53,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 {
                     ObjectReference instance = (ObjectReference)args[0];
 
-                    if (instance.TryGetExpression(cur, out Expression instanceExor))
+                    if (instance.TryGetExpression(cur, out Expression instanceExpr))
                     {
-                        Debug.Assert(instanceExor is VariableExpression);
-                        dnWalker.Symbolic.IVariable instanceVar = ((VariableExpression)instanceExor).Variable;
+                        Debug.Assert(instanceExpr is VariableExpression);
+                        dnWalker.Symbolic.IVariable instanceVar = ((VariableExpression)instanceExpr).Variable;
                         if (context.InputModel.TryGetValue(instanceVar, out IValue instanceValue))
                         {
                             Location symbolicLocation = (Location)instanceValue;

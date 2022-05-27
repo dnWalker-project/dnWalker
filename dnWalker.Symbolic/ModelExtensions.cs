@@ -31,6 +31,8 @@ namespace dnWalker.Symbolic
                 return value;
             }
 
+            // return ExpressionEvaluator.Evaluate(model, expression);
+
             throw new NotSupportedException();
         }
 

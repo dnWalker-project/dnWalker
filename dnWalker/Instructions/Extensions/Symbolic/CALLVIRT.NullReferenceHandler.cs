@@ -25,12 +25,12 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             {
                 CallInstructionExec callModel = (CallInstructionExec)baseExecutor;
                 MethodDef method = callModel.Method;
-
-                IIEReturnValue returnValue = next(baseExecutor, cur);
-
+                
                 if (!method.IsStatic &&
                     ExpressionUtils.GetExpressions(cur, GetInstance(method, cur), out Expression instanceExpression))
                 {
+                    IIEReturnValue returnValue = next(baseExecutor, cur);
+
                     MakeDecision(cur, returnValue, (cur, edge, instance) =>
                     {
                         ExpressionFactory ef = cur.GetExpressionFactory();
@@ -38,12 +38,14 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                         {
                             NextEdge _ => Expression.MakeNotEqual(instanceExpression, ef.NullExpression),
                             ExceptionEdge _ => Expression.MakeEqual(instanceExpression, ef.NullExpression),
-                            _ => throw new NotSupportedException("Only next edge and null reference excetption edge are supported in CALLVIRT insruction.")
+                            _ => throw new NotSupportedException("Only next edge and null reference exception edge are supported in CALLVIRT insruction.")
                         };
                     }, instanceExpression);
+                
+                    return returnValue;
                 }
 
-                return returnValue;
+                return next(baseExecutor, cur);
             }
         }
     }
