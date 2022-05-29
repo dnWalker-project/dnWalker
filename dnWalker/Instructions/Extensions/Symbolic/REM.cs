@@ -16,19 +16,17 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class DivideByZero : DecisionMaker
+    public class REM : IInstructionExecutor
     {
         private static readonly OpCode[] _supportedOpCodes = new[]
         {
-            OpCodes.Div,
-            OpCodes.Div_Un,
             OpCodes.Rem,
             OpCodes.Rem_Un,
         };
 
-        public override IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
+        public IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
 
-        public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
+        public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             INumericElement divider = (INumericElement) cur.EvalStack.Peek();
             
@@ -41,7 +39,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             if (ExpressionUtils.GetExpressions(cur, divider, out Expression dividerExpression))
             {
-                MakeDecision(cur, returnValue, static (cur, edge, dividerExpression) =>
+                DecisionMaker.MakeDecision(cur, returnValue, static (cur, edge, dividerExpression) =>
                 {
                     return edge switch
                     {

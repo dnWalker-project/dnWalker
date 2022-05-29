@@ -68,7 +68,7 @@ namespace dnWalker.Concolic
 
             _exception = path.Exception;
             _stackTrace = path.StackTrace;
-            _output = path.Output;
+            _output = path.Output ?? string.Empty;
             _segments = path.Segments.ToArray();
             _visitedNodes = path.VisitedNodes.ToArray();
 

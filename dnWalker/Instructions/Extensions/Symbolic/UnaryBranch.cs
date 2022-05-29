@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class UnaryBranch : DecisionMaker
+    public class UnaryBranch : IInstructionExecutor
     {
         private static readonly OpCode[] _supportedOpCodes = new OpCode[]
         {
@@ -27,9 +27,9 @@ namespace dnWalker.Instructions.Extensions.Symbolic
         };
 
 
-        public override IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
+        public IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
 
-        public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
+        public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             IDataElement operandDE = cur.EvalStack.Peek();
 
@@ -40,7 +40,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
-            MakeDecision(cur, retValue, static (_, edge, checksTrue, operand) => (checksTrue, edge) switch
+            DecisionMaker.MakeDecision(cur, retValue, static (_, edge, checksTrue, operand) => (checksTrue, edge) switch
             {
                 (true, JumpEdge) => operand,
                 (true, NextEdge) => Expression.MakeNot(operand),

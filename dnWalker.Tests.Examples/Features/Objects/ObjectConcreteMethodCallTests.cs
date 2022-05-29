@@ -23,8 +23,8 @@ namespace dnWalker.Tests.Examples.Features.Objects
 
             result.Iterations.Should().HaveCount(3);
             result.Iterations[0].Output.Should().BeNullOrEmpty();
-            result.Iterations[1].Output.Trim().Should().Be("instance._myField != 3");
-            result.Iterations[2].Output.Trim().Should().Be("instance._myField == 3");
+            result.Iterations[1].Output.Trim().Should().Be("instance:_myField != 3");
+            result.Iterations[2].Output.Trim().Should().Be("instance:_myField == 3");
         }
     }
 }

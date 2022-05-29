@@ -33,12 +33,6 @@ namespace dnWalker.Symbolic
             return new SymbolicContext(model, model.Clone());
         }
 
-        public Expression ProcessExistingObject(ObjectReference objRef)
-        {
-            // this should not be executed... yet
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Checks whether the variable has been initialized (queries appropriate parts of the explicit active state).
         /// If the variable is not initialized, performs lazy initialization.

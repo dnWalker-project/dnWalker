@@ -218,45 +218,55 @@ namespace Examples.Concolic.Features.Objects
 
         }
 
-        public static void SetFieldToInput(TestClass obj, double value)
+        public static void SetFieldToInputPrimitive(TestClass obj, double value)
         {
-            if (obj == null) return;
+            if (value < 5.5)
+            {
+                Console.Out.WriteLine("Value too low...");
+                return;
+            }
 
             obj.OtherField = value;
         }
-
-        public static void SetFieldToFreshInput(TestClass obj, double value)
+        public static void SetFieldToInputObject(TestClass obj, TestClass value)
         {
-            if (obj == null) return;
+            if (value == null)
+            {
+                Console.Out.WriteLine("Value is null");
+                return;
+            }
 
-            obj.OtherField = value * 2;
+            obj.TCField = value;
+        }
+
+        public static void SetFieldToFreshPrimitive(TestClass obj)
+        {
+            obj.OtherField = 3.14;
         }
 
         public static void SetFieldToFreshObject(TestClass obj)
         {
-            if (obj == null) return;
-
             obj.TCField = new TestClass();
         }
 
         public static void SetFieldToFreshPrimitiveArray(TestClass obj, int i)
         {
-            if (obj == null) return;
+            if (i < 10)
+            {
+                Console.Out.WriteLine("Value too low...");
+                return;
+            }
 
             obj.PrimitiveArray = new int[] {i, i - 1, i + 1};
         }
 
         public static void SetFieldToFreshRefArray(TestClass obj)
         {
-            if (obj == null) return;
-
             obj.RefArray = new TestClass[] { obj, null, new TestClass() };
         }
 
         public static void SetFieldToNull(TestClass obj)
         {
-            if (obj == null) return;
-
             obj.PrimitiveArray = null;
             obj.RefArray = null;
             obj.TCField = null;

@@ -198,5 +198,11 @@ namespace MMC.Data
                 throw;
             }
         }
+
+        public static IDataElement ResolvePointer(this IDataElement dataElement)
+        {
+            if (dataElement is IManagedPointer mp) return mp.Value;
+            return dataElement;
+        }
     }
 }

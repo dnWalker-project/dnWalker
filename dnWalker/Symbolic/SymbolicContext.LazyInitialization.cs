@@ -2,6 +2,7 @@
 
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Heap;
+using dnWalker.Symbolic.Utils;
 using dnWalker.Symbolic.Variables;
 
 using MMC.Data;
@@ -75,7 +76,7 @@ namespace dnWalker.Symbolic
 
             if (parentLocation == Location.Null) return false;
 
-            AllocatedArray parentArray = (AllocatedArray)cur.DynamicArea.Allocations[(int)_locationMapping[parentLocation]];
+            AllocatedArray parentArray = (AllocatedArray)cur.DynamicArea.Allocations[(int)_symToConcrMapping[parentLocation]];
 
             if (index < 0 || index >= parentArray.Fields.Length) return false;
             
@@ -106,7 +107,7 @@ namespace dnWalker.Symbolic
 
             Location parentLocation = (Location)parent;
 
-            AllocatedObject parentObject = (AllocatedObject)cur.DynamicArea.Allocations[(int)_locationMapping[parentLocation]];
+            AllocatedObject parentObject = (AllocatedObject)cur.DynamicArea.Allocations[(int)_symToConcrMapping[parentLocation]];
             IDataElement de = parentObject.Fields[index];
 
             if (de.TryGetExpression(cur, out Expression elemExpr))
@@ -124,7 +125,8 @@ namespace dnWalker.Symbolic
             return true;
         }
 
-        private readonly Dictionary<Location, uint> _locationMapping = new Dictionary<Location, uint>();
+        private readonly Dictionary<Location, uint> _symToConcrMapping = new Dictionary<Location, uint>();
+        private readonly Dictionary<uint, Location> _concrToSymMapping = new Dictionary<uint, Location>();
 
         public IDataElement LazyInitialize(IVariable variable, ExplicitActiveState cur)
         {
@@ -144,7 +146,7 @@ namespace dnWalker.Symbolic
                     // the location is null => return null object reference
                     result = new ObjectReference(0);
                 }
-                else if (_locationMapping.TryGetValue(location, out uint heapAddress))
+                else if (_symToConcrMapping.TryGetValue(location, out uint heapAddress))
                 {
                     // the location is not null && its node has already been allocated => return object reference which points at that allocation
                     // heap address starts at 0 and IS NOT NULL => the transformation +1
@@ -163,7 +165,8 @@ namespace dnWalker.Symbolic
                     };
 
                     // heap address starts at 0 and IS NOT NULL => the transformation +1
-                    _locationMapping[location] = or.Location - 1;
+                    _symToConcrMapping[location] = or.Location - 1;
+                    _concrToSymMapping[or.Location - 1] = location;
                     result = or;
                 }
             }
@@ -172,8 +175,84 @@ namespace dnWalker.Symbolic
                 result = value.ToDataElement();
             }
 
+            _outputModel.TrySetValue(variable, value);
+
             return result;
         }
 
+
+        public Location ProcessExistingReference(ObjectReference objRef, ExplicitActiveState cur)
+        {
+            if (objRef.IsNull()) return Location.Null;
+
+            if (_concrToSymMapping.TryGetValue(objRef.Location - 1, out Location location)) return location;
+
+            DynamicAllocation allocation = cur.DynamicArea.Allocations[objRef];
+            location = allocation switch
+            {
+                AllocatedArray arrayAllocation => ProcessExistingArray(arrayAllocation, cur),
+                AllocatedObject objectAllocation => ProcessExistingObject(objectAllocation, cur),
+                _ => throw new NotSupportedException()
+            };
+
+            _symToConcrMapping[location] = objRef.Location - 1;
+            _concrToSymMapping[objRef.Location - 1] = location;
+
+            return location;
+        }
+
+        private Location ProcessExistingObject(AllocatedObject objectAllocation, ExplicitActiveState cur)
+        {
+            // we assume that this location has no mapping yet
+            IObjectHeapNode heapNode = _outputModel.HeapInfo.InitializeObject(objectAllocation.Type.ToTypeSig());
+
+            TypeDef type = objectAllocation.Type.ResolveTypeDefThrow();
+            type.InitLayout();
+            for (int i = 0; i < objectAllocation.Fields.Length; ++i)
+            {
+                IField field = objectAllocation.FieldDefs[i];
+                IValue fieldValue;
+                if (field.FieldSig.Type.IsPrimitive || field.FieldSig.Type.IsString())
+                {
+                    fieldValue = objectAllocation.Fields[i].AsModelValue(field.FieldSig.Type);
+                }
+                else
+                {
+                    ObjectReference refValue = (ObjectReference)objectAllocation.Fields[i];
+                    fieldValue = ProcessExistingReference(refValue, cur);
+                }
+
+                heapNode.SetField(field, fieldValue);
+            }
+
+            return heapNode.Location;
+        }
+
+        private Location ProcessExistingArray(AllocatedArray arrayAllocation, ExplicitActiveState cur)
+        {
+            // we assume that this location has no mapping yet
+            IArrayHeapNode heapNode = _outputModel.HeapInfo.InitializeArray(arrayAllocation.Type.ToTypeSig(), arrayAllocation.Fields.Length);
+
+            TypeSig elementType = arrayAllocation.Type.ToTypeSig();
+            bool primitiveOrString = elementType.IsPrimitive || elementType.IsString();
+
+            for (int i = 0; i < arrayAllocation.Fields.Length; ++i)
+            {
+                IValue elementValue;
+                if (primitiveOrString)
+                {
+                    elementValue = arrayAllocation.Fields[i].AsModelValue(elementType);
+                }
+                else
+                {
+                    ObjectReference refValue = (ObjectReference)arrayAllocation.Fields[i];
+                    elementValue = ProcessExistingReference(refValue, cur);
+                }
+
+                heapNode.SetElement(i, elementValue);
+            }
+
+            return heapNode.Location;
+        }
     }
 }

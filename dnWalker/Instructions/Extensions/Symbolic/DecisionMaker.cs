@@ -16,17 +16,12 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public abstract class DecisionMaker : IInstructionExecutor
+    public static class DecisionMaker
     {
-        protected delegate Expression EdgeExpressionFactory(ExplicitActiveState cur, ControlFlowEdge edge);
-        protected delegate Expression EdgeExpressionFactory<T>(ExplicitActiveState cur, ControlFlowEdge edge, T context);
-        protected delegate Expression EdgeExpressionFactory<T1,T2>(ExplicitActiveState cur, ControlFlowEdge edge, T1 ctx1, T2 ctx2);
-        protected delegate Expression EdgeExpressionFactory<T1,T2,T3>(ExplicitActiveState cur, ControlFlowEdge edge, T1 ctx1, T2 ctx2, T3 ctx3);
-
-        public abstract IEnumerable<OpCode> SupportedOpCodes { get; }
-
-        public abstract IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next);
-
+        public delegate Expression EdgeExpressionFactory(ExplicitActiveState cur, ControlFlowEdge edge);
+        public delegate Expression EdgeExpressionFactory<T>(ExplicitActiveState cur, ControlFlowEdge edge, T context);
+        public delegate Expression EdgeExpressionFactory<T1,T2>(ExplicitActiveState cur, ControlFlowEdge edge, T1 ctx1, T2 ctx2);
+        public delegate Expression EdgeExpressionFactory<T1,T2,T3>(ExplicitActiveState cur, ControlFlowEdge edge, T1 ctx1, T2 ctx2, T3 ctx3);
 
         private static InstructionBlockNode GetControlFlowNode(ExplicitActiveState cur)
         {
@@ -70,7 +65,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
         }
 
-        protected static void MakeDecision<TContext>(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory<TContext> expressionBuilder, TContext context)
+        public static void MakeDecision<TContext>(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory<TContext> expressionBuilder, TContext context)
         {
             InstructionBlockNode currentNode = GetControlFlowNode(cur);
             ControlFlowNode[] successors = currentNode.Successors.ToArray();
@@ -85,7 +80,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             MakeDecision(cur, decision, successors, choiceExpression);
         }
-        protected static void MakeDecision<T1,T2>(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory<T1,T2> expressionBuilder, T1 ctx1, T2 ctx2)
+        public static void MakeDecision<T1,T2>(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory<T1,T2> expressionBuilder, T1 ctx1, T2 ctx2)
         {
             InstructionBlockNode currentNode = GetControlFlowNode(cur);
             ControlFlowNode[] successors = currentNode.Successors.ToArray();
@@ -100,7 +95,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             MakeDecision(cur, decision, successors, choiceExpression);
         }
-        protected static void MakeDecision<T1, T2, T3>(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory<T1,T2,T3> expressionBuilder, T1 ctx1, T2 ctx2, T3 ctx3)
+        public static void MakeDecision<T1, T2, T3>(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory<T1,T2,T3> expressionBuilder, T1 ctx1, T2 ctx2, T3 ctx3)
         {
             InstructionBlockNode currentNode = GetControlFlowNode(cur);
             ControlFlowNode[] successors = currentNode.Successors.ToArray();
@@ -116,7 +111,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             MakeDecision(cur, decision, successors, choiceExpression);
         }
 
-        protected static void MakeDecision(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory expressionBuilder)
+        public static void MakeDecision(ExplicitActiveState cur, IIEReturnValue returnValue, EdgeExpressionFactory expressionBuilder)
         {
             InstructionBlockNode currentNode = GetControlFlowNode(cur);
             ControlFlowNode[] successors = currentNode.Successors.ToArray();

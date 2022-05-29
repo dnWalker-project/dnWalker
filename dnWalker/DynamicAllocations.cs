@@ -45,6 +45,8 @@ namespace MMC.State {
         /// <remarks>Note that the static fields never get assigned.</remarks>
         public DataElementList Fields { get; set; }
 
+        public List<FieldDef> FieldDefs { get; set; }
+
         /// <summary>
         /// The offset of the value field for wrapped types.
         /// </summary>
@@ -102,16 +104,18 @@ namespace MMC.State {
             /* 
 			 * determine the field length of this object
 			 */
-            var fields = new List<FieldDef>();
+            FieldDefs = new List<FieldDef>();
+
+            Type.ResolveTypeDefThrow().InitLayout();
 
             foreach (var typeDefOrRef in Type.InheritanceEnumerator())
             {
-                fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
+                FieldDefs.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
             }
 
             if (Fields == null)
             {
-                Fields = cur.StorageFactory.CreateList(fields.Count);
+                Fields = cur.StorageFactory.CreateList(FieldDefs.Count);
             }
 
             /*
@@ -121,11 +125,11 @@ namespace MMC.State {
             //int typeOffset = 0;
 
             //foreach (var typeDef in cur.DefinitionProvider.InheritanceEnumerator(m_typeDef)) {
-            for (var i = 0; i < fields.Count; i++)
+            for (var i = 0; i < FieldDefs.Count; i++)
             {
                 //int fieldsOffset = typeOffset + i;
-                var type = fields[i].FieldType.ToTypeDefOrRef();
-                if (type == null && !fields[i].FieldType.IsPrimitive)
+                var type = FieldDefs[i].FieldType.ToTypeDefOrRef();
+                if (type == null && !FieldDefs[i].FieldType.IsPrimitive)
                 {
                     Fields[i] = ObjectReference.Null;
                     continue;

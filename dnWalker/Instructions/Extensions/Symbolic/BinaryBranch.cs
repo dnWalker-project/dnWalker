@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class BinaryBranch : DecisionMaker
+    public class BinaryBranch : IInstructionExecutor
     {
         private static readonly Dictionary<OpCode, Operator> _operatorLookup = new Dictionary<OpCode, Operator>()
         {
@@ -54,15 +54,9 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             return (fallThrough, branch);
         }
 
-        public override IEnumerable<OpCode> SupportedOpCodes
-        {
-            get
-            {
-                return _operatorLookup.Keys;
-            }
-        }
+        public IEnumerable<OpCode> SupportedOpCodes => _operatorLookup.Keys;
 
-        public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
+        public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             IDataElement lhs = cur.EvalStack.Peek(1);
             IDataElement rhs = cur.EvalStack.Peek(0);
@@ -75,7 +69,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
 
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
-            MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
+            DecisionMaker.MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
                 edge switch
                 {
                     // the fall-through option => the (left [op] right) fails => negate the operator

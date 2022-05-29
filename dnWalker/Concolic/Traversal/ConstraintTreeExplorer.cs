@@ -77,9 +77,8 @@ namespace dnWalker.Concolic.Traversal
         {
             if (_current == null) _current = _trees[0].Root;
 
-            Debug.Assert(decision >= 0);
-            Debug.Assert(decision < choiceTargets.Length);
-            Debug.Assert(choiceTargets.Length == choiceExpressions.Length);
+            Debug.Assert(decision >= 0 && decision < choiceTargets.Length, "Decision must be greater than or equal to 0 and less than choiceTargets.Length.");
+            Debug.Assert(choiceTargets.Length == choiceExpressions.Length, "choiceTargets must have same length as choiceExpressions.");
 
             // we are making a decision from the current node => we can mark it covered
             _strategy.AddExploredNode(_current);

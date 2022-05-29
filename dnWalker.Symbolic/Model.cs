@@ -28,9 +28,9 @@ namespace dnWalker.Symbolic
 
         private Model(Model model)
         {
-            _precondition = model._precondition;
-            _values = new Dictionary<IRootVariable, IValue>(model._values.Select(p => KeyValuePair.Create(p.Key, p.Value)));
-            _heapInfo = model._heapInfo;
+            _precondition = model._precondition.Clone();
+            _values = new Dictionary<IRootVariable, IValue>(model._values);
+            _heapInfo = model._heapInfo.Clone();
         }
 
         IModel IModel.Clone()

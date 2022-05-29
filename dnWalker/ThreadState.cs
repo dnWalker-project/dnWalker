@@ -71,7 +71,7 @@ namespace MMC.State
 
         public ObjectReference ThreadObject { get; set; }
 
-        public ExceptionInfo UnhandledException { get; internal set; }
+        public ExceptionInfo UnhandledException { get; set; }
 
         public ExplicitActiveState Cur => cur;
 

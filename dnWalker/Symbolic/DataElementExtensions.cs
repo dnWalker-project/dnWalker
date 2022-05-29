@@ -5,6 +5,8 @@ using System;
 using dnWalker.Symbolic.Expressions;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using dnlib.DotNet;
+using dnWalker.Symbolic.Utils;
 
 namespace dnWalker.Symbolic
 {
@@ -26,19 +28,10 @@ namespace dnWalker.Symbolic
                     case Float8 f8: return factory.MakeRealConstant(f8.Value);
                     case ConstantString constStr: return constStr.Value == null ? factory.StringNullExpression : factory.MakeStringConstant(constStr.Value);
                     case ObjectReference objRef:
-                        return objRef.IsNull() ? factory.NullExpression :
-                       // not null => generate a new variable based on the type name & process the concrete value
-                       ProcessNewObject(objRef);
+                        return objRef.IsNull() ? factory.NullExpression : throw new InvalidOperationException();
                 }
             }
             return expression;
-
-            Expression ProcessNewObject(ObjectReference objRef)
-            {
-                cur.TryGetSymbolicContext(out SymbolicContext context);
-                Debug.Assert(context != null);
-                return context.ProcessExistingObject(objRef);
-            }
         }
         public static void SetExpression(this IDataElement dataElement, ExplicitActiveState cur, Expression expression)
         {
@@ -50,5 +43,44 @@ namespace dnWalker.Symbolic
             return cur.PathStore.CurrentPath.TryGetObjectAttribute(dataElement, ExpressionAttribute, out expression);
         }
 
+        public static IValue AsModelValue(this IDataElement dataElement, TypeSig expectedType)
+        {
+            switch (dataElement)
+            {
+                case Int4 i4:
+                    {
+                        if (expectedType.IsByte())
+                        {
+                            return ValueFactory.GetValue((byte)i4.Value);
+                        }
+                        if (expectedType.IsSByte())
+                        {
+                            return ValueFactory.GetValue((sbyte)i4.Value);
+                        }
+                        if (expectedType.IsUInt16())
+                        {
+                            return ValueFactory.GetValue((ushort)i4.Value);
+                        }
+                        if (expectedType.IsInt16())
+                        {
+                            return ValueFactory.GetValue((short)i4.Value);
+                        }
+                        if (expectedType.IsBoolean())
+                        {
+                            return ValueFactory.GetValue(i4.Value != 0);
+                        }
+
+                        return ValueFactory.GetValue(i4.Value);
+                    }
+                case UnsignedInt4 u4: return ValueFactory.GetValue(u4.Value);
+                case Int8 i8: return ValueFactory.GetValue(i8.Value);
+                case UnsignedInt8 u8: return ValueFactory.GetValue(u8.Value);
+                case Float4 f4: return ValueFactory.GetValue(f4.Value);
+                case Float8 f8: return ValueFactory.GetValue(f8.Value);
+                case ConstantString constStr: return new StringValue(constStr.Value);
+            }
+
+            throw new NotSupportedException();
+        }
     }
 }
