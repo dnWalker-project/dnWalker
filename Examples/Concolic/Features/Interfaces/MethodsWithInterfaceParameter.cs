@@ -21,7 +21,7 @@ namespace Examples.Concolic.Features.Interfaces
 
     public class MethodsWithInterfaceParameter
     {
-        public static void Interface_AbstractMethod(IMyInterface instance)
+        public static void InvokeInterfaceMethod(IMyInterface instance)
         {
             if (instance == null)
             {

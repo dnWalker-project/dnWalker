@@ -117,15 +117,19 @@ namespace Examples.Concolic.Features.Arrays
             }
         }
 
-        public static void SetElementToInput(TestClass[] arr, TestClass value)
+        public static void SetElementToRefInput(TestClass[] arr, TestClass value)
         {
-            if (arr == null || arr.Length < 3) return;
+            if (value == null)
+            {
+                Console.Out.WriteLine("Value is null");
+                return;
+            }
             arr[2] = value;
         }
 
         public static void SetElementToFreshObject(TestClass[] arr)
         {
-            if (arr == null || arr.Length < 3) return;
+            //if (arr == null || arr.Length < 3) return;
             arr[2] = new TestClass();
         }
 
@@ -139,15 +143,18 @@ namespace Examples.Concolic.Features.Arrays
 
         public static void SetElementToFreshArray(TestClass[][] arr2D)
         {
-            if (arr2D == null || arr2D.Length < 3) return;
-
             TestClass[] arr = new TestClass[5];
             arr2D[2] = arr;
         }
 
         public static void SetElementToNull(TestClass[] arr)
         {
-            if (arr == null || arr.Length < 3) return;
+            if (arr[1] == null)
+            {
+                Console.Out.WriteLine("arr[1] == null");
+                return;
+            }
+
             arr[1] = null;
         }
     }

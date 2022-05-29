@@ -13,23 +13,19 @@ using System.Collections.Generic;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public static partial class STFLD
+    public abstract partial class STFLD
     {
-        public class NullReferenceHandler : DecisionMaker
+        public class NullReferenceHandler : STFLD
         {
-            private static readonly OpCode[] _supportedOpCodes = new[] { OpCodes.Stfld };
-
-            public override IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
-
             public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
             {
                 IDataElement instance = cur.EvalStack.Peek(1).ResolvePointer();
 
-                IIEReturnValue returnVaalue = next(baseExecutor, cur);
+                IIEReturnValue returnValue = next(baseExecutor, cur);
 
                 if (ExpressionUtils.GetExpressions(cur, instance, out Expression instanceExpression))
                 {
-                    MakeDecision(cur, returnVaalue, static (cur, edge, instance) =>
+                    DecisionMaker.MakeDecision(cur, returnValue, static (cur, edge, instance) =>
                     {
                         Expression nullExpression = cur.GetExpressionFactory().NullExpression;
                         return edge switch
@@ -41,7 +37,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                     }, instanceExpression);
                 }
 
-                return returnVaalue;
+                return returnValue;
             }
         }
     }

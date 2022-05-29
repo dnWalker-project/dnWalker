@@ -36,9 +36,21 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             return expr1 != null;
         }
 
-        //public static bool GetExpressions(ExplicitActiveState cur, IDataElement[] dataElements, out Expression[] expressions)
-        //{
+        public static bool GetExpressions(ExplicitActiveState cur, IDataElement de1, IDataElement de2, IDataElement de3, out Expression expr1, out Expression expr2, out Expression expr3)
+        {
+            de1.TryGetExpression(cur, out expr1);
+            de2.TryGetExpression(cur, out expr2);
+            de3.TryGetExpression(cur, out expr3);
 
-        //}
+            if (expr1 != null || expr2 != null || expr3 != null)
+            {
+                expr1 ??= de1.AsExpression(cur);
+                expr2 ??= de2.AsExpression(cur);
+                expr3 ??= de3.AsExpression(cur);
+            }
+
+
+            return expr1 != null;
+        }
     }
 }

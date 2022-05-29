@@ -56,7 +56,7 @@ namespace dnWalker.Symbolic
 
         public override string ToString()
         {
-            return $"@{Value:X8}";
+            return this == Null ? "null" : $"@{Value:X8}";
         }
     }
 }

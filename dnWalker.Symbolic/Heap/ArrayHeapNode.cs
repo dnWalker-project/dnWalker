@@ -14,12 +14,13 @@ namespace dnWalker.Symbolic.Heap
 
         private ArrayHeapNode(ArrayHeapNode other) : base(other.Location, other.Type)
         {
+            Length = other.Length;
             _elements = new Dictionary<int, IValue>(other._elements);
         }
 
-        public ArrayHeapNode(Location location, TypeSig elementType, int lenght) : base(location, elementType)
+        public ArrayHeapNode(Location location, TypeSig elementType, int length) : base(location, elementType)
         {
-            Length = lenght;
+            Length = length;
         }
 
         public override HeapNode Clone()

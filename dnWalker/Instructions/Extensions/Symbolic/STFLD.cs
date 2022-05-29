@@ -1,10 +1,5 @@
 ﻿using dnlib.DotNet.Emit;
 
-using dnWalker.Graphs.ControlFlow;
-using dnWalker.Symbolic;
-using dnWalker.Symbolic.Expressions;
-
-using MMC.Data;
 using MMC.InstructionExec;
 using MMC.State;
 
@@ -16,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public abstract partial class LDLEN : IInstructionExecutor
+    public abstract partial class STFLD : IInstructionExecutor
     {
-        private static readonly OpCode[] _supportedOpCodes = new[] { OpCodes.Ldlen };
+        private static readonly OpCode[] _supportedCodes = new[] { OpCodes.Stfld };
 
-        public IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
+        public IEnumerable<OpCode> SupportedOpCodes => _supportedCodes;
 
         public abstract IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next);
     }

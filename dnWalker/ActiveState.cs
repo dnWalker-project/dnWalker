@@ -31,14 +31,6 @@ namespace MMC.State
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
-    /// <summary>
-    /// Represents a service which may be attached to <see cref="ExplicitActiveState"/>.
-    /// </summary>
-    public interface IActiveStateService
-    {
-        void Attach(ExplicitActiveState cur);
-        void Detach(ExplicitActiveState cur);
-    }
 
     /// <summary>
     /// An implementation of the active state of the virtual machine.

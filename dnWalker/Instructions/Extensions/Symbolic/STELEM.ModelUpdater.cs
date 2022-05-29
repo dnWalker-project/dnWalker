@@ -18,15 +18,17 @@ using System.Threading.Tasks;
 
 using IVariable = dnWalker.Symbolic.IVariable;
 
+
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public abstract partial class STFLD
+    public abstract partial class STELEM
     {
-        public class ModelUpdater : STFLD
+        public class ModelUpdater : STELEM
         {
             public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
             {
-                IDataElement instance = cur.EvalStack.Peek(1).ResolvePointer();
+                IDataElement array = cur.EvalStack.Peek(2).ResolvePointer();
+                IDataElement index = cur.EvalStack.Peek(1);
                 IDataElement value = cur.EvalStack.Peek(0);
 
                 IIEReturnValue returnValue = next(baseExecutor, cur);
@@ -34,20 +36,21 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 if (returnValue != InstructionExecBase.ehLookupRetval &&
                     cur.TryGetSymbolicContext(out SymbolicContext context))
                 {
-                    if (ExpressionUtils.GetExpressions(cur, instance, out Expression instanceExpression))
+                    if (ExpressionUtils.GetExpressions(cur, array, out Expression arrayExpression))
                     {
-                        Debug.Assert(instanceExpression is VariableExpression);
-                        IVariable instanceVar = ((VariableExpression)instanceExpression).Variable;
+                        Debug.Assert(arrayExpression is VariableExpression);
+                        IVariable arrayVar = ((VariableExpression)arrayExpression).Variable;
 
-                        IField field = ((ObjectModelInstructionExec)baseExecutor).GetFieldDefinition();
+                        int idx = ((INumericElement)index).ToInt4(false).Value;
 
                         IValue modelValue;
+                        
                         // field is primitive type
-                        if (field.FieldSig.Type.IsPrimitive || field.FieldSig.Type.IsString())
+                        if (value is not ObjectReference)
                         {
                             // 1. primitive value type field or string
                             // just convert data element value to IValue
-                            modelValue = value.AsModelValue(field.FieldSig.Type);
+                            modelValue = value.AsModelValue(cur.DynamicArea.Allocations[(ObjectReference)array].Type.ToTypeSig());
                         }
                         // field is reference type
                         else
@@ -66,7 +69,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                             }
                         }
 
-                        context.Update(instanceVar, field, modelValue);
+                        context.Update(arrayVar, idx, modelValue);
                     }
                 }
 
