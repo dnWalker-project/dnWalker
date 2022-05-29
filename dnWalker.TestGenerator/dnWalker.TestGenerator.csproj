@@ -8,6 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Symbols\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Templates\TemplateBase.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -26,6 +29,7 @@
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
+    <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,4 +110,7 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Symbols\" />
+  </ItemGroup>
 </Project>

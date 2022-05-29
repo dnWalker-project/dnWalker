@@ -36,4 +36,10 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Symbols\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Symbols\" />
+  </ItemGroup>
 </Project>
