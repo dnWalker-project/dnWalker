@@ -1,4 +1,6 @@
-﻿namespace dnWalker.Symbolic.Heap
+﻿using dnlib.DotNet;
+
+namespace dnWalker.Symbolic.Heap
 {
     /// <summary>
     /// Represents a read only array heap node.
@@ -14,6 +16,9 @@
 
         IEnumerable<int> Indeces { get; }
 
+        TypeSig ElementType { get; }
+
         int Length { get; }
+        bool HasElements { get; }
     }
 }

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.XUnitFramework
+namespace dnWalker.TestGenerator.XunitFramework
 {
-    internal partial class XUnitTestProjectTemplate
+    internal partial class XunitTestProjectTemplate
     {
         private ITestProjectContext? _context;
 
@@ -31,8 +31,8 @@ namespace dnWalker.TestGenerator.XUnitFramework
         public List<PackageReference> BasePackages { get; } = new List<PackageReference>() 
         {
             PackageReference.Create("Microsoft.NET.Test.Sdk", new Version("17.0.0")),
-            PackageReference.Create("xunit", new Version("2.4.1")),
-            PackageReference.Create("xunit.runner.visualstudio", new Version("2.4.3"))
+            PackageReference.Create("Xunit", new Version("2.4.1")),
+            PackageReference.Create("Xunit.runner.visualstudio", new Version("2.4.3"))
                 .Include("runtime", "build", "native", "contentfiles", "analyzers", "buildtransitive")
                 .Private("all"),
             PackageReference.Create("coverlet.collector", new Version("3.1.0"))

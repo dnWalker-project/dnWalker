@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.XUnitFramework
+namespace dnWalker.TestGenerator.XunitFramework
 {
-    internal class XUnitTestProjectGenerator : ITestProjectGenerator
+    internal class XunitTestProjectGenerator : ITestProjectGenerator
     {
-        private readonly XUnitTestProjectTemplate _template = new XUnitTestProjectTemplate();
+        private readonly XunitTestProjectTemplate _template = new XunitTestProjectTemplate();
 
         public void GenerateProject(ITestProjectContext context)
         {
@@ -38,7 +38,7 @@ namespace dnWalker.TestGenerator.XUnitFramework
 
         private static string GenerateTestProjectName(string solutionDirectory)
         {
-            const string BaseProjectName = "XUnitTestProject";
+            const string BaseProjectName = "XunitTestProject";
 
             string[] dirs = Directory.GetDirectories(solutionDirectory).Where(d => d.StartsWith(BaseProjectName)).ToArray();
 

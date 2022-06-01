@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.XUnitFramework
+namespace dnWalker.TestGenerator.XunitFramework
 {
-    internal class XUnitTestClassGenerator : ITestClassGenerator
+    internal class XunitTestClassGenerator : ITestClassGenerator
     {
-        private readonly XUnitTestClassTemplate _template = new XUnitTestClassTemplate();
+        private readonly XunitTestClassTemplate _template = new XunitTestClassTemplate();
 
         public void GenerateTestClass(ITestClassContext context)
         {

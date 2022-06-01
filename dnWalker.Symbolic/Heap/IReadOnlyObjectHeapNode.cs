@@ -24,5 +24,51 @@ namespace dnWalker.Symbolic.Heap
 
         IEnumerable<IField> Fields { get; }
         IEnumerable<(IMethod method, int invocation)> MethodInvocations { get; }
+
+        bool HasFields { get; }
+        bool HasMethodInvocations { get; }
+    }
+
+    public static class ReadOnlyObjectHeapNodeExtensions
+    {
+        public static IEnumerable<(IMethod method, IValue[] results)> GetMethodResults(this IReadOnlyObjectHeapNode objectNode)
+        {
+            Dictionary<IMethod, int> maxInvocation = new Dictionary<IMethod, int>(MethodEqualityComparer.CompareDeclaringTypes);
+
+            foreach ((IMethod method, int invocation) in objectNode.MethodInvocations)
+            {
+                UpdateInvocation(method, invocation);
+            }
+
+            List<(IMethod method, IValue[] results)> retList = new List<(IMethod,IValue[])>();
+
+            foreach ((IMethod method, int max) in maxInvocation)
+            {
+                IValue[] results = new IValue[max];
+                for (int i = 0; i < max; ++i)
+                {
+                    results[i] = objectNode.GetMethodResult(method, i);
+                }
+
+                retList.Add((method, results));
+            }
+
+            return retList;
+            
+            void UpdateInvocation(IMethod method, int invocation)
+            {
+                if (maxInvocation.TryGetValue(method, out int currMax))
+                {
+                    if (currMax < invocation)
+                    {
+                        maxInvocation[method] = invocation;
+                    }
+                }
+                else
+                {
+                    maxInvocation[method] = invocation;
+                }
+            }
+        }
     }
 }

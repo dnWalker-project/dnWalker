@@ -1,5 +1,5 @@
 ﻿using dnWalker.TestGenerator.TestProjects;
-using dnWalker.TestGenerator.XUnitFramework;
+using dnWalker.TestGenerator.XunitFramework;
 
 using FluentAssertions;
 
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace dnWalker.TestGenerator.Tests.XUnitFramework
+namespace dnWalker.TestGenerator.Tests.XunitFramework
 {
     public class XUnitTestProjectGeneratorTests
     {
@@ -46,7 +46,7 @@ namespace dnWalker.TestGenerator.Tests.XUnitFramework
         public void Test_BasicXUnitTestProject()
         {
             TestProjectContext context = new TestProjectContext();
-            string generatedContent = new XUnitTestProjectGenerator().GenerateProjectFileContent(context).Trim();
+            string generatedContent = new XunitTestProjectGenerator().GenerateProjectFileContent(context).Trim();
 
             //string line463 = generatedContent.Substring(463 - 10, 30);
 

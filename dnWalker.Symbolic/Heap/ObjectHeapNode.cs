@@ -82,5 +82,9 @@ namespace dnWalker.Symbolic.Heap
         public IEnumerable<IField> Fields => _fields.Keys;
 
         public IEnumerable<(IMethod method, int invocation)> MethodInvocations => _methods.Keys;
+
+        public bool HasFields => _fields.Count > 0;
+
+        public bool HasMethodInvocations => _methods.Count > 0;
     }
 }

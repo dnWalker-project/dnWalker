@@ -40,6 +40,6 @@
     <None Remove="Symbols\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Symbols\" />
+    <Folder Include="Templates\" />
   </ItemGroup>
 </Project>

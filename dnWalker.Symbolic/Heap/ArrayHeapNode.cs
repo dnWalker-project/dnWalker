@@ -18,7 +18,7 @@ namespace dnWalker.Symbolic.Heap
             _elements = new Dictionary<int, IValue>(other._elements);
         }
 
-        public ArrayHeapNode(Location location, TypeSig elementType, int length) : base(location, elementType)
+        public ArrayHeapNode(Location location, TypeSig elementType, int length) : base(location, new SZArraySig(elementType))
         {
             Length = length;
         }
@@ -32,7 +32,7 @@ namespace dnWalker.Symbolic.Heap
 
         public IValue GetElement(int index)
         {
-            return GetValueOrDefault(_elements, index, Type);
+            return GetValueOrDefault(_elements, index, ElementType);
         }
 
         public void SetElement(int index, IValue value)
@@ -47,5 +47,9 @@ namespace dnWalker.Symbolic.Heap
         }
 
         public IEnumerable<int> Indeces => _elements.Keys;
+
+        public TypeSig ElementType => Type.Next;
+
+        public bool HasElements => _elements.Count > 0;
     }
 }

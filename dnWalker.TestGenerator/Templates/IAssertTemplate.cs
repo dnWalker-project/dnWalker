@@ -1,21 +1,26 @@
 ﻿using System;
 using System.IO;
 
+using dnlib.DotNet;
+
 using dnWalker.TestGenerator.Symbols;
 
 namespace dnWalker.TestGenerator.Templates
 {
-    public interface IAssertTemplate
+    public interface IAssertTemplate : ITemplate
     {
-        void WriteAssertNull(TextWriter output, TemplateSymbol symbol);
-        void WriteAssertNotNull(TextWriter output, TemplateSymbol symbol);
+        void WriteAssertNull(IWriter output, string symbol);
+        void WriteAssertNotNull(IWriter output, string symbol);
 
-        void WriteAssertEqual(TextWriter output, TemplateSymbol left, TemplateSymbol right);
-        void WriteAssertNotEqual(TextWriter output, TemplateSymbol left, TemplateSymbol right);
+        void WriteAssertEqual(IWriter output, string leftSymbol, string rightSymbol);
+        void WriteAssertNotEqual(IWriter output, string leftSymbol, string rightSymbol);
 
-        void WriteAssertSame(TextWriter output, TemplateSymbol left, TemplateSymbol right);
-        void WriteAssertNotSame(TextWriter output, TemplateSymbol left, TemplateSymbol right);
+        void WriteAssertSame(IWriter output, string leftSymbol, string rightSymbol);
+        void WriteAssertNotSame(IWriter output, string leftSymbol, string rightSymbol);
 
+        void WriteAssertExceptionThrown(IWriter output, string delegateSymbol, TypeSig exceptionType);
+        void WriteAssertExceptionNotThrown(IWriter output, string delegateSymbol, TypeSig exceptionType);
+        void WriteAssertNoExceptionThrown(IWriter output, string delegateSymbol);
 
     }
 }

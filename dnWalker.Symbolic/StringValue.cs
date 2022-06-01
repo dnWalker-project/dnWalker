@@ -46,5 +46,10 @@ namespace dnWalker.Symbolic
         {
             return obj is StringValue value && Equals(value);
         }
+
+        public override string ToString()
+        {
+            return string.IsNullOrEmpty(Content) ? "\"\"" : $"\"{Content}\"";
+        }
     }
 }

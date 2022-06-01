@@ -7,9 +7,10 @@ using dnlib.DotNet;
 
 namespace dnWalker.TestGenerator.Templates
 {
-    public interface IActTemplate
+    public interface IActTemplate : ITemplate
     {
-        void WriteAct(TextWriter output, IMethod method, TemplateSymbol[] arguments);
+        void WriteAct(IWriter output, IMethod method, string[] argumentSymbols, string? returnSymbol = null);
+        void WriteActDelegate(IWriter output, IMethod method, string[] argumentSymbols, string? returnSymbol = null, string delegateSymbol = "act");
     }
 }
 
