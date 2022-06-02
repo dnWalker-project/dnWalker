@@ -2,7 +2,7 @@
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
-using dnWalker.TestGenerator.Heap;
+using dnWalker.TestGenerator.Symbolic.Heap;
 
 using FluentAssertions;
 

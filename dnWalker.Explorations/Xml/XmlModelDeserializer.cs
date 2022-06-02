@@ -43,6 +43,7 @@ namespace dnWalker.Explorations.Xml
                     {
                         XmlTokens.MethodArgument => MethodArgumentVariableFromXml(varXml, method),
                         XmlTokens.StaticField => StaticFieldVariableFromXml(varXml),
+                        XmlTokens.ReturnValue => ReturnValueVariableFromXml(varXml, method),
                         _ => throw new NotSupportedException()
                     };
 
@@ -150,7 +151,7 @@ namespace dnWalker.Explorations.Xml
         #region Deserialize Heap
         private IHeapNode ObjectNodeFromXml(XElement nodeXml, Location location, TypeSig type)
         {
-            ObjectHeapNode objectNode = new ObjectHeapNode(location, type);
+            ObjectHeapNode objectNode = new ObjectHeapNode(location, type, (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
 
             Debug.Fail("Not yet implemented!!! TODO: set fields and method results");
 
@@ -159,7 +160,7 @@ namespace dnWalker.Explorations.Xml
 
         private IHeapNode ArrayNodeFromXml(XElement nodeXml, Location location, TypeSig elementType)
         {
-            ArrayHeapNode arrayNode = new ArrayHeapNode(location, elementType, (int)GetAttribute(nodeXml, XmlTokens.Length));
+            ArrayHeapNode arrayNode = new ArrayHeapNode(location, elementType, (int)GetAttribute(nodeXml, XmlTokens.Length), (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
 
             Debug.Fail("Not yet implemented!!! TODO: set method results");
 
@@ -181,6 +182,11 @@ namespace dnWalker.Explorations.Xml
             ITypeDefOrRef type = _typeTranslator.FromString(GetAttribute(varXml, XmlTokens.Type).Value).ToTypeDefOrRef();
             IField field = type.ResolveTypeDefThrow().Fields.First(fld => fld.Name == fieldName);
             return new StaticFieldVariable(field);
+        }
+
+        private ReturnValueVariable ReturnValueVariableFromXml(XElement varXml, IMethod method)
+        {
+            return new ReturnValueVariable(method);
         }
         #endregion Deserialize Variables
     }

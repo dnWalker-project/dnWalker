@@ -37,11 +37,14 @@ namespace dnWalker.Explorations.Xml
         public const string Value = nameof(Value);
         public const string MethodArgument = nameof(MethodArgument);
         public const string StaticField = nameof(StaticField);
-        
+        public const string ReturnValue = nameof(ReturnValue);
+
         public const string Name = nameof(Name);
         public const string FieldName = nameof(FieldName);
         public const string Type = nameof(Type);
         
+        public const string IsDirty = nameof(IsDirty);
+
         public const string Heap = nameof(Heap);
         
         public const string ObjectNode = nameof(ObjectNode);

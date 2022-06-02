@@ -3,8 +3,6 @@ using System.IO;
 
 using dnlib.DotNet;
 
-using dnWalker.TestGenerator.Symbols;
-
 namespace dnWalker.TestGenerator.Templates
 {
     public interface IAssertTemplate : ITemplate

@@ -1,5 +1,7 @@
-﻿using dnWalker.Explorations;
-using dnWalker.Parameters;
+﻿using dnlib.DotNet;
+
+using dnWalker.Explorations;
+using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 
 using System;
@@ -21,28 +23,27 @@ namespace dnWalker.TestGenerator.TestClasses
                 Builder builder = new Builder();
 
                 builder._iterationNumber = 0;
-                builder._methodSignature = MethodSignature.Empty;
+                builder._method = null;
                 builder._assemblyName = string.Empty;
                 builder._assemblyFileName = string.Empty;
                 builder._pathConstraint = string.Empty;
                 builder._standardOutput = string.Empty;
                 builder._errorOutput = string.Empty;
-                builder._exception = TypeSignature.Empty;
+                builder._exception = null;
 
                 return builder;
             }
 
             private int _iterationNumber;
-            private MethodSignature _methodSignature;
+            private IMethod? _method;
             private string? _assemblyName;
             private string? _assemblyFileName;
-            private IParameterContext? _parameterContext;
-            private IReadOnlyParameterSet? _baseSet;
-            private IReadOnlyParameterSet? _executionSet;
+            private IReadOnlyModel? _inputModel;
+            private IReadOnlyModel? _outputModel;
             private string? _pathConstraint;
             private string? _standardOutput;
             private string? _errorOutput;
-            private TypeSignature _exception;
+            private TypeSig? _exception;
 
             public int IterationNumber
             {
@@ -56,16 +57,16 @@ namespace dnWalker.TestGenerator.TestClasses
                     _iterationNumber = value;
                 }
             }
-            public MethodSignature MethodSignature
+            public IMethod? Method
             {
                 get
                 {
-                    return _methodSignature;
+                    return _method;
                 }
 
                 set
                 {
-                    _methodSignature = value;
+                    _method = value;
                 }
             }
             public string? AssemblyName
@@ -92,40 +93,28 @@ namespace dnWalker.TestGenerator.TestClasses
                     _assemblyFileName = value;
                 }
             }
-            public IParameterContext? ParameterContext
+            public IReadOnlyModel? InputModel
             {
                 get
                 {
-                    return _parameterContext;
+                    return _inputModel;
                 }
 
                 set
                 {
-                    _parameterContext = value;
+                    _inputModel = value;
                 }
             }
-            public IReadOnlyParameterSet? BaseSet
+            public IReadOnlyModel? OutputModel
             {
                 get
                 {
-                    return _baseSet;
+                    return _outputModel;
                 }
 
                 set
                 {
-                    _baseSet = value;
-                }
-            }
-            public IReadOnlyParameterSet? ExecutionSet
-            {
-                get
-                {
-                    return _executionSet;
-                }
-
-                set
-                {
-                    _executionSet = value;
+                    _outputModel = value;
                 }
             }
             public string? PathConstraint
@@ -164,7 +153,7 @@ namespace dnWalker.TestGenerator.TestClasses
                     _errorOutput = value;
                 }
             }
-            public TypeSignature Exception
+            public TypeSig? Exception
             {
                 get
                 {
@@ -178,22 +167,22 @@ namespace dnWalker.TestGenerator.TestClasses
 
             public ITestClassContext Build()
             {
-                if (_assemblyName == null) throw new NullReferenceException("AssemblyName is NULL");
-                if (_assemblyFileName == null) throw new NullReferenceException("AssemblyFileName is NULL");
-                if (_parameterContext == null) throw new NullReferenceException("AssemblyName is NULL");
-                if (_baseSet == null) throw new NullReferenceException("AssemblyName is NULL");
-                if (_executionSet == null) throw new NullReferenceException("AssemblyName is NULL");
-                if (_pathConstraint == null) throw new NullReferenceException("AssemblyName is NULL");
-                if (_standardOutput == null) throw new NullReferenceException("AssemblyName is NULL");
-                if (_errorOutput == null) throw new NullReferenceException("AssemblyName is NULL");
+                if (_method == null) throw new NullReferenceException($"'{nameof(Method)}' is NULL");
+                if (_assemblyName == null) throw new NullReferenceException($"'{nameof(AssemblyName)}' is NULL");
+                if (_assemblyFileName == null) throw new NullReferenceException($"'{nameof(AssemblyFileName)}' is NULL");
+                if (_inputModel == null) throw new NullReferenceException($"'{nameof(TestClassContext.InputModel)}' is NULL");
+                if (_outputModel == null) throw new NullReferenceException($"'{nameof(TestClassContext.OutputModel)}' is NULL");
+                if (_pathConstraint == null) throw new NullReferenceException($"'{nameof(ErrorOutput)}' is NULL");
+                if (_standardOutput == null) throw new NullReferenceException($"'{nameof(ErrorOutput)}' is NULL");
+                if (_errorOutput == null) throw new NullReferenceException($"'{nameof(ErrorOutput)}' is NULL");
+                if (_exception == null) throw new NullReferenceException($"'{nameof(Exception)}' is NULL");
 
                 return new TestClassContext(_iterationNumber,
-                                            _methodSignature,
+                                            _method,
                                             _assemblyName,
                                             _assemblyFileName,
-                                            _parameterContext,
-                                            _baseSet,
-                                            _executionSet,
+                                            _inputModel,
+                                            _outputModel,
                                             _pathConstraint,
                                             _standardOutput,
                                             _errorOutput,
@@ -211,26 +200,24 @@ namespace dnWalker.TestGenerator.TestClasses
                 // these three services provides execution agnostic data => can be shared in between "explorations"
                 IDomain domain = Domain.LoadFromFile(exploration.AssemblyFileName);
                 IDefinitionProvider definitionProvider = new DefinitionProvider(domain);
-                IParameterContext context = new ParameterContext(definitionProvider);
 
                 IMethodTranslator methodTranslator = new MethodTranslator(definitionProvider);
                 TypeTranslator typeTranslator = new TypeTranslator(definitionProvider);
-                MethodSignature methodSignature = methodTranslator.FromString(exploration.MethodSignature);
+                IMethod methodSignature = methodTranslator.FromString(exploration.MethodSignature).ToMethod();
 
                 foreach (ConcolicExplorationIteration iteration in exploration.Iterations)
                 {
                     Builder builder = new Builder()
                     {
                         IterationNumber = iteration.IterationNumber,
-                        MethodSignature = methodSignature,
+                        Method = methodSignature,
                         AssemblyFileName = exploration.AssemblyFileName,
                         AssemblyName = exploration.AssemblyName,
-                        ParameterContext = context,
-                        //BaseSet = iteration.BaseParameterSet.Construct(context),
-                        //ExecutionSet = iteration.ExecutionParameterSet.Construct(context),
+                        InputModel = iteration.InputModel,
+                        OutputModel = iteration.OutputModel,
                         ErrorOutput = iteration.ErrorOutput ?? string.Empty,
                         StandardOutput = iteration.StandardOutput ?? string.Empty,
-                        Exception = iteration.Exception == string.Empty ? TypeSignature.Empty : typeTranslator.FromString(iteration.Exception),
+                        Exception = string.IsNullOrWhiteSpace(iteration.Exception) ? null : typeTranslator.FromString(iteration.Exception).ToTypeDefOrRef().ToTypeSig(),
                         PathConstraint = iteration.PathConstraint ?? string.Empty,
                     };
 

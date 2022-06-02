@@ -32,11 +32,11 @@ namespace dnWalker.Symbolic.Heap
         private static readonly IEqualityComparer<IField> _fieldComaparer = FieldEqualityComparer.CompareDeclaringTypes;
         private static readonly IEqualityComparer<(IMethod, int)> _methodInvocationComparer = new MethodInvocationComparer();
 
-        public ObjectHeapNode(Location location, TypeSig type) : base(location, type)
+        public ObjectHeapNode(Location location, TypeSig type, bool isDirty = false) : base(location, type, isDirty)
         {
         }
 
-        private ObjectHeapNode(ObjectHeapNode other) : base(other.Location, other.Type)
+        private ObjectHeapNode(ObjectHeapNode other) : base(other.Location, other.Type, other.IsDirty)
         {
             _fields = new Dictionary<IField, IValue>(other._fields, _fieldComaparer);
             _methods = new Dictionary<(IMethod, int), IValue>(other._methods, _methodInvocationComparer);
@@ -61,6 +61,8 @@ namespace dnWalker.Symbolic.Heap
             System.Diagnostics.Debug.Assert(field != null);
 
             _fields[field] = value;
+
+            SetDirty();
         }
 
         public IValue GetMethodResult(IMethod method, int invocation)

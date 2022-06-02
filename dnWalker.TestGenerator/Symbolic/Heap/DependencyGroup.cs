@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.Heap
+namespace dnWalker.TestGenerator.Symbolic.Heap
 {
     public class DependencyGroup : IReadOnlyCollection<IReadOnlyHeapNode>
     {

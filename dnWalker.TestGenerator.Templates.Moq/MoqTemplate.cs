@@ -2,7 +2,6 @@
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
-using dnWalker.TestGenerator.Symbols;
 
 namespace dnWalker.TestGenerator.Templates.Moq
 {

@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.TestClasses;
+﻿using dnWalker.TestGenerator.Templates;
+using dnWalker.TestGenerator.TestClasses;
 
 using System;
 using System.Collections.Generic;
@@ -10,17 +11,20 @@ namespace dnWalker.TestGenerator.XunitProvider
 {
     internal class XunitTestClassWriter : ITestClassWriter
     {
-        private readonly XunitTestClassTemplate _template = new XunitTestClassTemplate();
         private readonly XunitFramework _framework;
+        private readonly ITemplateProvider _templates;
+        private readonly XunitTestClassTemplate _mainTemplate;
 
-        public XunitTestClassWriter(XunitFramework framework)
+        public XunitTestClassWriter(XunitFramework framework, ITemplateProvider templates)
         {
             _framework = framework;
+            _templates = templates;
+            _mainTemplate = new XunitTestClassTemplate(_templates);
         }
 
         public void WriteTestClass(TextWriter output, ITestClassContext context)
         {
-            string content = _template.GenerateContent(context);
+            string content = _mainTemplate.GenerateContent(context);
 
             output.WriteLine(content);
         }

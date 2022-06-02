@@ -28,5 +28,10 @@ namespace dnWalker.Symbolic.Heap
         /// </summary>
         /// <returns></returns>
         IReadOnlyHeapNode Clone();
+
+        /// <summary>
+        /// Indicates whether this heap nodes was changed.
+        /// </summary>
+        bool IsDirty { get; }
     }
 }

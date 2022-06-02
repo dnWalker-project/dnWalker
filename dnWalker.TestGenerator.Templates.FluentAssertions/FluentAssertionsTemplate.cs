@@ -1,7 +1,5 @@
 ﻿using dnlib.DotNet;
 
-using dnWalker.TestGenerator.Symbols;
-
 namespace dnWalker.TestGenerator.Templates.FluentAssertions
 {
     public class FluentAssertionsTemplate : IAssertTemplate

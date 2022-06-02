@@ -125,13 +125,15 @@ namespace dnWalker.Explorations.Xml
         private XElement ObjectNodeToXml(IReadOnlyObjectHeapNode ohn)
         {
             XElement xml = new XElement(XmlTokens.ObjectNode);
+            xml.SetAttributeValue(XmlTokens.IsDirty, ohn.IsDirty);
+
             foreach (IField fld in ohn.Fields)
             {
                 XElement fieldXml = new XElement(XmlTokens.InstanceField);
 
                 fieldXml.SetAttributeValue(XmlTokens.DeclaringType, _typeTranslator.GetString(fld.DeclaringType));
                 fieldXml.SetAttributeValue(XmlTokens.FieldName, fld.Name);
-
+                
                 fieldXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetField(fld)));
 
                 xml.Add(fieldXml);
@@ -154,6 +156,7 @@ namespace dnWalker.Explorations.Xml
         private XElement ArrayNodeToXml(IReadOnlyArrayHeapNode ahn)
         {
             XElement xml = new XElement(XmlTokens.ArrayNode);
+            xml.SetAttributeValue(XmlTokens.IsDirty, ahn.IsDirty);
             xml.SetAttributeValue(XmlTokens.Length, ahn.Length);
 
             foreach (int index in ahn.Indeces)

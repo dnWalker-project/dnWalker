@@ -1,7 +1,5 @@
 ﻿using dnlib.DotNet;
 
-using dnWalker.TestGenerator.Symbols;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +15,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public static readonly BasicActTemplate Instance = new BasicActTemplate();
 
-        public void WriteAct(IWriter output, IMethod method, string[] argumentSymbols, string? returnSymbol = null)
+        public void WriteAct(IWriter output, IMethod method, string? returnSymbol = null)
         {
             if (method.MethodSig.RetType != null)
             {
@@ -25,12 +23,12 @@ namespace dnWalker.TestGenerator.Templates
                 output.Write($"{returnSymbol} = ");
             }
 
-            WriteInvocation(output, method, argumentSymbols);
+            WriteInvocation(output, method);
 
             output.WriteLine(";");
         }
 
-        public void WriteActDelegate(IWriter output, IMethod method, string[] argumentSymbols, string? returnSymbol = null, string delegateSymbol = "act")
+        public void WriteActDelegate(IWriter output, IMethod method, string? returnSymbol = null, string delegateSymbol = "act")
         {
             if (method.MethodSig.RetType != null)
             {
@@ -43,14 +41,18 @@ namespace dnWalker.TestGenerator.Templates
                 output.Write($"Action {delegateSymbol} = () => ");
             }
             
-            WriteInvocation(output, method, argumentSymbols);
+            WriteInvocation(output, method);
 
             output.WriteLine(";");
         }
 
-        private static void WriteInvocation(IWriter output, IMethod method, string[] argumentSymbols)
+        private static void WriteInvocation(IWriter output, IMethod method)
         {
             MethodDef md = method.ResolveMethodDefThrow();
+
+            string[] argumentSymbols = md.Parameters
+                .Select(static p => p.Name)
+                .ToArray();
 
             if (md.IsStatic)
             {

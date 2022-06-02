@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.TestClasses;
+﻿using dnWalker.TestGenerator.Templates;
+using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TestGenerator.TestProjects;
 
 using System;
@@ -19,7 +20,7 @@ namespace dnWalker.TestGenerator.TestFrameworks
         /// Creates an instance of <see cref="ITestClassWriter"/>.
         /// </summary>
         /// <returns></returns>
-        ITestClassWriter CreateClassWriter();
+        ITestClassWriter CreateClassWriter(ITemplateProvider templateProvider);
 
         /// <summary>
         /// Initializes an instance of <see cref="ITestClassContext"/>.

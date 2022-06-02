@@ -1,4 +1,5 @@
-﻿using dnWalker.TestGenerator.TestClasses;
+﻿using dnWalker.TestGenerator.Templates;
+using dnWalker.TestGenerator.TestClasses;
 using dnWalker.TestGenerator.TestFrameworks;
 using dnWalker.TestGenerator.TestProjects;
 
@@ -28,9 +29,9 @@ namespace dnWalker.TestGenerator.XunitProvider
         };
 
 
-        public ITestClassWriter CreateClassWriter()
+        public ITestClassWriter CreateClassWriter(ITemplateProvider templateProvider)
         {
-            return new XunitTestClassWriter(this);
+            return new XunitTestClassWriter(this, templateProvider);
         }
 
         public void InitializeClassContext(ITestClassContext classContext)

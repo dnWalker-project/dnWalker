@@ -1,14 +1,13 @@
 ﻿using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
+using dnWalker.Symbolic.Variables;
 
-using dnWalker.TestGenerator.Symbols;
+using dnlib.DotNet;
 
 using System;
 using System.IO;
 using System.Collections.Generic;
-using dnWalker.Symbolic.Variables;
 using System.Linq;
-using dnlib.DotNet;
 using System.Diagnostics;
 
 namespace dnWalker.TestGenerator.Templates

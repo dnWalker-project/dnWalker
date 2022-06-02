@@ -10,6 +10,8 @@ namespace dnWalker.Symbolic.Heap
 {
     public abstract class HeapNode : IHeapNode
     {
+        private bool _isDirty;
+
         protected static IValue GetValueOrDefault<TKey>(IDictionary<TKey, IValue> src, TKey key, TypeSig type)
         {
             if (!src.TryGetValue(key, out IValue? value))
@@ -20,10 +22,11 @@ namespace dnWalker.Symbolic.Heap
             return value;
         }
 
-        protected HeapNode(Location location, TypeSig type)
+        protected HeapNode(Location location, TypeSig type, bool isDirty = false)
         {
             Location = location;
             Type = type ?? throw new ArgumentNullException(nameof(type));
+            _isDirty = isDirty;
         }
 
         IHeapNode IHeapNode.Clone() => Clone();
@@ -35,5 +38,11 @@ namespace dnWalker.Symbolic.Heap
 
         public TypeSig Type { get; }
 
+        protected virtual void SetDirty()
+        {
+            _isDirty = true;
+        }
+
+        public bool IsDirty => _isDirty;
     }
 }

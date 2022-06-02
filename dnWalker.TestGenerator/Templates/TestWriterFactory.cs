@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.Templates
 {
-    public class TestWriterFactory
+    public class TemplateProviderFactory
     {
         private IArrangeTemplate? _arrangeTemplate;
         private IActTemplate? _actTemplate;
         private IAssertTemplate? _assertTemplate;
 
-        public TestWriterFactory()
+        public TemplateProviderFactory()
         {
         }
 
-        public TestWriterFactory(IArrangeTemplate? arrangeTemplate, IAssertTemplate? assertTemplate) 
+        public TemplateProviderFactory(IArrangeTemplate? arrangeTemplate, IAssertTemplate? assertTemplate) 
             : this(arrangeTemplate, BasicActTemplate.Instance, assertTemplate)
         { }
 
-        public TestWriterFactory(IArrangeTemplate? arrangeTemplate, IActTemplate? actTemplate, IAssertTemplate? assertTemplate)
+        public TemplateProviderFactory(IArrangeTemplate? arrangeTemplate, IActTemplate? actTemplate, IAssertTemplate? assertTemplate)
         {
             _arrangeTemplate = arrangeTemplate;
             _actTemplate = actTemplate;
@@ -66,7 +66,7 @@ namespace dnWalker.TestGenerator.Templates
             }
         }
 
-        public TestWriter Create()
+        public ITemplateProvider Create()
         {
             return new TestWriter(
                 _arrangeTemplate ?? throw new InvalidOperationException("The arrange template is not set."),
