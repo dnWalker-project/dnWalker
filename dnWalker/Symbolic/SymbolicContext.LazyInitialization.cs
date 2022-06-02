@@ -2,7 +2,7 @@
 
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Heap;
-using dnWalker.Symbolic.Utils;
+
 using dnWalker.Symbolic.Variables;
 
 using MMC.Data;

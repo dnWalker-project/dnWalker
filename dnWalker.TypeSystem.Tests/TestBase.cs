@@ -8,14 +8,19 @@ namespace dnWalker.TypeSystem.Tests
 {
     public class TestBase
     {
-        protected IDefinitionProvider DefinitionProvider
+        protected static IDefinitionProvider DefinitionProvider
         {
             get;
         }
 
-        public TestBase()
+        static TestBase()
         {
             DefinitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(typeof(TestBase).Assembly));
+        }
+
+        public TestBase()
+        {
+            
         }
     }
 }

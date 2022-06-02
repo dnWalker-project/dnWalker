@@ -15,12 +15,12 @@ namespace dnWalker.Explorations.Xml
 {
     public class XmlExplorationDeserializer
     {
-        private readonly IMethodTranslator _methodTranslator;
+        private readonly IMethodParser _methodParser;
         private readonly XmlModelDeserializer _modelDeserializer;
 
-        public XmlExplorationDeserializer(IMethodTranslator methodTranslator, XmlModelDeserializer modelDeserializer)
+        public XmlExplorationDeserializer(IMethodParser methodParser, XmlModelDeserializer modelDeserializer)
         {
-            _methodTranslator = methodTranslator;
+            _methodParser = methodParser;
             _modelDeserializer = modelDeserializer;
         }
 
@@ -41,7 +41,7 @@ namespace dnWalker.Explorations.Xml
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.Failed = bool.Parse(xml.Attribute(XmlTokens.Failed)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Failed));
 
-            IMethod method = _methodTranslator.FromString(builder.MethodSignature).ToMethod();
+            IMethod method = _methodParser.Parse(builder.MethodSignature);
 
             foreach (XElement iterationXml in xml.Elements(XmlTokens.Iteration))
             {

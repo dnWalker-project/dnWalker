@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using dnlib.DotNet;
 
 using IVariable = dnWalker.Symbolic.IVariable;
-using dnWalker.Symbolic.Utils;
+
 
 namespace dnWalker.Z3
 {

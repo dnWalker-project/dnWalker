@@ -2,7 +2,7 @@
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
-using dnWalker.Symbolic.Utils;
+
 using dnWalker.Symbolic.Variables;
 using dnWalker.TypeSystem;
 
@@ -20,13 +20,13 @@ namespace dnWalker.Explorations.Xml
 {
     public class XmlModelDeserializer
     {
-        private readonly ITypeTranslator _typeTranslator;
-        private readonly IMethodTranslator _methodTranslator;
+        private readonly ITypeParser _typeParser;
+        private readonly IMethodParser _methodParser;
 
-        public XmlModelDeserializer(ITypeTranslator typeTranslator, IMethodTranslator methodTranslator)
+        public XmlModelDeserializer(ITypeParser typeParser, IMethodParser methodParser)
         {
-            _typeTranslator = typeTranslator ?? throw new ArgumentNullException(nameof(typeTranslator));
-            _methodTranslator = methodTranslator ?? throw new ArgumentNullException(nameof(methodTranslator));
+            _typeParser = typeParser ?? throw new ArgumentNullException(nameof(typeParser));
+            _methodParser = methodParser ?? throw new ArgumentNullException(nameof(methodParser));
         }
 
         public IReadOnlyModel FromXml(XElement xml, IMethod method)
@@ -58,7 +58,7 @@ namespace dnWalker.Explorations.Xml
                 foreach (XElement nodeXml in heapXml.Elements())
                 {
                     Location location = new Location((uint)GetAttribute(nodeXml, XmlTokens.Location));
-                    TypeSig type = _typeTranslator.FromString((string)GetAttribute(nodeXml, XmlTokens.Type)).ToTypeDefOrRef().ToTypeSig();
+                    TypeSig type = _typeParser.Parse((string)GetAttribute(nodeXml, XmlTokens.Type)).ToTypeDefOrRef().ToTypeSig();
 
                     IHeapNode heapNode = nodeXml.Name.LocalName switch
                     {
@@ -179,7 +179,7 @@ namespace dnWalker.Explorations.Xml
         private StaticFieldVariable StaticFieldVariableFromXml(XElement varXml)
         {
             string fieldName = GetAttribute(varXml, XmlTokens.FieldName).Value;
-            ITypeDefOrRef type = _typeTranslator.FromString(GetAttribute(varXml, XmlTokens.Type).Value).ToTypeDefOrRef();
+            ITypeDefOrRef type = _typeParser.Parse(GetAttribute(varXml, XmlTokens.Type).Value).ToTypeDefOrRef();
             IField field = type.ResolveTypeDefThrow().Fields.First(fld => fld.Name == fieldName);
             return new StaticFieldVariable(field);
         }

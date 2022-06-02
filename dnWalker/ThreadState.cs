@@ -25,6 +25,7 @@ namespace MMC.State
     using MMC.InstructionExec;
     using System;
     using dnWalker.TypeSystem;
+    using dnWalker;
 
     public delegate void ThreadStateChanged(ThreadState threadState, System.Threading.ThreadState state);
 

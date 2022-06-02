@@ -16,13 +16,13 @@ namespace dnWalker.Explorations.Xml
 {
     public class XmlModelSerializer
     {
-        private readonly ITypeTranslator _typeTranslator;
-        private readonly IMethodTranslator _methodTranslator;
+        private readonly ITypeParser _typeParser;
+        private readonly IMethodParser _methodParser;
 
-        public XmlModelSerializer(ITypeTranslator typeTranslator, IMethodTranslator methodTranslator)
+        public XmlModelSerializer(ITypeParser typeParser, IMethodParser methodParser)
         {
-            _typeTranslator = typeTranslator ?? throw new ArgumentNullException(nameof(typeTranslator));
-            _methodTranslator = methodTranslator ?? throw new ArgumentNullException(nameof(methodTranslator));
+            _typeParser = typeParser ?? throw new ArgumentNullException(nameof(typeParser));
+            _methodParser = methodParser ?? throw new ArgumentNullException(nameof(methodParser));
         }
 
         public XElement ToXml(IReadOnlyModel model, string? name = null)
@@ -94,7 +94,7 @@ namespace dnWalker.Explorations.Xml
         {
             XElement xml = new XElement(XmlTokens.StaticField);
 
-            xml.SetAttributeValue(XmlTokens.Type, _typeTranslator.GetString(sfv.Field.DeclaringType));
+            xml.SetAttributeValue(XmlTokens.Type, sfv.Field.DeclaringType.ToString());
             xml.SetAttributeValue(XmlTokens.FieldName, sfv.Field.Name);
 
             return xml;
@@ -116,7 +116,7 @@ namespace dnWalker.Explorations.Xml
                 };
 
                 nodeXml.SetAttributeValue(XmlTokens.Location, node.Location.ToString());
-                nodeXml.SetAttributeValue(XmlTokens.Type, _typeTranslator.GetString(node.Type));
+                nodeXml.SetAttributeValue(XmlTokens.Type, node.Type.ToString());
             }
 
             return heapXml;
@@ -131,7 +131,7 @@ namespace dnWalker.Explorations.Xml
             {
                 XElement fieldXml = new XElement(XmlTokens.InstanceField);
 
-                fieldXml.SetAttributeValue(XmlTokens.DeclaringType, _typeTranslator.GetString(fld.DeclaringType));
+                fieldXml.SetAttributeValue(XmlTokens.DeclaringType, fld.DeclaringType.ToString());
                 fieldXml.SetAttributeValue(XmlTokens.FieldName, fld.Name);
                 
                 fieldXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetField(fld)));
@@ -143,7 +143,7 @@ namespace dnWalker.Explorations.Xml
             {
                 XElement methodXml = new XElement(XmlTokens.MethodResult);
 
-                methodXml.SetAttributeValue(XmlTokens.Method, _methodTranslator.GetString(method));
+                methodXml.SetAttributeValue(XmlTokens.Method, method.ToString());
                 methodXml.SetAttributeValue(XmlTokens.Invocation, invocation);
 
                 methodXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetMethodResult(method, invocation)));

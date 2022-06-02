@@ -1,7 +1,9 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker;
+
 // TODO: refactor these utils in some mini dnlib utils library?
-using dnWalker.Symbolic.Utils;
+
 using dnWalker.TypeSystem;
 
 using MMC.State;

@@ -11,7 +11,7 @@ using Model = dnWalker.Symbolic.Model;
 using System.Linq;
 using System;
 using dnlib.DotNet;
-using dnWalker.Symbolic.Utils;
+
 using System.Diagnostics;
 using dnWalker.Symbolic.Heap;
 

@@ -201,9 +201,9 @@ namespace dnWalker.TestGenerator.TestClasses
                 IDomain domain = Domain.LoadFromFile(exploration.AssemblyFileName);
                 IDefinitionProvider definitionProvider = new DefinitionProvider(domain);
 
-                IMethodTranslator methodTranslator = new MethodTranslator(definitionProvider);
-                TypeTranslator typeTranslator = new TypeTranslator(definitionProvider);
-                IMethod methodSignature = methodTranslator.FromString(exploration.MethodSignature).ToMethod();
+                IMethodParser methodTranslator = new MethodParser(definitionProvider);
+                ITypeParser typeTranslator = new TypeParser(definitionProvider);
+                IMethod methodSignature = methodTranslator.Parse(exploration.MethodSignature);
 
                 foreach (ConcolicExplorationIteration iteration in exploration.Iterations)
                 {
@@ -217,7 +217,7 @@ namespace dnWalker.TestGenerator.TestClasses
                         OutputModel = iteration.OutputModel,
                         ErrorOutput = iteration.ErrorOutput ?? string.Empty,
                         StandardOutput = iteration.StandardOutput ?? string.Empty,
-                        Exception = string.IsNullOrWhiteSpace(iteration.Exception) ? null : typeTranslator.FromString(iteration.Exception).ToTypeDefOrRef().ToTypeSig(),
+                        Exception = string.IsNullOrWhiteSpace(iteration.Exception) ? null : typeTranslator.Parse(iteration.Exception),
                         PathConstraint = iteration.PathConstraint ?? string.Empty,
                     };
 

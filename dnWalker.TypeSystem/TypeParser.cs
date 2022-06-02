@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TypeSystem
 {
-    internal class TypeParser
+    public class TypeParser : ITypeParser
     {
         private const char BeginGenCount = '`';
         private const char BeginGenArray = '<';

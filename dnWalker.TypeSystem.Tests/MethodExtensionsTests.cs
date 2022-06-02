@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using dnlib.DotNet;
+
+using FluentAssertions;
 
 using System;
 using System.Collections.Generic;
@@ -10,20 +12,20 @@ using Xunit;
 
 namespace dnWalker.TypeSystem.Tests
 {
-    public class MethodSignatureTests : TestBase
+    public class MethodExtensionsTests : TestBase
     {
-        private readonly IMethodTranslator _translator;
+        private readonly IMethodParser _methodParser;
 
-        public MethodSignatureTests()
+        public MethodExtensionsTests()
         {
-            _translator = new MethodTranslator(DefinitionProvider);
+            _methodParser = new MethodParser(DefinitionProvider);
         }
 
         [Theory]
         [InlineData("System.Void GlobalClass::Method()", "Method")]
         public void Test_Name(string fullName, string name)
         {
-            MethodSignature ms = _translator.FromString(fullName);
+            IMethod ms = _methodParser.Parse(fullName);
             ms.Name.Should().Be(name);
         }
 
@@ -32,8 +34,8 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("System.String dnWalker.TypeSystem.Tests.TestTypes.AbstractClass::StringMethod()", true)]
         public void Test_IsAbstract(string fullName, bool isAbstract)
         {
-            MethodSignature ms = _translator.FromString(fullName);
-            ms.IsAbstract.Should().Be(isAbstract);
+            IMethod ms = _methodParser.Parse(fullName);
+            ms.ResolveMethodDefThrow().IsAbstract.Should().Be(isAbstract);
         }
 
         [Theory]
@@ -42,8 +44,8 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("System.Void GlobalClass::Method<System.String>()", true)]
         public void Test_IsGeneric(string fullName, bool isGeneric)
         {
-            MethodSignature ms = _translator.FromString(fullName);
-            ms.IsGeneric.Should().Be(isGeneric);
+            IMethod ms = _methodParser.Parse(fullName);
+            ms.IsGenericMethod().Should().Be(isGeneric);
         }
 
         [Theory]
@@ -52,8 +54,8 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("System.Void GlobalClass::Method<System.String>()", true)]
         public void Test_IsGenericInstance(string fullName, bool isGenericInstance)
         {
-            MethodSignature ms = _translator.FromString(fullName);
-            ms.IsGenericInstance.Should().Be(isGenericInstance);
+            IMethod ms = _methodParser.Parse(fullName);
+            ms.IsGenericMethod().Should().Be(isGenericInstance);
         }
     }
 }
