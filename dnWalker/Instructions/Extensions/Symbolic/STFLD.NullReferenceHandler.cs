@@ -25,7 +25,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                 if (ExpressionUtils.GetExpressions(cur, instance, out Expression instanceExpression))
                 {
-                    DecisionMaker.MakeDecision(cur, returnValue, static (cur, edge, instance) =>
+                    ConstraintsHelper.MakeDecision(cur, returnValue, static (cur, edge, instance) =>
                     {
                         Expression nullExpression = cur.GetExpressionFactory().NullExpression;
                         return edge switch

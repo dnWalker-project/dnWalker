@@ -82,7 +82,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 ExpressionUtils.GetExpressions(cur, args[0], out Expression instanceExpression))
             {
 
-                DecisionMaker.MakeDecision(cur, returnValue, (cur, edge, instance) =>
+                ConstraintsHelper.MakeDecision(cur, returnValue, (cur, edge, instance) =>
                 {
                     ExpressionFactory ef = cur.GetExpressionFactory();
                     return edge switch

@@ -25,7 +25,7 @@ namespace dnWalker.Concolic.Traversal
 
         public ConstraintTree(Constraint precondition, ControlFlowNode entryNode)
         {
-            _root = new PreconditionNode(this, precondition, entryNode);
+            _root = new ConstraintNode(this, null, entryNode, precondition);
         }
 
         public ConstraintNode Root => _root;
