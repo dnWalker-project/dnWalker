@@ -11,15 +11,14 @@ namespace dnWalker.TestGenerator.TestClasses
     {
         public class Builder
         {
-            public Builder(ITestGeneratorConfiguration configuration)
+            public Builder()
             {
-                _configuration = configuration;
             }
 
 
-            internal static Builder NewEmpty(ITestGeneratorConfiguration? configuration = null)
+            internal static Builder NewEmpty()
             {
-                Builder builder = new Builder(configuration ?? new TestGeneratorConfiguration());
+                Builder builder = new Builder();
 
                 builder._iterationNumber = 0;
                 builder._methodSignature = MethodSignature.Empty;
@@ -44,7 +43,6 @@ namespace dnWalker.TestGenerator.TestClasses
             private string? _standardOutput;
             private string? _errorOutput;
             private TypeSignature _exception;
-            private readonly ITestGeneratorConfiguration _configuration;
 
             public int IterationNumber
             {
@@ -189,8 +187,7 @@ namespace dnWalker.TestGenerator.TestClasses
                 if (_standardOutput == null) throw new NullReferenceException("AssemblyName is NULL");
                 if (_errorOutput == null) throw new NullReferenceException("AssemblyName is NULL");
 
-                return new TestClassContext(_configuration,
-                                            _iterationNumber,
+                return new TestClassContext(_iterationNumber,
                                             _methodSignature,
                                             _assemblyName,
                                             _assemblyFileName,
@@ -205,7 +202,7 @@ namespace dnWalker.TestGenerator.TestClasses
 
         }
 
-        public static IReadOnlyList<ITestClassContext> FromExplorationData(ITestGeneratorConfiguration configuration, params ConcolicExploration[] data)
+        public static IReadOnlyList<ITestClassContext> FromExplorationData(params ConcolicExploration[] data)
         {
             List<ITestClassContext> result = new List<ITestClassContext>();
 
@@ -222,7 +219,7 @@ namespace dnWalker.TestGenerator.TestClasses
 
                 foreach (ConcolicExplorationIteration iteration in exploration.Iterations)
                 {
-                    Builder builder = new Builder(configuration)
+                    Builder builder = new Builder()
                     {
                         IterationNumber = iteration.IterationNumber,
                         MethodSignature = methodSignature,

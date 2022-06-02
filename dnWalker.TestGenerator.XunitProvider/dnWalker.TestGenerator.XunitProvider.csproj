@@ -7,7 +7,43 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="XunitTestClassTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\dnWalker.TestGenerator\dnWalker.TestGenerator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="XunitTestClassTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XunitTestClassTemplate.cs</LastGenOutput>
+    </None>
+    <None Update="XunitTestProjectTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XunitTestProjectTemplate.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="XunitTestClassTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="XunitTestProjectTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XunitTestProjectTemplate.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

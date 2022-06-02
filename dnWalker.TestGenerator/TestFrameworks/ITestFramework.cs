@@ -10,38 +10,27 @@ using System.Threading.Tasks;
 namespace dnWalker.TestGenerator.TestFrameworks
 {
     /// <summary>
-    /// A top level object which creates <see cref="ITestProjectGenerator"> and <see cref="ITestClassGenerator"/>.
+    /// A top level object which creates <see cref="ITestProjectWriter"> and <see cref="ITestClassWriter"/>.
     /// </summary>
     public interface ITestFramework
     {
-        /// <summary>
-        /// Initializes project context.
-        /// </summary>
-        /// <remarks>
-        /// Use this method in order to add package, services references and other project file settings.
-        /// </remarks>
-        /// <param name="context"></param>
-        void InitializeProjectContext(ITestProjectContext context);
 
         /// <summary>
-        /// Initializes class context.
-        /// </summary>
-        /// <remarks>
-        /// Use this method in order to add namespaces or some other parts of the test class.
-        /// </remarks>
-        /// <param name="context"></param>
-        void InitializeClassContext(ITestClassContext context);
-
-        /// <summary>
-        /// Creates an instance of <see cref="ITestClassGenerator"/>.
+        /// Creates an instance of <see cref="ITestClassWriter"/>.
         /// </summary>
         /// <returns></returns>
-        ITestClassGenerator CreateClassGenerator();
+        ITestClassWriter CreateClassWriter();
 
         /// <summary>
-        /// Creates an instance of <see cref="ITestProjectGenerator"/>.
+        /// Initializes an instance of <see cref="ITestClassContext"/>.
         /// </summary>
         /// <returns></returns>
-        ITestProjectGenerator CreateProjectGenerator();
+        void InitializeClassContext(ITestClassContext classContext);
+
+        /// <summary>
+        /// Initializes an instance of <see cref="ITestProjectContext"/>.
+        /// </summary>
+        /// <returns></returns>
+        void InitializeProjectContext(ITestProjectContext projectContext);
     }
 }

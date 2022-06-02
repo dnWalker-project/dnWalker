@@ -9,8 +9,6 @@ namespace dnWalker.TestGenerator.TestClasses
 {
     public interface ITestClassContext
     {
-        ITestGeneratorConfiguration Configuration { get; }
-
         string AssemblyFileName { get; }
         string AssemblyName { get; }
         IReadOnlyParameterSet BaseSet { get; }
@@ -26,6 +24,8 @@ namespace dnWalker.TestGenerator.TestClasses
         string StandardOutput { get; }
         string TestClassName { get; }
         string TestNamespaceName { get; }
+
+        IList<string> Usings { get; }
     }
 
     public static class TestClassContextExtensions
@@ -48,6 +48,11 @@ namespace dnWalker.TestGenerator.TestClasses
             if (ctx.IsFaulted)
             {
                 nsSet.Add(ctx.Exception.Namespace);
+            }
+
+            foreach (string u in ctx.Usings)
+            {
+                nsSet.Add(u);
             }
 
             string[] ns = nsSet.ToArray();

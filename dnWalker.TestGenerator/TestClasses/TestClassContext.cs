@@ -22,9 +22,8 @@ namespace dnWalker.TestGenerator.TestClasses
         private readonly string _standardOutput;
         private readonly string _errorOutput;
         private readonly TypeSignature _exception;
-
-        public TestClassContext(ITestGeneratorConfiguration configuration,
-                                int iterationNumber,
+        private readonly List<string> _usings = new List<string>();
+        public TestClassContext(int iterationNumber,
                                 MethodSignature methodSignature,
                                 string assemblyName,
                                 string assemblyFileName,
@@ -36,8 +35,6 @@ namespace dnWalker.TestGenerator.TestClasses
                                 string errorOutput,
                                 TypeSignature exception)
         {
-            Configuration = configuration;
-
             _iterationNumber = iterationNumber;
             _methodSignature = methodSignature;
             _assemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
@@ -167,9 +164,12 @@ namespace dnWalker.TestGenerator.TestClasses
             get;
         } = "TestClass";
 
-        public ITestGeneratorConfiguration Configuration
+        public IList<string> Usings
         {
-            get;
+            get
+            {
+                return _usings;
+            }
         }
     }
 }

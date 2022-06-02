@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.TestClasses
 {
-    public interface ITestClassGenerator
+    public abstract class TestClassTemplateBase : Templates.TemplateBase<ITestClassContext>
     {
-        void GenerateTestClass(ITestClassContext context);
+
     }
 }

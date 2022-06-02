@@ -13,17 +13,8 @@ namespace dnWalker.TestGenerator.Templates
 {
     public abstract class TemplateBase : IWriter
     {
-        public virtual string TransformText()
-        {
-            return _sb.ToString();
-        }
+        public abstract string TransformText();
 
-        public virtual string GenerateContent(ITestClassContext context)
-        {
-            if (Interlocked.CompareExchange(ref _context, context, null) != null) throw new InvalidOperationException("The template already runs with different context.");
-
-            return TransformText();
-        }
 
         private StringBuilder _sb = new StringBuilder();
         private System.CodeDom.Compiler.CompilerErrorCollection? _errors;
@@ -32,12 +23,7 @@ namespace dnWalker.TestGenerator.Templates
         private bool _endsWithNewline;
         private IDictionary<string, object> _session = new Dictionary<string, object>();
 
-        private ITestClassContext? _context = null;
-
-
-        public ITestClassContext Context => _context ?? throw new InvalidOperationException("The template is not initialized.");
-
-        public StringBuilder GenerationEnvironment
+        protected StringBuilder GenerationEnvironment
         {
             get 
             {
@@ -92,7 +78,7 @@ namespace dnWalker.TestGenerator.Templates
         /// <summary>
         /// Write text directly into the generated output
         /// </summary>
-        public void Write(string textToAppend)
+        protected void Write(string textToAppend)
         {
             if (string.IsNullOrEmpty(textToAppend))
             {
@@ -130,33 +116,45 @@ namespace dnWalker.TestGenerator.Templates
                 _sb.Append(textToAppend);
             }
         }
+
+        void IWriter.Write(string text) => Write(text);
+
         /// <summary>
         /// Write text directly into the generated output
         /// </summary>
-        public void WriteLine(string textToAppend)
+        protected void WriteLine(string textToAppend)
         {
             Write(textToAppend);
             _sb.AppendLine();
             _endsWithNewline = true;
         }
+
+        void IWriter.WriteLine(string text) => WriteLine(text);
+
         /// <summary>
         /// Write formatted text directly into the generated output
         /// </summary>
-        public void Write(string format, params object[] args)
+        protected void Write(string format, params object[] args)
         {
             Write(string.Format(CultureInfo.CurrentCulture, format, args));
         }
+        void IWriter.Write(string format, params object[] args) => WriteLine(format, args);
+
+
+
         /// <summary>
         /// Write formatted text directly into the generated output
         /// </summary>
-        public void WriteLine(string format, params object[] args)
+        protected void WriteLine(string format, params object[] args)
         {
             WriteLine(string.Format(CultureInfo.CurrentCulture, format, args));
         }
+        void IWriter.WriteLine(string format, params object[] args) => WriteLine(format, args);
+
         /// <summary>
         /// Raise an error
         /// </summary>
-        public void Error(string message)
+        protected void Error(string message)
         {
             System.CodeDom.Compiler.CompilerError error = new System.CodeDom.Compiler.CompilerError();
             error.ErrorText = message;
@@ -165,7 +163,7 @@ namespace dnWalker.TestGenerator.Templates
         /// <summary>
         /// Raise a warning
         /// </summary>
-        public void Warning(string message)
+        protected void Warning(string message)
         {
             System.CodeDom.Compiler.CompilerError error = new System.CodeDom.Compiler.CompilerError();
             error.ErrorText = message;
@@ -175,7 +173,7 @@ namespace dnWalker.TestGenerator.Templates
         /// <summary>
         /// Increase the indent
         /// </summary>
-        public void PushIndent(string indent)
+        protected void PushIndent(string indent)
         {
             if (indent == null)
             {
@@ -185,12 +183,14 @@ namespace dnWalker.TestGenerator.Templates
             _indentLengths.Add(indent.Length);
         }
 
-        public void PushIndent() => PushIndent(TemplateUtils.Indent);
+        void IWriter.PushIndent(string indent) => PushIndent(indent);
+
+        protected void PushIndent() => PushIndent(TemplateUtils.Indent);
 
         /// <summary>
         /// Remove the last indent that was added with PushIndent
         /// </summary>
-        public string PopIndent()
+        protected string PopIndent()
         {
             string returnValue = "";
             if (_indentLengths.Count > 0)
@@ -205,14 +205,19 @@ namespace dnWalker.TestGenerator.Templates
             }
             return returnValue;
         }
+
+        string IWriter.PopIndent() => PopIndent();
+
         /// <summary>
         /// Remove any indentation
         /// </summary>
-        public void ClearIndent()
+        protected void ClearIndent()
         {
             _indentLengths.Clear();
             _currentIndent = "";
         }
+
+        void IWriter.ClearIndent() => ClearIndent();
         #endregion
 
 
@@ -220,7 +225,7 @@ namespace dnWalker.TestGenerator.Templates
         /// <summary>
         /// Utility class to produce culture-oriented representation of an object as a string.
         /// </summary>
-        public class ToStringInstanceHelper
+        protected class ToStringInstanceHelper
         {
             private IFormatProvider _formatProvider = CultureInfo.InvariantCulture;
             /// <summary>
@@ -265,7 +270,7 @@ namespace dnWalker.TestGenerator.Templates
         /// <summary>
         /// Helper to produce culture-oriented representation of an object as a string
         /// </summary>
-        public ToStringInstanceHelper ToStringHelper
+        protected ToStringInstanceHelper ToStringHelper
         {
             get
             {

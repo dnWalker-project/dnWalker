@@ -15,26 +15,35 @@ namespace dnWalker.TestGenerator.XunitProvider
     /// </summary>
     public class XunitFramework : ITestFramework
     {
-
-
-        public void InitializeProjectContext(ITestProjectContext context)
+        private static readonly PackageReference[] _references = new[]
         {
-            throw new NotImplementedException();
+            PackageReference.Create("Microsoft.NET.Test.Sdk", new Version("17.0.0")),
+            PackageReference.Create("xunit", new Version("2.4.1")),
+            PackageReference.Create("xunit.runner.visualstudio", new Version("2.4.3"))
+                .Include("runtime", "build", "native", "contentfiles", "analyzers", "buildtransitive")
+                .Private("all"),
+            PackageReference.Create("coverlet.collector", new Version("3.1.0"))
+                .Include("runtime", "build", "native", "contentfiles", "analyzers", "buildtransitive")
+                .Private("all"),
+        };
+
+
+        public ITestClassWriter CreateClassWriter()
+        {
+            return new XunitTestClassWriter(this);
         }
 
-        public void InitializeClassContext(ITestClassContext context)
+        public void InitializeClassContext(ITestClassContext classContext)
         {
-            throw new NotImplementedException();
+            classContext.Usings.Add("Xunit");
         }
 
-        public ITestClassGenerator CreateClassGenerator()
+        public void InitializeProjectContext(ITestProjectContext projectContext)
         {
-            throw new NotImplementedException();
-        }
-
-        public ITestProjectGenerator CreateProjectGenerator()
-        {
-            throw new NotImplementedException();
+            foreach (var pr in _references)
+            {
+                projectContext.PackageReferencies.Add(pr);
+            }
         }
     }
 }

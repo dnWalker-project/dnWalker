@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 namespace dnWalker.TestGenerator.TestProjects
 {
     /// <summary>
-    /// Provides methods for generating a project directory and file.
+    /// Provides methods for writing a project file.
     /// </summary>
-    public interface ITestProjectGenerator
+    public interface ITestProjectWriter
     {
-        void GenerateProject(ITestProjectContext context);
+        void WriteProject(TextWriter output, ITestProjectContext context);
     }
 }

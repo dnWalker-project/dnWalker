@@ -18,22 +18,22 @@ namespace dnWalker.TestGenerator.TestProjects
             get; set;
         }
 
-        public List<string> Targets
+        public IList<string> Targets
         {
             get;
         } = new List<string>();
 
-        public List<PackageReference> PackageReferencies
+        public IList<PackageReference> PackageReferencies
         {
             get;
         } = new List<PackageReference>();
 
-        public List<string> ProjectReferencies
+        public IList<string> ProjectReferencies
         {
             get;
         } = new List<string>();
 
-        public List<Guid> Services
+        public IList<Guid> Services
         {
             get;
         } = new List<Guid>();
