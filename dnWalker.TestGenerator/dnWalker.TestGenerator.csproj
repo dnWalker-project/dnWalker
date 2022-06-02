@@ -8,7 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Symbols\" />
+    <None Include="Templates\TemplateBase.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TemplateBase.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +26,6 @@
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
     <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
-    <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,25 +33,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="XunitFramework\XunitTestProjectTemplate.cs">
+    <Compile Update="XUnitFramework\XUnitTestClassTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XunitTestProjectTemplate.tt</DependentUpon>
+      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
     </Compile>
-    <Compile Update="Xunit\XunitTestClassTemplate.cs">
+    <Compile Update="XUnitFramework\XUnitTestProjectTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
+      <DependentUpon>XUnitTestProjectTemplate.tt</DependentUpon>
     </Compile>
-    <Compile Update="Xunit\XunitTestProjectTemplate.tt.cs">
+    <Compile Update="XUnit\XUnitTestClassTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
+      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
     </Compile>
-    <Compile Update="Xunit\XunitTestProjectTemplate.cs">
+    <Compile Update="XUnit\XUnitTestProjectTemplate.tt.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XunitTestProjectTemplate.tt</DependentUpon>
+      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="XUnit\XUnitTestProjectTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XUnitTestProjectTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -71,17 +79,26 @@
     <None Update="ExplorationData_NullEquality.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="XunitFramework\XunitTestProjectTemplate.tt">
+    <None Update="Templates\TemplateBase.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>XunitTestProjectTemplate.cs</LastGenOutput>
+      <LastGenOutput>TemplateBase.cs</LastGenOutput>
     </None>
-    <None Update="Xunit\XunitTestClassTemplate.tt">
+    <None Update="XUnitFramework\XUnitTestClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>XunitTestClassTemplate.cs</LastGenOutput>
+      <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
     </None>
-    <None Update="Xunit\XunitTestProjectTemplate.tt">
+    <None Update="XUnitFramework\XUnitTestProjectTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>XunitTestProjectTemplate.cs</LastGenOutput>
+      <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
+    </None>
+    <None Update="XUnit\XUnitTestClassTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
+    </None>
+    <None Update="XUnit\XUnitTestProjectTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
 </Project>

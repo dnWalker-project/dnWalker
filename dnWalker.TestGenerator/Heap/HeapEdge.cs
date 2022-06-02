@@ -1,4 +1,6 @@
-﻿using QuikGraph;
+﻿using dnWalker.Symbolic;
+
+using QuikGraph;
 
 using System;
 using System.Collections.Generic;
@@ -16,11 +18,11 @@ namespace dnWalker.TestGenerator.Heap
         MethodResult
     }
 
-    public class HeapEdge : Edge<HeapVertex>
+    public class HeapEdge : Edge<Location>
     {
         private readonly HeapEdgeType _type;
 
-        public HeapEdge([NotNull]HeapVertex source, [NotNull]HeapVertex target, HeapEdgeType type) : base(source, target)
+        public HeapEdge([NotNull]Location source, [NotNull] Location target, HeapEdgeType type) : base(source, target)
         {
             _type = type;
         }

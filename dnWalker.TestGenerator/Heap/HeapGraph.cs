@@ -8,49 +8,86 @@ using System.Threading.Tasks;
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
+using QuikGraph.Algorithms.ConnectedComponents;
+using QuikGraph.Algorithms;
 
 namespace dnWalker.TestGenerator.Heap
 {
-    public class HeapGraph : IBidirectionalGraph<HeapVertex, HeapEdge>
+    public class HeapGraph : IBidirectionalGraph<Location, HeapEdge>
     {
-        private List<DependencyGroup>? _groups;
-        private readonly BidirectionalGraph<HeapVertex, HeapEdge> _graph;
-        private readonly Dictionary<Location, HeapVertex> _vertexLookup;
+        private readonly IReadOnlyHeapInfo _heap;
 
-        internal HeapGraph(BidirectionalGraph<HeapVertex, HeapEdge> graph)
+        private IReadOnlyList<DependencyGroup>? _groups;
+        private readonly BidirectionalGraph<Location, HeapEdge> _graph;
+
+        internal HeapGraph(BidirectionalGraph<Location, HeapEdge> graph, IReadOnlyHeapInfo heap)
         {
             _graph = graph;
-            _vertexLookup = graph.Vertices.ToDictionary(static v => v.Node.Location);
+            _heap = heap;
 
         }
 
         public IReadOnlyList<DependencyGroup> GetDependencyGroups()
         {
-            if (_groups != null) return _groups;
+            if (_groups == null)
+            {
+                // condensate the graph:
+                // 1) find condensation (SSCs)
+                var sccAlg = new StronglyConnectedComponentsAlgorithm<Location, HeapEdge>(this);
+                sccAlg.Compute();
+                int componentCount = sccAlg.ComponentCount;
+                IDictionary<Location, int> components = sccAlg.Components;
 
-            _groups = new List<DependencyGroup>();
+                List<Location>[] groupBuilders = new List<Location>[componentCount];
+                for (int i = 0; i < componentCount; ++i)
+                {
+                    groupBuilders[i] = new List<Location>();
+                }
 
+                foreach ((Location location, int component) in components)
+                {
+                    groupBuilders[component].Add(location);
+                }
 
+                DependencyGroup[] groups = Build(groupBuilders, _heap);
 
+                var depGraph = new AdjacencyGraph<DependencyGroup, Edge<DependencyGroup>>(false, groups.Length);
+                depGraph.AddVertexRange(groups);
+
+                // 2) build edges between the SSCs
+                foreach (HeapEdge e in _graph.Edges)
+                {
+                    int srcCmp = components[e.Source];
+                    int trgCmp = components[e.Target];
+
+                    if (srcCmp != trgCmp)
+                    {
+                        depGraph.AddEdge(new Edge<DependencyGroup>(groups[srcCmp], groups[trgCmp]));
+                    }
+                }
+
+                // do topological ordering of the condensated graph
+                _groups = depGraph.TopologicalSort().ToArray();
+            }
             return _groups;
+
+            static DependencyGroup[] Build(List<Location>[] builders, IReadOnlyHeapInfo heap)
+            {
+                DependencyGroup[] groups = new DependencyGroup[builders.Length];
+                for (int i = 0; i < groups.Length; ++i)
+                {
+                    groups[i] = new DependencyGroup(builders[i].Select(loc => heap.GetNode(loc)));
+                }
+                return groups;
+            }
         }
 
-        public HeapVertex GetVertex(IReadOnlyHeapNode heapNode)
-        {
-            return GetVertex(heapNode.Location);
-        }
-        public HeapVertex GetVertex(Location location)
-        {
-            return _vertexLookup[location];
-        }
-
-
-        #region IBidirectionalGraph<HeapVertex, HeapEdge>
+        #region IBidirectionalGraph<Location, HeapEdge>
         public bool IsVerticesEmpty
         {
             get
             {
-                return ((IVertexSet<HeapVertex>)_graph).IsVerticesEmpty;
+                return ((IVertexSet<Location>)_graph).IsVerticesEmpty;
             }
         }
 
@@ -58,28 +95,28 @@ namespace dnWalker.TestGenerator.Heap
         {
             get
             {
-                return ((IVertexSet<HeapVertex>)_graph).VertexCount;
+                return ((IVertexSet<Location>)_graph).VertexCount;
             }
         }
 
-        public IEnumerable<HeapVertex> Vertices
+        public IEnumerable<Location> Vertices
         {
             get
             {
-                return ((IVertexSet<HeapVertex>)_graph).Vertices;
+                return ((IVertexSet<Location>)_graph).Vertices;
             }
         }
 
         public bool ContainsEdge(HeapEdge edge)
         {
-            return ((IEdgeSet<HeapVertex, HeapEdge>)_graph).ContainsEdge(edge);
+            return ((IEdgeSet<Location, HeapEdge>)_graph).ContainsEdge(edge);
         }
 
         public bool IsEdgesEmpty
         {
             get
             {
-                return ((IEdgeSet<HeapVertex, HeapEdge>)_graph).IsEdgesEmpty;
+                return ((IEdgeSet<Location, HeapEdge>)_graph).IsEdgesEmpty;
             }
         }
 
@@ -87,7 +124,7 @@ namespace dnWalker.TestGenerator.Heap
         {
             get
             {
-                return ((IEdgeSet<HeapVertex, HeapEdge>)_graph).EdgeCount;
+                return ((IEdgeSet<Location, HeapEdge>)_graph).EdgeCount;
             }
         }
 
@@ -95,85 +132,85 @@ namespace dnWalker.TestGenerator.Heap
         {
             get
             {
-                return ((IEdgeSet<HeapVertex, HeapEdge>)_graph).Edges;
+                return ((IEdgeSet<Location, HeapEdge>)_graph).Edges;
             }
         }
 
-        public bool IsInEdgesEmpty(HeapVertex vertex)
+        public bool IsInEdgesEmpty(Location vertex)
         {
-            return ((IBidirectionalIncidenceGraph<HeapVertex, HeapEdge>)_graph).IsInEdgesEmpty(vertex);
+            return ((IBidirectionalIncidenceGraph<Location, HeapEdge>)_graph).IsInEdgesEmpty(vertex);
         }
 
-        public int InDegree(HeapVertex vertex)
+        public int InDegree(Location vertex)
         {
-            return ((IBidirectionalIncidenceGraph<HeapVertex, HeapEdge>)_graph).InDegree(vertex);
+            return ((IBidirectionalIncidenceGraph<Location, HeapEdge>)_graph).InDegree(vertex);
         }
 
-        public IEnumerable<HeapEdge> InEdges(HeapVertex vertex)
+        public IEnumerable<HeapEdge> InEdges(Location vertex)
         {
-            return ((IBidirectionalIncidenceGraph<HeapVertex, HeapEdge>)_graph).InEdges(vertex);
+            return ((IBidirectionalIncidenceGraph<Location, HeapEdge>)_graph).InEdges(vertex);
         }
 
-        public bool TryGetInEdges(HeapVertex vertex, out IEnumerable<HeapEdge> edges)
+        public bool TryGetInEdges(Location vertex, out IEnumerable<HeapEdge> edges)
         {
-            return ((IBidirectionalIncidenceGraph<HeapVertex, HeapEdge>)_graph).TryGetInEdges(vertex, out edges);
+            return ((IBidirectionalIncidenceGraph<Location, HeapEdge>)_graph).TryGetInEdges(vertex, out edges);
         }
 
-        public HeapEdge InEdge(HeapVertex vertex, int index)
+        public HeapEdge InEdge(Location vertex, int index)
         {
-            return ((IBidirectionalIncidenceGraph<HeapVertex, HeapEdge>)_graph).InEdge(vertex, index);
+            return ((IBidirectionalIncidenceGraph<Location, HeapEdge>)_graph).InEdge(vertex, index);
         }
 
-        public int Degree(HeapVertex vertex)
+        public int Degree(Location vertex)
         {
-            return ((IBidirectionalIncidenceGraph<HeapVertex, HeapEdge>)_graph).Degree(vertex);
+            return ((IBidirectionalIncidenceGraph<Location, HeapEdge>)_graph).Degree(vertex);
         }
 
-        public bool ContainsEdge(HeapVertex source, HeapVertex target)
+        public bool ContainsEdge(Location source, Location target)
         {
-            return ((IIncidenceGraph<HeapVertex, HeapEdge>)_graph).ContainsEdge(source, target);
+            return ((IIncidenceGraph<Location, HeapEdge>)_graph).ContainsEdge(source, target);
         }
 
-        public bool TryGetEdge(HeapVertex source, HeapVertex target, out HeapEdge edge)
+        public bool TryGetEdge(Location source, Location target, out HeapEdge edge)
         {
-            return ((IIncidenceGraph<HeapVertex, HeapEdge>)_graph).TryGetEdge(source, target, out edge);
+            return ((IIncidenceGraph<Location, HeapEdge>)_graph).TryGetEdge(source, target, out edge);
         }
 
-        public bool TryGetEdges(HeapVertex source, HeapVertex target, out IEnumerable<HeapEdge> edges)
+        public bool TryGetEdges(Location source, Location target, out IEnumerable<HeapEdge> edges)
         {
-            return ((IIncidenceGraph<HeapVertex, HeapEdge>)_graph).TryGetEdges(source, target, out edges);
+            return ((IIncidenceGraph<Location, HeapEdge>)_graph).TryGetEdges(source, target, out edges);
         }
 
-        public bool IsOutEdgesEmpty(HeapVertex vertex)
+        public bool IsOutEdgesEmpty(Location vertex)
         {
-            return ((IImplicitGraph<HeapVertex, HeapEdge>)_graph).IsOutEdgesEmpty(vertex);
+            return ((IImplicitGraph<Location, HeapEdge>)_graph).IsOutEdgesEmpty(vertex);
         }
 
-        public int OutDegree(HeapVertex vertex)
+        public int OutDegree(Location vertex)
         {
-            return ((IImplicitGraph<HeapVertex, HeapEdge>)_graph).OutDegree(vertex);
+            return ((IImplicitGraph<Location, HeapEdge>)_graph).OutDegree(vertex);
         }
 
-        public IEnumerable<HeapEdge> OutEdges(HeapVertex vertex)
+        public IEnumerable<HeapEdge> OutEdges(Location vertex)
         {
-            return ((IImplicitGraph<HeapVertex, HeapEdge>)_graph).OutEdges(vertex);
+            return ((IImplicitGraph<Location, HeapEdge>)_graph).OutEdges(vertex);
         }
 
-        public bool TryGetOutEdges(HeapVertex vertex, out IEnumerable<HeapEdge> edges)
+        public bool TryGetOutEdges(Location vertex, out IEnumerable<HeapEdge> edges)
         {
-            return ((IImplicitGraph<HeapVertex, HeapEdge>)_graph).TryGetOutEdges(vertex, out edges);
+            return ((IImplicitGraph<Location, HeapEdge>)_graph).TryGetOutEdges(vertex, out edges);
         }
 
-        public HeapEdge OutEdge(HeapVertex vertex, int index)
+        public HeapEdge OutEdge(Location vertex, int index)
         {
-            return ((IImplicitGraph<HeapVertex, HeapEdge>)_graph).OutEdge(vertex, index);
+            return ((IImplicitGraph<Location, HeapEdge>)_graph).OutEdge(vertex, index);
         }
 
         public bool IsDirected
         {
             get
             {
-                return ((IGraph<HeapVertex, HeapEdge>)_graph).IsDirected;
+                return ((IGraph<Location, HeapEdge>)_graph).IsDirected;
             }
         }
 
@@ -181,14 +218,14 @@ namespace dnWalker.TestGenerator.Heap
         {
             get
             {
-                return ((IGraph<HeapVertex, HeapEdge>)_graph).AllowParallelEdges;
+                return ((IGraph<Location, HeapEdge>)_graph).AllowParallelEdges;
             }
         }
 
-        public bool ContainsVertex(HeapVertex vertex)
+        public bool ContainsVertex(Location vertex)
         {
-            return ((IImplicitVertexSet<HeapVertex>)_graph).ContainsVertex(vertex);
+            return ((IImplicitVertexSet<Location>)_graph).ContainsVertex(vertex);
         }
-        #endregion IBidirectionalGraph<HeapVertex, HeapEdge>
+        #endregion IBidirectionalGraph<Location, HeapEdge>
     }
 }

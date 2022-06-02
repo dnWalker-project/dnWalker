@@ -17,42 +17,39 @@ namespace dnWalker.TestGenerator.Heap
     {
         public static HeapGraph CreateGraph(this IReadOnlyHeapInfo heap)
         {
-            Dictionary<Location, HeapVertex> vertexLookup = heap.Nodes.ToDictionary(n => n.Location, n => new HeapVertex(heap, n));
+            BidirectionalGraph<Location, HeapEdge> graph = new BidirectionalGraph<Location, HeapEdge>(true, heap.Locations.Count);
 
-            BidirectionalGraph<HeapVertex, HeapEdge> graph = new BidirectionalGraph<HeapVertex, HeapEdge>(true, vertexLookup.Count);
-
-            graph.AddVertexRange(vertexLookup.Values);
+            graph.AddVertexRange(heap.Locations);
 
             foreach (HeapNode node in heap.Nodes)
             {
-                AddEdges(node, heap, graph, vertexLookup);
+                AddEdges(node, heap, graph);
             }
 
-            return new HeapGraph(graph);
+            return new HeapGraph(graph, heap);
         }
 
-        private static void AddEdges(HeapNode node, IReadOnlyHeapInfo heap, BidirectionalGraph<HeapVertex, HeapEdge> graph, IReadOnlyDictionary<Location, HeapVertex> vertexLookup)
+        private static void AddEdges(HeapNode node, IReadOnlyHeapInfo heap, BidirectionalGraph<Location, HeapEdge> graph)
         {
             switch (node)
             {
-                case IReadOnlyArrayHeapNode arrayNode: AddArrayEdges(arrayNode, heap, graph, vertexLookup); break;
-                case IReadOnlyObjectHeapNode objectNode: AddObjectEdges(objectNode, heap, graph, vertexLookup); break;
+                case IReadOnlyArrayHeapNode arrayNode: AddArrayEdges(arrayNode, heap, graph); break;
+                case IReadOnlyObjectHeapNode objectNode: AddObjectEdges(objectNode, heap, graph); break;
                 default: throw new NotSupportedException("Unexpected heap node type.");
             }
 
         }
 
-        private static void AddObjectEdges(IReadOnlyObjectHeapNode objectNode, IReadOnlyHeapInfo heap, BidirectionalGraph<HeapVertex, HeapEdge> graph, IReadOnlyDictionary<Location, HeapVertex> vertexLookup)
+        private static void AddObjectEdges(IReadOnlyObjectHeapNode objectNode, IReadOnlyHeapInfo heap, BidirectionalGraph<Location, HeapEdge> graph)
         {
             if (objectNode.HasFields)
             {
-                HeapVertex target = vertexLookup[objectNode.Location];
+                Location target = objectNode.Location;
                 foreach (IField field in objectNode.Fields)
                 {
                     IValue value = objectNode.GetField(field);
-                    if (value is Location fieldLocation)
+                    if (value is Location source && source != Location.Null)
                     {
-                        HeapVertex source = vertexLookup[fieldLocation];
                         HeapEdge edge = new HeapEdge(source, target, HeapEdgeType.Field);
                         graph.AddEdge(edge);
                     }
@@ -61,13 +58,12 @@ namespace dnWalker.TestGenerator.Heap
 
             if (objectNode.HasMethodInvocations)
             {
-                HeapVertex target = vertexLookup[objectNode.Location];
+                Location target = objectNode.Location;
                 foreach ((IMethod method, int invocation) in objectNode.MethodInvocations)
                 {
                     IValue value = objectNode.GetMethodResult(method, invocation);
-                    if (value is Location resultLocation)
+                    if (value is Location source && source != Location.Null)
                     {
-                        HeapVertex source = vertexLookup[resultLocation];
                         HeapEdge edge = new HeapEdge(source, target, HeapEdgeType.MethodResult);
                         graph.AddEdge(edge);
                     }
@@ -75,19 +71,21 @@ namespace dnWalker.TestGenerator.Heap
             }
         }
 
-        private static void AddArrayEdges(IReadOnlyArrayHeapNode arrayNode, IReadOnlyHeapInfo heap, BidirectionalGraph<HeapVertex, HeapEdge> graph, IReadOnlyDictionary<Location, HeapVertex> vertexLookup)
+        private static void AddArrayEdges(IReadOnlyArrayHeapNode arrayNode, IReadOnlyHeapInfo heap, BidirectionalGraph<Location, HeapEdge> graph)
         {
             if (arrayNode.HasElements)
             {
-                HeapVertex target = vertexLookup[arrayNode.Location];
+                Location target = arrayNode.Location;
                 foreach (int index in arrayNode.Indeces)
                 {
                     IValue value = arrayNode.GetElement(index);
-                    if (value is Location elementLocation)
+                    if (value is Location source)
                     {
-                        HeapVertex source = vertexLookup[elementLocation];
-                        HeapEdge edge = new HeapEdge(source, target, HeapEdgeType.ArrayElement);
-                        graph.AddEdge(edge);
+                        if (source != Location.Null)
+                        {
+                            HeapEdge edge = new HeapEdge(source, target, HeapEdgeType.ArrayElement);
+                            graph.AddEdge(edge);
+                        }
                     }
                     else
                     {

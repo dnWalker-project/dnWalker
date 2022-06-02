@@ -67,10 +67,10 @@ namespace dnWalker.TestGenerator.Templates.Moq
 
                 for (int i = 0; i < results.Length - 1; ++i)
                 {
-                    output.WriteLine($".Returns({results[i].GetLiteral(locationNames)})");
+                    output.WriteLine($".Returns({GetLiteral(results[i], locationNames)})");
                 }
 
-                output.WriteLine($".Returns({results[^1].GetLiteral(locationNames)});");
+                output.WriteLine($".Returns({GetLiteral(results[^1],locationNames)});");
 
                 output.PopIndent();
             }

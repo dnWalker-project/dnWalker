@@ -112,10 +112,13 @@ namespace dnWalker.TestGenerator.Templates
             // create & sort heap node groups using dependency graph
             HeapGraph graph = heap.CreateGraph();
 
-            IReadOnlyList<IReadOnlyCollection<IReadOnlyHeapNode>> dependencyGroups = graph.GetDependencyGroups();
-
+            IReadOnlyList<DependencyGroup> dependencyGroups = graph.GetDependencyGroups();
 
             // arrange each heap node group
+            foreach (DependencyGroup dg in dependencyGroups)
+            {
+                WriteArrangeNodeGroup(output, dg, locationNames);
+            }
         }
 
         /// <summary>

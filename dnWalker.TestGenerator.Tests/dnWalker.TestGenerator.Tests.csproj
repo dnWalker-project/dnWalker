@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Templates\**" />
+    <EmbeddedResource Remove="Templates\**" />
+    <None Remove="Templates\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -21,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.TestGenerator.Templates.FluentAssertions\dnWalker.TestGenerator.Templates.FluentAssertions.csproj" />
+    <ProjectReference Include="..\dnWalker.TestGenerator.Templates.Moq\dnWalker.TestGenerator.Templates.Moq.csproj" />
+    <ProjectReference Include="..\dnWalker.TestGenerator.XunitProvider\dnWalker.TestGenerator.XunitProvider.csproj" />
     <ProjectReference Include="..\dnWalker.TestGenerator\dnWalker.TestGenerator.csproj" />
   </ItemGroup>
 
@@ -29,17 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Templates\MethodInvocationDummy.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MethodInvocationDummy.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Symbols\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Templates\" />
   </ItemGroup>
 </Project>
