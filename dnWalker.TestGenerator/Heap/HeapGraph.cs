@@ -6,16 +6,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using dnWalker.Symbolic;
+using dnWalker.Symbolic.Heap;
+
 namespace dnWalker.TestGenerator.Heap
 {
     public class HeapGraph : IBidirectionalGraph<HeapVertex, HeapEdge>
     {
         private List<DependencyGroup>? _groups;
         private readonly BidirectionalGraph<HeapVertex, HeapEdge> _graph;
+        private readonly Dictionary<Location, HeapVertex> _vertexLookup;
 
         internal HeapGraph(BidirectionalGraph<HeapVertex, HeapEdge> graph)
         {
             _graph = graph;
+            _vertexLookup = graph.Vertices.ToDictionary(static v => v.Node.Location);
+
         }
 
         public IReadOnlyList<DependencyGroup> GetDependencyGroups()
@@ -28,6 +34,16 @@ namespace dnWalker.TestGenerator.Heap
 
             return _groups;
         }
+
+        public HeapVertex GetVertex(IReadOnlyHeapNode heapNode)
+        {
+            return GetVertex(heapNode.Location);
+        }
+        public HeapVertex GetVertex(Location location)
+        {
+            return _vertexLookup[location];
+        }
+
 
         #region IBidirectionalGraph<HeapVertex, HeapEdge>
         public bool IsVerticesEmpty
