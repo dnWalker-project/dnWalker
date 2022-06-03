@@ -783,11 +783,11 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             output.ToString().Trim().Should().Be(
                 string.Join(Environment.NewLine,
-                    "// Arrange input model heap",
-                    "object object1 = new object();",
-                    "",
                     "// Arrange static fields",
                     "MoqTemplateTests.ArgClass.MagicObject = object1;",
+                    "",
+                    "// Arrange input model heap",
+                    "object object1 = new object();",
                     "",
                     "// Arrange method arguments",
                     "string strArg = null;",
@@ -810,11 +810,11 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             output.ToString().Trim().Should().Be(
                 string.Join(Environment.NewLine,
-                    "// Arrange input model heap",
-                    "object object1 = new object();",
-                    "",
                     "// Arrange static fields",
                     "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicObject\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, object1);",
+                    "",
+                    "// Arrange input model heap",
+                    "object object1 = new object();",
                     "",
                     "// Arrange method arguments",
                     "string strArg = null;",
@@ -912,7 +912,94 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
         }
         #endregion Static Fields
 
+        #region Circular Dependencies
+        [Fact]
+        public void ArrangeCircularDependency()
+        {
+            Model model = new Model();
+
+            IObjectHeapNode objNode1 = model.HeapInfo.InitializeObject(ArgClassTS);
+            IObjectHeapNode objNode2 = model.HeapInfo.InitializeObject(ArgClassTS);
+
+            objNode1.SetField(GetField("PublicRefField"), objNode2.Location);
+            objNode2.SetField(GetField("PublicRefField"), objNode1.Location);
+
+            DummyWriter output = new DummyWriter();
+            IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
+
+            output.ToString().Trim().Should().Be(
+                string.Join(Environment.NewLine,
+                    "// Arrange input model heap",
+                    "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
+                    "MoqTemplateTests.ArgClass argClass2 = new Mock<MoqTemplateTests.ArgClass>().Object;",
+                    "argClass1.PublicRefField = argClass2;",
+                    "argClass2.PublicRefField = argClass1;",
+                    "",
+                    "// Arrange method arguments",
+                    "string strArg = null;",
+                    "MoqTemplateTests.ArgClass refArg = null;",
+                    "int primitiveArg = 0;"));
+            locationNames.Should().HaveCount(2);
+
+        }
+        #endregion Circular Dependencies
+
         #region Mix Of All
+        [Fact]
+        public void ArrangeComplexHeap()
+        {
+            Model model = new Model();
+            IObjectHeapNode refArgNode = model.HeapInfo.InitializeObject(ArgClassTS);
+            IArrayHeapNode primitiveArrNode = model.HeapInfo.InitializeArray(IntTS, 8);
+            primitiveArrNode.SetElement(1, ValueFactory.GetValue(3));
+            primitiveArrNode.SetElement(5, ValueFactory.GetValue(42));
+            primitiveArrNode.SetElement(7, ValueFactory.GetValue(-86));
+
+            IArrayHeapNode refArrNode = model.HeapInfo.InitializeArray(ArgClassTS, 3);
+            refArrNode.SetElement(0, refArgNode.Location);
+            refArrNode.SetElement(2, Location.Null);
+
+            refArgNode.SetField(GetField("PublicRefField"), primitiveArrNode.Location);
+            refArgNode.SetMethodResult(GetMethod("RefMethodArgs"), 2, refArrNode.Location);
+
+
+            model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[0]), new StringValue("Hello world!"));
+            model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), refArgNode.Location);
+            model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[2]), ValueFactory.GetValue(42));
+
+            model.SetValue(new StaticFieldVariable(GetField("PrivateMagicString")), new StringValue("Hello world!"));
+
+            DummyWriter output = new DummyWriter();
+            IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
+
+            output.ToString().Trim().Should().Be(
+                string.Join(Environment.NewLine,
+                    "// Arrange static fields",
+                    "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicString\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, \"Hello world!\");",
+                    "",
+                    "// Arrange input model heap",
+                    "int[] intArray1 = new int[8];",
+                    "intArray1[1] = 3;",
+                    "intArray1[5] = 42;",
+                    "intArray1[7] = -86;",
+                    "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
+                    "MoqTemplateTests.ArgClass[] argClassArray1 = new MoqTemplateTests.ArgClass[3];",
+                    "argClass1.PublicRefField = intArray1;",
+                    "{",
+                    "    Mock<MoqTemplateTests.ArgClass> mock = Mock.Get(argClass1);",
+                    "    mock.SetupSequence(o => o.RefMethodArgs(It.IsAny<string>(), It.IsAny<MoqTemplateTests.ArgClass>(), It.IsAny<int>()))",
+                    "        .Returns(null)",
+                    "        .Returns(argClassArray1);",
+                    "}",
+                    "argClassArray1[0] = argClass1;",
+                    "argClassArray1[2] = null;",
+                    "",
+                    "// Arrange method arguments",
+                    "string strArg = \"Hello world!\";",
+                    "MoqTemplateTests.ArgClass refArg = argClass1;",
+                    "int primitiveArg = 42;"));
+            locationNames.Should().HaveCount(3);
+        }
         #endregion Mix Of All
     }
 }
