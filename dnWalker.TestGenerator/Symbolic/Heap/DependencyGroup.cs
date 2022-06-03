@@ -16,6 +16,9 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
         public DependencyGroup(IEnumerable<IReadOnlyHeapNode> heapNodes)
         {
             _heapNodes = new List<IReadOnlyHeapNode>(heapNodes);
+            
+            // nodes within one group have proper ordering
+            _heapNodes.Sort(static (n1, n2) => n1.Location.Value.CompareTo(n2.Location.Value));
         }
 
         public int Count

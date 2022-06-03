@@ -45,7 +45,7 @@ namespace dnWalker.TestGenerator.Tests
             if (_indentLengths.TryPop(out int length))
             {
                 string popped = _currentIndent.Substring(_currentIndent.Length - length);
-                _currentIndent = _currentIndent.Substring(0, length);
+                _currentIndent = _currentIndent.Substring(0, _currentIndent.Length - length);
                 return popped;
             }
             return string.Empty;

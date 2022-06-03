@@ -54,7 +54,7 @@ namespace dnWalker.Explorations.Xml
             {
                 // heap
                 XElement heapXml = GetElement(xml, XmlTokens.Heap);
-                IHeapInfo heapInfo = model.HeapInfo;
+                HeapInfo heapInfo = model.HeapInfo;
                 foreach (XElement nodeXml in heapXml.Elements())
                 {
                     Location location = new Location((uint)GetAttribute(nodeXml, XmlTokens.Location));

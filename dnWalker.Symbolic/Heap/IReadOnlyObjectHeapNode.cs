@@ -47,7 +47,7 @@ namespace dnWalker.Symbolic.Heap
                 IValue[] results = new IValue[max];
                 for (int i = 0; i < max; ++i)
                 {
-                    results[i] = objectNode.GetMethodResult(method, i);
+                    results[i] = objectNode.GetMethodResult(method, i + 1);
                 }
 
                 retList.Add((method, results));

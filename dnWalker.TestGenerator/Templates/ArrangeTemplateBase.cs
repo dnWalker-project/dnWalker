@@ -40,11 +40,11 @@ namespace dnWalker.TestGenerator.Templates
 
             if (heapNode is IReadOnlyObjectHeapNode objectNode)
             {
-                return FirstCharToLower($"{objectNode.Type.TypeName}{counter}");
+                return FirstCharToLower($"{TemplateUtils.GetTypeNameOrAlias(objectNode.Type)}{counter}");
             }
             else if (heapNode is IReadOnlyArrayHeapNode arrayNode)
             {
-                return FirstCharToLower($"{arrayNode.ElementType.TypeName}Array{counter}");
+                return FirstCharToLower($"{TemplateUtils.GetTypeNameOrAlias(arrayNode.ElementType)}Array{counter}");
             }
 
             throw new NotSupportedException("Unexpected heap node type.");
@@ -94,10 +94,21 @@ namespace dnWalker.TestGenerator.Templates
         public IDictionary<Location, string> WriteArrange(IWriter output, IReadOnlyModel model, IMethod testedMethod)
         {
             IDictionary<Location, string> locationNames = new Dictionary<Location, string>();
-            
-            WriteArrangeHeap(output, model.HeapInfo, locationNames);
 
-            ArrangeStaticFields(output, model, locationNames);
+            IReadOnlyHeapInfo heap = model.HeapInfo;
+            if (!heap.IsEmpty())
+            {
+                output.WriteLine("// Arrange input model heap");
+                WriteArrangeHeap(output, model.HeapInfo, locationNames);
+                output.WriteLine(string.Empty);
+            }
+            if (model.Variables.OfType<StaticFieldVariable>().Any())
+            {
+                output.WriteLine("// Arrange static fields");
+                ArrangeStaticFields(output, model, locationNames);
+                output.WriteLine(string.Empty);
+            }
+            output.WriteLine("// Arrange method arguments");
             ArrangeMethodArguments(output, model, locationNames, testedMethod);
 
             return locationNames;
@@ -156,7 +167,7 @@ namespace dnWalker.TestGenerator.Templates
 
         protected virtual void WriteVariableDeclaration(IWriter output, IReadOnlyHeapNode node, IDictionary<Location, string> locationNames, bool newLine = false)
         {
-            output.Write(node.Type);
+            output.WriteNameOrAlias(node.Type);
             output.Write(TemplateUtils.WhiteSpace);
             output.Write(GetName(node, locationNames));
 
@@ -170,15 +181,15 @@ namespace dnWalker.TestGenerator.Templates
         {
             // TODO: how to handle non parameterless constructor? - from dependency graph the values should already be created...
             output.Write("new ");
-            output.Write(objectNode.Type);
+            output.WriteNameOrAlias(objectNode.Type);
             output.WriteLine("();");
         }
 
         protected virtual void WriteArrayCreation(IWriter output, IReadOnlyArrayHeapNode arrayNode, IDictionary<Location, string> locationNames)
         {
             output.Write("new ");
-            output.Write(arrayNode.ElementType);
-            output.Write($"[{arrayNode.Length}];");
+            output.WriteNameOrAlias(arrayNode.ElementType);
+            output.WriteLine($"[{arrayNode.Length}];");
         }
 
         protected virtual void WriteObjectInitialization(IWriter output, IReadOnlyObjectHeapNode objectNode, IDictionary<Location, string> locationNames)
@@ -212,8 +223,8 @@ namespace dnWalker.TestGenerator.Templates
                     {
                         // must use reflection to set the field :(
                         output.Write("typeof(");
-                        output.Write(declaringType);
-                        output.WriteLine($").GetField(\"{fldName}\", Flags.Instance | Flags.Public).SetValue({varName}, {fieldValueLiteral});"); // calling Write with the format & args overload would be faster...
+                        output.WriteNameOrAlias(declaringType);
+                        output.WriteLine($").GetField(\"{fldName}\", BindingFlags.Instance | BindingFlags.Public).SetValue({varName}, {fieldValueLiteral});"); // calling Write with the format & args overload would be faster...
                     }
                     else
                     {
@@ -224,8 +235,8 @@ namespace dnWalker.TestGenerator.Templates
                 {
                     // must use reflection to set the field :(
                     output.Write("typeof(");
-                    output.Write(declaringType);
-                    output.WriteLine($").GetField(\"{fldName}\", Flags.Instance | Flags.NonPublic).SetValue({varName}, {fieldValueLiteral});"); // calling Write with the format & args overload would be faster...
+                    output.WriteNameOrAlias(declaringType);
+                    output.WriteLine($").GetField(\"{fldName}\", BindingFlags.Instance | BindingFlags.NonPublic).SetValue({varName}, {fieldValueLiteral});"); // calling Write with the format & args overload would be faster...
                 }
             }
         }
@@ -270,11 +281,11 @@ namespace dnWalker.TestGenerator.Templates
             if (fldDef.IsPublic)
             {
                 // easily set
-                output.Write(declaringType);
-                output.Write(TemplateUtils.Coma);
+                output.WriteNameOrAlias(declaringType);
+                output.Write(TemplateUtils.Dot);
                 output.Write(fldName);
                 output.Write(TemplateUtils.AssignmentOperator);
-                output.WriteLine(literal);
+                output.WriteLine($"{literal};");
             }
             else
             {
@@ -282,8 +293,8 @@ namespace dnWalker.TestGenerator.Templates
 
                 // fld def is not public => we need to use reflection to set it...
                 output.Write("typeof(");
-                output.Write(declaringType);
-                output.WriteLine($").GetField(\"{fldName}\", Flags.Static | Flags.NonPublic).SetValue(null, {literal});"); // calling Write with the format & args overload would be faster...
+                output.WriteNameOrAlias(declaringType);
+                output.WriteLine($").GetField(\"{fldName}\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, {literal});"); // calling Write with the format & args overload would be faster...
             }
         }
 
@@ -304,11 +315,11 @@ namespace dnWalker.TestGenerator.Templates
 
         private void ArrangeMethodArgument(IWriter output, MethodArgumentVariable methodArgumentVar, string literal)
         {
-            output.Write(methodArgumentVar.Parameter.Type);
+            output.WriteNameOrAlias(methodArgumentVar.Parameter.Type);
             output.Write(TemplateUtils.WhiteSpace);
             output.Write(methodArgumentVar.Parameter.Name);
             output.Write(TemplateUtils.AssignmentOperator);
-            output.WriteLine(literal);
+            output.WriteLine($"{literal};");
         }
         #endregion Arrange Variables
     }

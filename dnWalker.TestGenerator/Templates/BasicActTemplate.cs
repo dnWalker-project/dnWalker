@@ -21,7 +21,7 @@ namespace dnWalker.TestGenerator.Templates
         {
             if (method.HasReturnValue())
             {
-                output.Write(method.MethodSig.RetType);
+                output.WriteFullName(method.MethodSig.RetType);
                 output.Write($" {returnSymbol} = ");
             }
 
@@ -35,7 +35,7 @@ namespace dnWalker.TestGenerator.Templates
             if (method.HasReturnValue())
             {
                 output.Write("Func<");
-                output.Write(method.MethodSig.RetType);
+                output.WriteFullName(method.MethodSig.RetType);
                 output.Write($"> {delegateSymbol} = () => ");
             }
             else
@@ -59,7 +59,7 @@ namespace dnWalker.TestGenerator.Templates
                     .Select(static p => p.Name)
                     .ToArray();
 
-                output.Write(md.DeclaringType.ToTypeSig());
+                output.WriteFullName(md.DeclaringType.ToTypeSig());
                 output.Write($".{method.Name}(");
                 output.Write(string.Join(TemplateUtils.ComaSpace, argumentSymbols));
                 output.Write(")");

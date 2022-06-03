@@ -10,11 +10,11 @@ namespace dnWalker.TestGenerator.Templates
 {
     public static class WriterExtensions
     {
-        public static void Write(this IWriter writer, TypeSig type, bool includeNamespace = true)
+        public static void WriteFullName(this IWriter writer, TypeSig type)
         {
             if (type.IsSZArray || type.IsArray)
             {
-                writer.Write(type.Next);
+                writer.WriteFullName(type.Next);
                 writer.Write("[]");
                 return;
             }
@@ -26,7 +26,51 @@ namespace dnWalker.TestGenerator.Templates
                 if (declType != null)
                 {
                     // is nested
-                    writer.Write(declType.ToTypeSig());
+                    writer.WriteFullName(declType.ToTypeSig());
+                    writer.Write(TemplateUtils.Dot);
+                }
+            }
+
+            IType t = type;
+
+            writer.Write(t.Namespace);
+            writer.Write(TemplateUtils.Dot);
+            writer.Write(t.Name);
+
+            if (type.IsGenericInstanceType)
+            {
+                IList<TypeSig> genericArgs = ((GenericInstSig)type).GenericArguments;
+                writer.Write("<");
+
+                writer.WriteFullName(genericArgs[0]);
+
+                for (int i = 1; i < genericArgs.Count; ++i)
+                {
+                    writer.Write(TemplateUtils.ComaSpace);
+                    writer.WriteFullName(genericArgs[i]);
+                }
+
+                writer.Write(">");
+            }
+        }
+    
+        public static void WriteNameOrAlias(this IWriter writer, TypeSig type)
+        {
+            if (type.IsSZArray || type.IsArray)
+            {
+                writer.WriteNameOrAlias(type.Next);
+                writer.Write("[]");
+                return;
+            }
+
+            if (type.IsTypeDefOrRef)
+            {
+                ITypeDefOrRef typeDefOrRef = ((TypeDefOrRefSig)type).TypeDefOrRef;
+                ITypeDefOrRef declType = typeDefOrRef.DeclaringType;
+                if (declType != null)
+                {
+                    // is nested
+                    writer.WriteNameOrAlias(declType.ToTypeSig());
                     writer.Write(TemplateUtils.Dot);
                 }
             }
@@ -38,12 +82,12 @@ namespace dnWalker.TestGenerator.Templates
                 IList<TypeSig> genericArgs = ((GenericInstSig)type).GenericArguments;
                 writer.Write("<");
 
-                writer.Write(genericArgs[0]);
+                writer.WriteNameOrAlias(genericArgs[0]);
 
                 for (int i = 1; i < genericArgs.Count; ++i)
                 {
                     writer.Write(TemplateUtils.ComaSpace);
-                    writer.Write(genericArgs[i]);
+                    writer.WriteNameOrAlias(genericArgs[i]);
                 }
 
                 writer.Write(">");

@@ -50,19 +50,23 @@ namespace dnWalker.Symbolic.Heap
             return GetNode(location);
         }
 
-        public IObjectHeapNode InitializeObject(TypeSig type)
+        public ObjectHeapNode InitializeObject(TypeSig type)
         {
             ObjectHeapNode node = new ObjectHeapNode(NextLocation(), type);
             _nodes[node.Location] = node;
             return node;
         }
 
-        public IArrayHeapNode InitializeArray(TypeSig elementType, int length)
+        IObjectHeapNode IHeapInfo.InitializeObject(TypeSig type) => InitializeObject(type);
+
+        public ArrayHeapNode InitializeArray(TypeSig elementType, int length)
         {
             ArrayHeapNode node = new ArrayHeapNode(NextLocation(), elementType, length);
             _nodes[node.Location] = node;
             return node;
         }
+
+        IArrayHeapNode IHeapInfo.InitializeArray(TypeSig elementType, int length) => InitializeArray(elementType, length);
 
         private uint _freeLocation = 1;
         private Location NextLocation()

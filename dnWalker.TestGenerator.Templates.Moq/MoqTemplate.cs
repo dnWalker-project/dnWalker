@@ -26,7 +26,7 @@ namespace dnWalker.TestGenerator.Templates.Moq
             {
                 // create the object using Mock
                 output.Write("new Mock<");
-                output.Write(type);
+                output.WriteNameOrAlias(type);
                 output.WriteLine(">().Object;");
             }
         }
@@ -41,12 +41,12 @@ namespace dnWalker.TestGenerator.Templates.Moq
 
 
             output.Write("Mock<");
-            output.Write(type);
+            output.WriteNameOrAlias(type);
             output.WriteLine($"> mock = Mock.Get({GetName(objectNode, locationNames)});");
 
             foreach ((IMethod method, IValue[] results) in objectNode.GetMethodResults())
             {
-                output.Write($"mock.SetupSequence(static o => o.{method.Name}(");
+                output.Write($"mock.SetupSequence(o => o.{method.Name}(");
 
                 if (method.HasParams())
                 {
@@ -69,7 +69,7 @@ namespace dnWalker.TestGenerator.Templates.Moq
                     output.WriteLine($".Returns({GetLiteral(results[i], locationNames)})");
                 }
 
-                output.WriteLine($".Returns({GetLiteral(results[^1],locationNames)});");
+                output.WriteLine($".Returns({GetLiteral(results[results.Length - 1], locationNames)});");
 
                 output.PopIndent();
             }
@@ -80,7 +80,7 @@ namespace dnWalker.TestGenerator.Templates.Moq
             void WritePlaceholder(TypeSig type)
             {
                 output.Write("It.IsAny<");
-                output.Write(type);
+                output.WriteNameOrAlias(type);
                 output.Write(">()");
             }
         }

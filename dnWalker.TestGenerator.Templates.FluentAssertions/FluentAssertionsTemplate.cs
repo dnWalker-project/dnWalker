@@ -41,13 +41,13 @@ namespace dnWalker.TestGenerator.Templates.FluentAssertions
         public void WriteAssertExceptionThrown(IWriter output, string delegateSymbol, TypeSig exceptionType)
         {
             output.Write($"{delegateSymbol}.Should().Throw<");
-            output.Write(exceptionType);
+            output.WriteFullName(exceptionType);
             output.WriteLine(">();");
         }
         public void WriteAssertExceptionNotThrown(IWriter output, string delegateSymbol, TypeSig exceptionType)
         {
             output.Write($"{delegateSymbol}.Should().NotThrow<");
-            output.Write(exceptionType);
+            output.WriteFullName(exceptionType);
             output.WriteLine(">();");
         }
 

@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
-using QuikGraph.Algorithms.ConnectedComponents;
+
 using QuikGraph.Algorithms;
+using QuikGraph.Algorithms.ConnectedComponents;
+using QuikGraph.Algorithms.TopologicalSort;
 
 namespace dnWalker.TestGenerator.Symbolic.Heap
 {
@@ -67,7 +69,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
                 }
 
                 // do topological ordering of the condensated graph
-                _groups = depGraph.TopologicalSort().ToArray();
+                _groups = TopologicalSort(depGraph);
             }
             return _groups;
 
@@ -79,6 +81,14 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
                     groups[i] = new DependencyGroup(builders[i].Select(loc => heap.GetNode(loc)));
                 }
                 return groups;
+            }
+            static DependencyGroup[] TopologicalSort(AdjacencyGraph<DependencyGroup, Edge<DependencyGroup>> depGraph)
+            {
+                //return depGraph.TopologicalSort().ToArray();
+                TopologicalSortAlgorithm<DependencyGroup, Edge<DependencyGroup>> tsAlg = new TopologicalSortAlgorithm<DependencyGroup, Edge<DependencyGroup>>(depGraph, depGraph.VertexCount);
+                tsAlg.Compute();
+                return tsAlg.SortedVertices;
+
             }
         }
 

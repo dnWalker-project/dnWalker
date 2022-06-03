@@ -37,6 +37,5 @@ namespace dnWalker.Symbolic.Heap
 
         IObjectHeapNode InitializeObject(TypeSig type);
         IArrayHeapNode InitializeArray(TypeSig elementType, int length);
-        bool AddNode(IHeapNode node);
     }
 }
