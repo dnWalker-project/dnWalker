@@ -24,5 +24,10 @@ namespace dnWalker.TypeSystem
 
             return Array.Empty<TypeSig>();
         }
+
+        public static bool HasReturnValue(this IMethod method)
+        {
+            return !TypeEqualityComparer.Instance.Equals(method.MethodSig.RetType, method.Module.CorLibTypes.Void);
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.TypeSystem;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,10 +19,10 @@ namespace dnWalker.TestGenerator.Templates
 
         public void WriteAct(IWriter output, IMethod method, string? instanceSymbol, string? returnSymbol = null)
         {
-            if (method.MethodSig.RetType != null)
+            if (method.HasReturnValue())
             {
                 output.Write(method.MethodSig.RetType);
-                output.Write($"{returnSymbol} = ");
+                output.Write($" {returnSymbol} = ");
             }
 
             WriteInvocation(output, method, instanceSymbol);
@@ -30,7 +32,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public void WriteActDelegate(IWriter output, IMethod method, string? instanceSymbol, string? returnSymbol = null, string delegateSymbol = "act")
         {
-            if (method.MethodSig.RetType != null)
+            if (method.HasReturnValue())
             {
                 output.Write("Func<");
                 output.Write(method.MethodSig.RetType);
@@ -50,12 +52,13 @@ namespace dnWalker.TestGenerator.Templates
         {
             MethodDef md = method.ResolveMethodDefThrow();
 
-            string[] argumentSymbols = md.Parameters
-                .Select(static p => p.Name)
-                .ToArray();
 
             if (md.IsStatic)
             {
+                string[] argumentSymbols = md.Parameters
+                    .Select(static p => p.Name)
+                    .ToArray();
+
                 output.Write(md.DeclaringType.ToTypeSig());
                 output.Write($".{method.Name}(");
                 output.Write(string.Join(TemplateUtils.ComaSpace, argumentSymbols));
@@ -64,6 +67,12 @@ namespace dnWalker.TestGenerator.Templates
             else
             {
                 System.Diagnostics.Debug.Assert(instanceSymbol != null, "Writing non static function, instance symbol must be specified.");
+
+                string[] argumentSymbols = md.Parameters
+                    .Skip(1)
+                    .Select(static p => p.Name)
+                    .ToArray();
+
                 output.Write($"{instanceSymbol}.{method.Name}(");
                 output.Write(string.Join(TemplateUtils.ComaSpace, argumentSymbols));
                 output.Write(")");

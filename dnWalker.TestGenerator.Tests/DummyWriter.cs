@@ -22,8 +22,8 @@ namespace dnWalker.TestGenerator.Tests
 
         private string PreprocessText(string text)
         {
-            string newLineAndIndent = "\n" + _currentIndent;
-            return text.Replace("\n", newLineAndIndent);
+            string newLineAndIndent = Environment.NewLine + _currentIndent;
+            return text.Replace(Environment.NewLine, newLineAndIndent);
         }
 
         public override string ToString()

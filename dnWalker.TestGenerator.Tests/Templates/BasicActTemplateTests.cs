@@ -51,17 +51,17 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 instanceSymbol,
                 returnSymbol);
 
-            output.ToString().Should().Be(expected);
+            output.ToString().Trim().Should().Be(expected);
         }
 
 
         [Theory]
         [InlineData(nameof(ActTestClass.NoReturnNoArgsStatic), null, null, "method", "Action method = () => ActTestClass.NoReturnNoArgsStatic();")]
         [InlineData(nameof(ActTestClass.NoReturnNoArgsInstance), "obj", null, "method", "Action method = () => obj.NoReturnNoArgsInstance();")]
-        [InlineData(nameof(ActTestClass.ReturnNoArgsStatic), null, "result", "method", "int result;\r\nAction method = () => result = ActTestClass.ReturnNoArgsStatic();")]
-        [InlineData(nameof(ActTestClass.ReturnNoArgsInstance), "obj", "result", "method", "int result;\r\nAction method = () => result = obj.ReturnNoArgsInstance();")]
-        [InlineData(nameof(ActTestClass.ReturnArgsStatic), null, "result", "method", "int result;\r\nAction method = () => result = ActTestClass.ReturnArgsStatic(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.ReturnArgsInstance), "obj", "result", "method", "int result;\r\nAction method = () => result = obj.ReturnArgsInstance(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.ReturnNoArgsStatic), null, "result", "method", "Func<int> method = () => ActTestClass.ReturnNoArgsStatic();")]
+        [InlineData(nameof(ActTestClass.ReturnNoArgsInstance), "obj", "result", "method", "Func<int> method = () => obj.ReturnNoArgsInstance();")]
+        [InlineData(nameof(ActTestClass.ReturnArgsStatic), null, "result", "method", "Func<int> method = () => ActTestClass.ReturnArgsStatic(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.ReturnArgsInstance), "obj", "result", "method", "Func<int> method = () => obj.ReturnArgsInstance(strArg, dblArg);")]
         [InlineData(nameof(ActTestClass.NoReturnArgsStatic), null, null, "method", "Action method = () => ActTestClass.NoReturnArgsStatic(strArg, dblArg);")]
         [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "method", "Action method = () => obj.NoReturnArgsInstance(strArg, dblArg);")]
         public void WriteInvocationDelegate(string method, string? instanceSymbol, string? returnSymbol, string? delegateSymbol, string expected)
@@ -77,7 +77,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 returnSymbol,
                 delegateSymbol ?? "act");
 
-            output.ToString().Should().Be(expected);
+            output.ToString().Trim().Should().Be(expected);
         }
     }
 }
