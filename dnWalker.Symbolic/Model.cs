@@ -21,10 +21,13 @@ namespace dnWalker.Symbolic
 
         public Model(Constraint precondition)
         {
-            _precondition = precondition ?? new Constraint();
+            _precondition = precondition ?? throw new ArgumentNullException(nameof(precondition));
             _values = new Dictionary<IRootVariable, IValue>();
             _heapInfo = new HeapInfo();
         }
+
+        public Model() : this(new Constraint())
+        {  }
 
         private Model(Model model)
         {

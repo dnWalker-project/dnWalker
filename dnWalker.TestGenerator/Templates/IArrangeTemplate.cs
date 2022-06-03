@@ -20,7 +20,8 @@ namespace dnWalker.TestGenerator.Templates
         /// <param name="output"></param>
         /// <param name="model"></param>
         /// <returns>A mapping from heap location to a variable name.</returns>
-        IDictionary<Location, string> WriteArrange(IWriter output, IReadOnlyModel model);
+        /// <param name="testedMethod"></param>
+        IDictionary<Location, string> WriteArrange(IWriter output, IReadOnlyModel model, IMethod testedMethod);
     }
 }
 

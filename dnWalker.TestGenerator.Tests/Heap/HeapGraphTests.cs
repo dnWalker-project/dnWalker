@@ -16,16 +16,20 @@ using Xunit;
 
 namespace dnWalker.TestGenerator.Tests.Heap
 {
-    public abstract class TestClass
-    {
-        public object PublicField;
-        private object PrivateField;
-
-        public abstract object Run();
-    }
 
     public class HeapGraphTests
     {
+        private abstract class TestClass
+        {
+            public object PublicField;
+            private object PrivateField;
+
+            public abstract object Run();
+            public abstract object Run(string name, TestClass other);
+
+            public static int MagicNumber;
+        }
+
         [Fact]
         public void EmptyHeap()
         {
@@ -96,7 +100,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -128,7 +132,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -160,7 +164,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -196,7 +200,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -242,7 +246,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -284,7 +288,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -326,7 +330,7 @@ namespace dnWalker.TestGenerator.Tests.Heap
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 

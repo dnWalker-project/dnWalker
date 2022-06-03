@@ -91,14 +91,14 @@ namespace dnWalker.TestGenerator.Templates
             return result;
         }
 
-        public IDictionary<Location, string> WriteArrange(IWriter output, IReadOnlyModel model)
+        public IDictionary<Location, string> WriteArrange(IWriter output, IReadOnlyModel model, IMethod testedMethod)
         {
             IDictionary<Location, string> locationNames = new Dictionary<Location, string>();
             
             WriteArrangeHeap(output, model.HeapInfo, locationNames);
 
             ArrangeStaticFields(output, model, locationNames);
-            ArrangeMethodArguments(output, model, locationNames);
+            ArrangeMethodArguments(output, model, locationNames, testedMethod);
 
             return locationNames;
         }
@@ -287,10 +287,17 @@ namespace dnWalker.TestGenerator.Templates
             }
         }
 
-        private void ArrangeMethodArguments(IWriter output, IReadOnlyModel model, IDictionary<Location, string> locationNames)
+        private void ArrangeMethodArguments(IWriter output, IReadOnlyModel model, IDictionary<Location, string> locationNames, IMethod method)
         {
-            foreach (MethodArgumentVariable methodArgumentVar in model.Variables.OfType<MethodArgumentVariable>())
+            MethodDef md = method.ResolveMethodDefThrow();
+
+            IList<Parameter> parameters = md.Parameters;
+            
+            //foreach (MethodArgumentVariable methodArgumentVar in model.Variables.OfType<MethodArgumentVariable>())
+            foreach (Parameter p in parameters)
             {
+                MethodArgumentVariable methodArgumentVar = new MethodArgumentVariable(p);
+
                 ArrangeMethodArgument(output, methodArgumentVar, GetLiteral(model.GetValueOrDefault(methodArgumentVar), locationNames));
             }
         }

@@ -23,7 +23,7 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
             IMethod method = Method;
 
             // TODO: setup the input symbols
-            IDictionary<Location, string> locationNames = templates.ArrangeTemplate.WriteArrange(output, inputModel);
+            IDictionary<Location, string> locationNames = templates.ArrangeTemplate.WriteArrange(output, inputModel, method);
 
             templates.ActTemplate.WriteActDelegate(output, method, null, method.Name);
 

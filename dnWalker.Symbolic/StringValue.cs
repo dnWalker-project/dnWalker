@@ -49,7 +49,7 @@ namespace dnWalker.Symbolic
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(Content) ? "\"\"" : $"\"{Content}\"";
+            return Content == null ? "null" : $"\"{Content}\"";
         }
     }
 }

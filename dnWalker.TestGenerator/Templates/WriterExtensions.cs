@@ -10,7 +10,7 @@ namespace dnWalker.TestGenerator.Templates
 {
     public static class WriterExtensions
     {
-        public static void Write(this IWriter writer, TypeSig type)
+        public static void Write(this IWriter writer, TypeSig type, bool includeNamespace = true)
         {
             if (type.IsSZArray || type.IsArray)
             {
