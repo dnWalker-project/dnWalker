@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.TestClasses
 {
-    public abstract class TestClassTemplateBase : Templates.TemplateBase<ITestClassContext>
+    public abstract class TestClassTemplateBase : TemplateBase<ITestClassContext>
     {
         private readonly ITemplateProvider _templateProvider;
 
@@ -19,5 +19,17 @@ namespace dnWalker.TestGenerator.TestClasses
         }
 
         public ITemplateProvider TemplateProvider => _templateProvider;
+
+        public IEnumerable<IGrouping<string, string>> GetNamespaces()
+        {
+            IEnumerable<string> namespaces = Context.Usings.Concat(_templateProvider.Namespaces);
+
+            return namespaces.GroupBy(static ns =>
+            {
+                int dot = ns.IndexOf('.');
+                if (dot < 0) return ns;
+                return ns.Substring(0, dot);
+            });
+        }
     }
 }

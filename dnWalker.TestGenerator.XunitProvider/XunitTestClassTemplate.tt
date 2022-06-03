@@ -1,6 +1,57 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" visibility="internal" inherits="dnWalker.TestGenerator.TestClasses.TestClassTemplateBase"#>
 <#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension=".txt" #>
+<#@ import namespace="dnWalker.TestGenerator.Templates" #>
+<#@ import namespace="dnWalker.TestGenerator.TestClasses" #>
+<#@ import namespace="dnWalker.TestGenerator.TestClasses.Schemas" #>
+<#@ import namespace="dnWalker.TestGenerator.TestFrameworks" #>
+<#
+            // generate usings
+#>
+<#
+            foreach (IEnumerable<string> nsGroup in GetNamespaces())
+            {
+                foreach (string ns in nsGroup)
+                {
+ #>
+using <#= ns #>;
+<#
+            }
+ #>
+
+<#
+        }
+ #>
+
+<#
+            // declare test namespace
+#>
+namespace <#= Context.TestNamespaceName #>
+{
+<#
+            // declare test class
+#>
+    public class <#= Context.TestClassName #>
+    {
+
+<#
+            // for each schema create a method
+#>
+<#
+            foreach (TestSchema schema in Context.GetSchemas())
+            {
+ #>
+        public void <#= schema.TestMethodName #>()
+        {
+<#
+                schema.Write(this, TemplateProvider);
+ #>
+        }
+<#
+            }
+ #>
+    }
+}

@@ -31,6 +31,8 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
         public IReadOnlyModel OutputModel => _context.OutputModel;
         public IMethod Method => _context.Method;
 
+        public virtual string TestMethodName => $"{Method.Name}_{GetType().Name}";
+
         public abstract void Write(IWriter output, ITemplateProvider templates);
     }
 }

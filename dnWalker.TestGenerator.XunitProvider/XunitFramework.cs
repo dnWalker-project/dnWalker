@@ -29,10 +29,12 @@ namespace dnWalker.TestGenerator.XunitProvider
         };
 
 
-        public ITestClassWriter CreateClassWriter(ITemplateProvider templateProvider)
+        internal XunitTestClassWriter CreateClassWriter(ITemplateProvider templateProvider)
         {
             return new XunitTestClassWriter(this, templateProvider);
         }
+
+        ITestClassWriter ITestFramework.CreateClassWriter(ITemplateProvider templateProvider) => CreateClassWriter(templateProvider);
 
         public void InitializeClassContext(ITestClassContext classContext)
         {

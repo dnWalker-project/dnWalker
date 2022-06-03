@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="XunitTestClassTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\dnWalker.TestGenerator\dnWalker.TestGenerator.csproj" />
   </ItemGroup>
 
@@ -34,15 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="XunitTestClassTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
-    </Compile>
     <Compile Update="XunitTestProjectTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>XunitTestProjectTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="XunitTestClassTemplate.cs">
+      <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

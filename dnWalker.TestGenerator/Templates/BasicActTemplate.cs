@@ -15,7 +15,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public static readonly BasicActTemplate Instance = new BasicActTemplate();
 
-        public void WriteAct(IWriter output, IMethod method, string? returnSymbol = null)
+        public void WriteAct(IWriter output, IMethod method, string? instanceSymbol, string? returnSymbol = null)
         {
             if (method.MethodSig.RetType != null)
             {
@@ -23,12 +23,12 @@ namespace dnWalker.TestGenerator.Templates
                 output.Write($"{returnSymbol} = ");
             }
 
-            WriteInvocation(output, method);
+            WriteInvocation(output, method, instanceSymbol);
 
             output.WriteLine(";");
         }
 
-        public void WriteActDelegate(IWriter output, IMethod method, string? returnSymbol = null, string delegateSymbol = "act")
+        public void WriteActDelegate(IWriter output, IMethod method, string? instanceSymbol, string? returnSymbol = null, string delegateSymbol = "act")
         {
             if (method.MethodSig.RetType != null)
             {
@@ -41,12 +41,12 @@ namespace dnWalker.TestGenerator.Templates
                 output.Write($"Action {delegateSymbol} = () => ");
             }
             
-            WriteInvocation(output, method);
+            WriteInvocation(output, method, instanceSymbol);
 
             output.WriteLine(";");
         }
 
-        private static void WriteInvocation(IWriter output, IMethod method)
+        private static void WriteInvocation(IWriter output, IMethod method, string? instanceSymbol)
         {
             MethodDef md = method.ResolveMethodDefThrow();
 
@@ -63,8 +63,9 @@ namespace dnWalker.TestGenerator.Templates
             }
             else
             {
-                output.Write($"{argumentSymbols[0]}.{method.Name}(");
-                output.Write(string.Join(TemplateUtils.ComaSpace, argumentSymbols.Skip(1)));
+                System.Diagnostics.Debug.Assert(instanceSymbol != null, "Writing non static function, instance symbol must be specified.");
+                output.Write($"{instanceSymbol}.{method.Name}(");
+                output.Write(string.Join(TemplateUtils.ComaSpace, argumentSymbols));
                 output.Write(")");
             }
         }

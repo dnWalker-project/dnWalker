@@ -72,7 +72,7 @@ namespace dnWalker.TestGenerator.Tests.TestProjects
 
             TestProjectWriter projectWriter = new TestProjectWriter();
 
-            new XunitProvider.XunitFramework().InitializeProjectContext(context);
+            new dnWalker.TestGenerator.XunitProvider.XunitFramework().InitializeProjectContext(context);
 
             StringWriter output = new StringWriter();
             projectWriter.WriteProject(output, context);

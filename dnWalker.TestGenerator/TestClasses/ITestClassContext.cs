@@ -83,10 +83,8 @@ namespace dnWalker.TestGenerator.TestClasses
             IReadOnlyModel inSet = ctx.InputModel;
             IReadOnlyModel outSet = ctx.OutputModel;
 
-            MethodDef md = ctx.Method.ResolveMethodDefThrow();
-
             // check the return type
-            if (!TypeEqualityComparer.Instance.Equals(md.ReturnType, md.Module.CorLibTypes.Void))
+            if (!TypeEqualityComparer.Instance.Equals(ctx.Method.MethodSig.RetType, ctx.Method.Module.CorLibTypes.Void))
             {
                 // there is a return value
                 schemas.Add(new ReturnValueSchema(ctx));

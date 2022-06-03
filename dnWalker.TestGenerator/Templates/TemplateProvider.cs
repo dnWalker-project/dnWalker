@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestGenerator.Templates
 {
-    public class TestWriter : ITemplateProvider
+    public class TemplateProvider : ITemplateProvider
     {
         private readonly IArrangeTemplate _arrangeTemplate;
         private readonly IActTemplate _actTemplate;
@@ -19,7 +19,7 @@ namespace dnWalker.TestGenerator.Templates
 
         private readonly string[] _namespaces;
 
-        public TestWriter(IArrangeTemplate arrangeTemplate, IActTemplate actTemplate, IAssertTemplate assertTemplate)
+        public TemplateProvider(IArrangeTemplate arrangeTemplate, IActTemplate actTemplate, IAssertTemplate assertTemplate)
         {
             _arrangeTemplate = arrangeTemplate ?? throw new ArgumentNullException(nameof(arrangeTemplate));
             _actTemplate = actTemplate ?? throw new ArgumentNullException(nameof(actTemplate));
@@ -30,7 +30,7 @@ namespace dnWalker.TestGenerator.Templates
                 .Concat(assertTemplate.Namespaces)
                 .ToArray();
 
-            Array.Sort(_namespaces, StringComparer.OrdinalIgnoreCase);
+            //Array.Sort(_namespaces, StringComparer.OrdinalIgnoreCase);
         }
 
         public IEnumerable<string> Namespaces

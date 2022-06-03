@@ -68,7 +68,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public ITemplateProvider Create()
         {
-            return new TestWriter(
+            return new TemplateProvider(
                 _arrangeTemplate ?? throw new InvalidOperationException("The arrange template is not set."),
                 _actTemplate ?? throw new InvalidOperationException("The act template is not set."),
                 _assertTemplate ?? throw new InvalidOperationException("The assert template is not set.")

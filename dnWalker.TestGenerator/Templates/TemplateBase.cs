@@ -14,12 +14,19 @@ namespace dnWalker.TestGenerator.Templates
     public abstract class TemplateBase : IWriter
     {
         public abstract string TransformText();
-
+        public virtual void Initialize()
+        {
+            _sb.Clear();
+            _errors?.Clear();
+            _indentLengths.Clear();
+            _currentIndent = string.Empty;
+            _endsWithNewline = false;
+        }
 
         private StringBuilder _sb = new StringBuilder();
-        private System.CodeDom.Compiler.CompilerErrorCollection? _errors;
+        private System.CodeDom.Compiler.CompilerErrorCollection _errors;
         private List<int> _indentLengths = new List<int>();
-        private string _currentIndent = "";
+        private string _currentIndent = string.Empty;
         private bool _endsWithNewline;
         private IDictionary<string, object> _session = new Dictionary<string, object>();
 
