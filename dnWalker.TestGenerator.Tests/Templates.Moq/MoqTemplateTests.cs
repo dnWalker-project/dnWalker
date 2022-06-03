@@ -78,10 +78,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
         public void ArrangeEmptyModel()
         {
             Model model = new Model();
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange method arguments",
                     "string strArg = null;",
@@ -101,10 +101,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             arrayNode.SetElement(0, objectNode.Location);
             arrayNode.SetElement(1, Location.Null);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     // ArgClass is abstract => we need to have the mock...
@@ -133,10 +133,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             arrayNode.SetElement(0, objectNode.Location);
             arrayNode.SetElement(1, objectNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     // ArgClass is abstract => we need to have the mock...
@@ -166,10 +166,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             arrayNode.SetElement(2, ValueFactory.GetValue(3));
             arrayNode.SetElement(4, ValueFactory.GetValue(0));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "int[] intArray1 = new int[5];",
@@ -200,10 +200,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine, 
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -231,10 +231,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -261,10 +261,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -289,10 +289,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -318,10 +318,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[0]), new StringValue("NOT A NULL!"));
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -347,10 +347,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[0]), new StringValue("NOT A NULL!"));
             model.SetValue(new MethodArgumentVariable(TestedMethod.ResolveMethodDefThrow().Parameters[1]), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -376,10 +376,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("PrimitiveMethodNoArgs"), 1, ValueFactory.GetValue(10));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -405,10 +405,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("PrimitiveMethodNoArgs"), 3, ValueFactory.GetValue(10));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -438,10 +438,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             objNode.SetMethodResult(GetMethod("PrimitiveMethodNoArgs"), 2, ValueFactory.GetValue(10));
             objNode.SetMethodResult(GetMethod("PrimitiveMethodNoArgs"), 3, ValueFactory.GetValue(15));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -470,10 +470,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("RefMethodNoArgs"), 1, resNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -503,10 +503,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("RefMethodNoArgs"), 5, resNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -542,13 +542,13 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             objNode.SetMethodResult(GetMethod("RefMethodNoArgs"), 1, res1Node.Location);
             objNode.SetMethodResult(GetMethod("RefMethodNoArgs"), 2, res2Node.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
             locationNames.Should().HaveCount(3);
             locationNames[objNode.Location].Should().Be("argClass1");
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -577,10 +577,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("PrimitiveMethodArgs"), 1, ValueFactory.GetValue(10));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -606,10 +606,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("PrimitiveMethodArgs"), 3, ValueFactory.GetValue(10));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -639,10 +639,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             objNode.SetMethodResult(GetMethod("PrimitiveMethodArgs"), 2, ValueFactory.GetValue(10));
             objNode.SetMethodResult(GetMethod("PrimitiveMethodArgs"), 3, ValueFactory.GetValue(15));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -671,10 +671,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("RefMethodArgs"), 1, resNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -704,10 +704,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             objNode.SetMethodResult(GetMethod("RefMethodArgs"), 3, resNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -741,13 +741,13 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             objNode.SetMethodResult(GetMethod("RefMethodArgs"), 1, res1Node.Location);
             objNode.SetMethodResult(GetMethod("RefMethodArgs"), 2, res2Node.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
             locationNames.Should().HaveCount(3);
             locationNames[objNode.Location].Should().Be("argClass1");
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "object object1 = new object();",
@@ -778,10 +778,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("MagicObject")), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "MoqTemplateTests.ArgClass.MagicObject = object1;",
@@ -805,10 +805,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("PrivateMagicObject")), objNode.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicObject\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, object1);",
@@ -830,10 +830,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("MagicNumber")), ValueFactory.GetValue(10));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "MoqTemplateTests.ArgClass.MagicNumber = 10;",
@@ -852,10 +852,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("PrivateMagicNumber")), ValueFactory.GetValue(10));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicNumber\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, 10);",
@@ -874,10 +874,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("MagicString")), new StringValue("Hello world!"));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "MoqTemplateTests.ArgClass.MagicString = \"Hello world!\";",
@@ -896,10 +896,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("PrivateMagicString")), new StringValue("Hello world!"));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicString\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, \"Hello world!\");",
@@ -924,10 +924,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
             objNode1.SetField(GetField("PublicRefField"), objNode2.Location);
             objNode2.SetField(GetField("PublicRefField"), objNode1.Location);
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange input model heap",
                     "MoqTemplateTests.ArgClass argClass1 = new Mock<MoqTemplateTests.ArgClass>().Object;",
@@ -969,10 +969,10 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             model.SetValue(new StaticFieldVariable(GetField("PrivateMagicString")), new StringValue("Hello world!"));
 
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             IDictionary<Location, string> locationNames = Template.WriteArrange(output, model, TestedMethod);
 
-            output.ToString().Trim().Should().Be(
+            output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
                     "// Arrange static fields",
                     "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicString\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, \"Hello world!\");",

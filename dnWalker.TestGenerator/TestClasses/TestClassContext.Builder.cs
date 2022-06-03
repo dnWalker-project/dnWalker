@@ -175,7 +175,7 @@ namespace dnWalker.TestGenerator.TestClasses
                 if (_pathConstraint == null) throw new NullReferenceException($"'{nameof(ErrorOutput)}' is NULL");
                 if (_standardOutput == null) throw new NullReferenceException($"'{nameof(ErrorOutput)}' is NULL");
                 if (_errorOutput == null) throw new NullReferenceException($"'{nameof(ErrorOutput)}' is NULL");
-                if (_exception == null) throw new NullReferenceException($"'{nameof(Exception)}' is NULL");
+                //if (_exception == null) throw new NullReferenceException($"'{nameof(Exception)}' is NULL");
 
                 return new TestClassContext(_iterationNumber,
                                             _method,

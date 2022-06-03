@@ -47,7 +47,13 @@ namespace <#= Context.TestNamespaceName #>
         public void <#= schema.TestMethodName #>()
         {
 <#
+                PushIndent();
+                PushIndent();
+                PushIndent();
                 schema.Write(this, TemplateProvider);
+                PopIndent();
+                PopIndent();
+                PopIndent();
  #>
         }
 <#

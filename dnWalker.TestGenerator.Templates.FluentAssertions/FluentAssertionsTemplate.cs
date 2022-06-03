@@ -17,37 +17,37 @@ namespace dnWalker.TestGenerator.Templates.FluentAssertions
             output.WriteLine($"{symbol}.Should().NotBeNull();");
         }
 
-        public void WriteAssertEqual(IWriter output, string leftSymbol, string rightSymbol)
+        public void WriteAssertEqual(IWriter output, string actual, string expected)
         {
-            output.WriteLine($"{leftSymbol}.Should().Be({rightSymbol});");
+            output.WriteLine($"{actual}.Should().Be({expected});");
         }
 
-        public void WriteAssertNotEqual(IWriter output, string leftSymbol, string rightSymbol)
+        public void WriteAssertNotEqual(IWriter output, string actual, string expected)
         {
-            output.WriteLine($"{leftSymbol}.Should().NotBe({rightSymbol});");
+            output.WriteLine($"{actual}.Should().NotBe({expected});");
         }
 
-        public void WriteAssertSame(IWriter output, string leftSymbol, string rightSymbol)
+        public void WriteAssertSame(IWriter output, string actual, string expected)
         {
-            output.WriteLine($"{leftSymbol}.Should().BeSameAs({rightSymbol});");
+            output.WriteLine($"{actual}.Should().BeSameAs({expected});");
         }
 
-        public void WriteAssertNotSame(IWriter output, string leftSymbol, string rightSymbol)
+        public void WriteAssertNotSame(IWriter output, string actual, string expected)
         {
-            output.WriteLine($"{leftSymbol}.Should().NotBeSameAs({rightSymbol});");
+            output.WriteLine($"{actual}.Should().NotBeSameAs({expected});");
         }
 
 
         public void WriteAssertExceptionThrown(IWriter output, string delegateSymbol, TypeSig exceptionType)
         {
             output.Write($"{delegateSymbol}.Should().Throw<");
-            output.WriteFullName(exceptionType);
+            output.WriteNameOrAlias(exceptionType);
             output.WriteLine(">();");
         }
         public void WriteAssertExceptionNotThrown(IWriter output, string delegateSymbol, TypeSig exceptionType)
         {
             output.Write($"{delegateSymbol}.Should().NotThrow<");
-            output.WriteFullName(exceptionType);
+            output.WriteNameOrAlias(exceptionType);
             output.WriteLine(">();");
         }
 

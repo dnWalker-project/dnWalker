@@ -10,11 +10,11 @@ namespace dnWalker.TestGenerator.Templates
         void WriteAssertNull(IWriter output, string symbol);
         void WriteAssertNotNull(IWriter output, string symbol);
 
-        void WriteAssertEqual(IWriter output, string leftSymbol, string rightSymbol);
-        void WriteAssertNotEqual(IWriter output, string leftSymbol, string rightSymbol);
+        void WriteAssertEqual(IWriter output, string actual, string expected);
+        void WriteAssertNotEqual(IWriter output, string actual, string expected);
 
-        void WriteAssertSame(IWriter output, string leftSymbol, string rightSymbol);
-        void WriteAssertNotSame(IWriter output, string leftSymbol, string rightSymbol);
+        void WriteAssertSame(IWriter output, string actual, string expected);
+        void WriteAssertNotSame(IWriter output, string actual, string expected);
 
         void WriteAssertExceptionThrown(IWriter output, string delegateSymbol, TypeSig exceptionType);
         void WriteAssertExceptionNotThrown(IWriter output, string delegateSymbol, TypeSig exceptionType);

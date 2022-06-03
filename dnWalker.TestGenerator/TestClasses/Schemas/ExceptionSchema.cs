@@ -22,18 +22,23 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
             IReadOnlyModel inputModel = InputModel;
             IMethod method = Method;
 
-            // TODO: setup the input symbols
+            // arrange
             IDictionary<Location, string> locationNames = templates.ArrangeTemplate.WriteArrange(output, inputModel, method);
+ 
+            string delegateSymbol = ((string)method.Name).FirstCharToLower();
 
-            templates.ActTemplate.WriteActDelegate(output, method, null, method.Name);
+            // act
+            // TODO: pass this name by some other means, in order to avoid collision!!!
+            templates.ActTemplate.WriteActDelegate(output, method, "objectUnderTest", null, delegateSymbol);
 
+            // assert
             if (exceptionType == null)
             {
-                templates.AssertTemplate.WriteAssertNoExceptionThrown(output, method.Name);
+                templates.AssertTemplate.WriteAssertNoExceptionThrown(output, delegateSymbol);
             }
             else
             {
-                templates.AssertTemplate.WriteAssertExceptionThrown(output, method.Name, exceptionType);
+                templates.AssertTemplate.WriteAssertExceptionThrown(output, delegateSymbol, exceptionType);
             }
         }
     }

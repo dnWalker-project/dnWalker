@@ -145,5 +145,10 @@ namespace dnWalker.Symbolic
             return self.Variables.Count == 0 &&
                 self.HeapInfo.IsEmpty();
         }
+
+        public static bool TryGetReturnValue(this IReadOnlyModel self, dnlib.DotNet.IMethod method, [NotNullWhen(true)]out IValue? value)
+        {
+            return self.TryGetValue(new ReturnValueVariable(method), out value);
+        }
     }
 }

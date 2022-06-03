@@ -19,7 +19,7 @@ namespace dnWalker.TestGenerator.TestClasses
         string AssemblyName { get; }
         IReadOnlyModel InputModel { get; }
         string ErrorOutput { get; }
-        TypeSig Exception { get; }
+        TypeSig? Exception { get; }
         IReadOnlyModel OutputModel { get; }
         bool IsFaulted { get; }
         int IterationNumber { get; }
@@ -51,7 +51,7 @@ namespace dnWalker.TestGenerator.TestClasses
 
             if (ctx.IsFaulted)
             {
-                nsSet.Add(ctx.Exception.Namespace);
+                nsSet.Add(ctx.Exception!.Namespace);
             }
 
             foreach (string u in ctx.Usings)

@@ -41,7 +41,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
         [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "obj.NoReturnArgsInstance(strArg, dblArg);")]
         public void WriteInvocation(string method, string? instanceSymbol, string? returnSymbol, string expected)
         {
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             BasicActTemplate template = new BasicActTemplate();
 
             template.WriteAct(
@@ -51,7 +51,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 instanceSymbol,
                 returnSymbol);
 
-            output.ToString().Trim().Should().Be(expected);
+            output.ToString().Should().Be(expected);
         }
 
 
@@ -66,7 +66,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
         [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "method", "Action method = () => obj.NoReturnArgsInstance(strArg, dblArg);")]
         public void WriteInvocationDelegate(string method, string? instanceSymbol, string? returnSymbol, string? delegateSymbol, string expected)
         {
-            DummyWriter output = new DummyWriter();
+            TestWriter output = new TestWriter();
             BasicActTemplate template = new BasicActTemplate();
 
             template.WriteActDelegate(
@@ -77,7 +77,7 @@ namespace dnWalker.TestGenerator.Tests.Templates
                 returnSymbol,
                 delegateSymbol ?? "act");
 
-            output.ToString().Trim().Should().Be(expected);
+            output.ToString().Should().Be(expected);
         }
     }
 }

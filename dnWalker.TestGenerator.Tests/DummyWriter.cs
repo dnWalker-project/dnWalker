@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace dnWalker.TestGenerator.Tests
 {
-    internal class DummyWriter : TestGenerator.Templates.IWriter
+    internal class TestWriter : TestGenerator.Templates.IWriter
     {
         private readonly StringBuilder _sb = new StringBuilder();
         private string _currentIndent = string.Empty;
@@ -28,7 +28,7 @@ namespace dnWalker.TestGenerator.Tests
 
         public override string ToString()
         {
-            return _sb.ToString();
+            return _sb.ToString().Trim();
         }
 
 

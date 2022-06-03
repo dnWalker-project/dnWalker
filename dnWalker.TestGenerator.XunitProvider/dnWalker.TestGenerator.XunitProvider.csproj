@@ -33,6 +33,8 @@
     </Compile>
     <Compile Update="XunitTestClassTemplate.cs">
       <DependentUpon>XunitTestClassTemplate.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
 

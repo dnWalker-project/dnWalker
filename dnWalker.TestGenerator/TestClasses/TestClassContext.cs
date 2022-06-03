@@ -22,7 +22,7 @@ namespace dnWalker.TestGenerator.TestClasses
         private readonly string _pathConstraint;
         private readonly string _standardOutput;
         private readonly string _errorOutput;
-        private readonly TypeSig _exception;
+        private readonly TypeSig? _exception;
         private readonly List<string> _usings = new List<string>();
         public TestClassContext(int iterationNumber,
                                 IMethod IMethod,
@@ -33,7 +33,7 @@ namespace dnWalker.TestGenerator.TestClasses
                                 string pathConstraint,
                                 string standardOutput,
                                 string errorOutput,
-                                TypeSig exception)
+                                TypeSig? exception)
         {
             _iterationNumber = iterationNumber;
             _IMethod = IMethod;
@@ -119,7 +119,7 @@ namespace dnWalker.TestGenerator.TestClasses
             }
         }
 
-        public TypeSig Exception
+        public TypeSig? Exception
         {
             get
             {

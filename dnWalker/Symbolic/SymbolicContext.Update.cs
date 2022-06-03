@@ -2,9 +2,10 @@
 
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Heap;
-
+using dnWalker.Symbolic.Variables;
 
 using MMC.Data;
+using MMC.State;
 
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,23 @@ namespace dnWalker.Symbolic
 
             IArrayHeapNode arrayNode = (IArrayHeapNode)node;
             arrayNode.SetElement(index, value);
+        }
+
+        public void SetReturnValue(IDataElement retVal, ExplicitActiveState cur, TypeSig retType)
+        {
+            IModel outputModel = _outputModel;
+
+            IValue modelValue;
+            if (retVal is ObjectReference or)
+            {
+                modelValue = ProcessExistingReference(or, cur);
+            }
+            else
+            {
+                modelValue = retVal.AsModelValue(retType);
+            }
+
+            _outputModel.SetValue(new ReturnValueVariable(cur.CurrentMethod.Definition), modelValue);
         }
     }
 }

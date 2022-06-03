@@ -40,24 +40,16 @@ namespace dnWalker.TestGenerator.Templates
 
             if (heapNode is IReadOnlyObjectHeapNode objectNode)
             {
-                return FirstCharToLower($"{TemplateUtils.GetTypeNameOrAlias(objectNode.Type)}{counter}");
+                return $"{TemplateUtils.GetTypeNameOrAlias(objectNode.Type)}{counter}".FirstCharToLower();
             }
             else if (heapNode is IReadOnlyArrayHeapNode arrayNode)
             {
-                return FirstCharToLower($"{TemplateUtils.GetTypeNameOrAlias(arrayNode.ElementType)}Array{counter}");
+                return $"{TemplateUtils.GetTypeNameOrAlias(arrayNode.ElementType)}Array{counter}".FirstCharToLower();
             }
 
             throw new NotSupportedException("Unexpected heap node type.");
         }
 
-        private static string FirstCharToLower(string str)
-        {
-            return string.Create(str.Length, str, static (span, str) =>
-            {
-                span[0] = char.ToLower(str[0]);
-                str.AsSpan(1).CopyTo(span.Slice(1));
-            });
-        }
 
         protected string GetName(IReadOnlyHeapNode arrayNode, IDictionary<Location, string> locationNames)
         {
@@ -68,27 +60,6 @@ namespace dnWalker.TestGenerator.Templates
                 locationNames.Add(location, name);
             }
             return name;
-        }
-
-        protected string GetLiteral(IValue value, IDictionary<Location, string> locationNames)
-        {
-            string result;
-            if (value is Location location)
-            {
-                if (location == Location.Null)
-                {
-                    result = "null";
-                }
-                else if (!locationNames.TryGetValue(location, out result))
-                {
-                    result = $"LOCATION_{location.Value:X8}";
-                }
-            }
-            else
-            {
-                result = value.ToString()!;
-            }
-            return result;
         }
 
         public IDictionary<Location, string> WriteArrange(IWriter output, IReadOnlyModel model, IMethod testedMethod)
@@ -211,7 +182,7 @@ namespace dnWalker.TestGenerator.Templates
             // this basic implementation doesn't know how to mock virtual/abstract/interface methods
             foreach (IField fld in objectNode.Fields)
             {
-                string fieldValueLiteral = GetLiteral(objectNode.GetField(fld), locationNames);
+                string fieldValueLiteral = objectNode.GetField(fld).GetLiteral(locationNames);
 
                 FieldDef fldDef = fld.ResolveFieldDefThrow();
                 TypeSig declaringType = fld.DeclaringType.ToTypeSig();
@@ -248,7 +219,7 @@ namespace dnWalker.TestGenerator.Templates
             string varName = GetName(arrayNode, locationNames);
             foreach (int index in arrayNode.Indeces)
             {
-                string elementValueLiteral = GetLiteral(arrayNode.GetElement(index), locationNames);
+                string elementValueLiteral = arrayNode.GetElement(index).GetLiteral(locationNames);
                 output.WriteLine($"{varName}[{index}] = {elementValueLiteral};");
             }
         }
@@ -260,7 +231,7 @@ namespace dnWalker.TestGenerator.Templates
         {
             foreach (StaticFieldVariable staticFieldVar in model.Variables.OfType<StaticFieldVariable>())
             {
-                ArrangeStaticField(output, staticFieldVar, GetLiteral(model.GetValueOrDefault(staticFieldVar), locationNames));
+                ArrangeStaticField(output, staticFieldVar, model.GetValueOrDefault(staticFieldVar).GetLiteral(locationNames));
             }
         }
 
@@ -309,7 +280,7 @@ namespace dnWalker.TestGenerator.Templates
             {
                 MethodArgumentVariable methodArgumentVar = new MethodArgumentVariable(p);
 
-                ArrangeMethodArgument(output, methodArgumentVar, GetLiteral(model.GetValueOrDefault(methodArgumentVar), locationNames));
+                ArrangeMethodArgument(output, methodArgumentVar, model.GetValueOrDefault(methodArgumentVar).GetLiteral(locationNames));
             }
         }
 
@@ -317,7 +288,7 @@ namespace dnWalker.TestGenerator.Templates
         {
             output.WriteNameOrAlias(methodArgumentVar.Parameter.Type);
             output.Write(TemplateUtils.WhiteSpace);
-            output.Write(methodArgumentVar.Parameter.Name);
+            output.Write(methodArgumentVar.Name);
             output.Write(TemplateUtils.AssignmentOperator);
             output.WriteLine($"{literal};");
         }
