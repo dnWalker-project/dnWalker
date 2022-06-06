@@ -36,10 +36,10 @@ namespace dnWalker.NativePeers
                         string.Join(
                             string.Empty,
                             values.Select(v => ((IConvertible)v).ToString(System.Globalization.CultureInfo.CurrentCulture))));
-                    cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
+                    cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC());
                     ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val, cur);
                     theObject.Fields[offset] = val;
-                    cur.ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC);
+                    cur.ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC());
                     iieReturnValue = InstructionExecBase.nextRetval;
                     return true;
             }

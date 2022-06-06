@@ -63,7 +63,7 @@ namespace MMC.State {
 
 			var fmt = "{1} Alloc({2} ({3}) -> {4}\n";
 			// Leave out the "(refcount)" part if we don't use reference counting.
-			/*if (!Config.UseRefCounting)
+			/*if (!IConfiguration.UseRefCounting)
 				fmt = "{1} Alloc({2}) -> {4}\n";*/
 
 			for (var loc = 0; loc < m_alloc.Length; ++loc)
@@ -174,7 +174,7 @@ namespace MMC.State {
                     _cur.Logger.Debug("pinning allocation " + objRef + ".");
                     alloc.Pinned = true;
                     m_pinned.Add(objRef);
-                    _cur.ParentWatcher.AddParentToChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC);
+                    _cur.ParentWatcher.AddParentToChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC());
                 }
                 else
                 {
@@ -185,7 +185,7 @@ namespace MMC.State {
                     if (!alloc.Pinned)
                     {
                         m_pinned.Remove(objRef);
-                        _cur.ParentWatcher.RemoveParentFromChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC);
+                        _cur.ParentWatcher.RemoveParentFromChild(_cur.ParentWatcher.RootObjectReference, objRef, _cur.Configuration.MemoisedGC());
                     }
                 }
             }
@@ -201,7 +201,7 @@ namespace MMC.State {
             m_freeSlot = 0;
             _cur = cur;
 
-            if (cur.Configuration.SymmetryReduction)
+            if (cur.Configuration.SymmetryReduction())
             {
                 m_placementMapping = new PlacementMapping();
             }
@@ -268,7 +268,7 @@ namespace MMC.State {
         {
 			m_alloc[loc] = new AllocatedDelegate(_cur.DefinitionProvider.BaseTypes.Delegate.ToTypeDefOrRef(), obj, ptr, _cur.Configuration);
 			var newDelRef = new ObjectReference(loc + 1);
-			_cur.ParentWatcher.AddParentToChild(newDelRef, obj, _cur.Configuration.MemoisedGC);
+			_cur.ParentWatcher.AddParentToChild(newDelRef, obj, _cur.Configuration.MemoisedGC());
 			return newDelRef;
 		}
 
@@ -278,7 +278,7 @@ namespace MMC.State {
         /// <param name="obj">A reference to the allocation.</param>
         public void IncRefCount(ObjectReference obj)
         {
-            if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
+            if (obj.Location != 0 && _cur.Configuration.UseRefCounting())
             {
                 var alloc = Allocations[obj];
                 Debug.Assert(alloc != null, "allocation of to change ref.count is null");
@@ -293,7 +293,7 @@ namespace MMC.State {
         /// <param name="obj">A reference to the allocation.</param>
         public void DecRefCount(ObjectReference obj)
         {
-            if (obj.Location != 0 && _cur.Configuration.UseRefCounting)
+            if (obj.Location != 0 && _cur.Configuration.UseRefCounting())
             {
                 var alloc = Allocations[obj];
                 Debug.Assert(alloc != null, "allocation of to change ref.count is null");
@@ -387,7 +387,7 @@ namespace MMC.State {
 		/// <summary>Determine the placement for an allocation.</summary>
 		///
 		/// If byCil is true, the current instruction is used to determine the
-		/// placement. If byCil is false, or if Config.SymmetryReduction is
+		/// placement. If byCil is false, or if IConfiguration.SymmetryReduction is
 		/// false, we return a free slot.
 		///
 		/// We could also check for the absence of any CIL instruction to be
@@ -400,7 +400,7 @@ namespace MMC.State {
 		public int DeterminePlacement(bool byCil)
         {
 			int retval;
-			if (!_cur.Configuration.SymmetryReduction || !byCil)
+			if (!_cur.Configuration.SymmetryReduction() || !byCil)
 				retval = FreeSlot();
 			else
 				retval = m_placementMapping.GetLocation(_cur);

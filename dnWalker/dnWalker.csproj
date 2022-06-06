@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.Configuration\dnWalker.Configuration.csproj" />
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
     <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />

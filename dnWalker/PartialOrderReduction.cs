@@ -28,6 +28,8 @@ namespace MMC
     using MMC.Collections;
     using System.Collections;
     using dnlib.DotNet.Emit;
+    using dnWalker.Configuration;
+    using dnWalker;
 
     /// This is L in the stateful dynamic POR algorithm outlined in the 
     /// Collapsing Interleaving Information of VY's thesis
@@ -84,9 +86,9 @@ namespace MMC
     {
 		private Stack<SchedulingData> backtrack;
 		private LastTransitionMapper mapper;
-        private readonly IConfig _config;
+        private readonly IConfiguration _config;
 
-        public StatefulDynamicPOR(IConfig config)
+        public StatefulDynamicPOR(IConfiguration config)
         {
             mapper = new LastTransitionMapper();
             _config = config;
@@ -103,7 +105,7 @@ namespace MMC
         {
             if (fromSD.State.SII == null)
             {
-                if (_config.UseDPORCollapser)
+                if (_config.UseDPORCollapser())
                     fromSD.State.SII = new CollapsedSII(fromSD.SII as SimplifiedSII, cur.StateCollapser.PoolData);
                 else
                     fromSD.State.SII = fromSD.SII;
@@ -187,7 +189,7 @@ namespace MMC
         /// the objectreference is not
         public static void UpdateReachability(bool parentIsShared, IDataElement oldRef, IDataElement newRef, ExplicitActiveState cur)
         {
-            if (!cur.Configuration.UseObjectEscapePOR || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
+            if (!cur.Configuration.UseObjectEscapePOR() || !(oldRef is ObjectReference) || oldRef.Equals(newRef))
             {
                 return;
             }

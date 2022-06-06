@@ -18,6 +18,8 @@
 namespace MMC.InstructionExec
 {
     using dnlib.DotNet.Emit;
+
+    using dnWalker.Configuration;
     using dnWalker.Factories;
     using MMC.Collections;
 
@@ -40,9 +42,9 @@ namespace MMC.InstructionExec
         /// <summary>
         /// The singleton instruction executor provider.
         /// </summary>
-        public static IInstructionExecProvider Get(IConfig config, IInstructionFactory instructionFactory)
+        public static IInstructionExecProvider Get(IConfiguration config, IInstructionFactory instructionFactory)
         {
-            if (config.UseInstructionCache)
+            if (config.UseInstructionCache())
             {
                 return new HashedIEC(instructionFactory);
             }

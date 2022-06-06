@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
@@ -25,15 +26,15 @@ namespace dnWalker.Concolic
     /// </summary>
     public class ConcolicExplorer : ExplorerBase
     {
-        public ConcolicExplorer(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver) : base(definitionProvider, config, logger, solver)
+        public ConcolicExplorer(IDefinitionProvider definitionProvider, IConfiguration config, Logger logger, ISolver solver) : base(definitionProvider, config, logger, solver)
         {
         }
 
         protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null)
         {
-            IConfig configuration = GetConfiguration();
+            IConfiguration configuration = Configuration();
 
-            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, GetStrategy(configuration));
+            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy());
 
             // TODO: make it as a explorer extension...
             if (!ControlFlowGraphWriter.TryWrite(ControlFlowGraph.Build(entryPoint), "cfg.dot")) Logger.Warning("CFG writer failed.");
@@ -57,7 +58,7 @@ namespace dnWalker.Concolic
                 SimpleStatistics statistics = new SimpleStatistics();
                 // creating the explorer before main thread is created
                 // - no need to do explicit (a.k.a. error prone) registration of events
-                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, GetConfiguration(), pathStore);
+                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, Configuration(), pathStore);
 
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));
@@ -99,23 +100,13 @@ namespace dnWalker.Concolic
                 currentIteration++;
             }
 
-            static int GetMaxIterations(IConfig config)
+            static int GetMaxIterations(IConfiguration config)
             {
-                int maxIterations = config.MaxIterations;
+                int maxIterations = config.MaxIterations();
                 if (maxIterations <= 0) return int.MaxValue;
                 return maxIterations;
             }
         }
 
-        private static IExplorationStrategy GetStrategy(IConfig configuration)
-        {
-            return configuration.GetCustomSetting<string>("strategy") switch
-            {
-                "AllNodes" => new AllNodesCoverage(),
-                "AllEdges" => new AllEdgesCoverage(),
-                "AllPaths" => new AllPathsCoverage(),
-                _ => new AllEdgesCoverage()
-            };
-        }
     }
 }

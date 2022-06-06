@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Traversal;
@@ -62,7 +63,7 @@ namespace dnWalker.Tests.Interpreter
             return type.GetMethod(methodName.Substring(lastDot + 1)) ?? throw new Exception("Method Info not found!");
         }
 
-        public static Explorer GetModelChecker(string methodName, object[] args, IDefinitionProvider definitionProvider, IStatistics? statistics = null, IConfig? config = null, Logger? logger = null)
+        public static Explorer GetModelChecker(string methodName, object[] args, IDefinitionProvider definitionProvider, IStatistics? statistics = null, IConfiguration? config = null, Logger? logger = null)
         {
             return GetModelChecker(methodName, cur => CreateArguments(args, cur), definitionProvider, statistics, config, logger);
 
@@ -104,10 +105,10 @@ namespace dnWalker.Tests.Interpreter
             }
         }
 
-        public static Explorer GetModelChecker(string methodName, Func<ExplicitActiveState, DataElementList> argsProvider, IDefinitionProvider definitionProvider, IStatistics? statistics = null, IConfig? config = null, Logger? logger = null)
+        public static Explorer GetModelChecker(string methodName, Func<ExplicitActiveState, DataElementList> argsProvider, IDefinitionProvider definitionProvider, IStatistics? statistics = null, IConfiguration? config = null, Logger? logger = null)
         {
             statistics ??= new SimpleStatistics();
-            config ??= new Config();
+            config ??= new ConfigurationBuilder().Build().InitializeDefaults();
             logger ??= new Logger();
 
             MethodDef entryPoint = definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");

@@ -185,7 +185,7 @@ namespace MMC.State
             if (alloc != null)
             {
                 var ad = (AllocatedDelegate)alloc;
-                cur.ParentWatcher.RemoveParentFromChild(new ObjectReference(alloc_id + 1), ad.Object, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.RemoveParentFromChild(new ObjectReference(alloc_id + 1), ad.Object, cur.Configuration.MemoisedGC());
                 ad.Method = meth_ptr;
                 ad.Object = obj_ref;
             }

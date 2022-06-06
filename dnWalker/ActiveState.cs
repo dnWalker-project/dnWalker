@@ -28,6 +28,7 @@ namespace MMC.State
     using System;
     using dnWalker.TypeSystem;
     using System.Diagnostics.CodeAnalysis;
+    using dnWalker.Configuration;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
 
@@ -59,7 +60,7 @@ namespace MMC.State
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExplicitActiveState(IConfig config, IInstructionExecProvider instructionExecProvider, IDefinitionProvider definitionProvider, Logger logger)
+        public ExplicitActiveState(IConfiguration config, IInstructionExecProvider instructionExecProvider, IDefinitionProvider definitionProvider, Logger logger)
         {
             DefinitionProvider = definitionProvider;
             Logger = logger;
@@ -72,7 +73,7 @@ namespace MMC.State
             /*
 			 * Pick out the garbage collector. Note that only memoised GC and
 			 * Mark & sweep are available. Reference counting is broken. */
-            m_gc = config.MemoisedGC ?
+            m_gc = config.MemoisedGC() ?
                 new IncrementalHeapVisitor(this) as IGarbageCollector :
                 new MarkAndSweepGC() as IGarbageCollector;
 
@@ -148,7 +149,7 @@ namespace MMC.State
             get { return CurrentThread.CurrentMethod; }
         }
 
-        public IConfig Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         internal IInstructionExecProvider InstructionExecProvider { get; }
 
