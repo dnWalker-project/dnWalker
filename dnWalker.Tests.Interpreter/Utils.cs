@@ -116,7 +116,7 @@ namespace dnWalker.Tests.Interpreter
             // a bit dirty...
             PathStore pathStore = new PathStore(entryPoint, new ControlFlowGraphProvider());
 
-            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
+            var f = new Instructions.ExtendableInstructionFactory().AddExtensionsFrom(config);
             IInstructionExecProvider instructionExecProvider = InstructionExecProvider.Get(config, f);
 
             ExplicitActiveState cur = new ExplicitActiveState(config, instructionExecProvider, definitionProvider, logger);

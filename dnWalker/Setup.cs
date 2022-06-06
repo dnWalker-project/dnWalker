@@ -85,7 +85,7 @@ namespace MMC
             //    new dnWalker.Symbolic.Instructions.InstructionFactory()); // TODO enable dynamic switch
 
 
-            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddExtensionsFrom(config);
 
             var instructionExecProvider = InstructionExecProvider.Get(config, f);
 

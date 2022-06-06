@@ -32,7 +32,7 @@ namespace dnWalker.Concolic
 
         protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null)
         {
-            IConfiguration configuration = Configuration();
+            IConfiguration configuration = Configuration;
 
             ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy());
 
@@ -58,7 +58,7 @@ namespace dnWalker.Concolic
                 SimpleStatistics statistics = new SimpleStatistics();
                 // creating the explorer before main thread is created
                 // - no need to do explicit (a.k.a. error prone) registration of events
-                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, Configuration(), pathStore);
+                MMC.Explorer explorer = new MMC.Explorer(cur, statistics, Logger, Configuration, pathStore);
 
                 MethodState mainState = new MethodState(entryPoint, cur);
                 cur.ThreadPool.CurrentThreadId = cur.ThreadPool.NewThread(cur, mainState, StateSpaceSetup.CreateMainThreadObject(cur, entryPoint, Logger));

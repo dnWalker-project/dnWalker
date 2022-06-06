@@ -24,7 +24,7 @@ namespace dnWalker.Concolic
         ExplorationResult Run(string methodName, IDictionary<string, object> data = null);
 
         public IDefinitionProvider DefinitionProvider { get; }
-        public IConfiguration Configuration();
+        public IConfiguration Configuration { get; }
     }
 
     public static class ExplorerExtensions

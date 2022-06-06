@@ -89,7 +89,7 @@ namespace dnWalker.Concolic
             _logger = logger;
             _solver = solver;
 
-            ExtendableInstructionFactory f = new ExtendableInstructionFactory().AddStandardExtensions();
+            ExtendableInstructionFactory f = new ExtendableInstructionFactory().AddExtensionsFrom(config);
             _instructionExecProvider = InstructionExecProvider.Get(config, f);
         }
 
@@ -199,7 +199,7 @@ namespace dnWalker.Concolic
         //    ++_currentIteration;
         //}
 
-        public IConfiguration Configuration() => _config;
+        public IConfiguration Configuration => _config;
 
 
         #region IDisposable
