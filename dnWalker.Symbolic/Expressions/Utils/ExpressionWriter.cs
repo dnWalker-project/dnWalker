@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,7 +104,11 @@ namespace dnWalker.Symbolic.Expressions.Utils
 
         protected internal override Expression VisitConstant(ConstantExpression constant, StringBuilder sb)
         {
-            sb.Append(constant.Value?.ToString() ?? NullLiteral);
+            object? value = constant.Value;
+            if (value is null) sb.Append(NullLiteral);
+            else if (value is IFormattable form) sb.Append(form.ToString(null, CultureInfo.InvariantCulture));
+            else sb.Append(value.ToString());
+
             return constant;
         }
 

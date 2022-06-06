@@ -30,6 +30,7 @@ namespace dnWalker.Symbolic
         public IReadOnlyList<HeapTerm> HeapTerms => _heapTerms;
 
         public void AddExpressionConstraint(Expression expression) => _pureTerms.Add(new BooleanExpressionTerm(expression));
+        public void AddExpressionConstraints(IEnumerable<Expression> expressions) => _pureTerms.AddRange(expressions.Select(static e => new BooleanExpressionTerm(e));
 
         public void AddEqualConstraint(Expression left, Expression right) => AddExpressionConstraint(ExpressionFactory.Default.MakeEqual(left, right));
         public void AddNotEqualConstraint(Expression left, Expression right) => AddExpressionConstraint(ExpressionFactory.Default.MakeNotEqual(left, right));

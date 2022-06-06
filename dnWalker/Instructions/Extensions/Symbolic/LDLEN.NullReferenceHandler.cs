@@ -34,7 +34,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 IVariable arrayVariable = ((VariableExpression)arrayExpression).Variable;
 
                 // make decision
-                DecisionMaker.MakeDecision(cur, retValue, static (cur, edge, variable) =>
+                ConstraintsHelper.MakeDecision(cur, retValue, static (cur, edge, variable) =>
                 {
                     return edge switch
                     {

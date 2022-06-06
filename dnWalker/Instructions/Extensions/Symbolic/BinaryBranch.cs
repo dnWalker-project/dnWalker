@@ -69,7 +69,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
 
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
-            DecisionMaker.MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
+            ConstraintsHelper.MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
                 edge switch
                 {
                     // the fall-through option => the (left [op] right) fails => negate the operator
