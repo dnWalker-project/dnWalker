@@ -89,7 +89,14 @@ namespace dnWalker.Concolic.Traversal
             // create the decision nodes and select the correct one
             if (!_current.IsExpanded)
             {
-                _current.Expand(choiceTargets, choiceExpressions);
+                Constraint[] choiceConstraints = new Constraint[choiceExpressions.Length];
+                for (int i = 0; i < choiceExpressions.Length; ++i)
+                {
+                    choiceConstraints[i] = new Constraint();
+                    choiceConstraints[i].AddExpressionConstraint(choiceExpressions[i]);
+                }
+
+                _current.Expand(choiceTargets, choiceConstraints);
                 for (int i = 0; i < _current.Children.Count; ++i)
                 {
                     if (i != decision)

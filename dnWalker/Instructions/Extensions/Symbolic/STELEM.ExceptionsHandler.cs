@@ -34,7 +34,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                         IIEReturnValue retValue = next(baseExecutor, cur);
 
-                        DecisionMaker.MakeDecision(cur, retValue, (cur, edge, array, index) =>
+                        ConstraintsHelper.MakeDecision(cur, retValue, (cur, edge, array, index) =>
                         {
                             ExpressionFactory ef = cur.GetExpressionFactory();
                             IVariable arrayVariable = ((VariableExpression)array).Variable;

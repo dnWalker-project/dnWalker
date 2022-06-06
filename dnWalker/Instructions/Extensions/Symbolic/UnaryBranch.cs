@@ -40,7 +40,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
-            DecisionMaker.MakeDecision(cur, retValue, static (_, edge, checksTrue, operand) => (checksTrue, edge) switch
+            ConstraintsHelper.MakeDecision(cur, retValue, static (_, edge, checksTrue, operand) => (checksTrue, edge) switch
             {
                 (true, JumpEdge) => operand,
                 (true, NextEdge) => Expression.MakeNot(operand),
