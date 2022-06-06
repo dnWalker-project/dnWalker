@@ -74,7 +74,7 @@ namespace dnWalker.Explorations.Xml
         }
 
 
-        private IValue ValueFromXml(string xml, TypeSig type)
+        private static IValue ValueFromXml(string xml, TypeSig type)
         {
             if (type.IsPrimitive)
             {
@@ -153,7 +153,30 @@ namespace dnWalker.Explorations.Xml
         {
             ObjectHeapNode objectNode = new ObjectHeapNode(location, type, (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
 
-            Debug.Fail("Not yet implemented!!! TODO: set fields and method results");
+            foreach (XElement fieldXml in nodeXml.Elements(XmlTokens.InstanceField))
+            {
+                TypeDef declaringType = _typeParser.Parse((string)GetAttribute(fieldXml, XmlTokens.DeclaringType))
+                    .ToTypeDefOrRef()
+                    .ResolveTypeDefThrow();
+
+                string fieldName = (string)GetAttribute(fieldXml, XmlTokens.FieldName);
+                string valueXMl = (string)GetAttribute(fieldXml, XmlTokens.Value);
+
+                FieldDef field = declaringType.FindField(fieldName);
+                IValue value = ValueFromXml(valueXMl, field.FieldType);
+
+                objectNode.SetField(field, value);
+            }
+
+            foreach (XElement methodXml in nodeXml.Elements(XmlTokens.MethodResult))
+            {
+                IMethod method = _methodParser.Parse((string)GetAttribute(methodXml, XmlTokens.Method));
+                int invocation = (int)GetAttribute(methodXml, XmlTokens.Invocation);
+
+                IValue value = ValueFromXml((string)GetAttribute(methodXml, XmlTokens.Value), method.MethodSig.RetType);
+
+                objectNode.SetMethodResult(method, invocation, value);
+            }
 
             return objectNode;
         }
@@ -162,7 +185,11 @@ namespace dnWalker.Explorations.Xml
         {
             ArrayHeapNode arrayNode = new ArrayHeapNode(location, elementType, (int)GetAttribute(nodeXml, XmlTokens.Length), (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
 
-            Debug.Fail("Not yet implemented!!! TODO: set method results");
+            foreach (XElement elementXml in nodeXml.Elements(XmlTokens.ArrayElement))
+            {
+                int index = (int)GetAttribute(elementXml, XmlTokens.Index);
+                IValue value = ValueFromXml((string)GetAttribute(elementXml, XmlTokens.Value), elementType);
+            }
 
             return arrayNode;
         }

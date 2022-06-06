@@ -783,11 +783,11 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
-                    "// Arrange static fields",
-                    "MoqTemplateTests.ArgClass.MagicObject = object1;",
-                    "",
                     "// Arrange input model heap",
                     "object object1 = new object();",
+                    "",
+                    "// Arrange static fields",
+                    "MoqTemplateTests.ArgClass.MagicObject = object1;",
                     "",
                     "// Arrange method arguments",
                     "string strArg = null;",
@@ -810,11 +810,11 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
-                    "// Arrange static fields",
-                    "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicObject\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, object1);",
-                    "",
                     "// Arrange input model heap",
                     "object object1 = new object();",
+                    "",
+                    "// Arrange static fields",
+                    "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicObject\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, object1);",
                     "",
                     "// Arrange method arguments",
                     "string strArg = null;",
@@ -974,9 +974,6 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
 
             output.ToString().Should().Be(
                 string.Join(Environment.NewLine,
-                    "// Arrange static fields",
-                    "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicString\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, \"Hello world!\");",
-                    "",
                     "// Arrange input model heap",
                     "int[] intArray1 = new int[8];",
                     "intArray1[1] = 3;",
@@ -993,6 +990,9 @@ namespace dnWalker.TestGenerator.Tests.Templates.Moq
                     "}",
                     "argClassArray1[0] = argClass1;",
                     "argClassArray1[2] = null;",
+                    "",
+                    "// Arrange static fields",
+                    "typeof(MoqTemplateTests.ArgClass).GetField(\"PrivateMagicString\", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, \"Hello world!\");",
                     "",
                     "// Arrange method arguments",
                     "string strArg = \"Hello world!\";",

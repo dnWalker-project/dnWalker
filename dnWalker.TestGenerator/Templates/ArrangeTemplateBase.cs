@@ -67,16 +67,16 @@ namespace dnWalker.TestGenerator.Templates
             IDictionary<Location, string> locationNames = new Dictionary<Location, string>();
 
             IReadOnlyHeapInfo heap = model.HeapInfo;
-            if (model.Variables.OfType<StaticFieldVariable>().Any())
-            {
-                output.WriteLine("// Arrange static fields");
-                ArrangeStaticFields(output, model, locationNames);
-                output.WriteLine(string.Empty);
-            }
             if (!heap.IsEmpty())
             {
                 output.WriteLine("// Arrange input model heap");
                 WriteArrangeHeap(output, model.HeapInfo, locationNames);
+                output.WriteLine(string.Empty);
+            }
+            if (model.Variables.OfType<StaticFieldVariable>().Any())
+            {
+                output.WriteLine("// Arrange static fields");
+                ArrangeStaticFields(output, model, locationNames);
                 output.WriteLine(string.Empty);
             }
             output.WriteLine("// Arrange method arguments");

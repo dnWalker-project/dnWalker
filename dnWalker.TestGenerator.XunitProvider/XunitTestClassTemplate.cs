@@ -126,16 +126,16 @@ namespace dnWalker.TestGenerator.XunitProvider
             
             #line default
             #line hidden
-            this.Write("        public void ");
+            this.Write("        [Fact]\r\n        public void ");
             
-            #line 47 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 48 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(schema.TestMethodName));
             
             #line default
             #line hidden
             this.Write("()\r\n        {\r\n");
             
-            #line 49 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 50 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
                 PushIndent();
                 PushIndent();
@@ -150,7 +150,7 @@ namespace dnWalker.TestGenerator.XunitProvider
             #line hidden
             this.Write("        }\r\n");
             
-            #line 59 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 60 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             }
  

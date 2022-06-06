@@ -44,6 +44,7 @@ namespace <#= Context.TestNamespaceName #>
             foreach (TestSchema schema in Context.GetSchemas())
             {
  #>
+        [Fact]
         public void <#= schema.TestMethodName #>()
         {
 <#
