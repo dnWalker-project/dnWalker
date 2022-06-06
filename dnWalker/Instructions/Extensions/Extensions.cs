@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.Configuration;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,33 +10,58 @@ namespace dnWalker.Instructions.Extensions
 {
     public static partial class Extensions
     {
-        public static ExtendableInstructionFactory AddStandardExtensions(this ExtendableInstructionFactory factory)
-        {
-            factory.AddParameterHandlers();
-            factory.AddSymbolicExecution();
+        private const string BaseNamespace = "dnWalker.Instructions.Extensions";
 
-            return factory;
-        }
-
-        private static IEnumerable<Type> GetExtensions(string ns)
+        private static readonly string[] _defualtExtensions = new string[]
         {
-            return typeof(Extensions)
-                .Assembly
-                .GetTypes()
-                .Where(t => 
-                    t.Namespace == ns && 
-                    !t.IsAbstract && 
-                    t.IsAssignableTo(typeof(IInstructionExecutor)));
-        }
+            // ordered from first to execute to last to execute
+            // all of them are within the base assembly => we can ommit the assembly part
+            BaseNamespace + "." + "Symbolic.BinaryBranch",
+            BaseNamespace + "." + "Symbolic.BinaryOperation",
+            BaseNamespace + "." + "Symbolic.CALLVIRT",
+            BaseNamespace + "." + "Symbolic.CONV",
+            BaseNamespace + "." + "Symbolic.CONV_OVF",
+            BaseNamespace + "." + "Symbolic.DIV",
+            BaseNamespace + "." + "Symbolic.LDARG",
+            BaseNamespace + "." + "Symbolic.LDARGA",
+            BaseNamespace + "." + "Symbolic.LDELEM+ExceptionsHandler",
+            BaseNamespace + "." + "Symbolic.LDELEM+StateInitializer",
+            BaseNamespace + "." + "Symbolic.LDFLD+NullReferenceHandler",
+            BaseNamespace + "." + "Symbolic.LDFLD+StateInitializer",
+            BaseNamespace + "." + "Symbolic.LDLEN+NullReferenceHandler",
+            BaseNamespace + "." + "Symbolic.LDLEN+StateInitializer",
+            BaseNamespace + "." + "Symbolic.REM",
+            BaseNamespace + "." + "Symbolic.RET",
+            BaseNamespace + "." + "Symbolic.STELEM+ExceptionsHandler",
+            BaseNamespace + "." + "Symbolic.STELEM+ModelUpdater",
+            BaseNamespace + "." + "Symbolic.STFLD+ModelUpdater",
+            BaseNamespace + "." + "Symbolic.STFLD+NullReferenceHandler",
+            BaseNamespace + "." + "Symbolic.UnaryBranch",
+            BaseNamespace + "." + "Symbolic.UnaryOperation",
 
-        private static ExtendableInstructionFactory RegisterExtensionsFrom(this ExtendableInstructionFactory factory, string ns)
+        };
+
+        public static ExtendableInstructionFactory AddExtensionsFrom(this ExtendableInstructionFactory factory, IConfiguration configuration)
         {
-            foreach(Type extensionType in GetExtensions(ns))
-            {
-                factory.RegisterExtension((IInstructionExecutor)Activator.CreateInstance(extensionType));
+            foreach (IInstructionExecutor exec in CreateInstructionExtensions(configuration))
+            { 
+                factory.RegisterExtension(exec);
             }
 
             return factory;
+        }
+
+        public static IEnumerable<IInstructionExecutor> CreateInstructionExtensions(this IConfiguration configuration)
+        {
+            string[] extensionsIdentifiers = configuration.GetValue<string[]>("InstructionExtensions") ?? _defualtExtensions;
+
+
+            return extensionsIdentifiers
+                .Select(static id =>
+                {
+                    (string assemblyName, string typeName) = ExtensibilityPointHelper.FromTypeIdentifier(id);
+                    return ExtensibilityPointHelper.Create<IInstructionExecutor>(assemblyName, typeName);
+                });
         }
     }
 }

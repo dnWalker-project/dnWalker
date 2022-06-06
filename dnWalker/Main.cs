@@ -31,103 +31,104 @@ namespace MMC
     using dnWalker.TypeSystem;
     using dnWalker.Graphs.ControlFlow;
     using dnWalker.Traversal;
+    using dnWalker.Configuration;
 
-    public interface IConfig
-    {
-        /// <summary>
-        /// Gets, sets the maximum iterations. Negative value of zero for unlimited.
-        /// </summary>
-        int MaxIterations { get; set; }
-        string[] RunTimeParameters { get; set; }
-        bool Verbose { get; set; }
-        bool SymmetryReduction { get; set; }
-        bool UseRefCounting { get; set; }
-        bool NonStaticSafe { get; set; }
-        bool UseMarkAndSweep { get; set; }
-        bool UseDPORCollapser { get; set; }
-        bool UseInstructionCache { get; set; }
-        bool OneTraceAndStop { get; set; }
-        double MaxExploreInMinutes { get; set; }
-        string AssemblyToCheckFileName { get; set; }
-        bool StopOnError { get; set; }
-        bool Interactive { get; set; }
-        bool MemoisedGC { get; set; }
-        double MemoryLimit { get; set; }
-        bool UseStatefulDynamicPOR { get; set; }
-        bool UseObjectEscapePOR { get; set; }
-        bool ShowStatistics { get; set; }
-        bool TraceOnError { get; set; }
-        bool Quiet { get; set; }
-        double OptimizeStorageAtMegabyte { get; set; }
-        LogPriority LogFilter { get; }
-        string LogFileName { get; }
+    //public interface IConfiguration
+    //{
+    //    /// <summary>
+    //    /// Gets, sets the maximum iterations. Negative value of zero for unlimited.
+    //    /// </summary>
+    //    int MaxIterations { get; set; }
+    //    string[] RunTimeParameters { get; set; }
+    //    bool Verbose { get; set; }
+    //    bool SymmetryReduction { get; set; }
+    //    bool UseRefCounting { get; set; }
+    //    bool NonStaticSafe { get; set; }
+    //    bool UseMarkAndSweep { get; set; }
+    //    bool UseDPORCollapser { get; set; }
+    //    bool UseInstructionCache { get; set; }
+    //    bool OneTraceAndStop { get; set; }
+    //    double MaxExploreInMinutes { get; set; }
+    //    string AssemblyToCheckFileName { get; set; }
+    //    bool StopOnError { get; set; }
+    //    bool Interactive { get; set; }
+    //    bool MemoisedGC { get; set; }
+    //    double MemoryLimit { get; set; }
+    //    bool UseStatefulDynamicPOR { get; set; }
+    //    bool UseObjectEscapePOR { get; set; }
+    //    bool ShowStatistics { get; set; }
+    //    bool TraceOnError { get; set; }
+    //    bool Quiet { get; set; }
+    //    double OptimizeStorageAtMegabyte { get; set; }
+    //    LogPriority LogFilter { get; }
+    //    string LogFileName { get; }
 
-        int StateStorageSize { get; }
+    //    int StateStorageSize { get; }
 
-        void SetCustomSetting(string key, object value);
-        T GetCustomSetting<T>(string key);
-    }
+    //    void SetCustomSetting(string key, object value);
+    //    T GetCustomSetting<T>(string key);
+    //}
 
-    /// <summary>
-    /// <para>Configuration class</para>
-    /// <para>
-    /// This is just a big collection of fields. Because of C# properties, the
-    /// functionality behind access to these fields can be transparently
-    /// adjusted without breaking source compatibility.
-    /// </para>
-    /// </summary>
-    public class Config : IConfig
-    {
-        public int MaxIterations { get; set; }
-        public string AssemblyToCheckFileName { get; set; }
-        public string[] RunTimeParameters { get; set; } = new string[] { };
-        public bool ShowStatistics { get; set; }
-        public bool Quiet { get; set; }
-        public bool Interactive { get; set; }
-        public LogPriority LogFilter { get; set; }
-        public bool UseInstructionCache { get; set; } = true;
-        public bool UseRefCounting { get; set; }
-        public bool UseMarkAndSweep { get; set; } = true;
-        public bool Verbose { get; set; }
-        public bool SymmetryReduction { get; set; } = true;
-        public bool NonStaticSafe { get; set; }
-        public bool MemoisedGC { get; set; }
-        public bool UseDPORCollapser { get; set; } = true;
-        public bool UseObjectEscapePOR { get; set; } = true;
-        public bool UseStatefulDynamicPOR { get; set; } = true;
-        public bool StopOnError { get; set; } = true;
-        public bool TraceOnError { get; set; } = true;
-        public bool OneTraceAndStop { get; set; }
-        public bool ExPostFactoMerging { get; set; } = true;
-        public double MaxExploreInMinutes { get; set; } = double.PositiveInfinity;
-        public double OptimizeStorageAtMegabyte { get; set; } = double.PositiveInfinity;
-        public double MemoryLimit { get; set; } = double.PositiveInfinity;
-        public string LogFileName { get; set; }
-        public int StateStorageSize { get; set; } = 20;
+    ///// <summary>
+    ///// <para>Configuration class</para>
+    ///// <para>
+    ///// This is just a big collection of fields. Because of C# properties, the
+    ///// functionality behind access to these fields can be transparently
+    ///// adjusted without breaking source compatibility.
+    ///// </para>
+    ///// </summary>
+    //public class IConfiguration : IConfiguration
+    //{
+    //    public int MaxIterations { get; set; }
+    //    public string AssemblyToCheckFileName { get; set; }
+    //    public string[] RunTimeParameters { get; set; } = new string[] { };
+    //    public bool ShowStatistics { get; set; }
+    //    public bool Quiet { get; set; }
+    //    public bool Interactive { get; set; }
+    //    public LogPriority LogFilter { get; set; }
+    //    public bool UseInstructionCache { get; set; } = true;
+    //    public bool UseRefCounting { get; set; }
+    //    public bool UseMarkAndSweep { get; set; } = true;
+    //    public bool Verbose { get; set; }
+    //    public bool SymmetryReduction { get; set; } = true;
+    //    public bool NonStaticSafe { get; set; }
+    //    public bool MemoisedGC { get; set; }
+    //    public bool UseDPORCollapser { get; set; } = true;
+    //    public bool UseObjectEscapePOR { get; set; } = true;
+    //    public bool UseStatefulDynamicPOR { get; set; } = true;
+    //    public bool StopOnError { get; set; } = true;
+    //    public bool TraceOnError { get; set; } = true;
+    //    public bool OneTraceAndStop { get; set; }
+    //    public bool ExPostFactoMerging { get; set; } = true;
+    //    public double MaxExploreInMinutes { get; set; } = double.PositiveInfinity;
+    //    public double OptimizeStorageAtMegabyte { get; set; } = double.PositiveInfinity;
+    //    public double MemoryLimit { get; set; } = double.PositiveInfinity;
+    //    public string LogFileName { get; set; }
+    //    public int StateStorageSize { get; set; } = 20;
 
-        private readonly System.Collections.Generic.IDictionary<string, object> _custom =
-            new System.Collections.Generic.Dictionary<string, object>();
-        public void SetCustomSetting(string key, object value)
-        {
-            _custom[key] = value;
-        }
+    //    private readonly System.Collections.Generic.IDictionary<string, object> _custom =
+    //        new System.Collections.Generic.Dictionary<string, object>();
+    //    public void SetCustomSetting(string key, object value)
+    //    {
+    //        _custom[key] = value;
+    //    }
 
-        public T GetCustomSetting<T>(string key)
-        {
-            if (!_custom.TryGetValue(key, out var value))
-            {
-                return default(T);
-            }
+    //    public T GetCustomSetting<T>(string key)
+    //    {
+    //        if (!_custom.TryGetValue(key, out var value))
+    //        {
+    //            return default(T);
+    //        }
 
-            if (value is IConvertible convertible)
-            {
-                return (T) Convert.ChangeType(convertible, typeof(T));
-            }
+    //        if (value is IConvertible convertible)
+    //        {
+    //            return (T) Convert.ChangeType(convertible, typeof(T));
+    //        }
 
-            return (T) value;
+    //        return (T) value;
 
-        }
-    }
+    //    }
+    //}
 
     /// The main application class.
     class MonoModelChecker
@@ -145,7 +146,7 @@ namespace MMC
         /// <param name="value">Values for the message string.</param>
         public void Message(string msg, params object[] values)
         {
-            //if (Config.Instance.Verbose)
+            //if (IConfiguration.Instance.Verbose)
             {
                 var to_write = (values.Length > 0 ? string.Format(msg, values) : msg);
                 System.Console.WriteLine(to_write);
@@ -200,12 +201,12 @@ namespace MMC
         /// Parse command line options.
         /// </summary>
         /// <remarks>
-        /// This sets various fields in class Config.
+        /// This sets various fields in class IConfiguration.
         /// </remarks>
         /// <param name="args">Command-line options as passed to Main.</param>
-        public IConfig GetConfigFromCommandLine(string[] args)
+        public IConfiguration GetConfigurationFromCommandLine(string[] args, IConfiguration configuration)
         {
-            var config = new Config();
+
             for (var i = 0; i < args.Length; ++i)
             {
                 if (args[i][0] != '-' || args[i].Length <= 1)
@@ -218,30 +219,30 @@ namespace MMC
                     switch (flags[f])
                     {
                         case 'A':
-                            config.OneTraceAndStop = true;
+                            configuration.SetOneTraceAndStop(true);
                             break;
                         case 'C':
-                            config.UseInstructionCache = false;
+                            configuration.SetUseInstructionCache(false);
                             break;
                         case 'F':
-                            config.UseDPORCollapser = false;
+                            configuration.SetUseDPORCollapser(false);
                             break;
                         case 'G':
-                            config.UseMarkAndSweep = false;
+                            configuration.SetUseMarkAndSweep(false);
                             break;
                         case 'O':
-                            config.NonStaticSafe = true;
+                            configuration.SetNonStaticSafe(true);
                             break;
                         case 'R':
-                            config.UseRefCounting = true;
+                            configuration.SetUseRefCounting(true);
                             break;
                         case 'S':
-                            config.SymmetryReduction = false;
+                            configuration.SetSymmetryReduction(false);
                             break;
                         case 'T':
                             ++i;
                             if (i < args.Length)
-                                config.MaxExploreInMinutes = System.Double.Parse(args[i]);
+                                configuration.SetMaxExploreInMinutes(System.Double.Parse(args[i]));
                             else
                                 Fatal("-T option requires an argument");
                             break;
@@ -251,7 +252,7 @@ namespace MMC
                             if (i < args.Length)
                             {
                                 if (File.Exists(args[i]))
-                                    config.AssemblyToCheckFileName = args[i];
+                                    configuration.SetAssemblyToCheckFileName(args[i]);
                                 else
                                     Fatal("assembly file not found: " + args[i]);
                             }
@@ -259,7 +260,7 @@ namespace MMC
                                 Fatal("-a option requires an argument");
                             break;
                         case 'c':
-                            config.StopOnError = false;
+                            configuration.SetStopOnError(false);
                             break;
                         case 'f':
                             ++i;
@@ -269,7 +270,7 @@ namespace MMC
                                 {
                                     Fatal("malformed log filter (use -h)");
                                 }
-                                config.LogFilter = logFilter;
+                                configuration.SetLogFilter(logFilter);
                             }
                             else
                                 Fatal("-f option requires an argument");
@@ -279,31 +280,31 @@ namespace MMC
                             System.Environment.Exit(0);
                             break;
                         case 'i':
-                            config.Interactive = true;
+                            configuration.SetInteractive(true);
                             break;
                         case 'I':
-                            config.MemoisedGC = true;
+                            configuration.SetMemoisedGC(true);
                             break;
                         case 'm':
                             ++i;
                             if (i < args.Length)
-                                config.MemoryLimit = System.Int32.Parse(args[i]);
+                                configuration.SetMemoryLimit(System.Int32.Parse(args[i]));
                             else
                                 Fatal("-m option requires an argument");
                             break;
                         case 'o':
                             ++i;
                             if (i < args.Length)
-                                config.OptimizeStorageAtMegabyte = System.Int32.Parse(args[i]);
+                                configuration.SetOptimizeStorageAtMegabyte(System.Int32.Parse(args[i]));
                             else
                                 Fatal("-o option requires an argument");
                             break;
                         case 'p':
-                            config.UseObjectEscapePOR = false;
+                            configuration.SetUseObjectEscapePOR(false);
                             break;
                         case 'P':
-                            config.UseStatefulDynamicPOR = false;
-                            config.UseDPORCollapser = false;
+                            configuration.SetUseStatefulDynamicPOR(false);
+                            configuration.SetUseDPORCollapser(false);
                             break;
                         case 'l':
                             ++i;
@@ -315,20 +316,20 @@ namespace MMC
                                 Fatal("-l option requies an argument");
                             break;
                         case 'r':
-                            config.RunTimeParameters = FetchTillNextArgument(args, i + 1);
-                            i += config.RunTimeParameters.Length;
+                            configuration.SetRunTimeParameters(FetchTillNextArgument(args, i + 1));
+                            i += configuration.RunTimeParameters().Length;
                             break;
                         case 's':
-                            config.ShowStatistics = true;
+                            configuration.SetShowStatistics(true);
                             break;
                         case 't':
-                            config.TraceOnError = false;
+                            configuration.SetTraceOnError(false);
                             break;
                         case 'q':
-                            config.Quiet = true;
+                            configuration.SetQuiet(true);
                             break;
                         case 'V':
-                            config.Verbose = true;
+                            configuration.SetVerbose(true);
                             break;
                         default:
                             Fatal("unknown parameter: " + flags[f]);
@@ -338,15 +339,15 @@ namespace MMC
             }
 
             // Fatal combination (or lack of) parameters.
-            if (config.Quiet && config.Interactive)
+            if (configuration.Quiet() && configuration.Interactive())
                 Fatal("you have asked me to be quiet and interactive. make up your mind.");
-            if (config.AssemblyToCheckFileName == null)
+            if (configuration.AssemblyToCheckFileName == null)
                 Fatal("no assembly to check specified");
 
-            if (config.RunTimeParameters == null)
-                config.RunTimeParameters = new string[] { };
+            if (configuration.RunTimeParameters() == null)
+                configuration.SetRunTimeParameters(new string[] { });
 
-            return config;
+            return configuration;
         }
 
         static string[] FetchTillNextArgument(string[] args, int offset)
@@ -413,20 +414,20 @@ Disabling/enabling features:
             System.Console.WriteLine(help_text);
         }
 
-        public static void PrintConfig(IConfig config, Logger logger)
-        {
-            var configType = typeof(IConfig);
-            foreach (var fld in configType.GetFields())
-            {
-                logger.Notice(string.Format("Config.{0,-25} = {1,-25}", fld.Name, fld.GetValue(config)));
-            }
+//        public static void PrintIConfiguration(IConfiguration config, Logger logger)
+//        {
+//            var configType = typeof(IConfiguration);
+//            foreach (var fld in configType.GetFields())
+//            {
+//                logger.Notice(string.Format("IConfiguration.{0,-25} = {1,-25}", fld.Name, fld.GetValue(config)));
+//            }
 
-#if DEBUG
-            logger.Notice("DEBUG is enabled");
-#else
-			logger.Notice("RELEASE is enabled");
-#endif
-        }
+//#if DEBUG
+//            logger.Notice("DEBUG is enabled");
+//#else
+//			logger.Notice("RELEASE is enabled");
+//#endif
+//        }
 
         /// <summary>
         /// MMC entry point
@@ -458,29 +459,32 @@ Disabling/enabling features:
 
             Console.WriteLine(copyright + "\n");
 
-            IConfig config = GetConfigFromCommandLine(args);
-            config.SetCustomSetting("evaluateRandom", true);
+            IConfiguration config = new ConfigurationBuilder()
+                .Build()
+                .InitializeDefaults();
+            GetConfigurationFromCommandLine(args, config);
 
-            Logger logger = new Logger(config.LogFilter);
+
+            Logger logger = new Logger(config.LogFilter());
             _logger = logger;
 
-            var dotFile = config.AssemblyToCheckFileName + ".dot";
+            var dotFile = config.AssemblyToCheckFileName() + ".dot";
             File.Delete(dotFile);
             DotWriter.Begin(TryOpen(dotFile));
 
             // Defaults.
-            if (!config.Quiet)
+            if (!config.Quiet())
             {
                 logger.AddOutput(new TextLoggerOutput(Console.Out));
             }
 
-            PrintConfig(config, logger);
+            //PrintIConfiguration(config, logger);
 
-            IDefinitionProvider definitionProvider = new DefinitionProvider(Domain.LoadFromFile(config.AssemblyToCheckFileName));
+            IDefinitionProvider definitionProvider = new DefinitionProvider(Domain.LoadFromFile(config.AssemblyToCheckFileName()));
 
             StateSpaceSetup stateSpaceSetup = new StateSpaceSetup(definitionProvider, config, logger);
 
-            IDataElement[] methodArgs = StrArrToDataElements(config.RunTimeParameters);
+            IDataElement[] methodArgs = StrArrToDataElements(config.RunTimeParameters());
 
             ExplicitActiveState cur = stateSpaceSetup.CreateInitialState(definitionProvider.Context.MainModule.EntryPoint, methodArgs);
             SimpleStatistics statistics = new SimpleStatistics();            
@@ -498,12 +502,12 @@ Disabling/enabling features:
                 statistics.Start();
                 bool noErrors = ex.Run();
 
-                if (!noErrors && config.StopOnError && config.TraceOnError)
+                if (!noErrors && config.StopOnError() && config.TraceOnError())
                 {
                     cur.Reset();
                     cur = stateSpaceSetup.CreateInitialState(definitionProvider.Context.MainModule.EntryPoint, methodArgs);
 
-                    var traceFile = config.AssemblyToCheckFileName + ".trace";
+                    var traceFile = config.AssemblyToCheckFileName() + ".trace";
                     File.Delete(traceFile);
                     tw = File.CreateText(traceFile);
 
@@ -516,7 +520,7 @@ Disabling/enabling features:
             {
                 statistics.Stop();
                 // Done, show statistics
-                if (config.ShowStatistics)
+                if (config.ShowStatistics())
                 {
                     logger.Message("statistics: {0}", statistics.ToString());
                 }
@@ -525,7 +529,7 @@ Disabling/enabling features:
                 {
                     tw.Flush();
                     tw.Close();
-                    logger.Message("Trace written to " + config.AssemblyToCheckFileName + ".trace");
+                    logger.Message("Trace written to " + config.AssemblyToCheckFileName() + ".trace");
                 }
 
                 logger.CloseAll();

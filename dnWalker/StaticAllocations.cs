@@ -209,7 +209,7 @@ namespace MMC.State
         }
 
         public AllocatedClass(TypeDefinition typeDef, ExplicitActiveState cur)
-            : base(typeDef, cur.Configuration.UseRefCounting, cur.Configuration.MemoisedGC)
+            : base(typeDef, cur.Configuration.UseRefCounting(), cur.Configuration.MemoisedGC())
         {
             m_fields = cur.StorageFactory.CreateList(typeDef.Fields.Count);
             m_initData = new InitDataContainer();

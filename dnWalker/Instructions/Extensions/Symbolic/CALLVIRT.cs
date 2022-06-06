@@ -47,11 +47,11 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IIEReturnValue returnValue = next(baseExecutor, cur);
 
-            // we will fake this method...
             if (returnValue == InstructionExecBase.ehLookupRetval &&
                 cur.CurrentThread.UnhandledException.Type.FullName == "System.MissingMethodException")
             {
-                // failed to find method overload
+                // since we failed to find method overload
+                // we will fake this method...
                 if (cur.TryGetSymbolicContext(out SymbolicContext context))
                 {
                     ObjectReference instance = (ObjectReference)args[0];

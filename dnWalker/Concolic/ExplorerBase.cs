@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
@@ -23,7 +24,7 @@ namespace dnWalker.Concolic
     public abstract class ExplorerBase : IExplorer, IDisposable
     {
         private readonly IDefinitionProvider _definitionProvider;
-        private readonly Config _config;
+        private readonly IConfiguration _config;
         private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
         private readonly Logger _logger;
         private readonly ISolver _solver;
@@ -81,14 +82,14 @@ namespace dnWalker.Concolic
         //    return state;
         //}
 
-        public ExplorerBase(IDefinitionProvider definitionProvider, Config config, Logger logger, ISolver solver)
+        public ExplorerBase(IDefinitionProvider definitionProvider, IConfiguration config, Logger logger, ISolver solver)
         {
             _definitionProvider = definitionProvider;
             _config = config;
             _logger = logger;
             _solver = solver;
 
-            ExtendableInstructionFactory f = new ExtendableInstructionFactory().AddStandardExtensions();
+            ExtendableInstructionFactory f = new ExtendableInstructionFactory().AddExtensionsFrom(config);
             _instructionExecProvider = InstructionExecProvider.Get(config, f);
         }
 
@@ -124,7 +125,7 @@ namespace dnWalker.Concolic
                     PathStore = pathStore 
                 };
 
-                OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName, entryPoint, _solver?.GetType()));
+                OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName(), entryPoint, _solver?.GetType()));
                 ExplorationResult result = RunCore(entryPoint, pathStore, cur, data);
                 OnExplorationFinished(new ExplorationFinishedEventArgs(result));
                 return result;
@@ -198,7 +199,7 @@ namespace dnWalker.Concolic
         //    ++_currentIteration;
         //}
 
-        public IConfig GetConfiguration() => _config;
+        public IConfiguration Configuration => _config;
 
 
         #region IDisposable

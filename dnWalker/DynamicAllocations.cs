@@ -23,6 +23,7 @@ namespace MMC.State {
     using System.Collections.Generic;
     using dnWalker;
     using dnWalker.TypeSystem;
+    using dnWalker.Configuration;
 
     /// <summary>
     /// An object instances on the heap.
@@ -176,7 +177,7 @@ namespace MMC.State {
             return sb.ToString();
         }
 
-		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : this(typeDef, config.UseRefCounting, config.MemoisedGC) { }
+		public AllocatedObject(ITypeDefOrRef typeDef, IConfiguration config) : this(typeDef, config.UseRefCounting(), config.MemoisedGC()) { }
 
         public AllocatedObject(ITypeDefOrRef typeDef, bool useRefCounting, bool memoisedGC) : base(typeDef, useRefCounting, memoisedGC) { }
 	}
@@ -207,7 +208,7 @@ namespace MMC.State {
 			visitor.VisitAllocatedObject(this);
 		}*/
 
-        public AllocatedArray(ITypeDefOrRef arrayType, int length, IConfig config)
+        public AllocatedArray(ITypeDefOrRef arrayType, int length, IConfiguration config)
             : base(arrayType, config)
         {
             this.Fields = new DataElementList(length);
@@ -274,7 +275,7 @@ namespace MMC.State {
 			return "delegate:" + Object.ToString() + "." + Method.Value.Name;
 		}
 
-		public AllocatedDelegate(ITypeDefOrRef delegateTypeDef, ObjectReference obj, MethodPointer ptr, IConfig config) : base(delegateTypeDef, config.UseRefCounting, config.MemoisedGC)
+		public AllocatedDelegate(ITypeDefOrRef delegateTypeDef, ObjectReference obj, MethodPointer ptr, IConfiguration config) : base(delegateTypeDef, config.UseRefCounting(), config.MemoisedGC())
         {
 			Object = obj;
 			Method = ptr;

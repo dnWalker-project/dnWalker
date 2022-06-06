@@ -112,7 +112,7 @@ namespace MMC
         {
             Statistics = statistics;
 
-            if (!ex.Config.Quiet)
+            if (!ex.IConfiguration.Quiet())
             {
                 timer = new System.Timers.Timer();
                 timer.Elapsed += OnTimedEvent;

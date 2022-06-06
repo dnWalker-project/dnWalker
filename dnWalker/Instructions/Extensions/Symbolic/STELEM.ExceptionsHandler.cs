@@ -19,7 +19,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 {
     public abstract partial class STELEM
     {
-        public class NullReferenceHandler : STELEM
+        public class ExceptionsHandler : STELEM
         {
             public override IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
             {

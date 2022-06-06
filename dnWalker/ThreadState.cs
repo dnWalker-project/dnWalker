@@ -26,6 +26,7 @@ namespace MMC.State
     using System;
     using dnWalker.TypeSystem;
     using dnWalker;
+    using dnWalker.Configuration;
 
     public delegate void ThreadStateChanged(ThreadState threadState, System.Threading.ThreadState state);
 
@@ -280,7 +281,7 @@ namespace MMC.State
 
         public bool ExecuteStep(IInstructionExecProvider instructionExecProvider, 
             Logger logger,
-            IConfig config,
+            IConfiguration config,
             StatefulDynamicPOR m_dpor,
             out bool threadTerm)
         {
@@ -354,7 +355,7 @@ namespace MMC.State
 				 * need to ensure stateful DPOR correctness
 				 */
                 if (canForward
-                    && config.UseStatefulDynamicPOR
+                    && config.UseStatefulDynamicPOR()
                     && !currentInstrExec.IsMultiThreadSafe(cur)
                     && cur.ThreadPool.RunnableThreadCount == 1)
                 {

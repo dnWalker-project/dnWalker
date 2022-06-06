@@ -1,4 +1,5 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.Configuration;
 using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 using dnWalker.Z3;
@@ -50,11 +51,13 @@ namespace dnWalker.Tests.Examples
         protected IDefinitionProvider DefinitionProvider => _definitionProvider ?? throw new InvalidDataException("TEST IS NOT INITIALIZED");
         protected ITestOutputHelper Output => _output;
 
-        protected virtual IExplorer CreateExplorer(BuildInfo buildInfo, Action<Config>? configure = null, Action<Logger>? configureLogging = null, Func<ISolver>? buildSolver = null)
+        protected virtual IExplorer CreateExplorer(BuildInfo buildInfo, Action<IConfiguration>? configure = null, Action<Logger>? configureLogging = null, Func<ISolver>? buildSolver = null)
         {
             _definitionProvider = GetDefinitionProvider(buildInfo.Configuration, buildInfo.Target);
 
-            Config config = new Config();
+            IConfiguration config = new ConfigurationBuilder()
+                .Build()
+                .InitializeDefaults();
             SetupConfiguration(config);
             configure?.Invoke(config);
 
@@ -68,9 +71,9 @@ namespace dnWalker.Tests.Examples
         }
 
         protected virtual void SetupLogging(Logger logger) { }
-        protected virtual void SetupConfiguration(Config configuration) 
+        protected virtual void SetupConfiguration(IConfiguration configuration) 
         {
-            configuration.SetCustomSetting("strategy", "AllPaths");
+            configuration.SetStrategy(typeof(Concolic.Traversal.AllPathsCoverage));
         }
     }
 }

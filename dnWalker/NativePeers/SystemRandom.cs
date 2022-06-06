@@ -4,6 +4,7 @@ using MMC.InstructionExec;
 using MMC.State;
 using System;
 using dnWalker.ChoiceGenerators;
+using MMC;
 
 namespace dnWalker.NativePeers
 {
@@ -42,7 +43,7 @@ namespace dnWalker.NativePeers
                     }
                 }
 
-                if (cur.Configuration.GetCustomSetting<bool>("evaluateRandom"))
+                if (cur.Configuration.EvaluateRandom())
                 {
                     // push all arguments back on stack (they were popped before the execution got here)
                     // the execution will get back here, but next time a value from the choice generator will be used

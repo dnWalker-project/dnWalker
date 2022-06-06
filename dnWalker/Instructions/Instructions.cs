@@ -1484,9 +1484,9 @@ namespace dnWalker.Instructions
             {
                 ObjectEscapePOR.UpdateReachability(theArray.ThreadShared, theArray.Fields[idx.Value], val, cur);
 
-                cur.ParentWatcher.RemoveParentFromChild(arrayRef, theArray.Fields[idx.Value], cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.RemoveParentFromChild(arrayRef, theArray.Fields[idx.Value], cur.Configuration.MemoisedGC());
                 theArray.Fields[idx.Value] = val;
-                cur.ParentWatcher.AddParentToChild(arrayRef, val, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(arrayRef, val, cur.Configuration.MemoisedGC());
             }
             else
             {
@@ -1797,13 +1797,13 @@ namespace dnWalker.Instructions
                 AllocatedObject theObject = cur.DynamicArea.Allocations[objectReference] as AllocatedObject;
 
                 int offset = GetFieldOffset(theObject.Type);
-                cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.RemoveParentFromChild(objectReference, theObject.Fields[offset], cur.Configuration.MemoisedGC());
 
                 // Can be the case that an object reference was written, thereby changing the object graph
                 ObjectEscapePOR.UpdateReachability(theObject.ThreadShared, theObject.Fields[offset], val, cur);
 
                 theObject.Fields[offset] = val;
-                cur.ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(objectReference, val, cur.Configuration.MemoisedGC());
                 return nextRetval;
             }
 

@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Configuration;
 using dnWalker.Traversal;
 using dnWalker.TypeSystem;
 
@@ -23,7 +24,7 @@ namespace dnWalker.Concolic
         ExplorationResult Run(string methodName, IDictionary<string, object> data = null);
 
         public IDefinitionProvider DefinitionProvider { get; }
-        public IConfig GetConfiguration();
+        public IConfiguration Configuration { get; }
     }
 
     public static class ExplorerExtensions
