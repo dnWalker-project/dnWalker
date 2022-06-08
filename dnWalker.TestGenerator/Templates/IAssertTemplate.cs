@@ -31,6 +31,8 @@ namespace dnWalker.TestGenerator.Templates
         void WriteAssertExceptionNotThrown(IWriter output, string delegateSymbol, TypeSig exceptionType);
         void WriteAssertNoExceptionThrown(IWriter output, string delegateSymbol);
 
+        void WriteAssertOfType(IWriter output, string objectSymbol, TypeSig expectedType);
+        void WriteAssertNotOfType(IWriter output, string objectSymbol, TypeSig expectedType);
     }
 }
 

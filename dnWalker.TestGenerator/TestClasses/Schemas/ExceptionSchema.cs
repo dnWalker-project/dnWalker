@@ -16,7 +16,7 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
 
         public TypeSig? ExceptionType { get; }
 
-        public override void Write(IWriter output, ITemplateProvider templates)
+        public override void WriteTestMethodBody(IWriter output, ITemplateProvider templates)
         {
             TypeSig? exceptionType = ExceptionType;
             IReadOnlyModel inputModel = InputModel;

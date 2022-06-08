@@ -65,5 +65,19 @@ namespace dnWalker.TestGenerator.Templates.FluentAssertions
         {
             output.WriteLine($"{collectionSymbol}.Should().HaveCount({expected});");
         }
+
+        public void WriteAssertOfType(IWriter output, string objectSymbol, TypeSig expectedType)
+        {
+            output.Write($"{objectSymbol}.Should().BeOfType<");
+            output.WriteNameOrAlias(expectedType);
+            output.WriteLine(">();");
+        }
+
+        public void WriteAssertNotOfType(IWriter output, string objectSymbol, TypeSig expectedType)
+        {
+            output.Write($"{objectSymbol}.Should().NotBeOfType<");
+            output.WriteNameOrAlias(expectedType);
+            output.WriteLine(">();");
+        }
     }
 }

@@ -16,15 +16,15 @@
             {
                 foreach (string ns in nsGroup)
                 {
- #>
+#>
 using <#= ns #>;
 <#
             }
- #>
+#>
 
 <#
         }
- #>
+#>
 
 <#
             // declare test namespace
@@ -41,24 +41,21 @@ namespace <#= Context.TestNamespaceName #>
             // for each schema create a method
 #>
 <#
+            PushIndent();
+            PushIndent();
+            PushIndent();
             foreach (TestSchema schema in Context.GetSchemas())
             {
- #>
-        [Fact]
-        public void <#= schema.TestMethodName #>()
-        {
-<#
-                PushIndent();
-                PushIndent();
-                PushIndent();
-                schema.Write(this, TemplateProvider);
-                PopIndent();
-                PopIndent();
-                PopIndent();
- #>
-        }
-<#
+                // foreach (var attInfo in GetTestMethodAttributes())
+                // Write(attInfo);
+                WriteLine("[Fact]");
+                schema.WriteTestMethodHeader(this);
+                schema.WriteTestMethodBody(this, TemplateProvider);
+                schema.WriteTestMethodFooter(this);
             }
- #>
+            PopIndent();
+            PopIndent();
+            PopIndent();
+#>
     }
 }

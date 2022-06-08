@@ -21,7 +21,7 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
             }
         }
 
-        public override void Write(IWriter output, ITemplateProvider templates)
+        public override void WriteTestMethodBody(IWriter output, ITemplateProvider templates)
         {
             throw new System.NotImplementedException();
         }

@@ -33,6 +33,17 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
 
         public virtual string TestMethodName => $"{Method.Name}_{GetType().Name}";
 
-        public abstract void Write(IWriter output, ITemplateProvider templates);
+        public virtual void WriteTestMethodHeader(IWriter output)
+        {
+            output.WriteLine($"public void {TestMethodName}()");
+            output.WriteLine("{");
+            output.PushIndent(TemplateUtils.Indent);
+        }
+        public virtual void WriteTestMethodFooter(IWriter output)
+        {
+            output.PopIndent();
+            output.WriteLine("}");
+        }
+        public abstract void WriteTestMethodBody(IWriter output, ITemplateProvider templates);
     }
 }

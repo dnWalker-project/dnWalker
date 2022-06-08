@@ -22,7 +22,7 @@ namespace dnWalker.TestGenerator.XunitProvider
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+    #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class XunitTestClassTemplate : dnWalker.TestGenerator.TestClasses.TestClassTemplateBase
     {
@@ -32,132 +32,126 @@ namespace dnWalker.TestGenerator.XunitProvider
         /// </summary>
         public override string TransformText()
         {
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
             
-            #line 11 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             // generate usings
 
             
             #line default
             #line hidden
+            this.Write("\n");
             
-            #line 14 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             foreach (IEnumerable<string> nsGroup in GetNamespaces())
             {
                 foreach (string ns in nsGroup)
                 {
- 
+
             
             #line default
             #line hidden
-            this.Write("using ");
+            this.Write("\nusing ");
             
-            #line 20 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ns));
             
             #line default
             #line hidden
-            this.Write(";\r\n");
+            this.Write(";\n");
             
-            #line 21 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             }
- 
+
             
             #line default
             #line hidden
-            this.Write("\r\n");
+            this.Write("\n\n");
             
-            #line 25 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
         }
- 
+
             
             #line default
             #line hidden
-            this.Write("\r\n");
+            this.Write("\n\n");
             
-            #line 29 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             // declare test namespace
 
             
             #line default
             #line hidden
-            this.Write("namespace ");
+            this.Write("\nnamespace ");
             
-            #line 32 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Context.TestNamespaceName));
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n");
+            this.Write("\n{\n");
             
-            #line 34 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             // declare test class
 
             
             #line default
             #line hidden
-            this.Write("    public class ");
+            this.Write("\n    public class ");
             
-            #line 37 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Context.TestClassName));
             
             #line default
             #line hidden
-            this.Write("\r\n    {\r\n\r\n");
+            this.Write("\n    {\n\n");
             
-            #line 40 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
             // for each schema create a method
 
             
             #line default
             #line hidden
+            this.Write("\n");
             
-            #line 43 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
+            #line 1 "C:\Users\hejlb\Documents\CVUT-FEL\MGR\Diplomka\src\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
 
+            PushIndent();
+            PushIndent();
+            PushIndent();
             foreach (TestSchema schema in Context.GetSchemas())
             {
- 
-            
-            #line default
-            #line hidden
-            this.Write("        [Fact]\r\n        public void ");
-            
-            #line 48 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(schema.TestMethodName));
-            
-            #line default
-            #line hidden
-            this.Write("()\r\n        {\r\n");
-            
-            #line 50 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
-
-                PushIndent();
-                PushIndent();
-                PushIndent();
-                schema.Write(this, TemplateProvider);
-                PopIndent();
-                PopIndent();
-                PopIndent();
- 
-            
-            #line default
-            #line hidden
-            this.Write("        }\r\n");
-            
-            #line 60 "D:\CVUT\dnWalker\dnWalker.TestGenerator.XunitProvider\XunitTestClassTemplate.tt"
-
+                // foreach (var attInfo in GetTestMethodAttributes())
+                // Write(attInfo);
+                WriteLine("[Fact]");
+                schema.WriteTestMethodHeader(this);
+                schema.WriteTestMethodBody(this, TemplateProvider);
+                schema.WriteTestMethodFooter(this);
             }
- 
+            PopIndent();
+            PopIndent();
+            PopIndent();
+
             
             #line default
             #line hidden
-            this.Write("    }\r\n}\r\n");
+            this.Write("\n    }\n}\n");
             return this.GenerationEnvironment.ToString();
         }
     }

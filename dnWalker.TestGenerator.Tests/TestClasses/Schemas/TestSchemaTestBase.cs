@@ -45,7 +45,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
         {
             TestWriter output = new TestWriter();
 
-            schema.Write(output, TestUtils.Templates);
+            schema.WriteTestMethodBody(output, TestUtils.Templates);
 
             return output.ToString().Trim();
         }
