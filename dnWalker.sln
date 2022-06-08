@@ -59,7 +59,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestGenerator.Xuni
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Examples.Tests.Generated", "Examples.Tests.Generated\Examples.Tests.Generated.csproj", "{4C0700BD-6123-4F87-8560-70BBD8E28243}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.Configuration", "dnWalker.Configuration\dnWalker.Configuration.csproj", "{52F18630-9FD9-4B29-B96C-6A48673F64B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.Configuration", "dnWalker.Configuration\dnWalker.Configuration.csproj", "{52F18630-9FD9-4B29-B96C-6A48673F64B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
