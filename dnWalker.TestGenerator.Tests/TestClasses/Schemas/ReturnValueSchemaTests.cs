@@ -46,6 +46,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
 
             GenerateTestClass(new ReturnValueSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 // no arrange, just assert the return value
+                "// Act, invoke method under test",
                 "int result = ClassUnderTest.IntStaticMethod();",
                 "result.Should().Be(5);"));
         }
@@ -84,6 +85,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "// Arrange method arguments",
                 "ClassUnderTest objectUnderTest = classUnderTest1;",
                 "",
+                "// Act, invoke method under test",
                 "int result = objectUnderTest.IntInstanceMethod();",
                 "result.Should().Be(5);"));
         }
@@ -114,6 +116,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
 
             GenerateTestClass(new ReturnValueSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 // no arrange, just assert the return value
+                "// Act, invoke method under test",
                 "string result = ClassUnderTest.StringStaticMethod();",
                 "result.Should().Be(\"Hello world!\");"));
         }
@@ -152,6 +155,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "// Arrange method arguments",
                 "ClassUnderTest objectUnderTest = classUnderTest1;",
                 "",
+                "// Act, invoke method under test",
                 "string result = objectUnderTest.StringInstanceMethod();",
                 "result.Should().Be(\"Hello world!\");"));
         }
@@ -182,6 +186,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
 
             GenerateTestClass(new ReturnValueSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 // no arrange, just assert the return value
+                "// Act, invoke method under test",
                 "string result = ClassUnderTest.StringStaticMethod();",
                 "result.Should().Be(null);"));
         }
@@ -220,6 +225,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "// Arrange method arguments",
                 "ClassUnderTest objectUnderTest = classUnderTest1;",
                 "",
+                "// Act, invoke method under test",
                 "string result = objectUnderTest.StringInstanceMethod();",
                 "result.Should().Be(null);"));
         }
@@ -256,6 +262,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "int i = 0;",
                 "DataClass refArg = null;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass result = ClassUnderTest.ObjectReferenceStaticMethod(i, refArg);",
                 "result.Should().NotBeNull();",
                 "result.StringField.Should().Be(\"Hello world!\");"));
@@ -301,6 +308,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "int i = 0;",
                 "DataClass refArg = null;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass result = objectUnderTest.ObjectReferenceInstanceMethod(i, refArg);",
                 "result.Should().NotBeNull();",
                 "result.StringField.Should().Be(\"Hello world!\");",
@@ -345,6 +353,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "int i = 0;",
                 "DataClass refArg = dataClass1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass result = ClassUnderTest.ObjectReferenceStaticMethod(i, refArg);",
                 "result.Should().NotBeNull();",
                 "result.Should().BeSameAs(dataClass1);",
@@ -394,6 +403,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "int i = 0;",
                 "DataClass refArg = dataClass1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass result = objectUnderTest.ObjectReferenceInstanceMethod(i, refArg);",
                 "result.Should().NotBeNull();",
                 "result.Should().BeSameAs(dataClass1);",
@@ -438,6 +448,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "int i = 0;",
                 "DataClass refArg = dataClass1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass result = ClassUnderTest.ObjectReferenceStaticMethod(i, refArg);",
                 "result.Should().BeNull();"));
         }
@@ -485,6 +496,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "int i = 0;",
                 "DataClass refArg = dataClass1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass result = objectUnderTest.ObjectReferenceInstanceMethod(i, refArg);",
                 "result.Should().BeNull();"));
         }
@@ -532,6 +544,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "DataClass refArg = dataClass1;",
                 "DataClass[] arrArg = null;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass[] result = ClassUnderTest.ArrayReferenceStaticMethod(i, refArg, arrArg);",
                 "result.Should().NotBeNull();",
                 "result.Should().HaveLength(4);",
@@ -585,6 +598,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "DataClass refArg = dataClass1;",
                 "DataClass[] arrArg = null;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass[] result = objectUnderTest.ArrayReferenceInstanceMethod(i, refArg, arrArg);",
                 "result.Should().NotBeNull();",
                 "result.Should().HaveLength(4);",
@@ -629,6 +643,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "DataClass refArg = null;",
                 "DataClass[] arrArg = dataClassArray1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass[] result = ClassUnderTest.ArrayReferenceStaticMethod(i, refArg, arrArg);",
                 "result.Should().NotBeNull();",
                 "result.Should().BeSameAs(dataClassArray1);"));
@@ -676,6 +691,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "DataClass refArg = null;",
                 "DataClass[] arrArg = dataClassArray1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass[] result = objectUnderTest.ArrayReferenceInstanceMethod(i, refArg, arrArg);",
                 "result.Should().NotBeNull();",
                 "result.Should().BeSameAs(dataClassArray1);"));
@@ -718,6 +734,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "DataClass refArg = null;",
                 "DataClass[] arrArg = dataClassArray1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass[] result = ClassUnderTest.ArrayReferenceStaticMethod(i, refArg, arrArg);",
                 "result.Should().BeNull();"));
         }
@@ -764,6 +781,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "DataClass refArg = null;",
                 "DataClass[] arrArg = dataClassArray1;",
                 "",
+                "// Act, invoke method under test",
                 "DataClass[] result = objectUnderTest.ArrayReferenceInstanceMethod(i, refArg, arrArg);",
                 "result.Should().BeNull();"));
         }

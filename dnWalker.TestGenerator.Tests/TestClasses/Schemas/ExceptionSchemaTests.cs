@@ -55,6 +55,8 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "// Arrange method arguments",
                 "int i = 0;",
                 "string s = null;",
+                "",
+                "// Act, create method under test delegate",
                 "Action staticMethod = () => ClassUnderTest.StaticMethod(i, s);",
                 "staticMethod.Should().NotThrow();"
                 ));
@@ -86,6 +88,8 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "// Arrange method arguments",
                 "int i = 0;",
                 "string s = null;",
+                "",
+                "// Act, create method under test delegate",
                 "Action staticMethod = () => ClassUnderTest.StaticMethod(i, s);",
                 "staticMethod.Should().Throw<NullReferenceException>();"
                 ));
@@ -123,6 +127,8 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "ClassUnderTest objectUnderTest = classUnderTest1;",
                 "int i = 0;",
                 "string s = null;",
+                "",
+                "// Act, create method under test delegate",
                 "Action instanceMethod = () => objectUnderTest.InstanceMethod(i, s);",
                 "instanceMethod.Should().NotThrow();"
                 ));
@@ -160,6 +166,8 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 "ClassUnderTest objectUnderTest = classUnderTest1;",
                 "int i = 0;",
                 "string s = null;",
+                "",
+                "// Act, create method under test delegate",
                 "Action instanceMethod = () => objectUnderTest.InstanceMethod(i, s);",
                 "instanceMethod.Should().Throw<NullReferenceException>();"
                 ));

@@ -19,6 +19,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public void WriteAct(IWriter output, IMethod method, string? instanceSymbol, string? returnSymbol = null)
         {
+            output.WriteLine("// Act, invoke method under test");
             if (method.HasReturnValue())
             {
                 output.WriteNameOrAlias(method.MethodSig.RetType);
@@ -32,6 +33,7 @@ namespace dnWalker.TestGenerator.Templates
 
         public void WriteActDelegate(IWriter output, IMethod method, string? instanceSymbol, string? returnSymbol = null, string delegateSymbol = "act")
         {
+            output.WriteLine("// Act, create method under test delegate");
             if (method.HasReturnValue())
             {
                 output.Write("Func<");
