@@ -49,10 +49,10 @@ namespace dnWalker.Tests.Examples.Features.Arrays
             outModel.HeapInfo.Locations.Should().Contain(arrLoc).And.Contain(valueLoc);
 
             IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)outModel.HeapInfo.GetNode(arrLoc);
-            arrNode.GetElement(2).Should().Be(valueLoc);
+            arrNode.GetElementOrDefault(2).Should().Be(valueLoc);
 
             arrNode = (IReadOnlyArrayHeapNode)inModel.HeapInfo.GetNode(arrLoc);
-            arrNode.GetElement(2).Should().Be(Location.Null);
+            arrNode.GetElementOrDefault(2).Should().Be(Location.Null);
         }
 
         [ExamplesTest]
@@ -76,7 +76,7 @@ namespace dnWalker.Tests.Examples.Features.Arrays
             Location arrLoc = (Location)outModel.GetValueOrDefault(arrVar);
 
             IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)outModel.HeapInfo.GetNode(arrLoc);
-            Location newLoc = (Location)arrNode.GetElement(2);
+            Location newLoc = (Location)arrNode.GetElementOrDefault(2);
 
             outModel.HeapInfo.Locations.Should().Contain(newLoc);
         }
@@ -94,9 +94,9 @@ namespace dnWalker.Tests.Examples.Features.Arrays
             IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)model.HeapInfo.Nodes.First();
 
             arrNode.Length.Should().BeGreaterThanOrEqualTo(3);
-            arrNode.GetElement(0).Should().Be(ValueFactory.GetValue(2));
-            arrNode.GetElement(1).Should().Be(ValueFactory.GetValue(4));
-            arrNode.GetElement(2).Should().Be(ValueFactory.GetValue(5));
+            arrNode.GetElementOrDefault(0).Should().Be(ValueFactory.GetValue(2));
+            arrNode.GetElementOrDefault(1).Should().Be(ValueFactory.GetValue(4));
+            arrNode.GetElementOrDefault(2).Should().Be(ValueFactory.GetValue(5));
         }
 
         [ExamplesTest]
@@ -120,7 +120,7 @@ namespace dnWalker.Tests.Examples.Features.Arrays
             Location arrLoc = (Location)outModel.GetValueOrDefault(arrVar);
 
             IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)outModel.HeapInfo.GetNode(arrLoc);
-            Location newLoc = (Location)arrNode.GetElement(2);
+            Location newLoc = (Location)arrNode.GetElementOrDefault(2);
 
             outModel.HeapInfo.Locations.Should().Contain(newLoc);
         }
@@ -149,10 +149,10 @@ namespace dnWalker.Tests.Examples.Features.Arrays
             Location arrLoc = (Location)inModel.GetValueOrDefault(arrVar);
 
             IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)inModel.HeapInfo.GetNode(arrLoc);
-            arrNode.GetElement(1).Should().NotBe(Location.Null);
+            arrNode.GetElementOrDefault(1).Should().NotBe(Location.Null);
             
             arrNode = (IReadOnlyArrayHeapNode)outModel.HeapInfo.GetNode(arrLoc);
-            arrNode.GetElement(1).Should().Be(Location.Null);
+            arrNode.GetElementOrDefault(1).Should().Be(Location.Null);
         }
     }
 }

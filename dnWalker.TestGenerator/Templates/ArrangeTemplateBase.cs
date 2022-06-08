@@ -186,7 +186,7 @@ namespace dnWalker.TestGenerator.Templates
             // this basic implementation doesn't know how to mock virtual/abstract/interface methods
             foreach (IField fld in objectNode.Fields)
             {
-                string fieldValueLiteral = objectNode.GetField(fld).GetLiteral(locationNames);
+                string fieldValueLiteral = objectNode.GetFieldOrDefault(fld).GetLiteral(locationNames);
 
                 FieldDef fldDef = fld.ResolveFieldDefThrow();
                 TypeSig declaringType = fld.DeclaringType.ToTypeSig();
@@ -223,7 +223,7 @@ namespace dnWalker.TestGenerator.Templates
             string varName = GetName(arrayNode, locationNames);
             foreach (int index in arrayNode.Indeces)
             {
-                string elementValueLiteral = arrayNode.GetElement(index).GetLiteral(locationNames);
+                string elementValueLiteral = arrayNode.GetElementOrDefault(index).GetLiteral(locationNames);
                 output.WriteLine($"{varName}[{index}] = {elementValueLiteral};");
             }
         }

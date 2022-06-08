@@ -134,7 +134,7 @@ namespace dnWalker.Explorations.Xml
                 fieldXml.SetAttributeValue(XmlTokens.DeclaringType, fld.DeclaringType.ToString());
                 fieldXml.SetAttributeValue(XmlTokens.FieldName, fld.Name);
                 
-                fieldXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetField(fld)));
+                fieldXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetFieldOrDefault(fld)));
 
                 xml.Add(fieldXml);
             }
@@ -163,7 +163,7 @@ namespace dnWalker.Explorations.Xml
             {
                 XElement elementXml = new XElement(XmlTokens.ArrayElement);
                 elementXml.SetAttributeValue(XmlTokens.Index, index);
-                elementXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ahn.GetElement(index)));
+                elementXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ahn.GetElementOrDefault(index)));
 
                 xml.Add(elementXml);
             }

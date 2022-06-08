@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace dnWalker.Symbolic.Heap
 {
     /// <summary>
@@ -12,7 +14,9 @@ namespace dnWalker.Symbolic.Heap
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        IValue GetElement(int index);
+        IValue GetElementOrDefault(int index);
+
+        bool TryGetElement(int index, [NotNullWhen(true)] out IValue? value);
 
         IEnumerable<int> Indeces { get; }
 

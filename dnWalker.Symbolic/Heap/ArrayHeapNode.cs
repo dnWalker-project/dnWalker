@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace dnWalker.Symbolic.Heap
 
         IReadOnlyHeapNode IReadOnlyHeapNode.Clone() => Clone();
 
-        public IValue GetElement(int index)
+        public IValue GetElementOrDefault(int index)
         {
             return GetValueOrDefault(_elements, index, ElementType);
         }
@@ -53,5 +54,10 @@ namespace dnWalker.Symbolic.Heap
         public TypeSig ElementType => Type.Next;
 
         public bool HasElements => _elements.Count > 0;
+
+        public bool TryGetElement(int index, [NotNullWhen(true)] out IValue? value)
+        {
+            return _elements.TryGetValue(index, out value);
+        }
     }
 }

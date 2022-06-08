@@ -85,7 +85,7 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
 
             foreach (int index in arrResult.Indeces)
             {
-                IValue elementValue = arrResult.GetElement(index);
+                IValue elementValue = arrResult.GetElementOrDefault(index);
                 string selectorLiteral = $"{resultLiteral}[{index}]";
                 
                 if (elementValue is Location fldLoc)
@@ -114,7 +114,7 @@ namespace dnWalker.TestGenerator.TestClasses.Schemas
         {
             foreach (IField fld in objResult.Fields)
             {
-                IValue fldValue = objResult.GetField(fld);
+                IValue fldValue = objResult.GetFieldOrDefault(fld);
 
                 FieldDef fldDef = fld.ResolveFieldDefThrow();
                 string selectorLiteral;

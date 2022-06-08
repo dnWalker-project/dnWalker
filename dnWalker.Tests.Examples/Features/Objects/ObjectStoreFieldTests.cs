@@ -40,7 +40,7 @@ namespace dnWalker.Tests.Examples.Features.Objects
             IReadOnlyObjectHeapNode node = (IReadOnlyObjectHeapNode)model.HeapInfo.Nodes.First();
 
             node.Fields.Should().HaveCount(1);
-            ((PrimitiveValue<double>)node.GetField(node.Fields.First())).Value.Should().BeGreaterThanOrEqualTo(5.5);
+            ((PrimitiveValue<double>)node.GetFieldOrDefault(node.Fields.First())).Value.Should().BeGreaterThanOrEqualTo(5.5);
         }
 
         [ExamplesTest]
@@ -64,7 +64,7 @@ namespace dnWalker.Tests.Examples.Features.Objects
             IValue value = model.GetValueOrDefault(valueVar);
 
             objNode.Fields.Should().HaveCount(1);
-            objNode.GetField(objNode.Fields.First()).Should().Be(value);
+            objNode.GetFieldOrDefault(objNode.Fields.First()).Should().Be(value);
         }
 
         [ExamplesTest]
@@ -82,7 +82,7 @@ namespace dnWalker.Tests.Examples.Features.Objects
             IReadOnlyObjectHeapNode node = (IReadOnlyObjectHeapNode)model.HeapInfo.Nodes.First();
 
             node.Fields.Should().HaveCount(1);
-            ((PrimitiveValue<double>)node.GetField(node.Fields.First())).Value.Should().Be(3.14);
+            ((PrimitiveValue<double>)node.GetFieldOrDefault(node.Fields.First())).Value.Should().Be(3.14);
         }
 
         [ExamplesTest]
@@ -124,16 +124,16 @@ namespace dnWalker.Tests.Examples.Features.Objects
             IVariable objVar = Variable.MethodArgument(result.EntryPoint.Parameters[0]);
             IReadOnlyObjectHeapNode objNode = (IReadOnlyObjectHeapNode)outModel.HeapInfo.GetNode((Location)outModel.GetValueOrDefault(objVar));
 
-            IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)outModel.HeapInfo.GetNode((Location)objNode.GetField(objNode.Fields.First()));
+            IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)outModel.HeapInfo.GetNode((Location)objNode.GetFieldOrDefault(objNode.Fields.First()));
 
             IVariable iVar = Variable.MethodArgument(result.EntryPoint.Parameters[1]);
             int iValue = ((PrimitiveValue<int>)outModel.GetValueOrDefault(iVar)).Value;
 
             arrNode.Indeces.Should().HaveCount(3);
 
-            arrNode.GetElement(0).Should().Be(ValueFactory.GetValue(iValue));
-            arrNode.GetElement(1).Should().Be(ValueFactory.GetValue(iValue - 1));
-            arrNode.GetElement(2).Should().Be(ValueFactory.GetValue(iValue + 1));
+            arrNode.GetElementOrDefault(0).Should().Be(ValueFactory.GetValue(iValue));
+            arrNode.GetElementOrDefault(1).Should().Be(ValueFactory.GetValue(iValue - 1));
+            arrNode.GetElementOrDefault(2).Should().Be(ValueFactory.GetValue(iValue + 1));
 
             inModel.HeapInfo.Locations.Should().NotContain(arrNode.Location);
         }
@@ -168,9 +168,9 @@ namespace dnWalker.Tests.Examples.Features.Objects
             arrLoc.Should().Be(nodes[1].Location);
             IReadOnlyArrayHeapNode arrNode = (IReadOnlyArrayHeapNode)nodes[1];
 
-            arrNode.GetElement(0).Should().Be(objLoc);
-            arrNode.GetElement(1).Should().Be(Location.Null);
-            arrNode.GetElement(2).Should().Be(nodes[2].Location);
+            arrNode.GetElementOrDefault(0).Should().Be(objLoc);
+            arrNode.GetElementOrDefault(1).Should().Be(Location.Null);
+            arrNode.GetElementOrDefault(2).Should().Be(nodes[2].Location);
 
             inModel.HeapInfo.Locations.Should().NotContain(arrLoc);
             inModel.HeapInfo.Locations.Should().NotContain(nodes[2].Location);
@@ -191,7 +191,7 @@ namespace dnWalker.Tests.Examples.Features.Objects
             objNode.Fields.Should().HaveCount(3);
             foreach (IField fld in objNode.Fields)
             {
-                objNode.GetField(fld).Should().Be(Location.Null);
+                objNode.GetFieldOrDefault(fld).Should().Be(Location.Null);
             }
         }
     }

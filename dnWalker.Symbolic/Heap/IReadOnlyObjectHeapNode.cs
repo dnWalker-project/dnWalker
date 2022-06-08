@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace dnWalker.Symbolic.Heap
 {
     /// <summary>
@@ -12,7 +14,9 @@ namespace dnWalker.Symbolic.Heap
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        IValue GetField(IField field);
+        IValue GetFieldOrDefault(IField field);
+
+        bool TryGetField(IField field, [NotNullWhen(true)]out IValue? value);
 
         /// <summary>
         /// Gets the value of the method result.

@@ -51,7 +51,7 @@ namespace dnWalker.Symbolic.Heap
         }
         IReadOnlyHeapNode IReadOnlyHeapNode.Clone() => Clone();
 
-        public IValue GetField(IField field)
+        public IValue GetFieldOrDefault(IField field)
         {
             return GetValueOrDefault(_fields, field, field.FieldSig.GetFieldType());
         }
@@ -88,5 +88,10 @@ namespace dnWalker.Symbolic.Heap
         public bool HasFields => _fields.Count > 0;
 
         public bool HasMethodInvocations => _methods.Count > 0;
+
+        public bool TryGetField(IField field, [NotNullWhen(true)] out IValue? value)
+        {
+            return _fields.TryGetValue(field, out value);
+        }
     }
 }

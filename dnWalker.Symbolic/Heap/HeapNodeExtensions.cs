@@ -13,7 +13,7 @@ namespace dnWalker.Symbolic.Heap
         public static IValue GetField(this IReadOnlyObjectHeapNode node, string fieldName)
         {
             IField field = node.Fields.First(fld => fld.Name == fieldName);
-            return node.GetField(field);
+            return node.GetFieldOrDefault(field);
         }
 
         public static IValue GetMethodResult(this IReadOnlyObjectHeapNode node, string methodName, int invocation)

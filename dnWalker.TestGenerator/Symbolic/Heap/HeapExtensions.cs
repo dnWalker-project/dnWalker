@@ -47,7 +47,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
                 Location target = objectNode.Location;
                 foreach (IField field in objectNode.Fields)
                 {
-                    IValue value = objectNode.GetField(field);
+                    IValue value = objectNode.GetFieldOrDefault(field);
                     if (value is Location source && source != Location.Null)
                     {
                         HeapEdge edge = new HeapEdge(source, target, HeapEdgeType.Field);
@@ -78,7 +78,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
                 Location target = arrayNode.Location;
                 foreach (int index in arrayNode.Indeces)
                 {
-                    IValue value = arrayNode.GetElement(index);
+                    IValue value = arrayNode.GetElementOrDefault(index);
                     if (value is Location source)
                     {
                         if (source != Location.Null)

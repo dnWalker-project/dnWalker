@@ -69,7 +69,7 @@ namespace dnWalker.Symbolic
 
                 if (variable is ArrayElementVariable aev)
                 {
-                    value = ((IReadOnlyArrayHeapNode)parentNode).GetElement(aev.Index);
+                    value = ((IReadOnlyArrayHeapNode)parentNode).GetElementOrDefault(aev.Index);
                     return true;
                 }
                 else if (variable is ArrayLengthVariable)
@@ -79,7 +79,7 @@ namespace dnWalker.Symbolic
                 }
                 else if (variable is InstanceFieldVariable ifv)
                 {
-                    value = ((IReadOnlyObjectHeapNode)parentNode).GetField(ifv.Field);
+                    value = ((IReadOnlyObjectHeapNode)parentNode).GetFieldOrDefault(ifv.Field);
                     return true;
                 }
                 else if (variable is MethodResultVariable mrv)
