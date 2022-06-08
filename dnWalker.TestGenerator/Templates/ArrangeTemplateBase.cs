@@ -79,8 +79,12 @@ namespace dnWalker.TestGenerator.Templates
                 ArrangeStaticFields(output, model, locationNames);
                 output.WriteLine(string.Empty);
             }
-            output.WriteLine("// Arrange method arguments");
-            ArrangeMethodArguments(output, model, locationNames, testedMethod);
+            if (testedMethod.ResolveMethodDefThrow().Parameters.Count > 0)
+            {
+                output.WriteLine("// Arrange method arguments");
+                ArrangeMethodArguments(output, model, locationNames, testedMethod);
+                output.WriteLine(string.Empty);
+            }
 
             return locationNames;
         }

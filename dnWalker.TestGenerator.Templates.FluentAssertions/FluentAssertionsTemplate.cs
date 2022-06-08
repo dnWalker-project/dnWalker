@@ -55,5 +55,15 @@ namespace dnWalker.TestGenerator.Templates.FluentAssertions
         {
             output.WriteLine($"{delegateSymbol}.Should().NotThrow();");
         }
+
+        public void WriteAssertLength(IWriter output, string arraySymbol, string expected)
+        {
+            output.WriteLine($"{arraySymbol}.Should().HaveLength({expected});");
+        }
+
+        public void WriteAssertCount(IWriter output, string collectionSymbol, string expected)
+        {
+            output.WriteLine($"{collectionSymbol}.Should().HaveCount({expected});");
+        }
     }
 }

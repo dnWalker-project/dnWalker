@@ -23,6 +23,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
     {
         private readonly TypeSig NullReferenceExceptionSig;
 
+
         public ExceptionSchemaTests()
         {
             NullReferenceExceptionSig = DefinitionProvider.GetTypeDefinition("System.NullReferenceException").ToTypeSig();
@@ -50,12 +51,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 Method = testedMethod
             }.Build();
 
-            ExceptionSchema schema = new ExceptionSchema(context);
-            TestWriter output = new TestWriter();
-
-            schema.Write(output, TestUtils.Templates);
-
-            output.ToString().Should().Be(string.Join(Environment.NewLine,
+            GenerateTestClass(new ExceptionSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 "// Arrange method arguments",
                 "int i = 0;",
                 "string s = null;",
@@ -86,12 +82,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 Method = testedMethod
             }.Build();
 
-            ExceptionSchema schema = new ExceptionSchema(context);
-            TestWriter output = new TestWriter();
-
-            schema.Write(output, TestUtils.Templates);
-
-            output.ToString().Should().Be(string.Join(Environment.NewLine,
+            GenerateTestClass(new ExceptionSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 "// Arrange method arguments",
                 "int i = 0;",
                 "string s = null;",
@@ -124,12 +115,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 Method = testedMethod
             }.Build();
 
-            ExceptionSchema schema = new ExceptionSchema(context);
-            TestWriter output = new TestWriter();
-
-            schema.Write(output, TestUtils.Templates);
-
-            output.ToString().Should().Be(string.Join(Environment.NewLine,
+            GenerateTestClass(new ExceptionSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 "// Arrange input model heap",
                 "ClassUnderTest classUnderTest1 = new ClassUnderTest();",
                 "",
@@ -166,12 +152,7 @@ namespace dnWalker.TestGenerator.Tests.TestClasses.Schemas
                 Method = testedMethod
             }.Build();
 
-            ExceptionSchema schema = new ExceptionSchema(context);
-            TestWriter output = new TestWriter();
-
-            schema.Write(output, TestUtils.Templates);
-
-            output.ToString().Should().Be(string.Join(Environment.NewLine,
+            GenerateTestClass(new ExceptionSchema(context)).Should().Be(string.Join(Environment.NewLine,
                 "// Arrange input model heap",
                 "ClassUnderTest classUnderTest1 = new ClassUnderTest();",
                 "",

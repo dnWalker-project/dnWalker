@@ -19,7 +19,6 @@ namespace dnWalker.TestGenerator.Tests.XunitProvider
             _classWriter = _framework.CreateClassWriter(TestUtils.Templates);
         }
 
-
     }
 }
 
