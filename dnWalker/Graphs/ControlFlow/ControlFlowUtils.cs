@@ -69,6 +69,14 @@ namespace dnWalker.Graphs.ControlFlow
             {
                 return !(left == right);
             }
+
+            public override string ToString()
+            {
+                if (Instruction == null && ExceptionType == null) return "Next Instruction";
+                else if (Instruction == null && ExceptionType != null) return $"Virtual Exception Handler [{ExceptionType}]";
+                else if (Instruction != null && ExceptionType == null) return $"Branch To [{Instruction}]";
+                else return $"Concrete Exception Handler [{ExceptionType}] ad [{Instruction}]";
+            }
         }
 
         public static bool EndsBlock(Instruction instruction)
@@ -179,146 +187,146 @@ namespace dnWalker.Graphs.ControlFlow
                     return !((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic;
 
                 case Code.Switch:
-                    throw new NotSupportedException();
+                    return true;
 
                 default:
                     return false;
             }
         }
 
-        public static int GetSuccessorCount(Instruction instruction)
-        {
-            switch (instruction.OpCode.Code)
-            {
-                case Code.Beq:
-                case Code.Beq_S:
-                case Code.Bge:
-                case Code.Bge_S:
-                case Code.Bge_Un:
-                case Code.Bge_Un_S:
-                case Code.Bgt:
-                case Code.Bgt_S:
-                case Code.Bgt_Un:
-                case Code.Bgt_Un_S:
-                case Code.Ble:
-                case Code.Ble_S:
-                case Code.Ble_Un:
-                case Code.Ble_Un_S:
-                case Code.Blt:
-                case Code.Blt_S:
-                case Code.Blt_Un:
-                case Code.Blt_Un_S:
-                case Code.Bne_Un:
-                case Code.Bne_Un_S:
-                case Code.Brfalse:
-                case Code.Brfalse_S:
-                case Code.Brtrue:
-                case Code.Brtrue_S:
-                    // next, branch
-                    return 2;
+        //public static int GetSuccessorCount(Instruction instruction)
+        //{
+        //    switch (instruction.OpCode.Code)
+        //    {
+        //        case Code.Beq:
+        //        case Code.Beq_S:
+        //        case Code.Bge:
+        //        case Code.Bge_S:
+        //        case Code.Bge_Un:
+        //        case Code.Bge_Un_S:
+        //        case Code.Bgt:
+        //        case Code.Bgt_S:
+        //        case Code.Bgt_Un:
+        //        case Code.Bgt_Un_S:
+        //        case Code.Ble:
+        //        case Code.Ble_S:
+        //        case Code.Ble_Un:
+        //        case Code.Ble_Un_S:
+        //        case Code.Blt:
+        //        case Code.Blt_S:
+        //        case Code.Blt_Un:
+        //        case Code.Blt_Un_S:
+        //        case Code.Bne_Un:
+        //        case Code.Bne_Un_S:
+        //        case Code.Brfalse:
+        //        case Code.Brfalse_S:
+        //        case Code.Brtrue:
+        //        case Code.Brtrue_S:
+        //            // next, branch
+        //            return 2;
 
-                case Code.Add_Ovf:
-                case Code.Add_Ovf_Un:
-                case Code.Sub_Ovf:
-                case Code.Sub_Ovf_Un:
-                case Code.Mul_Ovf:
-                case Code.Mul_Ovf_Un:
+        //        case Code.Add_Ovf:
+        //        case Code.Add_Ovf_Un:
+        //        case Code.Sub_Ovf:
+        //        case Code.Sub_Ovf_Un:
+        //        case Code.Mul_Ovf:
+        //        case Code.Mul_Ovf_Un:
 
-                case Code.Conv_Ovf_I:
-                case Code.Conv_Ovf_I_Un:
-                case Code.Conv_Ovf_I1:
-                case Code.Conv_Ovf_I1_Un:
-                case Code.Conv_Ovf_I2:
-                case Code.Conv_Ovf_I2_Un:
-                case Code.Conv_Ovf_I4:
-                case Code.Conv_Ovf_I4_Un:
-                case Code.Conv_Ovf_I8:
-                case Code.Conv_Ovf_I8_Un:
-                case Code.Conv_Ovf_U:
-                case Code.Conv_Ovf_U_Un:
-                case Code.Conv_Ovf_U1:
-                case Code.Conv_Ovf_U1_Un:
-                case Code.Conv_Ovf_U2:
-                case Code.Conv_Ovf_U2_Un:
-                case Code.Conv_Ovf_U4:
-                case Code.Conv_Ovf_U4_Un:
-                case Code.Conv_Ovf_U8:
-                case Code.Conv_Ovf_U8_Un:
-                    // next, overflow exception
-                    return 2;
+        //        case Code.Conv_Ovf_I:
+        //        case Code.Conv_Ovf_I_Un:
+        //        case Code.Conv_Ovf_I1:
+        //        case Code.Conv_Ovf_I1_Un:
+        //        case Code.Conv_Ovf_I2:
+        //        case Code.Conv_Ovf_I2_Un:
+        //        case Code.Conv_Ovf_I4:
+        //        case Code.Conv_Ovf_I4_Un:
+        //        case Code.Conv_Ovf_I8:
+        //        case Code.Conv_Ovf_I8_Un:
+        //        case Code.Conv_Ovf_U:
+        //        case Code.Conv_Ovf_U_Un:
+        //        case Code.Conv_Ovf_U1:
+        //        case Code.Conv_Ovf_U1_Un:
+        //        case Code.Conv_Ovf_U2:
+        //        case Code.Conv_Ovf_U2_Un:
+        //        case Code.Conv_Ovf_U4:
+        //        case Code.Conv_Ovf_U4_Un:
+        //        case Code.Conv_Ovf_U8:
+        //        case Code.Conv_Ovf_U8_Un:
+        //            // next, overflow exception
+        //            return 2;
 
-                case Code.Div:
-                case Code.Div_Un:
-                    // next, divide by zero exception
-                    // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
-                    return 2;
+        //        case Code.Div:
+        //        case Code.Div_Un:
+        //            // next, divide by zero exception
+        //            // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
+        //            return 2;
 
-                case Code.Rem:
-                case Code.Rem_Un:
-                    // next, divide by zero exception
-                    // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
-                    return 2;
+        //        case Code.Rem:
+        //        case Code.Rem_Un:
+        //            // next, divide by zero exception
+        //            // ?? when dividing floats, results in Non Finite, when dividing integers, results in exceptions
+        //            return 2;
 
-                case Code.Ldelem:
-                case Code.Ldelem_I:
-                case Code.Ldelem_I1:
-                case Code.Ldelem_I2:
-                case Code.Ldelem_I4:
-                case Code.Ldelem_I8:
-                case Code.Ldelem_R4:
-                case Code.Ldelem_R8:
-                case Code.Ldelem_Ref:
-                case Code.Ldelem_U1:
-                case Code.Ldelem_U2:
-                case Code.Ldelem_U4:
-                case Code.Ldelema:
+        //        case Code.Ldelem:
+        //        case Code.Ldelem_I:
+        //        case Code.Ldelem_I1:
+        //        case Code.Ldelem_I2:
+        //        case Code.Ldelem_I4:
+        //        case Code.Ldelem_I8:
+        //        case Code.Ldelem_R4:
+        //        case Code.Ldelem_R8:
+        //        case Code.Ldelem_Ref:
+        //        case Code.Ldelem_U1:
+        //        case Code.Ldelem_U2:
+        //        case Code.Ldelem_U4:
+        //        case Code.Ldelema:
 
-                case Code.Stelem:
-                case Code.Stelem_I:
-                case Code.Stelem_I1:
-                case Code.Stelem_I2:
-                case Code.Stelem_I4:
-                case Code.Stelem_I8:
-                case Code.Stelem_R4:
-                case Code.Stelem_R8:
-                case Code.Stelem_Ref:
-                    // next, null reference exception, index out of range exception
-                    return 3;
+        //        case Code.Stelem:
+        //        case Code.Stelem_I:
+        //        case Code.Stelem_I1:
+        //        case Code.Stelem_I2:
+        //        case Code.Stelem_I4:
+        //        case Code.Stelem_I8:
+        //        case Code.Stelem_R4:
+        //        case Code.Stelem_R8:
+        //        case Code.Stelem_Ref:
+        //            // next, null reference exception, index out of range exception
+        //            return 3;
 
-                case Code.Ldlen:
-                case Code.Ldfld:
-                case Code.Ldflda:
-                case Code.Ldftn:
-                case Code.Ldvirtftn:
+        //        case Code.Ldlen:
+        //        case Code.Ldfld:
+        //        case Code.Ldflda:
+        //        case Code.Ldftn:
+        //        case Code.Ldvirtftn:
 
-                case Code.Stfld:
-                    // next, null reference exception
-                    return 2;
+        //        case Code.Stfld:
+        //            // next, null reference exception
+        //            return 2;
 
-                case Code.Call:
-                case Code.Callvirt:
-                    // if static => next only
-                    // if not static => next, null reference exception
-                    //{
-                    //    MethodDef md = ((IMethod)instruction.Operand).ResolveMethodDef();
-                    //    if (md != null)
-                    //    {
-                    //        return md.IsStatic ? 1 : 2;
-                    //    }
-                    //    throw new Exception("Could not resolve method!");
-                    //}
-                    return ((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic ? 1 : 2;
+        //        case Code.Call:
+        //        case Code.Callvirt:
+        //            // if static => next only
+        //            // if not static => next, null reference exception
+        //            //{
+        //            //    MethodDef md = ((IMethod)instruction.Operand).ResolveMethodDef();
+        //            //    if (md != null)
+        //            //    {
+        //            //        return md.IsStatic ? 1 : 2;
+        //            //    }
+        //            //    throw new Exception("Could not resolve method!");
+        //            //}
+        //            return ((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic ? 1 : 2;
 
-                case Code.Ret:
-                    return 0;
+        //        case Code.Ret:
+        //            return 0;
 
-                case Code.Switch:
-                    throw new NotSupportedException();
+        //        case Code.Switch:
+        //            return ((Instruction[])instruction.Operand).Length;
 
-                default:
-                    return 1;
-            }
-        }
+        //        default:
+        //            return 1;
+        //    }
+        //}
 
         internal static SuccessorInfo[] GetSuccessors(Instruction instruction, ModuleDef context, IDictionary<string, TypeDef> exceptionCache = null)
         {
@@ -502,7 +510,12 @@ namespace dnWalker.Graphs.ControlFlow
                     return SuccessorInfo.EmptyArray;
 
                 case Code.Switch:
-                    throw new NotSupportedException();
+                    {
+                        // the switch may contain "explicit" default - one of the target instructions is the next instruction
+                        // if that is the case, it should be 
+
+                        return ((Instruction[])instruction.Operand).Select(i => SuccessorInfo.Branch(i)).Prepend(SuccessorInfo.NextInstruction).ToArray();
+                    }
 
                 case Code.Br:
                 case Code.Br_S:
@@ -584,15 +597,15 @@ namespace dnWalker.Graphs.ControlFlow
             return edge;
         }
 
-        public static ControlFlowEdge GetOrCreateEdge(ControlFlowNode source, ControlFlowNode target)
-        {
-            if (source.Successors.Contains(target))
-            {
-                return source.GetEdgeTo(target);
-            }
+        //public static ControlFlowEdge GetOrCreateEdge(ControlFlowNode source, ControlFlowNode target)
+        //{
+        //    if (source.Successors.Contains(target))
+        //    {
+        //        return source.GetEdgesTo(target);
+        //    }
 
-            return CreateEdge(source, target);
-        }
+        //    return CreateEdge(source, target);
+        //}
 
         private static void EnsureConnected(ControlFlowEdge edge)
         {

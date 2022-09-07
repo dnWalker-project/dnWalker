@@ -22,7 +22,7 @@ namespace dnWalker.Graphs.ControlFlow
             {
                 currentBlock.Add(instruction);
                 
-                if (ControlFlowUtils.GetSuccessorCount(instruction) > 1 ||
+                if (ControlFlowUtils.HasMultipleSuccessors(instruction) ||
                     ControlFlowUtils.EndsBlock(instruction))
                 {
                     InstructionBlockNode node = new InstructionBlockNode(currentBlock);
