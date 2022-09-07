@@ -36,7 +36,8 @@ namespace dnWalker.Instructions.Extensions
             BaseNamespace + "." + "Symbolic.STELEM+ModelUpdater",
             BaseNamespace + "." + "Symbolic.STFLD+ModelUpdater",
             BaseNamespace + "." + "Symbolic.STFLD+NullReferenceHandler",
-            BaseNamespace + "." + "Symbolic.UnaryBranch",
+            BaseNamespace + "." + "Symbolic.BRTRUE",
+            BaseNamespace + "." + "Symbolic.BRFALSE",
             BaseNamespace + "." + "Symbolic.UnaryOperation",
 
         };

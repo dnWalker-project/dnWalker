@@ -31,18 +31,20 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                     return retValue;
                 }
 
-                IVariable arrayVariable = ((VariableExpression)arrayExpression).Variable;
+                DecisionHelper.ThrowNullOrNext(cur, retValue, arrayExpression);
 
-                // make decision
-                ConstraintsHelper.MakeDecision(cur, retValue, static (cur, edge, variable) =>
-                {
-                    return edge switch
-                    {
-                        NextEdge => Expression.MakeNotEqual(Expression.MakeVariable(variable), cur.GetExpressionFactory().NullExpression),
-                        ExceptionEdge => Expression.MakeEqual(Expression.MakeVariable(variable), cur.GetExpressionFactory().NullExpression),
-                        _ => throw new NotSupportedException("Invalid edge, only next or null ref exception are available for LDLEN.")
-                    };
-                }, arrayVariable);
+                //IVariable arrayVariable = ((VariableExpression)arrayExpression).Variable;
+
+                //// make decision
+                //DecisionHelper.MakeDecision(cur, retValue, static (cur, edge, variable) =>
+                //{
+                //    return edge switch
+                //    {
+                //        NextEdge => Expression.MakeNotEqual(Expression.MakeVariable(variable), cur.GetExpressionFactory().NullExpression),
+                //        ExceptionEdge => Expression.MakeEqual(Expression.MakeVariable(variable), cur.GetExpressionFactory().NullExpression),
+                //        _ => throw new NotSupportedException("Invalid edge, only next or null ref exception are available for LDLEN.")
+                //    };
+                //}, arrayVariable);
 
                 return retValue;
             }
