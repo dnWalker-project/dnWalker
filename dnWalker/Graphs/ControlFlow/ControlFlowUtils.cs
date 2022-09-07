@@ -609,8 +609,8 @@ namespace dnWalker.Graphs.ControlFlow
 
         private static void EnsureConnected(ControlFlowEdge edge)
         {
-            edge.Source.AddEdgeTo(edge.Target, edge);
-            edge.Target.AddEdgeFrom(edge.Source, edge);
+            edge.Source.AddOutEdge(edge);
+            edge.Target.AddInEdge(edge);
         }
 
         public static void MarkUnreachable(ControlFlowEdge edge)
