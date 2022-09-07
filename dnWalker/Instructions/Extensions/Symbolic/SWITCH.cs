@@ -38,17 +38,19 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             {
                 Instruction[] targets = (Instruction[])baseExecutor.Operand;
 
-                ConstraintsHelper.MakeDecision(cur, retValue, (cur, edge, trgs, expr) =>
-                {
-                    ExpressionFactory ef = cur.GetExpressionFactory();
-                    return edge switch
-                    {
-                        NextEdge _ => ef.MakeGreaterThanOrEqual(expr, ef.MakeIntegerConstant(trgs.Length)),
-                        JumpEdge j => ef.MakeEqual(expr, ef.MakeIntegerConstant(Array.IndexOf(trgs, ((InstructionBlockNode)j.Target).Header))),
-                        _ => throw new InvalidOperationException("Only Next or Jump edge can be used within Switch executor.")
-                    };
+                DecisionHelper.Switch(cur, retValue, expression, targets);
 
-                }, targets, expression);
+                //DecisionHelper.MakeDecision(cur, retValue, (cur, edge, trgs, expr) =>
+                //{
+                //    ExpressionFactory ef = cur.GetExpressionFactory();
+                //    return edge switch
+                //    {
+                //        NextEdge _ => ef.MakeGreaterThanOrEqual(expr, ef.MakeIntegerConstant(trgs.Length)),
+                //        JumpEdge j => ef.MakeEqual(expr, ef.MakeIntegerConstant(Array.IndexOf(trgs, ((InstructionBlockNode)j.Target).Header))),
+                //        _ => throw new InvalidOperationException("Only Next or Jump edge can be used within Switch executor.")
+                //    };
+
+                //}, targets, expression);
             }
 
             return retValue;
