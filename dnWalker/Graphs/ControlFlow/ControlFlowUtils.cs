@@ -520,7 +520,9 @@ namespace dnWalker.Graphs.ControlFlow
                         // the switch may contain "explicit" default - one of the target instructions is the next instruction
                         // if that is the case, it should be 
 
-                        return ((Instruction[])instruction.Operand).Select(i => SuccessorInfo.Branch(i)).Prepend(SuccessorInfo.NextInstruction).ToArray();
+                        SuccessorInfo[] successors = ((IList<Instruction>)instruction.Operand).Select(i => SuccessorInfo.Branch(i)).Append(SuccessorInfo.NextInstruction).ToArray();
+
+                        return successors;
                     }
 
                 case Code.Br:
@@ -574,31 +576,52 @@ namespace dnWalker.Graphs.ControlFlow
             return false;
         }
 
-        public static ControlFlowEdge CreateEdge(ControlFlowNode source, ControlFlowNode target, TypeDef exception = null)
+        //public static ControlFlowEdge CreateEdge(ControlFlowNode source, ControlFlowNode target, TypeDef exception = null)
+        //{
+        //    ControlFlowEdge edge;
+        //    if (exception != null)
+        //    {
+        //        edge = new ExceptionEdge(exception, source, target);
+        //    }
+        //    else
+        //    {
+        //        InstructionBlockNode sourceBlock = source as InstructionBlockNode;
+        //        InstructionBlockNode targetBlock = target as InstructionBlockNode;
+        //        if (sourceBlock == null || targetBlock == null) throw new InvalidOperationException("Both source and target must be instruction block nodes.");
+
+        //        if (sourceBlock.Footer.Offset + sourceBlock.Footer.GetSize() ==
+        //            targetBlock.Header.Offset)
+        //        {
+        //            // target block is just after source block => next edge
+        //            edge = new NextEdge(source, target);
+        //        }
+        //        else
+        //        {
+        //            edge = new JumpEdge(source, target);
+        //        }
+        //    }
+
+        //    EnsureConnected(edge);
+        //    return edge;
+        //}
+
+        public static NextEdge CreateNextEdge(ControlFlowNode source, ControlFlowNode target)
         {
-            ControlFlowEdge edge;
-            if (exception != null)
-            {
-                edge = new ExceptionEdge(exception, source, target);
-            }
-            else
-            {
-                InstructionBlockNode sourceBlock = source as InstructionBlockNode;
-                InstructionBlockNode targetBlock = target as InstructionBlockNode;
-                if (sourceBlock == null || targetBlock == null) throw new InvalidOperationException("Both source and target must be instruction block nodes.");
+            NextEdge edge = new NextEdge(source, target);
+            EnsureConnected(edge);
+            return edge;
+        }
 
-                if (sourceBlock.Footer.Offset + sourceBlock.Footer.GetSize() ==
-                    targetBlock.Header.Offset)
-                {
-                    // target block is just after source block => next edge
-                    edge = new NextEdge(source, target);
-                }
-                else
-                {
-                    edge = new JumpEdge(source, target);
-                }
-            }
+        public static JumpEdge CreateJumpEdge(ControlFlowNode source, ControlFlowNode target)
+        {
+            JumpEdge edge = new JumpEdge(source, target);
+            EnsureConnected(edge);
+            return edge;
+        }
 
+        public static ExceptionEdge CreateExceptionEdge(TypeDef exception, ControlFlowNode source, ControlFlowNode target)
+        {
+            ExceptionEdge edge = new ExceptionEdge(exception, source, target);
             EnsureConnected(edge);
             return edge;
         }

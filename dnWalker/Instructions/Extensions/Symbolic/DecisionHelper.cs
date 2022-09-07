@@ -276,45 +276,28 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
         }
 
-        public static void Switch(ExplicitActiveState cur, IIEReturnValue returnValue, Expression expression, Instruction[] targets)
+        public static void Switch(ExplicitActiveState cur, int index, Expression expression, Instruction[] targets)
         {
             int n = targets.Length;
 
             ControlFlowEdge[] choiceTargets = GetCurrentControlFlowNode(cur).OutEdges.ToArray();
+            // [0]   ... 1st target
+            // [1]   ... 2nd target
+            // [n-1] ... n-th target
+            // [n]   ... next instruction
 
             Debug.Assert(choiceTargets.Length == n + 1, "For Switch there should be exactly (n + 1) options, where n is number of cases");
 
             ExpressionFactory ef = cur.GetExpressionFactory();
 
             Expression[] conditions = new Expression[n + 1];
-            for (int i = 0; i < choiceTargets.Length; i++)
+            for (int i = 0; i < targets.Length; i++)
             {
-                conditions[i] = choiceTargets[i] switch
-                {
-                    // next edge => default case or no jump => value must be greater than or equal to the number of cases
-                    NextEdge => Expression.MakeGreaterThanOrEqual(expression, ef.MakeIntegerConstant(n)),
-                    JumpEdge j => Expression.MakeEqual(expression, ef.MakeIntegerConstant(Array.IndexOf(targets, ((InstructionBlockNode)j.Target).Header))),
-                    { } e => throw new InvalidOperationException($"Invalid control flow edge: {e}")
-                };
+                conditions[i] = Expression.MakeEqual(expression, ef.MakeIntegerConstant(i));
             }
+            conditions[n] = Expression.MakeGreaterThanOrEqual(expression, ef.MakeIntegerConstant(n));
 
-            int decision = 0;
-            for (int i = 0; i < choiceTargets.Length; ++i)
-            {
-                if (choiceTargets[i] is NextEdge && returnValue is NextReturnValue)
-                {
-                    decision = i;
-                    break;
-                }
-
-                if (choiceTargets[i] is JumpEdge edge && 
-                    returnValue is JumpReturnValue j && 
-                    ((InstructionBlockNode)edge.Target).Header == j.Target)
-                {
-                    decision = i;
-                    break;
-                }
-            }
+            int decision = Math.Min(index, n);
 
             MakeDecision(cur, decision, choiceTargets, conditions);
         }
