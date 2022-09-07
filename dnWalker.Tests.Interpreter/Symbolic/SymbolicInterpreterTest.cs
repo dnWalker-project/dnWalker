@@ -222,8 +222,8 @@ namespace dnWalker.Tests.Interpreter.Symbolic
         [Theory]
         [InlineData(new object[] { 5, 5 }, new string?[] { null, null }, null, "True")]
         [InlineData(new object[] { 5, 5 }, new string?[] { "a", null }, "(a / 5)", "True")]
-        [InlineData(new object[] { 5, 5 }, new string?[] { null, "b" }, "(5 / b)", "True")]
-        [InlineData(new object[] { 5, 5 }, new string?[] { "a", "b" }, "(a / b)", "True")]
+        [InlineData(new object[] { 5, 5 }, new string?[] { null, "b" }, "(5 / b)", "(b != 0)")]
+        [InlineData(new object[] { 5, 5 }, new string?[] { "a", "b" }, "(a / b)", "(b != 0)")]
         public void Test_DIV__Int32(object[] args, string?[] argNames, string resultExpr, string pathConstraint)
         {
             TestAndCompare(SymbolicArgument.Build(args, argNames), SymbolicResult.Build(pathConstraint, resultExpr));

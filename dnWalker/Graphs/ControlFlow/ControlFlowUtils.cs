@@ -82,6 +82,7 @@ namespace dnWalker.Graphs.ControlFlow
         public static bool EndsBlock(Instruction instruction)
         {
             return
+                HasMultipleSuccessors(instruction) ||
                 instruction.OpCode.Code == Code.Ret ||
                 instruction.OpCode.Code == Code.Throw ||
                 instruction.OpCode.Code == Code.Rethrow ||
@@ -146,6 +147,11 @@ namespace dnWalker.Graphs.ControlFlow
                 case Code.Conv_Ovf_U4_Un:
                 case Code.Conv_Ovf_U8:
                 case Code.Conv_Ovf_U8_Un:
+
+                case Code.Div:
+                case Code.Div_Un:
+                case Code.Rem:
+                case Code.Rem_Un:
 
                 case Code.Ldelem:
                 case Code.Ldelem_I:
