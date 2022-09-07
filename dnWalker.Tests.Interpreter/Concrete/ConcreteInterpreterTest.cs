@@ -9,9 +9,9 @@ using Xunit.Abstractions;
 
 namespace dnWalker.Tests.Interpreter.Concrete
 {
-    public class InterpreterTest : ConcreteTestBase
+    public class ConcreteInterpreterTest : ConcreteTestBase
     {
-        public InterpreterTest(ITestOutputHelper output) : base(output)
+        public ConcreteInterpreterTest(ITestOutputHelper output) : base(output)
         {
         }
 
