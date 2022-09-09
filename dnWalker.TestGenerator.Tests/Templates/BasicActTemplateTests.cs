@@ -31,14 +31,14 @@ namespace dnWalker.TestGenerator.Tests.Templates
     public class BasicActTemplateTests
     {
         [Theory]
-        [InlineData(nameof(ActTestClass.NoReturnNoArgsStatic), null, null, "ActTestClass.NoReturnNoArgsStatic();")]
-        [InlineData(nameof(ActTestClass.NoReturnNoArgsInstance), "obj", null, "obj.NoReturnNoArgsInstance();")]
-        [InlineData(nameof(ActTestClass.ReturnNoArgsStatic), null, "result", "int result = ActTestClass.ReturnNoArgsStatic();")]
-        [InlineData(nameof(ActTestClass.ReturnNoArgsInstance), "obj", "result", "int result = obj.ReturnNoArgsInstance();")]
-        [InlineData(nameof(ActTestClass.ReturnArgsStatic), null, "result", "int result = ActTestClass.ReturnArgsStatic(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.ReturnArgsInstance), "obj", "result", "int result = obj.ReturnArgsInstance(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.NoReturnArgsStatic), null, null, "ActTestClass.NoReturnArgsStatic(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "obj.NoReturnArgsInstance(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.NoReturnNoArgsStatic), null, null, "// Act, invoke method under test\r\nActTestClass.NoReturnNoArgsStatic();")]
+        [InlineData(nameof(ActTestClass.NoReturnNoArgsInstance), "obj", null, "// Act, invoke method under test\r\nobj.NoReturnNoArgsInstance();")]
+        [InlineData(nameof(ActTestClass.ReturnNoArgsStatic), null, "result", "// Act, invoke method under test\r\nint result = ActTestClass.ReturnNoArgsStatic();")]
+        [InlineData(nameof(ActTestClass.ReturnNoArgsInstance), "obj", "result", "// Act, invoke method under test\r\nint result = obj.ReturnNoArgsInstance();")]
+        [InlineData(nameof(ActTestClass.ReturnArgsStatic), null, "result", "// Act, invoke method under test\r\nint result = ActTestClass.ReturnArgsStatic(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.ReturnArgsInstance), "obj", "result", "// Act, invoke method under test\r\nint result = obj.ReturnArgsInstance(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.NoReturnArgsStatic), null, null, "// Act, invoke method under test\r\nActTestClass.NoReturnArgsStatic(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "// Act, invoke method under test\r\nobj.NoReturnArgsInstance(strArg, dblArg);")]
         public void WriteInvocation(string method, string? instanceSymbol, string? returnSymbol, string expected)
         {
             TestWriter output = new TestWriter();
@@ -56,14 +56,14 @@ namespace dnWalker.TestGenerator.Tests.Templates
 
 
         [Theory]
-        [InlineData(nameof(ActTestClass.NoReturnNoArgsStatic), null, null, "method", "Action method = () => ActTestClass.NoReturnNoArgsStatic();")]
-        [InlineData(nameof(ActTestClass.NoReturnNoArgsInstance), "obj", null, "method", "Action method = () => obj.NoReturnNoArgsInstance();")]
-        [InlineData(nameof(ActTestClass.ReturnNoArgsStatic), null, "result", "method", "Func<int> method = () => ActTestClass.ReturnNoArgsStatic();")]
-        [InlineData(nameof(ActTestClass.ReturnNoArgsInstance), "obj", "result", "method", "Func<int> method = () => obj.ReturnNoArgsInstance();")]
-        [InlineData(nameof(ActTestClass.ReturnArgsStatic), null, "result", "method", "Func<int> method = () => ActTestClass.ReturnArgsStatic(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.ReturnArgsInstance), "obj", "result", "method", "Func<int> method = () => obj.ReturnArgsInstance(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.NoReturnArgsStatic), null, null, "method", "Action method = () => ActTestClass.NoReturnArgsStatic(strArg, dblArg);")]
-        [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "method", "Action method = () => obj.NoReturnArgsInstance(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.NoReturnNoArgsStatic), null, null, "method", "// Act, create method under test delegate\r\nAction method = () => ActTestClass.NoReturnNoArgsStatic();")]
+        [InlineData(nameof(ActTestClass.NoReturnNoArgsInstance), "obj", null, "method", "// Act, create method under test delegate\r\nAction method = () => obj.NoReturnNoArgsInstance();")]
+        [InlineData(nameof(ActTestClass.ReturnNoArgsStatic), null, "result", "method", "// Act, create method under test delegate\r\nFunc<int> method = () => ActTestClass.ReturnNoArgsStatic();")]
+        [InlineData(nameof(ActTestClass.ReturnNoArgsInstance), "obj", "result", "method", "// Act, create method under test delegate\r\nFunc<int> method = () => obj.ReturnNoArgsInstance();")]
+        [InlineData(nameof(ActTestClass.ReturnArgsStatic), null, "result", "method", "// Act, create method under test delegate\r\nFunc<int> method = () => ActTestClass.ReturnArgsStatic(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.ReturnArgsInstance), "obj", "result", "method", "// Act, create method under test delegate\r\nFunc<int> method = () => obj.ReturnArgsInstance(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.NoReturnArgsStatic), null, null, "method", "// Act, create method under test delegate\r\nAction method = () => ActTestClass.NoReturnArgsStatic(strArg, dblArg);")]
+        [InlineData(nameof(ActTestClass.NoReturnArgsInstance), "obj", null, "method", "// Act, create method under test delegate\r\nAction method = () => obj.NoReturnArgsInstance(strArg, dblArg);")]
         public void WriteInvocationDelegate(string method, string? instanceSymbol, string? returnSymbol, string? delegateSymbol, string expected)
         {
             TestWriter output = new TestWriter();
