@@ -18,16 +18,16 @@ namespace dnWalker.Z3
 {
     public partial class Z3Solver
     {
-        private static void SetupVariableMapping(Constraint constraint, ref SolverContext context)
+        private static void SetupVariableMapping(Constraint constraint, SolverContext context)
         {
             foreach (IVariable variable in GatherVariables(constraint))
             {
-                Expr varExpr = CreateVariableExpression(variable.Type, ref context);
+                Expr varExpr = CreateVariableExpression(variable.Type, context);
                 context.VariableMapping[variable] = varExpr;
             }
 
 
-            static void AddVarConstraint(ArithExpr var, long min, long max, ref SolverContext context)
+            static void AddVarConstraint(ArithExpr var, long min, long max, SolverContext context)
             {
                 BoolExpr constraint = context.Z3.MkAnd(
                     context.Z3.MkGe(var, context.Z3.MkInt(min)),
@@ -35,7 +35,7 @@ namespace dnWalker.Z3
                 context.Solver.Assert(constraint);
             }
 
-            static Expr CreateVariableExpression(TypeSig type, ref SolverContext context)
+            static Expr CreateVariableExpression(TypeSig type, SolverContext context)
             {
                 if (type.IsPrimitive)
                 {
@@ -44,49 +44,49 @@ namespace dnWalker.Z3
                     if (type.IsByte())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, byte.MinValue, byte.MaxValue, ref context);
+                        AddVarConstraint(varExpr, byte.MinValue, byte.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsUInt16())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, ushort.MinValue, ushort.MaxValue, ref context);
+                        AddVarConstraint(varExpr, ushort.MinValue, ushort.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsUInt32())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, uint.MinValue, uint.MaxValue, ref context);
+                        AddVarConstraint(varExpr, uint.MinValue, uint.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsUInt64())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, 0, long.MaxValue, ref context);
+                        AddVarConstraint(varExpr, 0, long.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsSByte())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, sbyte.MinValue, sbyte.MaxValue, ref context);
+                        AddVarConstraint(varExpr, sbyte.MinValue, sbyte.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsInt16())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, short.MinValue, short.MaxValue, ref context);
+                        AddVarConstraint(varExpr, short.MinValue, short.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsInt32())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, int.MinValue, int.MaxValue, ref context);
+                        AddVarConstraint(varExpr, int.MinValue, int.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsInt64())
                     {
                         ArithExpr varExpr = context.Z3.MkIntConst(context.Symbol());
-                        AddVarConstraint(varExpr, long.MinValue, long.MaxValue, ref context);
+                        AddVarConstraint(varExpr, long.MinValue, long.MaxValue, context);
                         return varExpr;
                     }
                     if (type.IsSingle()) return context.Z3.MkRealConst(context.Symbol());

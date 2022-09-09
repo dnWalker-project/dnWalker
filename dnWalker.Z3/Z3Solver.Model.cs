@@ -20,7 +20,7 @@ namespace dnWalker.Z3
     public partial class Z3Solver
     {
 
-        private static IModel BuildModel(Constraint constraint, ref SolverContext context)
+        private static IModel BuildModel(Constraint constraint, SolverContext context)
         {
             Z3Model z3Model = context.Solver.Model;
             Model result = new Model(constraint);

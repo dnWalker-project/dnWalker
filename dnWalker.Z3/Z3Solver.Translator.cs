@@ -18,7 +18,7 @@ namespace dnWalker.Z3
         /// </summary>
         /// <param name="constraint"></param>
         /// <param name="context"></param>
-        private static void AssertPureTerms(Constraint constraint, ref SolverContext context)
+        private static void AssertPureTerms(Constraint constraint, SolverContext context)
         {
             Z3ExpressionTranslator translator = new Z3ExpressionTranslator(
                 context.Z3,

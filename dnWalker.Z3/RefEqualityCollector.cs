@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Z3
 {
-    public class RefEqualityCollector : ExpressionVisitor<ICollection<(IMemberVariable v1, IMemberVariable v2)>>
+    public class RefEqualityCollector : ExpressionVisitor<ICollection<(IVariable v1, IVariable v2)>>
     {
         public static readonly RefEqualityCollector Instance = new RefEqualityCollector();
 
-        public static ICollection<(IMemberVariable v1, IMemberVariable v2)> GetRefEqualities(IEnumerable<Expression> expressions)
+        public static ICollection<(IVariable v1, IVariable v2)> GetRefEqualities(IEnumerable<Expression> expressions)
         {
-            HashSet<(IMemberVariable v1, IMemberVariable v2)> refEqualities = new HashSet<(IMemberVariable v1, IMemberVariable v2)>();
+            HashSet<(IVariable v1, IVariable v2)> refEqualities = new HashSet<(IVariable v1, IVariable v2)>();
 
             foreach (Expression expression in expressions)
             {
@@ -25,12 +25,12 @@ namespace dnWalker.Z3
             return refEqualities;
         }
 
-        public static void GetRefEqualities(Expression expression, ICollection<(IMemberVariable v1, IMemberVariable v2)> refEqualities)
+        public static void GetRefEqualities(Expression expression, ICollection<(IVariable v1, IVariable v2)> refEqualities)
         {
             Instance.Visit(expression, refEqualities);
         }
 
-        protected override Expression VisitBinary(BinaryExpression binary, ICollection<(IMemberVariable v1, IMemberVariable v2)> context)
+        protected override Expression VisitBinary(BinaryExpression binary, ICollection<(IVariable v1, IVariable v2)> context)
         {
             if (binary.Operator == Operator.Equal &&
                 binary.Left is VariableExpression leftVarExpr &&
@@ -40,11 +40,7 @@ namespace dnWalker.Z3
                 IVariable lVar = leftVarExpr.Variable;
                 IVariable rVar = rightVarExpr.Variable;
 
-                if (lVar is IMemberVariable lMemVar &&
-                    rVar is IMemberVariable rMemVar)
-                {
-                    context.Add((lMemVar, rMemVar));
-                }
+                context.Add((lVar, rVar));
 
                 return binary;
             }

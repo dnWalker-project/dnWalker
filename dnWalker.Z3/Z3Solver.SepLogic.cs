@@ -11,6 +11,7 @@ using IVariable = dnWalker.Symbolic.IVariable;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnWalker.Z3
 {
@@ -21,7 +22,7 @@ namespace dnWalker.Z3
         /// </summary>
         /// <param name="constraint"></param>
         /// <param name="context"></param>
-        private static void AssertHeapTerms(Constraint constraint, ref SolverContext context)
+        private static void AssertHeapTerms(Constraint constraint, SolverContext context)
         {
             Dictionary<IVariable, Expr> varLookup = context.VariableMapping;
             Solver solver = context.Solver;
@@ -71,24 +72,77 @@ namespace dnWalker.Z3
         }
 
         /// <summary>
-        /// Equality between member variables which represents the same member implies equality between the member variable roots.
+        /// Equality between variables implies equality between same member variables.
         /// </summary>
         /// <remarks>
-        /// ((x1.field = v1) && (x2.field = v2) && (v1 = v2)) => (x1 = x2)
+        /// (x1 = x2) => (x1.field == x2.field)
         /// From separation logic
         /// (x.field = v1) <=> (x -> (field := v))
         /// </remarks>
         /// <param name="constraint"></param>
         /// <param name="context"></param>
-        private static void AssertMemberRootPointerEqualities(Constraint constraint, ref SolverContext context)
+        private static void AssertMemberRootPointerEqualities(Constraint constraint, SolverContext context)
         {
-            ICollection<(IMemberVariable v1, IMemberVariable v2)> refEqualities = RefEqualityCollector.GetRefEqualities(constraint.PureTerms.Select(pt => pt.GetExpression()));
-            foreach ((IMemberVariable v1, IMemberVariable v2) in refEqualities)
+            // ref equalities from pure terms
+            ICollection<(IVariable x1, IVariable x2)> refEqualities = RefEqualityCollector.GetRefEqualities(constraint.PureTerms.Select(pt => pt.GetExpression()));
+
+            // we may add new ref equlity... system which checks for already handled equalities & enables adding new ones
+            Queue<(IVariable x1, IVariable x2)> toHandle = new Queue<(IVariable x1, IVariable x2)>(refEqualities);
+            HashSet<(IVariable x1, IVariable x2)> handled = new HashSet<(IVariable x1, IVariable x2)>();
+
+            Dictionary<IVariable, List<IMemberVariable>> memberVariables = new Dictionary<IVariable, List<IMemberVariable>>();
+
+            while (TryGetEquality(out IVariable? x1, out IVariable? x2))
             {
-                if (v1.IsSameMemberAs(v2))
+                List<IMemberVariable> members1 = GetMemberVariables(x1);
+                List<IMemberVariable> members2 = GetMemberVariables(x2);
+
+                foreach (IMemberVariable m1 in members1)
                 {
-                    context.Solver.Assert(context.Z3.MkEq(context.VariableMapping[v1.Parent], context.VariableMapping[v2.Parent]));
+                    foreach (IMemberVariable m2 in members2)
+                    {
+                        if (m1.IsSameMemberAs(m2))
+                        {
+                            BoolExpr x12Equals = context.Z3.MkEq(context.VariableMapping[x1], context.VariableMapping[x2]);
+                            BoolExpr m12Equals = context.Z3.MkEq(context.VariableMapping[m1], context.VariableMapping[m2]);
+
+                            context.Solver.Assert(context.Z3.MkImplies(x12Equals, m12Equals));
+
+                            if (!m1.Type.IsPrimitive && !m1.Type.IsString())
+                            {
+                                toHandle.Enqueue((m1, m2));
+                            }
+
+                            // we found a matching member variable, there cannot be another => break
+                            break;
+                        }
+                    }
                 }
+            }
+
+            bool TryGetEquality([NotNullWhen(true)]out IVariable? x1, [NotNullWhen(true)] out IVariable? x2)
+            {
+                if (toHandle.TryDequeue(out (IVariable, IVariable)eq) && handled.Add(eq))
+                {
+                    x1 = eq.Item1;
+                    x2 = eq.Item2;
+                    return true;
+                }
+
+                x1 = null;
+                x2 = null;
+                return false;
+            }
+
+            List<IMemberVariable> GetMemberVariables(IVariable variable)
+            {
+                if (!memberVariables.TryGetValue(variable, out List<IMemberVariable>? memberVars))
+                {
+                    memberVars = context.VariableMapping.Keys.OfType<IMemberVariable>().Where(mv => mv.Parent.Equals(variable)).ToList();
+                    memberVariables[variable] = memberVars;
+                }
+
+                return memberVars;
             }
         }
     }

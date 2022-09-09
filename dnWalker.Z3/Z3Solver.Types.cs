@@ -27,7 +27,7 @@ namespace dnWalker.Z3
         /// This method sorts the reference type variables into groups per their type and enforces non equality.
         /// TODO: make it accept inheritance.
         /// </remarks>
-        private static void AssertTypes(Constraint constraint, ref SolverContext context)
+        private static void AssertTypes(Constraint constraint, SolverContext context)
         {
             Dictionary<IVariable, Expr> varLookup = context.VariableMapping;
             Dictionary<TypeSig, List<IVariable>> groups = new Dictionary<TypeSig, List<IVariable>>(TypeEqualityComparer.Instance);
