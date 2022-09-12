@@ -2589,7 +2589,7 @@ namespace MMC.Data
             }
         }
 
-        public bool ToBool() { return Value != string.Empty; }
+        public bool ToBool() { return Value != null; }
 
         public bool Equals(IDataElement other)
         {
@@ -2598,8 +2598,9 @@ namespace MMC.Data
 
         public int CompareTo(object obj)
         {
-            if (obj is ObjectReference or && or.Location == ObjectReference.Null.Location)
+            if (obj is ObjectReference or)
             {
+                if (or.Location == ObjectReference.Null.Location) return Value == null ? 0 : 1;
                 return 1;
             }
 
@@ -2608,6 +2609,8 @@ namespace MMC.Data
 
         public override string ToString()
         {
+            if (Value == null) return "<NULL>";
+
             return string.Format("\"{0}\"", Value);
         }
 

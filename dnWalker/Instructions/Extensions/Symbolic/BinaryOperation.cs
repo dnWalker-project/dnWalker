@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
@@ -75,10 +76,12 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
+
             IDataElement result = cur.EvalStack.Peek();
 
             Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 
+            PreprocessNullExpressions(cur, ref lhsExpression, ref rhsExpression);
             PreprocessBooleanExpressions(ref lhsExpression, ref rhsExpression);
             if (lhs is IReferenceType)
                 PreprocessReferenceComparison(ref op);
@@ -115,6 +118,22 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             {
                 // ensure rhs is also boolean
                 lhs = lhs.AsBoolean();
+            }
+        }
+
+        private static void PreprocessNullExpressions(ExplicitActiveState cur, ref Expression lhs, ref Expression rhs)
+        {
+            Expression nullExpr = cur.GetExpressionFactory().NullExpression;
+            Expression strNullExpr = cur.GetExpressionFactory().StringNullExpression;
+            if (lhs.Type.IsString() && ReferenceEquals(rhs, nullExpr))
+            {
+                // lhs is a string and rhs is a null => switch it to StringNull
+                rhs = strNullExpr;
+            }
+            else if (rhs.Type.IsString() && ReferenceEquals(lhs, nullExpr))
+            {
+                // rhs is a string and lhs is a null => switch it to StringNull
+                lhs = strNullExpr;
             }
         }
     }
