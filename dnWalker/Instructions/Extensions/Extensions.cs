@@ -38,6 +38,9 @@ namespace dnWalker.Instructions.Extensions
             BaseNamespace + "." + "Symbolic.STFLD+NullReferenceHandler",
             BaseNamespace + "." + "Symbolic.UnaryBranch",
             BaseNamespace + "." + "Symbolic.UnaryOperation",
+            
+            //BaseNamespace + "." + "Symbolic.NativePeers.MethodCallNativePeers",
+            BaseNamespace + "." + "NativePeers.MethodCallNativePeers",
 
         };
 

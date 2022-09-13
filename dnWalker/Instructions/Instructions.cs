@@ -2946,14 +2946,14 @@ namespace dnWalker.Instructions
             bool violated;
             if (!HandleAssertCall(args, cur, out violated) && !FilterCall(cur))
             {
-                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
-                if (bypass != null)
-                {
-                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
-                    {
-                        return returnValue;
-                    }
-                }
+                //NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
+                //if (bypass != null)
+                //{
+                //    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
+                //    {
+                //        return returnValue;
+                //    }
+                //}
 
                 if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
                 {
@@ -3085,14 +3085,14 @@ namespace dnWalker.Instructions
             // Skip certain calls.
             if (!FilterCall(cur))
             {
-                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
-                if (bypass != null)
-                {
-                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
-                    {
-                        return returnValue;
-                    }
-                }
+                //NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
+                //if (bypass != null)
+                //{
+                //    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
+                //    {
+                //        return returnValue;
+                //    }
+                //}
 
                 // Search inheritance tree for most derived implementation.
                 MethodDefinition toCall = null;
