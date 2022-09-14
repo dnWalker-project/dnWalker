@@ -29,5 +29,17 @@ namespace dnWalker.Instructions.Extensions.NativePeers.MethodCalls
             returnValue = InstructionExecBase.nextRetval;
             return true;
         }
+
+        protected static bool Fail(out IIEReturnValue returnValue)
+        {
+            returnValue = null;
+            return false;
+        }
+
+        protected static bool Next(out IIEReturnValue returnValue)
+        {
+            returnValue = InstructionExecBase.nextRetval;
+            return true;
+        }
     }
 }

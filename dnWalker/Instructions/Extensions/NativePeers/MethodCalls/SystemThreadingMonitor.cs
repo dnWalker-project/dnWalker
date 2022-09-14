@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.NativePeers.MethodCalls
 {
+    [NativePeer("System.Threading.Monitor")]
     public class SystemThreadingMonitor : CompiledMethodCallNativePeer<SystemThreadingMonitor>
     {
         private static bool Enter(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
