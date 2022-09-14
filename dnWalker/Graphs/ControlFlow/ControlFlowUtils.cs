@@ -12,30 +12,20 @@ namespace dnWalker.Graphs.ControlFlow
 {
     public static class ControlFlowUtils
     {
-        internal enum SuccessorInfoType
-        {
-            Next,
-            Jump,
-            Exception,
-            AssertViolation
-        }
-
         internal readonly struct SuccessorInfo : IEquatable<SuccessorInfo>
         {
-            public static readonly SuccessorInfo NextInstruction = new SuccessorInfo(null, null, SuccessorInfoType.Next);
-            public static readonly SuccessorInfo AssertViolation = new SuccessorInfo(null, null, SuccessorInfoType.AssertViolation);
+            public static readonly SuccessorInfo NextInstruction = new SuccessorInfo();
 
             public static readonly SuccessorInfo[] NextInstructionArray = new SuccessorInfo[] { NextInstruction };
             public static readonly SuccessorInfo[] EmptyArray = new SuccessorInfo[0];
-            public static readonly SuccessorInfo[] AssertArray = new SuccessorInfo[] { NextInstruction, AssertViolation };
 
             public static SuccessorInfo ExceptionHandler(TypeDef exception)
             {
-                return new SuccessorInfo(exception, null, SuccessorInfoType.Exception);
+                return new SuccessorInfo(exception);
             }
-            public static SuccessorInfo Jump(Instruction target)
+            public static SuccessorInfo Branch(Instruction target)
             {
-                return new SuccessorInfo(null, target, SuccessorInfoType.Jump);
+                return new SuccessorInfo(target);
             }
 
             public override bool Equals(object obj)
@@ -46,24 +36,28 @@ namespace dnWalker.Graphs.ControlFlow
             public bool Equals(SuccessorInfo other)
             {
                 return TypeEqualityComparer.Instance.Equals(ExceptionType, other.ExceptionType) &&
-                       EqualityComparer<Instruction>.Default.Equals(Instruction, other.Instruction) &&
-                       Type == other.Type;
+                       EqualityComparer<Instruction>.Default.Equals(Instruction, other.Instruction);
             }
 
             public override int GetHashCode()
             {
-                return HashCode.Combine(ExceptionType, Instruction, Type);
+                return HashCode.Combine(ExceptionType, Instruction);
             }
 
             public readonly TypeDef ExceptionType;
             public readonly Instruction Instruction;
-            public readonly SuccessorInfoType Type;
 
-            private SuccessorInfo(TypeDef exceptionType, Instruction instruction, SuccessorInfoType type)
+
+            private SuccessorInfo(TypeDef exceptionType)
             {
-                ExceptionType = exceptionType;
-                Instruction = instruction;
-                Type = type;
+                ExceptionType = exceptionType ?? throw new ArgumentNullException(nameof(exceptionType));
+                Instruction = null;
+            }
+
+            public SuccessorInfo(Instruction instruction)
+            {
+                ExceptionType = null;
+                Instruction = instruction ?? throw new ArgumentNullException(nameof(instruction));
             }
 
             public static bool operator ==(SuccessorInfo left, SuccessorInfo right)
@@ -399,7 +393,7 @@ namespace dnWalker.Graphs.ControlFlow
                     return new SuccessorInfo[]
                     {
                         SuccessorInfo.NextInstruction,
-                        SuccessorInfo.Jump((Instruction)instruction.Operand)
+                        SuccessorInfo.Branch((Instruction)instruction.Operand)
                     };
 
                 case Code.Add_Ovf:
@@ -503,28 +497,19 @@ namespace dnWalker.Graphs.ControlFlow
 
                 case Code.Call:
                 case Code.Callvirt:
+                    // if static => next only
+                    // if not static => next, null reference exception
+                    if (((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic)
                     {
-                        MethodDef m = ((IMethod)instruction.Operand).ResolveMethodDefThrow();
-                        // if static => next only
-                        // if not static => next, null reference exception
-                        if (m.IsStatic)
+                        return SuccessorInfo.NextInstructionArray;
+                    }
+                    else
+                    {
+                        return new SuccessorInfo[]
                         {
-                            // check for Debug.Assert call
-                            if (m.DeclaringType.FullName == "System.Diagnostics.Debug" &&
-                                m.Name == "Assert")
-                            {
-                                return SuccessorInfo.AssertArray;
-                            }
-                            return SuccessorInfo.NextInstructionArray;
-                        }
-                        else
-                        {
-                            return new SuccessorInfo[]
-                            {
-                                SuccessorInfo.NextInstruction,
-                                SuccessorInfo.ExceptionHandler(GetException(NullReference))
-                            };
-                        }
+                            SuccessorInfo.NextInstruction,
+                            SuccessorInfo.ExceptionHandler(GetException(NullReference))
+                        };
                     }
 
                 case Code.Ret:
@@ -535,12 +520,14 @@ namespace dnWalker.Graphs.ControlFlow
                         // the switch may contain "explicit" default - one of the target instructions is the next instruction
                         // if that is the case, it should be 
 
-                        return ((Instruction[])instruction.Operand).Select(i => SuccessorInfo.Jump(i)).Prepend(SuccessorInfo.NextInstruction).ToArray();
+                        SuccessorInfo[] successors = ((IList<Instruction>)instruction.Operand).Select(i => SuccessorInfo.Branch(i)).Append(SuccessorInfo.NextInstruction).ToArray();
+
+                        return successors;
                     }
 
                 case Code.Br:
                 case Code.Br_S:
-                    return new SuccessorInfo[] { SuccessorInfo.Jump((Instruction)instruction.Operand) };
+                    return new SuccessorInfo[] { SuccessorInfo.Branch((Instruction)instruction.Operand) };
 
                 default:
                     return SuccessorInfo.NextInstructionArray;
@@ -589,31 +576,52 @@ namespace dnWalker.Graphs.ControlFlow
             return false;
         }
 
-        public static ControlFlowEdge CreateEdge(ControlFlowNode source, ControlFlowNode target, TypeDef exception = null)
+        //public static ControlFlowEdge CreateEdge(ControlFlowNode source, ControlFlowNode target, TypeDef exception = null)
+        //{
+        //    ControlFlowEdge edge;
+        //    if (exception != null)
+        //    {
+        //        edge = new ExceptionEdge(exception, source, target);
+        //    }
+        //    else
+        //    {
+        //        InstructionBlockNode sourceBlock = source as InstructionBlockNode;
+        //        InstructionBlockNode targetBlock = target as InstructionBlockNode;
+        //        if (sourceBlock == null || targetBlock == null) throw new InvalidOperationException("Both source and target must be instruction block nodes.");
+
+        //        if (sourceBlock.Footer.Offset + sourceBlock.Footer.GetSize() ==
+        //            targetBlock.Header.Offset)
+        //        {
+        //            // target block is just after source block => next edge
+        //            edge = new NextEdge(source, target);
+        //        }
+        //        else
+        //        {
+        //            edge = new JumpEdge(source, target);
+        //        }
+        //    }
+
+        //    EnsureConnected(edge);
+        //    return edge;
+        //}
+
+        public static NextEdge CreateNextEdge(ControlFlowNode source, ControlFlowNode target)
         {
-            ControlFlowEdge edge;
-            if (exception != null)
-            {
-                edge = new ExceptionEdge(exception, source, target);
-            }
-            else
-            {
-                InstructionBlockNode sourceBlock = source as InstructionBlockNode;
-                InstructionBlockNode targetBlock = target as InstructionBlockNode;
-                if (sourceBlock == null || targetBlock == null) throw new InvalidOperationException("Both source and target must be instruction block nodes.");
+            NextEdge edge = new NextEdge(source, target);
+            EnsureConnected(edge);
+            return edge;
+        }
 
-                if (sourceBlock.Footer.Offset + sourceBlock.Footer.GetSize() ==
-                    targetBlock.Header.Offset)
-                {
-                    // target block is just after source block => next edge
-                    edge = new NextEdge(source, target);
-                }
-                else
-                {
-                    edge = new JumpEdge(source, target);
-                }
-            }
+        public static JumpEdge CreateJumpEdge(ControlFlowNode source, ControlFlowNode target)
+        {
+            JumpEdge edge = new JumpEdge(source, target);
+            EnsureConnected(edge);
+            return edge;
+        }
 
+        public static ExceptionEdge CreateExceptionEdge(TypeDef exception, ControlFlowNode source, ControlFlowNode target)
+        {
+            ExceptionEdge edge = new ExceptionEdge(exception, source, target);
             EnsureConnected(edge);
             return edge;
         }

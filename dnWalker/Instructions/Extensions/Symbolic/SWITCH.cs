@@ -38,7 +38,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             {
                 Instruction[] targets = (Instruction[])baseExecutor.Operand;
 
-                DecisionHelper.Switch(cur, retValue, expression, targets);
+                DecisionHelper.Switch(cur, ((INumericElement)value).ToInt4(false).Value, expression, targets);
 
                 //DecisionHelper.MakeDecision(cur, retValue, (cur, edge, trgs, expr) =>
                 //{
