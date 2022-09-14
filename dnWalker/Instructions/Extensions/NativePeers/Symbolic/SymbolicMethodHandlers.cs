@@ -17,7 +17,7 @@ namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
     {
         private static readonly INativePeerCache<ISymbolicNativePeer> _cache = new ReflectionNativePeerCache<ISymbolicNativePeer>();
 
-        private static readonly OpCode[] _opCodes = new OpCode[] { OpCodes.Newobj };
+        private static readonly OpCode[] _opCodes = new OpCode[] { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt };
 
         public IEnumerable<OpCode> SupportedOpCodes
         {
@@ -50,7 +50,7 @@ namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
 
             // Topmost stack element is last argument (this ptr is also on stack).
             for (var i = 0; i < size; ++i)
-                retval[size - i] = cur.EvalStack.Peek(i);
+                retval[size - i - 1] = cur.EvalStack.Peek(i);
 
             return retval;
         }

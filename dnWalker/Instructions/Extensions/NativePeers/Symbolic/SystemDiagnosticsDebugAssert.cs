@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
 {
-    [NativePeer(typeof(System.Diagnostics.Debug), "Assert")]
+    [NativePeer(typeof(System.Diagnostics.Debug), "Assert", MatchMethods = false)]
     public class SystemDiagnosticsDebugAssert : SymbolicNativePeerBase
     {
         public override void Handle(MethodDef method, DataElementList args, ExplicitActiveState cur, IIEReturnValue returnValue)

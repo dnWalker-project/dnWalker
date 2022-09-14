@@ -75,9 +75,9 @@ namespace dnWalker.Tests.Examples.Features.Asserts
             else
             {
                 result.Iterations.Should().HaveCount(2);
-                result.Iterations[0].Statistics.AssertionViolations.Should().Be(1);
+                result.Iterations[0].Statistics.AssertionViolations.Should().Be(0);
                 // result.Iterations[0].Statistics.AssertionPasses.Should().Be(0);
-                result.Iterations[1].Statistics.AssertionViolations.Should().Be(0);
+                result.Iterations[1].Statistics.AssertionViolations.Should().Be(1);
                 // result.Iterations[1].Statistics.AssertionPasses.Should().Be(1);
             }
         }

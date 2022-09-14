@@ -40,10 +40,10 @@ namespace dnWalker.Instructions.Extensions
             BaseNamespace + "." + "Symbolic.BRFALSE",
             BaseNamespace + "." + "Symbolic.UnaryOperation",
             
-            //BaseNamespace + "." + "Symbolic.NativePeers.MethodCallNativePeers",
+            // native peers - symbolic must be executed before concrete
+            BaseNamespace + "." + "NativePeers.Symbolic.SymbolicMethodHandlers",
             BaseNamespace + "." + "NativePeers.MethodCallNativePeers",
             BaseNamespace + "." + "NativePeers.ConstructorNativePeers",
-            BaseNamespace + "." + "NativePeers.Symbolic.SymbolicMethodHandlers",
 
         };
 

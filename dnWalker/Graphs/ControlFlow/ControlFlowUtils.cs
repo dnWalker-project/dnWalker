@@ -12,20 +12,30 @@ namespace dnWalker.Graphs.ControlFlow
 {
     public static class ControlFlowUtils
     {
+        internal enum SuccessorType
+        {
+            Next,
+            Jump,
+            Exception,
+            AssertViolation
+        }
+
         internal readonly struct SuccessorInfo : IEquatable<SuccessorInfo>
         {
-            public static readonly SuccessorInfo NextInstruction = new SuccessorInfo();
+            public static readonly SuccessorInfo NextInstruction = new SuccessorInfo(null, null, SuccessorType.Next);
+            public static readonly SuccessorInfo AssertViolation = new SuccessorInfo(null, null, SuccessorType.AssertViolation);
 
             public static readonly SuccessorInfo[] NextInstructionArray = new SuccessorInfo[] { NextInstruction };
+            public static readonly SuccessorInfo[] AssertArray = new SuccessorInfo[] { NextInstruction, AssertViolation };
             public static readonly SuccessorInfo[] EmptyArray = new SuccessorInfo[0];
 
             public static SuccessorInfo ExceptionHandler(TypeDef exception)
             {
-                return new SuccessorInfo(exception);
+                return new SuccessorInfo(null, exception, SuccessorType.Exception);
             }
-            public static SuccessorInfo Branch(Instruction target)
+            public static SuccessorInfo Jump(Instruction target)
             {
-                return new SuccessorInfo(target);
+                return new SuccessorInfo(target, null, SuccessorType.Next);
             }
 
             public override bool Equals(object obj)
@@ -44,20 +54,16 @@ namespace dnWalker.Graphs.ControlFlow
                 return HashCode.Combine(ExceptionType, Instruction);
             }
 
+            public readonly SuccessorType Type;
             public readonly TypeDef ExceptionType;
             public readonly Instruction Instruction;
 
 
-            private SuccessorInfo(TypeDef exceptionType)
+            private SuccessorInfo(Instruction instruction, TypeDef exception, SuccessorType type)
             {
-                ExceptionType = exceptionType ?? throw new ArgumentNullException(nameof(exceptionType));
-                Instruction = null;
-            }
-
-            public SuccessorInfo(Instruction instruction)
-            {
-                ExceptionType = null;
-                Instruction = instruction ?? throw new ArgumentNullException(nameof(instruction));
+                Instruction = instruction;
+                ExceptionType = exception;
+                Type = type;
             }
 
             public static bool operator ==(SuccessorInfo left, SuccessorInfo right)
@@ -393,7 +399,7 @@ namespace dnWalker.Graphs.ControlFlow
                     return new SuccessorInfo[]
                     {
                         SuccessorInfo.NextInstruction,
-                        SuccessorInfo.Branch((Instruction)instruction.Operand)
+                        SuccessorInfo.Jump((Instruction)instruction.Operand)
                     };
 
                 case Code.Add_Ovf:
@@ -497,19 +503,27 @@ namespace dnWalker.Graphs.ControlFlow
 
                 case Code.Call:
                 case Code.Callvirt:
-                    // if static => next only
-                    // if not static => next, null reference exception
-                    if (((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic)
                     {
-                        return SuccessorInfo.NextInstructionArray;
-                    }
-                    else
-                    {
-                        return new SuccessorInfo[]
+                        MethodDef m = ((IMethod)instruction.Operand).ResolveMethodDefThrow();
+                        // if static => next only
+                        // if not static => next, null reference exception
+                        if (m.IsStatic)
                         {
-                            SuccessorInfo.NextInstruction,
-                            SuccessorInfo.ExceptionHandler(GetException(NullReference))
-                        };
+                            if (m.DeclaringType.FullName == "System.Diagnostics.Debug" && m.Name == "Assert")
+                            {
+                                return SuccessorInfo.AssertArray;
+                            }
+
+                            return SuccessorInfo.NextInstructionArray;
+                        }
+                        else
+                        {
+                            return new SuccessorInfo[]
+                            {
+                                SuccessorInfo.NextInstruction,
+                                SuccessorInfo.ExceptionHandler(GetException(NullReference))
+                            };
+                        }
                     }
 
                 case Code.Ret:
@@ -520,14 +534,14 @@ namespace dnWalker.Graphs.ControlFlow
                         // the switch may contain "explicit" default - one of the target instructions is the next instruction
                         // if that is the case, it should be 
 
-                        SuccessorInfo[] successors = ((IList<Instruction>)instruction.Operand).Select(i => SuccessorInfo.Branch(i)).Append(SuccessorInfo.NextInstruction).ToArray();
+                        SuccessorInfo[] successors = ((IList<Instruction>)instruction.Operand).Select(i => SuccessorInfo.Jump(i)).Append(SuccessorInfo.NextInstruction).ToArray();
 
                         return successors;
                     }
 
                 case Code.Br:
                 case Code.Br_S:
-                    return new SuccessorInfo[] { SuccessorInfo.Branch((Instruction)instruction.Operand) };
+                    return new SuccessorInfo[] { SuccessorInfo.Jump((Instruction)instruction.Operand) };
 
                 default:
                     return SuccessorInfo.NextInstructionArray;
@@ -622,6 +636,13 @@ namespace dnWalker.Graphs.ControlFlow
         public static ExceptionEdge CreateExceptionEdge(TypeDef exception, ControlFlowNode source, ControlFlowNode target)
         {
             ExceptionEdge edge = new ExceptionEdge(exception, source, target);
+            EnsureConnected(edge);
+            return edge;
+        }
+
+        public static AssertViolationEdge CreateAssertViolationEdge(ControlFlowNode src, ControlFlowNode trg)
+        {
+            AssertViolationEdge edge = new AssertViolationEdge(src, trg);
             EnsureConnected(edge);
             return edge;
         }

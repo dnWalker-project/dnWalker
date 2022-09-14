@@ -36,6 +36,13 @@ namespace dnWalker.Graphs.ControlFlow
             Dictionary<TypeDef, VirtualExceptionHandlerNode> exceptionHandlerLookup = new Dictionary<TypeDef, VirtualExceptionHandlerNode>(TypeEqualityComparer.Instance);
             Dictionary<string, TypeDef> exceptionCache = new Dictionary<string, TypeDef>();
 
+            Lazy<AssertViolationNode> assertNode = new Lazy<AssertViolationNode>(() =>
+            {
+                AssertViolationNode node = new AssertViolationNode();
+                nodes.Add(node);
+                return node;
+            });
+
             for (int i = 0; i < blockNodes.Count; ++i)
             {
                 Instruction last = blockNodes[i].Footer;
@@ -44,7 +51,7 @@ namespace dnWalker.Graphs.ControlFlow
 
                 foreach (ControlFlowUtils.SuccessorInfo info in successors)
                 {
-                    if (info == ControlFlowUtils.SuccessorInfo.NextInstruction)
+                    if (info.Type == ControlFlowUtils.SuccessorType.Next)
                     {
                         // this should always happen iff (i < blockNodes.Count - 1) as the last instruction is RET
                         ControlFlowNode srcNode = blockNodes[i];
@@ -52,13 +59,20 @@ namespace dnWalker.Graphs.ControlFlow
 
                         ControlFlowUtils.CreateNextEdge(srcNode, trgNode);
                     }
-                    else if (info.Instruction != null)
+                    else if (info.Type == ControlFlowUtils.SuccessorType.Jump)
                     {
                         // branch to specific instruction
                         ControlFlowNode srcNode = blockNodes[i];
                         ControlFlowNode trgNode = ControlFlowUtils.GetNode(blockNodes, info.Instruction);
 
                         ControlFlowUtils.CreateJumpEdge(srcNode, trgNode);
+                    }
+                    else if (info.Type == ControlFlowUtils.SuccessorType.AssertViolation)
+                    {
+                        ControlFlowNode srcNode = blockNodes[i];
+                        ControlFlowNode trgNode = assertNode.Value;
+
+                        ControlFlowUtils.CreateAssertViolationEdge(srcNode, trgNode);
                     }
                     else
                     {
