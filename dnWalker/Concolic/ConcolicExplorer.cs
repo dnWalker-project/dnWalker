@@ -91,7 +91,7 @@ namespace dnWalker.Concolic
             // TODO: make it as a explorer extension...
             if (!ConstraintTreeExplorerWriter.TryWrite(constraintTrees, $"constraintTree.dot")) Logger.Warning("ConstraintTree writer failed.");
 
-            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.ControlFlowGraphProvider.Get(entryPoint));
+            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint));
             return result;
 
             static void NextIterationOrThrow(ref int currentIteration, int maxIterations)

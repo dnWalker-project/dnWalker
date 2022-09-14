@@ -17,32 +17,40 @@ namespace dnWalker.Graphs.ControlFlow
 
         public bool IsCovered => _isCovered;
 
-        private readonly Dictionary<ControlFlowNode, ControlFlowEdge> _predecessors = new Dictionary<ControlFlowNode, ControlFlowEdge>();
-        private readonly Dictionary<ControlFlowNode, ControlFlowEdge> _successors = new Dictionary<ControlFlowNode, ControlFlowEdge>();
+        private readonly List<ControlFlowEdge> _inEdges = new List<ControlFlowEdge>();
+        private readonly List<ControlFlowEdge> _outEdges = new List<ControlFlowEdge>();
 
-        public IReadOnlyCollection<ControlFlowEdge> InEdges => _predecessors.Values;
-        public IReadOnlyCollection<ControlFlowEdge> OutEdges => _successors.Values;
+        public IReadOnlyCollection<ControlFlowEdge> InEdges => _inEdges;
+        public IReadOnlyCollection<ControlFlowEdge> OutEdges => _outEdges;
 
-        public IReadOnlyCollection<ControlFlowNode> Predecessors => _predecessors.Keys;
-        public IReadOnlyCollection<ControlFlowNode> Successors => _successors.Keys;
+        public IEnumerable<ControlFlowNode> Predecessors => _inEdges.Select(e => e.Source);
+        public IEnumerable<ControlFlowNode> Successors => _outEdges.Select(e => e.Target);
 
-        public ControlFlowEdge GetEdgeFrom(ControlFlowNode predecessor)
+        public IEnumerable<ControlFlowEdge> GetEdgesFrom(ControlFlowNode predecessor)
         {
-            return _predecessors[predecessor];
+            return _inEdges.Where(e => e.Source == predecessor);
+        }
+
+        public IEnumerable<ControlFlowEdge> GetEdgesTo(ControlFlowNode successor)
+        {
+            // WIP: this is very bad, but some method depend on a single edge between two nodes.
+            return _outEdges.Where(e => e.Target == successor);
         }
 
         public ControlFlowEdge GetEdgeTo(ControlFlowNode successor)
         {
-            return _successors[successor];
+            // WIP: this is very bad, but some method depend on a single edge between two nodes.
+            return _outEdges.Where(e => e.Target == successor).Single();
         }
 
-        public void AddEdgeFrom(ControlFlowNode predecessor, ControlFlowEdge edge)
+        internal void AddInEdge(ControlFlowEdge edge)
         {
-            _predecessors.Add(predecessor, edge);
+            _inEdges.Add(edge);
         }
-        public void AddEdgeTo(ControlFlowNode successor, ControlFlowEdge edge)
+
+        internal void AddOutEdge(ControlFlowEdge edge)
         {
-            _successors.Add(successor, edge);
+            _outEdges.Add(edge);
         }
     }
 }

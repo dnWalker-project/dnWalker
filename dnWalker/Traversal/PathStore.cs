@@ -75,6 +75,8 @@ namespace dnWalker.Traversal
 
         public ICache<MethodDef, ControlFlowGraph> ControlFlowGraphProvider => _cfgProvider;
 
+        public ICache<MethodDef, MethodTracer> MethodTracerProvider => _methodTracers;
+
         public MethodDef EntryPoint
         {
             get

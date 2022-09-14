@@ -44,7 +44,21 @@ namespace dnWalker.Concolic.Traversal
         }
 
 
-        public ConstraintNode Current => _current;
+        public ConstraintNode Current
+        {
+            //get
+            //{
+            //    return _current;
+            //}
+            get
+            {
+                if (_current == null)
+                {
+                    _current = _trees[0].Root;
+                }
+                return _current;
+            }
+        }
 
         public IReadOnlyList<ConstraintTree> Trees
         {
@@ -73,12 +87,12 @@ namespace dnWalker.Concolic.Traversal
         ///         (arr != null && len(arr) \leq idx),  // index out of range exc, idx >= arr.Length
         ///     }
         /// </example>
-        public void MakeDecision(ExplicitActiveState cur, int decision, ControlFlowNode[] choiceTargets, Expression[] choiceExpressions)
+        public void MakeDecision(ExplicitActiveState cur, int decision, ControlFlowEdge[] choicePaths, Expression[] choiceExpressions)
         {
             if (_current == null) _current = _trees[0].Root;
 
-            Debug.Assert(decision >= 0 && decision < choiceTargets.Length, "Decision must be greater than or equal to 0 and less than choiceTargets.Length.");
-            Debug.Assert(choiceTargets.Length == choiceExpressions.Length, "choiceTargets must have same length as choiceExpressions.");
+            Debug.Assert(decision >= 0 && decision < choicePaths.Length, "Decision must be greater than or equal to 0 and less than choiceTargets.Length.");
+            Debug.Assert(choicePaths.Length == choiceExpressions.Length, "choiceTargets must have same length as choiceExpressions.");
 
             // we are making a decision from the current node => we can mark it covered
             _strategy.AddExploredNode(_current);
@@ -96,7 +110,7 @@ namespace dnWalker.Concolic.Traversal
                     choiceConstraints[i].AddExpressionConstraint(choiceExpressions[i]);
                 }
 
-                _current.Expand(choiceTargets, choiceConstraints);
+                _current.Expand(choicePaths, choiceConstraints);
                 for (int i = 0; i < _current.Children.Count; ++i)
                 {
                     if (i != decision)
@@ -113,7 +127,7 @@ namespace dnWalker.Concolic.Traversal
             // set current node based on the decision
             else
             {
-                Debug.Assert(_current.Children.Count == choiceTargets.Length);
+                Debug.Assert(_current.Children.Count == choicePaths.Length);
                 _current = _current.Children[decision];
             }
         }

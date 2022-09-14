@@ -26,9 +26,9 @@ namespace dnWalker.Traversal
 
         public MethodDef Method => _method;
 
-        protected ControlFlowGraph Graph => _graph;
+        public ControlFlowGraph Graph => _graph;
 
-        public virtual Coverage GetCoverage() => _graph.GetCoverage();
+        public virtual Coverage GetCoverage() => new Coverage(0, 0); //_graph.GetCoverage();
 
         public virtual void OnInstructionExecuted(Instruction instruction)
         {
