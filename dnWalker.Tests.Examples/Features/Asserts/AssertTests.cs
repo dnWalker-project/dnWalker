@@ -67,12 +67,10 @@ namespace dnWalker.Tests.Examples.Features.Asserts
             if (buildInfo.IsRelease())
             {
                 // should pass as the Debug.Assert call is not optimized out
-                result.Iterations.Should().HaveCount(2);
+                result.Iterations.Should().HaveCount(1);
                 result.Iterations[0].Statistics.AssertionViolations.Should().Be(0);
                 // passed assertions are not logged right now, TODO...
                 // result.Iterations[0].Statistics.AssertionPasses.Should().Be(0);
-                result.Iterations[1].Statistics.AssertionViolations.Should().Be(0);
-                // result.Iterations[1].Statistics.AssertionPasses.Should().Be(0);
             }
             else
             {

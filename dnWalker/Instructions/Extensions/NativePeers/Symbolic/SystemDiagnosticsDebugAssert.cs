@@ -23,9 +23,7 @@ namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
         {
             if (args[0].TryGetExpression(cur, out Expression conditionExpression))
             {
-                bool violated = !args[0].ToBool();
-
-                
+                DecisionHelper.Assert(cur, args[0].ToBool(), conditionExpression, Expression.MakeNot(conditionExpression));
             }
         }
     }

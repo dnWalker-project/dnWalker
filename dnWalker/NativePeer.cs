@@ -58,40 +58,40 @@ namespace dnWalker
             //    return new NativePeers.SystemRuntimeFieldHandle();
             //}
 
-            if (typeDef.FullName == typeof(string).FullName)
-            {
-                return new NativePeers.SystemString();
-            }
+            //if (typeDef.FullName == typeof(string).FullName)
+            //{
+            //    return new NativePeers.SystemString();
+            //}
 
-            if (typeDef.FullName == typeof(System.Threading.Thread).FullName)
-            {
-                return new NativePeers.SystemThreadingThread();
-            }
+            //if (typeDef.FullName == typeof(System.Threading.Thread).FullName)
+            //{
+            //    return new NativePeers.SystemThreadingThread();
+            //}
 
             //if (typeDef.FullName == typeof(System.Threading.Monitor).FullName)
             //{
             //    return new NativePeers.SystemThreadingMonitor();
             //}
 
-            if (typeDef.FullName == typeof(Random).FullName)
-            {
-                return new NativePeers.SystemRandom();
-            }
+            //if (typeDef.FullName == typeof(Random).FullName)
+            //{
+            //    return new NativePeers.SystemRandom();
+            //}
 
             //if (typeDef.FullName == typeof(Math).FullName)
             //{
             //    return new NativePeers.SystemMath();
             //}
 
-            if (fullName == typeof(IntPtr).FullName)
-            {
-                return new NativePeers.SystemIntPtr();
-            }
+            //if (fullName == typeof(IntPtr).FullName)
+            //{
+            //    return new NativePeers.SystemIntPtr();
+            //}
 
-            if (fullName == typeof(UIntPtr).FullName)
-            {
-                return new NativePeers.SystemUIntPtr();
-            }
+            //if (fullName == typeof(UIntPtr).FullName)
+            //{
+            //    return new NativePeers.SystemUIntPtr();
+            //}
 
             return null;
         }
@@ -104,10 +104,10 @@ namespace dnWalker
 
         public virtual bool TryConstruct(MethodDef methodDef, DataElementList args, ExplicitActiveState cur)
         {
-            if (methodDef.DeclaringType.FullName == typeof(string).FullName)
-            {
-                return new NativePeers.SystemString().TryConstruct(methodDef, args, cur);
-            }
+            //if (methodDef.DeclaringType.FullName == typeof(string).FullName)
+            //{
+            //    return new NativePeers.SystemString().TryConstruct(methodDef, args, cur);
+            //}
 
             return false;
         }

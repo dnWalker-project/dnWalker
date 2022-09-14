@@ -43,7 +43,7 @@ namespace dnWalker.Instructions.Extensions
             //BaseNamespace + "." + "Symbolic.NativePeers.MethodCallNativePeers",
             BaseNamespace + "." + "NativePeers.MethodCallNativePeers",
             BaseNamespace + "." + "NativePeers.ConstructorNativePeers",
-            BaseNamespace + "." + "Symbolic.NativePeers.SymbolicNativePeers",
+            BaseNamespace + "." + "NativePeers.Symbolic.SymbolicMethodHandlers",
 
         };
 

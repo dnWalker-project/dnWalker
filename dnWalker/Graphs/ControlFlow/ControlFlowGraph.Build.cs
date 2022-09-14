@@ -35,6 +35,12 @@ namespace dnWalker.Graphs.ControlFlow
             // connect the instruction block nodes
             Dictionary<TypeDef, VirtualExceptionHandlerNode> exceptionHandlerLookup = new Dictionary<TypeDef, VirtualExceptionHandlerNode>(TypeEqualityComparer.Instance);
             Dictionary<string, TypeDef> exceptionCache = new Dictionary<string, TypeDef>();
+            Lazy<AssertViolationNode> assertViolationNode = new Lazy<AssertViolationNode>(() =>
+            {
+                AssertViolationNode node = new AssertViolationNode();
+                nodes.Add(node);
+                return node;
+            });
 
             for (int i = 0; i < blockNodes.Count; ++i)
             {
@@ -48,19 +54,24 @@ namespace dnWalker.Graphs.ControlFlow
                     ControlFlowNode trgNode;
                     TypeDef exceptionType = null;
 
-                    if (info == ControlFlowUtils.SuccessorInfo.NextInstruction)
+                    if (info.Type == ControlFlowUtils.SuccessorInfoType.Next)
                     {
                         // this should always happen iff (i < blockNodes.Count - 1) as the last instruction is RET
                         srcNode = blockNodes[i];
                         trgNode = blockNodes[i + 1];
                     }
-                    else if (info.Instruction != null)
+                    else if (info.Type == ControlFlowUtils.SuccessorInfoType.Jump)
                     {
                         // branch to specific instruction
                         srcNode = blockNodes[i];
                         trgNode = ControlFlowUtils.GetNode(blockNodes, info.Instruction);
                     }
-                    else
+                    else if (info.Type == ControlFlowUtils.SuccessorInfoType.AssertViolation)
+                    {
+                        srcNode = blockNodes[i];
+                        trgNode = assertViolationNode.Value;
+                    }
+                    else // if (info.Type == ControlFlowUtils.SuccessorInfoType.Exception)
                     {
                         // TODO: not yet implemented... branch to a concrete, known, exception handler - within this method
                         if (ControlFlowUtils.TryGetHandler(last, info.ExceptionType, method, out Instruction handlerHeader))

@@ -12,20 +12,30 @@ namespace dnWalker.Graphs.ControlFlow
 {
     public static class ControlFlowUtils
     {
+        internal enum SuccessorInfoType
+        {
+            Next,
+            Jump,
+            Exception,
+            AssertViolation
+        }
+
         internal readonly struct SuccessorInfo : IEquatable<SuccessorInfo>
         {
-            public static readonly SuccessorInfo NextInstruction = new SuccessorInfo();
+            public static readonly SuccessorInfo NextInstruction = new SuccessorInfo(null, null, SuccessorInfoType.Next);
+            public static readonly SuccessorInfo AssertViolation = new SuccessorInfo(null, null, SuccessorInfoType.AssertViolation);
 
             public static readonly SuccessorInfo[] NextInstructionArray = new SuccessorInfo[] { NextInstruction };
             public static readonly SuccessorInfo[] EmptyArray = new SuccessorInfo[0];
+            public static readonly SuccessorInfo[] AssertArray = new SuccessorInfo[] { NextInstruction, AssertViolation };
 
             public static SuccessorInfo ExceptionHandler(TypeDef exception)
             {
-                return new SuccessorInfo(exception);
+                return new SuccessorInfo(exception, null, SuccessorInfoType.Exception);
             }
-            public static SuccessorInfo Branch(Instruction target)
+            public static SuccessorInfo Jump(Instruction target)
             {
-                return new SuccessorInfo(target);
+                return new SuccessorInfo(null, target, SuccessorInfoType.Jump);
             }
 
             public override bool Equals(object obj)
@@ -36,28 +46,24 @@ namespace dnWalker.Graphs.ControlFlow
             public bool Equals(SuccessorInfo other)
             {
                 return TypeEqualityComparer.Instance.Equals(ExceptionType, other.ExceptionType) &&
-                       EqualityComparer<Instruction>.Default.Equals(Instruction, other.Instruction);
+                       EqualityComparer<Instruction>.Default.Equals(Instruction, other.Instruction) &&
+                       Type == other.Type;
             }
 
             public override int GetHashCode()
             {
-                return HashCode.Combine(ExceptionType, Instruction);
+                return HashCode.Combine(ExceptionType, Instruction, Type);
             }
 
             public readonly TypeDef ExceptionType;
             public readonly Instruction Instruction;
+            public readonly SuccessorInfoType Type;
 
-
-            private SuccessorInfo(TypeDef exceptionType)
+            private SuccessorInfo(TypeDef exceptionType, Instruction instruction, SuccessorInfoType type)
             {
-                ExceptionType = exceptionType ?? throw new ArgumentNullException(nameof(exceptionType));
-                Instruction = null;
-            }
-
-            public SuccessorInfo(Instruction instruction)
-            {
-                ExceptionType = null;
-                Instruction = instruction ?? throw new ArgumentNullException(nameof(instruction));
+                ExceptionType = exceptionType;
+                Instruction = instruction;
+                Type = type;
             }
 
             public static bool operator ==(SuccessorInfo left, SuccessorInfo right)
@@ -393,7 +399,7 @@ namespace dnWalker.Graphs.ControlFlow
                     return new SuccessorInfo[]
                     {
                         SuccessorInfo.NextInstruction,
-                        SuccessorInfo.Branch((Instruction)instruction.Operand)
+                        SuccessorInfo.Jump((Instruction)instruction.Operand)
                     };
 
                 case Code.Add_Ovf:
@@ -497,19 +503,28 @@ namespace dnWalker.Graphs.ControlFlow
 
                 case Code.Call:
                 case Code.Callvirt:
-                    // if static => next only
-                    // if not static => next, null reference exception
-                    if (((IMethod)instruction.Operand).ResolveMethodDefThrow().IsStatic)
                     {
-                        return SuccessorInfo.NextInstructionArray;
-                    }
-                    else
-                    {
-                        return new SuccessorInfo[]
+                        MethodDef m = ((IMethod)instruction.Operand).ResolveMethodDefThrow();
+                        // if static => next only
+                        // if not static => next, null reference exception
+                        if (m.IsStatic)
                         {
-                            SuccessorInfo.NextInstruction,
-                            SuccessorInfo.ExceptionHandler(GetException(NullReference))
-                        };
+                            // check for Debug.Assert call
+                            if (m.DeclaringType.FullName == "System.Diagnostics.Debug" &&
+                                m.Name == "Assert")
+                            {
+                                return SuccessorInfo.AssertArray;
+                            }
+                            return SuccessorInfo.NextInstructionArray;
+                        }
+                        else
+                        {
+                            return new SuccessorInfo[]
+                            {
+                                SuccessorInfo.NextInstruction,
+                                SuccessorInfo.ExceptionHandler(GetException(NullReference))
+                            };
+                        }
                     }
 
                 case Code.Ret:
@@ -520,12 +535,12 @@ namespace dnWalker.Graphs.ControlFlow
                         // the switch may contain "explicit" default - one of the target instructions is the next instruction
                         // if that is the case, it should be 
 
-                        return ((Instruction[])instruction.Operand).Select(i => SuccessorInfo.Branch(i)).Prepend(SuccessorInfo.NextInstruction).ToArray();
+                        return ((Instruction[])instruction.Operand).Select(i => SuccessorInfo.Jump(i)).Prepend(SuccessorInfo.NextInstruction).ToArray();
                     }
 
                 case Code.Br:
                 case Code.Br_S:
-                    return new SuccessorInfo[] { SuccessorInfo.Branch((Instruction)instruction.Operand) };
+                    return new SuccessorInfo[] { SuccessorInfo.Jump((Instruction)instruction.Operand) };
 
                 default:
                     return SuccessorInfo.NextInstructionArray;
