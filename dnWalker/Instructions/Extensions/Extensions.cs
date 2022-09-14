@@ -12,7 +12,7 @@ namespace dnWalker.Instructions.Extensions
     {
         private const string BaseNamespace = "dnWalker.Instructions.Extensions";
 
-        private static readonly string[] _defualtExtensions = new string[]
+        private static readonly string[] _defaultExtensions = new string[]
         {
             // ordered from first to execute to last to execute
             // all of them are within the base assembly => we can ommit the assembly part
@@ -41,6 +41,8 @@ namespace dnWalker.Instructions.Extensions
             
             //BaseNamespace + "." + "Symbolic.NativePeers.MethodCallNativePeers",
             BaseNamespace + "." + "NativePeers.MethodCallNativePeers",
+            BaseNamespace + "." + "NativePeers.ConstructorNativePeers",
+            BaseNamespace + "." + "Symbolic.NativePeers.SymbolicNativePeers",
 
         };
 
@@ -56,7 +58,7 @@ namespace dnWalker.Instructions.Extensions
 
         public static IEnumerable<IInstructionExecutor> CreateInstructionExtensions(this IConfiguration configuration)
         {
-            string[] extensionsIdentifiers = configuration.GetValue<string[]>("InstructionExtensions") ?? _defualtExtensions;
+            string[] extensionsIdentifiers = configuration.GetValue<string[]>("InstructionExtensions") ?? _defaultExtensions;
 
 
             return extensionsIdentifiers

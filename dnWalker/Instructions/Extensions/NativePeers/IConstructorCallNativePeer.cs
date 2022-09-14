@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.NativePeers
 {
-    internal interface IConstructorCallNativePeer
+    public interface IConstructorCallNativePeer : INativePeer
     {
-        bool TryExecute(MethodDef method, ExplicitActiveState cur, out IIEReturnValue returnValue);
     }
 }

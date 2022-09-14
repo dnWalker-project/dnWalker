@@ -3028,13 +3028,13 @@ namespace dnWalker.Instructions
                 args[i] = cur.EvalStack.Pop();
             }
 
-            NativePeer nativePeer = NativePeer.Get(methDef.DeclaringType);
-            if (Method.IsConstructor
-                && nativePeer != null
-                && nativePeer.TryConstruct(methDef, args, cur))
-            {
-                return nextRetval;
-            }
+            //NativePeer nativePeer = NativePeer.Get(methDef.DeclaringType);
+            //if (Method.IsConstructor
+            //    && nativePeer != null
+            //    && nativePeer.TryConstruct(methDef, args, cur))
+            //{
+            //    return nextRetval;
+            //}
 
             /*if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
             {

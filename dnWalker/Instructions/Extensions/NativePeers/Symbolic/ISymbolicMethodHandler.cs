@@ -7,14 +7,13 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.Instructions.Extensions.NativePeers.MethodCalls
+namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
 {
-    public abstract class MethodCallNativePeerBase : NativePeerBase, IMethodCallNativePeer
+    public interface ISymbolicNativePeer
     {
+        void Handle(MethodDef method, DataElementList args, ExplicitActiveState cur, IIEReturnValue returnValue);
     }
 }

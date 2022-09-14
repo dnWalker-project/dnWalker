@@ -28,26 +28,22 @@ namespace dnWalker.Instructions.Extensions.NativePeers
             }
         }
 
-        private readonly Dictionary<MethodDef, Func<ExplicitActiveState, IIEReturnValue>> _nativePeers = new Dictionary<MethodDef, Func<ExplicitActiveState, IIEReturnValue>>();
-
         public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             MethodDef method = GetMethod(baseExecutor, cur);
 
             DataElementList args = CreateArgumentList(method, cur);
+            if(_cache.TryGetNativePeer(method, out IMethodCallNativePeer nativePeer) && 
+                nativePeer.TryExecute(method, args, cur, out IIEReturnValue returnValue))
             {
-                if(_cache.TryGetNativePeer(method, out IMethodCallNativePeer nativePeer) && 
-                    nativePeer.TryExecute(method, args, cur, out IIEReturnValue returnValue))
-                {
-                    args.Dispose();
-                    return returnValue;
-                }
-
-                // all native peers failed => return the popped arguments on the stack
-                ReturnArguemntList(args, cur);
-
-                return next(baseExecutor, cur);
+                args.Dispose();
+                return returnValue;
             }
+
+            // all native peers failed => return the popped arguments on the stack
+            ReturnArguemntList(args, cur);
+
+            return next(baseExecutor, cur);
         }
 
         protected static void ReturnArguemntList(DataElementList args, ExplicitActiveState cur)

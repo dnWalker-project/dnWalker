@@ -30,11 +30,18 @@ namespace dnWalker.Instructions.Extensions.NativePeers
         public IIEReturnValue Execute(InstructionExecBase baseExecutor, ExplicitActiveState cur, InstructionExecution next)
         {
             MethodDef method = GetMethod(baseExecutor, cur);
+
+            DataElementList args = CreateArgumentList(method, cur);
             if (_cache.TryGetNativePeer(method, out IConstructorCallNativePeer nativePeer) &&
-                nativePeer.TryExecute(method, cur, out IIEReturnValue returnValue))
+                nativePeer.TryExecute(method, args, cur, out IIEReturnValue returnValue))
             {
+                args.Dispose();
                 return returnValue;
             }
+
+            // all native peers failed => return the popped arguments on the stack
+            ReturnArguemntList(args, cur);
+
             return next(baseExecutor, cur); ;
         }
 
@@ -42,6 +49,26 @@ namespace dnWalker.Instructions.Extensions.NativePeers
         protected static MethodDef GetMethod(InstructionExecBase instruction, ExplicitActiveState cur)
         {
             return (instruction.Operand as IMethod).ResolveMethodDefThrow();
+        }
+
+        protected static DataElementList CreateArgumentList(MethodDef method, ExplicitActiveState cur)
+        {
+            int size = method.ParamDefs.Count + (method.HasThis ? 1 : 0);
+            DataElementList retval = cur.StorageFactory.CreateList(size);
+
+            // Topmost stack element is last argument (this ptr is also on stack).
+            for (--size; size >= 0; --size)
+                retval[size] = cur.EvalStack.Pop();
+
+            return retval;
+        }
+
+        protected static void ReturnArguemntList(DataElementList args, ExplicitActiveState cur)
+        {
+            foreach (IDataElement de in args)
+            {
+                cur.EvalStack.Push(de);
+            }
         }
     }
 }
