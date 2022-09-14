@@ -82,7 +82,7 @@ namespace dnWalker.Concolic
                 Constraint postCondition = node.GetPrecondition();
                 SymbolicContext symbolicContext = currentPath.GetSymbolicContext();
 
-                ExplorationIterationResult iterationResult = new ExplorationIterationResult(currentIteration, currentPath, symbolicContext, preCondition, postCondition);
+                ExplorationIterationResult iterationResult = new ExplorationIterationResult(currentIteration, currentPath, symbolicContext, preCondition, postCondition, explorer.Statistics);
                 iterationResults.Add(iterationResult);
 
                 OnIterationFinished(new IterationFinishedEventArgs(iterationResult, currentPath));

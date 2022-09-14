@@ -48,6 +48,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.Tests.Interpreter", "dnWalker.Tests.Interpreter\dnWalker.Tests.Interpreter.csproj", "{7638742D-2A23-4754-9625-A07913E9D670}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.Tests.Examples", "dnWalker.Tests.Examples\dnWalker.Tests.Examples.csproj", "{64AF8187-3BC6-47DC-9FBD-FB48FD760D2A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6A4FF09A-CEE6-481F-A208-F24470A9CC91} = {6A4FF09A-CEE6-481F-A208-F24470A9CC91}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnlib", "..\..\Development\dnlib\src\dnlib.csproj", "{BAB26A14-907E-434E-A845-D7BF6C7A1874}"
 EndProject

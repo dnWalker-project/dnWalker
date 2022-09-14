@@ -37,7 +37,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IIEReturnValue returnValue = next(baseExecutor, cur);
 
-            context.SetReturnValue(retVal, cur, retType);
+            context.SetReturnValue(retVal, method, cur, retType);
 
             return returnValue;
         }
