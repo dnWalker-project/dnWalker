@@ -57,7 +57,7 @@ namespace dnWalker.Instructions.Extensions.NativePeers
             DataElementList retval = cur.StorageFactory.CreateList(size);
 
             // Topmost stack element is last argument (this ptr is also on stack).
-            for (--size; size >= 0; --size)
+            for (--size; size > 0; --size)
                 retval[size] = cur.EvalStack.Pop();
 
             return retval;
@@ -65,9 +65,9 @@ namespace dnWalker.Instructions.Extensions.NativePeers
 
         protected static void ReturnArguemntList(DataElementList args, ExplicitActiveState cur)
         {
-            foreach (IDataElement de in args)
+            for (int i = 1; i < args.Length; ++i)
             {
-                cur.EvalStack.Push(de);
+                cur.EvalStack.Push(args[i]);
             }
         }
     }
