@@ -58,11 +58,17 @@ namespace dnWalker.Concolic
             if (inputModelsFile != null && System.IO.File.Exists(inputModelsFile))
             {
                 XElement xml = XElement.Load(inputModelsFile);
-                String fullMethodName = method.FullName;
+                String fullMethodName = method.DeclaringType.FullName + "." + method.Name;
                 models.AddRange(xml.Elements().Where(e => e.Name == "InputModel" && e.Attribute("Method").Value == fullMethodName).Select(x => deserializer.FromXml(x, method)));
             }
 
             return models;
+        }
+
+        public static IConfiguration SetInputModelsFile(this IConfiguration configuration, string filename)
+        {
+            configuration.SetValue("InputModelsFile", filename);
+            return configuration;
         }
     }
 }
