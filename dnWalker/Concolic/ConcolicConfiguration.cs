@@ -1,11 +1,17 @@
-﻿using dnWalker.Concolic.Traversal;
+﻿using dnlib.DotNet;
+
+using dnWalker.Concolic.Traversal;
 using dnWalker.Configuration;
+using dnWalker.Symbolic;
+using dnWalker.Symbolic.Xml;
+using dnWalker.TypeSystem;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace dnWalker.Concolic
 {
@@ -38,6 +44,25 @@ namespace dnWalker.Concolic
         {
             (string assemblyName, string typeName) = configuration.Strategy();
             return ExtensibilityPointHelper.Create<IExplorationStrategy>(assemblyName, typeName);
+        }
+
+        public static IEnumerable<IReadOnlyModel> GetInputModels(this IConfiguration configuration, MethodDef method, IDefinitionProvider definitionProvider)
+        {
+            List<IReadOnlyModel> models = new List<IReadOnlyModel>();
+
+
+            TypeParser tp = new TypeParser(definitionProvider);
+            XmlModelDeserializer deserializer = new XmlModelDeserializer(tp, new MethodParser(definitionProvider, tp));
+
+            String inputModelsFile = configuration.GetValue<string>("InputModelsFile");
+            if (inputModelsFile != null && System.IO.File.Exists(inputModelsFile))
+            {
+                XElement xml = XElement.Load(inputModelsFile);
+                String fullMethodName = method.FullName;
+                models.AddRange(xml.Elements().Where(e => e.Name == "InputModel" && e.Attribute("Method").Value == fullMethodName).Select(x => deserializer.FromXml(x, method)));
+            }
+
+            return models;
         }
     }
 }
