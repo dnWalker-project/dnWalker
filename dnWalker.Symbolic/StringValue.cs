@@ -9,6 +9,7 @@ namespace dnWalker.Symbolic
     public readonly struct StringValue : IValue, IEquatable<StringValue>
     {
         public static readonly StringValue Null = new StringValue(null);
+        public static readonly StringValue Empty = new StringValue("");
 
         public StringValue(string? content)
         {
@@ -50,6 +51,13 @@ namespace dnWalker.Symbolic
         public override string ToString()
         {
             return Content == null ? "null" : $"\"{Content}\"";
+        }
+
+        public static StringValue Parse(string text)
+        {
+            if (text == "\"\"") return Empty;
+            if (text == "null") return Null;
+            return new StringValue(text.Trim('"'));
         }
     }
 }

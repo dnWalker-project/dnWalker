@@ -1,8 +1,12 @@
-﻿using System;
+﻿using dnWalker.Symbolic.Xml;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using static System.Net.Mime.MediaTypeNames;
 
 namespace dnWalker.Symbolic
 {
@@ -57,6 +61,15 @@ namespace dnWalker.Symbolic
         public override string ToString()
         {
             return this == Null ? "null" : $"@{Value:X8}";
+        }
+
+        public static Location Parse(string text)
+        {
+            if (text == "null") return Location.Null;
+
+            if (text[0] != '@') throw new FormatException("Location starts with '@'.");
+
+            return new Location(UInt32.Parse(text.AsSpan(1), System.Globalization.NumberStyles.HexNumber));
         }
     }
 }
