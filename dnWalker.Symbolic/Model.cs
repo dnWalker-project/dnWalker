@@ -68,5 +68,6 @@ namespace dnWalker.Symbolic
         public IReadOnlyCollection<IRootVariable> Variables => _values.Keys;
 
         public Constraint Precondition => _precondition;
+
     }
 }

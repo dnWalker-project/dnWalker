@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Xml;
 using dnWalker.TypeSystem;
 
 using System;

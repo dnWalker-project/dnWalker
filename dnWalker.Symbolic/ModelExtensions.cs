@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Symbolic
 {
-    public static class ModelExtensions
+    public static partial class ModelExtensions
     {
         /// <summary>
         /// Evaluates the expression with regards to the model.

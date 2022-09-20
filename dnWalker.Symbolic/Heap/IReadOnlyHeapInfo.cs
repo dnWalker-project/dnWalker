@@ -12,6 +12,7 @@ namespace dnWalker.Symbolic.Heap
     /// </summary>
     public interface IReadOnlyHeapInfo
     {
+
         /// <summary>
         /// Clones the instance.
         /// </summary>

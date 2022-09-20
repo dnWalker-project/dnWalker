@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace dnWalker.Explorations.Xml
+namespace dnWalker.Symbolic.Xml
 {
     public class XmlModelSerializer
     {
@@ -29,7 +29,7 @@ namespace dnWalker.Explorations.Xml
         {
             if (name == null) name = XmlTokens.Model;
 
-            XElement modelXml = new XElement(name);
+            var modelXml = new XElement(name);
 
             modelXml.Add(VariablesToXml(model));
             modelXml.Add(HeapToXml(model.HeapInfo));
@@ -58,9 +58,9 @@ namespace dnWalker.Explorations.Xml
         #region Serialize Variables
         private XElement VariablesToXml(IReadOnlyModel model)
         {
-            XElement variablesXml = new XElement(XmlTokens.Variables);
+            var variablesXml = new XElement(XmlTokens.Variables);
 
-            foreach (IRootVariable variable in model.Variables)
+            foreach (var variable in model.Variables)
             {
                 variablesXml.Add(VariableToXml(variable, model));
             }
@@ -70,7 +70,7 @@ namespace dnWalker.Explorations.Xml
 
         private XElement VariableToXml(IRootVariable variable, IReadOnlyModel model)
         {
-            XElement variableXml = variable switch
+            var variableXml = variable switch
             {
                 MethodArgumentVariable mav => MethodArgumentVariableToXml(mav),
                 StaticFieldVariable sfv => StaticFieldVariableToXml(sfv),
@@ -84,7 +84,7 @@ namespace dnWalker.Explorations.Xml
 
         private XElement MethodArgumentVariableToXml(MethodArgumentVariable mav)
         {
-            XElement xml = new XElement(XmlTokens.MethodArgument);
+            var xml = new XElement(XmlTokens.MethodArgument);
 
             xml.SetAttributeValue(XmlTokens.Name, mav.Parameter.Name);
 
@@ -92,7 +92,7 @@ namespace dnWalker.Explorations.Xml
         }
         private XElement StaticFieldVariableToXml(StaticFieldVariable sfv)
         {
-            XElement xml = new XElement(XmlTokens.StaticField);
+            var xml = new XElement(XmlTokens.StaticField);
 
             xml.SetAttributeValue(XmlTokens.Type, sfv.Field.DeclaringType.ToString());
             xml.SetAttributeValue(XmlTokens.FieldName, sfv.Field.Name);
@@ -104,11 +104,11 @@ namespace dnWalker.Explorations.Xml
         #region Serialize Heap
         private XElement HeapToXml(IReadOnlyHeapInfo heap)
         {
-            XElement heapXml = new XElement(XmlTokens.Heap);
+            var heapXml = new XElement(XmlTokens.Heap);
 
             foreach (HeapNode node in heap.Nodes)
             {
-                XElement nodeXml = node switch
+                var nodeXml = node switch
                 {
                     IReadOnlyObjectHeapNode ohn => ObjectNodeToXml(ohn),
                     IReadOnlyArrayHeapNode ahn => ArrayNodeToXml(ahn),
@@ -124,24 +124,24 @@ namespace dnWalker.Explorations.Xml
 
         private XElement ObjectNodeToXml(IReadOnlyObjectHeapNode ohn)
         {
-            XElement xml = new XElement(XmlTokens.ObjectNode);
+            var xml = new XElement(XmlTokens.ObjectNode);
             xml.SetAttributeValue(XmlTokens.IsDirty, ohn.IsDirty);
 
-            foreach (IField fld in ohn.Fields)
+            foreach (var fld in ohn.Fields)
             {
-                XElement fieldXml = new XElement(XmlTokens.InstanceField);
+                var fieldXml = new XElement(XmlTokens.InstanceField);
 
                 fieldXml.SetAttributeValue(XmlTokens.DeclaringType, fld.DeclaringType.ToString());
                 fieldXml.SetAttributeValue(XmlTokens.FieldName, fld.Name);
-                
+
                 fieldXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetFieldOrDefault(fld)));
 
                 xml.Add(fieldXml);
             }
 
-            foreach ((IMethod method, int invocation) in ohn.MethodInvocations)
+            foreach ((var method, var invocation) in ohn.MethodInvocations)
             {
-                XElement methodXml = new XElement(XmlTokens.MethodResult);
+                var methodXml = new XElement(XmlTokens.MethodResult);
 
                 methodXml.SetAttributeValue(XmlTokens.Method, method.ToString());
                 methodXml.SetAttributeValue(XmlTokens.Invocation, invocation);
@@ -155,13 +155,13 @@ namespace dnWalker.Explorations.Xml
 
         private XElement ArrayNodeToXml(IReadOnlyArrayHeapNode ahn)
         {
-            XElement xml = new XElement(XmlTokens.ArrayNode);
+            var xml = new XElement(XmlTokens.ArrayNode);
             xml.SetAttributeValue(XmlTokens.IsDirty, ahn.IsDirty);
             xml.SetAttributeValue(XmlTokens.Length, ahn.Length);
 
-            foreach (int index in ahn.Indeces)
+            foreach (var index in ahn.Indeces)
             {
-                XElement elementXml = new XElement(XmlTokens.ArrayElement);
+                var elementXml = new XElement(XmlTokens.ArrayElement);
                 elementXml.SetAttributeValue(XmlTokens.Index, index);
                 elementXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ahn.GetElementOrDefault(index)));
 

@@ -106,6 +106,7 @@ namespace dnWalker.Symbolic.Expressions.Utils
         {
             object? value = constant.Value;
             if (value is null) sb.Append(NullLiteral);
+            else if (value is String str) sb.Append($"\"{str}\"");
             else if (value is IFormattable form) sb.Append(form.ToString(null, CultureInfo.InvariantCulture));
             else sb.Append(value.ToString());
 

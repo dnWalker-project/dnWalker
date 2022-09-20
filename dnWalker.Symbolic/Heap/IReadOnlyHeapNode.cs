@@ -11,8 +11,13 @@ namespace dnWalker.Symbolic.Heap
     /// <summary>
     /// Represents a read only heap node.
     /// </summary>
-    public interface IReadOnlyHeapNode
+    public interface IReadOnlyHeapNode : IModelVisitable
     {
+        void IModelVisitable.Accept(IModelVisitor visitor)
+        {
+            visitor.VisitHeapNode(this);
+        }
+
         /// <summary>
         /// Specifies the location of the node.
         /// </summary>
