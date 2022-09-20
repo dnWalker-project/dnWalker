@@ -14,8 +14,13 @@ namespace dnWalker.Symbolic
     /// <summary>
     /// Provides valuation for the variables.
     /// </summary>
-    public interface IReadOnlyModel
+    public interface IReadOnlyModel : IModelVisitable
     {
+        void IModelVisitable.Accept(IModelVisitor visitor)
+        {
+            visitor.VisitModel(this);
+        }
+
         Constraint Precondition { get; }
 
         IReadOnlyModel Clone();

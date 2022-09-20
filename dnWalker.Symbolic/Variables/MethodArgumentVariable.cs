@@ -18,7 +18,7 @@ namespace dnWalker.Symbolic.Variables
             _parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
         }
 
-        public string Name => _parameter.IsHiddenThisParameter ? "objectUnderTest" : _parameter.Name;
+        public string Name => _parameter.IsHiddenThisParameter ? "$this$" : _parameter.Name;
         public TypeSig Type => _parameter.Type;
         public Parameter Parameter => _parameter;
 
