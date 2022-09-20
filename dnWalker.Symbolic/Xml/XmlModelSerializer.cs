@@ -117,6 +117,8 @@ namespace dnWalker.Symbolic.Xml
 
                 nodeXml.SetAttributeValue(XmlTokens.Location, node.Location.ToString());
                 nodeXml.SetAttributeValue(XmlTokens.Type, node.Type.ToString());
+
+                heapXml.Add(nodeXml);
             }
 
             return heapXml;

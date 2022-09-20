@@ -57,7 +57,7 @@ namespace dnWalker.Symbolic.Xml
                 var heapInfo = model.HeapInfo;
                 foreach (var nodeXml in heapXml.Elements())
                 {
-                    var location = new Location((uint)GetAttribute(nodeXml, XmlTokens.Location));
+                    var location = Location.Parse((string)GetAttribute(nodeXml, XmlTokens.Location));
                     var type = _typeParser.Parse((string)GetAttribute(nodeXml, XmlTokens.Type)).ToTypeDefOrRef().ToTypeSig();
 
                     var heapNode = nodeXml.Name.LocalName switch
@@ -139,11 +139,11 @@ namespace dnWalker.Symbolic.Xml
             }
             else if (type.IsString())
             {
-                return new StringValue(xml);
+                return StringValue.Parse(xml);
             }
             else
             {
-                return new Location(uint.Parse(xml.AsSpan(1), System.Globalization.NumberStyles.HexNumber));
+                return Location.Parse(xml);
             }
         }
 
@@ -189,6 +189,8 @@ namespace dnWalker.Symbolic.Xml
             {
                 var index = (int)GetAttribute(elementXml, XmlTokens.Index);
                 var value = ValueFromXml((string)GetAttribute(elementXml, XmlTokens.Value), elementType);
+
+                arrayNode.SetElement(index, value);
             }
 
             return arrayNode;
