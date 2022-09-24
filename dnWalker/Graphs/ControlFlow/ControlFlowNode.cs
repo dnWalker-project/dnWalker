@@ -8,15 +8,6 @@ namespace dnWalker.Graphs.ControlFlow
 {
     public abstract class ControlFlowNode
     {
-        private bool _isCovered;
-
-        public void MarkCovered()
-        {
-            _isCovered = true;
-        }
-
-        public bool IsCovered => _isCovered;
-
         private readonly List<ControlFlowEdge> _inEdges = new List<ControlFlowEdge>();
         private readonly List<ControlFlowEdge> _outEdges = new List<ControlFlowEdge>();
 
@@ -33,14 +24,7 @@ namespace dnWalker.Graphs.ControlFlow
 
         public IEnumerable<ControlFlowEdge> GetEdgesTo(ControlFlowNode successor)
         {
-            // WIP: this is very bad, but some method depend on a single edge between two nodes.
             return _outEdges.Where(e => e.Target == successor);
-        }
-
-        public ControlFlowEdge GetEdgeTo(ControlFlowNode successor)
-        {
-            // WIP: this is very bad, but some method depend on a single edge between two nodes.
-            return _outEdges.Where(e => e.Target == successor).Single();
         }
 
         internal void AddInEdge(ControlFlowEdge edge)

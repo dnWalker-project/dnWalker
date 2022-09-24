@@ -13,8 +13,6 @@ namespace dnWalker.Graphs.ControlFlow
 {
     public abstract class ControlFlowEdge
     {
-        private bool _isCovered;
-        private bool _isUnreachable;
         private readonly ControlFlowNode _source;
         private readonly ControlFlowNode _target;
 
@@ -23,20 +21,6 @@ namespace dnWalker.Graphs.ControlFlow
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _target = target ?? throw new ArgumentNullException(nameof(target));
         }
-
-
-        public void MarkCovered()
-        {
-            _isCovered = true;
-        }
-
-        public void MarkUnreachable()
-        {
-            _isUnreachable = true;
-        }
-
-        public bool IsCovered => _isCovered;
-        public bool IsReachable => !_isUnreachable;
 
         public ControlFlowNode Source => _source;
         public ControlFlowNode Target => _target;
