@@ -61,6 +61,10 @@ namespace dnWalker.Concolic
                 String fullMethodName = method.DeclaringType.FullName + "." + method.Name;
                 models.AddRange(xml.Elements().Where(e => e.Name == "InputModel" && e.Attribute("Method").Value == fullMethodName).Select(x => deserializer.FromXml(x, method)));
             }
+            else
+            {
+                throw new ExplorationException($"InputModelsFile specified, but not found: {inputModelsFile}");
+            }
 
             return models;
         }
