@@ -39,15 +39,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             if (ExpressionUtils.GetExpressions(cur, divider, out Expression dividerExpression))
             {
-                ConstraintsHelper.MakeDecision(cur, returnValue, static (cur, edge, dividerExpression) =>
-                {
-                    return edge switch
-                    {
-                        NextEdge => Expression.MakeNotEqual(dividerExpression, cur.GetExpressionFactory().MakeIntegerConstant(0)),
-                        ExceptionEdge => Expression.MakeEqual(dividerExpression, cur.GetExpressionFactory().MakeIntegerConstant(0)),
-                        _ => throw new NotSupportedException()
-                    };
-                }, dividerExpression);
+                DecisionHelper.ThrowZeroOrNext(cur, returnValue, dividerExpression);
             }
 
             return returnValue;

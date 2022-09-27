@@ -40,12 +40,22 @@ namespace dnWalker.Graphs.ControlFlow
 
         public ControlFlowNode Source => _source;
         public ControlFlowNode Target => _target;
+
+        public override string ToString()
+        {
+            return $"{{{Source}}}->{{{Target}}}";
+        }
     }
 
     public class NextEdge : ControlFlowEdge
     {
         public NextEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target) : base(source, target)
         {
+        }
+
+        public override string ToString()
+        {
+            return $"{{{Source}}}->{{NEXT}}";
         }
     }
 
@@ -66,5 +76,10 @@ namespace dnWalker.Graphs.ControlFlow
         }
 
         public TypeDef ExceptionType => _exceptionType;
+
+        public override string ToString()
+        {
+            return $"{{{Source}}}- [{ExceptionType.Name}] >{{{Target}}}";
+        }
     }
 }

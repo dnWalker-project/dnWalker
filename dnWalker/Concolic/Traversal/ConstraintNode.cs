@@ -107,12 +107,12 @@ namespace dnWalker.Concolic.Traversal
 
         public void MarkPreconditionSource(int iteration) => _sourceNodeIteration = iteration;
 
-        public IReadOnlyList<ConstraintNode> Expand(ControlFlowNode[] locations, Constraint[] choices)
+        public IReadOnlyList<ConstraintNode> Expand(ControlFlowEdge[] paths, Constraint[] choices)
         {
             ConstraintNode[] children = new ConstraintNode[choices.Length];
             for (int i = 0; i < choices.Length; ++i)
             {
-                ConstraintNode child = new ConstraintNode(_tree, this, locations[i], choices[i]);
+                ConstraintNode child = new ConstraintNode(_tree, this, paths[i].Target, choices[i]);
                 children[i] = child;
             }
             _children = children;

@@ -5,12 +5,15 @@ using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Variables;
 using dnWalker.TypeSystem;
 
+using FluentAssertions;
+
 using MMC.Data;
 using MMC.State;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,39 +23,106 @@ namespace dnWalker.Tests.Interpreter.Symbolic
 {
     public abstract class SymbolicTestBase : InterpreterTestBase
     {
-        protected struct SymbolicResult
+        protected readonly struct SymbolicResult
         {
-            public Constraint? PathConstraint;
-            public Expression? ResultExpression;
+            public readonly string? PathConstraint;
+            public readonly string? ResultExpression;
+
+            public SymbolicResult(string? pathConstraint, string? resultExpression)
+            {
+                PathConstraint = pathConstraint;
+                ResultExpression = resultExpression;
+            }
+
+            public void Deconstruct(out string? pathConstraint, out string? resultEpression)
+            {
+                pathConstraint = PathConstraint;
+                resultEpression = ResultExpression;
+            }
+
+            public static SymbolicResult Build(string? pathConstraint, string? resultExpression)
+            {
+                return new SymbolicResult(pathConstraint, resultExpression);
+            }
+        }
+
+        protected readonly struct SymbolicArgument
+        {
+            public readonly object Value;
+            public readonly string? Name;
+
+            public static SymbolicArgument[] Build(object[] values, string?[] names)
+            {
+                Assert.Equal(values.Length, names.Length);
+
+                SymbolicArgument[] ret = new SymbolicArgument[values.Length];
+                for (int i = 0; i < values.Length; ++i)
+                {
+                    ret[i] = new SymbolicArgument(values[i], names[i]);
+                }
+                return ret;
+            }
+
+            public SymbolicArgument(object value, string? name)
+            {
+                Value = value;
+                Name = name;
+            }
+
+            public void Deconstruct(out object value, out string? name)
+            {
+                value = Value;
+                name = Name;
+            }
         }
 
         protected SymbolicTestBase(ITestOutputHelper output) : base(output)
         {
         }
 
-        protected SymbolicResult Test(string methodName, object[] args, string[] argsNames)
+        protected SymbolicResult Test(SymbolicArgument[] args, [CallerMemberName]string? methodName = null)
         {
-            var explorer = Utils.GetModelChecker(GetFullMethodName(methodName), cur => CreateArguments(cur, args, argsNames), DefinitionProvider);
+            ArgumentNullException.ThrowIfNull(methodName);
+
+            var explorer = Utils.GetModelChecker(GetFullMethodName(methodName), cur => CreateArguments(cur, args), DefinitionProvider);
 
             // setup symbolic execution & path constraint generation
             explorer.ActiveState.InitializeConcolicExploration(explorer.ActiveState.CurrentMethod.Definition, new FirstNPaths(1));
 
             explorer.Run();
 
-            SymbolicResult result = new SymbolicResult();
+            ConstraintTreeExplorer cte = explorer.ActiveState.Services.GetService<ConstraintTreeExplorer>();
+            Constraint constraint = cte.Current.Constraint;
 
-            return result;
+            IDataElement resultDE = explorer.ActiveState.CurrentThread.RetValue;
+
+            if (resultDE != null && resultDE.TryGetExpression(explorer.ActiveState, out Expression expr))
+            {
+                return new SymbolicResult(constraint.ToString(), expr.ToString());
+            }
+            else
+            {
+                return new SymbolicResult(constraint.ToString(), null);
+            }
         }
 
-        private static DataElementList CreateArguments(ExplicitActiveState cur, object[] args, string[] names)
+        protected void TestAndCompare(SymbolicArgument[] args, SymbolicResult expected, [CallerMemberName]string? methodName = null)
+        {
+            SymbolicResult actual = Test(args, methodName);
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+        private static DataElementList CreateArguments(ExplicitActiveState cur, SymbolicArgument[] args)
         {
             DataElementList argsDE = cur.StorageFactory.CreateList(args.Length);
             for (int i = 0; i < args.Length; ++i)
             {
-                argsDE[i] = DataElement.CreateDataElement(args[i], cur.DefinitionProvider);
-                if (!string.IsNullOrWhiteSpace(names[i]))
+                (object value, string? name) = args[i];
+
+                argsDE[i] = DataElement.CreateDataElement(value, cur.DefinitionProvider);
+                if (!string.IsNullOrWhiteSpace(name))
                 {
-                    Expression argExpr = CreateExpression(cur.DefinitionProvider, args[i].GetType(), names[i]);
+                    Expression argExpr = CreateExpression(cur.DefinitionProvider, value.GetType(), name);
                     argsDE[i].SetExpression(cur, argExpr);
                 }
             }

@@ -35,11 +35,6 @@ namespace dnWalker.Concolic.Traversal
             _lastInstruction = instruction;
         }
 
-        public Coverage GetCoverage()
-        {
-            return _cfg.GetCoverage();
-        }
-
         public ControlFlowGraph Graph => _cfg;
     }
 }

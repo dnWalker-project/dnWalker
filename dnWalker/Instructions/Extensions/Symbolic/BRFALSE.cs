@@ -1,6 +1,5 @@
 ﻿using dnlib.DotNet.Emit;
 
-using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
 
@@ -16,16 +15,13 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
-    public class UnaryBranch : IInstructionExecutor
+    public class BRFALSE : IInstructionExecutor
     {
         private static readonly OpCode[] _supportedOpCodes = new OpCode[]
         {
             OpCodes.Brfalse,
             OpCodes.Brfalse_S,
-            OpCodes.Brtrue,
-            OpCodes.Brtrue_S,
         };
-
 
         public IEnumerable<OpCode> SupportedOpCodes => _supportedOpCodes;
 
@@ -40,14 +36,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 return retValue;
             }
 
-            ConstraintsHelper.MakeDecision(cur, retValue, static (_, edge, checksTrue, operand) => (checksTrue, edge) switch
-            {
-                (true, JumpEdge) => operand,
-                (true, NextEdge) => Expression.MakeNot(operand),
-                (false, JumpEdge) => Expression.MakeNot(operand),
-                (false, NextEdge) => operand,
-                _ => throw new InvalidOperationException("Only Next or Jump edge can be used within UnaryBranch executor.")
-            }, baseExecutor.Instruction.OpCode.Code is Code.Brtrue or Code.Brtrue_S, expression.AsBoolean());
+            DecisionHelper.JumpOrNext(cur, retValue, Expression.MakeNot(expression.AsBoolean()), expression.AsBoolean());
 
             return retValue;
         }

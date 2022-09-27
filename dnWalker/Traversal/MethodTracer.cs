@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Traversal
 {
+    // WIP: CoverageTracer?
     public class MethodTracer
     {
         private readonly MethodDef _method;
@@ -26,13 +27,15 @@ namespace dnWalker.Traversal
 
         public MethodDef Method => _method;
 
-        protected ControlFlowGraph Graph => _graph;
+        public ControlFlowGraph Graph => _graph;
 
-        public virtual Coverage GetCoverage() => _graph.GetCoverage();
+        // TODO: actual coverage calculation
+        public virtual Coverage GetCoverage() => new Coverage(0, 0); //_graph.GetCoverage();
 
         public virtual void OnInstructionExecuted(Instruction instruction)
         {
             InstructionBlockNode executedNode = _graph.GetInstructionNode(instruction);
+            // track covered nodes in some other structure than CFG
             executedNode.MarkCovered();
 
             if (_prevInstruction != null)
