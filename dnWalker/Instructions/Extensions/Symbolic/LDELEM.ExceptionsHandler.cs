@@ -36,29 +36,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                         DecisionHelper.ArrayElementAccess(cur, retValue, arrayExpression, indexExpression);
 
-                        //DecisionHelper.MakeDecision(cur, retValue, (cur, edge, array, index) =>
-                        //{
-                        //    ExpressionFactory ef = cur.GetExpressionFactory();
-                        //    IVariable arrayVariable = ((VariableExpression)array).Variable;
-                        //    return edge switch
-                        //    {
-                        //        NextEdge => Expression.MakeAnd(
-                        //                        Expression.MakeNotEqual(array, ef.NullExpression),
-                        //                        Expression.MakeAnd(
-                        //                            Expression.MakeGreaterThanOrEqual(index, ef.MakeIntegerConstant(0)),
-                        //                            Expression.MakeLessThan(index, Expression.MakeVariable(Variable.ArrayLength(arrayVariable)))
-                        //                            )),
-                        //        ExceptionEdge { ExceptionType.FullName: "System.NullReferenceException" } => Expression.MakeEqual(array, ef.NullExpression),
-                        //        ExceptionEdge { ExceptionType.FullName: "System.IndexOutOfRangeException" } => Expression.MakeAnd(
-                        //                        Expression.MakeNotEqual(array, ef.NullExpression),
-                        //                        Expression.MakeOr(
-                        //                            Expression.MakeLessThan(index, ef.MakeIntegerConstant(0)),
-                        //                            Expression.MakeGreaterThanOrEqual(index, Expression.MakeVariable(Variable.ArrayLength(arrayVariable)))
-                        //                            )),
-                        //        _ => throw new NotSupportedException("Only next edge and exception edge with NullReference and IndexOutOfRange are supported by LDELEM.")
-                        //    };
-                        //}, arrayExpression, indexExpression);
-
                         return retValue;
                     }
                 }

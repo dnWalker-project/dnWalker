@@ -82,16 +82,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 ExpressionUtils.GetExpressions(cur, args[0], out Expression instanceExpression))
             {
                 DecisionHelper.ThrowNullOrNext(cur, returnValue, instanceExpression);
-                //DecisionHelper.MakeDecision(cur, returnValue, (cur, edge, instance) =>
-                //{
-                //    ExpressionFactory ef = cur.GetExpressionFactory();
-                //    return edge switch
-                //    {
-                //        NextEdge _ => Expression.MakeNotEqual(instanceExpression, ef.NullExpression),
-                //        ExceptionEdge _ => Expression.MakeEqual(instanceExpression, ef.NullExpression),
-                //        _ => throw new NotSupportedException("Only next edge and null reference exception edge are supported in CALLVIRT instruction.")
-                //    };
-                //}, instanceExpression);
 
             }
 
