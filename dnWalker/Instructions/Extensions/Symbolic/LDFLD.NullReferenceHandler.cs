@@ -39,18 +39,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                         DecisionHelper.ThrowNullOrNext(cur, retValue, instanceExpression);
 
-                        //DecisionHelper.MakeDecision(cur, retValue, (cur, edge, instance) =>
-                        //{
-                        //    ExpressionFactory ef = cur.GetExpressionFactory();
-                        //    IVariable arrayVariable = ((VariableExpression)instance).Variable;
-                        //    return edge switch
-                        //    {
-                        //        NextEdge => Expression.MakeNotEqual(instance, ef.NullExpression),
-                        //        ExceptionEdge { ExceptionType.FullName: "System.NullReferenceException" } => Expression.MakeEqual(instance, ef.NullExpression),
-                        //        _ => throw new NotSupportedException("Only next edge and exception edge with NullReference are supported by LDFLD.")
-                        //    };
-                        //}, instanceExpression);
-
                         return retValue;
                     }
                 }

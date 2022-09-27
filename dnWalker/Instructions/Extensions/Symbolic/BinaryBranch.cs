@@ -74,19 +74,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             DecisionHelper.JumpOrNext(cur, retValue, jumpCondition, nextCondition);
 
-
-            //DecisionHelper.MakeDecision(cur, retValue, static (_, edge, left, right, op) =>
-            //    edge switch
-            //    {
-            //        // the fall-through option => the (left [op] right) fails => negate the operator
-            //        NextEdge _ => Expression.MakeBinary(op.Negate(), left, right),
-
-            //        // the jump option => the (left [op] right) succeeds => use the operator directly
-            //        JumpEdge _ => Expression.MakeBinary(op, left, right),
-
-            //        _ => throw new InvalidOperationException("Only Next or Jump edge can be used within BinaryBranch executor.")
-            //    }, lhsExpression, rhsExpression, op);
-
             return retValue;
         }
     }
