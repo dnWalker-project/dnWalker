@@ -5,6 +5,7 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
+using dnWalker.DataElements;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
@@ -45,36 +46,21 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             MethodDef method = callModel.Method;
             IDataElement[] args = GetArguments(method, cur);
 
+            // if there is symbolic value for this method execution - fake it 
+            if (TryFakeMethod(cur, method, args, forceInitialization: false))
+            {
+                return InstructionExecBase.nextRetval;
+            }
+
             IIEReturnValue returnValue = next(baseExecutor, cur);
 
             if (returnValue == InstructionExecBase.ehLookupRetval &&
                 cur.CurrentThread.UnhandledException.Type.FullName == "System.MissingMethodException")
             {
-                // since we failed to find method overload
-                // we will fake this method...
-                if (cur.TryGetSymbolicContext(out SymbolicContext context))
+                if (TryFakeMethod(cur, method, args, forceInitialization: true))
                 {
-                    ObjectReference instance = (ObjectReference)args[0];
-
-                    if (instance.TryGetExpression(cur, out Expression instanceExpr))
-                    {
-                        InstructionExecBase.UnthrowException(cur);
-                        returnValue = InstructionExecBase.nextRetval;
-
-                        Debug.Assert(instanceExpr is VariableExpression);
-                        dnWalker.Symbolic.IVariable instanceVar = ((VariableExpression)instanceExpr).Variable;
-                        if (context.InputModel.TryGetValue(instanceVar, out IValue instanceValue))
-                        {
-                            Location symbolicLocation = (Location)instanceValue;
-                            int invocation = context.GetInvocation(symbolicLocation, method);
-
-                            dnWalker.Symbolic.IVariable resultVar = Variable.MethodResult(instanceVar, method, invocation);
-
-                            IDataElement result = context.LazyInitialize(resultVar, cur);
-                            result.SetExpression(cur, cur.GetExpressionFactory().MakeVariable(resultVar));
-                            cur.EvalStack.Push(result);
-                        }
-                    }
+                    InstructionExecBase.UnthrowException(cur);
+                    returnValue = InstructionExecBase.nextRetval;
                 }
             }
 
@@ -86,6 +72,36 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             }
 
             return returnValue;
+        }
+
+        private static bool TryFakeMethod(ExplicitActiveState cur, MethodDef method, IDataElement[] args, bool forceInitialization = false)
+        {
+            if (cur.TryGetSymbolicContext(out SymbolicContext context))
+            {
+                ObjectReference instance = (ObjectReference)args[0];
+
+                if (instance.TryGetExpression(cur, out Expression instanceExpr))
+                {
+                    Debug.Assert(instanceExpr is VariableExpression);
+                    dnWalker.Symbolic.IVariable instanceVar = ((VariableExpression)instanceExpr).Variable;
+
+                    if (context.InputModel.TryGetValue(instanceVar, out IValue instanceValue, forceInitialization))
+                    {
+                        Location symbolicLocation = (Location)instanceValue;
+                        int invocation = context.GetInvocation(symbolicLocation, method);
+
+                        dnWalker.Symbolic.IVariable resultVar = Variable.MethodResult(instanceVar, method, invocation);
+
+                        IDataElement result = context.LazyInitialize(resultVar, cur);
+                        result.SetExpression(cur, cur.GetExpressionFactory().MakeVariable(resultVar));
+                        cur.EvalStack.Push(result);
+                        
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }

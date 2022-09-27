@@ -24,7 +24,9 @@ namespace dnWalker.Symbolic.Heap
         /// <param name="method"></param>
         /// <param name="invocation"></param>
         /// <returns></returns>
-        IValue GetMethodResult(IMethod method, int invocation);
+        IValue GetMethodResultOrDefault(IMethod method, int invocation);
+
+        bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value);
 
         IEnumerable<IField> Fields { get; }
         IEnumerable<(IMethod method, int invocation)> MethodInvocations { get; }
@@ -51,7 +53,7 @@ namespace dnWalker.Symbolic.Heap
                 IValue[] results = new IValue[max];
                 for (int i = 0; i < max; ++i)
                 {
-                    results[i] = objectNode.GetMethodResult(method, i + 1);
+                    results[i] = objectNode.GetMethodResultOrDefault(method, i + 1);
                 }
 
                 retList.Add((method, results));

@@ -61,7 +61,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
                 Location target = objectNode.Location;
                 foreach ((IMethod method, int invocation) in objectNode.MethodInvocations)
                 {
-                    IValue value = objectNode.GetMethodResult(method, invocation);
+                    IValue value = objectNode.GetMethodResultOrDefault(method, invocation);
                     if (value is Location source && source != Location.Null)
                     {
                         HeapEdge edge = new HeapEdge(source, target, HeapEdgeType.MethodResult);

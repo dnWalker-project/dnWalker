@@ -65,7 +65,7 @@ namespace dnWalker.Symbolic.Heap
             SetDirty();
         }
 
-        public IValue GetMethodResult(IMethod method, int invocation)
+        public IValue GetMethodResultOrDefault(IMethod method, int invocation)
         {
             System.Diagnostics.Debug.Assert(method != null);
             System.Diagnostics.Debug.Assert(invocation >= 0);
@@ -92,6 +92,11 @@ namespace dnWalker.Symbolic.Heap
         public bool TryGetField(IField field, [NotNullWhen(true)] out IValue? value)
         {
             return _fields.TryGetValue(field, out value);
+        }
+
+        public bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value)
+        {
+            return _methods.TryGetValue((method, invocation), out value);
         }
     }
 }

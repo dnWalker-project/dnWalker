@@ -52,7 +52,7 @@ namespace dnWalker.Symbolic
         /// <param name="variable"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool TryGetValue(this IReadOnlyModel model, IVariable variable, [NotNullWhen(true)]out IValue? value)
+        public static bool TryGetValue(this IReadOnlyModel model, IVariable variable, [NotNullWhen(true)]out IValue? value, bool forceInitialization = false)
         {
             if (variable is IRootVariable rootVar) return model.TryGetValue(rootVar, out value);
             else if (variable is IMemberVariable memberVar)
@@ -69,8 +69,12 @@ namespace dnWalker.Symbolic
 
                 if (variable is ArrayElementVariable aev)
                 {
-                    value = ((IReadOnlyArrayHeapNode)parentNode).GetElementOrDefault(aev.Index);
-                    return true;
+                    if (forceInitialization)
+                    {
+                        value = ((IReadOnlyArrayHeapNode)parentNode).GetElementOrDefault(aev.Index);
+                        return true;
+                    }
+                    return ((IReadOnlyArrayHeapNode)parentNode).TryGetElement(aev.Index, out value);
                 }
                 else if (variable is ArrayLengthVariable)
                 {
@@ -79,14 +83,24 @@ namespace dnWalker.Symbolic
                 }
                 else if (variable is InstanceFieldVariable ifv)
                 {
-                    value = ((IReadOnlyObjectHeapNode)parentNode).GetFieldOrDefault(ifv.Field);
-                    return true;
+                    if (forceInitialization)
+                    {
+                        value = ((IReadOnlyObjectHeapNode)parentNode).GetFieldOrDefault(ifv.Field);
+                        return true;
+                    }
+                    return ((IReadOnlyObjectHeapNode)parentNode).TryGetField(ifv.Field, out value);
                 }
                 else if (variable is MethodResultVariable mrv)
                 {
-                    value = ((IReadOnlyObjectHeapNode)parentNode).GetMethodResult(mrv.Method, mrv.Invocation);
-                    return true;
+                    if (forceInitialization)
+                    {
+                        value = ((IReadOnlyObjectHeapNode)parentNode).GetMethodResultOrDefault(mrv.Method, mrv.Invocation);
+                        return true;
+                    }
+                    return ((IReadOnlyObjectHeapNode)parentNode).TryGetMethodResult(mrv.Method, mrv.Invocation, out value);
                 }
+
+                return false;
             }
 
             throw new InvalidOperationException("Unexpected variable type.");

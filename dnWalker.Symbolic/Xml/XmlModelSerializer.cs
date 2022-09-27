@@ -148,7 +148,7 @@ namespace dnWalker.Symbolic.Xml
                 methodXml.SetAttributeValue(XmlTokens.Method, method.ToString());
                 methodXml.SetAttributeValue(XmlTokens.Invocation, invocation);
 
-                methodXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetMethodResult(method, invocation)));
+                methodXml.SetAttributeValue(XmlTokens.Value, ValueToXml(ohn.GetMethodResultOrDefault(method, invocation)));
 
                 xml.Add(methodXml);
             }

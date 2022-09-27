@@ -20,7 +20,7 @@ namespace dnWalker.Symbolic.Heap
         {
             IMethod method = node.MethodInvocations.First(((IMethod m, int inv) t) => t.inv == invocation && t.m.Name == methodName).Item1;
 
-            return node.GetMethodResult(method, invocation);
+            return node.GetMethodResultOrDefault(method, invocation);
         }
     }
 }
