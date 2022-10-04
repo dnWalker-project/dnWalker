@@ -12,7 +12,7 @@ namespace dnWalker.Graphs.ControlFlow
     {
         private readonly TypeDef _exceptionType;
 
-        public VirtualExceptionHandlerNode(TypeDef exceptionType)
+        public VirtualExceptionHandlerNode(TypeDef exceptionType, MethodDef method) : base(method)
         {
             _exceptionType = exceptionType ?? throw new ArgumentNullException(nameof(exceptionType));
         }

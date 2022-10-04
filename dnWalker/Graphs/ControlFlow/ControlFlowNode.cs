@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Graphs.ControlFlow
 {
-    public abstract class ControlFlowNode
+    public abstract class ControlFlowNode : ControlFlowElement
     {
         private bool _isCovered;
 
@@ -19,6 +21,10 @@ namespace dnWalker.Graphs.ControlFlow
 
         private readonly List<ControlFlowEdge> _inEdges = new List<ControlFlowEdge>();
         private readonly List<ControlFlowEdge> _outEdges = new List<ControlFlowEdge>();
+
+        protected ControlFlowNode(MethodDef method) : base(method)
+        {
+        }
 
         public IReadOnlyCollection<ControlFlowEdge> InEdges => _inEdges;
         public IReadOnlyCollection<ControlFlowEdge> OutEdges => _outEdges;

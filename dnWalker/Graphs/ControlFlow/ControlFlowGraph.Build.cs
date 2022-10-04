@@ -24,7 +24,7 @@ namespace dnWalker.Graphs.ControlFlow
                 
                 if (ControlFlowUtils.EndsBlock(instruction))
                 {
-                    InstructionBlockNode node = new InstructionBlockNode(currentBlock);
+                    InstructionBlockNode node = new InstructionBlockNode(currentBlock, method);
                     blockNodes.Add(node);
 
                     currentBlock = new List<Instruction>();
@@ -76,7 +76,7 @@ namespace dnWalker.Graphs.ControlFlow
                         {
                             if (!exceptionHandlerLookup.TryGetValue(info.ExceptionType, out VirtualExceptionHandlerNode handlerNode))
                             {
-                                handlerNode = new VirtualExceptionHandlerNode(info.ExceptionType);
+                                handlerNode = new VirtualExceptionHandlerNode(info.ExceptionType, method);
                                 exceptionHandlerLookup.Add(info.ExceptionType, handlerNode);
                                 nodes.Add(handlerNode);
                             }

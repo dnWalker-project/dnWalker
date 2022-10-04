@@ -4,6 +4,7 @@ using dnWalker.Symbolic;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -11,15 +12,17 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Graphs.ControlFlow
 {
-    public abstract class ControlFlowEdge
+    public abstract class ControlFlowEdge : ControlFlowElement
     {
         private bool _isCovered;
         private bool _isUnreachable;
         private readonly ControlFlowNode _source;
         private readonly ControlFlowNode _target;
 
-        protected ControlFlowEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target)
+        protected ControlFlowEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target) : base(source.Method)
         {
+            Debug.Assert(MethodEqualityComparer.CompareDeclaringTypes.Equals(source.Method, target.Method), "Methods do not match.");
+
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _target = target ?? throw new ArgumentNullException(nameof(target));
         }

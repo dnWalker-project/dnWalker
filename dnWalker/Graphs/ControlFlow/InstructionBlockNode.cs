@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace dnWalker.Graphs.ControlFlow
     {
         private readonly IReadOnlyList<Instruction> _instructions;
 
-        public InstructionBlockNode(IReadOnlyList<Instruction> instructions)
+        public InstructionBlockNode(IReadOnlyList<Instruction> instructions, MethodDef method) : base(method)
         {
             _instructions = instructions ?? throw new ArgumentNullException(nameof(instructions));
         }
