@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,17 +25,22 @@ namespace dnWalker.Concolic.Traversal
     public class ConstraintTreeExplorer
     {
         private readonly IExplorationStrategy _strategy;
-
         private readonly List<ConstraintTree> _trees;
+        private readonly ICache<MethodDef, MethodTracer> _tracers;// = new DelegateCache<MethodDef, MethodTracer>(m => new MethodTracer())
+
 
         private ConstraintNode _current;
+
+
 
         /// <summary>
         /// Initializes a new constraint tree explorer with a preconditions.
         /// </summary>
-        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<ConstraintTree> trees)
+        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<ConstraintTree> trees, ICache<MethodDef, ControlFlowGraph> controlFlowGraphProvider)
         {
             _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
+
+            _tracers = new DelegateCache<MethodDef, MethodTracer>(md => new MethodTracer(md, controlFlowGraphProvider.Get(md)));
 
             _trees = new List<ConstraintTree>(trees);
 
@@ -140,14 +147,22 @@ namespace dnWalker.Concolic.Traversal
                 _strategy.AddExploredNode(_current);
             }
 
-            if (_strategy.TryGetNextSatisfiableNode(solver, out ConstraintNode node, out inputModel))
+            IterationInfo iterationInfo = _strategy.NextIteration(solver);
+            inputModel = iterationInfo.Model;
+            
+            foreach (ConstraintNode unsatNode in iterationInfo.UnsatNodes)
             {
-                // a new iteration will be run => reset
+                _tracers.Get(unsatNode.Edge.Method).MarkUnreachable(unsatNode.Edge);
+            }
 
-                _current = node.Tree.Root;
+            if (iterationInfo.IsValid)
+            {
+                _current = iterationInfo.SelectedNode.Tree.Root;
+
 
                 return true;
             }
+
             return false;
         }
     }

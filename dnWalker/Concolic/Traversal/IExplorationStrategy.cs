@@ -18,23 +18,6 @@ namespace dnWalker.Concolic.Traversal
 {
     public interface IExplorationStrategy
     {
-        ///// <summary>
-        ///// Determine whether specified constraint node has been explored.
-        ///// </summary>
-        ///// <param name="constraintNode"></param>
-        ///// <returns>True if already explored, false otherwise.</returns>
-        //bool ShouldBeExplored(ConstraintNode constraintNode);
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="constraintNode"></param>
-        //void OnNodeExplored(ConstraintNode constraintNode);
-
-        //void OnUnsatisfiableNodePruned(ConstraintNode constraintNode);
-
-        //void NewIteration();
-
         /// <summary>
         /// Invoked before the execution.
         /// </summary>
@@ -42,13 +25,15 @@ namespace dnWalker.Concolic.Traversal
         /// <param name="entryPoint"></param>
         void Initialize(ExplicitActiveState activeState, MethodDef entryPoint);
 
-        /// <summary>
-        /// Produces next input model.
-        /// </summary>
-        /// <param name="solver"></param>
-        /// <param name="inputModel"></param>
-        /// <returns>True if new input model was created, false if exploration is finished.</returns>
-        bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node,  out IModel inputModel);
+        ///// <summary>
+        ///// Produces next input model.
+        ///// </summary>
+        ///// <param name="solver"></param>
+        ///// <param name="inputModel"></param>
+        ///// <returns>True if new input model was created, false if exploration is finished.</returns>
+        //bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node,  out IModel inputModel);
+
+        IterationInfo NextIteration(ISolver solver);
 
         /// <summary>
         /// Adds new discovered node for the search.

@@ -19,7 +19,7 @@ namespace dnWalker.Concolic
         {
             ControlFlowGraph entryCfg = cur.PathStore.ControlFlowGraphProvider.Get(entryPoint);
             IReadOnlyList<ConstraintTree> constraintTrees = ConstraintTree.UnfoldConstraints(entryPoint, entryCfg.EntryPoint);
-            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, constraintTrees);
+            ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, constraintTrees, cur.PathStore.ControlFlowGraphProvider);
 
             cur.Services.RegisterService(constraintTree);
 

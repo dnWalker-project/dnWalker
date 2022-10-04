@@ -19,7 +19,6 @@ namespace dnWalker.Concolic
     public class ExplorationResult
     {
         private readonly MethodDef _entryPoint;
-        private readonly Coverage _coverage;
         private readonly IReadOnlyList<ExplorationIterationResult> _iterations;
         private readonly MethodTracer _methodTracer;
         private readonly IReadOnlyList<ConstraintTree> _constraintTrees;
@@ -33,11 +32,10 @@ namespace dnWalker.Concolic
             _constraintTrees = constraintTrees ?? throw new ArgumentNullException(nameof(constraintTrees));
             _methodTracer = methodTracer ?? throw new ArgumentNullException(nameof(methodTracer));
             _entryPoint = entryPoint ?? throw new ArgumentNullException(nameof(entryPoint));
-            _coverage = methodTracer.GetCoverage();
         }
 
 
-        public Coverage Coverage => _coverage;
+        public Coverage Coverage => _methodTracer.GetCoverage();
         public IReadOnlyList<ExplorationIterationResult> Iterations => _iterations;
         public IReadOnlyList<ConstraintTree> ConstraintTrees => _constraintTrees;
         public ControlFlowGraph ControlFlowGraph => _methodTracer.Graph;

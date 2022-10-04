@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
+using dnWalker.Concolic.Traversal;
 using dnWalker.Graphs.ControlFlow;
 
 using MMC.Data;

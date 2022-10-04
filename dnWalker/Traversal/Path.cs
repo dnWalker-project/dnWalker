@@ -2,6 +2,7 @@
 using dnlib.DotNet.Emit;
 
 using dnWalker.Concolic;
+using dnWalker.Concolic.Traversal;
 using dnWalker.Graphs;
 using dnWalker.NativePeers;
 using dnWalker.Symbolic;

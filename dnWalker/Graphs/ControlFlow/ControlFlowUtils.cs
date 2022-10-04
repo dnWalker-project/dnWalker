@@ -469,19 +469,19 @@ namespace dnWalker.Graphs.ControlFlow
             edge.Target.AddInEdge(edge);
         }
 
-        public static void MarkUnreachable(ControlFlowEdge edge)
-        {
-            edge.MarkUnreachable();
+        //public static void MarkUnreachable(ControlFlowEdge edge)
+        //{
+        //    edge.MarkUnreachable();
 
-            ControlFlowNode target = edge.Target;
-            if (target.InEdges.All(static e => !e.IsReachable))
-            {
-                // every in edge is marked as unreachable => we can marking every out edge in same manner
-                foreach (ControlFlowEdge outEdge in target.OutEdges)
-                {
-                    MarkUnreachable(outEdge);
-                }
-            }
-        }
+        //    ControlFlowNode target = edge.Target;
+        //    if (target.InEdges.All(static e => !e.IsReachable))
+        //    {
+        //        // every in edge is marked as unreachable => we can marking every out edge in same manner
+        //        foreach (ControlFlowEdge outEdge in target.OutEdges)
+        //        {
+        //            MarkUnreachable(outEdge);
+        //        }
+        //    }
+        //}
     }
 }

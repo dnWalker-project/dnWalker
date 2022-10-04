@@ -9,6 +9,7 @@ using MMC.State;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +18,10 @@ namespace dnWalker.Concolic.Traversal
 {
     public abstract class ExplorationStrategyBase : IExplorationStrategy
     {
-        protected virtual void NewIteration()
+        protected virtual bool NewIteration()
         {
             _currentIteration++;
+            return true;
         }
 
         public virtual void Initialize(ExplicitActiveState activeState, MethodDef entryPoint)
@@ -37,11 +39,51 @@ namespace dnWalker.Concolic.Traversal
         public ExplicitActiveState ActiveState => _activeState;
         public MethodDef EntryPoint => _entryPoint;
 
-        public abstract bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel);
+        //public abstract bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel);
 
         public abstract void AddDiscoveredNode(ConstraintNode node);
         public virtual void AddExploredNode(ConstraintNode node) => node.MarkExplored(_currentIteration);
 
+        public virtual IterationInfo NextIteration(ISolver solver)
+        {
+            List<ConstraintNode> unsatNodes = new List<ConstraintNode>();
+            List<ConstraintNode> skippedNodes = new List<ConstraintNode>();
+            IModel inputModel = null;
+
+            ConstraintNode selectedNode = null;
+
+            if (!NewIteration()) return IterationInfo.InvalidEmpty;
+
+            while (TryGetNextNode(out ConstraintNode node))
+            {
+                if (SkipNode(node))
+                {
+                    skippedNodes.Add(node);
+                }
+                else if (CheckSat(solver, node, out inputModel))
+                {
+                    selectedNode = node;
+                    break;
+                }
+                else
+                {
+                    unsatNodes.Add(node);
+                }
+            }
+
+            IterationInfo info = new IterationInfo(selectedNode, inputModel, unsatNodes, skippedNodes);
+            return info;
+        }
+
+        protected abstract bool TryGetNextNode([NotNullWhen(true)] out ConstraintNode node);
+
+        protected abstract bool SkipNode(ConstraintNode node);
+
+        protected virtual bool CheckSat(ISolver solver, ConstraintNode node, [NotNullWhen(true)] out IModel model)
+        {
+            model = solver.Solve(node.GetPrecondition());
+            return model != null;
+        }
     }
 
     public class FirstNPaths : AllPathsCoverage
@@ -53,11 +95,9 @@ namespace dnWalker.Concolic.Traversal
             _maxPaths = maxPaths;
         }
 
-        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
+        protected override bool NewIteration()
         {
-            node = null;
-            inputModel = null;
-            return CurrentIteration < _maxPaths && base.TryGetNextSatisfiableNode(solver, out node, out inputModel);
+            return base.NewIteration() && CurrentIteration < _maxPaths;
         }
     }
 
@@ -65,29 +105,15 @@ namespace dnWalker.Concolic.Traversal
     {
         private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
 
-        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
+        protected override bool SkipNode(ConstraintNode node)
         {
-            while (_frontier.TryPop(out node))
-            {
-                if (node.IsExplored) continue;
-
-                inputModel = solver.Solve(node.GetPrecondition());
-                if (inputModel != null)
-                {
-                    NewIteration();
-                    node.MarkPreconditionSource(CurrentIteration);
-                    return true;
-                }
-                else
-                {
-                    // UNSAT
-                    node.MarkUnsatisfiable();
-                }
-            }
-            inputModel = null;
-            return false;
+            return node.IsExplored;
         }
 
+        protected override bool TryGetNextNode([NotNullWhen(true)] out ConstraintNode node)
+        {
+            return _frontier.TryPop(out node);
+        }
         public override void AddDiscoveredNode(ConstraintNode node)
         {
             _frontier.Push(node);
@@ -97,7 +123,7 @@ namespace dnWalker.Concolic.Traversal
     public class AllEdgesCoverage : ExplorationStrategyBase
     {
         private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
-        private readonly Dictionary<(ControlFlowNode src, ControlFlowNode trg), bool> _coverage = new Dictionary<(ControlFlowNode src, ControlFlowNode trg), bool>();
+        private readonly Dictionary<ControlFlowEdge, bool> _coverage = new Dictionary<ControlFlowEdge, bool>();
 
         public override void AddExploredNode(ConstraintNode node)
         {
@@ -116,29 +142,14 @@ namespace dnWalker.Concolic.Traversal
             base.Initialize(activeState, entryPoint);
         }
 
-        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
+        protected override bool SkipNode(ConstraintNode node)
         {
-            while (_frontier.TryPop(out node))
-            {
-                if (node.IsExplored) continue;
+            return node.IsExplored || GetEdgeCovered(node);
+        }
 
-                if (GetEdgeCovered(node)) continue;
-
-                inputModel = solver.Solve(node.GetPrecondition());
-                if (inputModel != null)
-                {
-                    NewIteration();
-                    node.MarkPreconditionSource(CurrentIteration);
-                    return true;
-                }
-                else
-                {
-                    // UNSAT
-                    node.MarkUnsatisfiable();
-                }
-            }
-            inputModel = null;
-            return false;
+        protected override bool TryGetNextNode([NotNullWhen(true)] out ConstraintNode node)
+        {
+            return _frontier.TryPop(out node);
         }
 
         private void SetEdgeCovered(ConstraintNode node)
@@ -146,11 +157,8 @@ namespace dnWalker.Concolic.Traversal
 
             if (node.IsRoot) return;
 
-            ControlFlowNode src = node.Parent.Location;
-            ControlFlowNode trg = node.Location;
-
             // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
-            _coverage[(src, trg)] = true;
+            _coverage[node.Edge] = true;
         }
 
         private bool GetEdgeCovered(ConstraintNode node)
@@ -161,17 +169,15 @@ namespace dnWalker.Concolic.Traversal
                 return false;
             }
 
-            ControlFlowNode src = node.Parent.Location;
-            ControlFlowNode trg = node.Location;
-
             // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
-            return _coverage.TryGetValue((src, trg), out bool covered) && covered;
+            return _coverage.TryGetValue(node.Edge, out bool covered) && covered;
         }
     }
 
     public class AllNodesCoverage : ExplorationStrategyBase
     {
         private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
+        private readonly Dictionary<ControlFlowNode, bool> _coverage = new Dictionary<ControlFlowNode, bool>();
 
         public override void AddExploredNode(ConstraintNode node)
         {
@@ -188,34 +194,25 @@ namespace dnWalker.Concolic.Traversal
             base.Initialize(activeState, entryPoint);
         }
 
-        public override bool TryGetNextSatisfiableNode(ISolver solver, out ConstraintNode node, out IModel inputModel)
+        private void SetNodesCovered(ConstraintNode node)
         {
-            while (_frontier.TryPop(out node))
-            {
-                if (node.IsExplored) continue;
-
-                if (node.Location.IsCovered)
-                {
-                    // use the global CFG tracing done by the MMC
-                    continue;
-                }
-
-                inputModel = solver.Solve(node.GetPrecondition());
-                if (inputModel != null)
-                {
-                    NewIteration();
-                    node.MarkPreconditionSource(CurrentIteration);
-                    return true;
-                }
-                else
-                {
-                    // UNSAT
-                    node.MarkUnsatisfiable();
-                }
-            }
-            inputModel = null;
-            return false;
+            _coverage[node.Edge.Source] = true;
+            _coverage[node.Edge.Target] = true;
         }
 
+        private bool GetTargetCovered(ConstraintNode node)
+        {
+            return _coverage.TryGetValue(node.Edge.Target, out bool isCovered) && isCovered;
+        }
+
+        protected override bool SkipNode(ConstraintNode node)
+        {
+            return node.IsExplored || GetTargetCovered(node);
+        }
+
+        protected override bool TryGetNextNode([NotNullWhen(true)] out ConstraintNode node)
+        {
+            return _frontier.TryPop(out node);
+        }
     }
 }
