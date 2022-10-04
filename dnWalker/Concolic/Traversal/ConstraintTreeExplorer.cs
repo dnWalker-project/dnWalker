@@ -36,11 +36,11 @@ namespace dnWalker.Concolic.Traversal
         /// <summary>
         /// Initializes a new constraint tree explorer with a preconditions.
         /// </summary>
-        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<ConstraintTree> trees, ICache<MethodDef, ControlFlowGraph> controlFlowGraphProvider)
+        public ConstraintTreeExplorer(IExplorationStrategy strategy, IEnumerable<ConstraintTree> trees, ICache<MethodDef, MethodTracer> tracers)
         {
             _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
 
-            _tracers = new DelegateCache<MethodDef, MethodTracer>(md => new MethodTracer(md, controlFlowGraphProvider.Get(md)));
+            _tracers = tracers;
 
             _trees = new List<ConstraintTree>(trees);
 
@@ -136,6 +136,68 @@ namespace dnWalker.Concolic.Traversal
             {
                 Debug.Assert(_current.Children.Count == choicePaths.Length);
                 _current = _current.Children[decision];
+            }
+
+            UpdateCoverage();
+        }
+
+        public void AvoidDecision(ExplicitActiveState cur, int decision, ControlFlowEdge[] choicePaths)
+        {
+            if (_current == null) _current = _trees[0].Root;
+
+            Debug.Assert(decision >= 0 && decision < choicePaths.Length, "Decision must be greater than or equal to 0 and less than choiceTargets.Length.");
+
+            // we are closing the current node => we can mark it covered
+            _strategy.AddExploredNode(_current);
+
+            if (!_current.IsExpanded)
+            {
+                Constraint[] choiceConstraints = new Constraint[choicePaths.Length];
+                Expression falseConsraint = cur.GetExpressionFactory().MakeBooleanConstant(false);
+                Expression trueConsraint = cur.GetExpressionFactory().MakeBooleanConstant(true);
+
+                for (int i = 0; i < choiceConstraints.Length; ++i)
+                {
+                    choiceConstraints[i] = new Constraint();
+                    if (i == decision)
+                    {
+                        choiceConstraints[i].AddExpressionConstraint(trueConsraint);
+                    }
+                    else
+                    {
+                        choiceConstraints[i].AddExpressionConstraint(falseConsraint);
+                    }
+                }
+
+                IReadOnlyList<ConstraintNode> expansion = _current.Expand(choicePaths, choiceConstraints);
+
+                // we know that the not chosen constraints must be unreachable since we are avoiding a decision
+                for (int i = 0; i < expansion.Count; ++i)
+                {
+                    if (i != decision)
+                    {
+                        expansion[i].MarkUnsatisfiable();
+                        _tracers.Get(choicePaths[i].Method).MarkUnreachable(choicePaths[i]);
+                    }
+                }
+
+                _current = expansion[decision];
+            }
+            else
+            {
+                Debug.Assert(_current.Children.Count == choicePaths.Length);
+                _current = _current.Children[decision];
+            }
+
+            UpdateCoverage();
+        }
+
+        private void UpdateCoverage()
+        {
+            if (_current != null)
+            {
+                ControlFlowEdge edge = _current.Edge;
+                _tracers.Get(edge.Method).MarkCovered(edge);
             }
         }
 

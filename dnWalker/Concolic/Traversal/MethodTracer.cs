@@ -136,8 +136,8 @@ namespace dnWalker.Concolic.Traversal
             double coveredNodes = _cfg.Nodes.Count(IsCovered);
             double reachableNodes = _cfg.Nodes.Count(IsReachable);
 
-            double coveredEdges = _cfg.Nodes.Count(IsCovered);
-            double reachableEdges = _cfg.Nodes.Count(IsReachable);
+            double coveredEdges = _cfg.Edges.Count(IsCovered);
+            double reachableEdges = _cfg.Edges.Count(IsReachable);
 
             return new Coverage(coveredEdges / reachableEdges, coveredNodes / reachableNodes);
         }
@@ -146,9 +146,9 @@ namespace dnWalker.Concolic.Traversal
         private bool IsCovered(ControlFlowNode node) => node.InEdges.Any(e => IsCovered(e));
         private bool IsUnreachable(ControlFlowNode node) => node.InEdges.All(e => IsUnreachable(e));
 
-        private bool IsReachable(ControlFlowEdge e) => !GetCoverage(e).IsUnreachable;
-        private bool IsCovered(ControlFlowEdge e) => GetCoverage(e).IsCovered;
-        private bool IsUnreachable(ControlFlowEdge e) => GetCoverage(e).IsUnreachable;
+        private bool IsReachable(ControlFlowEdge e) => !GetCoverageInfo(e).IsUnreachable;
+        private bool IsCovered(ControlFlowEdge e) => GetCoverageInfo(e).IsCovered;
+        private bool IsUnreachable(ControlFlowEdge e) => GetCoverageInfo(e).IsUnreachable;
 
         public IEnumerable<ControlFlowNode> GetCoveredNodes()
         {
@@ -185,15 +185,17 @@ namespace dnWalker.Concolic.Traversal
 
         public void MarkCovered(ControlFlowEdge edge)
         {
-            GetCoverage(edge).MarkCovered(GetCoverage);
+            _coverage = null;
+            GetCoverageInfo(edge).MarkCovered(GetCoverageInfo);
         }
 
         public void MarkUnreachable(ControlFlowEdge edge)
         {
-            GetCoverage(edge).MarkUnreachable(GetCoverage);
+            _coverage = null;
+            GetCoverageInfo(edge).MarkUnreachable(GetCoverageInfo);
         }
 
-        private CoverageInfo GetCoverage(ControlFlowEdge edge)
+        private CoverageInfo GetCoverageInfo(ControlFlowEdge edge)
         {
             return _edgeCoverage[edge];
         }
