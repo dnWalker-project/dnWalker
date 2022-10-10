@@ -2942,7 +2942,7 @@ namespace MMC.InstructionExec
             }
 
             var nativePeer = NativePeer.Get(methDef.DeclaringType);
-            if (Method.IsConstructor 
+            if (Method.IsConstructor
                 && nativePeer != null
                 && nativePeer.TryConstruct(methDef, args, cur))
             {
@@ -3785,7 +3785,7 @@ namespace MMC.InstructionExec
 
     public class STLOC : StoreInstructionExec
     {
-        public STLOC(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr) {}
+        public STLOC(Instruction instr, object operand, InstructionExecAttributes atr) : base(instr, operand, atr) { }
 
         public override IIEReturnValue Execute(ExplicitActiveState cur)
         {

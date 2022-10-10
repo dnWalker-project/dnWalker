@@ -2718,17 +2718,17 @@ namespace dnWalker.Instructions
             {
             }
 
-            if (methDef.FullName == "System.Int32 System.Runtime.CompilerServices.RuntimeHelpers::GetHashCode(System.Object)")
-            {
-                cur.EvalStack.Push(new Int4(args[0].GetHashCode()));
-                return true;
-            }
+            //if (methDef.FullName == "System.Int32 System.Runtime.CompilerServices.RuntimeHelpers::GetHashCode(System.Object)")
+            //{
+            //    cur.EvalStack.Push(new Int4(args[0].GetHashCode()));
+            //    return true;
+            //}
 
-            if (methDef.FullName == "System.Threading.Thread System.Threading.Thread::GetCurrentThreadNative()")
-            {
-                ThreadHandlers.CurrentThread_internal(null, null, cur);
-                return true;
-            }
+            //if (methDef.FullName == "System.Threading.Thread System.Threading.Thread::GetCurrentThreadNative()")
+            //{
+            //    ThreadHandlers.CurrentThread_internal(null, null, cur);
+            //    return true;
+            //}
 
             // Delegate Invoke call.
             // TODO: Asynchronous delegate calls, i.e. BeginInvoke and EndInvoke.
@@ -2760,72 +2760,6 @@ namespace dnWalker.Instructions
             return handled;
         }
 
-        // TODO fix documentation of args
-        /// <summary>Handle assertion violations.</summary>
-        /// <remarks>
-        /// <para>This handles calls System.Diagnostics.Debug.Assert(*).</para>
-        /// <para>
-        /// This is not a nice place to put this code. All code should be put
-        /// in the ICM, which is not just an internal call manager any more,
-        /// but this makes the approach much more generic. 
-        /// The ICM should be adjusted to handle polymorphic calls for this to
-        /// be possible.
-        /// </para>
-        /// </remarks>
-        /// <param name="args">Arguments to the Assert call.</param>
-        /// <returns>True iff the call was handled by this method.</returns>
-        protected bool HandleAssertCall(DataElementList args, ExplicitActiveState cur, out bool violated)
-        {
-            MethodDefinition methDef = Operand as MethodDefinition;
-            string name = methDef.Name;
-            string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
-            bool assert = name == "Assert" && decl == "System.Diagnostics.Debug";
-            violated = false;
-
-            if (assert)
-            {
-                violated = !args[0].ToBool();
-                if (violated)
-                {
-                    if (args.Length > 1)
-                    {
-                        cur.Logger.Warning("short message: {0}", args[1].ToString());
-                    }
-                    if (args.Length > 2)
-                    {
-                        cur.Logger.Warning("long message: {0}", args[2].ToString());
-                    }
-                }
-                else
-                {
-                    cur.Logger.Debug("assertion passed.");
-                }
-            }
-            return assert;
-        }
-
-        /// <summary>
-        /// Filter out specific calls.
-        /// </summary>
-        /// <remarks>This code shouldn't be. It was introduced as a quick hack, and survived several re-factorings.
-        /// Like HandleAssertCall, this should be merged with the ICM.</remarks>
-        /// <param name="cur"></param>
-        /// <returns>True iff the call to be made is to be filtered out.</returns>
-        protected bool FilterCall(ExplicitActiveState cur)
-        {
-            MethodDefinition methDef = Operand as MethodDefinition;
-            string name = methDef.Name;
-            string decl = methDef.DeclaringType.Namespace + "." + methDef.DeclaringType.Name;
-            bool filtered =
-                //(name == "WriteLine" && decl == "System.Console")
-                //|| 
-                name == "StartupSetApartmentStateInternal";
-            if (filtered)
-            {
-                cur.Logger.Log(LogPriority.Call, "{0}: method is filtered out, not executed", name);
-            }
-            return filtered;
-        }
 
         /// <summary>Create an argument list.</summary>
         /// <remarks>
@@ -2942,57 +2876,33 @@ namespace dnWalker.Instructions
             DataElementList args = CreateArgumentList(cur);
             IIEReturnValue retval = nextRetval;
 
-            // Skip certain calls.
-            bool violated;
-            if (!HandleAssertCall(args, cur, out violated) && !FilterCall(cur))
+            if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
             {
-                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
-                if (bypass != null)
-                {
-                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
-                    {
-                        return returnValue;
-                    }
-                }
+                cur.EvalStack.Push(DataElement.CreateDataElement(args[0].ToString(), cur.DefinitionProvider));
+                return nextRetval;
+            }
 
-                if (methDef.DeclaringType.IsValueType && methDef.Name == "ToString") // TODO
+            // Check for empty body (stub).
+            if (IsEmptyMethod(methDef))
+            {
+                cur.Logger.Log(LogPriority.Call, "{0}: instance call to method with no body.", methDef.FullName);
+                if (!HandleEmptyMethod(cur, args))
                 {
-                    cur.EvalStack.Push(DataElement.CreateDataElement(args[0].ToString(), cur.DefinitionProvider));
-                    return nextRetval;
-                }
-
-                // Check for empty body (stub).
-                if (IsEmptyMethod(methDef))
-                {
-                    cur.Logger.Log(LogPriority.Call, "{0}: instance call to method with no body.", methDef.FullName);
-                    if (!HandleEmptyMethod(cur, args))
-                    {
-                        cur.Logger.Log(LogPriority.Call, "{0}: unhandled empty method call.", methDef.FullName);
-                    }
-                }
-                else
-                {
-                    // Create new frame. Note we still return nextRetval, so
-                    // the call instruction is not re-executed after returning.
-                    //
-                    // Before the scheduler cleanup we returned a jump target
-                    // from this call (as a up-casted Instruction instance,
-                    // yuck). This is BAD idea since it requires nasty hacks
-                    // (to update the PC) to get right and is poorly readable.
-                    MethodState called = new MethodState(methDef, args, cur);
-                    this.CheckTailCall();
-                    cur.CallStack.Push(called);
+                    cur.Logger.Log(LogPriority.Call, "{0}: unhandled empty method call.", methDef.FullName);
                 }
             }
             else
             {
-                // assertion could be violated, if so, then stop the exploration
-                if (violated)
-                    retval = assertionViolatedRetval;
-
-                // Gotcha: don't forget to dispose of the arguments if we don't
-                // use them.
-                args.Dispose();
+                // Create new frame. Note we still return nextRetval, so
+                // the call instruction is not re-executed after returning.
+                //
+                // Before the scheduler cleanup we returned a jump target
+                // from this call (as a up-casted Instruction instance,
+                // yuck). This is BAD idea since it requires nasty hacks
+                // (to update the PC) to get right and is poorly readable.
+                MethodState called = new MethodState(methDef, args, cur);
+                this.CheckTailCall();
+                cur.CallStack.Push(called);
             }
 
             return retval;
@@ -3021,18 +2931,10 @@ namespace dnWalker.Instructions
 
             DataElementList args = CreateArgumentList(cur);
 
-            if (!FilterCall(cur))
-            {
-                // Assumption: CALLI targets have a body.
-                MethodState called = new MethodState(methDef, args, cur);
-                this.CheckTailCall();
-                cur.CallStack.Push(called);
-            }
-            else
-            {
-                //ThreadObjectWatcher.RemoveAllInContainer(cur.ThreadPool.CurrentThreadId, args);
-                args.Dispose();
-            }
+            // Assumption: CALLI targets have a body.
+            MethodState called = new MethodState(methDef, args, cur);
+            this.CheckTailCall();
+            cur.CallStack.Push(called);
 
             return nextRetval;
         }
@@ -3071,62 +2973,31 @@ namespace dnWalker.Instructions
                 return ThrowException(new NullReferenceException(), cur);
             }
 
-            if (methDef.FullName == "System.Void System.Threading.Thread::Start()")
+            MethodDefinition toCall = null;
+            ITypeDefOrRef constrained = cur.CurrentMethod.Constrained;
+            if (cur.CurrentMethod.IsPrefixed
+                && constrained?.IsValueType == true
+                && methDef.DeclaringType == constrained)
             {
-                Int32 threadId = cur.ThreadPool.FindOwningThread(args[0]);
-                if (threadId == LockManager.NoThread)
-                {
-                    throw new NotSupportedException("Owning thread not found.");
-                }
-                cur.ThreadPool.Threads[threadId].State = System.Threading.ThreadState.Running;
-                return nextRetval;
-            }
-
-            // Skip certain calls.
-            if (!FilterCall(cur))
-            {
-                NativePeer bypass = NativePeer.Get(methDef.DeclaringType);
-                if (bypass != null)
-                {
-                    if (bypass.TryGetValue(methDef, args, cur, out IIEReturnValue returnValue))
-                    {
-                        return returnValue;
-                    }
-                }
-
-                // Search inheritance tree for most derived implementation.
-                MethodDefinition toCall = null;
-                ITypeDefOrRef constrained = cur.CurrentMethod.Constrained;
-                if (cur.CurrentMethod.IsPrefixed
-                    && constrained?.IsValueType == true
-                    && methDef.DeclaringType == constrained)
-                {
-                    toCall = methDef;
-                }
-                else
-                {
-                    toCall = args[0].FindVirtualMethod(methDef, cur);
-
-                    if (toCall == null)
-                    {
-                        return ThrowException(new MissingMethodException(), cur);
-                    }
-                }
-
-                cur.CurrentMethod.IsPrefixed = false;
-                cur.CurrentMethod.Constrained = null;
-
-
-                MethodState called = new MethodState(toCall, args, cur);
-                this.CheckTailCall();
-                cur.CallStack.Push(called);
+                toCall = methDef;
             }
             else
             {
-                // End Filter If //
-                //ThreadObjectWatcher.RemoveAllInContainer(cur.ThreadPool.CurrentThreadId, args);
-                args.Dispose();
+                toCall = args[0].FindVirtualMethod(methDef, cur);
+
+                if (toCall == null)
+                {
+                    return ThrowException(new MissingMethodException(), cur);
+                }
             }
+
+            cur.CurrentMethod.IsPrefixed = false;
+            cur.CurrentMethod.Constrained = null;
+
+
+            MethodState called = new MethodState(toCall, args, cur);
+            this.CheckTailCall();
+            cur.CallStack.Push(called);
 
             return nextRetval;
         }
@@ -3157,13 +3028,13 @@ namespace dnWalker.Instructions
                 args[i] = cur.EvalStack.Pop();
             }
 
-            NativePeer nativePeer = NativePeer.Get(methDef.DeclaringType);
-            if (Method.IsConstructor
-                && nativePeer != null
-                && nativePeer.TryConstruct(methDef, args, cur))
-            {
-                return nextRetval;
-            }
+            //NativePeer nativePeer = NativePeer.Get(methDef.DeclaringType);
+            //if (Method.IsConstructor
+            //    && nativePeer != null
+            //    && nativePeer.TryConstruct(methDef, args, cur))
+            //{
+            //    return nextRetval;
+            //}
 
             /*if (Method.DeclaringType.FullName == "System.Threading.Thread" && Method.IsConstructor)
             {

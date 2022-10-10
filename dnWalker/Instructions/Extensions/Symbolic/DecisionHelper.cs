@@ -90,6 +90,24 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             MakeDecision(cur, decision, choiceTargets, conditions);
         }
 
+        public static void Assert(ExplicitActiveState cur, bool passed, Expression passCondition, Expression violationCondition)
+        {
+            ControlFlowEdge[] choiceTargets = GetCurrentControlFlowNode(cur).OutEdges.ToArray();
+
+            Debug.Assert(choiceTargets.Length == 2, "For Assert there should be exactly 2 options.");
+
+            if (choiceTargets[0] is NextEdge)
+            {
+                int index = passed ? 0 : 1;
+                MakeDecision(cur, index, choiceTargets, new Expression[] { passCondition, violationCondition });
+            }
+            else
+            {
+                int index = passed ? 1 : 0;
+                MakeDecision(cur, index, choiceTargets, new Expression[] { violationCondition, passCondition });
+            }
+        }
+
         public static void JumpOrNext(ExplicitActiveState cur, IIEReturnValue returnValue, Expression jumpCondition, Expression nextCondition)
         {
             ControlFlowEdge[] choiceTargets = GetCurrentControlFlowNode(cur).OutEdges.ToArray();

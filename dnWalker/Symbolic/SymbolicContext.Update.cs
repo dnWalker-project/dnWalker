@@ -50,7 +50,7 @@ namespace dnWalker.Symbolic
             arrayNode.SetElement(index, value);
         }
 
-        public void SetReturnValue(IDataElement retVal, ExplicitActiveState cur, TypeSig retType)
+        public void SetReturnValue(IDataElement retVal, MethodDef method, ExplicitActiveState cur, TypeSig retType)
         {
             IModel outputModel = _outputModel;
 
@@ -64,7 +64,7 @@ namespace dnWalker.Symbolic
                 modelValue = retVal.AsModelValue(retType);
             }
 
-            _outputModel.SetValue(new ReturnValueVariable(cur.CurrentMethod.Definition), modelValue);
+            outputModel.SetValue(new ReturnValueVariable(method), modelValue);
         }
     }
 }

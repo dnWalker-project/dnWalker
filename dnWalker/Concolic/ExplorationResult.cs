@@ -5,6 +5,7 @@ using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 using dnWalker.Traversal;
 
+using MMC;
 using MMC.State;
 using MMC.Util;
 
@@ -57,8 +58,9 @@ namespace dnWalker.Concolic
         private readonly Constraint _precondition;
         private readonly Constraint _postcondition;
         private readonly IReadOnlyList<CILLocation> _visitedNodes;
+        private readonly IReadOnlyStatistics _statistics;
 
-        internal ExplorationIterationResult(int iterationNumber, Path path, SymbolicContext symbolicContext, Constraint precondition, Constraint postcondition)
+        internal ExplorationIterationResult(int iterationNumber, Path path, SymbolicContext symbolicContext, Constraint precondition, Constraint postcondition, IReadOnlyStatistics statistics)
         {
             _iterationNumber = iterationNumber;
 
@@ -77,6 +79,7 @@ namespace dnWalker.Concolic
             _symbolicContext = symbolicContext ?? throw new ArgumentNullException(nameof(symbolicContext));
             _precondition = precondition ?? throw new ArgumentNullException(nameof(precondition));
             _postcondition = postcondition ?? throw new ArgumentNullException(nameof(postcondition));
+            _statistics = statistics ?? throw new ArgumentNullException(nameof(statistics));
         }
 
         public ExceptionInfo Exception => _exception;
@@ -95,6 +98,8 @@ namespace dnWalker.Concolic
         public int IterationNumber => _iterationNumber;
 
         public IReadOnlyList<CILLocation> VisitedNodes => _visitedNodes;
+
+        public IReadOnlyStatistics Statistics => _statistics;
 
         public string GetPathInfo()
         {

@@ -41,6 +41,16 @@ namespace dnWalker.Tests.Examples
             _target = target ?? throw new ArgumentNullException(nameof(target));
         }
 
+        public bool IsRelease()
+        {
+            return _configuration == "Release";
+        }
+
+        public bool IsDebug()
+        {
+            return _configuration == "Debug";
+        }
+
         public void Deserialize(IXunitSerializationInfo info)
         {
             _configuration = info.GetValue<string>(nameof(Configuration));

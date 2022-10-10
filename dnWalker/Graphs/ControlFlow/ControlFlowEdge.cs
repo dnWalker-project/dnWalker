@@ -82,4 +82,16 @@ namespace dnWalker.Graphs.ControlFlow
             return $"{{{Source}}}- [{ExceptionType.Name}] >{{{Target}}}";
         }
     }
+
+    public class AssertViolationEdge : ControlFlowEdge
+    {
+        public AssertViolationEdge([NotNull] ControlFlowNode source, [NotNull] ControlFlowNode target) : base(source, target)
+        {
+        }
+
+        public override string ToString()
+        {
+            return $"{{{Source}}} Assertion Violated";
+        }
+    }
 }

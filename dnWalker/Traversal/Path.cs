@@ -3,12 +3,14 @@ using dnlib.DotNet.Emit;
 
 using dnWalker.Concolic;
 using dnWalker.Graphs;
+using dnWalker.Instructions.Extensions.NativePeers.MethodCalls;
 using dnWalker.NativePeers;
 using dnWalker.Symbolic;
 
 using MMC.Data;
 using MMC.State;
 using MMC.Util;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
