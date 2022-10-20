@@ -26,11 +26,27 @@ namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
             bool any = false;
             for (int i = 0; i < tmp.Length; ++i)
             {
-                any |= args[i].TryGetExpression(cur, out tmp[i]);
+                Boolean hasExpression = args[i].TryGetExpression(cur, out tmp[i]);
+                any |= hasExpression;
             }
 
-            expressions = any ? tmp : null;
-            return any;
+            if (any)
+            {
+                expressions = tmp;
+
+                for (int i = 0; i < expressions.Length; ++i)
+                {
+                    expressions[i] ??= args[i].AsExpression(cur);
+                }
+
+                return any;
+            }
+            else
+            {
+                expressions = null;
+                return false;
+            }
+
         }
     }
 }

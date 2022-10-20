@@ -57,7 +57,13 @@ namespace dnWalker.Instructions.Extensions.NativePeers.MethodCalls
 
         private static bool get_Length(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
         {
-            return PushReturnValue(new Int4(((ConstantString)args[0]).Value.Length), cur, out returnValue);
+            ConstantString str = (ConstantString)args[0];
+            if (str.Value == null)
+            {
+                return ThrowException(new NullReferenceException(), cur, out returnValue);
+            }
+
+            return PushReturnValue(new Int4((str).Value.Length), cur, out returnValue);
         }
 
         private static bool Concat(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
@@ -83,10 +89,10 @@ namespace dnWalker.Instructions.Extensions.NativePeers.MethodCalls
             return PushReturnValue(new ConstantString(sb.ToString()), cur, out returnValue);
         }
 
-        private static bool IsNullOrEmptry(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
-        {
-            ConstantString arg = (ConstantString)args[0];
-            return PushReturnValue(new Int4(string.IsNullOrEmpty(arg.Value) ? 1 : 0), cur, out returnValue);
-        }
+        //private static bool IsNullOrEmpty(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
+        //{
+        //    ConstantString arg = (ConstantString)args[0];
+        //    return PushReturnValue(new Int4(string.IsNullOrEmpty(arg.Value) ? 1 : 0), cur, out returnValue);
+        //}
     }
 }

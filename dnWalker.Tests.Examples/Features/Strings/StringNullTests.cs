@@ -33,9 +33,12 @@ namespace dnWalker.Tests.Examples.Features.Strings
             ExplorationResult result = Run(CreateExplorer(buildInfo));
 
             result.Iterations.Should().HaveCount(3);
-            result.Iterations[0].Output.Trim().Should().Be("input is null or empty");
-            result.Iterations[1].Output.Trim().Should().Be("input is null or empty");
-            result.Iterations[2].Output.Trim().Should().Be("input is not null and not empty");
+            result.Iterations.Select(it => it.Output.Trim())
+                .Should().Contain("input is null or empty", "input is null or empty", "input is not null and not empty");
+
+            //result.Iterations[0].Output.Trim().Should().Be("input is null or empty");
+            //result.Iterations[1].Output.Trim().Should().Be("input is null or empty");
+            //result.Iterations[2].Output.Trim().Should().Be("input is not null and not empty");
         }
     }
 }

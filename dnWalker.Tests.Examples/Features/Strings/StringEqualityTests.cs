@@ -31,12 +31,12 @@ namespace dnWalker.Tests.Examples.Features.Strings
         {
             ExplorationResult result = Run(CreateExplorer(buildInfo));
 
-            result.Iterations.Should().HaveCount(5);
+            result.Iterations.Should().HaveCount(4);
             result.Iterations[0].Output.Trim().Should().Be("input1 or input2 is null");
             result.Iterations[1].Output.Trim().Should().Be("input1 or input2 is null");
 
-            result.Iterations[3].Output.Trim().Should().Be("input1 == input2"); // both are empty strings
-            result.Iterations[4].Output.Trim().Should().Be("input1 != input2"); // ???
+            result.Iterations[2].Output.Trim().Should().Be("input1 != input2");
+            result.Iterations[3].Output.Trim().Should().Be("input1 == input2"); 
         }
 
         [ExamplesTest]

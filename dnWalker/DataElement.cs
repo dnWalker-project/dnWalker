@@ -2604,7 +2604,12 @@ namespace MMC.Data
                 return 1;
             }
 
-            return Value.CompareTo(((ConstantString)obj).Value);
+            if (obj is ConstantString str)
+            {
+                return StringComparer.Ordinal.Compare(Value, str.Value);
+            }
+
+            return -1;// Value.CompareTo(((ConstantString)obj).Value);
         }
 
         public override string ToString()
