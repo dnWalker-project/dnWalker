@@ -99,6 +99,60 @@ namespace Examples.Concolic.Features.Strings
             }
         }
 
+        public static void BranchOnContainsConstString(string input)
+        {
+            if (input.Contains("HELLO_WORLD"))
+            {
+                Console.Out.WriteLine("input contains HELLO_WORLD");
+            }
+            else
+            {
+                Console.Out.WriteLine("input doesn't contain HELLO_WORLD");
+            }
+        }
+
+        public static void BranchOnContainsDynamicString(string input, string containee)
+        {
+            if (String.IsNullOrEmpty(containee))
+            {
+                Console.Out.WriteLine("$containee is null or empty");
+                return;
+            }
+
+            if (input.Contains(containee))
+            {
+                Console.Out.WriteLine("input contains $containee");
+            }
+            else
+            {
+                Console.Out.WriteLine("input doesn't contain $containee");
+            }
+        }
+
+        public static void BranchOnContainsConstChar(string input)
+        {
+            if (input.Contains('Q'))
+            {
+                Console.Out.WriteLine("input contains 'Q'");
+            }
+            else
+            {
+                Console.Out.WriteLine("input doesn't contain 'Q'");
+            }
+        }
+
+        public static void BranchOnContainsDynamicChar(string input, char symbol)
+        {
+            if (input.Contains(symbol))
+            {
+                Console.Out.WriteLine("input contains $symbol");
+            }
+            else
+            {
+                Console.Out.WriteLine("input doesn't contain $symbol");
+            }
+        }
+
         public static void BranchOnPrefixConstEquality(string input)
         {
             if (input.StartsWith("PREFIX"))
@@ -135,15 +189,15 @@ namespace Examples.Concolic.Features.Strings
             }
         }
 
-        public static void BranchOnSuffixDynamicEquality(string input, string prefix)
+        public static void BranchOnSuffixDynamicEquality(string input, string suffix)
         {
-            if (input.EndsWith(prefix))
+            if (input.EndsWith(suffix))
             {
-                Console.Out.WriteLine("input ends with $prefix");
+                Console.Out.WriteLine("input ends with $suffix");
             }
             else
             {
-                Console.Out.WriteLine("input does not end with $prefix");
+                Console.Out.WriteLine("input does not end with $suffix");
             }
         }
 
