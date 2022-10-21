@@ -17,7 +17,7 @@ namespace dnWalker.Tests.Examples.Features.Strings
         }
 
         [ExamplesTest]
-        public void BranshOnContainsConstString(BuildInfo buildInfo)
+        public void BranchOnContainsConstString(BuildInfo buildInfo)
         {
             ExplorationResult result = Run(CreateExplorer(buildInfo));
 
@@ -30,7 +30,7 @@ namespace dnWalker.Tests.Examples.Features.Strings
         }
 
         [ExamplesTest]
-        public void BranshOnContainsDynamicString(BuildInfo buildInfo)
+        public void BranchOnContainsDynamicString(BuildInfo buildInfo)
         {
             ExplorationResult result = Run(CreateExplorer(buildInfo));
 
@@ -58,7 +58,7 @@ namespace dnWalker.Tests.Examples.Features.Strings
         }
 
         [ExamplesTest]
-        public void BranshOnContainsDynamicChar(BuildInfo buildInfo)
+        public void BranchOnContainsDynamicChar(BuildInfo buildInfo)
         {
             ExplorationResult result = Run(CreateExplorer(buildInfo));
 
