@@ -35,7 +35,7 @@ namespace dnWalker.Graphs.ControlFlow
             }
             public static SuccessorInfo Jump(Instruction target)
             {
-                return new SuccessorInfo(target, null, SuccessorType.Next);
+                return new SuccessorInfo(target, null, SuccessorType.Jump);
             }
 
             public override bool Equals(object obj)
