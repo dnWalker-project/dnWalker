@@ -93,5 +93,10 @@ namespace dnWalker.Symbolic.Heap
         {
             return _fields.TryGetValue(field, out value);
         }
+
+        public bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value)
+        {
+            return _methods.TryGetValue((method, invocation), out value);
+        }
     }
 }

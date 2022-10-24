@@ -25,6 +25,7 @@ namespace dnWalker.Symbolic.Heap
         /// <param name="invocation"></param>
         /// <returns></returns>
         IValue GetMethodResult(IMethod method, int invocation);
+        bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value);
 
         IEnumerable<IField> Fields { get; }
         IEnumerable<(IMethod method, int invocation)> MethodInvocations { get; }

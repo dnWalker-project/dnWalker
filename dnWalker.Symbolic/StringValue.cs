@@ -9,7 +9,7 @@ namespace dnWalker.Symbolic
     public readonly struct StringValue : IValue, IEquatable<StringValue>
     {
         public static readonly StringValue Null = new StringValue(null);
-        public static readonly StringValue Empty = new StringValue("");
+        public static readonly StringValue Empty = new StringValue(String.Empty);
 
         public StringValue(string? content)
         {
@@ -55,6 +55,7 @@ namespace dnWalker.Symbolic
 
         public static StringValue Parse(string text)
         {
+            if (text == null) return Null;
             if (text == "\"\"") return Empty;
             if (text == "null") return Null;
             return new StringValue(text.Trim('"'));

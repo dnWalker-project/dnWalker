@@ -18,10 +18,25 @@ namespace dnWalker.Tests
         private readonly ITestOutputHelper _textOutput;
         private readonly IDefinitionProvider _definitionProvider;
 
+        /// <summary>
+        /// Initializes the <see cref="DnlibTestBase.DefinitionProvider"/> using entry assembly specified by <paramref name="assemblyFileName"/>.
+        /// </summary>
+        /// <param name="textOutput"></param>
+        /// <param name="assemblyFileName"></param>
         protected DnlibTestBase(ITestOutputHelper textOutput, string assemblyFileName)
         {
             _textOutput = textOutput;
             _definitionProvider = new DefinitionProvider(Domain.LoadFromFile(assemblyFileName));
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="DnlibTestBase.DefinitionProvider"/> using the calling assembly as the entry assembly.
+        /// </summary>
+        /// <param name="textOutput"></param>
+        protected DnlibTestBase(ITestOutputHelper textOutput)
+        {
+            _textOutput = textOutput;
+            _definitionProvider = new DefinitionProvider(Domain.LoadFromAppDomain(System.Reflection.Assembly.GetCallingAssembly()));
         }
 
         protected TypeDef GetType(string ns, string typeName)
