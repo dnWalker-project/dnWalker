@@ -26,17 +26,6 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                 if (ExpressionUtils.GetExpressions(cur, instance, out Expression instanceExpression))
                 {
                     DecisionHelper.ThrowNullOrNext(cur, returnValue, instanceExpression);
-
-                    //DecisionHelper.MakeDecision(cur, returnValue, static (cur, edge, instance) =>
-                    //{
-                    //    Expression nullExpression = cur.GetExpressionFactory().NullExpression;
-                    //    return edge switch
-                    //    {
-                    //        NextEdge => Expression.MakeNotEqual(instance, nullExpression),
-                    //        ExceptionEdge { ExceptionType.FullName : "System.NullReferenceException" } => Expression.MakeEqual(instance, nullExpression),
-                    //        _ => throw new NotSupportedException("Only next instruction or null reference exception edges are supported for STFLD instruction.")
-                    //    };
-                    //}, instanceExpression);
                 }
 
                 return returnValue;

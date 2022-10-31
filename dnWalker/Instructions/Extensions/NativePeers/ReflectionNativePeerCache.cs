@@ -38,12 +38,6 @@ namespace dnWalker.Instructions.Extensions.NativePeers
 
         private void UpdateTypeLookup(string typeName, IEnumerable<string> methodNames, Type methodCallNativePeer)
         {
-            //if (!_typeLookup.TryGetValue(typeName, out Dictionary<string, Type> methodMapper))
-            //{
-            //    methodMapper = new Dictionary<string, Type>();
-            //    _typeLookup.Add(typeName, methodMapper);
-            //}
-
             ConcurrentDictionary<string, Type> methodMapper = _typeLookup.GetOrAdd(typeName, _ => new ConcurrentDictionary<string, Type>());
 
             foreach (string methodName in methodNames)
@@ -78,11 +72,6 @@ namespace dnWalker.Instructions.Extensions.NativePeers
             {
                 nativePeer = _cache.GetOrAdd(handlerType, t => BuildHandler(t));
 
-                //if (!_cache.TryGetValue(handlerType, out nativePeer))
-                //{
-                //    nativePeer = BuildHandler(handlerType);
-                //    _cache.Add(handlerType, nativePeer);
-                //}
                 return true;
             }
             nativePeer = null;
