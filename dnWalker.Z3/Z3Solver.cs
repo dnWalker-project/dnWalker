@@ -74,6 +74,7 @@ namespace dnWalker.Z3
                 // assert constraints from heap terms
                 AssertHeapTerms(constraint, context);
                 AssertMemberRootPointerEqualities(constraint, context);
+                AssertRootsWithMembersAreNotNull(constraint, context);
 
                 // assert constraints from types of location variables
                 AssertTypes(constraint, context);

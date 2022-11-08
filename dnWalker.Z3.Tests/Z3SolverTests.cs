@@ -162,7 +162,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void MemberVariableForcesRootVariableToNotBeNull()
         {
-            // (x == y) && (x.A == y.A) - SAT
+            // (x == y) && (x.A == y.A) && (x == null) - UNSAT
 
             Constraint constraint = new Constraint();
 
@@ -176,16 +176,17 @@ namespace dnWalker.Z3.Tests
             Expression exprYA = Expressions.MakeVariable(Variable.InstanceField(y, _testClassTD.FindField("A")));
 
             constraint.AddEqualConstraint(exprX, exprY);
+            constraint.AddEqualConstraint(exprX, Expressions.NullExpression);
             constraint.AddEqualConstraint(exprXA, exprYA);
 
             Z3Solver solver = new Z3Solver();
             IModel? model = solver.Solve(constraint);
 
-            model!.Should().NotBeNull();
-            model.TryGetValue(x, out IValue? vx).Should().BeTrue();
-            model.TryGetValue(y, out IValue? vy).Should().BeTrue();
+            model.Should().BeNull();
+            //model.TryGetValue(x, out IValue? vx).Should().BeTrue();
+            //model.TryGetValue(y, out IValue? vy).Should().BeTrue();
 
-            vx.Should().Be(vy).And.NotBe(Location.Null);
+            //vx.Should().Be(vy).And.NotBe(Location.Null);
         }
     }
 }
