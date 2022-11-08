@@ -12,7 +12,7 @@ namespace dnWalker.Z3
 {
     public partial class Z3Solver : ISolver
     {
-        private ref struct SolverContext
+        private class SolverContext : IDisposable
         {
             private int _freeSymbol;
 
@@ -58,39 +58,30 @@ namespace dnWalker.Z3
 
         public IModel? Solve(Constraint constraint)
         {
-            SolverContext context = new SolverContext(); // ref struct cannot implement IDisposable
-            try
+
+            using (SolverContext context = new SolverContext())
             {
                 // setup variables & their mapping
-                SetupVariableMapping(constraint, ref context);
+                SetupVariableMapping(constraint, context);
 
                 // assert constraint from pure terms
-                AssertPureTerms(constraint, ref context);
+                AssertPureTerms(constraint, context);
 
                 // assert constraints from heap terms
-                AssertHeapTerms(constraint, ref context);
-                AssertMemberRootPointerEqualities(constraint, ref context);
+                AssertHeapTerms(constraint, context);
+                AssertMemberRootPointerEqualities(constraint, context);
 
                 // assert constraints from types of location variables
-                AssertTypes(constraint, ref context);
+                AssertTypes(constraint, context);
 
                 if (context.CheckSat())
                 {
-                    return BuildModel(constraint, ref context);
+                    return BuildModel(constraint, context);
                 }
                 else
                 {
                     return null;
                 }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Exception: {e.GetType()}:{e.Message}");
-                throw;
-            }
-            finally
-            {
-                context.Dispose();
             }
         }
     }
