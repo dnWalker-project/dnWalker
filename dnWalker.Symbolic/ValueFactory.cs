@@ -82,5 +82,84 @@ namespace dnWalker.Symbolic
         {
             return new PrimitiveValue<T>(value);
         }
+
+
+        public static IValue? ParseValue(string literal, TypeSig type)
+        {
+            if (string.IsNullOrEmpty(literal)) return GetDefault(type);
+
+            IValue? value = null;
+
+            if (type.IsString())
+            {
+                value = StringValue.Parse(literal);
+            }
+            else if (type.IsBoolean())
+            {
+                value = new PrimitiveValue<bool>(bool.Parse(literal));
+            }
+            else if (type.IsChar())
+            {
+                value = new PrimitiveValue<char>(literal[0]);
+            }
+            else if (type.IsByte())
+            {
+                value = new PrimitiveValue<byte>(byte.Parse(literal));
+            }
+            else if (type.IsUInt16())
+            {
+                value = new PrimitiveValue<ushort>(ushort.Parse(literal));
+            }
+            else if (type.IsUInt32())
+            {
+                value = new PrimitiveValue<uint>(uint.Parse(literal));
+            }
+            else if (type.IsUInt64())
+            {
+                value = new PrimitiveValue<ulong>(ulong.Parse(literal));
+            }
+            else if (type.IsSByte())
+            {
+                value = new PrimitiveValue<sbyte>(sbyte.Parse(literal));
+            }
+            else if (type.IsInt16())
+            {
+                value = new PrimitiveValue<short>(short.Parse(literal));
+            }
+            else if (type.IsInt32())
+            {
+                value = new PrimitiveValue<int>(int.Parse(literal));
+            }
+            else if (type.IsInt64())
+            {
+                value = new PrimitiveValue<long>(long.Parse(literal));
+            }
+            else if (type.IsSingle())
+            {
+                if (literal == "-INF") value = new PrimitiveValue<float>(float.NegativeInfinity);
+                else if (literal == "+INF") value = new PrimitiveValue<float>(float.PositiveInfinity);
+                else if (literal == "NAN") value = new PrimitiveValue<float>(float.NaN);
+                else value = new PrimitiveValue<float>(float.Parse(literal));
+            }
+            else if (type.IsDouble())
+            {
+                if (literal == "-INF") value = new PrimitiveValue<double>(double.NegativeInfinity);
+                else if (literal == "+INF") value = new PrimitiveValue<double>(double.PositiveInfinity);
+                else if (literal == "NAN") value = new PrimitiveValue<double>(double.NaN);
+                else value = new PrimitiveValue<double>(double.Parse(literal));
+            }
+
+            else if (!type.IsPrimitive)
+            {
+                if (literal == null || literal == "null") value = Location.Null;
+                else
+                {
+                    throw new NotSupportedException("Non primitive non strings literals can only be null");
+                }
+            }
+
+            return value;
+        }
+
     }
 }
