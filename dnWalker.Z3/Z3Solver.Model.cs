@@ -25,8 +25,13 @@ namespace dnWalker.Z3
             Z3Model z3Model = context.Solver.Model;
             Model result = new Model(constraint);
             Dictionary<IVariable, Expr> varLookup = context.VariableMapping;
+            
             Expr nullExpr = context.NullExpr;
             Expr stringNullExpr = context.StringNullExpr;
+
+            Expr nullEval = z3Model.ConstInterp(nullExpr);
+            Expr stringNullEval = z3Model.ConstInterp(stringNullExpr);
+
             Dictionary<Expr, Location> locationMapping = new Dictionary<Expr, Location>();
 
             // setup the variables into a list
@@ -89,7 +94,7 @@ namespace dnWalker.Z3
                 else
                 {
                     TypeSig type = variable.Type;
-                    if (type.IsString()) return z3Value.Equals(stringNullExpr) ? StringValue.Null : new StringValue(z3Value.String);
+                    if (type.IsString()) return z3Value.Equals(stringNullEval) ? StringValue.Null : new StringValue(z3Value.String);
 
                     if (type.IsBoolean()) return new PrimitiveValue<bool>(z3Value.BoolValue == Z3_lbool.Z3_L_TRUE);
 
@@ -160,6 +165,8 @@ namespace dnWalker.Z3
 
                     if (!type.IsPrimitive)
                     {
+                        if (z3Value == nullEval) return Location.Null;
+
                         // a non primitive type => a location
                         if (!locationMapping.TryGetValue(z3Value, out Location location))
                         {

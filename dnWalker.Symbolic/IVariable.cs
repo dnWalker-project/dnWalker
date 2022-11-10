@@ -8,8 +8,13 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Symbolic
 {
-    public interface IVariable
+    public interface IVariable : IModelVisitable
     {
+        void IModelVisitable.Accept(dnWalker.Symbolic.IModelVisitor visitor)
+        {
+            visitor.VisitVariable(this);
+        }
+
         TypeSig Type { get; }
         string Name { get; }
     }

@@ -14,9 +14,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-using static dnWalker.Explorations.Xml.XmlUtils;
+using static dnWalker.Symbolic.Xml.XmlUtils;
 
-namespace dnWalker.Explorations.Xml
+namespace dnWalker.Symbolic.Xml
 {
     public class XmlModelDeserializer
     {
@@ -31,13 +31,13 @@ namespace dnWalker.Explorations.Xml
 
         public IReadOnlyModel FromXml(XElement xml, IMethod method)
         {
-            Constraint constraint = new Constraint();//Constraint.Parse(GetAttribute(xml, "Constraint"));
-            Model model = new Model(constraint);
+            var constraint = new Constraint();//Constraint.Parse(GetAttribute(xml, "Constraint"));
+            var model = new Model(constraint);
 
             {
                 // variables
-                XElement variablesXml = GetElement(xml, XmlTokens.Variables);
-                foreach (XElement varXml in variablesXml.Elements())
+                var variablesXml = GetElement(xml, XmlTokens.Variables);
+                foreach (var varXml in variablesXml.Elements())
                 {
                     IRootVariable variable = varXml.Name.LocalName switch
                     {
@@ -53,14 +53,14 @@ namespace dnWalker.Explorations.Xml
             }
             {
                 // heap
-                XElement heapXml = GetElement(xml, XmlTokens.Heap);
-                HeapInfo heapInfo = model.HeapInfo;
-                foreach (XElement nodeXml in heapXml.Elements())
+                var heapXml = GetElement(xml, XmlTokens.Heap);
+                var heapInfo = model.HeapInfo;
+                foreach (var nodeXml in heapXml.Elements())
                 {
-                    Location location = new Location((uint)GetAttribute(nodeXml, XmlTokens.Location));
-                    TypeSig type = _typeParser.Parse((string)GetAttribute(nodeXml, XmlTokens.Type)).ToTypeDefOrRef().ToTypeSig();
+                    var location = Location.Parse((string)GetAttribute(nodeXml, XmlTokens.Location));
+                    var type = _typeParser.Parse((string)GetAttribute(nodeXml, XmlTokens.Type)).ToTypeDefOrRef().ToTypeSig();
 
-                    IHeapNode heapNode = nodeXml.Name.LocalName switch
+                    var heapNode = nodeXml.Name.LocalName switch
                     {
                         XmlTokens.ObjectNode => ObjectNodeFromXml(nodeXml, location, type),
                         XmlTokens.ArrayNode => ArrayNodeFromXml(nodeXml, location, type),
@@ -139,11 +139,11 @@ namespace dnWalker.Explorations.Xml
             }
             else if (type.IsString())
             {
-                return new StringValue(xml);
+                return StringValue.Parse(xml);
             }
             else
             {
-                return new Location(uint.Parse(xml.AsSpan(1), System.Globalization.NumberStyles.HexNumber));
+                return Location.Parse(xml);
             }
         }
 
@@ -151,29 +151,29 @@ namespace dnWalker.Explorations.Xml
         #region Deserialize Heap
         private IHeapNode ObjectNodeFromXml(XElement nodeXml, Location location, TypeSig type)
         {
-            ObjectHeapNode objectNode = new ObjectHeapNode(location, type, (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
+            var objectNode = new ObjectHeapNode(location, type, (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
 
-            foreach (XElement fieldXml in nodeXml.Elements(XmlTokens.InstanceField))
+            foreach (var fieldXml in nodeXml.Elements(XmlTokens.InstanceField))
             {
-                TypeDef declaringType = _typeParser.Parse((string)GetAttribute(fieldXml, XmlTokens.DeclaringType))
+                var declaringType = _typeParser.Parse((string)GetAttribute(fieldXml, XmlTokens.DeclaringType))
                     .ToTypeDefOrRef()
                     .ResolveTypeDefThrow();
 
-                string fieldName = (string)GetAttribute(fieldXml, XmlTokens.FieldName);
-                string valueXMl = (string)GetAttribute(fieldXml, XmlTokens.Value);
+                var fieldName = (string)GetAttribute(fieldXml, XmlTokens.FieldName);
+                var valueXMl = (string)GetAttribute(fieldXml, XmlTokens.Value);
 
-                FieldDef field = declaringType.FindField(fieldName);
-                IValue value = ValueFromXml(valueXMl, field.FieldType);
+                var field = declaringType.FindField(fieldName);
+                var value = ValueFromXml(valueXMl, field.FieldType);
 
                 objectNode.SetField(field, value);
             }
 
-            foreach (XElement methodXml in nodeXml.Elements(XmlTokens.MethodResult))
+            foreach (var methodXml in nodeXml.Elements(XmlTokens.MethodResult))
             {
-                IMethod method = _methodParser.Parse((string)GetAttribute(methodXml, XmlTokens.Method));
-                int invocation = (int)GetAttribute(methodXml, XmlTokens.Invocation);
+                var method = _methodParser.Parse((string)GetAttribute(methodXml, XmlTokens.Method));
+                var invocation = (int)GetAttribute(methodXml, XmlTokens.Invocation);
 
-                IValue value = ValueFromXml((string)GetAttribute(methodXml, XmlTokens.Value), method.MethodSig.RetType);
+                var value = ValueFromXml((string)GetAttribute(methodXml, XmlTokens.Value), method.MethodSig.RetType);
 
                 objectNode.SetMethodResult(method, invocation, value);
             }
@@ -183,12 +183,14 @@ namespace dnWalker.Explorations.Xml
 
         private IHeapNode ArrayNodeFromXml(XElement nodeXml, Location location, TypeSig elementType)
         {
-            ArrayHeapNode arrayNode = new ArrayHeapNode(location, elementType, (int)GetAttribute(nodeXml, XmlTokens.Length), (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
+            var arrayNode = new ArrayHeapNode(location, elementType, (int)GetAttribute(nodeXml, XmlTokens.Length), (bool?)nodeXml.Attribute(XmlTokens.IsDirty) ?? false);
 
-            foreach (XElement elementXml in nodeXml.Elements(XmlTokens.ArrayElement))
+            foreach (var elementXml in nodeXml.Elements(XmlTokens.ArrayElement))
             {
-                int index = (int)GetAttribute(elementXml, XmlTokens.Index);
-                IValue value = ValueFromXml((string)GetAttribute(elementXml, XmlTokens.Value), elementType);
+                var index = (int)GetAttribute(elementXml, XmlTokens.Index);
+                var value = ValueFromXml((string)GetAttribute(elementXml, XmlTokens.Value), elementType);
+
+                arrayNode.SetElement(index, value);
             }
 
             return arrayNode;
@@ -198,15 +200,15 @@ namespace dnWalker.Explorations.Xml
         #region Deserialize Variables
         private MethodArgumentVariable MethodArgumentVariableFromXml(XElement varXml, IMethod method)
         {
-            string name = GetAttribute(varXml, XmlTokens.Name).Value;
-            Parameter parameter = method.ResolveMethodDefThrow().Parameters.First(p => p.Name == name);
+            var name = GetAttribute(varXml, XmlTokens.Name).Value;
+            var parameter = method.ResolveMethodDefThrow().Parameters.First(p => p.Name == name);
             return new MethodArgumentVariable(parameter);
         }
 
         private StaticFieldVariable StaticFieldVariableFromXml(XElement varXml)
         {
-            string fieldName = GetAttribute(varXml, XmlTokens.FieldName).Value;
-            ITypeDefOrRef type = _typeParser.Parse(GetAttribute(varXml, XmlTokens.Type).Value).ToTypeDefOrRef();
+            var fieldName = GetAttribute(varXml, XmlTokens.FieldName).Value;
+            var type = _typeParser.Parse(GetAttribute(varXml, XmlTokens.Type).Value).ToTypeDefOrRef();
             IField field = type.ResolveTypeDefThrow().Fields.First(fld => fld.Name == fieldName);
             return new StaticFieldVariable(field);
         }

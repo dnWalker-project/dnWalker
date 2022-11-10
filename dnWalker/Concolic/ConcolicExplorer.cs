@@ -34,7 +34,7 @@ namespace dnWalker.Concolic
         {
             IConfiguration configuration = Configuration;
 
-            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy());
+            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy(), configuration.GetInputModels(entryPoint, DefinitionProvider));
 
             // TODO: make it as a explorer extension...
             if (!ControlFlowGraphWriter.TryWrite(ControlFlowGraph.Build(entryPoint), "cfg.dot")) Logger.Warning("CFG writer failed.");
