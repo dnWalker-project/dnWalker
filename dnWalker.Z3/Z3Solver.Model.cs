@@ -89,7 +89,7 @@ namespace dnWalker.Z3
                 else
                 {
                     TypeSig type = variable.Type;
-                    if (type.IsString()) return z3Value.Equals(stringNullEval) ? StringValue.Null : new StringValue(z3Value.String);
+                    if (type.IsString()) return z3Value.Equals(stringNullExpr) ? StringValue.Null : new StringValue(z3Value.String);
 
                     if (type.IsBoolean()) return new PrimitiveValue<bool>(z3Value.BoolValue == Z3_lbool.Z3_L_TRUE);
 
