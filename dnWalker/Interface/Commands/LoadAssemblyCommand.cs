@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TypeSystem;
+
+using System;
 
 namespace dnWalker.Interface.Commands
 {
@@ -13,7 +15,7 @@ namespace dnWalker.Interface.Commands
 
         public CommandResult Execute(AppModel appModel)
         {
-            Console.WriteLine($"Running LoadAssembly command: '{_assemblyFileName}'");
+            appModel.Domain.Load(_assemblyFileName);
             return CommandResult.Success;
         }
     }

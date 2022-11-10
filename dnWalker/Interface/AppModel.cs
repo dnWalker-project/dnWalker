@@ -19,7 +19,7 @@ namespace dnWalker.Interface
 
         private AppModel(IConfiguration configuration)
         {
-            _domain = Domain.Create();
+            _domain = dnWalker.TypeSystem.Domain.Create();
 
         }
 
@@ -29,6 +29,14 @@ namespace dnWalker.Interface
             {
                 _definitionProvider ??= new DefinitionProvider(_domain);
                 return _definitionProvider;
+            }
+        }
+
+        public IDomain Domain
+        {
+            get
+            {
+                return _domain;
             }
         }
 
@@ -51,6 +59,11 @@ namespace dnWalker.Interface
         public static AppModel Create(Options options) 
         {
             AppModel appModel = new AppModel(BuildConfiguration(options.ConfigurationFiles));
+
+            if (!string.IsNullOrWhiteSpace(options.Assembly))
+            { 
+                appModel.Domain.Load(options.Assembly);
+            }
 
             return appModel;
         }

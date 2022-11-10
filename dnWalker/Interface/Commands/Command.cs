@@ -17,20 +17,21 @@ namespace dnWalker.Interface.Commands
 
             if (tokens.Count == 0) return NoopCommand;
 
-            switch (tokens[0])
+            switch (tokens[0].ToLower())
             {
                 case CommandTokens.Exit: return ExitCommand;
                 case CommandTokens.Load:
                     {
                         if (tokens.Count != 3)
                         {
-                            return new InvalidCommand(commandString, "load command must have 3 tokens: 'assembly/cfg' and 'file-specification'");
+                            return new InvalidCommand(commandString, "load command must have 3 tokens: 'assembly/models' and 'file-specification'");
                         }
-                        switch (tokens[1]) 
+                        switch (tokens[1].ToLower()) 
                         {
                             case CommandTokens.Assembly: return new LoadAssemblyCommand(tokens[2]);
+                            case CommandTokens.Models: return new LoadModelsCommand(tokens[2]);
                         }
-                        return new InvalidCommand(commandString, "second parameter of the load command must be 'assembly' or 'cfg'");
+                        return new InvalidCommand(commandString, "second parameter of the load command must be 'assembly' or 'models'");
                     }
                 case CommandTokens.Explore:
                     {
@@ -65,7 +66,7 @@ namespace dnWalker.Interface.Commands
                 var c = commandString[i];
                 if (c == ' ' && !ignoreSpace)
                 {
-                    tokens.Add(commandString.Substring(lastSpace, i - lastSpace).Trim(' ', '"').ToLower());
+                    tokens.Add(commandString.Substring(lastSpace, i - lastSpace).Trim(' ', '"'));
                     lastSpace = i;
                 }
                 else if (c == '"')
@@ -76,7 +77,7 @@ namespace dnWalker.Interface.Commands
 
             if (!ignoreSpace)
             {
-                tokens.Add(commandString.Substring(lastSpace).Trim(' ', '"').ToLower());
+                tokens.Add(commandString.Substring(lastSpace).Trim(' ', '"'));
             }
 
             return tokens;
