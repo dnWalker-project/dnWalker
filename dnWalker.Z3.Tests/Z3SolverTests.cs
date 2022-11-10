@@ -43,7 +43,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void PointerEqualityOfSameType_SAT()
         {
-            // (x == y) && (typeof(x) == typeof(y)) - SAT
+            // ReferenceEquals(x, y) && (typeof(x) == typeof(y)) - SAT
             Constraint constraint = new Constraint();
 
             NamedVariable x = new NamedVariable(_testClassTD.ToTypeSig(), "x");
@@ -64,7 +64,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void PointerEqualityOfDifferentTypesNotNull_UNSAT()
         {
-            // (x == y) && (typeof(x) != typeof(y) && (x != null)) - UNSAT
+            // ReferenceEquals(x, y) && (typeof(x) != typeof(y) && (x != null)) - UNSAT
 
             Constraint constraint = new Constraint();
 
@@ -86,7 +86,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void PointerEqualityOfDifferentTypesMayBeNull_SAT_AndNull()
         {
-            // (x == y) && (typeof(x) != typeof(y)) - SAT
+            // ReferenceEquals(x, y) && (typeof(x) != typeof(y)) - SAT
             Constraint constraint = new Constraint();
 
             NamedVariable x = new NamedVariable(_testClassTD.ToTypeSig(), "x");
@@ -111,7 +111,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void PointerEqualityNullAndNotNull_UNSAT()
         {
-            // (x == y) && (y == z) && (x == null) && (z != null) - UNSAT
+            // ReferenceEquals(x, y) && ReferenceEquals(y, z) && (x == null) && (z != null) - UNSAT
             Constraint constraint = new Constraint();
 
             NamedVariable x = new NamedVariable(_testClassTD.ToTypeSig(), "x");
@@ -137,7 +137,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void AttributeEqualityForcedByRootEquality()
         {
-            // (x == y) && (x.A != y.A) - UNSAT
+            // ReferenceEquals(x, y) && (x.A != y.A) - UNSAT
 
             Constraint constraint = new Constraint();
 
@@ -162,7 +162,7 @@ namespace dnWalker.Z3.Tests
         [Fact]
         public void MemberVariableForcesRootVariableToNotBeNull()
         {
-            // (x == y) && (x.A == y.A) && (x == null) - UNSAT
+            // ReferenceEquals(x, y) && (x.A == y.A) && (x == null) - UNSAT
 
             Constraint constraint = new Constraint();
 
@@ -183,10 +183,68 @@ namespace dnWalker.Z3.Tests
             IModel? model = solver.Solve(constraint);
 
             model.Should().BeNull();
-            //model.TryGetValue(x, out IValue? vx).Should().BeTrue();
-            //model.TryGetValue(y, out IValue? vy).Should().BeTrue();
+        }
 
-            //vx.Should().Be(vy).And.NotBe(Location.Null);
+        [Fact]
+        public void TransitivityCannotBeNull()
+        {
+            // ReferenceEquals(x, y) && ReferenceEquals(y, z) && (z != null) - SAT
+
+            Constraint constraint = new Constraint();
+
+            NamedVariable x = new NamedVariable(_testClassTD.ToTypeSig(), "x");
+            NamedVariable y = new NamedVariable(_testClassTD.ToTypeSig(), "y");
+            NamedVariable z = new NamedVariable(_testClassTD.ToTypeSig(), "z");
+
+            Expression exprX = Expressions.MakeVariable(x);
+            Expression exprY = Expressions.MakeVariable(y);
+            Expression exprZ = Expressions.MakeVariable(z);
+
+            constraint.AddEqualConstraint(exprX, exprY);
+            constraint.AddEqualConstraint(exprY, exprZ);
+            constraint.AddNotEqualConstraint(exprZ, Expressions.NullExpression);
+
+            Z3Solver solver = new Z3Solver();
+            IModel? model = solver.Solve(constraint);
+
+            model!.Should().NotBeNull();
+
+            model.TryGetValue(x, out IValue? xv).Should().BeTrue();
+            model.TryGetValue(y, out IValue? yv).Should().BeTrue();
+            model.TryGetValue(z, out IValue? zv).Should().BeTrue();
+
+            xv.Should().Be(yv).And.Be(zv).And.NotBe(Location.Null);
+        }
+
+        [Fact]
+        public void TransitivityFallsToNull()
+        {
+            // ReferenceEquals(x, y) && ReferenceEquals(y, z) - SAT
+
+            Constraint constraint = new Constraint();
+
+            NamedVariable x = new NamedVariable(_testClassTD.ToTypeSig(), "x");
+            NamedVariable y = new NamedVariable(_testClassTD.ToTypeSig(), "y");
+            NamedVariable z = new NamedVariable(_testClassTD.ToTypeSig(), "z");
+
+            Expression exprX = Expressions.MakeVariable(x);
+            Expression exprY = Expressions.MakeVariable(y);
+            Expression exprZ = Expressions.MakeVariable(z);
+
+            constraint.AddEqualConstraint(exprX, exprY);
+            constraint.AddEqualConstraint(exprY, exprZ);
+
+            Z3Solver solver = new Z3Solver();
+            IModel? model = solver.Solve(constraint);
+
+            model!.Should().NotBeNull();
+
+            model.TryGetValue(x, out IValue? xv).Should().BeTrue();
+            model.TryGetValue(y, out IValue? yv).Should().BeTrue();
+            model.TryGetValue(z, out IValue? zv).Should().BeTrue();
+
+            xv.Should().Be(yv).And.Be(zv).And.Be(Location.Null);
+
         }
     }
 }
