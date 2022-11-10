@@ -27,6 +27,12 @@ namespace dnWalker.Instructions.Extensions.NativePeers
             return true;
         }
 
+        protected static bool ThrowException(Exception exception, ExplicitActiveState cur, out IIEReturnValue returnValue)
+        {
+            returnValue = InstructionExecBase.ThrowException(exception, cur);
+            return true;
+        }
+
         protected static bool Fail(out IIEReturnValue returnValue)
         {
             returnValue = null;

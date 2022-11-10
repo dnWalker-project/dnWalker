@@ -176,8 +176,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             ExpressionFactory ef = cur.GetExpressionFactory();
 
-            Expression isNull = Expression.MakeEqual(instanceExpression, ef.NullExpression);
-            Expression isNotNull = Expression.MakeNotEqual(instanceExpression, ef.NullExpression);
+            Expression nullExpression = instanceExpression.Type.IsString() ? ef.StringNullExpression : ef.NullExpression;
+
+            Expression isNull = Expression.MakeEqual(instanceExpression, nullExpression);
+            Expression isNotNull = Expression.MakeNotEqual(instanceExpression, nullExpression);
 
             if (choiceTargets[0] is NextEdge)
             {
