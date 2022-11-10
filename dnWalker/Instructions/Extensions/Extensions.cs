@@ -59,7 +59,7 @@ namespace dnWalker.Instructions.Extensions
 
         public static IEnumerable<IInstructionExecutor> CreateInstructionExtensions(this IConfiguration configuration)
         {
-            string[] extensionsIdentifiers = configuration.GetValue<string[]>("InstructionExtensions") ?? _defaultExtensions;
+            string[] extensionsIdentifiers = configuration.GetValueOrDefault<string[]>("InstructionExtensions", _defaultExtensions);
 
 
             return extensionsIdentifiers

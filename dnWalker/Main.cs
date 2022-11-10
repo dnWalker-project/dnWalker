@@ -33,102 +33,6 @@ namespace MMC
     using dnWalker.Traversal;
     using dnWalker.Configuration;
 
-    //public interface IConfiguration
-    //{
-    //    /// <summary>
-    //    /// Gets, sets the maximum iterations. Negative value of zero for unlimited.
-    //    /// </summary>
-    //    int MaxIterations { get; set; }
-    //    string[] RunTimeParameters { get; set; }
-    //    bool Verbose { get; set; }
-    //    bool SymmetryReduction { get; set; }
-    //    bool UseRefCounting { get; set; }
-    //    bool NonStaticSafe { get; set; }
-    //    bool UseMarkAndSweep { get; set; }
-    //    bool UseDPORCollapser { get; set; }
-    //    bool UseInstructionCache { get; set; }
-    //    bool OneTraceAndStop { get; set; }
-    //    double MaxExploreInMinutes { get; set; }
-    //    string AssemblyToCheckFileName { get; set; }
-    //    bool StopOnError { get; set; }
-    //    bool Interactive { get; set; }
-    //    bool MemoisedGC { get; set; }
-    //    double MemoryLimit { get; set; }
-    //    bool UseStatefulDynamicPOR { get; set; }
-    //    bool UseObjectEscapePOR { get; set; }
-    //    bool ShowStatistics { get; set; }
-    //    bool TraceOnError { get; set; }
-    //    bool Quiet { get; set; }
-    //    double OptimizeStorageAtMegabyte { get; set; }
-    //    LogPriority LogFilter { get; }
-    //    string LogFileName { get; }
-
-    //    int StateStorageSize { get; }
-
-    //    void SetCustomSetting(string key, object value);
-    //    T GetCustomSetting<T>(string key);
-    //}
-
-    ///// <summary>
-    ///// <para>Configuration class</para>
-    ///// <para>
-    ///// This is just a big collection of fields. Because of C# properties, the
-    ///// functionality behind access to these fields can be transparently
-    ///// adjusted without breaking source compatibility.
-    ///// </para>
-    ///// </summary>
-    //public class IConfiguration : IConfiguration
-    //{
-    //    public int MaxIterations { get; set; }
-    //    public string AssemblyToCheckFileName { get; set; }
-    //    public string[] RunTimeParameters { get; set; } = new string[] { };
-    //    public bool ShowStatistics { get; set; }
-    //    public bool Quiet { get; set; }
-    //    public bool Interactive { get; set; }
-    //    public LogPriority LogFilter { get; set; }
-    //    public bool UseInstructionCache { get; set; } = true;
-    //    public bool UseRefCounting { get; set; }
-    //    public bool UseMarkAndSweep { get; set; } = true;
-    //    public bool Verbose { get; set; }
-    //    public bool SymmetryReduction { get; set; } = true;
-    //    public bool NonStaticSafe { get; set; }
-    //    public bool MemoisedGC { get; set; }
-    //    public bool UseDPORCollapser { get; set; } = true;
-    //    public bool UseObjectEscapePOR { get; set; } = true;
-    //    public bool UseStatefulDynamicPOR { get; set; } = true;
-    //    public bool StopOnError { get; set; } = true;
-    //    public bool TraceOnError { get; set; } = true;
-    //    public bool OneTraceAndStop { get; set; }
-    //    public bool ExPostFactoMerging { get; set; } = true;
-    //    public double MaxExploreInMinutes { get; set; } = double.PositiveInfinity;
-    //    public double OptimizeStorageAtMegabyte { get; set; } = double.PositiveInfinity;
-    //    public double MemoryLimit { get; set; } = double.PositiveInfinity;
-    //    public string LogFileName { get; set; }
-    //    public int StateStorageSize { get; set; } = 20;
-
-    //    private readonly System.Collections.Generic.IDictionary<string, object> _custom =
-    //        new System.Collections.Generic.Dictionary<string, object>();
-    //    public void SetCustomSetting(string key, object value)
-    //    {
-    //        _custom[key] = value;
-    //    }
-
-    //    public T GetCustomSetting<T>(string key)
-    //    {
-    //        if (!_custom.TryGetValue(key, out var value))
-    //        {
-    //            return default(T);
-    //        }
-
-    //        if (value is IConvertible convertible)
-    //        {
-    //            return (T) Convert.ChangeType(convertible, typeof(T));
-    //        }
-
-    //        return (T) value;
-
-    //    }
-    //}
 
     /// The main application class.
     class MonoModelChecker
@@ -204,7 +108,7 @@ namespace MMC
         /// This sets various fields in class IConfiguration.
         /// </remarks>
         /// <param name="args">Command-line options as passed to Main.</param>
-        public IConfiguration GetConfigurationFromCommandLine(string[] args, IConfiguration configuration)
+        public IConfigurationBuilder GetConfigurationFromCommandLine(string[] args, IConfigurationBuilder configuration)
         {
 
             for (var i = 0; i < args.Length; ++i)
@@ -459,10 +363,12 @@ Disabling/enabling features:
 
             Console.WriteLine(copyright + "\n");
 
-            IConfiguration config = new ConfigurationBuilder()
-                .Build()
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder()
                 .InitializeDefaults();
-            GetConfigurationFromCommandLine(args, config);
+                
+            GetConfigurationFromCommandLine(args, configBuilder);
+
+            IConfiguration config = configBuilder.Build();
 
 
             Logger logger = new Logger(config.LogFilter());

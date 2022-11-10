@@ -108,7 +108,7 @@ namespace dnWalker.Tests.Interpreter
         public static Explorer GetModelChecker(string methodName, Func<ExplicitActiveState, DataElementList> argsProvider, IDefinitionProvider definitionProvider, IStatistics? statistics = null, IConfiguration? config = null, Logger? logger = null)
         {
             statistics ??= new SimpleStatistics();
-            config ??= new ConfigurationBuilder().Build().InitializeDefaults();
+            config ??= new ConfigurationBuilder().InitializeDefaults().Build();
             logger ??= new Logger();
 
             MethodDef entryPoint = definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Configuration
 {
-    internal class JsonConfigurationProvider : IConfigurationProvider
+    public class JsonConfigurationProvider : IConfigurationProvider
     {
         private static readonly JsonSerializerOptions _options = new JsonSerializerOptions();
         private readonly JsonDocument _document;
@@ -21,14 +22,21 @@ namespace dnWalker.Configuration
         {
         }
 
-        public bool TryGetValue(string key, Type type, out object? value)
+        public bool TryGetValue(string key, Type type, [NotNullWhen(true)] out object? value)
         {
             if (_document.RootElement.TryGetProperty(key, out JsonElement jsonValue))
-            {
+            {   
                 value = JsonSerializer.Deserialize(jsonValue, type);
+
+                return value != null;
             }
             value = null;
             return false;
+        }
+
+        public bool HasValue(string key)
+        {
+            return _document.RootElement.TryGetProperty(key, out _);
         }
     }
 }

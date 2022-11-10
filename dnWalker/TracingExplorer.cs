@@ -41,7 +41,7 @@ namespace MMC
         {
             m_tracingQueue = tracingQueue;
             // disable stats
-            config.SetShowStatistics(false);
+            // config.SetShowStatistics(false);
             this.tw = tw;
         }
 

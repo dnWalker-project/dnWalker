@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace dnWalker.Configuration
 {
     public interface IConfiguration
     {
-        TValue GetValue<TValue>(string key);
-        void SetValue<TValue>(string key, TValue value);
+        bool TryGetValue(string key, Type type, [NotNullWhen(true)] out object? value);
+        bool HasValue(string key);
     }
 }
