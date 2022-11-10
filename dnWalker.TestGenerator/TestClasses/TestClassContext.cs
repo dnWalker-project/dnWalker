@@ -1,4 +1,6 @@
-﻿using dnWalker.Parameters;
+﻿using dnlib.DotNet;
+
+using dnWalker.Symbolic;
 using dnWalker.TypeSystem;
 
 using System;
@@ -12,51 +14,37 @@ namespace dnWalker.TestGenerator.TestClasses
     public partial class TestClassContext : ITestClassContext
     {
         private readonly int _iterationNumber;
-        private readonly MethodSignature _methodSignature;
+        private readonly IMethod _IMethod;
         private readonly string _assemblyName;
         private readonly string _assemblyFileName;
-        private readonly IParameterContext _parameterContext;
-        private readonly IReadOnlyParameterSet _baseSet;
-        private readonly IReadOnlyParameterSet _executionSet;
+        private readonly IReadOnlyModel _inputModel;
+        private readonly IReadOnlyModel _outputModel;
         private readonly string _pathConstraint;
         private readonly string _standardOutput;
         private readonly string _errorOutput;
-        private readonly TypeSignature _exception;
-
-        public TestClassContext(ITestGeneratorConfiguration configuration,
-                                int iterationNumber,
-                                MethodSignature methodSignature,
+        private readonly TypeSig? _exception;
+        private readonly List<string> _usings = new List<string>();
+        public TestClassContext(int iterationNumber,
+                                IMethod IMethod,
                                 string assemblyName,
                                 string assemblyFileName,
-                                IParameterContext parameterContext,
-                                IReadOnlyParameterSet baseSet,
-                                IReadOnlyParameterSet executionSet,
+                                IReadOnlyModel inputModel,
+                                IReadOnlyModel outputModel,
                                 string pathConstraint,
                                 string standardOutput,
                                 string errorOutput,
-                                TypeSignature exception)
+                                TypeSig? exception)
         {
-            Configuration = configuration;
-
             _iterationNumber = iterationNumber;
-            _methodSignature = methodSignature;
+            _IMethod = IMethod;
             _assemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
             _assemblyFileName = assemblyFileName ?? throw new ArgumentNullException(nameof(assemblyFileName));
-            _parameterContext = parameterContext ?? throw new ArgumentNullException(nameof(parameterContext));
-            _baseSet = baseSet ?? throw new ArgumentNullException(nameof(baseSet));
-            _executionSet = executionSet ?? throw new ArgumentNullException(nameof(executionSet));
+            _inputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
+            _outputModel = outputModel ?? throw new ArgumentNullException(nameof(outputModel));
             _pathConstraint = pathConstraint ?? throw new ArgumentNullException(nameof(pathConstraint));
             _standardOutput = standardOutput ?? throw new ArgumentNullException(nameof(standardOutput));
             _errorOutput = errorOutput ?? throw new ArgumentNullException(nameof(errorOutput));
             _exception = exception;
-        }
-
-        public IDefinitionProvider DefinitionProvider
-        {
-            get
-            {
-                return _parameterContext.DefinitionProvider;
-            }
         }
 
         public int IterationNumber
@@ -67,11 +55,11 @@ namespace dnWalker.TestGenerator.TestClasses
             }
         }
 
-        public MethodSignature MethodSignature
+        public IMethod Method
         {
             get
             {
-                return _methodSignature;
+                return _IMethod;
             }
         }
 
@@ -91,27 +79,19 @@ namespace dnWalker.TestGenerator.TestClasses
             }
         }
 
-        public IParameterContext ParameterContext
+        public IReadOnlyModel InputModel
         {
             get
             {
-                return _parameterContext;
+                return _inputModel;
             }
         }
 
-        public IReadOnlyParameterSet BaseSet
+        public IReadOnlyModel OutputModel
         {
             get
             {
-                return _baseSet;
-            }
-        }
-
-        public IReadOnlyParameterSet ExecutionSet
-        {
-            get
-            {
-                return _executionSet;
+                return _outputModel;
             }
         }
 
@@ -139,7 +119,7 @@ namespace dnWalker.TestGenerator.TestClasses
             }
         }
 
-        public TypeSignature Exception
+        public TypeSig? Exception
         {
             get
             {
@@ -151,7 +131,7 @@ namespace dnWalker.TestGenerator.TestClasses
         {
             get
             {
-                return _exception != TypeSignature.Empty;
+                return _exception != null;
             }
         }
 
@@ -167,9 +147,12 @@ namespace dnWalker.TestGenerator.TestClasses
             get;
         } = "TestClass";
 
-        public ITestGeneratorConfiguration Configuration
+        public IList<string> Usings
         {
-            get;
+            get
+            {
+                return _usings;
+            }
         }
     }
 }

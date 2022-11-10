@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TypeSystem
 {
-    internal class MethodParser
+    public class MethodParser : IMethodParser
     {
         private static readonly TypeEqualityComparer _typeCmp = TypeEqualityComparer.Instance;
 

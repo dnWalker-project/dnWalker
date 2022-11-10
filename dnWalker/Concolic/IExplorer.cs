@@ -1,5 +1,8 @@
-﻿using dnWalker.Parameters;
+﻿using dnlib.DotNet;
+
+using dnWalker.Configuration;
 using dnWalker.Traversal;
+using dnWalker.TypeSystem;
 
 using MMC;
 
@@ -18,13 +21,10 @@ namespace dnWalker.Concolic
 
         void AddExtension(IExplorationExtension extension);
         void RemoveExtension(IExplorationExtension extension);
-        void Run(string methodName, IDictionary<string, object> data = null);
+        ExplorationResult Run(string methodName, IDictionary<string, object> data = null);
 
-        public dnWalker.Concolic.Traversal.PathStore PathStore { get; }
-        public ParameterStore ParameterStore { get; }
-        public int IterationCount { get; }
-
-        public IConfig GetConfiguration();
+        public IDefinitionProvider DefinitionProvider { get; }
+        public IConfiguration Configuration { get; }
     }
 
     public static class ExplorerExtensions

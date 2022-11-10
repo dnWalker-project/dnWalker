@@ -1,6 +1,6 @@
 ﻿using dnlib.DotNet;
 
-using dnWalker.Parameters;
+using dnWalker.Symbolic;
 using dnWalker.Traversal;
 
 using System;
@@ -43,6 +43,20 @@ namespace dnWalker.Concolic
     }
     public class ExplorationFinishedEventArgs : EventArgs
     {
+        private readonly ExplorationResult _result;
+
+        public ExplorationFinishedEventArgs(ExplorationResult result)
+        {
+            _result = result;
+        }
+
+        public ExplorationResult Result
+        {
+            get
+            {
+                return _result;
+            }
+        }
     }
 
     public class ExplorationFailedEventArgs : EventArgs
@@ -57,27 +71,26 @@ namespace dnWalker.Concolic
 
     public class IterationStartedEventArgs : EventArgs
     {
-        public IterationStartedEventArgs(int iterationNmber, ParameterStore parameterStore)
+        public IterationStartedEventArgs(int iterationNmber, IReadOnlyModel inputModel)
         {
             IterationNmber = iterationNmber;
-            ParameterStore = parameterStore;
+            InputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
         }
 
         public int IterationNmber { get; }
-        public ParameterStore ParameterStore { get; }
+        public IReadOnlyModel InputModel { get; }
+        public Constraint PreCondition => InputModel.Precondition;
     }
 
     public class IterationFinishedEventArgs : EventArgs
     {
-        public IterationFinishedEventArgs(int iterationNumber, ParameterStore parameterStore, Path exploredPath)
+        public IterationFinishedEventArgs(ExplorationIterationResult iterationResult, Path exploredPath)
         {
-            IterationNumber = iterationNumber;
-            ParameterStore = parameterStore;
-            ExploredPath = exploredPath;
+            Result = iterationResult ?? throw new ArgumentNullException(nameof(iterationResult));
+            ExploredPath = exploredPath ?? throw new ArgumentNullException(nameof(exploredPath));
         }
 
-        public int IterationNumber { get; }
-        public ParameterStore ParameterStore { get; }
+        public ExplorationIterationResult Result { get; }
         public Path ExploredPath { get; }
     }
 }

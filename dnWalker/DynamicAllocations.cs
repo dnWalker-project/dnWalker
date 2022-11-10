@@ -23,6 +23,7 @@ namespace MMC.State {
     using System.Collections.Generic;
     using dnWalker;
     using dnWalker.TypeSystem;
+    using dnWalker.Configuration;
 
     /// <summary>
     /// An object instances on the heap.
@@ -44,6 +45,8 @@ namespace MMC.State {
         /// </summary>
         /// <remarks>Note that the static fields never get assigned.</remarks>
         public DataElementList Fields { get; set; }
+
+        public List<FieldDef> FieldDefs { get; set; }
 
         /// <summary>
         /// The offset of the value field for wrapped types.
@@ -102,16 +105,18 @@ namespace MMC.State {
             /* 
 			 * determine the field length of this object
 			 */
-            var fields = new List<FieldDef>();
+            FieldDefs = new List<FieldDef>();
+
+            Type.ResolveTypeDefThrow().InitLayout();
 
             foreach (var typeDefOrRef in Type.InheritanceEnumerator())
             {
-                fields.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
+                FieldDefs.AddRange(typeDefOrRef.ResolveTypeDef().Fields);
             }
 
             if (Fields == null)
             {
-                Fields = cur.StorageFactory.CreateList(fields.Count);
+                Fields = cur.StorageFactory.CreateList(FieldDefs.Count);
             }
 
             /*
@@ -121,11 +126,11 @@ namespace MMC.State {
             //int typeOffset = 0;
 
             //foreach (var typeDef in cur.DefinitionProvider.InheritanceEnumerator(m_typeDef)) {
-            for (var i = 0; i < fields.Count; i++)
+            for (var i = 0; i < FieldDefs.Count; i++)
             {
                 //int fieldsOffset = typeOffset + i;
-                var type = fields[i].FieldType.ToTypeDefOrRef();
-                if (type == null && !fields[i].FieldType.IsPrimitive)
+                var type = FieldDefs[i].FieldType.ToTypeDefOrRef();
+                if (type == null && !FieldDefs[i].FieldType.IsPrimitive)
                 {
                     Fields[i] = ObjectReference.Null;
                     continue;
@@ -172,7 +177,7 @@ namespace MMC.State {
             return sb.ToString();
         }
 
-		public AllocatedObject(ITypeDefOrRef typeDef, IConfig config) : this(typeDef, config.UseRefCounting, config.MemoisedGC) { }
+		public AllocatedObject(ITypeDefOrRef typeDef, IConfiguration config) : this(typeDef, config.UseRefCounting(), config.MemoisedGC()) { }
 
         public AllocatedObject(ITypeDefOrRef typeDef, bool useRefCounting, bool memoisedGC) : base(typeDef, useRefCounting, memoisedGC) { }
 	}
@@ -203,7 +208,7 @@ namespace MMC.State {
 			visitor.VisitAllocatedObject(this);
 		}*/
 
-        public AllocatedArray(ITypeDefOrRef arrayType, int length, IConfig config)
+        public AllocatedArray(ITypeDefOrRef arrayType, int length, IConfiguration config)
             : base(arrayType, config)
         {
             this.Fields = new DataElementList(length);
@@ -222,7 +227,7 @@ namespace MMC.State {
     {
         bool m_isDirty;
 
-        public static ITypeDefOrRef DelegateTypeDef { get; set; }//= new Lazy<TypeDef>(() => DefinitionProvider.GetTypeDefinition("System.Delegate"));
+        //public static ITypeDefOrRef DelegateTypeDef { get; set; }//= new Lazy<TypeDef>(() => DefinitionProvider.GetTypeDefinition("System.Delegate"));
 
         public override AllocationType AllocationType
         {
@@ -270,13 +275,13 @@ namespace MMC.State {
 			return "delegate:" + Object.ToString() + "." + Method.Value.Name;
 		}
 
-		public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, IConfig config) : base(DelegateTypeDef, config.UseRefCounting, config.MemoisedGC)
+		public AllocatedDelegate(ITypeDefOrRef delegateTypeDef, ObjectReference obj, MethodPointer ptr, IConfiguration config) : base(delegateTypeDef, config.UseRefCounting(), config.MemoisedGC())
         {
 			Object = obj;
 			Method = ptr;
 			m_isDirty = true;
         }
-        public AllocatedDelegate(ObjectReference obj, MethodPointer ptr, bool useRefCounting, bool memoisedGC) : base(DelegateTypeDef, useRefCounting, memoisedGC)
+        public AllocatedDelegate(ITypeDefOrRef delegateTypeDef, ObjectReference obj, MethodPointer ptr, bool useRefCounting, bool memoisedGC) : base(delegateTypeDef, useRefCounting, memoisedGC)
         {
             Object = obj;
             Method = ptr;

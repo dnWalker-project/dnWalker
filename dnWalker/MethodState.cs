@@ -279,10 +279,20 @@ namespace MMC.State
 
             if (Arguments == null)
             {
-                throw new NotImplementedException("XX");/*
-                m_inArguments = cur.StorageFactory.CreateList(m_methodDefinition.Par amDefs.Count);
-                for (int i = 0; i < m_inArguments.Length; ++i)
-                    m_inArguments[i] = cur.DefinitionProvider.GetParameterNullOrDefaultValue(m_methodDefinition.Parame ters[i].ParamDef);*/
+                ParameterList parameters = Definition.Parameters;
+                int cnt = parameters.Count;
+                DataElementList args = cur.StorageFactory.CreateList(cnt);
+                for (int i = 0; i < cnt; ++i)
+                {
+                    args[i] = DataElement.GetNullValue(parameters[i].Type);
+                }
+
+                Arguments = args;
+
+                //throw new NotImplementedException("XX");/*
+                //m_inArguments = cur.StorageFactory.CreateList(m_methodDefinition.Par amDefs.Count);
+                //for (int i = 0; i < m_inArguments.Length; ++i)
+                //    m_inArguments[i] = cur.DefinitionProvider.GetParameterNullOrDefaultValue(m_methodDefinition.Parame ters[i].ParamDef);*/
             }
         }
 
@@ -300,6 +310,12 @@ namespace MMC.State
             m_isExceptionSource = false;
 
             ThreadObjectWatcher.IncrementAll(cur.ThreadPool.CurrentThreadId, pars, cur);
+        }
+
+        public MethodState(MethodDef meth, ExplicitActiveState cur)
+            : this(meth, null, null, null, cur)
+        {
+            InitStructures();
         }
 
         public MethodState(MethodDef meth, DataElementList pars, ExplicitActiveState cur)

@@ -38,7 +38,11 @@ namespace MMC.State {
         // Accessors
         ////////////////////////////////////////////////////////////////////
 
-        public int CurrentThreadId { get; set; }
+        public int CurrentThreadId 
+        { 
+            get; 
+            set; 
+        }
 
         public SparseReferenceList<ThreadState> Threads { get; }
 

@@ -1,5 +1,4 @@
-﻿using dnWalker.Parameters;
-using dnWalker.Parameters.Serialization;
+﻿using dnWalker.Symbolic;
 
 using System;
 
@@ -9,8 +8,8 @@ namespace dnWalker.Explorations
     {
         private ConcolicExplorationIteration(int iterationNumber,
                                              ConcolicExploration exploration,
-                                             IParameterSetInfo baseParameterSet,
-                                             IParameterSetInfo executionParameterSet,
+                                             IReadOnlyModel inputModel,
+                                             IReadOnlyModel outputModel,
                                              DateTime start,
                                              DateTime end,
                                              string pathConstraint, 
@@ -20,8 +19,8 @@ namespace dnWalker.Explorations
         {
             IterationNumber = iterationNumber;
             Exploration = exploration ?? throw new ArgumentNullException(nameof(exploration));
-            BaseParameterSet = baseParameterSet ?? throw new ArgumentNullException(nameof(baseParameterSet));
-            ExecutionParameterSet = executionParameterSet ?? throw new ArgumentNullException(nameof(executionParameterSet));
+            InputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
+            OutputModel = outputModel ?? throw new ArgumentNullException(nameof(outputModel));
             Start = start;
             End = end;
             PathConstraint = pathConstraint ?? throw new ArgumentNullException(nameof(pathConstraint));
@@ -32,8 +31,8 @@ namespace dnWalker.Explorations
 
         public int IterationNumber { get; }
         public ConcolicExploration Exploration { get; }
-        public IParameterSetInfo BaseParameterSet { get; }
-        public IParameterSetInfo ExecutionParameterSet { get; }
+        public IReadOnlyModel InputModel { get; }
+        public IReadOnlyModel OutputModel { get; }
         public DateTime Start { get; }
         public DateTime End { get; }
 

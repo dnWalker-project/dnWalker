@@ -114,6 +114,21 @@ namespace MMC.InstructionExec
             return ehLookupRetval;
         }
 
+        public static void UnthrowException(ExplicitActiveState cur)
+        {
+            ObjectReference exceptionReference = cur.CurrentThread.ExceptionReference;
+            if (exceptionReference.Equals(cur.EvalStack.Peek()))
+            {
+                cur.EvalStack.Pop();
+            }
+
+            cur.DynamicArea.DisposeAllocation(exceptionReference);
+
+            cur.CurrentThread.ExceptionReference = ObjectReference.Null;
+            cur.CurrentThread.UnhandledException = null;
+            cur.CurrentMethod.IsExceptionSource = false;
+        }
+
         public virtual bool IsMultiThreadSafe(ExplicitActiveState cur)
         {
             // Note that the current implementation of safe vs. unsafe

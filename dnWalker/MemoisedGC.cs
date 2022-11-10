@@ -22,6 +22,7 @@ using SGC = System.Collections.Generic;
 using MMC.Data;
 using C5;
 using dnWalker.TypeSystem;
+using dnWalker.Configuration;
 
 namespace MMC.State
 {
@@ -327,7 +328,7 @@ namespace MMC.State
     {
         public static void DecrementAll(int threadId, IDataElementContainer ids, ExplicitActiveState cur)
         {
-            if (cur.Configuration.MemoisedGC)
+            if (cur.Configuration.MemoisedGC())
             {
                 for (var i = 0; i < ids.Length; i++)
                     Decrement(threadId, ids[i], cur);
@@ -336,7 +337,7 @@ namespace MMC.State
 
         public static void IncrementAll(int threadId, IDataElementContainer ids, ExplicitActiveState cur)
         {
-            if (cur.Configuration.MemoisedGC)
+            if (cur.Configuration.MemoisedGC())
             {
                 for (var i = 0; i < ids.Length; i++)
                     Increment(threadId, ids[i], cur);
@@ -345,7 +346,7 @@ namespace MMC.State
 
         public static void UpdateDifference(int threadId, IDataElementContainer oldList, IDataElementContainer newList, ExplicitActiveState cur)
         {
-            if (cur.Configuration.MemoisedGC)
+            if (cur.Configuration.MemoisedGC())
             {
                 /* precondition: oldList.Length is equal to newList.Length */
 
@@ -402,7 +403,7 @@ namespace MMC.State
     {
         private readonly SGC.IDictionary<int, ObjectReferenceBag> parents;
 
-        public ParentWatcher(IConfig config, IDefinitionProvider definitionProvider)
+        public ParentWatcher(IConfiguration config, IDefinitionProvider definitionProvider)
         {
             parents = new SGC.Dictionary<int, ObjectReferenceBag>();
 
@@ -447,7 +448,7 @@ namespace MMC.State
         /// </summary>
         public /*static*/ AllocatedObject RootAllocatedObject { get; }/*= new AllocatedObject(
             cur.DefinitionProvider.GetTypeDefinition("System.Object"),
-            Config.Instance)
+            IConfiguration.Instance)
         {
             Depth = 0
         };*/
@@ -484,7 +485,7 @@ namespace MMC.State
 
         public /*static*/ void RemoveParentFromChild(ObjectReference parentRef, IDataElement childRef, ExplicitActiveState cur)
         {
-            var memoisedGC = cur.Configuration.MemoisedGC;
+            var memoisedGC = cur.Configuration.MemoisedGC();
             if (memoisedGC && childRef is ObjectReference && !childRef.Equals(ObjectReference.Null))
             {
                 var reference = (ObjectReference)childRef;
@@ -503,7 +504,7 @@ namespace MMC.State
 
         public /*static*/ void AddParentToChild(ObjectReference parentRef, IDataElement childRef, ExplicitActiveState cur)
         {
-            var memoisedGC = cur.Configuration.MemoisedGC;
+            var memoisedGC = cur.Configuration.MemoisedGC();
             if (memoisedGC && childRef is ObjectReference objRef && !objRef.Equals(ObjectReference.Null))
             {
                 this[(int)objRef.Location].Increment(parentRef);
@@ -520,7 +521,7 @@ namespace MMC.State
 
         public /*static*/ void UpdateParentOfDifferentChild(ObjectReference parentRef, IDataElement oldChildRef, IDataElement newChildRef, ExplicitActiveState cur)
         {
-            if (cur.Configuration.MemoisedGC && oldChildRef != newChildRef)
+            if (cur.Configuration.MemoisedGC() && oldChildRef != newChildRef)
             {
                 RemoveParentFromChild(parentRef, oldChildRef, cur);
                 AddParentToChild(parentRef, newChildRef, cur);
@@ -529,7 +530,7 @@ namespace MMC.State
 
         private /*static*/ void UpdateParentFromAllChilds(ObjectReference parentRef, UpdateSingle updater, ExplicitActiveState cur)
         {
-            if (cur.Configuration.MemoisedGC)
+            if (cur.Configuration.MemoisedGC())
             {
                 var alloc = cur.DynamicArea.Allocations[parentRef];
                 if (alloc == null)
@@ -556,7 +557,7 @@ namespace MMC.State
 
         public /*static*/ void UpdateParentFromAllChilds(ObjectReference parentRef, UpdateSingle updater, DataElementList list, ExplicitActiveState cur)
         {
-            var memoisedGC = cur.Configuration.MemoisedGC;
+            var memoisedGC = cur.Configuration.MemoisedGC();
             if (memoisedGC && list != null)
             {
                 for (var i = 0; i < list.Length; i++)

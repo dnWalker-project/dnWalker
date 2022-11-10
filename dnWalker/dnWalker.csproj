@@ -1,43 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <StartupObject>MMC.MonoModelChecker</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
-    <PackageReference Include="dnlib" Version="3.4.0" />
     <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.13" />
-    <PackageReference Include="QuikGraph" Version="2.3.0" />
-    <PackageReference Include="QuikGraph.Graphviz" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.Configuration\dnWalker.Configuration.csproj" />
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
-    <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
+    <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
-    <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Echo.ControlFlow">
-      <HintPath>..\lib\Echo\Echo.ControlFlow.dll</HintPath>
-    </Reference>
-    <Reference Include="Echo.Core">
-      <HintPath>..\lib\Echo\Echo.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Echo.DataFlow">
-      <HintPath>..\lib\Echo\Echo.DataFlow.dll</HintPath>
-    </Reference>
-    <Reference Include="Echo.Platforms.Dnlib">
-      <HintPath>..\lib\Echo\Echo.Platforms.Dnlib.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Input\" />
   </ItemGroup>
 
 </Project>

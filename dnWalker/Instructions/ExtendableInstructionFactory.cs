@@ -34,7 +34,6 @@ namespace dnWalker.Instructions
 
         private readonly Dictionary<OpCode, List<IInstructionExecutor>> _pipelines = new Dictionary<OpCode, List<IInstructionExecutor>>();
 
-
         public override InstructionExecBase CreateInstructionExec(Instruction instr)
         {
             var tokens = instr.OpCode.Name.Split(new char[] { '.' });
@@ -70,5 +69,6 @@ namespace dnWalker.Instructions
 
             return iExec;
         }
+
     }
 }

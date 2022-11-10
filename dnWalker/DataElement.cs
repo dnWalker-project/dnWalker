@@ -24,6 +24,7 @@ namespace MMC.Data
     using MethodDefinition = dnlib.DotNet.MethodDef;
     using TypeDefinition = dnlib.DotNet.TypeDef;
     using dnWalker;
+    using System.Numerics;
 
     public interface IDataElement : IComparable
     {
@@ -109,6 +110,19 @@ namespace MMC.Data
         uint Location { get; }
     }
 
+    public enum IntKind
+    {
+        Bool,
+        Int1,
+        UInt1,
+        Int2,
+        UInt2,
+        Int4,
+        UInt4,
+        Int8,
+        UInt8,
+    }
+
     /* --------------------------------------------------------------
 	 * The following structs define objects that can be loaded onto
 	 * the stack by load instructions, or be the result of the
@@ -116,10 +130,22 @@ namespace MMC.Data
 	 * -------------------------------------------------------------- */
     public struct Int4 : IHasIntValue, IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
     {
+        public IntKind Kind { get; }
+
         public int HashCode { get; }
 
         public static readonly Int4 Zero = new Int4(0);
-        public string WrapperName { get { return "System.Int32"; } }
+        public string WrapperName => Kind switch
+        {
+            IntKind.Int1 => "System.SByte",
+            IntKind.UInt1 => "System.Byte",
+            IntKind.Int2 => "System.Int16",
+            IntKind.UInt2 => "System.UInt16",
+            IntKind.Int4 => "System.Int32",
+            IntKind.Bool => "System.Boolean",
+            _ => throw new NotSupportedException("Unexpected int kind."),
+        };
+
         public int Value { get; }
         // public DataElementKind Kind => DataElementKind.Int32;
 
@@ -389,13 +415,26 @@ namespace MMC.Data
         }
 
         public Int4(int val)
-        {            
+        {
+            Kind = IntKind.Int4;
+            Value = val;
+            HashCode = 1;
+            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
+        }
+        public Int4(int val, IntKind kind)
+        {
+            Kind = kind;
             Value = val;
             HashCode = 1;
             HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
         }
 
-        public static explicit operator Int4(int b) => new Int4(b);
+        public static explicit operator Int4(bool b) => new Int4(b ? 1 : 0, IntKind.Bool);
+        public static explicit operator Int4(sbyte b) => new Int4(b, IntKind.Int1);
+        public static explicit operator Int4(byte b) => new Int4(b, IntKind.UInt1);
+        public static explicit operator Int4(short b) => new Int4(b, IntKind.Int2);
+        public static explicit operator Int4(ushort b) => new Int4(b, IntKind.UInt2);
+        public static explicit operator Int4(int b) => new Int4(b, IntKind.Int4);
     }
 
     public struct IntPtr4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement
@@ -962,6 +1001,9 @@ namespace MMC.Data
         public int HashCode { get; }
 
         public uint Value { get { return m_value; } }
+
+        public IntKind Kind => IntKind.UInt4;
+
         public string WrapperName { get { return "System.UInt32"; } }
         // public DataElementKind Kind => DataElementKind.UInt32;
 
@@ -1235,6 +1277,8 @@ namespace MMC.Data
         private int _hashCode;
         public int HashCode => _hashCode;
 
+        public IntKind Kind => IntKind.Int8;
+
         public string WrapperName { get { return "System.Int64"; } }
         public long Value { get { return m_value; } }
         // public DataElementKind Kind => DataElementKind.Int64;
@@ -1501,6 +1545,7 @@ namespace MMC.Data
         ulong m_value;
         int _hashCode;
 
+        public IntKind Kind => IntKind.UInt8;
         public string WrapperName { get { return "System.UInt64"; } }
         public ulong Value { get { return m_value; } }
         public int HashCode => _hashCode;
@@ -2544,7 +2589,7 @@ namespace MMC.Data
             }
         }
 
-        public bool ToBool() { return Value != string.Empty; }
+        public bool ToBool() { return Value != null; }
 
         public bool Equals(IDataElement other)
         {
@@ -2553,16 +2598,24 @@ namespace MMC.Data
 
         public int CompareTo(object obj)
         {
-            if (obj is ObjectReference or && or.Location == ObjectReference.Null.Location)
+            if (obj is ObjectReference or)
             {
+                if (or.Location == ObjectReference.Null.Location) return Value == null ? 0 : 1;
                 return 1;
             }
 
-            return Value.CompareTo(((ConstantString)obj).Value);
+            if (obj is ConstantString str)
+            {
+                return StringComparer.Ordinal.Compare(Value, str.Value);
+            }
+
+            return -1;// Value.CompareTo(((ConstantString)obj).Value);
         }
 
         public override string ToString()
         {
+            if (Value == null) return "<NULL>";
+
             return string.Format("\"{0}\"", Value);
         }
 
@@ -2649,7 +2702,7 @@ namespace MMC.Data
 
         public string ToString(IFormatProvider provider)
         {
-            return Value.ToString(provider);
+            return Value?.ToString(provider);
         }
 
         public object ToType(Type conversionType, IFormatProvider provider)
@@ -2715,6 +2768,11 @@ namespace MMC.Data
         public override int GetHashCode()
         {
             return (int)Location;
+        }
+
+        public ObjectReference Clone()
+        {
+            return new ObjectReference((int)Location, WrapperName);
         }
 
         public ObjectReference(uint loc)

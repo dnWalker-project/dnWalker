@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,12 +13,16 @@ namespace dnWalker.TypeSystem
         private readonly ModuleContext _moduleContext = ModuleDef.CreateModuleContext();
 
         private readonly Dictionary<string, ModuleDef> _loadedModules = new Dictionary<string, ModuleDef>();
-        private readonly Dictionary<string, AssemblyDef> _loadedAssemblies = new Dictionary<string, AssemblyDef>();
+        //private readonly Dictionary<string, AssemblyDef> _loadedAssemblies = new Dictionary<string, AssemblyDef>();
+
         private ModuleDef _mainModule;
+
+        private readonly Resolver2 _typeResolver;
 
         private Domain()
         {
-
+            _typeResolver = new Resolver2(_moduleContext.AssemblyResolver, _moduleContext.Resolver);
+            _moduleContext.Resolver = _typeResolver;
         }
 
         public ModuleDef MainModule
@@ -40,15 +43,15 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        public IReadOnlyCollection<AssemblyDef> Assemblies
-        {
-            get
-            {
-                return _loadedAssemblies.Values;
-            }
-        }
+        //public IReadOnlyCollection<AssemblyDef> Assemblies
+        //{
+        //    get
+        //    {
+        //        return _loadedAssemblies.Values;
+        //    }
+        //}
 
-        private void Setup(ModuleDef module)
+        private void Load(ModuleDef module)
         {
             string moduleName = module.FullName;
             if (_loadedModules.ContainsKey(moduleName))
@@ -59,65 +62,51 @@ namespace dnWalker.TypeSystem
             _loadedModules.Add(moduleName, module);
 
             // load the referenced assemblies
-            //foreach (AssemblyDef refAssembly in module.GetAssemblyRefs().Select(ar => _moduleContext.AssemblyResolver.Resolve(ar, module)))
-            foreach (AssemblyRef ar in module.GetAssemblyRefs())
+            AssemblyRef[] refs = module.GetAssemblyRefs().ToArray();
+            foreach (AssemblyRef ar in refs)
             {
                 AssemblyDef refAssembly = _moduleContext.AssemblyResolver.Resolve(ar, module);
-
-                if (refAssembly == null)
+                if (refAssembly != null)
                 {
-                    System.Diagnostics.Debug.WriteLine($"WARNING: could not resolve the assembly: {ar.FullName}");
-                    continue;
+                    Load(refAssembly);
                 }
-
-                Setup(refAssembly);
             }
         }
 
-        private void Setup(AssemblyDef assembly)
+        private void Load(AssemblyDef assembly)
         {
-            string assemblyName = assembly.FullName;
-            if (_loadedAssemblies.ContainsKey(assemblyName))
-            {
-                return;
-            }
-
-            _loadedAssemblies.Add(assemblyName, assembly);
-
             foreach (ModuleDef module in assembly.Modules)
             {
-                Setup(module);
+                Load(module);
             }
-        }
-
-        private void SetupMain(AssemblyDef mainAssembly)
-        {
-            _mainModule = mainAssembly.ManifestModule;
-            Setup(mainAssembly);
         }
 
         public static IDomain LoadFromFile(string file)
         {
-            Domain definitionContext = new Domain();
-            AssemblyDef mainAssembly = AssemblyDef.Load(file, definitionContext._moduleContext);
-            definitionContext.SetupMain(mainAssembly);
+            Domain domain = new Domain();
+            AssemblyDef mainAssembly = AssemblyDef.Load(file, domain._moduleContext);
+            domain._mainModule = mainAssembly.ManifestModule;
+            domain.Load(mainAssembly);
 
 
-            return definitionContext;
+            return domain;
         }
 
-        public static IDomain LoadFromAppDomain(Assembly loadedAssembly)
+        public static IDomain LoadFromAppDomain(System.Reflection.Assembly loadedAssembly)
         {
             return LoadFromAppDomain(loadedAssembly.ManifestModule);
         }
 
-        public static IDomain LoadFromAppDomain(Module loadedModule)
+        public static IDomain LoadFromAppDomain(System.Reflection.Module loadedModule)
         {
-            Domain definitionContext = new Domain();
+            Domain domain = new Domain();
 
-            AssemblyDef mainAssembly = ModuleDefMD.Load(loadedModule, definitionContext._moduleContext).Assembly;
-            definitionContext.SetupMain(mainAssembly);
-            return definitionContext;
+            ModuleDef mainModule = ModuleDefMD.Load(loadedModule, domain._moduleContext);
+            domain._mainModule = mainModule;
+            domain.Load(mainModule.Assembly);
+            return domain;
         }
+
+        public IResolver Resolver => _moduleContext.Resolver;
     }
 }

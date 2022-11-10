@@ -23,6 +23,9 @@ namespace MMC
     using MMC.State;
     using MMC.Util;
     using dnlib.DotNet.Emit;
+    using dnWalker.Traversal;
+    using dnWalker.Configuration;
+    using dnWalker;
 
     /// <summary>
     /// This is the error tracer
@@ -33,12 +36,12 @@ namespace MMC
         private string prevMethod = "";
         private readonly TextWriter tw;
 
-        public TracingExplorer(ExplicitActiveState cur, IStatistics statistics, Stack<int> tracingQueue, TextWriter tw, Logger logger, IConfig config)
-            : base(cur, statistics, logger, config)
+        public TracingExplorer(ExplicitActiveState cur, IStatistics statistics, Stack<int> tracingQueue, TextWriter tw, Logger logger, IConfiguration config, PathStore pathStore)
+            : base(cur, statistics, logger, config, pathStore)
         {
             m_tracingQueue = tracingQueue;
             // disable stats
-            config.ShowStatistics = false;
+            config.SetShowStatistics(false);
             this.tw = tw;
         }
 

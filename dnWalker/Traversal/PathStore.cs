@@ -1,4 +1,7 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+
+using dnWalker.Graphs.ControlFlow;
 
 using MMC.Data;
 using MMC.State;
@@ -15,18 +18,36 @@ namespace dnWalker.Traversal
         private Path _currentPath;
         private IList<Path> _paths = new List<Path>();
 
-        public PathStore()
+        private readonly ICache<MethodDef, MethodTracer> _methodTracers;
+        private readonly MethodDef _entryPoint;
+        private readonly ICache<MethodDef, ControlFlowGraph> _cfgProvider;
+
+        public PathStore(MethodDef entryPoint, ICache<MethodDef, ControlFlowGraph> cfgProvider)
         {
-            _currentPath = new Path();
+            _entryPoint = entryPoint ?? throw new ArgumentNullException(nameof(entryPoint));
+            _cfgProvider = cfgProvider;
+            _methodTracers = new DelegateCache<MethodDef, MethodTracer>(method => new MethodTracer(method, _cfgProvider.Get(method)));
+            _currentPath = CreatePath();
             _paths.Add(_currentPath);
         }
 
         public Path CurrentPath => _currentPath;
 
+        protected virtual Path CreatePath()
+        {
+            return new Path(_methodTracers);
+        }
+
         public void ResetPath()
         {
-            _currentPath = new Path();
+            _currentPath = CreatePath();
             _paths.Add(_currentPath);
+        }
+
+        public Path ResetPath(bool checkTermination)
+        {
+            if (!checkTermination || _currentPath.IsTerminated) ResetPath();
+            return _currentPath;
         }
 
         public void BacktrackStart(Stack<SchedulingData> stack, SchedulingData fromSD, ExplicitActiveState cur)
@@ -36,11 +57,6 @@ namespace dnWalker.Traversal
         public void StateConstructed(CollapsedState collapsed, SchedulingData sd, ExplicitActiveState cur)
         {
             _currentPath.Extend(sd.ID);
-        }
-
-        public virtual void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
-        {
-            _currentPath.AddPathConstraint(expression, next, cur);
         }
 
         public void BacktrackStop(Stack<SchedulingData> stack, SchedulingData sd, ExplicitActiveState cur)
@@ -56,6 +72,20 @@ namespace dnWalker.Traversal
         }
 
         public IReadOnlyList<Path> Paths => new ReadOnlyCollection<Path>(_paths);
+
+        public ICache<MethodDef, ControlFlowGraph> ControlFlowGraphProvider => _cfgProvider;
+
+        public ICache<MethodDef, MethodTracer> MethodTracerProvider => _methodTracers;
+
+        public MethodDef EntryPoint
+        {
+            get
+            {
+                return _entryPoint;
+            }
+        }
+
+        public Coverage GetCoverage() => _methodTracers.Get(_entryPoint).GetCoverage();
 
         public void NewThreadSpawned(ThreadState threadState)
         {

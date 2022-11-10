@@ -1,5 +1,9 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker;
+
+// TODO: refactor these utils in some mini dnlib utils library?
+
 using dnWalker.TypeSystem;
 
 using MMC.State;
@@ -70,9 +74,14 @@ namespace MMC.Data
 
         public static IDataElement GetNullValue(TypeSig typeSig)
         {
+            if (typeSig.IsString())
+            {
+                return new ConstantString(null);
+            }
+
             if (!typeSig.IsPrimitive)
             {
-                return ObjectReference.Null;
+                return new ObjectReference(0);
             }
 
             if (typeSig.Module.CorLibTypes.IntPtr == typeSig
@@ -164,7 +173,8 @@ namespace MMC.Data
                 }
                 else
                 {
-                    throw new MemberNotFoundException(type.FullName, key.name);
+                    // throw new MemberNotFoundException(type.FullName, key.name);
+                    return null;
                 }
             }
 
@@ -189,6 +199,12 @@ namespace MMC.Data
             {
                 throw;
             }
+        }
+
+        public static IDataElement ResolvePointer(this IDataElement dataElement)
+        {
+            if (dataElement is IManagedPointer mp) return mp.Value;
+            return dataElement;
         }
     }
 }

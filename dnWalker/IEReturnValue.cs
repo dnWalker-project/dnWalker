@@ -36,8 +36,15 @@ namespace MMC.InstructionExec
 
     public class JumpReturnValue : IIEReturnValue
     {
+        private readonly Instruction m_target;
 
-        Instruction m_target;
+        public Instruction Target
+        {
+            get
+            {
+                return m_target;
+            }
+        }
 
         public bool ContinueExploration(MethodState current)
         {
@@ -141,14 +148,14 @@ namespace MMC.InstructionExec
         /// </summary>
         public Instruction GetNextInstruction(MethodState current)
         {
-            var cur = current.Cur;
+            ExplicitActiveState cur = current.Cur;
 
-            var exceptionRef = cur.CurrentThread.ExceptionReference;
-            var exceptionObj = cur.DynamicArea.Allocations[exceptionRef] as AllocatedObject;
+            ObjectReference exceptionRef = cur.CurrentThread.ExceptionReference;
+            AllocatedObject exceptionObj = cur.DynamicArea.Allocations[exceptionRef] as AllocatedObject;
 
             Instruction retval = null;
 
-            foreach (var method in cur.CallStack)
+            foreach (MethodState method in cur.CallStack)
             {
                 method.EvalStack.PopAll();
                 var eh = method.NextFilterOrCatchHandler(method.ProgramCounter, exceptionObj.Type);

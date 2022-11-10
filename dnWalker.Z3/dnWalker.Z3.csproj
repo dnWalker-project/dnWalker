@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,8 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
-      <ProjectReference Include="..\Z3.LinqBinding\src\Z3.LinqBinding\Z3.LinqBinding.csproj" />
+      <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
     </ItemGroup>
 
 </Project>

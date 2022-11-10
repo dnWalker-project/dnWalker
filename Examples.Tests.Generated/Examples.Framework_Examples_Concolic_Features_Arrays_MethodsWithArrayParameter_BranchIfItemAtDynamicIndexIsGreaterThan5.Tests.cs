@@ -22,6 +22,7 @@ namespace Examples.Concolic.Features.Arrays.Tests
 		[Fact]
 		public void Test_Iteration_1()
 		{
+
 			// construct all input parameters which are used in the test
 			// TODO: construct return value comparer instance
 			System.Double[]? array = null;

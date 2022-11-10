@@ -1,6 +1,9 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
+
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -8,56 +11,48 @@ using MMC.State;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.Symbolic
 {
     public class BinaryOperation : IInstructionExecutor
     {
-        private static readonly Dictionary<OpCode, ExpressionType> _operatorLookup = new Dictionary<OpCode, ExpressionType>()
+        private static readonly Dictionary<OpCode, Operator> _operatorLookup = new Dictionary<OpCode, Operator>()
         {
-            [OpCodes.Ceq] = ExpressionType.Equal,
+            [OpCodes.Ceq] = Operator.Equal,
 
-            [OpCodes.Cgt] = ExpressionType.GreaterThan,
-            [OpCodes.Cgt_Un] = ExpressionType.GreaterThan,
+            [OpCodes.Cgt] = Operator.GreaterThan,
+            [OpCodes.Cgt_Un] = Operator.GreaterThan,
 
-            [OpCodes.Clt] = ExpressionType.LessThan,
-            [OpCodes.Clt_Un] = ExpressionType.LessThan,
+            [OpCodes.Clt] = Operator.LessThan,
+            [OpCodes.Clt_Un] = Operator.LessThan,
 
-            [OpCodes.Add] = ExpressionType.Add,
-            [OpCodes.Add_Ovf] = ExpressionType.Add, //Checked?
-            [OpCodes.Add_Ovf_Un] = ExpressionType.Add, //Checked?
+            [OpCodes.Add] = Operator.Add,
+            [OpCodes.Add_Ovf] = Operator.Add, //Checked?
+            [OpCodes.Add_Ovf_Un] = Operator.Add, //Checked?
 
-            [OpCodes.Div] = ExpressionType.Divide,
-            [OpCodes.Div_Un] = ExpressionType.Divide,
+            [OpCodes.Div] = Operator.Divide,
+            [OpCodes.Div_Un] = Operator.Divide,
 
-            [OpCodes.Mul] = ExpressionType.Multiply,
-            [OpCodes.Mul_Ovf] = ExpressionType.Multiply, //Checked?
-            [OpCodes.Mul_Ovf_Un] = ExpressionType.Multiply, //Checked?
+            [OpCodes.Mul] = Operator.Multiply,
+            [OpCodes.Mul_Ovf] = Operator.Multiply, //Checked?
+            [OpCodes.Mul_Ovf_Un] = Operator.Multiply, //Checked?
 
-            [OpCodes.Rem] = ExpressionType.Modulo,
-            [OpCodes.Rem_Un] = ExpressionType.Modulo,
+            [OpCodes.Rem] = Operator.Modulo,
+            [OpCodes.Rem_Un] = Operator.Modulo,
 
-            [OpCodes.Sub] = ExpressionType.Subtract,
-            [OpCodes.Sub_Ovf] = ExpressionType.Subtract, //Checked?
-            [OpCodes.Sub_Ovf_Un] = ExpressionType.Subtract, //Checked?
+            [OpCodes.Sub] = Operator.Subtract,
+            [OpCodes.Sub_Ovf] = Operator.Subtract, //Checked?
+            [OpCodes.Sub_Ovf_Un] = Operator.Subtract, //Checked?
 
-            // unary
-            // [OpCodes.Neg] = ExpressionType.Negate,
 
-            [OpCodes.And] = ExpressionType.And,
-            //[OpCodes.And] = ExpressionType.AndAlso,
-            // unary
-            // [OpCodes.Not] = ExpressionType.Not,
-            [OpCodes.Or] = ExpressionType.Or,
-            //[OpCodes.Or] = ExpressionType.OrElse,
-            [OpCodes.Xor] = ExpressionType.ExclusiveOr,
-            [OpCodes.Shl] = ExpressionType.LeftShift,
-            [OpCodes.Shr] = ExpressionType.RightShift,
-            [OpCodes.Shr_Un] = ExpressionType.RightShift,
+            [OpCodes.And] = Operator.And,
+
+            [OpCodes.Or] = Operator.Or,
+            //TODO: add these operators
+            [OpCodes.Xor] = Operator.Xor,
+            [OpCodes.Shl] = Operator.ShiftLeft,
+            [OpCodes.Shr] = Operator.ShiftRight,
+            [OpCodes.Shr_Un] = Operator.ShiftRight,
         };
 
 
@@ -76,10 +71,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IIEReturnValue retValue = next(baseExecutor, cur);
 
-            bool lhsSymbolic = lhs.TryGetExpression(cur, out Expression lhsExpression);
-            bool rhsSymbolic = rhs.TryGetExpression(cur, out Expression rhsExpression);
-
-            if (!lhsSymbolic && !rhsSymbolic)
+            if (!ExpressionUtils.GetExpressions(cur, lhs, rhs, out Expression lhsExpression, out Expression rhsExpression))
             {
                 return retValue;
             }
@@ -87,30 +79,61 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IDataElement result = cur.EvalStack.Peek();
 
-            lhsExpression ??= lhs.AsExpression();
-            rhsExpression ??= rhs.AsExpression();
+            Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 
-            ExpressionType op = _operatorLookup[baseExecutor.Instruction.OpCode];
-
+            PreprocessNullExpressions(cur, ref lhsExpression, ref rhsExpression);
             PreprocessBooleanExpressions(ref lhsExpression, ref rhsExpression);
+            if (lhs is IReferenceType)
+                PreprocessReferenceComparison(ref op);
 
             Expression resultExpression = Expression.MakeBinary(op, lhsExpression, rhsExpression);
-            result.SetExpression(resultExpression, cur);
+            result.SetExpression(cur, resultExpression);
             
             return retValue;
         }
 
+        private static void PreprocessReferenceComparison(ref Operator op)
+        {
+            // if the result should be comparison between two references, we need to change 
+            // <,> to !=
+            switch (op)
+            {
+                case Operator.LessThan:
+                case Operator.GreaterThan:
+                    op = Operator.NotEqual;
+                    break;
+            }
+        }
+
         private static void PreprocessBooleanExpressions(ref Expression lhs, ref Expression rhs)
         {
-            if (lhs.Type == typeof(bool))
+            // ensure both are the same 
+
+            if (lhs.Type.IsBoolean())
             {
                 // ensure rhs is also boolean
                 rhs = rhs.AsBoolean();
             }
-            else if (rhs.Type == typeof(bool))
+            else if (rhs.Type.IsBoolean())
             {
                 // ensure rhs is also boolean
                 lhs = lhs.AsBoolean();
+            }
+        }
+
+        private static void PreprocessNullExpressions(ExplicitActiveState cur, ref Expression lhs, ref Expression rhs)
+        {
+            Expression nullExpr = cur.GetExpressionFactory().NullExpression;
+            Expression strNullExpr = cur.GetExpressionFactory().StringNullExpression;
+            if (lhs.Type.IsString() && ReferenceEquals(rhs, nullExpr))
+            {
+                // lhs is a string and rhs is a null => switch it to StringNull
+                rhs = strNullExpr;
+            }
+            else if (rhs.Type.IsString() && ReferenceEquals(lhs, nullExpr))
+            {
+                // rhs is a string and lhs is a null => switch it to StringNull
+                lhs = strNullExpr;
             }
         }
     }

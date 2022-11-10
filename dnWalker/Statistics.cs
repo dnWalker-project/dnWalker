@@ -17,24 +17,32 @@
 
 namespace MMC
 {
-    public interface IStatistics
+    public interface IReadOnlyStatistics
     {
         int StateCount { get; }
         int RevisitCount { get; }
-
         int Deadlocks { get; }
+        int AssertionViolations { get; }
+        int AssertionPasses { get; }
+    }
+
+    public interface IStatistics : IReadOnlyStatistics
+    {
 
         void Start();
         void NewState();
         void RevisitState();
         void Backtrack();
         void AssertionViolation();
+        void AssertionPass();
         void Deadlock();
         void MaxHashtableSize(int count);
         void MaxHeapArray(int length);
         void BacktrackStackDepth(int count);
         void MeasureMemory(long memUsed);
     }
+
+
 
     public class SimpleStatistics : IStatistics
     {
@@ -44,7 +52,8 @@ namespace MMC
         int m_backtrackCount;
         int m_maxBacktrackStack;
         long m_maxMemUsage = 0;        
-        int m_assertions;
+        int m_assertionViolations;
+        int m_assertionPasses;
         int m_maxAllocArray;
 
         public int Deadlocks { get; private set; }
@@ -56,7 +65,11 @@ namespace MMC
 
         public void AssertionViolation()
         {
-            m_assertions++;
+            m_assertionViolations++;
+        }
+        public void AssertionPass()
+        {
+            m_assertionPasses++;
         }
 
         public System.TimeSpan TotalElapsed
@@ -67,6 +80,21 @@ namespace MMC
         public int StateCount { get; private set; }
 
         public int RevisitCount { get; private set; }
+
+        public int AssertionViolations
+        {
+            get
+            {
+                return m_assertionViolations;
+            }
+        }
+        public int AssertionPasses
+        {
+            get
+            {
+                return m_assertionPasses;
+            }
+        }
 
         public void Start()
         {
@@ -130,7 +158,7 @@ namespace MMC
             sb.AppendFormat("Max. mem. used        : {0} Kb\n", m_maxMemUsage / 1024);
             sb.AppendFormat("Current. mem. use     : {0} Kb\n", usedAfterGC);
             sb.AppendFormat("Deadlocks             : {0}\n", Deadlocks);
-            sb.AppendFormat("Assertion violations  : {0}\n", m_assertions);
+            sb.AppendFormat("Assertion violations  : {0}\n", m_assertionViolations);
             sb.Append("--------------------------------------\n");
 
             return sb.ToString();

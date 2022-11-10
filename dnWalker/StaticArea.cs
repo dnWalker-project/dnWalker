@@ -48,7 +48,7 @@ namespace MMC.State {
 		void DeleteClassAtLocation(int location);
 	}
 
-	class StaticArea : IStaticArea {
+	public class StaticArea : IStaticArea {
 
 		/// <summary>Mapping of type definitions to the location of the allocated</summary>
 		/// class.

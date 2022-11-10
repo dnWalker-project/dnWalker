@@ -26,11 +26,12 @@ namespace MMC
     using System.Linq;
     using dnWalker.Instructions.Extensions;
     using dnWalker.TypeSystem;
+    using dnWalker.Configuration;
 
     public class StateSpaceSetup
     {
         private readonly IDefinitionProvider _definitionProvider;
-        private readonly IConfig _config;
+        private readonly IConfiguration _config;
         private readonly Logger _logger;
 
         // Okay, this is just great. These are the fields of a Thread
@@ -58,11 +59,8 @@ namespace MMC
         //
         // Nice.
 
-        public StateSpaceSetup(IDefinitionProvider definitionProvider, IConfig config, Logger logger)
+        public StateSpaceSetup(IDefinitionProvider definitionProvider, IConfiguration config, Logger logger)
         {
-            // TODO: dirty trick, ensure the System.Delegate within AllocatedDelegate is set
-            AllocatedDelegate.DelegateTypeDef = definitionProvider.BaseTypes.Delegate.ToTypeDefOrRef().ResolveTypeDefThrow();
-
             _definitionProvider = definitionProvider;
             _config = config;
             _logger = logger;
@@ -87,7 +85,7 @@ namespace MMC
             //    new dnWalker.Symbolic.Instructions.InstructionFactory()); // TODO enable dynamic switch
 
 
-            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddStandardExtensions();
+            var f = new dnWalker.Instructions.ExtendableInstructionFactory().AddExtensionsFrom(config);
 
             var instructionExecProvider = InstructionExecProvider.Get(config, f);
 
@@ -96,7 +94,7 @@ namespace MMC
             IDataElement[] arguments = createArgs(cur) ?? Array.Empty<IDataElement>();
 
             //StorageFactory.UseRefCounting(_config.UseRefCounting);
-            if (config.UseRefCounting)
+            if (config.UseRefCounting())
             {
                 _logger.Notice("using reference counting");
             }
@@ -109,10 +107,10 @@ namespace MMC
                     cur.DefinitionProvider.GetTypeDefinition("System.String"),
                     arguments.Length);
 
-                if (config.RunTimeParameters.Length > 0)
+                if (config.RunTimeParameters().Length > 0)
                 {
                     var runArgs = (AllocatedArray)cur.DynamicArea.Allocations[runArgsRef];
-                    for (var i = 0; i < config.RunTimeParameters.Length; ++i)
+                    for (var i = 0; i < config.RunTimeParameters().Length; ++i)
                     {
                         runArgs.Fields[i] = arguments[i];
                     }
@@ -166,8 +164,8 @@ namespace MMC
             //   on Windows, using Mono 1.1.15, and when running without debug mode, the field
             //   names are different for some reason.
 
-            TypeDef objectTypeDef = cur.DefinitionProvider.BaseTypes.Object.TypeDef;
-            TypeDef threadTypeDef = cur.DefinitionProvider.BaseTypes.Thread.TypeDef;
+            TypeDef objectTypeDef = cur.DefinitionProvider.BaseTypes.Object.ToTypeDefOrRef().ResolveTypeDefThrow();
+            TypeDef threadTypeDef = cur.DefinitionProvider.BaseTypes.Thread.ToTypeDefOrRef().ResolveTypeDefThrow();
 
             // 1
             var mainMethodPtr = new MethodPointer(mainDefinition);
@@ -199,7 +197,7 @@ namespace MMC
                 threadObject.Fields[(int)synch_lockField.FieldOffset] = newObjectRef;
                 // TODO: HV for maintaining the parents references in the incremental heap visitor
                 //cur.DynamicArea.Allocations[newObjectRef].Parents.Add(threadObjectRef);
-                cur.ParentWatcher.AddParentToChild(threadObjectRef, newObjectRef, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(threadObjectRef, newObjectRef, cur.Configuration.MemoisedGC());
             }
             else
             {
@@ -214,7 +212,7 @@ namespace MMC
                 threadObject.Fields[(int)threadstartField.FieldOffset] = mainMethodDelegate;
                 // TODO: HV 
                 //cur.DynamicArea.Allocations[mainMethodDelegate].Parents.Add(threadObjectRef);
-                cur.ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC);
+                cur.ParentWatcher.AddParentToChild(threadObjectRef, mainMethodDelegate, cur.Configuration.MemoisedGC());
             }
             else
                 logger.Warning("No thread field found for storing Main delegate!");

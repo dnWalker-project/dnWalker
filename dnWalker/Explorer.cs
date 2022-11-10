@@ -29,6 +29,8 @@ namespace MMC
     using dnWalker.ChoiceGenerators;
     using dnWalker;
     using dnWalker.Traversal;
+    using dnWalker.Graphs.ControlFlow;
+    using dnWalker.Configuration;
 
     /// <summary>
     /// Handler for events that indicate the exploration of a state.
@@ -117,24 +119,24 @@ namespace MMC
         private IChoiceStrategy _strategy;
         private readonly PathStore _pathStore;
 
-        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfig config, PathStore pathStore = null)
+        public Explorer(ExplicitActiveState cur, IStatistics statistics, Logger Logger, IConfiguration config, PathStore pathStore)
         {
             Statistics = statistics;
             this.Logger = Logger;
             this.cur = cur;
 
-            Config = config;
+            IConfiguration = config;
             _instructionExecProvider = cur.InstructionExecProvider;            
             
             cur.DoSharingAnalysisRequest += () => DoSharingAnalysis = true;
 
-            var size = Math.Max(20, config.StateStorageSize);
+            var size = Math.Max(20, config.StateStorageSize());
             size = Math.Min(5, size);
 
             _explorationLogger = new ExplorationLogger(Statistics, this);
             var el = _explorationLogger;
 
-            _pathStore = pathStore ?? new PathStore();
+            _pathStore = pathStore;
 
             /*
 			 * Logging
@@ -157,7 +159,7 @@ namespace MMC
                 Backtracked += new BacktrackEventHandler(el.GraphBacktrack);
             }
 
-            if (config.UseStatefulDynamicPOR)
+            if (config.UseStatefulDynamicPOR())
             {
                 m_dpor = new StatefulDynamicPOR(config);
                 Backtracked += new BacktrackEventHandler(m_dpor.Backtracked);
@@ -166,7 +168,7 @@ namespace MMC
                 ThreadPicked += new PickThreadEventHandle(m_dpor.ThreadPicked);
             }
 
-            if (config.UseObjectEscapePOR)
+            if (config.UseObjectEscapePOR())
             {
                 m_spor = new ObjectEscapePOR();
                 BacktrackStart += new BacktrackEventHandler(m_spor.CheckStoreThreadSharingData);
@@ -181,25 +183,25 @@ namespace MMC
             cur.ThreadPool.OnNewThreadSpawned += _pathStore.NewThreadSpawned;
             cur.ThreadPool.OnNewThreadSpawned += threadState => threadState.InstructionExecuted += InstructionExecuted;
 
-            // TODO CurrentThread was created in advance, explicit event registration/firing
-            _pathStore.NewThreadSpawned(cur.CurrentThread);            
+            //// TODO CurrentThread was created in advance, explicit event registration/firing
+            //_pathStore.NewThreadSpawned(cur.CurrentThread);
 
-            if (!double.IsInfinity(config.MaxExploreInMinutes))
+            if (!double.IsInfinity(config.MaxExploreInMinutes()))
             {
                 m_explorationTimer = new Timer();
                 m_explorationTimer.Elapsed += OnTimedEvent;
-                m_explorationTimer.Interval = config.MaxExploreInMinutes * 60 * 1000;
+                m_explorationTimer.Interval = config.MaxExploreInMinutes() * 60 * 1000;
                 m_explorationTimer.Enabled = true;
             }
 
-            if (!double.IsInfinity(config.OptimizeStorageAtMegabyte))
+            if (!double.IsInfinity(config.OptimizeStorageAtMegabyte()))
             {
                 m_atomicStates = new LinkedList<CollapsedState>();
                 StateConstructed += new StateEventHandler(CheckAtomicOnNewState);
                 Backtracked += new BacktrackEventHandler(CheckAtomicOnBacktrack);
             }
 
-            if (config.OneTraceAndStop)
+            if (config.OneTraceAndStop())
             {
                 Backtracked += new BacktrackEventHandler(OnBacktrackAndStop);
             }
@@ -235,11 +237,9 @@ namespace MMC
             _strategy.RegisterChoiceGenerator(schedulingChoiceGenerator);
 
             cur.ChoiceStrategy = _strategy;
-
-            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
         }
 
-        public IConfig Config { get; }
+        public IConfiguration IConfiguration { get; }
 
         public Logger Logger { get; }
 
@@ -275,6 +275,8 @@ namespace MMC
 
         public bool Run()
         {
+            cur.CurrentThread.State = (int)System.Threading.ThreadState.Running;
+
             var logAssert = false;
             var logDeadlock = false;
             var noErrors = false;
@@ -310,7 +312,7 @@ namespace MMC
                     }
                     logAssert = true;
 
-                    if (Config.StopOnError)
+                    if (IConfiguration.StopOnError())
                     {
                         break;
                     }
@@ -328,7 +330,7 @@ namespace MMC
 
                     Deadlocked(null);
 
-                    if (Config.StopOnError)
+                    if (IConfiguration.StopOnError())
                     {
                         break;
                     }
@@ -351,7 +353,7 @@ namespace MMC
 
         private void InitializeStaticGlobals(ExplicitActiveState cur)
         {
-            dnWalker.NativePeers.SystemConsole.Init(cur);
+            //dnWalker.NativePeers.SystemConsole.Init(cur);
         }
 
         private void Advance()
@@ -370,7 +372,7 @@ namespace MMC
                 Statistics.MeasureMemory(memUsed);
 
                 /// If ex post facto transition merging is enabled...
-                if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte) && (memUsed / 1024 / 1024) > Config.OptimizeStorageAtMegabyte)
+                if (!double.IsInfinity(IConfiguration.OptimizeStorageAtMegabyte()) && (memUsed / 1024 / 1024) > IConfiguration.OptimizeStorageAtMegabyte())
                 {
                     var count = m_atomicStates.Count;
 
@@ -387,7 +389,7 @@ namespace MMC
                 }
 
                 /// If memory limiting is enabled...
-                if (!double.IsInfinity(Config.MemoryLimit) && (memUsed / 1024 / 1024) > Config.MemoryLimit)
+                if (!double.IsInfinity(IConfiguration.MemoryLimit()) && (memUsed / 1024 / 1024) > IConfiguration.MemoryLimit())
                 {
                     Logger.Notice("Ran out of memory");
                     m_continue = false;
@@ -416,7 +418,7 @@ namespace MMC
         /// <returns></returns>
         public bool ExecuteStep(ThreadState thread, out bool threadTerm)
         {
-            return thread.ExecuteStep(_instructionExecProvider, Logger, Config, m_dpor, out threadTerm);
+            return thread.ExecuteStep(_instructionExecProvider, Logger, IConfiguration, m_dpor, out threadTerm);
         }
 
         private bool SetExecutingThread(out ThreadState thread)
@@ -430,7 +432,7 @@ namespace MMC
             bool noErrors;
             bool threadTerm;
 
-            if (Config.OneTraceAndStop)
+            if (IConfiguration.OneTraceAndStop())
             {
                 PrintTransition(thread);
             }
@@ -477,7 +479,7 @@ namespace MMC
 
         public void CheckAtomicOnNewState(CollapsedState collapsedCurrent, SchedulingData sd, ExplicitActiveState state)
         {
-            if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte) && state.ThreadPool.RunnableThreadCount == 1)
+            if (!double.IsInfinity(IConfiguration.OptimizeStorageAtMegabyte()) && state.ThreadPool.RunnableThreadCount == 1)
             {
                 m_atomicStates.AddLast(collapsedCurrent);
             }
@@ -485,7 +487,7 @@ namespace MMC
 
         public void CheckAtomicOnBacktrack(Stack<SchedulingData> stack, SchedulingData parent, ExplicitActiveState cur)
         {
-            if (!double.IsInfinity(Config.OptimizeStorageAtMegabyte))
+            if (!double.IsInfinity(IConfiguration.OptimizeStorageAtMegabyte()))
             {
                 // check if singleton transition
                 if (parent.Working.Count == 0 && parent.Done.Count == 1)

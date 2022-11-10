@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -13,11 +13,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TemplateBase.tt</DependentUpon>
     </None>
+    <None Include="TestProjects\TestProjectTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestProjectTemplate.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="dnlib" Version="3.4.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="QuikGraph" Version="2.3.0" />
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
@@ -25,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
-    <ProjectReference Include="..\dnWalker.Parameters\dnWalker.Parameters.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
   </ItemGroup>
 
@@ -34,20 +37,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Templates\TemplateBase.cs">
+    <Compile Update="TestProjects\TestProjectTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>TemplateBase.tt</DependentUpon>
-    </Compile>
-    <Compile Update="XUnitFramework\XUnitTestClassTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XUnitTestClassTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="XUnitFramework\XUnitTestProjectTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>XUnitTestProjectTemplate.tt</DependentUpon>
+      <DependentUpon>TestProjectTemplate.tt</DependentUpon>
     </Compile>
     <Compile Update="XUnit\XUnitTestClassTemplate.cs">
       <DesignTime>True</DesignTime>
@@ -89,13 +82,9 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TemplateBase.cs</LastGenOutput>
     </None>
-    <None Update="XUnitFramework\XUnitTestClassTemplate.tt">
+    <None Update="TestProjects\TestProjectTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>XUnitTestClassTemplate.cs</LastGenOutput>
-    </None>
-    <None Update="XUnitFramework\XUnitTestProjectTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>XUnitTestProjectTemplate.cs</LastGenOutput>
+      <LastGenOutput>TestProjectTemplate.cs</LastGenOutput>
     </None>
     <None Update="XUnit\XUnitTestClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

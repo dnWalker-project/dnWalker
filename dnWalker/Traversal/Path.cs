@@ -1,14 +1,16 @@
-﻿using dnlib.DotNet.Emit;
+﻿using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 using dnWalker.Concolic;
 using dnWalker.Graphs;
+using dnWalker.Instructions.Extensions.NativePeers.MethodCalls;
 using dnWalker.NativePeers;
-using dnWalker.Parameters;
+using dnWalker.Symbolic;
 
-using Echo.ControlFlow;
 using MMC.Data;
 using MMC.State;
 using MMC.Util;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,24 +21,21 @@ using System.Text;
 
 namespace dnWalker.Traversal
 {
-    [DebuggerDisplay("{Expression}")]
-    public class PathConstraint
-    {
-        public Instruction Next { get; set; }
-        public CILLocation Location { get; set; }
-        public Expression Expression { get; set; }
-    }
-
-
     public class Path : ICloneable
     {
         private IDictionary<string, object> _attributes = new Dictionary<string, object>();
         private IList<Segment> _segments = new List<Segment>();
-        private IList<PathConstraint> _pathConstraints = new List<PathConstraint>();
-        private IList<long> _visitedNodes = new List<long>();
+
+        private IList<CILLocation> _visitedNodes = new List<CILLocation>();
         private IDictionary<IDataElement, IDictionary<string, object>> _properties = new Dictionary<IDataElement, IDictionary<string, object>>(new Eq());
-        private CILLocation _lastLocation;
-        private IDictionary<CILLocation, int> _counter = new Dictionary<CILLocation, int>();
+        private IDictionary<Allocation, IDictionary<string, object>> _allocationProperties = new Dictionary<Allocation, IDictionary<string, object>>();
+        
+        private readonly ICache<MethodDef, MethodTracer> _methodTracers;
+
+        public Path(ICache<MethodDef, MethodTracer> methodTracers)
+        {
+            _methodTracers = methodTracers ?? throw new ArgumentNullException(nameof(methodTracers));
+        }
 
         public void Extend(int toState)
         {
@@ -45,22 +44,6 @@ namespace dnWalker.Traversal
             _segments.Add(new Segment(fromState, toState));
         }
 
-        //public T Get<T>(string name)
-        //{
-        //    if (_attributes.TryGetValue(name, out var o) && o is T t)
-        //    {
-        //        return t;
-        //    }
-
-        //    throw new ArgumentException(name);
-        //}
-
-        //public T SetObjectAttribute<T>(Allocation alloc, string attributeName, T attributeValue)
-        //{
-        //    var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
-        //    _attributes[key] = attributeValue;
-        //    return attributeValue;
-        //}
 
         public bool TryGetPathAttribute<T>(string name, [NotNullWhen(true)]out T attribute)
         {
@@ -114,13 +97,28 @@ namespace dnWalker.Traversal
             return true;
         }
 
-        public void AddVisitedNode(Node node)
+        public void SetAllocationAttribute<T>(Allocation allocation, string attributeName, T attributeValue)
         {
-            if (!_visitedNodes.Contains(node.Offset))
+            if (!_allocationProperties.TryGetValue(allocation, out var dict))
             {
-                _visitedNodes.Add(node.Offset);
+                dict = new Dictionary<string, object>();
+                _allocationProperties.Add(allocation, dict);
             }
+            dict[attributeName]= attributeValue;
         }
+
+        public bool TryGetAllocationAttribute<T>(Allocation allocation, string attributeName, out T attributeValue)
+        {
+            attributeValue = default;
+            if (!_allocationProperties.TryGetValue(allocation, out var dict) || !dict.TryGetValue(attributeName, out var value))
+            {
+                return false;
+            }
+
+            attributeValue = (T)value;
+            return true;
+        }
+
 
         public Path BacktrackTo(int id)
         {
@@ -129,60 +127,15 @@ namespace dnWalker.Traversal
                 return null;
             }
 
-            return new Path
+            return new Path(_methodTracers)
             {
                 _segments = _segments.TakeWhile(s => s.ToState != id).Union(_segments.Where(s => s.ToState == id)).ToList()
             };
         }
 
-        public bool TryGetObjectAttribute<T>(Allocation alloc, string attributeName, out T attributeValue)
-        {
-            var key = alloc != null ? $"{alloc.GetHashCode()}:{attributeName}" : attributeName;
-            if (_attributes.TryGetValue(key, out var o) && o is T t)
-            {
-                attributeValue = t;
-                return true;
-            }
-
-            attributeValue = default;
-            return false;
-        }
-
-        public void AddPathConstraint(Expression expression, Instruction next, ExplicitActiveState cur)
-        {
-            //try
-            //{
-            //    expression = ExpressionOptimizer.visit(expression);
-            //}
-            //catch
-            //{
-            //    // exception is ignored, 3rd party 
-            //}
-
-            expression = expression.Optimize().Simplify();
-
-            _pathConstraints.Add(
-                new PathConstraint
-                {
-                    Expression = expression,
-                    Location = new CILLocation(cur.CurrentLocation.Instruction, cur.CurrentLocation.Method),
-                    Next = next
-                });
-        }
-
-        public IReadOnlyCollection<PathConstraint> PathConstraints => new System.Collections.ObjectModel.ReadOnlyCollection<PathConstraint>(_pathConstraints);
-
-        public Expression PathConstraint =>
-            _pathConstraints.Any() ? 
-            PathConstraints.Select(p => p.Expression).Aggregate((a, b) => Expression.And(a, b)) :
-            null;
-
-        public string PathConstraintString => PathConstraint?.ToString() ?? "True"; // if no constraint, the expression is True
-
         public string GetPathInfo()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Path constraint: " + PathConstraintString);
             sb.AppendLine("Input:");
             sb.AppendLine("Output:");
             sb.AppendLine(Output);
@@ -198,17 +151,20 @@ namespace dnWalker.Traversal
 
         public void OnInstructionExecuted(CILLocation location)
         {
-            _lastLocation = location;
+            if (location == CILLocation.None) return;
 
-            if (_counter.ContainsKey(location))
-            {
-                _counter[location]++;
-            }
-            else
-            {
-                _counter[location] = 1;
-            }
+            _visitedNodes.Add(location);
+            _methodTracers.Get(location.Method).OnInstructionExecuted(location.Instruction);
         }
+
+        public void OnExceptionThrown(CILLocation location, TypeDef exceptionType)
+        {
+            if (location == CILLocation.None) return;
+
+            _visitedNodes.Add(location);
+            _methodTracers.Get(location.Method).OnExceptionThrown(location.Instruction, exceptionType);
+        }
+
 
         public ExceptionInfo Exception { get; private set; }
 
@@ -219,6 +175,9 @@ namespace dnWalker.Traversal
         public int Length => _segments.Count;
 
         public bool IsTerminated { get; private set; }
+
+        public IList<Segment> Segments => _segments;
+        public IList<CILLocation> VisitedNodes => _visitedNodes;
 
         public void Terminate(MMC.State.ThreadState threadState)
         {
@@ -239,41 +198,37 @@ namespace dnWalker.Traversal
 
             _segments.Add(segment);
 
-            if (SystemConsole.OutTextWriterRef.Equals(ObjectReference.Null))
+            if (SystemConsole.TryGetConsoleOut(threadState.Cur, out ObjectReference consoleOut))
             {
-                return;
-            }
-
-            if (threadState.Cur.DynamicArea.Allocations[SystemConsole.OutTextWriterRef] is AllocatedObject theObject)
-            {
-                var field = theObject.Fields[0];
-                if (field.Equals(ObjectReference.Null))
+                if (threadState.Cur.DynamicArea.Allocations[consoleOut] is AllocatedObject theObject)
                 {
-                    return;
+                    var field = theObject.Fields[0];
+                    if (field.Equals(ObjectReference.Null))
+                    {
+                        return;
 
-                }
+                    }
 
-                if (field is IConvertible c)
-                {
-                    Output = c.ToString(System.Globalization.CultureInfo.CurrentCulture);
-                }
-                else
-                {
-                    throw new Exception(field.WrapperName);
+                    if (field is IConvertible c)
+                    {
+                        Output = c.ToString(System.Globalization.CultureInfo.CurrentCulture);
+                    }
+                    else
+                    {
+                        throw new Exception(field.WrapperName);
+                    }
                 }
             }
         }
 
         object ICloneable.Clone()
         {
-            return new Path
+            return new Path(_methodTracers)
             {
                 _attributes = new Dictionary<string, object>(_attributes),
                 _segments = new List<Segment>(_segments),
-                _pathConstraints = new List<PathConstraint>(_pathConstraints),
-                _visitedNodes = new List<long>(_visitedNodes),
-                _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties),
-                _lastLocation = _lastLocation
+                _visitedNodes = new List<CILLocation>(_visitedNodes),
+                _properties = new Dictionary<IDataElement, IDictionary<string, object>>(_properties)
             };
         }
     }

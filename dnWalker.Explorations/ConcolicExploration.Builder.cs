@@ -1,6 +1,4 @@
-﻿using dnWalker.TypeSystem;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace dnWalker.Explorations

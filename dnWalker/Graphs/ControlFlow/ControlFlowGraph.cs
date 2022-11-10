@@ -1,178 +1,104 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using Echo.ControlFlow;
-using Echo.Platforms.Dnlib;
-using MMC.State;
-using QuikGraph;
+
+using dnWalker.Symbolic;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.Graphs
+namespace dnWalker.Graphs.ControlFlow
 {
-    public class Node
+    public partial class ControlFlowGraph
     {
-        private bool _isCovered;
-        private readonly ControlFlowNode<Instruction> _controlFlowNode;
-        private readonly ControlFlowGraph _controlFlowGraph;
-        private Expression _expression;
+        private readonly IReadOnlyList<InstructionBlockNode> _instructionBlockNodes;
+        private readonly IReadOnlyDictionary<TypeDef, VirtualExceptionHandlerNode> _exceptionNodes;
 
-        public Node(ControlFlowNode<Instruction> controlFlowNode, ControlFlowGraph controlFlowGraph)
+        private readonly IReadOnlyList<ControlFlowNode> _nodes;
+        private readonly IReadOnlyList<ControlFlowEdge> _edges;
+
+
+        private ControlFlowGraph(
+            [NotNull] IReadOnlyList<ControlFlowNode> nodes, 
+            [NotNull] IReadOnlyList<InstructionBlockNode> instructionBlockNodes,
+            [NotNull] IReadOnlyDictionary<TypeDef, VirtualExceptionHandlerNode> exceptionNodes)
         {
-            _controlFlowNode = controlFlowNode;
-            _controlFlowGraph = controlFlowGraph;
+            _nodes = nodes;
+            _edges = _nodes.SelectMany(static n => n.OutEdges).ToList();
+
+            _instructionBlockNodes = instructionBlockNodes;
+
+            _exceptionNodes = exceptionNodes;
         }
 
-        public void SetExpression(Expression expression)
+        public IReadOnlyCollection<ControlFlowNode> Nodes => _nodes;
+        public IReadOnlyCollection<ControlFlowEdge> Edges => _edges;
+
+        public ControlFlowNode EntryPoint => _instructionBlockNodes[0];
+
+        public InstructionBlockNode GetInstructionNode(Instruction instruction)
         {
-            _expression = expression;
+            return ControlFlowUtils.GetNode(_instructionBlockNodes, instruction);
         }
 
-        public long Offset => _controlFlowNode.Offset;
-
-        public void SetIsCovered() 
+        public VirtualExceptionHandlerNode GetExceptionNode(TypeDef exceptionType)
         {
-            _isCovered = true;
+            return _exceptionNodes[exceptionType];
         }
 
-        public void SetIsCovered(Instruction next, ExplicitActiveState cur) 
-        { 
-            _isCovered = true;
-
-            if (next == null)
-            {
-                var fallThroughEdge = GetOutgoingEdges().OfType<UnconditionalEdge>().Single();
-                fallThroughEdge.Tag.IsCovered = true;
-                fallThroughEdge.Tag.Times++;
-                return;
-            }
-
-            var nextNode = _controlFlowGraph.GetNode(next);
-            if (nextNode == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            var edge = GetOutgoingEdges().Where(e => e.Target.Offset == nextNode.Offset).FirstOrDefault();
-            edge.Tag.IsCovered = true;
-            edge.Tag.Times++;
-        }
-
-        public Edge GetNextUncoveredOutgoingEdge()
+        public IEnumerable<ControlFlowNode> GetSuccessors(Instruction instruction)
         {
-            var edges = GetOutgoingEdges();
-            return edges
-                .Where(e => e.Source.Offset < e.Target.Offset)
-                .FirstOrDefault(e => !e.Tag.IsCovered);
+            return GetInstructionNode(instruction)?.Successors ?? Array.Empty<ControlFlowNode>();
         }
 
-        public IEnumerable<Edge> GetOutgoingEdges()
-        {
-            return _controlFlowGraph.Edges.Where(e => e.Source.Offset == this.Offset).Cast<Edge>();
-        }
+        //public void MarkCovered(Instruction current, Instruction next)
+        //{
+        //    InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlockNodes, current);
+        //    InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlockNodes, next);
 
-        public bool IsCovered
-        {
-            get { return _isCovered; }
-        }
+        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+        //    edge.MarkCovered();
+        //}
 
-        public override string ToString()
-        {
-            return _controlFlowNode.ToString();
-        }
-    }
+        //public void MarkUnreachable(Instruction current, Instruction next)
+        //{
+        //    InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlockNodes, current);
+        //    InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlockNodes, next);
 
-    public abstract class Edge : QuikGraph.TaggedEdge<Node, CoverageInfo>
-    {
-        public Edge(Node source, Node target, CoverageInfo o) : base(source, target, o)
-        {
+        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+        //    ControlFlowUtils.MarkUnreachable(edge);
+        //}
 
+        //public void MarkCovered(Instruction current, TypeDef exception)
+        //{
+        //    InstructionBlockNode sourceNode = GetInstructionNode(current);
+        //    VirtualExceptionHandlerNode targetNode = GetExceptionNode(exception);
 
-        }
-    }
+        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+        //    edge.MarkCovered();
+        //}
 
-    [DebuggerDisplay("Covered: {Times}, [{Coverage}]")]
-    public class CoverageInfo
-    {
-        public int Times { get; set; }
+        //public void MarkUnreachable(Instruction current, TypeDef exception)
+        //{
+        //    InstructionBlockNode sourceNode = GetInstructionNode(current);
+        //    VirtualExceptionHandlerNode targetNode = GetExceptionNode(exception);
 
-        public bool IsCovered { get; set; }
+        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
+        //    ControlFlowUtils.MarkUnreachable(edge);
+        //}
 
-        public decimal Coverage { get; set; }
-    }
+        //public Coverage GetCoverage()
+        //{
+        //    int reachableNodes = _nodes.Count(static n => n.InEdges.Any(static e => e.IsReachable));
+        //    int coveredNodes = _nodes.Count(static n => n.IsCovered);
 
-    public class UnconditionalEdge : Edge
-    {
-        public UnconditionalEdge(Node source, Node target, CoverageInfo coverageInfo) : base(source, target, coverageInfo)
-        {
-        }
-    }
+        //    int reachableEdges = _edges.Count(static e => e.IsReachable);
+        //    int coveredEdges = _edges.Count(static e => e.IsCovered);
 
-    public class ConditionalEdge : Edge
-    {
-        public ConditionalEdge(Node source, Node target, CoverageInfo coverageInfo) : base(source, target, coverageInfo)
-        {
-            
-        }
-    }
-
-    public class ControlFlowGraph : AdjacencyGraph<Node, Edge<Node>>
-    {
-        private IDictionary<long, Node> _nodeMapping;
-        private ControlFlowGraph<Instruction> _originalCfg;
-
-        public ControlFlowGraph(MethodDef method)// ControlFlowGraph<Instruction> controlFlowGraph)
-        {
-            _originalCfg = method.ConstructStaticFlowGraph();
-            _nodeMapping = new Dictionary<long, Node>();
-
-            // ensure that entry point is in the graph => method with no branching will not throw error in GetNode(...);
-            var entryPoint = _originalCfg.Entrypoint;
-            var entryPointNode = new Node(entryPoint, this);
-
-            AddVertex(entryPointNode);
-            _nodeMapping[entryPointNode.Offset] = entryPointNode;
-
-            foreach (var edge in _originalCfg.GetEdges())
-            {
-                var origin = new Node(edge.Origin, this);
-                var target = new Node(edge.Target, this);
-
-                _nodeMapping[edge.Origin.Offset] = origin;
-                _nodeMapping[edge.Target.Offset] = target;
-
-                Edge cfgEdge = null;
-                switch (edge.Type)
-                {
-                    case ControlFlowEdgeType.None:
-                    case ControlFlowEdgeType.Abnormal:
-                    case ControlFlowEdgeType.FallThrough:
-                    case ControlFlowEdgeType.Unconditional:
-                        cfgEdge = new UnconditionalEdge(origin, target, new CoverageInfo());
-                        break;
-                    case ControlFlowEdgeType.Conditional:
-                        cfgEdge = new ConditionalEdge(origin, target, new CoverageInfo());
-                        break;
-                }
-                
-                AddVerticesAndEdge(cfgEdge);
-            }
-
-        }
-
-        public Node GetNode(Instruction instruction)
-        {
-            var node = _originalCfg.Nodes.FirstOrDefault(n => n.Contents.Instructions.Contains(instruction));
-            if (node == null)
-            {
-                return null;
-            }
-            return _nodeMapping[node.Offset];
-        }
-
+        //    return new Coverage(coveredEdges / (double)reachableEdges, coveredNodes / (double)reachableNodes);
+        //}
     }
 }

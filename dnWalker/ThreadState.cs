@@ -1,4 +1,4 @@
-/*
+﻿/*
  *   Copyright 2007 University of Twente, Formal Methods and Tools group
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,8 @@ namespace MMC.State
     using MMC.InstructionExec;
     using System;
     using dnWalker.TypeSystem;
+    using dnWalker;
+    using dnWalker.Configuration;
 
     public delegate void ThreadStateChanged(ThreadState threadState, System.Threading.ThreadState state);
 
@@ -65,13 +67,13 @@ namespace MMC.State
         {
             get
             {
-                return new CILLocation(CurrentMethod.ProgramCounter, CurrentMethod.Definition);
+                return new CILLocation(CurrentMethod?.ProgramCounter, CurrentMethod?.Definition);
             }
         }
 
         public ObjectReference ThreadObject { get; set; }
 
-        public ExceptionInfo UnhandledException { get; internal set; }
+        public ExceptionInfo UnhandledException { get; set; }
 
         public ExplicitActiveState Cur => cur;
 
@@ -279,7 +281,7 @@ namespace MMC.State
 
         public bool ExecuteStep(IInstructionExecProvider instructionExecProvider, 
             Logger logger,
-            IConfig config,
+            IConfiguration config,
             StatefulDynamicPOR m_dpor,
             out bool threadTerm)
         {
@@ -316,16 +318,17 @@ namespace MMC.State
 
                 logger.Trace($"[{thread.Id}] {currentInstrExec}");
                 ier = currentInstrExec.Execute(cur);
-
                 InstructionExecuted?.Invoke(location);
 
+                // update the program counter & cur.CurrentMethod before invoking the InstructionExecuted event
                 currentMethod.ProgramCounter = ier.GetNextInstruction(currentMethod);
-
+                
                 /* if a RET was performed, currentMethod.ProgramCounter is null
 				 * and the PC should be set to programcounter of the current method, i.e.,
 				 * the method jumped to
 				 */
                 currentMethod = cur.CurrentMethod;
+                
                 continueExploration = ier.ContinueExploration(currentMethod);
 
                 if (cur.Break())
@@ -352,7 +355,7 @@ namespace MMC.State
 				 * need to ensure stateful DPOR correctness
 				 */
                 if (canForward
-                    && config.UseStatefulDynamicPOR
+                    && config.UseStatefulDynamicPOR()
                     && !currentInstrExec.IsMultiThreadSafe(cur)
                     && cur.ThreadPool.RunnableThreadCount == 1)
                 {

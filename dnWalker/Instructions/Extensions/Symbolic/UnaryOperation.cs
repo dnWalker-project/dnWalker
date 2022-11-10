@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet.Emit;
 
 using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
 
 using MMC.Data;
 using MMC.InstructionExec;
@@ -9,7 +10,6 @@ using MMC.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,10 +17,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 {
     public class UnaryOperation : IInstructionExecutor
     {
-        private static readonly Dictionary<OpCode, ExpressionType> _operatorLookup = new Dictionary<OpCode, ExpressionType>()
+        private static readonly Dictionary<OpCode, Operator> _operatorLookup = new Dictionary<OpCode, Operator>()
         {
-            [OpCodes.Neg] = ExpressionType.Negate,
-            [OpCodes.Not] = ExpressionType.Not,
+            [OpCodes.Neg] = Operator.Negate,
+            [OpCodes.Not] = Operator.Not,
         };
         public IEnumerable<OpCode> SupportedOpCodes
         {
@@ -43,10 +43,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
             IDataElement result = cur.EvalStack.Peek();
 
-            ExpressionType op = _operatorLookup[baseExecutor.Instruction.OpCode];
+            Operator op = _operatorLookup[baseExecutor.Instruction.OpCode];
 
-            Expression resultExpression = Expression.MakeUnary(op, expression, expression.Type);
-            result.SetExpression(resultExpression, cur);
+            Expression resultExpression = Expression.MakeUnary(op, expression);
+            result.SetExpression(cur, resultExpression);
 
             return retValue;
         }

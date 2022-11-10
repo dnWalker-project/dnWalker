@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using dnlib.DotNet;
+
+using FluentAssertions;
 
 using System;
 using System.Collections.Generic;
@@ -10,13 +12,13 @@ using Xunit;
 
 namespace dnWalker.TypeSystem.Tests
 {
-    public class TypeSignatureTests : TestBase
+    public class TypeExtensionsTests : TestBase
     {
-        private readonly ITypeTranslator _translator;
+        private readonly ITypeParser _parser;
 
-        public TypeSignatureTests()
+        public TypeExtensionsTests()
         {
-            _translator = new TypeTranslator(DefinitionProvider);
+            _parser = new TypeParser(DefinitionProvider);
         }
 
         [Theory]
@@ -26,7 +28,7 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass1`1<System.String>", "dnWalker.TypeSystem.Tests.TestTypes")]
         public void Test_Namespace(string typeName, string namespaceName)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
             ts.Namespace.Should().Be(namespaceName);
         }
@@ -38,9 +40,9 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass1`1<System.String>", "NamespaceClass1`1")]
         public void Test_Name(string typeName, string name)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            ts.Name.Should().Be(name);
+            ts.TypeName.Should().Be(name);
         }
 
         [Theory]
@@ -48,8 +50,8 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass")]
         public void Test_CreateSZArray(string typeName)
         {
-            TypeSignature ts = _translator.FromString(typeName);
-            TypeSignature tsArray = ts.CreateArray();
+            TypeSig ts = _parser.Parse(typeName);
+            TypeSig tsArray = new SZArraySig(ts);
 
             tsArray.FullName.Should().Be(ts.ToString() + "[]");
         }
@@ -60,9 +62,9 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass1`1<System.String>", false)]
         public void Test_IsInterface(string typeName, bool isInterface)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            ts.IsInterface.Should().Be(isInterface);
+            ts.IsInterface().Should().Be(isInterface);
         }
 
         [Theory]
@@ -71,9 +73,9 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.ITestInterface", true)]
         public void Test_IsAbstract(string typeName, bool isAbstract)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            ts.IsAbstract.Should().Be(isAbstract);
+            ts.IsAbstract().Should().Be(isAbstract);
         }
 
         [Theory]
@@ -84,9 +86,9 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass1`1/NestedClass1`1", true)]
         public void Test_IsGeneric(string typeName, bool isGeneric)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            ts.IsGeneric.Should().Be(isGeneric);
+            ts.IsGenericInstanceType.Should().Be(isGeneric);
         }
 
         [Theory]
@@ -94,9 +96,9 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass1`1<System.String>", true)]
         public void Test_IsGenericInstance(string typeName, bool isGeneric)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            ts.IsGeneric.Should().Be(isGeneric);
+            ts.IsGenericInstanceType.Should().Be(isGeneric);
         }
 
         [Theory]
@@ -106,9 +108,9 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass2`2<System.Collections.Generic.List`1<System.String>, System.Boolean>", "System.Collections.Generic.List`1<System.String>", "System.Boolean")]
         public void Test_GetGenericParameters(string typeName, params string[] genericParams)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            TypeSignature[] genTS = genericParams.Select(s => _translator.FromString(s)).ToArray();
+            TypeSig[] genTS = genericParams.Select(s => _parser.Parse(s)).ToArray();
 
             ts.GetGenericParameters().Should().BeEquivalentTo(genTS);
         }
@@ -118,11 +120,11 @@ namespace dnWalker.TypeSystem.Tests
         [InlineData("dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass2`2", "dnWalker.TypeSystem.Tests.TestTypes.NamespaceClass2`2<System.String,System.Boolean>", "System.String", "System.Boolean")]
         public void Test_CreateGenericInstance(string typeName, string genericInstanceName, params string[] genericParams)
         {
-            TypeSignature ts = _translator.FromString(typeName);
+            TypeSig ts = _parser.Parse(typeName);
 
-            TypeSignature[] genTS = genericParams.Select(s => _translator.FromString(s)).ToArray();
+            IList<TypeSig> genTS = genericParams.Select(s => _parser.Parse(s)).ToList();
 
-            TypeSignature genericInstance = ts.CreateGenericInstance(genTS);
+            TypeSig genericInstance = new GenericInstSig(ts.ToClassOrValueTypeSig(), genTS);
 
             genericInstance.FullName.Should().Be(genericInstanceName);
         }

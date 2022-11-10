@@ -27,8 +27,11 @@ namespace MMC.State
     using dnWalker.Traversal;
     using System;
     using dnWalker.TypeSystem;
+    using System.Diagnostics.CodeAnalysis;
+    using dnWalker.Configuration;
 
     public delegate void ChoiceGeneratorCreated(IChoiceGenerator choiceGenerator);
+
 
     /// <summary>
     /// An implementation of the active state of the virtual machine.
@@ -36,11 +39,49 @@ namespace MMC.State
     public class ExplicitActiveState : IStorageVisitable, ICleanable
     {
 
+        public PathStore PathStore { get; set; }
+
+        public ServiceProvider Services { get; } = new ServiceProvider();
+
+
         DynamicArea m_dyn;
-        IStaticArea m_stat;
+        StaticArea m_stat;
         ThreadPool m_tp;
         IGarbageCollector m_gc;
         private readonly Collapser m_stateConvertor;
+
+        public void Reset()
+        {
+            m_dyn = new DynamicArea(this);
+            m_stat = new StaticArea(this);
+            m_tp = new ThreadPool(Logger);
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ExplicitActiveState(IConfiguration config, IInstructionExecProvider instructionExecProvider, IDefinitionProvider definitionProvider, Logger logger)
+        {
+            DefinitionProvider = definitionProvider;
+            Logger = logger;
+            Configuration = config;
+            InstructionExecProvider = instructionExecProvider;
+            Reset();
+
+            m_stateConvertor = new Collapser(this);
+
+            /*
+			 * Pick out the garbage collector. Note that only memoised GC and
+			 * Mark & sweep are available. Reference counting is broken. */
+            m_gc = config.MemoisedGC() ?
+                new IncrementalHeapVisitor(this) as IGarbageCollector :
+                new MarkAndSweepGC() as IGarbageCollector;
+
+            StorageFactory = new StorageFactory(this);
+            ParentWatcher = new ParentWatcher(config, DefinitionProvider);
+            ThreadObjectWatcher = new ThreadObjectWatcher();
+        }
+
 
         public event ChoiceGeneratorCreated ChoiceGeneratorCreated;
 
@@ -55,7 +96,7 @@ namespace MMC.State
         /// <summary>
         /// Loaded classes reside here, i.e. the static part.
         /// </summary>
-        public IStaticArea StaticArea
+        public StaticArea StaticArea
         {
             get { return m_stat; }
         }
@@ -108,7 +149,7 @@ namespace MMC.State
             get { return CurrentThread.CurrentMethod; }
         }
 
-        public IConfig Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         internal IInstructionExecProvider InstructionExecProvider { get; }
 
@@ -139,10 +180,8 @@ namespace MMC.State
         }
 
         public Logger Logger { get; internal set; }
-        
-        internal StateStorage StateStorage { get; set; }
 
-        public PathStore PathStore { get; set; }
+        internal StateStorage StateStorage { get; set; }
 
         /// <summary>
         /// Determine if we are "running" in the assembly to be checked.
@@ -234,44 +273,9 @@ namespace MMC.State
 {m_tp}";
         }
 
-        public void Reset()
-        {
-            m_dyn = new DynamicArea(this);
-            m_stat = new StaticArea(this);
-            m_tp = new ThreadPool(Logger);
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        internal ExplicitActiveState(
-            IConfig config,
-            IInstructionExecProvider instructionExecProvider,
-            IDefinitionProvider definitionProvider,
-            Logger logger)
-        {
-            DefinitionProvider = definitionProvider;
-            Logger = logger;
-            Configuration = config;
-            InstructionExecProvider = instructionExecProvider;
-            Reset();
-
-            m_stateConvertor = new Collapser(this);
-
-            /*
-			 * Pick out the garbage collector. Note that only memoised GC and
-			 * Mark & sweep are available. Reference counting is broken. */
-            m_gc = config.MemoisedGC ?
-                new IncrementalHeapVisitor(this) as IGarbageCollector :
-                new MarkAndSweepGC() as IGarbageCollector;
-
-            StorageFactory = new StorageFactory(this);
-            ParentWatcher = new ParentWatcher(config, DefinitionProvider);
-            ThreadObjectWatcher = new ThreadObjectWatcher();
-        }
 
         private readonly Queue<int> m_emptyQueue = new Queue<int>(0);
-        
+
         internal IChoiceStrategy ChoiceStrategy { get; set; }
 
         public IChoiceGenerator ChoiceGenerator => ChoiceStrategy.ChoiceGenerator;
@@ -355,7 +359,7 @@ namespace MMC.State
 
         public void SetNextChoiceGenerator(IChoiceGenerator choiceGenerator)
         {
-            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);            
+            ChoiceStrategy.RegisterChoiceGenerator(choiceGenerator);
         }
 
         public bool Break()
@@ -372,5 +376,53 @@ namespace MMC.State
         {
             return PathStore.CurrentPath.SetObjectAttribute(alloc, name, attributeValue);
         }*/
+    }
+
+    public class ServiceProvider
+    {
+        private readonly Dictionary<Type, Dictionary<string, object>> _services = new Dictionary<Type, Dictionary<string, object>>();
+
+        public bool TryGetService<T>([NotNullWhen(true)] out T service) where T : class => TryGetService(typeof(T).FullName!, out service);
+
+        public void RegisterService<T>(T service) where T : class => RegisterService(typeof(T).FullName!, service);
+
+        public bool TryGetService<T>(string name, [NotNullWhen(true)] out T service) where T : class
+        {
+            service = null;
+            if (_services.TryGetValue(typeof(T), out var services) &&
+                services.TryGetValue(name, out var obj))
+            {
+                service = obj as T;
+            }
+            return service != null;
+        }
+
+        public T GetService<T>() where T : class
+        {
+            return GetService<T>(typeof(T).FullName!);
+        }
+        public T GetService<T>(string name) where T : class
+        {
+            if (TryGetService(name, out T service))
+            {
+                return service;
+            }
+            throw new InvalidOperationException("The service is unavailable.");
+        }
+
+        public void RegisterService<T>(string name, T service) where T : class
+        {
+            RegisterService(typeof(T), name, service);
+        }
+
+        public void RegisterService(Type type, string name, object service)
+        {
+            if (!_services.TryGetValue(type, out var services))
+            {
+                services = new Dictionary<string, object>();
+                _services[type] = services;
+            }
+            services[name] = service;
+        }
     }
 }

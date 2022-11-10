@@ -25,9 +25,6 @@ namespace dnWalker.TypeSystem
             _sizeCache = BuildSizeCache(definitionContext.MainModule);
 
             _baseTypes = new BaseTypes(this);
-
-            // dirty, dirty trick
-            //AllocatedDelegate.DelegateTypeDef = GetTypeDefinition("System.Delegate");
         }
 
         private static Dictionary<string, TypeDef> BuildTypeCache(ModuleDef module)
@@ -135,6 +132,16 @@ namespace dnWalker.TypeSystem
                     {
                         _typeCache[t.FullName] = t;
                         return t;
+                    }
+                }
+
+                foreach (ExportedType et in _definitionContext.Modules.SelectMany(m => m.ExportedTypes))
+                {
+                    if (et.FullName == fullTypeName)
+                    {
+                        TypeDef td = et.Resolve();
+                        _typeCache[et.FullName] = td;
+                        return td;
                     }
                 }
 
