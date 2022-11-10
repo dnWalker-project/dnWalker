@@ -75,13 +75,6 @@ namespace dnWalker.Concolic
 
         protected IInstructionExecProvider ExecutorProvider => _instructionExecProvider;
 
-        //protected ExplicitActiveState CreateActiveState()
-        //{
-        //    ExplicitActiveState state = new ExplicitActiveState(_config, _instructionExecProvider, _definitionProvider, _logger);
-        //    state.PathStore = _pathStore;
-        //    return state;
-        //}
-
         public ExplorerBase(IDefinitionProvider definitionProvider, IConfiguration config, Logger logger, ISolver solver)
         {
             _definitionProvider = definitionProvider;
@@ -109,8 +102,6 @@ namespace dnWalker.Concolic
 
         public IReadOnlyCollection<IExplorationExtension> Extensions { get { return _extensions; } }
 
-
-        //public IMethod EntryPoint => _entryPoint;
 
         public ExplorationResult Run(string methodName, IDictionary<string, object> data = null)
         {
@@ -140,19 +131,6 @@ namespace dnWalker.Concolic
 
         protected abstract ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null);
 
-
-        //public PathStore PathStore
-        //{
-         
-        //    get { return _pathStore; }
-        //}
-
-        //public int IterationCount
-        //{
-        //    get { return _currentIteration; }
-        //}
-        //public int MaxIterations { get; set; }
-
         public ISolver Solver
         {
             get
@@ -176,28 +154,6 @@ namespace dnWalker.Concolic
                 return _definitionProvider;
             }
         }
-
-        //public ControlFlowGraphProvider ControlFlowGraphProvider
-        //{
-        //    get
-        //    {
-        //        return _cfgProvider;
-        //    }
-        //}
-
-        //protected void ResetIterations()
-        //{
-        //    _currentIteration = 0;
-        //}
-        //protected void NextIterationOrThrow()
-        //{
-        //    int maxIterations = MaxIterations;
-        //    if (maxIterations > 0 && _currentIteration >= maxIterations)
-        //    {
-        //        throw new MaxIterationsExceededException(_currentIteration);
-        //    }
-        //    ++_currentIteration;
-        //}
 
         public IConfiguration Configuration => _config;
 

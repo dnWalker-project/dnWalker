@@ -53,52 +53,5 @@ namespace dnWalker.Graphs.ControlFlow
         {
             return GetInstructionNode(instruction)?.Successors ?? Array.Empty<ControlFlowNode>();
         }
-
-        //public void MarkCovered(Instruction current, Instruction next)
-        //{
-        //    InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlockNodes, current);
-        //    InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlockNodes, next);
-
-        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
-        //    edge.MarkCovered();
-        //}
-
-        //public void MarkUnreachable(Instruction current, Instruction next)
-        //{
-        //    InstructionBlockNode sourceNode = ControlFlowUtils.GetNode(_instructionBlockNodes, current);
-        //    InstructionBlockNode targetNode = ControlFlowUtils.GetNode(_instructionBlockNodes, next);
-
-        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
-        //    ControlFlowUtils.MarkUnreachable(edge);
-        //}
-
-        //public void MarkCovered(Instruction current, TypeDef exception)
-        //{
-        //    InstructionBlockNode sourceNode = GetInstructionNode(current);
-        //    VirtualExceptionHandlerNode targetNode = GetExceptionNode(exception);
-
-        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
-        //    edge.MarkCovered();
-        //}
-
-        //public void MarkUnreachable(Instruction current, TypeDef exception)
-        //{
-        //    InstructionBlockNode sourceNode = GetInstructionNode(current);
-        //    VirtualExceptionHandlerNode targetNode = GetExceptionNode(exception);
-
-        //    ControlFlowEdge edge = sourceNode.GetEdgeTo(targetNode);
-        //    ControlFlowUtils.MarkUnreachable(edge);
-        //}
-
-        //public Coverage GetCoverage()
-        //{
-        //    int reachableNodes = _nodes.Count(static n => n.InEdges.Any(static e => e.IsReachable));
-        //    int coveredNodes = _nodes.Count(static n => n.IsCovered);
-
-        //    int reachableEdges = _edges.Count(static e => e.IsReachable);
-        //    int coveredEdges = _edges.Count(static e => e.IsCovered);
-
-        //    return new Coverage(coveredEdges / (double)reachableEdges, coveredNodes / (double)reachableNodes);
-        //}
     }
 }

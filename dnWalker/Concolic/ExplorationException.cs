@@ -28,18 +28,6 @@ namespace dnWalker.Concolic
 
     public class MaxIterationsExceededException : ExplorationException
     {
-        //public MaxIterationsExceededException()
-        //{
-        //}
-
-        //public MaxIterationsExceededException(String message) : base(message)
-        //{
-        //}
-
-        //public MaxIterationsExceededException(String message, Exception innerException) : base(message, innerException)
-        //{
-        //}
-
         public MaxIterationsExceededException(int iterationCount) : base("Max iterations exceeded (" + iterationCount + ")")
         {
         }
