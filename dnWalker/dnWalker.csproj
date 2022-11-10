@@ -17,6 +17,7 @@
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
     <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
+    <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,7 +11,6 @@ namespace dnWalker.Interface.Commands
         public const string Exit = "exit";
         public const string Load = "load";
         public const string Assembly = "assembly";
-        public const string Configuration = "cfg";
         public const string Explore = "explore";
     }
 }

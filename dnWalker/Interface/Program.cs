@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using CommandLine;
 
+using dnWalker.Configuration;
+
 namespace dnWalker.Interface
 {
     internal class Program
@@ -17,14 +19,17 @@ namespace dnWalker.Interface
             Options options = Parser.Default.ParseArguments<Options>(args)
                 .MapResult(o => o, errors => Options.Default);
 
+            return Main(options);
+        }
+
+        internal static int Main(Options options)
+        {
             options.Write(Console.Out);
 
-            return Run(options);
+            AppModel appModel = AppModel.Create(options);
+            IAppRunner runner = Runner.GetRunner(options);
+            return runner.Run(appModel);
         }
 
-        internal static int Run(Options options)
-        {
-            return Runner.Run(options);
-        }
     }
 }

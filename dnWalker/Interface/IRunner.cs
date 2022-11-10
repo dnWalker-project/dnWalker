@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Interface
 {
-    public interface IRunner
+    internal interface IAppRunner
     {
-        int Run();
+        int Run(AppModel appModel);
     }
 }

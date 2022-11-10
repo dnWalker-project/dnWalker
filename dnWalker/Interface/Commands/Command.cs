@@ -29,17 +29,16 @@ namespace dnWalker.Interface.Commands
                         switch (tokens[1]) 
                         {
                             case CommandTokens.Assembly: return new LoadAssemblyCommand(tokens[2]);
-                            case CommandTokens.Configuration: return new LoadConfigurationCommand(tokens[2]);
                         }
                         return new InvalidCommand(commandString, "second parameter of the load command must be 'assembly' or 'cfg'");
                     }
                 case CommandTokens.Explore:
                     {
-                        if (tokens.Count != 2)
+                        if (tokens.Count < 2)
                         {
-                            return new InvalidCommand(commandString, "explore command must have 2 tokens.");
+                            return new InvalidCommand(commandString, "explore command must have at least 2 tokens.");
                         }
-                        return new ExploreCommand(tokens[1]);
+                        return new ExploreCommand(tokens[1], tokens.Count == 3 ? tokens[2] : null);
                     }
             }
 

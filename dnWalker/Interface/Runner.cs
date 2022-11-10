@@ -8,13 +8,7 @@ namespace dnWalker.Interface
 {
     internal static class Runner
     {
-        public static int Run(Options options)
-        {
-            return GetRunner(options).Run();
-
-        }
-
-        public static IRunner GetRunner(Options options)
+        public static IAppRunner GetRunner(Options options)
         {
             if (options.Batch)
             {

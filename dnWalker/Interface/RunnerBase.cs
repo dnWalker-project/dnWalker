@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Interface
 {
-    internal abstract class RunnerBase : IRunner
+    internal abstract class RunnerBase : IAppRunner
     {
         protected RunnerBase(Options options)
         {
             Options = options;
-            AppModel = new AppModel();
         }
 
         protected Options Options
@@ -26,7 +25,29 @@ namespace dnWalker.Interface
             get;
         }
 
-        public abstract int Run();
+        protected abstract IEnumerable<ICommand> GetCommands();
+
+        public int Run(AppModel appModel)
+        {
+            bool br;
+            int exitCode = 0;
+
+            try
+            {
+                foreach (ICommand command in GetCommands()) 
+                {
+                    (exitCode, br) = command.Execute(appModel);
+                    if (br)
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex}");
+            }
+
+            return exitCode;
+        }
 
         protected int RunCommands(IEnumerable<string> commands)
         {

@@ -1,4 +1,9 @@
-﻿using System;
+﻿using dnWalker.Interface.Commands;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace dnWalker.Interface
 {
@@ -8,29 +13,19 @@ namespace dnWalker.Interface
         {
         }
 
-        public override int Run()
+        protected override IEnumerable<ICommand> GetCommands()
         {
             string scriptFile = Options.Script;
-            if (string.IsNullOrWhiteSpace(scriptFile)) 
+            if (string.IsNullOrWhiteSpace(scriptFile))
             {
-                Console.WriteLine("Commands not specified. The options -s --script must contain path to the command file.");
-                return -1;
+                throw new InvalidOperationException("Commands not specified. The options -s --script must contain path to the command file.");
             }
-            if (!System.IO.File.Exists(scriptFile)) 
+            if (!File.Exists(scriptFile))
             {
-                Console.WriteLine("Commands file does not exists.");
-                return -1;
+                throw new InvalidOperationException("Commands file does not exists.");
             }
 
-            try
-            {
-                return RunCommands(System.IO.File.ReadAllLines(scriptFile));
-            }
-            catch (Exception e) // which exception? IO etc...
-            {
-                Console.WriteLine($"Error during execution: '{e}'");
-                return -1;
-            }
+            return new CommandsReader(new StreamReader(scriptFile));
         }
     }
 }
