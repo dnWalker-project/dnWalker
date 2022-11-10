@@ -33,6 +33,10 @@ namespace dnWalker.Z3
                 LocSort = context.MkUninterpretedSort("loc");
                 NullExpr = context.MkConst("null", LocSort);
                 StringNullExpr = context.MkConst("string-null", Z3.StringSort);
+
+                // ensure null and string-null are actually used...
+                Solver.Assert(Z3.MkEq(NullExpr, context.MkConst("dummyLoc", LocSort)));
+                Solver.Assert(Z3.MkEq(StringNullExpr, context.MkConst("dummyString", Z3.StringSort)));
             }
 
             public readonly Dictionary<IVariable, Expr> VariableMapping = new Dictionary<IVariable, Expr>();
