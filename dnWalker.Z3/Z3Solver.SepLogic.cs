@@ -145,5 +145,23 @@ namespace dnWalker.Z3
                 return memberVars;
             }
         }
+
+        /// <summary>
+        /// if x.A is used, x must not be null
+        /// </summary>
+        /// <param name="constraint"></param>
+        /// <param name="context"></param>
+        private static void AssertRootsWithMembersAreNotNull(Constraint constraint, SolverContext context)
+        {
+            HashSet<Expr> notNullVariables = context.VariableMapping.Keys
+                .OfType<IMemberVariable>()
+                .Select(memVar => context.VariableMapping[memVar.Parent])
+                .ToHashSet();
+
+            foreach (Expr varExpr in notNullVariables)
+            {
+                context.Solver.Assert(context.Z3.MkNot(context.Z3.MkEq(varExpr, context.NullExpr)));
+            }
+        }
     }
 }
