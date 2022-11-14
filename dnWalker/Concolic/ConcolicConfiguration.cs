@@ -55,15 +55,16 @@ namespace dnWalker.Concolic
             XmlModelDeserializer deserializer = new XmlModelDeserializer(tp, new MethodParser(definitionProvider, tp));
 
             String inputModelsFile = configuration.GetValue<string>("InputModelsFile");
-            if (inputModelsFile != null && System.IO.File.Exists(inputModelsFile))
+            if (inputModelsFile != null)
             {
+                if (!System.IO.File.Exists(inputModelsFile))
+                {
+                    throw new ExplorationException($"InputModelsFile specified, but not found: {inputModelsFile}");
+                }
+
                 XElement xml = XElement.Load(inputModelsFile);
                 String fullMethodName = method.DeclaringType.FullName + "." + method.Name;
                 models.AddRange(xml.Elements().Where(e => e.Name == "InputModel" && e.Attribute("Method").Value == fullMethodName).Select(x => deserializer.FromXml(x, method)));
-            }
-            else
-            {
-                throw new ExplorationException($"InputModelsFile specified, but not found: {inputModelsFile}");
             }
 
             return models;

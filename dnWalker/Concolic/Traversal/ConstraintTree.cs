@@ -65,7 +65,10 @@ namespace dnWalker.Concolic.Traversal
                 unfolded.Add(new ConstraintTree(constraint, entryNode));
             }
 
-            //unfolded.AddRange(UnfoldConstraints(entryPoint, entryNode));
+            if (unfolded.Count == 0)
+            {
+                return UnfoldConstraints(entryPoint, entryNode);
+            }
 
             return unfolded;
         }
