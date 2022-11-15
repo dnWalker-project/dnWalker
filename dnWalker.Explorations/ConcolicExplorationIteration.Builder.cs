@@ -1,4 +1,6 @@
-﻿using dnWalker.Symbolic;
+﻿using dnlib.DotNet;
+
+using dnWalker.Symbolic;
 
 using System;
 
@@ -16,7 +18,7 @@ namespace dnWalker.Explorations
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
             public string? PathConstraint { get; set; }
-            public string? Exception { get; set; }
+            public TypeSig? Exception { get; set; }
             public string? StandardOutput { get; set; }
             public string? ErrorOutput { get; set; }
 
@@ -26,7 +28,6 @@ namespace dnWalker.Explorations
                 if (InputModel == null) throw new NullReferenceException("The BaseParameterSet is NULL");
                 if (OutputModel == null) throw new NullReferenceException("The ExecutionParameterSet is NULL");
                 if (PathConstraint == null) throw new NullReferenceException("The PathConstraint is NULL");
-                if (Exception == null) throw new NullReferenceException("The Exception is NULL");
                 if (StandardOutput == null) throw new NullReferenceException("The StandardOutput is NULL");
                 if (ErrorOutput == null) throw new NullReferenceException("The ErrorOutput is NULL");
 
