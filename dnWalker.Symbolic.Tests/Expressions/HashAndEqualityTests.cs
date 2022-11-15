@@ -31,7 +31,7 @@ namespace dnWalker.Symbolic.Tests.Expressions
             x1.Equals(x2).Should().BeTrue();
         }
 
-        private static TheoryData<Expression, Expression> EquivalentExpressions()
+        public static TheoryData<Expression, Expression> EquivalentExpressions()
         {
             ICorLibTypes types = ModuleDefMD.Load(typeof(HashAndEqualityTests).Module).CorLibTypes;
 
