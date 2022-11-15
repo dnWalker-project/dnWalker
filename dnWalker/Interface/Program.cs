@@ -26,7 +26,7 @@ namespace dnWalker.Interface
         {
             options.Write(Console.Out);
 
-            AppModel appModel = AppModel.Create(options);
+            IAppModel appModel = AppModel.Create(options);
             IAppRunner runner = Runner.GetRunner(options);
             return runner.Run(appModel);
         }

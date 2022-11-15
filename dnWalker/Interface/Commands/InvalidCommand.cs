@@ -17,7 +17,7 @@ namespace dnWalker.Interface.Commands
             _message = message;
         }
 
-        public CommandResult Execute(AppModel appModel)
+        public CommandResult Execute(IAppModel appModel)
         {
             Console.WriteLine($"ERROR: Invalid command '{_commandString}', '{_message}'");
             return CommandResult.BreakFail(-1);

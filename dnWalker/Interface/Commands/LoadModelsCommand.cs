@@ -19,24 +19,13 @@ namespace dnWalker.Interface.Commands
             _modelsFile = modelsFile;
         }
 
-        public CommandResult Execute(AppModel appModel)
+        public CommandResult Execute(IAppModel appModel)
         {
-            string extension = System.IO.Path.GetExtension(_modelsFile);
-
-            if (extension == ".xml")
+            if (appModel.LoadModels(_modelsFile))
             {
-                //using (XmlUserModelParser userModelParser = new XmlUserModelParser(appModel.DefinitionProvider))
-                XmlUserModelParser userModelParser = new XmlUserModelParser(appModel.DefinitionProvider);
-                {
-                    foreach (UserModel userModel in userModelParser.ParseModelCollection(XElement.Load(_modelsFile)))
-                    {
-                        appModel.UserModels.Add(userModel);
-                    }
-                }
-
+                return CommandResult.Success;
             }
-
-            return CommandResult.Success;
+            return CommandResult.BreakFail(-1);
         }
     }
 }

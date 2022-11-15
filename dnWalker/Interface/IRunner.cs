@@ -8,6 +8,6 @@ namespace dnWalker.Interface
 {
     internal interface IAppRunner
     {
-        int Run(AppModel appModel);
+        int Run(IAppModel appModel);
     }
 }

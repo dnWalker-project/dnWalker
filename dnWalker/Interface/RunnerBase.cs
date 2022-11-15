@@ -20,14 +20,10 @@ namespace dnWalker.Interface
             get;
         }
 
-        protected AppModel AppModel
-        {
-            get;
-        }
 
         protected abstract IEnumerable<ICommand> GetCommands();
 
-        public int Run(AppModel appModel)
+        public int Run(IAppModel appModel)
         {
             bool br;
             int exitCode = 0;
@@ -47,26 +43,6 @@ namespace dnWalker.Interface
             }
 
             return exitCode;
-        }
-
-        protected int RunCommands(IEnumerable<string> commands)
-        {
-            foreach (string command in commands) 
-            {
-                (int exitCode, bool br) = RunCommand(command);
-                if (br)
-                {
-                    return exitCode;
-                }
-            }
-            return 0;
-        }
-
-
-        protected CommandResult RunCommand(string commandString)
-        {
-            ICommand command = Command.GetCommand(commandString);
-            return command.Execute(AppModel);
         }
     }
 }

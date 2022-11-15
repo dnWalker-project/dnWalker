@@ -8,6 +8,6 @@ namespace dnWalker.Interface.Commands
 {
     internal interface ICommand
     {
-        CommandResult Execute(AppModel appModel);
+        CommandResult Execute(IAppModel appModel);
     }
 }

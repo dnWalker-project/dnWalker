@@ -13,10 +13,13 @@ namespace dnWalker.Interface.Commands
             _assemblyFileName = assemblyFileName;
         }
 
-        public CommandResult Execute(AppModel appModel)
+        public CommandResult Execute(IAppModel appModel)
         {
-            appModel.Domain.Load(_assemblyFileName);
-            return CommandResult.Success;
+            if (appModel.LoadAssembly(_assemblyFileName))
+            {
+               return CommandResult.Success;
+            }
+            return CommandResult.BreakFail(-1);
         }
     }
 }
