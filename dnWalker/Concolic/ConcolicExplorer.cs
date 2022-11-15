@@ -15,6 +15,7 @@ using MMC.State;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,8 @@ namespace dnWalker.Concolic
 
         protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null)
         {
+            DateTime explorationStart = DateTime.Now;
+
             IConfiguration configuration = Configuration;
 
             ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy(), configuration.GetInputModels(entryPoint, DefinitionProvider));
@@ -42,6 +45,8 @@ namespace dnWalker.Concolic
             List<ExplorationIterationResult> iterationResults = new List<ExplorationIterationResult>();
             int currentIteration = 0;
             int maxIterations = GetMaxIterations(configuration);
+                
+            DateTime iterationStarted = DateTime.Now;
             while (constraintTrees.TryGetNextInputModel(Solver, out IModel inputModel))
             {
                 NextIterationOrThrow(ref currentIteration, maxIterations);
@@ -82,16 +87,21 @@ namespace dnWalker.Concolic
                 Constraint postCondition = node.GetPrecondition();
                 SymbolicContext symbolicContext = currentPath.GetSymbolicContext();
 
-                ExplorationIterationResult iterationResult = new ExplorationIterationResult(currentIteration, currentPath, symbolicContext, preCondition, postCondition, explorer.Statistics);
+                DateTime iterationFinished = DateTime.Now;
+
+                ExplorationIterationResult iterationResult = new ExplorationIterationResult(currentIteration, currentPath, symbolicContext, preCondition, postCondition, explorer.Statistics, iterationStarted, iterationFinished);
                 iterationResults.Add(iterationResult);
 
                 OnIterationFinished(new IterationFinishedEventArgs(iterationResult, currentPath));
+                iterationStarted = DateTime.Now;
             }
+
+            DateTime explorationFinished = DateTime.Now;
 
             // TODO: make it as a explorer extension...
             if (!ConstraintTreeExplorerWriter.TryWrite(constraintTrees, $"constraintTree.dot")) Logger.Warning("ConstraintTree writer failed.");
 
-            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint));
+            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint), explorationStart, explorationFinished);
             return result;
 
             static void NextIterationOrThrow(ref int currentIteration, int maxIterations)

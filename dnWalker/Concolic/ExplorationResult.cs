@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Explorations;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 using dnWalker.Traversal;
@@ -19,22 +20,29 @@ namespace dnWalker.Concolic
 {
     public class ExplorationResult
     {
+        private readonly DateTime _start;
+        private readonly DateTime _end;
+
         private readonly MethodDef _entryPoint;
         private readonly Coverage _coverage;
         private readonly IReadOnlyList<ExplorationIterationResult> _iterations;
         private readonly MethodTracer _methodTracer;
         private readonly IReadOnlyList<ConstraintTree> _constraintTrees;
 
-        internal ExplorationResult(MethodDef entryPoint, 
-            IReadOnlyList<ExplorationIterationResult> iterations, 
-            IReadOnlyList<ConstraintTree> constraintTrees, 
-            MethodTracer methodTracer)
+        internal ExplorationResult(MethodDef entryPoint,
+            IReadOnlyList<ExplorationIterationResult> iterations,
+            IReadOnlyList<ConstraintTree> constraintTrees,
+            MethodTracer methodTracer,
+            DateTime start,
+            DateTime end)
         {
             _iterations = iterations ?? throw new ArgumentNullException(nameof(iterations));
             _constraintTrees = constraintTrees ?? throw new ArgumentNullException(nameof(constraintTrees));
             _methodTracer = methodTracer ?? throw new ArgumentNullException(nameof(methodTracer));
             _entryPoint = entryPoint ?? throw new ArgumentNullException(nameof(entryPoint));
             _coverage = methodTracer.GetCoverage();
+            _start = start;
+            _end = end;
         }
 
 
@@ -44,11 +52,34 @@ namespace dnWalker.Concolic
         public ControlFlowGraph ControlFlowGraph => _methodTracer.Graph;
         public MethodTracer MethodTracer => _methodTracer;
         public MethodDef EntryPoint => _entryPoint;
+
+        public DateTime Start => _start;
+
+        public DateTime End => _end;
+
+        public ConcolicExploration.Builder ToExplorationData()
+        {
+            ConcolicExploration.Builder builder = new ConcolicExploration.Builder()
+            {
+                AssemblyFileName = _entryPoint.Module.Location,
+                AssemblyName = _entryPoint.Module.Name,
+                MethodUnderTest = _entryPoint,
+                Solver = "TODO: get the solver name",
+                Start = _start,
+                End = _end
+            };
+
+            builder.Iterations.AddRange(_iterations.Select(it => it.ToExplorationData()));
+            return builder;
+        }
     }
 
 
     public class ExplorationIterationResult
     {
+        private readonly DateTime _start;
+        private readonly DateTime _end;
+
         private readonly ExceptionInfo _exception;
         private readonly string _stackTrace;
         private readonly string _output;
@@ -60,7 +91,7 @@ namespace dnWalker.Concolic
         private readonly IReadOnlyList<CILLocation> _visitedNodes;
         private readonly IReadOnlyStatistics _statistics;
 
-        internal ExplorationIterationResult(int iterationNumber, Path path, SymbolicContext symbolicContext, Constraint precondition, Constraint postcondition, IReadOnlyStatistics statistics)
+        internal ExplorationIterationResult(int iterationNumber, Path path, SymbolicContext symbolicContext, Constraint precondition, Constraint postcondition, IReadOnlyStatistics statistics, DateTime start, DateTime end)
         {
             _iterationNumber = iterationNumber;
 
@@ -80,6 +111,8 @@ namespace dnWalker.Concolic
             _precondition = precondition ?? throw new ArgumentNullException(nameof(precondition));
             _postcondition = postcondition ?? throw new ArgumentNullException(nameof(postcondition));
             _statistics = statistics ?? throw new ArgumentNullException(nameof(statistics));
+            _start = start;
+            _end = end;
         }
 
         public ExceptionInfo Exception => _exception;
@@ -101,6 +134,10 @@ namespace dnWalker.Concolic
 
         public IReadOnlyStatistics Statistics => _statistics;
 
+        public DateTime Start => _start;
+
+        public DateTime End => _end;
+
         public string GetPathInfo()
         {
             var sb = new StringBuilder();
@@ -113,6 +150,24 @@ namespace dnWalker.Concolic
                 sb.AppendLine(" - " + node.ToString());
             }
             return sb.ToString();
+        }
+
+        public ConcolicExplorationIteration.Builder ToExplorationData()
+        {
+            ConcolicExplorationIteration.Builder builder = new ConcolicExplorationIteration.Builder()
+            {
+                StandardOutput = _output,
+                Exception = _exception?.Type.ToTypeSig(),
+                InputModel = _symbolicContext.InputModel,
+                OutputModel = _symbolicContext.OutputModel,
+                IterationNumber = _iterationNumber,
+                PathConstraint = _postcondition.ToString(),
+                Start = _start,
+                End = _end
+            };
+
+
+            return builder;
         }
     }
 }
