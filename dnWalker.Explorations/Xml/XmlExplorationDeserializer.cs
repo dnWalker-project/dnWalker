@@ -36,13 +36,13 @@ namespace dnWalker.Explorations.Xml
 
             builder.AssemblyName = xml.Attribute(XmlTokens.AssemblyName)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.AssemblyName);
             builder.AssemblyFileName = xml.Attribute(XmlTokens.AssemblyFileName)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.AssemblyFileName);
-            builder.MethodSignature = xml.Attribute(XmlTokens.MethodSignature)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.MethodSignature);
+            string methodSignature = xml.Attribute(XmlTokens.MethodSignature)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.MethodSignature);
+            IMethod method = _methodParser.Parse(methodSignature);
+            builder.MethodUnderTest = method;
             builder.Solver = xml.Attribute(XmlTokens.Solver)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Solver);
             builder.Start = DateTime.ParseExact(xml.Attribute(XmlTokens.Start)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.Failed = bool.Parse(xml.Attribute(XmlTokens.Failed)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Failed));
-
-            IMethod method = _methodParser.Parse(builder.MethodSignature);
 
             foreach (XElement iterationXml in xml.Elements(XmlTokens.Iteration))
             {

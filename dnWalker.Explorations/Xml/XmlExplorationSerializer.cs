@@ -26,7 +26,7 @@ namespace dnWalker.Explorations.Xml
             XElement xml = new XElement(Exploration);
             xml.SetAttributeValue(AssemblyName, exploration.AssemblyName);
             xml.SetAttributeValue(AssemblyFileName, exploration.AssemblyFileName);
-            xml.SetAttributeValue(MethodSignature, exploration.MethodSignature);
+            xml.SetAttributeValue(MethodSignature, exploration.MethodUnderTest);
             xml.SetAttributeValue(Solver, exploration.Solver);
             xml.SetAttributeValue(Start, exploration.Start.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
             xml.SetAttributeValue(End, exploration.End.ToString(DateTimeFormat, CultureInfo.InvariantCulture));

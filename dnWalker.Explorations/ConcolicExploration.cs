@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using System;
 using System.Collections.Generic;
 
 namespace dnWalker.Explorations
@@ -7,11 +9,11 @@ namespace dnWalker.Explorations
     {
         private readonly List<ConcolicExplorationIteration> _iterations = new List<ConcolicExplorationIteration>();
 
-        private ConcolicExploration(string assemblyName, string assemblyFileName, string methodSignature, string solver, DateTime start, DateTime end, bool failed)
+        private ConcolicExploration(string assemblyName, string assemblyFileName, IMethod methodUnderTest, string solver, DateTime start, DateTime end, bool failed)
         {
             AssemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
             AssemblyFileName = assemblyFileName ?? throw new ArgumentNullException(nameof(assemblyFileName));
-            MethodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
+            MethodUnderTest = methodUnderTest ?? throw new ArgumentNullException(nameof(methodUnderTest));
             Solver = solver ?? throw new ArgumentNullException(nameof(solver));
             Start = start;
             End = end;
@@ -28,7 +30,7 @@ namespace dnWalker.Explorations
 
         public string AssemblyName { get; }
         public string AssemblyFileName { get; }
-        public string MethodSignature { get; }
+        public IMethod MethodUnderTest { get; }
         public string Solver { get; }
         public DateTime Start { get; }
         public DateTime End { get; }
