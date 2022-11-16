@@ -1,6 +1,4 @@
-﻿using dnWalker.Symbolic;
-
-using QuikGraph;
+﻿using QuikGraph;
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.Symbolic.Heap
+namespace dnWalker.Symbolic.Heap.Graphs
 {
     public enum HeapEdgeType
     {
@@ -22,7 +20,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
     {
         private readonly HeapEdgeType _type;
 
-        public HeapEdge([NotNull]Location source, [NotNull] Location target, HeapEdgeType type) : base(source, target)
+        public HeapEdge([NotNull] Location source, [NotNull] Location target, HeapEdgeType type) : base(source, target)
         {
             _type = type;
         }
