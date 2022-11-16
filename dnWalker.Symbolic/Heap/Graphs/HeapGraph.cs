@@ -6,14 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using dnWalker.Symbolic;
-using dnWalker.Symbolic.Heap;
-
 using QuikGraph.Algorithms;
 using QuikGraph.Algorithms.ConnectedComponents;
 using QuikGraph.Algorithms.TopologicalSort;
 
-namespace dnWalker.TestGenerator.Symbolic.Heap
+namespace dnWalker.Symbolic.Heap.Graphs
 {
     public class HeapGraph : IBidirectionalGraph<Location, HeapEdge>
     {
@@ -35,7 +32,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
             {
                 // condensate the graph:
                 // 1) find condensation (SSCs)
-                var sccAlg = new StronglyConnectedComponentsAlgorithm<Location, HeapEdge>(this);
+                StronglyConnectedComponentsAlgorithm<Location, HeapEdge> sccAlg = new StronglyConnectedComponentsAlgorithm<Location, HeapEdge>(this);
                 sccAlg.Compute();
                 int componentCount = sccAlg.ComponentCount;
                 IDictionary<Location, int> components = sccAlg.Components;
@@ -53,7 +50,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
 
                 DependencyGroup[] groups = Build(groupBuilders, _heap);
 
-                var depGraph = new AdjacencyGraph<DependencyGroup, Edge<DependencyGroup>>(false, groups.Length);
+                AdjacencyGraph<DependencyGroup, Edge<DependencyGroup>> depGraph = new AdjacencyGraph<DependencyGroup, Edge<DependencyGroup>>(false, groups.Length);
                 depGraph.AddVertexRange(groups);
 
                 // 2) build edges between the SSCs

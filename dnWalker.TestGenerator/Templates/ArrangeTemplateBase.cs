@@ -1,5 +1,6 @@
 ﻿using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
+using dnWalker.Symbolic.Heap.Graphs;
 using dnWalker.Symbolic.Variables;
 
 using System;
@@ -9,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 
 using dnlib.DotNet;
-using dnWalker.TestGenerator.Symbolic.Heap;
 
 namespace dnWalker.TestGenerator.Templates
 {
