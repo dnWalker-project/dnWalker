@@ -203,7 +203,7 @@ namespace dnWalker.TestGenerator.TestClasses
 
                 IMethodParser methodTranslator = new MethodParser(definitionProvider);
                 ITypeParser typeTranslator = new TypeParser(definitionProvider);
-                IMethod methodSignature = methodTranslator.Parse(exploration.MethodSignature);
+                IMethod methodSignature = exploration.MethodUnderTest;
 
                 foreach (ConcolicExplorationIteration iteration in exploration.Iterations)
                 {
@@ -217,7 +217,7 @@ namespace dnWalker.TestGenerator.TestClasses
                         OutputModel = iteration.OutputModel,
                         ErrorOutput = iteration.ErrorOutput ?? string.Empty,
                         StandardOutput = iteration.StandardOutput ?? string.Empty,
-                        Exception = string.IsNullOrWhiteSpace(iteration.Exception) ? null : typeTranslator.Parse(iteration.Exception),
+                        Exception = iteration.Exception,
                         PathConstraint = iteration.PathConstraint ?? string.Empty,
                     };
 

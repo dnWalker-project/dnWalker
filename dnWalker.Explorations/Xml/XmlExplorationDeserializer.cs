@@ -16,11 +16,13 @@ namespace dnWalker.Explorations.Xml
 {
     public class XmlExplorationDeserializer
     {
+        private readonly ITypeParser _typeParser;
         private readonly IMethodParser _methodParser;
         private readonly XmlModelDeserializer _modelDeserializer;
 
-        public XmlExplorationDeserializer(IMethodParser methodParser, XmlModelDeserializer modelDeserializer)
+        public XmlExplorationDeserializer(ITypeParser typeParser, IMethodParser methodParser, XmlModelDeserializer modelDeserializer)
         {
+            _typeParser = typeParser;
             _methodParser = methodParser;
             _modelDeserializer = modelDeserializer;
         }
@@ -36,13 +38,15 @@ namespace dnWalker.Explorations.Xml
 
             builder.AssemblyName = xml.Attribute(XmlTokens.AssemblyName)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.AssemblyName);
             builder.AssemblyFileName = xml.Attribute(XmlTokens.AssemblyFileName)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.AssemblyFileName);
-            builder.MethodSignature = xml.Attribute(XmlTokens.MethodSignature)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.MethodSignature);
+            
+            string methodSignature = xml.Attribute(XmlTokens.MethodSignature)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.MethodSignature);
+            IMethod method = _methodParser.Parse(methodSignature);
+            builder.MethodUnderTest = method;
+            
             builder.Solver = xml.Attribute(XmlTokens.Solver)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Solver);
             builder.Start = DateTime.ParseExact(xml.Attribute(XmlTokens.Start)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.Failed = bool.Parse(xml.Attribute(XmlTokens.Failed)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Failed));
-
-            IMethod method = _methodParser.Parse(builder.MethodSignature);
 
             foreach (XElement iterationXml in xml.Elements(XmlTokens.Iteration))
             {
@@ -61,7 +65,13 @@ namespace dnWalker.Explorations.Xml
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExplorationIteration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.PathConstraint = xml.Attribute(XmlTokens.PathConstraint)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExplorationIteration), XmlTokens.PathConstraint);
 
-            builder.Exception = xml.Attribute(XmlTokens.Exception)?.Value ?? string.Empty;
+            string? exceptionType = xml.Attribute(XmlTokens.Exception)?.Value;
+            if (exceptionType != null) 
+            {
+                TypeSig exception = _typeParser.Parse(exceptionType);
+                builder.Exception = exception;
+            }
+
             builder.StandardOutput = xml.Attribute(XmlTokens.StandardOutput)?.Value ?? string.Empty;
             builder.ErrorOutput = xml.Attribute(XmlTokens.ErrorOutput)?.Value ?? string.Empty;
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnlib.DotNet;
+
+using System;
 using System.Collections.Generic;
 
 namespace dnWalker.Explorations
@@ -9,7 +11,7 @@ namespace dnWalker.Explorations
         {
             public string? AssemblyName { get; set; }
             public string? AssemblyFileName { get; set; }
-            public string? MethodSignature { get; set; }
+            public IMethod? MethodUnderTest { get; set; }
             public string? Solver { get; set; }
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
@@ -23,10 +25,10 @@ namespace dnWalker.Explorations
             {
                 if (AssemblyName == null) throw new NullReferenceException("AssemblyName is NULL");
                 if (AssemblyFileName == null) throw new NullReferenceException("AssemblyFileName is NULL");
-                if (MethodSignature == null) throw new NullReferenceException("MethodSignature is NULL");
+                if (MethodUnderTest == null) throw new NullReferenceException("MethodUnderTest is NULL");
                 if (Solver == null) throw new NullReferenceException("Solver is NULL");
 
-                ConcolicExploration exploration = new ConcolicExploration(AssemblyName, AssemblyFileName, MethodSignature, Solver, Start, End, Failed);
+                ConcolicExploration exploration = new ConcolicExploration(AssemblyName, AssemblyFileName, MethodUnderTest, Solver, Start, End, Failed);
 
                 foreach (var i in Iterations)
                 {
