@@ -4,7 +4,7 @@ namespace dnWalker.Interface.Commands
 {
     internal class NoopCommand : ICommand
     {
-        public CommandResult Execute(AppModel appModel)
+        public CommandResult Execute(IAppModel appModel)
         {
             Console.WriteLine("INFO: Running noop command");
             return CommandResult.Success;
