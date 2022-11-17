@@ -28,7 +28,7 @@ namespace dnWalker.TestWriter.Generators.Arrange
                 type.IsSZArray) 
             {
                 // Type[] symbol = new Type[length];
-                string eTypeName = $"{type.Next.GetNameOrAlias()}";
+                string eTypeName = type.Next.GetNameOrAlias();
                 output.WriteLine($"{eTypeName}[] {symbol} = new {eTypeName}[{symbolContext.Length}];");
             }
             else
@@ -80,9 +80,9 @@ namespace dnWalker.TestWriter.Generators.Arrange
             string bindingFlags = (field.IsPublic, field.IsStatic) switch
             {
                 (true, false) => PublicInstanceFlags,
-                (false, false) => PublicInstanceFlags,
+                (false, false) => NonPublicInstanceFlags,
                 (true, true) => PublicStaticFlags,
-                (false, true) => PublicStaticFlags,
+                (false, true) => NonPublicStaticFlags,
             };
 
             string typeName = testContext.GetSymbolContext(symbol).Type.GetNameOrAlias();
