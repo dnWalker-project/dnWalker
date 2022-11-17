@@ -13,26 +13,26 @@ namespace dnWalker.TestWriter.Tests
         {
             const string Expected =
             """
-            using dnlib.DotNet;
+            using A.aabb;
+
+            using aa.aabb;
             
-            using dnWalker.Symbolic;
-            using dnWalker.Symbolic.Expressions;
+            using aaa.aabb;
             
-            using FluentAssertions;
+            using bbb.ccc;
+            using bbb.ccc.ddd;
             
-            using Mock;
+            using e;
             
-            using System;
-            using System.Linq;
-            using System.Linq.Expressions;
-            using System.Text;
+            using F;
+            using F.G;
             
-            using Xunit;
+            using XXX.YYY;
             """;
 
             TestClass testClass = new TestClass()
             {
-                Usings = { "System", "System.Linq", "Xunit", "FluentAssertions", "Mock", "System.Text", "dnlib.DotNet", "dnWalker.Symbolic", "dnWalker.Symbolic.Expressions", "System.Linq.Expressions" },
+                Usings = { "A.aabb", "XXX.YYY", "e", "F.G", "F", "aaa.aabb", "aa.aabb", "bbb.ccc.ddd", "bbb.ccc" },
                 //Namespace = "TestNamespace",
                 //Name = "TestClass"
             };
