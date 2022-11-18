@@ -34,9 +34,12 @@ namespace dnWalker.TestWriter.TestWriters
 
         private readonly IndentedTextWriter _output;
 
-        public TestClassWriter(string filePath, string tabString = TabString)
+        public TestClassWriter(string filePath, string tabString = TabString) : this(new StreamWriter(filePath), tabString)
         {
-            _output = new IndentedTextWriter(new StreamWriter(filePath), tabString);
+        }
+        public TestClassWriter(TextWriter output, string tabString = TabString)
+        {
+            _output = new IndentedTextWriter(output, tabString);
         }
 
         public void Write(TestClass testClass)

@@ -15,5 +15,7 @@ namespace dnWalker.TestWriter.TestModels
         public string? Name { get; set; }
         
         public IDictionary<string, TestGroup> TestGroups { get; } = new Dictionary<string, TestGroup>();
+
+        // TODO nuget package model
     }
 }
