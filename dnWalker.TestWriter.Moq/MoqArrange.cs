@@ -122,7 +122,7 @@ namespace dnWalker.TestWriter.Moq
                     output.Indent++;
 
                     output.WriteLine($".Setup({invokeExpression})");
-                    output.WriteLine($".Returns{literals[0]};");
+                    output.WriteLine($".Returns({literals[0]});");
 
                     output.Indent--;
                 }
