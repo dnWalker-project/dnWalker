@@ -30,7 +30,7 @@ namespace dnWalker.TestWriter.Xunit
             {
                 TypeName = "Fact"
             });
-            testClass.Attributes.Add(new AttributeInfo
+            testMethod.Attributes.Add(new AttributeInfo
             {
                 TypeName = "Trait",
                 PositionalArguments = { "TestSchema", testSchema.GetType().Name }
