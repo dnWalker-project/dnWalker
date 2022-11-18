@@ -18,47 +18,47 @@ namespace dnWalker.TestWriter.Generators.Arrange
 {
     internal class Arranger
     {
-        private readonly IReadOnlyList<IArrangePrimitives> _arrangeWriters;
+        private readonly ITestTemplate _template;
         private readonly ITestContext _context;
         private readonly IWriter _output;
         private readonly IReadOnlyModel _model;
-        
-        public Arranger(IReadOnlyList<IArrangePrimitives> arrangeWriters, ITestContext context, IWriter output)
+
+        private readonly HeapGraph _heapGraph;
+
+        public Arranger(ITestTemplate testTemplate, ITestContext context, IWriter output)
         {
-            _arrangeWriters = arrangeWriters;
+            _template = testTemplate;
             _context = context;
             _output = output;
             _model = context.Iteration.InputModel;
-        }
 
-        private void ArrangeOrThrow(Func<IArrangePrimitives, bool> arrangeAction, string? message = null)
-        {
-            if (!_arrangeWriters.Any(a => arrangeAction(a))) 
-            {
-                throw new InvalidOperationException(message);
-            }
-        }
-
-        private void WriteArrangeHeap()
-        {
-            HeapGraph graph = _model.HeapInfo.CreateGraph();
-            IReadOnlyList<DependencyGroup> dependencyGroups = graph.GetDependencyGroups();
+            _heapGraph = _model.HeapInfo.CreateGraph();
 
             // generate the symbol contexts
-            SetupSymbolContext(dependencyGroups);
-
-            // write symbols arrange
-            foreach (DependencyGroup dg in dependencyGroups)
+            SetupSymbolContext(_heapGraph.GetDependencyGroups());
+        }
+        public void WriteArrangeHeap()
+        {
+            IReadOnlyHeapInfo heap = _model.HeapInfo;
+            if (!heap.IsEmpty())
             {
-                // arrange each heap node group
-                WriteArrangeNodeGroup(dg);
+                _output.WriteLine("// Arrange input model heap");
+
+                // write symbols arrange
+                foreach (DependencyGroup dg in _heapGraph.GetDependencyGroups())
+                {
+                    // arrange each heap node group
+                    WriteArrangeNodeGroup(dg);
+                }
+
+                _output.WriteLine(string.Empty);
             }
         }
 
         private void SetupSymbolContext(IReadOnlyList<DependencyGroup> groups)
         {
-            Dictionary<TypeSig, int> _classCounters = new Dictionary<TypeSig, int>();
-            Dictionary<TypeSig, int> _arrayCounters = new Dictionary<TypeSig, int>();
+            Dictionary<TypeSig, int> classCounters = new Dictionary<TypeSig, int>(TypeEqualityComparer.Instance);
+            Dictionary<TypeSig, int> arrayCounters = new Dictionary<TypeSig, int>(TypeEqualityComparer.Instance);
 
             foreach (IReadOnlyHeapNode node in groups.SelectMany(dg => dg))
             {
@@ -73,17 +73,26 @@ namespace dnWalker.TestWriter.Generators.Arrange
                 if (node is IReadOnlyHeapNode objNode)
                 {
                     TypeSig type = objNode.Type;
-                    int cnt = _classCounters[type]++;
+                    int cnt = IncreaseCounter(type, classCounters);
                     return $"{type.GetNameOrAlias()}{cnt}";
                 }
                 else if (node is IReadOnlyArrayHeapNode arrNode)
                 {
                     TypeSig elementType = arrNode.ElementType;
-                    int cnt = _arrayCounters[elementType]++;
+                    int cnt = IncreaseCounter(elementType, arrayCounters);
                     return $"{elementType.GetNameOrAlias()}Arr{cnt}";
                 }
 
                 throw new NotSupportedException("Unexpected heap node type.");
+            }
+
+            static int IncreaseCounter<T>(T key, IDictionary<T, int> counters)
+            {
+                if (!counters.TryGetValue(key, out int value))
+                {
+                    counters[key] = 0;
+                }
+                return ++counters[key];
             }
         }
 
@@ -94,7 +103,7 @@ namespace dnWalker.TestWriter.Generators.Arrange
             {
                 string symbol = _context.GetSymbolContext(node.Location)!.Symbol;
 
-                ArrangeOrThrow(a => a.TryWriteArrangeCreateInstance(_context, _output, symbol), $"Failed to create instance for: '{symbol}'");
+                _template.WriteArrangeCreateInstance(_context, _output, symbol);
             }
 
             // set fields & elements & method results
@@ -109,7 +118,7 @@ namespace dnWalker.TestWriter.Generators.Arrange
                         foreach (var f in objNode.Fields)
                         {
                             string literal = _context.GetLiteral(objNode.GetFieldOrDefault(f))!;
-                            ArrangeOrThrow(a => a.TryWriteArrangeInitializeField(_context, _output, symbol, f, literal), $"Failed to arrange field '{f}' for '{symbol}'");
+                            _template.WriteArrangeInitializeField(_context, _output, symbol, f, literal);
                         }
                     }
 
@@ -133,7 +142,7 @@ namespace dnWalker.TestWriter.Generators.Arrange
                                 }
                             }
 
-                            ArrangeOrThrow(a => a.TryWriteArrangeInitializeMethod(_context, _output, symbol, method, literals), $"Failed to arrange method '{md}' for '{symbol}'");
+                            _template.WriteArrangeInitializeMethod(_context, _output, symbol, method, literals);
                         }
                     }
                 }
@@ -146,76 +155,67 @@ namespace dnWalker.TestWriter.Generators.Arrange
                         {
                             string literal = _context.GetLiteral(arrNode.GetElementOrDefault(index))!;
 
-                            ArrangeOrThrow(a => a.TryWriteArrangeInitializeArrayElement(_context, _output, symbol, index, literal), $"Failed to arrange element '{index}' for '{symbol}'");
+                            _template.WriteArrangeInitializeArrayElement(_context, _output, symbol, index, literal);
                         }
                     }
                 }
             }
         }
 
-        private void ArrangeStaticFields()
+        public void WriteArrangeStaticFields()
         {
-            IReadOnlyModel model = _model;
-            foreach (StaticFieldVariable staticFieldVar in model.Variables.OfType<StaticFieldVariable>())
-            {
-                string literal = _context.GetLiteral(model.GetValueOrDefault(staticFieldVar))!;
-
-                ArrangeOrThrow(a => a.TryWriteArrangeInitializeStaticField(_context, _output, staticFieldVar.Field, literal));
-            }
-        }
-
-        private void ArrangeMethodArguments()
-        {
-            IReadOnlyModel model = _model;
-            MethodDef md = _context.Iteration.Exploration.MethodUnderTest.ResolveMethodDefThrow();
-
-            IList<Parameter> parameters = md.Parameters;
-
-            foreach (Parameter p in parameters)
-            {
-                if (p.IsHiddenThisParameter)
-                {
-                    WriteArgument(p.Type, "@this", GetArgLiteral(p));
-                }
-                else if (p.IsNormalMethodParameter)
-                {
-                    WriteArgument(p.Type, p.Name, GetArgLiteral(p));
-                }
-            }
-
-            string GetArgLiteral(Parameter p)
-            {
-                MethodArgumentVariable methodArgumentVar = new MethodArgumentVariable(p);
-                string literal = _context.GetLiteral(model.GetValueOrDefault(methodArgumentVar))!;
-                return literal;
-            }
-
-            void WriteArgument(TypeSig t, string symbol, string literal)
-            {
-                string type = t.GetNameOrAlias();
-                _output.WriteLine($"{type} {symbol} = {literal};");
-            }
-        }
-
-        internal void Run()
-        {
-            IReadOnlyHeapInfo heap = _model.HeapInfo;
-            if (!heap.IsEmpty())
-            {
-                _output.WriteLine("// Arrange input model heap");
-                WriteArrangeHeap();
-                _output.WriteLine(string.Empty);
-            }
             if (_model.Variables.OfType<StaticFieldVariable>().Any())
             {
                 _output.WriteLine("// Arrange static fields");
-                ArrangeStaticFields();
+                
+                IReadOnlyModel model = _model;
+                foreach (StaticFieldVariable staticFieldVar in model.Variables.OfType<StaticFieldVariable>())
+                {
+                    string literal = _context.GetLiteral(model.GetValueOrDefault(staticFieldVar))!;
+
+                    _template.WriteArrangeInitializeStaticField(_context, _output, staticFieldVar.Field, literal);
+                }
+
                 _output.WriteLine(string.Empty);
             }
+        }
+
+        public void WriteArrangeMethodArguments()
+        {
             if (_context.Iteration.Exploration.MethodUnderTest.ResolveMethodDefThrow().Parameters.Count > 0)
             {
                 _output.WriteLine("// Arrange method arguments");
-                ArrangeMethodArguments();
+            
+                IReadOnlyModel model = _model;
+                MethodDef md = _context.Iteration.Exploration.MethodUnderTest.ResolveMethodDefThrow();
+
+                IList<Parameter> parameters = md.Parameters;
+
+                foreach (Parameter p in parameters)
+                {
+                    if (p.IsHiddenThisParameter)
+                    {
+                        WriteArgument(p.Type, "@this", GetArgLiteral(p));
+                    }
+                    else if (p.IsNormalMethodParameter)
+                    {
+                        WriteArgument(p.Type, p.Name, GetArgLiteral(p));
+                    }
+                }
+
+                string GetArgLiteral(Parameter p)
+                {
+                    MethodArgumentVariable methodArgumentVar = new MethodArgumentVariable(p);
+                    string literal = _context.GetLiteral(model.GetValueOrDefault(methodArgumentVar))!;
+                    return literal;
+                }
+
+                void WriteArgument(TypeSig t, string symbol, string literal)
+                {
+                    string type = t.GetNameOrAlias();
+                    _output.WriteLine($"{type} {symbol} = {literal};");
+                }
+
                 _output.WriteLine(string.Empty);
             }
         }
