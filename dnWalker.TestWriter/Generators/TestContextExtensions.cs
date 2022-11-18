@@ -82,7 +82,11 @@ namespace dnWalker.TestWriter.Generators
 
         public static string GetDefaultLiteral(this ITestContext context, TypeSig type)
         {
-            return $"default({type.GetNameOrAlias()})";
+            if (type.IsNumber()) return "0";
+            if (type.IsChar()) return "'\0'";
+            if (type.IsBoolean()) return "false";
+            if (type.GetIsValueType()) return $"default({type.GetNameOrAlias()})";
+            else return "null";
         }
 
         public static string? GetLiteral(this ITestContext context, IValue value)
@@ -90,7 +94,7 @@ namespace dnWalker.TestWriter.Generators
             return value switch
             {
                 Location l => l == Location.Null ? "null" : context.GetSymbolContext(l)?.Literal,
-                StringValue s => s == StringValue.Null ? "null" : $"{s.Content}",
+                StringValue s => s == StringValue.Null ? "null" : $"\"{s.Content}\"",
                 _ => value.ToString()
             };
         }
