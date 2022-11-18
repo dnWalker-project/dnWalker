@@ -60,6 +60,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestWriter.Xunit",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.TestWriter.Moq", "dnWalker.TestWriter.Moq\dnWalker.TestWriter.Moq.csproj", "{E7623543-9F30-431E-A8D4-5AFC2F3B68BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.TestWriter.Xunit.Tests", "dnWalker.TestWriter.Xunit.Tests\dnWalker.TestWriter.Xunit.Tests.csproj", "{558C04C5-965D-474C-AA05-4BA0A72528A0}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.TestWriter.Moq.Tests", "dnWalker.TestWriter.Moq.Tests\dnWalker.TestWriter.Moq.Tests.csproj", "{1A4F495A-B9A2-4280-AE20-8DB683B80EB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.TestUtils", "dnWalker.TestUtils\dnWalker.TestUtils.csproj", "{98036666-DE07-4566-AD7C-D970EBFBFB7E}"
