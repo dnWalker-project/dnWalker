@@ -62,8 +62,8 @@ namespace dnWalker.TestUtils
             }
             else
             {
-                return GetType(type.Namespace ?? string.Empty, type.Name);
-            }
+            return GetType(type.Namespace ?? string.Empty, type.Name);
+        }
         }
 
         protected IEnumerable<MethodDef> GetMethods(string ns, string typeName, string methodName)
