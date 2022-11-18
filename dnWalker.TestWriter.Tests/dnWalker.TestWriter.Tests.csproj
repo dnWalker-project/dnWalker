@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dnWalker.TestWriter.Xunit\dnWalker.TestWriter.Xunit.csproj" />
     <ProjectReference Include="..\dnWalker.TestWriter\dnWalker.TestWriter.csproj" />
   </ItemGroup>
 
