@@ -36,9 +36,10 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
             return new Model();
         }
 
-        protected ITestTemplate GetTestTemplate()
+        protected ITestTemplate TestTemplate
         {
-            return new TestTemplate(
+            get;
+        } = new TestTemplate(
                 new IArrangePrimitives[]
                 {
                     //new MoqArrange(),
@@ -53,6 +54,10 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
                     new XunitAssertions(),
                     new SimpleAssertPrimitives()
                 });
+
+        protected ITestContext GetTestContext(IMethod method, Action<ConcolicExplorationIteration.Builder>? initialize = null)
+        {
+            return new TestContext(GetIteration(method, initialize));
         }
 
         protected ConcolicExplorationIteration GetIteration(IMethod method, Action<ConcolicExplorationIteration.Builder>? initialize = null)
