@@ -13,7 +13,7 @@ namespace dnWalker.TestWriter.Generators.Schemas.ReturnValue
     {
         public IEnumerable<ITestSchema> GetSchemas(ConcolicExplorationIteration explorationIteration)
         {
-            if (explorationIteration.Exception != null &&
+            if (explorationIteration.Exception == null &&
                 explorationIteration.Exploration.MethodUnderTest.HasReturnValue())
             {
                 return new ITestSchema[] { new ReturnValueSchema(new TestContext(explorationIteration)) };
