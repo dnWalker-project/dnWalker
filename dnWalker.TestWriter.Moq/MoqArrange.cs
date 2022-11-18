@@ -88,8 +88,11 @@ namespace dnWalker.TestWriter.Moq
         public bool TryWriteArrangeCreateInstance(ITestContext testContext, IWriter output, string symbol)
         {
             SymbolContext symbolContext = testContext.SymbolMapping[symbol];
+            TypeDef td = symbolContext.Type.ToTypeDefOrRef().ResolveTypeDefThrow();
 
-            if (symbolContext.MembersToArrange.Any(CanArrange))
+            if (symbolContext.MembersToArrange.Any(CanArrange) ||
+                td.IsAbstract ||
+                td.IsInterface)
             {
                 string mockSymbol = GetMockSymbol(symbol);
                 string type = symbolContext.Type.GetNameOrAlias();
