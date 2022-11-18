@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.TestUtils\dnWalker.TestUtils.csproj" />
+    <ProjectReference Include="..\dnWalker.TestWriter.Moq\dnWalker.TestWriter.Moq.csproj" />
     <ProjectReference Include="..\dnWalker.TestWriter.Xunit\dnWalker.TestWriter.Xunit.csproj" />
     <ProjectReference Include="..\dnWalker.TestWriter\dnWalker.TestWriter.csproj" />
   </ItemGroup>
