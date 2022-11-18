@@ -25,25 +25,25 @@ namespace dnWalker.TestWriter.Xunit
 
         public bool TryWriteAssertEqual(ITestContext context, IWriter output, string actual, string expected)
         {
-            output.WriteLine($"Assert.Equal({expected},{actual});");
+            output.WriteLine($"Assert.Equal({expected}, {actual});");
             return true;
         }
 
         public bool TryWriteAssertNotEqual(ITestContext context, IWriter output, string actual, string expected)
         {
-            output.WriteLine($"Assert.NotEqual({expected},{actual});");
+            output.WriteLine($"Assert.NotEqual({expected}, {actual});");
             return true;
         }
 
         public bool TryWriteAssertSame(ITestContext context, IWriter output, string actual, string expected)
         {
-            output.WriteLine($"Assert.Same({expected},{actual});");
+            output.WriteLine($"Assert.Same({expected}, {actual});");
             return true;
         }
 
         public bool TryWriteAssertNotSame(ITestContext context, IWriter output, string actual, string expected)
         {
-            output.WriteLine($"Assert.NotSame({expected},{actual});");
+            output.WriteLine($"Assert.NotSame({expected}, {actual});");
             return true;
         }
 
@@ -67,13 +67,13 @@ namespace dnWalker.TestWriter.Xunit
 
         public bool TryWriteAssertOfType(ITestContext context, IWriter output, string objectSymbol, string expectedType)
         {
-            output.WriteLine($"Assert.IsType<{expectedType}>({objectSymbol})");
+            output.WriteLine($"Assert.IsType<{expectedType}>({objectSymbol});");
             return true;
         }
 
         public bool TryWriteAssertNotOfType(ITestContext context, IWriter output, string objectSymbol, string expectedType)
         {
-            output.WriteLine($"Assert.IsNotType<{expectedType}>({objectSymbol})");
+            output.WriteLine($"Assert.IsNotType<{expectedType}>({objectSymbol});");
             return true;
         }
 
