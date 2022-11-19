@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace dnWalker.TypeSystem
 {
@@ -101,7 +103,7 @@ namespace dnWalker.TypeSystem
             };
         }
 
-        public static TypeDef GetTypeDefinition(this IDefinitionProvider definitionProvider, string ns, string name)
+        public static TypeDef GetTypeDefinition(this IDefinitionProvider definitionProvider, string? ns, string name)
         {
             if (ns != null)
             {
@@ -115,5 +117,49 @@ namespace dnWalker.TypeSystem
                     .SingleOrDefault() ?? throw new TypeNotFoundException(name);
             }
         }
+
+        public static MethodDef GetMethodDefinitionPartial(this IDefinitionProvider definitionProvider, string methodSpecification)
+        {
+            string[] parts = methodSpecification.Split("::");
+
+            Debug.Assert(parts.Length == 2);
+
+            string typeNameOrFullName = parts[0];
+
+            TypeDef td = FindType(definitionProvider, typeNameOrFullName);
+
+            parts = parts[1].Split(new char[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+            string methodName = parts[0];
+
+            MethodDef[] methods = td.FindMethods(methodName).ToArray();
+
+            if (methods.Length == 1)
+            {
+                return methods[0];
+            }
+
+            TypeSig[] argTypes = parts[1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(fullNameOrName => FindType(definitionProvider, fullNameOrName).ToTypeSig())
+                .ToArray();
+
+            return methods.FirstOrDefault(m => m.Parameters.Select(p => p.Type).SequenceEqual(argTypes, TypeEqualityComparer.Instance)) ?? throw new MemberNotFoundException(td.Name, methodName);
+
+            static TypeDef FindType(IDefinitionProvider definitionProvider, string fullNameOrName)
+            {
+                try
+                {
+                    TypeDef td = definitionProvider.GetTypeDefinition(fullNameOrName);
+                    return td;
+                }
+                catch (TypeNotFoundException)
+                {
+                    // will throw new TypeNotFoundException should the no type be found
+                    // or Linq exception if more than one type matches...
+                    TypeDef td = definitionProvider.GetTypeDefinition(null, fullNameOrName);
+                    return td;
+                }
+            }
+        }
+
     }
 }

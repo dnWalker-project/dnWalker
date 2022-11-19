@@ -138,7 +138,7 @@ namespace dnWalker.Interface
             return builder.Build();
         }
 
-        public bool Explore(string method, string output)
+        public bool Explore(string methodSpecification, string output)
         {
 
             try
@@ -153,7 +153,7 @@ namespace dnWalker.Interface
                         new Z3Solver()
                     );
 
-                MethodDef md = GetMethod(method, definitionProvider);
+                MethodDef md = definitionProvider.GetMethodDefinitionPartial(methodSpecification);
 
                 ExplorationResult explorationResult = explorer.Run(md);
 
@@ -170,55 +170,6 @@ namespace dnWalker.Interface
             {
                 return false;
             }
-        }
-
-        private static TypeDef GetTypeDefinition(IDefinitionProvider definitionProvider, string fullNameOrName)
-        {
-            try
-            {
-                TypeDef td = definitionProvider.GetTypeDefinition(fullNameOrName);
-                return td;
-            }
-            catch (TypeNotFoundException)
-            {
-                // will throw new TypeNotFoundException should the no type be found
-                // or Linq exception if more than one type matches...
-                TypeDef td = definitionProvider.GetTypeDefinition(null, fullNameOrName);
-                return td;
-            }
-        }
-
-        private static MethodDef GetMethod(string methodSpecification, IDefinitionProvider definitionProvider)
-        {
-            string[] parts = methodSpecification.Split("::");
-
-            Debug.Assert(parts.Length == 2);
-
-            string typeNameOrFullName = parts[0];
-
-            TypeDef td = GetTypeDefinition(definitionProvider, typeNameOrFullName);
-
-            if (td == null)
-            {
-                // type not found
-                return null;
-            }
-
-            parts = methodSpecification.Split(new char[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
-            string methodName = parts[0];
-
-            MethodDef[] methods = td.FindMethods(methodName).ToArray();
-
-            if (methods.Length == 1)
-            {
-                return methods[0];
-            }
-
-            TypeSig[] argTypes = parts[1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(fullNameOrName => GetTypeDefinition(definitionProvider, fullNameOrName).ToTypeSig())
-                .ToArray();
-
-            return methods.FirstOrDefault(m => m.Parameters.Select(p => p.Type).SequenceEqual(argTypes, TypeEqualityComparer.Instance));
         }
 
         public bool LoadAssembly(string assemblyFile)
