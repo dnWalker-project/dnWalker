@@ -54,7 +54,7 @@ namespace dnWalker.Concolic
             TypeParser tp = new TypeParser(definitionProvider);
             XmlModelDeserializer deserializer = new XmlModelDeserializer(tp, new MethodParser(definitionProvider, tp));
 
-            String inputModelsFile = configuration.GetValue<string>("InputModelsFile");
+            String inputModelsFile = configuration.GetValueOrDefault<string>("InputModelsFile");
             if (inputModelsFile != null)
             {
                 if (!System.IO.File.Exists(inputModelsFile))
@@ -70,7 +70,7 @@ namespace dnWalker.Concolic
             return models;
         }
 
-        public static IConfiguration SetInputModelsFile(this IConfiguration configuration, string filename)
+        public static IConfiguration SetInputModelsFile(this IConfigurationBuilder configuration, string filename)
         {
             configuration.SetValue("InputModelsFile", filename);
             return configuration;

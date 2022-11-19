@@ -2,10 +2,15 @@
 
 using dnWalker.Concolic;
 using dnWalker.Configuration;
+using dnWalker.Explorations;
+using dnWalker.Explorations.Xml;
 using dnWalker.Input;
 using dnWalker.Input.Xml;
+using dnWalker.Symbolic.Xml;
 using dnWalker.TypeSystem;
 using dnWalker.Z3;
+
+using MMC;
 
 using System;
 using System.Collections.Generic;
@@ -26,14 +31,35 @@ namespace dnWalker.Interface
         private IDefinitionProvider _definitionProvider;
 
         private XmlUserModelParser _modelParser;
+        private XmlExplorationSerializer _explorationSerializer;
+
 
         [MemberNotNull(nameof(_modelParser))]
+        [MemberNotNull(nameof(_definitionProvider))]
         private XmlUserModelParser ModelParser
         {
             get
             {
                 _modelParser ??= new XmlUserModelParser(DefinitionProvider);
                 return _modelParser;
+            }
+        }
+
+        [MemberNotNull(nameof(_explorationSerializer))]
+        [MemberNotNull(nameof(_definitionProvider))]
+        private XmlExplorationSerializer ExplorationSerializer
+        {
+            get
+            {
+                if (_explorationSerializer == null)
+                {
+                    TypeParser tp = new TypeParser(DefinitionProvider);
+                    MethodParser mp = new MethodParser(DefinitionProvider, tp);
+
+                    XmlModelSerializer ms = new XmlModelSerializer(tp, mp);
+                    _explorationSerializer = new XmlExplorationSerializer(ms);
+                }
+                return _explorationSerializer;
             }
         }
 
@@ -83,12 +109,38 @@ namespace dnWalker.Interface
         }
         internal static IConfiguration BuildConfiguration(IEnumerable<string> configurationFiles)
         {
+            // WIP: right now the defaults are not overwritten by other configuration providers
+
+            IConfigurationBuilder builder = new ConfigurationBuilder();
+            builder.InitializeDefaults();
+
+            foreach (string cfgFile in configurationFiles)
+            {
+                string extension = System.IO.Path.GetExtension(cfgFile);
+                switch (extension)
+                {
+                    case ".json":
+                        builder.AddJsonFile(cfgFile);
+                        break;
+
+                    case ".ini":
+                        builder.AddIniFile(cfgFile);
+                        break;
+                }
+            }
+
+            if (!builder.HasValue("Strategy"))
+            {
+                builder.SetValue("Strategy", "dnWalker.Concolic.Traversal.AllPathsCoverage");
+            }
+
             // TODO add configurtion building
-            return null;
+            return builder.Build();
         }
 
         public bool Explore(string method, string output)
         {
+
             try
             {
                 IDefinitionProvider definitionProvider = DefinitionProvider;
@@ -101,10 +153,16 @@ namespace dnWalker.Interface
                         new Z3Solver()
                     );
 
-                ExplorationResult explorationResult = explorer.Run(GetMethod(method, definitionProvider));
+                MethodDef md = GetMethod(method, definitionProvider);
+
+                ExplorationResult explorationResult = explorer.Run(md);
 
                 // write the output
+                ConcolicExploration data = explorationResult.ToExplorationData().Build();
+                XmlExplorationSerializer serializer = ExplorationSerializer;
 
+                output ??= $"{md.Name}_dnWalkerExploration.xml";
+                serializer.ToXml(data).Save(output);
 
                 return true;
             }
