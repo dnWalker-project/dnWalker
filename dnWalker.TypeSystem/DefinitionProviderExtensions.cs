@@ -112,7 +112,7 @@ namespace dnWalker.TypeSystem
                 return definitionProvider.Context.Modules
                     .SelectMany(md => md.GetTypes())
                     .Where(td => td.Name == name)
-                    .Single();
+                    .SingleOrDefault() ?? throw new TypeNotFoundException(name);
             }
         }
     }

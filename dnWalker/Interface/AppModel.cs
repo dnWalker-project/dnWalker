@@ -116,12 +116,18 @@ namespace dnWalker.Interface
 
         private static TypeDef GetTypeDefinition(IDefinitionProvider definitionProvider, string fullNameOrName)
         {
-            TypeDef td = definitionProvider.GetTypeDefinition(fullNameOrName);
-            if (td == null)
+            try
             {
-                td = definitionProvider.GetTypeDefinition(null, fullNameOrName);
+                TypeDef td = definitionProvider.GetTypeDefinition(fullNameOrName);
+                return td;
             }
-            return td;
+            catch (TypeNotFoundException)
+            {
+                // will throw new TypeNotFoundException should the no type be found
+                // or Linq exception if more than one type matches...
+                TypeDef td = definitionProvider.GetTypeDefinition(null, fullNameOrName);
+                return td;
+            }
         }
 
         private static MethodDef GetMethod(string methodSpecification, IDefinitionProvider definitionProvider)
