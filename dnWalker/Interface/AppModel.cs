@@ -65,8 +65,8 @@ namespace dnWalker.Interface
 
         private AppModel(IConfiguration configuration)
         {
-            _domain = dnWalker.TypeSystem.Domain.Create();
-
+            _domain = Domain.Create();
+            _configuration = configuration;
         }
 
 

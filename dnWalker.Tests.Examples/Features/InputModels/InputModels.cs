@@ -27,7 +27,7 @@ namespace dnWalker.Tests.Examples.Features.InputModels
 
         }
 
-        protected override void SetupConfiguration(IConfiguration configuration)
+        protected override void SetupConfiguration(IConfigurationBuilder configuration)
         {
             base.SetupConfiguration(configuration);
 

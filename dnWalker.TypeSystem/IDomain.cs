@@ -17,7 +17,7 @@ namespace dnWalker.TypeSystem
 
         IResolver Resolver { get; }
 
-        bool Load(IAssembly assembly);
+        bool Load(AssemblyDef assembly);
     }
 
     public static class DomainExtensions

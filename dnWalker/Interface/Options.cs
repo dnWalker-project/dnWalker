@@ -33,7 +33,7 @@ namespace dnWalker.Interface
         internal void Write(TextWriter writer)
         {
             writer.WriteLine($"Configuration: {string.Join(", ", ConfigurationFiles.Select(f => $"'{f}'"))}");
-            writer.WriteLine($"Mode:          {(Batch ? "interactive" : "batch")}");
+            writer.WriteLine($"Mode:          {(Batch ? "batch" : "interactive")}");
             writer.WriteLine($"Script:        {Script}");
             writer.WriteLine($"Assembly:      {Assembly}");
         }

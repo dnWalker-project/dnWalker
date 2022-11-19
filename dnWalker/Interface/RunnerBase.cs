@@ -33,6 +33,12 @@ namespace dnWalker.Interface
                 foreach (ICommand command in GetCommands()) 
                 {
                     (exitCode, br) = command.Execute(appModel);
+
+                    if (exitCode != 0) 
+                    {
+                        Console.WriteLine($"ERROR: {command} ended with {exitCode}");
+                    }
+
                     if (br)
                         break;
                 }

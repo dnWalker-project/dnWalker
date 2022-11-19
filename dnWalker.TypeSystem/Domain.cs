@@ -43,18 +43,23 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        public bool Load(IAssembly assembly)
+        public bool Load(AssemblyDef assemblyDef)
         {
             try
             {
-                AssemblyDef assemblyDef = _moduleContext.AssemblyResolver.ResolveThrow(assembly, null);
-                Load(assemblyDef);
+                //Load(assemblyDef);
                 _mainModule ??= assemblyDef.ManifestModule;
+
+                foreach (ModuleDef module in assemblyDef.Modules)
+                {
+                    Load(module);
+                }
+
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to resolve or load assembly: '{assembly}'. Error: '{ex}'");
+                Debug.WriteLine($"Failed to resolve or load assembly: '{assemblyDef}'. Error: '{ex}'");
                 return false;
             }
         }
@@ -81,13 +86,13 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        private void Load(AssemblyDef assembly)
-        {
-            foreach (ModuleDef module in assembly.Modules)
-            {
-                Load(module);
-            }
-        }
+        //private void Load(AssemblyDef assembly)
+        //{
+        //    foreach (ModuleDef module in assembly.Modules)
+        //    {
+        //        Load(module);
+        //    }
+        //}
 
         public static IDomain LoadFromFile(string file)
         {
