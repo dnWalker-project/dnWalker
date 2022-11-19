@@ -111,6 +111,12 @@ namespace dnWalker.TypeSystem
             }
             else
             {
+                int slashIdx = name.IndexOf('/');
+                if (slashIdx > 0)
+                {
+                    name = name.Substring(slashIdx + 1);
+                }
+
                 return definitionProvider.Context.Modules
                     .SelectMany(md => md.GetTypes())
                     .Where(td => td.Name == name)
@@ -128,7 +134,7 @@ namespace dnWalker.TypeSystem
 
             TypeDef td = FindType(definitionProvider, typeNameOrFullName);
 
-            parts = parts[1].Split(new char[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+            parts = parts[1].Split(new char[] { '(', ')' });
             string methodName = parts[0];
 
             MethodDef[] methods = td.FindMethods(methodName).ToArray();
@@ -138,11 +144,13 @@ namespace dnWalker.TypeSystem
                 return methods[0];
             }
 
+            if (parts.Length == 1) throw new MemberNotFoundException(td.Name, methodName);
+
             TypeSig[] argTypes = parts[1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Select(fullNameOrName => FindType(definitionProvider, fullNameOrName).ToTypeSig())
                 .ToArray();
 
-            return methods.FirstOrDefault(m => m.Parameters.Select(p => p.Type).SequenceEqual(argTypes, TypeEqualityComparer.Instance)) ?? throw new MemberNotFoundException(td.Name, methodName);
+            return methods.FirstOrDefault(m => m.Parameters.Where(p => p.IsNormalMethodParameter).Select(p => p.Type).SequenceEqual(argTypes, TypeEqualityComparer.Instance)) ?? throw new MemberNotFoundException(td.Name, methodName);
 
             static TypeDef FindType(IDefinitionProvider definitionProvider, string fullNameOrName)
             {

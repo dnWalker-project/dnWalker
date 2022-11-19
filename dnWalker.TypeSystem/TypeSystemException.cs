@@ -122,5 +122,13 @@ namespace dnWalker.TypeSystem
         }
 
         public string? MemberName { get; }
+
+        public override string Message
+        {
+            get
+            {
+                return $"Could not find the '{MemberName}' on '{TypeName}'";
+            }
+        }
     }
 }
