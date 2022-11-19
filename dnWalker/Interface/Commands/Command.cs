@@ -8,12 +8,18 @@ namespace dnWalker.Interface.Commands
 {
     internal static class Command
     {
+
         internal static readonly ICommand ExitCommand = new ExitCommand();
         internal static readonly ICommand NoopCommand = new NoopCommand();
 
         internal static ICommand GetCommand(string commandString)
         {
-            var tokens = Tokenize(commandString);
+            if (string.IsNullOrEmpty(commandString))
+            {
+                return NoopCommand;
+            }
+
+            IReadOnlyList<string> tokens = Tokenize(commandString);
 
             if (tokens.Count == 0) return NoopCommand;
 
@@ -22,14 +28,14 @@ namespace dnWalker.Interface.Commands
                 case CommandTokens.Exit: return ExitCommand;
                 case CommandTokens.Load:
                     {
-                        if (tokens.Count != 3)
+                        if (tokens.Count < 2)
                         {
-                            return new InvalidCommand(commandString, "load command must have 3 tokens: 'assembly/models' and 'file-specification'");
+                            return new InvalidCommand(commandString, "load command must have at least 3 tokens: 'assembly/models' and 'file-specification'");
                         }
                         switch (tokens[1].ToLower()) 
                         {
-                            case CommandTokens.Assembly: return new LoadAssemblyCommand(tokens[2]);
-                            case CommandTokens.Models: return new LoadModelsCommand(tokens[2]);
+                            case CommandTokens.Assembly: return new LoadAssemblyCommand(tokens.Skip(1));
+                            case CommandTokens.Models: return new LoadModelsCommand(tokens.Skip(1));
                         }
                         return new InvalidCommand(commandString, "second parameter of the load command must be 'assembly' or 'models'");
                     }

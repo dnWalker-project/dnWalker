@@ -12,16 +12,28 @@ namespace dnWalker.Interface.Commands
 {
     internal class LoadModelsCommand : ICommand
     {
-        private readonly string _modelsFile;
+        private readonly string[] _modelsFiles;
 
-        public LoadModelsCommand(string modelsFile)
+        public LoadModelsCommand(params string[] modelsFiles)
         {
-            _modelsFile = modelsFile;
+            _modelsFiles = modelsFiles;
+        }
+        public LoadModelsCommand(IEnumerable<string> modelsFiles)
+        {
+            _modelsFiles = modelsFiles.ToArray();
+        }
+
+        public IReadOnlyList<string> ModelsFile
+        {
+            get
+            {
+                return _modelsFiles;
+            }
         }
 
         public CommandResult Execute(IAppModel appModel)
         {
-            if (appModel.LoadModels(_modelsFile))
+            if (_modelsFiles.All(f => appModel.LoadModels(f)))
             {
                 return CommandResult.Success;
             }

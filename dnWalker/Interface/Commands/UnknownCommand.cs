@@ -13,6 +13,14 @@ namespace dnWalker.Interface.Commands
             _command = command;
         }
 
+        public string Command
+        {
+            get
+            {
+                return _command;
+            }
+        }
+
         public CommandResult Execute(IAppModel appModel)
         {
             Console.WriteLine($"ERROR: Unknown command '{_command}'");

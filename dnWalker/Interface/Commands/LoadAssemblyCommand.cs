@@ -1,21 +1,35 @@
 ﻿using dnWalker.TypeSystem;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace dnWalker.Interface.Commands
 {
     internal class LoadAssemblyCommand : ICommand
     {
-        private readonly string _assemblyFileName;
+        private readonly string[] _assemblyFileNames;
 
-        public LoadAssemblyCommand(string assemblyFileName)
+        public LoadAssemblyCommand(params string[] assemblyFileNames)
         {
-            _assemblyFileName = assemblyFileName;
+            _assemblyFileNames = assemblyFileNames;
+        }
+        public LoadAssemblyCommand(IEnumerable<string> assemblyFileNames)
+        {
+            _assemblyFileNames = assemblyFileNames.ToArray();
+        }
+
+        public IReadOnlyList<string> AssemblyFileNames
+        {
+            get
+            {
+                return _assemblyFileNames;
+            }
         }
 
         public CommandResult Execute(IAppModel appModel)
         {
-            if (appModel.LoadAssembly(_assemblyFileName))
+            if (_assemblyFileNames.All(f => appModel.LoadAssembly(f)))
             {
                return CommandResult.Success;
             }

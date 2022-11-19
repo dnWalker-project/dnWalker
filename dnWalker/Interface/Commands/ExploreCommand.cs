@@ -15,6 +15,22 @@ namespace dnWalker.Interface.Commands
             _outputFile = outputFile;
         }
 
+        public string OutputFile
+        {
+            get
+            {
+                return _outputFile;
+            }
+        }
+
+        public string MethodSpecification
+        {
+            get
+            {
+                return _methodSpecification;
+            }
+        }
+
         public CommandResult Execute(IAppModel appModel)
         {
             Console.WriteLine($"Running Explore command: '{_methodSpecification}'");
