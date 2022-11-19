@@ -40,10 +40,13 @@ namespace dnWalker.Interface
             string line;
             do
             {
-                line = _reader.ReadLine().Trim();
+                line = _reader.ReadLine()?.Trim();
 
-            } while (string.IsNullOrWhiteSpace(line) || 
-                     line.StartsWith(';'));
+            } while (line != null && 
+                     (string.IsNullOrWhiteSpace(line) || 
+                      line.StartsWith(';')));
+
+            if (line == null) return false;
 
             _current = Command.GetCommand(line);
 

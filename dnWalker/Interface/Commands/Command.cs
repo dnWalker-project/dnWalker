@@ -8,6 +8,14 @@ namespace dnWalker.Interface.Commands
 {
     internal static class Command
     {
+        public static class ErrorMessage
+        {
+            public const string LoadTokenCount = "load command must have at least 3 tokens: 'assembly/models' and 'file-specification'";
+            public const string UnknownLoad = "second parameter of the load command must be 'assembly' or 'models'";
+            public const string ExploreTokenCount = "explore command must have at least 2 tokens.";
+        }
+
+
 
         internal static readonly ICommand ExitCommand = new ExitCommand();
         internal static readonly ICommand NoopCommand = new NoopCommand();
@@ -28,22 +36,22 @@ namespace dnWalker.Interface.Commands
                 case CommandTokens.Exit: return ExitCommand;
                 case CommandTokens.Load:
                     {
-                        if (tokens.Count < 2)
+                        if (tokens.Count < 3)
                         {
-                            return new InvalidCommand(commandString, "load command must have at least 3 tokens: 'assembly/models' and 'file-specification'");
+                            return new InvalidCommand(commandString, ErrorMessage.LoadTokenCount);
                         }
                         switch (tokens[1].ToLower()) 
                         {
-                            case CommandTokens.Assembly: return new LoadAssemblyCommand(tokens.Skip(1));
-                            case CommandTokens.Models: return new LoadModelsCommand(tokens.Skip(1));
+                            case CommandTokens.Assembly: return new LoadAssemblyCommand(tokens.Skip(2));
+                            case CommandTokens.Models: return new LoadModelsCommand(tokens.Skip(2));
                         }
-                        return new InvalidCommand(commandString, "second parameter of the load command must be 'assembly' or 'models'");
+                        return new InvalidCommand(commandString, ErrorMessage.UnknownLoad);
                     }
                 case CommandTokens.Explore:
                     {
                         if (tokens.Count < 2)
                         {
-                            return new InvalidCommand(commandString, "explore command must have at least 2 tokens.");
+                            return new InvalidCommand(commandString, ErrorMessage.ExploreTokenCount);
                         }
                         return new ExploreCommand(tokens[1], tokens.Count == 3 ? tokens[2] : null);
                     }

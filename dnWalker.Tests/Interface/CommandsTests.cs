@@ -24,5 +24,20 @@ namespace dnWalker.Tests.Interface
 
             resTokens.Should().BeEquivalentTo(tokens);
         }
+
+        [Theory]
+        [InlineData(typeof(NoopCommand), "")]
+        [InlineData(typeof(NoopCommand), null)]
+        [InlineData(typeof(ExitCommand), "Exit")]
+        [InlineData(typeof(ExploreCommand), "explore methodXYZ", "methodXYZ", (string?)null)]
+        [InlineData(typeof(ExploreCommand), "explore methodXYZ out", "methodXYZ", "out")]
+        [InlineData(typeof(LoadAssemblyCommand), "load assembly path/to/assembly", "path/to/assembly")]
+        [InlineData(typeof(LoadModelsCommand), "load models path/to/models", "path/to/models")]
+        [InlineData(typeof(UnknownCommand), "asdfh klasjdhf lasdhf lakjdhf kahsdf;ah df")]
+        public void GetCommandTests(Type commandType, string cmdText, params string?[] args)
+        {
+            ICommand command = Command.GetCommand(cmdText);
+            command.Should().BeOfType(commandType);
+        }
     }
 }
