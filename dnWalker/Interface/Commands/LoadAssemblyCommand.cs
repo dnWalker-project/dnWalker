@@ -33,7 +33,7 @@ namespace dnWalker.Interface.Commands
             {
                return CommandResult.Success;
             }
-            return CommandResult.BreakFail(-1);
+            return CommandResult.FailContinue(-1);
         }
     }
 }

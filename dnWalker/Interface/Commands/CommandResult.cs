@@ -10,6 +10,7 @@ namespace dnWalker.Interface.Commands
     {
         public static readonly CommandResult Success = new CommandResult(0, false);
         public static readonly CommandResult BreakSuccess = new CommandResult(0, true);
+        public static CommandResult FailContinue(int exitCode) => new CommandResult(exitCode, false);
         public static CommandResult BreakFail(int exitCode) => new CommandResult(exitCode, true);
     }
 }

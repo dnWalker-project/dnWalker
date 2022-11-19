@@ -24,7 +24,7 @@ namespace dnWalker.Interface.Commands
         public CommandResult Execute(IAppModel appModel)
         {
             Console.WriteLine($"ERROR: Unknown command '{_command}'");
-            return CommandResult.BreakFail(-1);
+            return CommandResult.FailContinue(-1);
         }
     }
 }

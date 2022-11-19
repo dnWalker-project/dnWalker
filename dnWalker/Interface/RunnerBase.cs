@@ -40,6 +40,7 @@ namespace dnWalker.Interface
             catch (Exception ex)
             {
                 Console.WriteLine($"ERROR: {ex}");
+                exitCode = 100;
             }
 
             return exitCode;
