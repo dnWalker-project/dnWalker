@@ -1,8 +1,5 @@
 ﻿using dnlib.DotNet;
 
-using dnWalker.Symbolic;
-using dnWalker.Symbolic.Heap;
-
 using QuikGraph;
 
 using System;
@@ -11,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dnWalker.TestGenerator.Symbolic.Heap
+namespace dnWalker.Symbolic.Heap.Graphs
 {
     public static class HeapExtensions
     {
@@ -45,7 +42,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
             if (objectNode.HasFields)
             {
                 Location target = objectNode.Location;
-                foreach (IField field in objectNode.Fields)
+                foreach (var field in objectNode.Fields)
                 {
                     IValue value = objectNode.GetFieldOrDefault(field);
                     if (value is Location source && source != Location.Null)
@@ -59,7 +56,7 @@ namespace dnWalker.TestGenerator.Symbolic.Heap
             if (objectNode.HasMethodInvocations)
             {
                 Location target = objectNode.Location;
-                foreach ((IMethod method, int invocation) in objectNode.MethodInvocations)
+                foreach ((IMethod? method, int invocation) in objectNode.MethodInvocations)
                 {
                     IValue value = objectNode.GetMethodResult(method, invocation);
                     if (value is Location source && source != Location.Null)

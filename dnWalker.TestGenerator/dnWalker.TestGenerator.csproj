@@ -23,7 +23,6 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Moq" Version="4.18.2" />
-    <PackageReference Include="QuikGraph" Version="2.5.0" />
     <PackageReference Include="System.CodeDom" Version="7.0.0" />
   </ItemGroup>
 

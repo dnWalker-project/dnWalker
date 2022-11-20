@@ -2,7 +2,7 @@
 
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
-using dnWalker.TestGenerator.Symbolic.Heap;
+using dnWalker.Symbolic.Heap.Graphs;
 
 using FluentAssertions;
 
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace dnWalker.TestGenerator.Tests.Heap
+namespace dnWalker.Symbolic.Tests.Heap.Graphs
 {
 
     public class HeapGraphTests
