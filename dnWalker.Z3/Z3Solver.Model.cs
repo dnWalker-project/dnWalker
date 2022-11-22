@@ -70,6 +70,10 @@ namespace dnWalker.Z3
                         case ArrayLengthVariable arrayLength:
                             ((IArrayHeapNode)parentNode).Length = (int)(((PrimitiveValue<uint>)value).Value);
                             break;
+
+                        case ConditionalMethodResultVariable condMethodResult:
+                            ((IObjectHeapNode)parentNode).SetConditionalMethodResult(condMethodResult.Method, condMethodResult.Condition, value);
+                            break;
                     }
                 }
             }

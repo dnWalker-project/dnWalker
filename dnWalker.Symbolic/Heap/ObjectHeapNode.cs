@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -28,9 +30,28 @@ namespace dnWalker.Symbolic.Heap
             }
         }
 
+        private class ConditionalMethodComparer : IEqualityComparer<(IMethod m, Expression e)>
+        {
+            // we need to compare declaring types as same method signature may be used by multiple interfaces...
+            private static readonly IEqualityComparer<IMethod> _methodComparer = MethodEqualityComparer.CaseInsensitiveCompareDeclaringTypes;
+
+            public bool Equals((IMethod m, Expression e) x, (IMethod m, Expression e) y)
+            {
+                return _methodComparer.Equals(x.m, y.m) &&
+                    x.e.Equals(y.e);
+            }
+
+            public int GetHashCode([DisallowNull] (IMethod m, Expression e) obj)
+            {
+                return HashCode.Combine(obj.m, obj.e);
+            }
+        }
+
+
         // we need to compare declaring types as same field signature may be used by base and descendant class
         private static readonly IEqualityComparer<IField> _fieldComaparer = FieldEqualityComparer.CompareDeclaringTypes;
         private static readonly IEqualityComparer<(IMethod, int)> _methodInvocationComparer = new MethodInvocationComparer();
+        private static readonly IEqualityComparer<(IMethod, Expression)> _conditionalMethodComparer = new ConditionalMethodComparer();
 
         public ObjectHeapNode(Location location, TypeSig type, bool isDirty = false) : base(location, type, isDirty)
         {
@@ -44,6 +65,7 @@ namespace dnWalker.Symbolic.Heap
 
         private readonly Dictionary<IField, IValue> _fields = new Dictionary<IField, IValue>(_fieldComaparer);
         private readonly Dictionary<(IMethod, int), IValue> _methods = new Dictionary<(IMethod, int), IValue>(_methodInvocationComparer);
+        private readonly Dictionary<(IMethod, Expression), IValue> _conditionalMethods = new Dictionary<(IMethod, Expression), IValue>(_conditionalMethodComparer);
 
         public override ObjectHeapNode Clone()
         {
@@ -84,6 +106,7 @@ namespace dnWalker.Symbolic.Heap
         public IEnumerable<IField> Fields => _fields.Keys;
 
         public IEnumerable<(IMethod method, int invocation)> MethodInvocations => _methods.Keys;
+        public IEnumerable<(IMethod method, Expression)> MethodConditions => _conditionalMethods.Keys;
 
         public bool HasFields => _fields.Count > 0;
 
@@ -97,6 +120,27 @@ namespace dnWalker.Symbolic.Heap
         public bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value)
         {
             return _methods.TryGetValue((method, invocation), out value);
+        }
+
+        public void SetConditionalMethodResult(IMethod method, Expression condition, IValue result)
+        {
+            _conditionalMethods[(method, condition)] = result;
+        }
+
+        public bool TryGetMethodConditionalResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors)
+        {
+            List<KeyValuePair<Expression, IValue>> results = new List<KeyValuePair<Expression, IValue>>();
+            foreach (var p in _conditionalMethods.Where(p => MethodEqualityComparer.CompareDeclaringTypes.Equals(p.Key.Item1, method))) 
+            {
+                results.Add(new KeyValuePair<Expression, IValue>(p.Key.Item2, p.Value));
+            }
+            behaviors = results;
+            return results.Count > 0;
+        }
+
+        public bool TryGetConditionalResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value)
+        {
+            return _conditionalMethods.TryGetValue((method, condition), out value);
         }
     }
 }

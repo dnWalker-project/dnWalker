@@ -87,6 +87,14 @@ namespace dnWalker.Symbolic
                     value = ((IReadOnlyObjectHeapNode)parentNode).GetMethodResult(mrv.Method, mrv.Invocation);
                     return true;
                 }
+                else if (variable is ConditionalMethodResultVariable cmr)
+                {
+                    if (((IReadOnlyObjectHeapNode)parentNode).TryGetConditionalResult(cmr.Method, cmr.Condition, out value))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
             }
 
             throw new InvalidOperationException("Unexpected variable type.");
@@ -132,6 +140,11 @@ namespace dnWalker.Symbolic
                 else if (variable is MethodResultVariable mrv)
                 {
                     ((IObjectHeapNode)parentNode).SetMethodResult(mrv.Method, mrv.Invocation, value);
+                    return true;
+                }
+                else if (variable is ConditionalMethodResultVariable cmrv)
+                {
+                    ((IObjectHeapNode)parentNode).SetConditionalMethodResult(cmrv.Method, cmrv.Condition, value);
                     return true;
                 }
             }

@@ -1,9 +1,12 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace dnWalker.Symbolic.Heap
 {
+
     /// <summary>
     /// Represents a read only object heap node.
     /// </summary>
@@ -27,8 +30,13 @@ namespace dnWalker.Symbolic.Heap
         IValue GetMethodResult(IMethod method, int invocation);
         bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value);
 
+
+        bool TryGetConditionalResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value);
+        bool TryGetMethodConditionalResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors);
+
         IEnumerable<IField> Fields { get; }
         IEnumerable<(IMethod method, int invocation)> MethodInvocations { get; }
+        IEnumerable<(IMethod method, Expression)> MethodConditions { get; }
 
         bool HasFields { get; }
         bool HasMethodInvocations { get; }
