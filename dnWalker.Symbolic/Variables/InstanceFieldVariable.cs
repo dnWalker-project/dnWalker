@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -71,6 +72,19 @@ namespace dnWalker.Symbolic.Variables
         {
             return other is InstanceFieldVariable ifv && 
                 FieldEqualityComparer.CompareDeclaringTypes.Equals(_field, ifv._field);
+        }
+
+        public IVariable Substitute(IVariable from, IVariable to)
+        {
+            if (from is InstanceFieldVariable fld &&
+                FieldEqualityComparer.CompareDeclaringTypes.Equals(_field, fld._field) &&
+                fld.Parent.Equals(_parent))
+            {
+                // we are substituting me
+                return to;
+            }
+
+            return new InstanceFieldVariable(_parent.Substitute(from, to), _field);
         }
     }
 }

@@ -50,9 +50,15 @@ namespace dnWalker.Symbolic.Variables
             return obj is NamedVariable nv && Equals(nv);
         }
 
+        public bool Equals(IVariable? other)
+        {
+            return other is NamedVariable n && Equals(n);
+        }
+
         public override string ToString()
         {
             return $"{_type.FullName} {_name}";
         }
+
     }
 }

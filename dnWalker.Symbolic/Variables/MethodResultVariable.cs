@@ -77,5 +77,19 @@ namespace dnWalker.Symbolic.Variables
                 mrv._invocation == _invocation && 
                 MethodEqualityComparer.CompareDeclaringTypes.Equals(_method, mrv._method);
         }
+
+        public IVariable Substitute(IVariable from, IVariable to)
+        {
+            if (from is MethodResultVariable met &&
+                MethodEqualityComparer.CompareDeclaringTypes.Equals(_method, met._method) &&
+                _invocation == met._invocation &&
+                met.Parent.Equals(_parent))
+            {
+                // we are substituting me
+                return to;
+            }
+
+            return new MethodResultVariable(_parent.Substitute(from, to), _method, _invocation);
+        }
     }
 }

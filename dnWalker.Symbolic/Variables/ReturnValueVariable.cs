@@ -51,5 +51,10 @@ namespace dnWalker.Symbolic.Variables
         public TypeSig Type => _method.MethodSig.RetType;
 
         public string Name => $"Return Value: {_method}";
+
+        public bool Equals(IVariable? other)
+        {
+            return other is ReturnValueVariable rvv && Equals(rvv);
+        }
     }
 }
