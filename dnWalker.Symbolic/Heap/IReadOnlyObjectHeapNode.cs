@@ -31,12 +31,12 @@ namespace dnWalker.Symbolic.Heap
         bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value);
 
 
-        bool TryGetConditionalResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value);
-        bool TryGetMethodConditionalResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors);
+        bool TryGetConstraintedMethodResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value);
+        bool TryGetConstraintedMethodResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors);
 
         IEnumerable<IField> Fields { get; }
         IEnumerable<(IMethod method, int invocation)> MethodInvocations { get; }
-        IEnumerable<(IMethod method, Expression)> MethodConditions { get; }
+        IEnumerable<(IMethod method, Expression)> MethodConstraints { get; }
 
         bool HasFields { get; }
         bool HasMethodInvocations { get; }

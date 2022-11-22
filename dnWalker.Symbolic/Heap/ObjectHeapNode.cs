@@ -106,7 +106,7 @@ namespace dnWalker.Symbolic.Heap
         public IEnumerable<IField> Fields => _fields.Keys;
 
         public IEnumerable<(IMethod method, int invocation)> MethodInvocations => _methods.Keys;
-        public IEnumerable<(IMethod method, Expression)> MethodConditions => _conditionalMethods.Keys;
+        public IEnumerable<(IMethod method, Expression)> MethodConstraints => _conditionalMethods.Keys;
 
         public bool HasFields => _fields.Count > 0;
 
@@ -127,7 +127,7 @@ namespace dnWalker.Symbolic.Heap
             _conditionalMethods[(method, condition)] = result;
         }
 
-        public bool TryGetMethodConditionalResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors)
+        public bool TryGetConstraintedMethodResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors)
         {
             List<KeyValuePair<Expression, IValue>> results = new List<KeyValuePair<Expression, IValue>>();
             foreach (var p in _conditionalMethods.Where(p => MethodEqualityComparer.CompareDeclaringTypes.Equals(p.Key.Item1, method))) 
@@ -138,7 +138,7 @@ namespace dnWalker.Symbolic.Heap
             return results.Count > 0;
         }
 
-        public bool TryGetConditionalResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value)
+        public bool TryGetConstraintedMethodResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value)
         {
             return _conditionalMethods.TryGetValue((method, condition), out value);
         }

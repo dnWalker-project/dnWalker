@@ -89,7 +89,7 @@ namespace dnWalker.Symbolic
                 }
                 else if (variable is ConditionalMethodResultVariable cmr)
                 {
-                    if (((IReadOnlyObjectHeapNode)parentNode).TryGetConditionalResult(cmr.Method, cmr.Condition, out value))
+                    if (((IReadOnlyObjectHeapNode)parentNode).TryGetConstraintedMethodResult(cmr.Method, cmr.Condition, out value))
                     {
                         return true;
                     }

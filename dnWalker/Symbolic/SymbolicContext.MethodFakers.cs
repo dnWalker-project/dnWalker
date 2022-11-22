@@ -21,7 +21,7 @@ namespace dnWalker.Symbolic
 {
     public partial class SymbolicContext
     {
-        private class ConditionalMethodFaker : IMethodFaker
+        private class ConstraintedMethodFaker : IMethodFaker
         {
             private readonly Expression[] _conditions;
 
@@ -29,7 +29,7 @@ namespace dnWalker.Symbolic
             private readonly IVariable _instanceVariable;
             private readonly IMethod _method;
 
-            public ConditionalMethodFaker(IMethod method, Location symbolicLocation, IVariable instanceVariable, IEnumerable<Expression> conditions)
+            public ConstraintedMethodFaker(IMethod method, Location symbolicLocation, IVariable instanceVariable, IEnumerable<Expression> conditions)
             {
                 _method = method ?? throw new ArgumentNullException(nameof(method));
                 _symbolicLocation = symbolicLocation;
@@ -185,9 +185,9 @@ namespace dnWalker.Symbolic
 
             IReadOnlyObjectHeapNode objNode = (IReadOnlyObjectHeapNode)n;
 
-            if (objNode.TryGetMethodConditionalResults(method, out IEnumerable<KeyValuePair<Expression, IValue>> results))
+            if (objNode.TryGetConstraintedMethodResults(method, out IEnumerable<KeyValuePair<Expression, IValue>> results))
             {
-                return new ConditionalMethodFaker(method, location, instanceVariable, results.Select(cr => cr.Key));
+                return new ConstraintedMethodFaker(method, location, instanceVariable, results.Select(cr => cr.Key));
             }
             else
             {

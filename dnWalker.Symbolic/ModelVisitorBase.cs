@@ -233,7 +233,7 @@ namespace dnWalker.Symbolic
                 Visit(methodResultVariable);
             }
 
-            foreach ((IMethod method, Expression condition) in node.MethodConditions) 
+            foreach ((IMethod method, Expression condition) in node.MethodConstraints) 
             {
                 IVariable conditionalVariable = new ConditionalMethodResultVariable(currentVar, method, condition);
                 Visit(conditionalVariable);
