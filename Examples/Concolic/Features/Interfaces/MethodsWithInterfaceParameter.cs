@@ -48,5 +48,23 @@ namespace Examples.Concolic.Features.Interfaces
                 Console.Out.WriteLine("instance.AbstractMethod()|1| <= 134");
             }
         }
+        public static void InvokeInterfaceMethodWithArgs(IMyInterface instance)
+        {
+            if (instance == null)
+            {
+                Console.Out.WriteLine("instance is null");
+                return;
+            }
+
+            if (instance.AbstractMethodWithArgs(3) == 5) 
+            {
+                Console.Out.WriteLine("instance.AbstractMethodWithArgs == 5, because the argument is less than 5");
+            }
+
+            if (instance.AbstractMethodWithArgs(6) == 10)
+            {
+                Console.Out.WriteLine("instance.AbstractMethodWithArgs == 10, because the argument is greater than or equal to 5");
+            }
+        }
     }
 }

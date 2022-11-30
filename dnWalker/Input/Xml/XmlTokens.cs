@@ -22,6 +22,8 @@ namespace dnWalker.Input.Xml
         public const string Id = nameof(Id);
         public const string Type = nameof(Type);
 
+        public const string Condition = nameof(Condition);
+
         public const string Length = nameof(Length);
         public const string Element = nameof(Element);
         public const string ElementType = nameof(ElementType);

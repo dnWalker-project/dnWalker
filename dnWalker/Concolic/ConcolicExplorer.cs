@@ -3,6 +3,7 @@
 using dnWalker.Concolic.Traversal;
 using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
+using dnWalker.Input;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Symbolic;
@@ -30,14 +31,14 @@ namespace dnWalker.Concolic
         public ConcolicExplorer(IDefinitionProvider definitionProvider, IConfiguration config, Logger logger, ISolver solver) : base(definitionProvider, config, logger, solver)
         {
         }
-
-        protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null)
+        
+        protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IEnumerable<UserModel> userModels = null)
         {
             DateTime explorationStart = DateTime.Now;
 
             IConfiguration configuration = Configuration;
 
-            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy(), configuration.GetInputModels(entryPoint, DefinitionProvider));
+            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy(), userModels?.Select(userModel => userModel.Build()) ?? Array.Empty<IModel>());
 
             // TODO: make it as a explorer extension...
             if (!ControlFlowGraphWriter.TryWrite(ControlFlowGraph.Build(entryPoint), "cfg.dot")) Logger.Warning("CFG writer failed.");

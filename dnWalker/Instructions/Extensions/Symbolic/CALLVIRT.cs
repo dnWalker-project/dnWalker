@@ -63,17 +63,10 @@ namespace dnWalker.Instructions.Extensions.Symbolic
 
                         Debug.Assert(instanceExpr is VariableExpression);
                         dnWalker.Symbolic.IVariable instanceVar = ((VariableExpression)instanceExpr).Variable;
-                        if (context.InputModel.TryGetValue(instanceVar, out IValue instanceValue))
-                        {
-                            Location symbolicLocation = (Location)instanceValue;
-                            int invocation = context.GetInvocation(symbolicLocation, method);
 
-                            dnWalker.Symbolic.IVariable resultVar = Variable.MethodResult(instanceVar, method, invocation);
-
-                            IDataElement result = context.LazyInitialize(resultVar, cur);
-                            result.SetExpression(cur, cur.GetExpressionFactory().MakeVariable(resultVar));
-                            cur.EvalStack.Push(result);
-                        }
+                        IMethodFaker methodFaker = context.GetMethodFaker(cur, instanceVar, method);
+                        IDataElement result = methodFaker.GetConcreteValue(cur, args);
+                        cur.EvalStack.Push(result);
                     }
                 }
             }

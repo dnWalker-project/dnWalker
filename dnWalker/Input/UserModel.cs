@@ -27,7 +27,9 @@ namespace dnWalker.Input
         public MethodDef Method { get; set; }
 
         public IDictionary<Parameter, UserData> MethodArguments { get; } = new Dictionary<Parameter, UserData>();
-        public IDictionary<FieldDef, UserData> StaticFields { get; } = new Dictionary<FieldDef, UserData>();
+        public IDictionary<FieldDef, UserData> StaticFields { get; } = new Dictionary<FieldDef, UserData>(FieldEqualityComparer.CompareDeclaringTypes);
+
+        public IDictionary<IMethod, MethodBehavior> MethodBehaviors { get; } = new Dictionary<IMethod, MethodBehavior>(MethodEqualityComparer.CompareDeclaringTypes);
 
         public IModel Build()
         {
