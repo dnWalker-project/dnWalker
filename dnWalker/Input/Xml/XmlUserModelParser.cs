@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
+using dnWalker.Symbolic.Expressions.Parsing;
 using dnWalker.TypeSystem;
 
 using System;
@@ -18,9 +20,37 @@ namespace dnWalker.Input.Xml
     public class XmlUserModelParser
     {
         private readonly IDefinitionProvider _definitionProvider;
+        private readonly Dictionary<MethodDef, ExpressionParser> _methodConditionParsers = new Dictionary<MethodDef, ExpressionParser>(MethodEqualityComparer.CompareDeclaringTypes);
+        private readonly ExpressionFactory _expressionFactory;
 
-        public XmlUserModelParser(IDefinitionProvider definitionProvider)
+        private ExpressionParser GetParser(MethodDef methodDef)
         {
+            if (!_methodConditionParsers.TryGetValue(methodDef, out ExpressionParser parser))
+            {
+                Dictionary<string, TypeSig> vars = new Dictionary<string, TypeSig>(
+                    methodDef.Parameters
+                        .Where(p => !p.IsReturnTypeParameter)
+                        .Select(p =>
+                        {
+                            if (p.IsHiddenThisParameter)
+                            {
+                                return KeyValuePair.Create("this", p.Type);
+                            }
+                            else //if (p.IsNormalMethodParameter)
+                            {
+                                return KeyValuePair.Create(p.Name, p.Type);
+                            }
+                        }));
+
+                parser = new ExpressionParser(vars, _expressionFactory);
+                _methodConditionParsers.Add(methodDef, parser);
+            }
+            return parser;
+        }
+
+        public XmlUserModelParser(IDefinitionProvider definitionProvider, ExpressionFactory expressionFactory = null)
+        {
+            _expressionFactory = expressionFactory ?? new CustomModuleExpressionFactory(definitionProvider.Context.MainModule);
             _definitionProvider = definitionProvider;
         }
 
@@ -247,9 +277,24 @@ namespace dnWalker.Input.Xml
                     MethodDef md = td.FindMethod(memberName);
                     if (md != null)
                     {
-                        int invocation = GetAndUpdateCounter(ref nextInvocation, GetInvocation(memberXml));
                         UserData memberValue = ParseUserDataFromValue(memberXml, references);
-                        uObject.MethodResults[(md, invocation)] = memberValue;
+
+                        int invocation = GetInvocation(memberXml);
+                        if (invocation < 0)
+                        {
+                            string conditionString = GetConditionString(memberXml);
+                            if (conditionString != null)
+                            {
+                                ExpressionParser parser = GetParser(md);
+                                Expression condition = parser.Parse(conditionString) ?? _expressionFactory.MakeBooleanConstant(true);
+
+                                uObject.AddMethodBehavior(md, condition, memberValue);
+                                return true;
+                            }
+                        }
+
+                        invocation = GetAndUpdateCounter(ref nextInvocation, invocation);
+                        uObject.AddMethodResult(md, invocation, memberValue);
                         return true;
                     }
                     return false;
@@ -329,6 +374,13 @@ namespace dnWalker.Input.Xml
             if (str != null) return int.Parse(str);
             return -1;
         }
+
+        private static string GetConditionString(XElement xml)
+        {
+            string str = xml.Attribute(XmlTokens.Condition)?.Value;
+            return str;
+        }
+
 
         private static TypeSig GetElementType(XElement xml, IDefinitionProvider definitionProvider)
         {

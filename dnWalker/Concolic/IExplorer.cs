@@ -1,6 +1,7 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Configuration;
+using dnWalker.Input;
 using dnWalker.Traversal;
 using dnWalker.TypeSystem;
 
@@ -21,7 +22,7 @@ namespace dnWalker.Concolic
 
         void AddExtension(IExplorationExtension extension);
         void RemoveExtension(IExplorationExtension extension);
-        ExplorationResult Run(string methodName, IDictionary<string, object> data = null);
+        ExplorationResult Run(MethodDef entryPoint, IEnumerable<UserModel> userModel = null);
 
         public IDefinitionProvider DefinitionProvider { get; }
         public IConfiguration Configuration { get; }
@@ -41,6 +42,10 @@ namespace dnWalker.Concolic
             explorer.AddExtension(extension);
             return extension;
         }
-    }
+        public static ExplorationResult Run(this IExplorer explorer, string methodName, IEnumerable<UserModel> inputModels = null)
+        {
+            return explorer.Run(explorer.DefinitionProvider.GetMethodDefinition(methodName), inputModels);
+        }
+}
 
 }

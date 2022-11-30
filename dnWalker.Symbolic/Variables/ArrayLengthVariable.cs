@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -67,6 +68,18 @@ namespace dnWalker.Symbolic.Variables
         public bool IsSameMemberAs(IMemberVariable other)
         {
             return other is ArrayLengthVariable;
+        }
+
+        public IVariable Substitute(IVariable from, IVariable to)
+        {
+            if (from is ArrayLengthVariable l &&
+                l.Parent.Equals(_parent))
+            {
+                // we are substituting me
+                return to;
+            }
+
+            return new ArrayLengthVariable(_parent.Substitute(from, to));
         }
     }
 }

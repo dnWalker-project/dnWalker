@@ -3,6 +3,7 @@
 using dnWalker.Concolic.Traversal;
 using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
+using dnWalker.Input;
 using dnWalker.Instructions;
 using dnWalker.Instructions.Extensions;
 using dnWalker.Symbolic;
@@ -103,9 +104,8 @@ namespace dnWalker.Concolic
         public IReadOnlyCollection<IExplorationExtension> Extensions { get { return _extensions; } }
 
 
-        public ExplorationResult Run(string methodName, IDictionary<string, object> data = null)
+        public ExplorationResult Run(MethodDef entryPoint, IEnumerable<UserModel> userModel = null)
         {
-            MethodDef entryPoint = _definitionProvider.GetMethodDefinition(methodName) ?? throw new NullReferenceException($"Method {methodName} not found");
             ControlFlowGraphProvider _cfgProvider = new ControlFlowGraphProvider();
             PathStore pathStore = new PathStore(entryPoint, _cfgProvider);
 
@@ -115,9 +115,10 @@ namespace dnWalker.Concolic
                 {
                     PathStore = pathStore 
                 };
+                cur.Services.RegisterService(_solver);
 
                 OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName(), entryPoint, _solver?.GetType()));
-                ExplorationResult result = RunCore(entryPoint, pathStore, cur, data);
+                ExplorationResult result = RunCore(entryPoint, pathStore, cur, userModel);
                 OnExplorationFinished(new ExplorationFinishedEventArgs(result));
                 return result;
             }
@@ -129,7 +130,7 @@ namespace dnWalker.Concolic
             }
         }
 
-        protected abstract ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IDictionary<string, object> data = null);
+        protected abstract ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IEnumerable<UserModel> userModel = null);
 
         public ISolver Solver
         {

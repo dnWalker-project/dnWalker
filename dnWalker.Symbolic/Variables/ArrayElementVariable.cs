@@ -71,5 +71,18 @@ namespace dnWalker.Symbolic.Variables
             return other is ArrayElementVariable aev && 
                 aev._index == _index;
         }
+
+        public IVariable Substitute(IVariable from, IVariable to)
+        {
+            if (from is ArrayElementVariable arr && 
+                arr._index == _index && 
+                arr.Parent.Equals(_parent))
+            {
+                // we are substituting me
+                return to;
+            }
+
+            return new ArrayElementVariable(_parent.Substitute(from, to), _index);
+        }
     }
 }
