@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Heap;
 using dnWalker.Symbolic.Variables;
 
@@ -118,9 +119,18 @@ namespace dnWalker.Symbolic
                 case StaticFieldVariable v: VisitStaticFieldVariable(v); break;
                 case NamedVariable v: VisitNamedVariable(v); break;
                 case ReturnValueVariable v: VisitReturnValueVariable(v); break;
+                case ConditionalMethodResultVariable v: VisitConditionalMethodResultVaraible(v); break;
             }
 
             _variables.Pop();
+        }
+
+        protected virtual void VisitConditionalMethodResultVaraible(ConditionalMethodResultVariable variable)
+        {
+            if (TryGetHeapNode(variable, out IReadOnlyHeapNode? node))
+            {
+                Visit(node);
+            }
         }
 
         protected virtual void VisitArrayElementVariable(ArrayElementVariable variable)
@@ -221,6 +231,12 @@ namespace dnWalker.Symbolic
             {
                 IVariable methodResultVariable = Variable.MethodResult(currentVar, method, invocation);
                 Visit(methodResultVariable);
+            }
+
+            foreach ((IMethod method, Expression condition) in node.MethodConstraints) 
+            {
+                IVariable conditionalVariable = new ConditionalMethodResultVariable(currentVar, method, condition);
+                Visit(conditionalVariable);
             }
         }
     }
