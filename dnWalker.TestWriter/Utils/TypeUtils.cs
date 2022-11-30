@@ -76,7 +76,8 @@ namespace dnWalker.TestWriter.Utils
                 case ElementType.GenericInst:
                     {
                         GenericInstSig genInst = type.ToGenericInstSig();
-                        return genInst.GenericType.GetNameOrAlias() + "<" + string.Join(", ", genInst.GenericArguments.Select(ga => ga.GetNameOrAlias())) + ">";
+                        // generic typename is finished by `XYZ, where XYZ is the gen arg count
+                        return genInst.GenericType.GetNameOrAlias().Split('`')[0] + "<" + string.Join(", ", genInst.GenericArguments.Select(ga => ga.GetNameOrAlias())) + ">";
                     }
 
                 case ElementType.Ptr:

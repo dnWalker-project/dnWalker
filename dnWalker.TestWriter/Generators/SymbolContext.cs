@@ -19,7 +19,7 @@ namespace dnWalker.TestWriter.Generators
         private TypeSig _type;
         private Location _location;
 
-        internal SymbolContext(string literal, int length, string symbol, TypeSig type, Location location)
+        public SymbolContext(string literal, int length, string symbol, TypeSig type, Location location)
         {
             _literal = literal;
             _length = length;
