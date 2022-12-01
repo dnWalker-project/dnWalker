@@ -10,297 +10,297 @@ namespace MMC
 {
     public static class ExplorerIConfigurationuration
     {
-        public static IConfiguration InitializeDefaults(this IConfiguration configuration)
+        public static IConfigurationBuilder InitializeDefaults(this IConfigurationBuilder configurationBuilder)
         {
-            configuration.SetRunTimeParameters(Array.Empty<string>());
-            configuration.SetUseInstructionCache(true);
-            configuration.SetSymmetryReduction(true);
-            configuration.SetUseDPORCollapser(true);
-            configuration.SetUseObjectEscapePOR(true);
-            configuration.SetUseStatefulDynamicPOR(true);
-            configuration.SetStopOnError(true);
-            configuration.SetTraceOnError(true);
-            configuration.SetExPostFactoMerging(true);
-            configuration.SetMaxExploreInMinutes(double.PositiveInfinity);
-            configuration.SetOptimizeStorageAtMegabyte(double.PositiveInfinity);
-            configuration.SetMemoryLimit(double.PositiveInfinity);
-            configuration.SetStateStorageSize(20);
-            configuration.SetEvaluateRandom(true);
+            configurationBuilder.SetRunTimeParameters(Array.Empty<string>());
+            configurationBuilder.SetUseInstructionCache(true);
+            configurationBuilder.SetSymmetryReduction(true);
+            configurationBuilder.SetUseDPORCollapser(true);
+            configurationBuilder.SetUseObjectEscapePOR(true);
+            configurationBuilder.SetUseStatefulDynamicPOR(true);
+            configurationBuilder.SetStopOnError(true);
+            configurationBuilder.SetTraceOnError(true);
+            configurationBuilder.SetExPostFactoMerging(true);
+            configurationBuilder.SetMaxExploreInMinutes(double.PositiveInfinity);
+            configurationBuilder.SetOptimizeStorageAtMegabyte(double.PositiveInfinity);
+            configurationBuilder.SetMemoryLimit(double.PositiveInfinity);
+            configurationBuilder.SetStateStorageSize(20);
+            configurationBuilder.SetEvaluateRandom(true);
 
-            return configuration;
+            return configurationBuilder;
         }
 
         public static int MaxIterations(this IConfiguration configuration)
         {
-            return configuration.GetValue<int>("MaxIterations");
+            return configuration.GetValueOrDefault<int>("MaxIterations");
         }
-        public static IConfiguration SetMaxIterations(this IConfiguration configuration, int maxIterations)
+        public static IConfiguration SetMaxIterations(this IConfigurationBuilder configurationBuilder, int maxIterations)
         {
-            configuration.SetValue("MaxIterations", maxIterations);
-            return configuration;
+            configurationBuilder.SetValue("MaxIterations", maxIterations);
+            return configurationBuilder;
         }
 
         public static string[] RunTimeParameters(this IConfiguration configuration)
         {
             // make copy of the array since it is muttable
-            return configuration.GetValue<string[]>("RunTimeParameters").ToArray();
+            return configuration.GetValueOrDefault<string[]>("RunTimeParameters").ToArray();
         }
-        public static IConfiguration SetRunTimeParameters(this IConfiguration configuration, string[] runTimeParameters)
+        public static IConfiguration SetRunTimeParameters(this IConfigurationBuilder configurationBuilder, string[] runTimeParameters)
         {
             // make copy of the array since it is muttable
-            configuration.SetValue("RunTimeParameters", runTimeParameters);
-            return configuration;
+            configurationBuilder.SetValue("RunTimeParameters", runTimeParameters);
+            return configurationBuilder;
         }
 
         public static bool Verbose(this IConfiguration configuration)
         {
-            return configuration.GetValue<bool>("Verbose");
+            return configuration.GetValueOrDefault<bool>("Verbose");
         }
-        public static IConfiguration SetVerbose(this IConfiguration configuration, bool verbose)
+        public static IConfiguration SetVerbose(this IConfigurationBuilder configurationBuilder, bool verbose)
         {
-            configuration.SetValue("Verbose", verbose);
-            return configuration;
+            configurationBuilder.SetValue("Verbose", verbose);
+            return configurationBuilder;
         }
 
         public static string AssemblyToCheckFileName(this IConfiguration configuration)
         {
-            return configuration.GetValue<string>("AssemblyToCheckFileName");
+            return configuration.GetValueOrDefault<string>("AssemblyToCheckFileName");
         }
-        public static IConfiguration SetAssemblyToCheckFileName(this IConfiguration configuration, string assemblyFileName)
+        public static IConfiguration SetAssemblyToCheckFileName(this IConfigurationBuilder configurationBuilder, string assemblyFileName)
         {
-            configuration.SetValue("AssemblyToCheckFileName", assemblyFileName);
-            return configuration;
+            configurationBuilder.SetValue("AssemblyToCheckFileName", assemblyFileName);
+            return configurationBuilder;
         }
 
         public static bool ShowStatistics(this IConfiguration configuration)
         {
-            return configuration.GetValue<bool>("ShowStatistics");
+            return configuration.GetValueOrDefault<bool>("ShowStatistics");
         }
-        public static IConfiguration SetShowStatistics(this IConfiguration configuration, bool showStatistics)
+        public static IConfiguration SetShowStatistics(this IConfigurationBuilder configurationBuilder, bool showStatistics)
         {
-            configuration.SetValue("ShowStatistics", showStatistics);
-            return configuration;
+            configurationBuilder.SetValue("ShowStatistics", showStatistics);
+            return configurationBuilder;
         }
 
 
         public static bool Quiet(this IConfiguration configuration)
         {
-            return configuration.GetValue<bool>("Quiet");
+            return configuration.GetValueOrDefault<bool>("Quiet");
         }
-        public static IConfiguration SetQuiet(this IConfiguration configuration, bool quiet)
+        public static IConfiguration SetQuiet(this IConfigurationBuilder configurationBuilder, bool quiet)
         {
-            configuration.SetValue("Quiet", quiet);
-            return configuration;
+            configurationBuilder.SetValue("Quiet", quiet);
+            return configurationBuilder;
         }
 
         public static bool Interactive(this IConfiguration configuration)
         {
-            return configuration.GetValue<bool>("Interactive");
+            return configuration.GetValueOrDefault<bool>("Interactive");
         }
-        public static IConfiguration SetInteractive(this IConfiguration configuration, bool interactive)
+        public static IConfiguration SetInteractive(this IConfigurationBuilder configurationBuilder, bool interactive)
         {
-            configuration.SetValue("Interactive", interactive);
-            return configuration;
+            configurationBuilder.SetValue("Interactive", interactive);
+            return configurationBuilder;
         }
 
         public static MMC.LogPriority LogFilter(this IConfiguration configuration)
         {
-            return configuration.GetValue<MMC.LogPriority>("LogPriority");
+            return configuration.GetValueOrDefault<MMC.LogPriority>("LogPriority");
         }
-        public static IConfiguration SetLogFilter(this IConfiguration configuration, MMC.LogPriority logPriority)
+        public static IConfiguration SetLogFilter(this IConfigurationBuilder configurationBuilder, MMC.LogPriority logPriority)
         {
-            configuration.SetValue("LogPriority", logPriority);
-            return configuration;
+            configurationBuilder.SetValue("LogPriority", logPriority);
+            return configurationBuilder;
         }
 
         public static bool UseInstructionCache(this IConfiguration configuration)
         {
-            return configuration.GetValue<bool>("UseInstructionCache");
+            return configuration.GetValueOrDefault<bool>("UseInstructionCache");
         }
-        public static IConfiguration SetUseInstructionCache(this IConfiguration configuration, bool useInstructionCache)
+        public static IConfiguration SetUseInstructionCache(this IConfigurationBuilder configurationBuilder, bool useInstructionCache)
         {
-            configuration.SetValue("UseInstructionCache", useInstructionCache);
-            return configuration;
+            configurationBuilder.SetValue("UseInstructionCache", useInstructionCache);
+            return configurationBuilder;
         }
 
         public static bool UseRefCounting(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("UseRefCounting");
+			return configuration.GetValueOrDefault<bool>("UseRefCounting");
         }
-        public static IConfiguration SetUseRefCounting(this IConfiguration configuration, bool useRefCounting)
+        public static IConfiguration SetUseRefCounting(this IConfigurationBuilder configurationBuilder, bool useRefCounting)
         {
-            configuration.SetValue<bool>("UseRefCounting", useRefCounting);
-            return configuration;
+            configurationBuilder.SetValue("UseRefCounting", useRefCounting);
+            return configurationBuilder;
         }
 
         public static bool UseMarkAndSweep(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("UseMarkAndSweep");
+			return configuration.GetValueOrDefault<bool>("UseMarkAndSweep");
         }
-        public static IConfiguration SetUseMarkAndSweep(this IConfiguration configuration, bool useMarkAndSweep)
+        public static IConfiguration SetUseMarkAndSweep(this IConfigurationBuilder configurationBuilder, bool useMarkAndSweep)
         {
-            configuration.SetValue<bool>("UseMarkAndSweep", useMarkAndSweep);
-            return configuration;
+            configurationBuilder.SetValue("UseMarkAndSweep", useMarkAndSweep);
+            return configurationBuilder;
         }
 
         public static bool SymmetryReduction(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("SymmetryReduction");
+			return configuration.GetValueOrDefault<bool>("SymmetryReduction");
         }
-        public static IConfiguration SetSymmetryReduction(this IConfiguration configuration, bool symmetryReduction)
+        public static IConfiguration SetSymmetryReduction(this IConfigurationBuilder configurationBuilder, bool symmetryReduction)
         {
-            configuration.SetValue<bool>("SymmetryReduction", symmetryReduction);
-            return configuration;
+            configurationBuilder.SetValue("SymmetryReduction", symmetryReduction);
+            return configurationBuilder;
         }
 
         public static bool NonStaticSafe(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("NonStaticSafe");
+			return configuration.GetValueOrDefault<bool>("NonStaticSafe");
         }
-        public static IConfiguration SetNonStaticSafe(this IConfiguration configuration, bool nonStaticSafe)
+        public static IConfiguration SetNonStaticSafe(this IConfigurationBuilder configurationBuilder, bool nonStaticSafe)
         {
-            configuration.SetValue<bool>("NonStaticSafe", nonStaticSafe);
-            return configuration;
+            configurationBuilder.SetValue("NonStaticSafe", nonStaticSafe);
+            return configurationBuilder;
         }
 
         public static bool MemoisedGC(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("MemoisedGC");
+			return configuration.GetValueOrDefault<bool>("MemoisedGC");
         }
-        public static IConfiguration SetMemoisedGC(this IConfiguration configuration, bool memoisedGCC)
+        public static IConfiguration SetMemoisedGC(this IConfigurationBuilder configurationBuilder, bool memoisedGCC)
         {
-            configuration.SetValue<bool>("MemoisedGC", memoisedGCC);
-            return configuration;
+            configurationBuilder.SetValue("MemoisedGC", memoisedGCC);
+            return configurationBuilder;
         }
 
         public static bool UseDPORCollapser(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("UseDPORCollapse");
+			return configuration.GetValueOrDefault<bool>("UseDPORCollapse");
         }
-        public static IConfiguration SetUseDPORCollapser(this IConfiguration configuration, bool useDPORCollapser)
+        public static IConfiguration SetUseDPORCollapser(this IConfigurationBuilder configurationBuilder, bool useDPORCollapser)
         {
-            configuration.SetValue<bool>("UseDPORCollapse", useDPORCollapser);
-            return configuration;
+            configurationBuilder.SetValue("UseDPORCollapse", useDPORCollapser);
+            return configurationBuilder;
         }
 
         public static bool UseObjectEscapePOR(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("UseObjectEscapePOR");
+			return configuration.GetValueOrDefault<bool>("UseObjectEscapePOR");
         }
-        public static IConfiguration SetUseObjectEscapePOR(this IConfiguration configuration, bool useObjectEscapePOR)
+        public static IConfiguration SetUseObjectEscapePOR(this IConfigurationBuilder configurationBuilder, bool useObjectEscapePOR)
         {
-            configuration.SetValue<bool>("UseObjectEscapePOR", useObjectEscapePOR);
-            return configuration;
+            configurationBuilder.SetValue("UseObjectEscapePOR", useObjectEscapePOR);
+            return configurationBuilder;
         }
 
         public static bool UseStatefulDynamicPOR(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("UseStatefulDynamicPOR");
+			return configuration.GetValueOrDefault<bool>("UseStatefulDynamicPOR");
         }
-        public static IConfiguration SetUseStatefulDynamicPOR(this IConfiguration configuration, bool useStatefulDynmicPOR)
+        public static IConfiguration SetUseStatefulDynamicPOR(this IConfigurationBuilder configurationBuilder, bool useStatefulDynmicPOR)
         {
-            configuration.SetValue<bool>("UseStatefulDynamicPOR", useStatefulDynmicPOR);
-            return configuration;
+            configurationBuilder.SetValue("UseStatefulDynamicPOR", useStatefulDynmicPOR);
+            return configurationBuilder;
         }
 
         public static bool StopOnError(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("StopOnError");
+			return configuration.GetValueOrDefault<bool>("StopOnError");
         }
-        public static IConfiguration SetStopOnError(this IConfiguration configuration, bool stopOnError)
+        public static IConfiguration SetStopOnError(this IConfigurationBuilder configurationBuilder, bool stopOnError)
         {
-            configuration.SetValue<bool>("StopOnError", stopOnError);
-            return configuration;
+            configurationBuilder.SetValue("StopOnError", stopOnError);
+            return configurationBuilder;
         }
 
         public static bool TraceOnError(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("TraceOnError");
+			return configuration.GetValueOrDefault<bool>("TraceOnError");
         }
-        public static IConfiguration SetTraceOnError(this IConfiguration configuration, bool traceOnError)
+        public static IConfiguration SetTraceOnError(this IConfigurationBuilder configurationBuilder, bool traceOnError)
         {
-            configuration.SetValue<bool>("TraceOnError", traceOnError);
-            return configuration;
+            configurationBuilder.SetValue("TraceOnError", traceOnError);
+            return configurationBuilder;
         }
 
         public static bool OneTraceAndStop(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("OneTraceAndStop");
+			return configuration.GetValueOrDefault<bool>("OneTraceAndStop");
         }
-        public static IConfiguration SetOneTraceAndStop(this IConfiguration configuration, bool oneTraceAndStop)
+        public static IConfiguration SetOneTraceAndStop(this IConfigurationBuilder configurationBuilder, bool oneTraceAndStop)
         {
-            configuration.SetValue<bool>("OneTraceAndStop", oneTraceAndStop);
-            return configuration;
+            configurationBuilder.SetValue("OneTraceAndStop", oneTraceAndStop);
+            return configurationBuilder;
         }
 
         public static bool ExPostFactoMerging(this IConfiguration configuration)
 		{
-			return configuration.GetValue<bool>("ExPostFactoMerging");
+			return configuration.GetValueOrDefault<bool>("ExPostFactoMerging");
         }
-        public static IConfiguration SetExPostFactoMerging(this IConfiguration configuration, bool exPostFactoMerging)
+        public static IConfiguration SetExPostFactoMerging(this IConfigurationBuilder configurationBuilder, bool exPostFactoMerging)
         {
-            configuration.SetValue<bool>("ExPostFactoMerging", exPostFactoMerging);
-            return configuration;
+            configurationBuilder.SetValue("ExPostFactoMerging", exPostFactoMerging);
+            return configurationBuilder;
         }
 
         public static double MaxExploreInMinutes(this IConfiguration configuration)
 		{
-			return configuration.GetValue<double>("MaxExploreInMinutes");
+			return configuration.GetValueOrDefault<double>("MaxExploreInMinutes");
         }
-        public static IConfiguration SetMaxExploreInMinutes(this IConfiguration configuration, double maxExploreInMinutes)
+        public static IConfiguration SetMaxExploreInMinutes(this IConfigurationBuilder configurationBuilder, double maxExploreInMinutes)
         {
-            configuration.SetValue<double>("MaxExploreInMinutes", maxExploreInMinutes);
-            return configuration;
+            configurationBuilder.SetValue("MaxExploreInMinutes", maxExploreInMinutes);
+            return configurationBuilder;
         }
 
         public static double OptimizeStorageAtMegabyte(this IConfiguration configuration)
 		{
-			return configuration.GetValue<double>("OptimizeStorageAtMegabyte");
+			return configuration.GetValueOrDefault<double>("OptimizeStorageAtMegabyte");
         }
-        public static IConfiguration SetOptimizeStorageAtMegabyte(this IConfiguration configuration, double optimizeStorageAtMegabytes)
+        public static IConfiguration SetOptimizeStorageAtMegabyte(this IConfigurationBuilder configurationBuilder, double optimizeStorageAtMegabytes)
         {
-            configuration.SetValue<double>("OptimizeStorageAtMegabyte", optimizeStorageAtMegabytes);
-            return configuration;
+            configurationBuilder.SetValue("OptimizeStorageAtMegabyte", optimizeStorageAtMegabytes);
+            return configurationBuilder;
         }
 
         public static double MemoryLimit(this IConfiguration configuration)
 		{
-			return configuration.GetValue<double>("MemoryLimit");
+			return configuration.GetValueOrDefault<double>("MemoryLimit");
         }
-        public static IConfiguration SetMemoryLimit(this IConfiguration configuration, double memoryLimit)
+        public static IConfiguration SetMemoryLimit(this IConfigurationBuilder configurationBuilder, double memoryLimit)
         {
-            configuration.SetValue<double>("MemoryLimit", memoryLimit);
-            return configuration;
+            configurationBuilder.SetValue("MemoryLimit", memoryLimit);
+            return configurationBuilder;
         }
 
         public static string LogFileName(this IConfiguration configuration)
 		{
-			return configuration.GetValue<string>("LogFileName");
+			return configuration.GetValueOrDefault<string>("LogFileName");
         }
-        public static IConfiguration SetLogFileName(this IConfiguration configuration, string logFileName)
+        public static IConfiguration SetLogFileName(this IConfigurationBuilder configurationBuilder, string logFileName)
         {
-            configuration.SetValue<string>("LogFileName", logFileName);
-            return configuration;
+            configurationBuilder.SetValue("LogFileName", logFileName);
+            return configurationBuilder;
         }
 
         public static int StateStorageSize(this IConfiguration configuration)
 		{
-			return configuration.GetValue<int>("StateStorageSize");
+			return configuration.GetValueOrDefault<int>("StateStorageSize");
         }
-        public static IConfiguration SetStateStorageSize(this IConfiguration configuration, int stateStorageSize)
+        public static IConfiguration SetStateStorageSize(this IConfigurationBuilder configurationBuilder, int stateStorageSize)
         {
-            configuration.SetValue<int>("StateStorageSize", stateStorageSize);
-            return configuration;
+            configurationBuilder.SetValue("StateStorageSize", stateStorageSize);
+            return configurationBuilder;
         }
 
         public static bool EvaluateRandom(this IConfiguration configuration)
         {
-            return configuration.GetValue<bool>("EvaluateRandom");
+            return configuration.GetValueOrDefault<bool>("EvaluateRandom");
         }
-        public static IConfiguration SetEvaluateRandom(this IConfiguration configuration, bool evaluateRandom)
+        public static IConfiguration SetEvaluateRandom(this IConfigurationBuilder configurationBuilder, bool evaluateRandom)
         {
-            configuration.SetValue("EvaluateRandom", evaluateRandom);
-            return configuration;
+            configurationBuilder.SetValue("EvaluateRandom", evaluateRandom);
+            return configurationBuilder;
         }
     }
 }

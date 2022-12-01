@@ -1,33 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace dnWalker.Configuration
 {
-    public class ConfigurationBuilder
+    public class ConfigurationBuilder : IConfigurationBuilder
     {
         private readonly List<IConfigurationProvider> _providers = new List<IConfigurationProvider>();
+        private readonly InMemoryConfigurationProvider _inMemoryProvider;
 
+        public ConfigurationBuilder()
+        {
+            _inMemoryProvider = new InMemoryConfigurationProvider();
+            _providers.Add(_inMemoryProvider);
+        }
 
+        public ConfigurationBuilder(IEnumerable<KeyValuePair<string, object>> values)
+        {
+            _inMemoryProvider = new InMemoryConfigurationProvider(values);
+            _providers.Add(_inMemoryProvider);
+        }
+        
 
         public IConfiguration Build()
         {
-            IConfigurationProvider provider;
-            if (_providers.Count == 0)
-            {
-                provider = new InMemoryConfigurationProvider();
-            }
-            else if (_providers.Count == 1)
-            {
-                provider = _providers[0];
-            }
-            else
-            {
-                provider = new MergedConfigurationProvider(_providers);
-            }
-            return new CachedConfiguration(provider);
+            return new Configuration(_providers);
+        }
+
+        public void SetValue(string key, object? value)
+        {
+            _inMemoryProvider.SetValue(key, value);
         }
 
         public void AddProvider(IConfigurationProvider provider)
@@ -35,14 +40,23 @@ namespace dnWalker.Configuration
             _providers.Add(provider);
         }
 
-        public void AddJsonFile(string fileName)
+        public bool TryGetValue(string key, Type type, [NotNullWhen(true)]out object? value)
         {
-            AddProvider(new JsonConfigurationProvider(File.ReadAllText(fileName)));
+            foreach (IConfigurationProvider p in _providers)
+            {
+                if (p.TryGetValue(key, type, out value))
+                {
+                    return true;
+                }
+            }
+
+            value = null;
+            return false;
         }
 
-        public void AddValues(IEnumerable<KeyValuePair<string, object>> values)
+        public bool HasValue(string key)
         {
-            AddProvider(new InMemoryConfigurationProvider(values));
+            return _providers.Any(p => p.HasValue(key));
         }
     }
 }

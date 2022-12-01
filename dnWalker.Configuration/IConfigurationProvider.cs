@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Configuration
 {
-    public interface IConfigurationProvider
+    public interface IConfigurationProvider : IConfiguration
     {
-        bool TryGetValue(string key, Type type, out object? value);
+        
     }
 }

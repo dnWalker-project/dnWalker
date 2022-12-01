@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,12 +20,17 @@ namespace dnWalker.Configuration
             _values = new Dictionary<string, object>(values);
         }
 
-        public bool TryGetValue(string key, Type type, out object? value)
+        public bool TryGetValue(string key, Type type, [NotNullWhen(true)] out object? value)
         {
             return _values.TryGetValue(key, out value);
         }
 
-        public void SetValue(string key, object value)
+        public bool HasValue(string key)
+        {
+            return _values.ContainsKey(key);
+        }
+
+        public void SetValue(string key, object? value)
         {
             if (value == null)
             {

@@ -51,15 +51,16 @@ namespace dnWalker.Tests.Examples
         protected IDefinitionProvider DefinitionProvider => _definitionProvider ?? throw new InvalidDataException("TEST IS NOT INITIALIZED");
         protected ITestOutputHelper Output => _output;
 
-        protected virtual IExplorer CreateExplorer(BuildInfo buildInfo, Action<IConfiguration>? configure = null, Action<Logger>? configureLogging = null, Func<ISolver>? buildSolver = null)
+        protected virtual IExplorer CreateExplorer(BuildInfo buildInfo, Action<IConfigurationBuilder>? configure = null, Action<Logger>? configureLogging = null, Func<ISolver>? buildSolver = null)
         {
             _definitionProvider = GetDefinitionProvider(buildInfo.Configuration, buildInfo.Target);
 
-            IConfiguration config = new ConfigurationBuilder()
-                .Build()
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder()
                 .InitializeDefaults();
-            SetupConfiguration(config);
-            configure?.Invoke(config);
+            SetupConfiguration(configBuilder);
+            configure?.Invoke(configBuilder);
+
+            IConfiguration config = configBuilder.Build();
 
             Logger logger = new Logger();
             SetupLogging(logger);
@@ -71,7 +72,7 @@ namespace dnWalker.Tests.Examples
         }
 
         protected virtual void SetupLogging(Logger logger) { }
-        protected virtual void SetupConfiguration(IConfiguration configuration) 
+        protected virtual void SetupConfiguration(IConfigurationBuilder configuration) 
         {
             configuration.SetStrategy(typeof(Concolic.Traversal.AllPathsCoverage));
         }

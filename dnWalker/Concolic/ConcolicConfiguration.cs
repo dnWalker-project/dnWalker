@@ -19,21 +19,21 @@ namespace dnWalker.Concolic
     {
         public static (string assemblyName, string typeName) Strategy(this IConfiguration configuration)
         {
-            return ExtensibilityPointHelper.FromTypeIdentifier(configuration.GetValue<string>("Strategy"));
+            return ExtensibilityPointHelper.FromTypeIdentifier(configuration.GetValueOrDefault<string>("Strategy"));
         }
 
-        public static IConfiguration SetStrategy(this IConfiguration configuration, string assemblyName, string typeName)
+        public static IConfiguration SetStrategy(this IConfigurationBuilder configuration, string assemblyName, string typeName)
         {
             configuration.SetValue("Strategy", ExtensibilityPointHelper.ToTypeIdentifier(assemblyName, typeName));
             return configuration;
         }
-        public static IConfiguration SetStrategy(this IConfiguration configuration, Type type)
+        public static IConfiguration SetStrategy(this IConfigurationBuilder configuration, Type type)
         {
             configuration.SetValue("Strategy", ExtensibilityPointHelper.ToTypeIdentifier(type));
             return configuration;
         }
 
-        public static IConfiguration SetStrategy<TStrategy>(this IConfiguration configuration)
+        public static IConfiguration SetStrategy<TStrategy>(this IConfigurationBuilder configuration)
             where TStrategy : IExplorationStrategy
         {
             configuration.SetValue("Strategy", ExtensibilityPointHelper.ToTypeIdentifier(typeof(TStrategy)));
