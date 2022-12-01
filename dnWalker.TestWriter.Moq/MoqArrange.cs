@@ -50,7 +50,7 @@ namespace dnWalker.TestWriter.Moq
                 sb.Append($"o => o.{method.Name}(");
 
                 sb.Append(string.Join(", ", md.Parameters
-                    .Where(p => p.IsNormalMethodParameter)
+                    .Where(p => !p.IsHiddenThisParameter && !p.IsReturnTypeParameter)
                     .Select(p => $"It.IsAny<{p.Type.GetNameOrAlias()}>()")));
 
                 sb.Append(')');
