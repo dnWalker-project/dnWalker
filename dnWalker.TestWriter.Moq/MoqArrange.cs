@@ -66,7 +66,7 @@ namespace dnWalker.TestWriter.Moq
                 sb.Append('(');
 
                 sb.Append(string.Join(", ", ms.Method.ResolveMethodDefThrow().Parameters
-                    .Where(p => p.IsNormalMethodParameter)
+                    .Where(p => !p.IsHiddenThisParameter && !p.IsReturnTypeParameter)
                     .Select(p => $"It.IsAny<{GetTypeName(ms.GenericInstMethodSig, p.Type)}>()")));
 
                 sb.Append(')');
@@ -139,7 +139,6 @@ namespace dnWalker.TestWriter.Moq
                     //     .Returns(retValueN);
 
 
-                    // do not setup sequence
                     output.WriteLine($"{mockSymbol}");
                     output.Indent++;
 
