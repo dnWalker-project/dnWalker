@@ -18,16 +18,19 @@ namespace dnWalker.TestWriter.Generators.Act
 
             if (returnSymbol != null && method.HasReturnType)
             {
-                output.Write($"{method.ReturnType.GetNameOrAlias()} {returnSymbol} = ");
+                output.Write($"{method.ReturnType.GetNameOrAlias()} returnSymbol = ");
             }
-            
-            if (method.IsStatic)
-            {
-                WriteStaticMethod(context, output, method);
-            }
+
             else
             {
-                WriteInstanceMethod(context, output, method);
+                if (method.IsStatic)
+                {
+                    WriteStaticMethod(context, output, method);
+                }
+                else
+                {
+                    WriteInstanceMethod(context, output, method);
+                }
             }
 
             output.WriteLine(";");
@@ -41,19 +44,15 @@ namespace dnWalker.TestWriter.Generators.Act
 
             if (returnSymbol != null && method.HasReturnType)
             {
-                output.WriteLine($"{method.ReturnType.GetNameOrAlias()} {returnSymbol} = {context.GetDefaultLiteral(method.ReturnType)};");
+                output.Write($"{method.ReturnType.GetNameOrAlias()} {returnSymbol} = {context.GetDefaultLiteral(method.ReturnType)};");
                 output.Write($"Action {delegateSymbol} = () => {{ {returnSymbol} = ");
 
                 if (method.IsStatic)
                 {
                     WriteStaticMethod(context, output, method);
                 }
-                else
-                {
-                    WriteInstanceMethod(context, output, method);
-                }
 
-                output.WriteLine($"; }};");
+                output.WriteLine($"}};");
             }
             else
             {
@@ -62,10 +61,6 @@ namespace dnWalker.TestWriter.Generators.Act
                 if (method.IsStatic)
                 {
                     WriteStaticMethod(context, output, method);
-                }
-                else
-                {
-                    WriteInstanceMethod(context, output, method);
                 }
 
                 output.WriteLine(";");

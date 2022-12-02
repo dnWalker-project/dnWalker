@@ -1,6 +1,4 @@
-﻿using dnlib.DotNet;
-
-using dnWalker.TestWriter.Generators.Arrange;
+﻿using dnWalker.TestWriter.Generators.Arrange;
 
 using System;
 using System.Collections.Generic;
@@ -25,47 +23,12 @@ namespace dnWalker.TestWriter.Generators
             }
         }
 
-        #region Arrange
         public static void WriteArrange(this ITestTemplate testTemplate, ITestContext testContext, IWriter output)
         {
-            Arranger arranger = new Arranger(testTemplate, testContext, output);
-            arranger.WriteArrangeHeap();
-            arranger.WriteArrangeStaticFields();
-            arranger.WriteArrangeMethodArguments();
+            Arranger arranger = new Arranger(testTemplate.ArrangeWriters, testContext, output);
+            arranger.Run();
         }
 
-        public static void WriteArrangeCreateInstance(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol)
-        {
-            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeCreateInstance(testContext, output, symbol));
-        }
-
-        public static void WriteArrangeInitializeField(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol, IField field, string literal)
-        {
-            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeField(testContext, output, symbol, field, literal));
-        }
-
-        public static void WriteArrangeInitializeStaticField(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, IField field, string literal)
-        {
-            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeStaticField(testContext, output, field, literal));
-        }
-
-        public static void WriteArrangeInitializeMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals)
-        {
-            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeMethod(testContext, output, symbol, method, literals));
-        }
-
-        public static void WriteArrangeInitializeStaticMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, IMethod method, params string[] literals)
-        {
-            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeStaticMethod(testContext, output, method, literals));
-        }
-
-        public static void WriteArrangeInitializeArrayElement(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol, int index, string literal)
-        {
-            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeArrayElement(testContext, output, symbol, index, literal));
-        }
-        #endregion Assert
-
-        #region Act
         public static void WriteAct(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string? returnSymbol = null)
         {
             ExecutePrimitiveOrThrow(testTemplate.ActWriters, act => act.TryWriteAct(testContext, output, returnSymbol), $"Failed to write 'act'");
@@ -75,10 +38,8 @@ namespace dnWalker.TestWriter.Generators
         {
             ExecutePrimitiveOrThrow(testTemplate.ActWriters, act => act.TryWriteActDelegate(testContext, output, returnSymbol, delegateSymbol), $"Failed to write 'act delegate'");
         }
-        #endregion Act
 
 
-        #region Assert
         public static void WriteAssertNull(this ITestTemplate testTemplate, ITestContext context, IWriter output, string symbol)
         {
             ExecutePrimitiveOrThrow(testTemplate.AssertWriters, assert => assert.TryWriteAssertNull(context, output, symbol), $"Failed to write 'assert null'");
@@ -141,6 +102,5 @@ namespace dnWalker.TestWriter.Generators
         {
             ExecutePrimitiveOrThrow(testTemplate.AssertWriters, assert => assert.TryWriteAssertNotOfType(context, output, objectSymbol, expectedType), $"Failed to write 'assert not of type'");
         }
-        #endregion Assert
     }
 }
