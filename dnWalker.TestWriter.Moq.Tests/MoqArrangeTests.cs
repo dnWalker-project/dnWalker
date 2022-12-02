@@ -17,28 +17,29 @@ using Xunit.Abstractions;
 
 namespace dnWalker.TestWriter.Moq.Tests
 {
-    file class ConcreteTestClass
-    {
-        public virtual int VirtualMethod() => -5;
-    }
-
-    file abstract class AbstractTestClass
-    {
-        public abstract int MethodNoArgs();
-        public abstract int MethodWithArgs(int a, string other, IDictionary<int, string> dict);
-        public abstract int GenericMethodWithGenericArgs<T>(T a);
-
-        public virtual int VirtualMethod() => -5;
-        public int ConcreteMethod() => 5;
-    }
-
-    file interface ITestInterface
-    {
-        int MethodNoArgs();
-    }
 
     public class MoqArrangeTests : DnlibTestBase<MoqArrangeTests>
     {
+        protected class ConcreteTestClass
+        {
+            public virtual int VirtualMethod() => -5;
+        }
+
+        protected abstract class AbstractTestClass
+        {
+            public abstract int MethodNoArgs();
+            public abstract int MethodWithArgs(int a, string other, IDictionary<int, string> dict);
+            public abstract int GenericMethodWithGenericArgs<T>(T a);
+
+            public virtual int VirtualMethod() => -5;
+            public int ConcreteMethod() => 5;
+        }
+
+        protected interface ITestInterface
+        {
+            int MethodNoArgs();
+        }
+
         private ITestContext GetTestContext(TypeSig type)
         {
             Mock<ITestContext> ctxMock = new Mock<ITestContext>();
