@@ -63,12 +63,12 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange method arguments
-            {td.Name} @this = {td.Name}1;
-            {td.Name} tc1 = {td.Name}1;
-            {td.Name} tc2 = null;
+            ArrangerTests.TestClass @this = arrangerTests_TestClass1;
+            ArrangerTests.TestClass tc1 = arrangerTests_TestClass1;
+            ArrangerTests.TestClass tc2 = null;
             string str = "hello world";
             """;
 
@@ -100,10 +100,10 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange static fields
-            {td.Name}.StaticField = "a string";
+            ArrangerTests.TestClass.StaticField = "a string";
             """;
 
             IModel input = NewModel();
@@ -126,10 +126,10 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange static fields
-            typeof({td.Name}).GetField("PrivateStaticField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, "a string");
+            typeof(ArrangerTests.TestClass).GetField("PrivateStaticField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, "a string");
             """;
 
             IModel input = NewModel();
@@ -152,11 +152,11 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange input model heap
-            {td.Name} {td.Name}1 = new {td.Name}();
-            typeof({td.Name}).GetField("_valueField", System.Reflection.BindingFlags.NonPublic).SetValue({td.Name}1, 5);
+            ArrangerTests.TestClass arrangerTests_TestClass1 = new ArrangerTests.TestClass();
+            typeof(ArrangerTests.TestClass).GetField("_valueField", System.Reflection.BindingFlags.NonPublic).SetValue(arrangerTests_TestClass1, 5);
             """;
 
             IModel input = NewModel();
@@ -182,11 +182,11 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange input model heap
-            {td.Name} {td.Name}1 = new {td.Name}();
-            typeof({td.Name}).GetField("_constValueField", System.Reflection.BindingFlags.NonPublic).SetValue({td.Name}1, 5);
+            ArrangerTests.TestClass arrangerTests_TestClass1 = new ArrangerTests.TestClass();
+            typeof(ArrangerTests.TestClass).GetField("_constValueField", System.Reflection.BindingFlags.NonPublic).SetValue(arrangerTests_TestClass1, 5);
             """;
 
             IModel input = NewModel();
@@ -212,11 +212,11 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange input model heap
-            {td.Name} {td.Name}1 = new {td.Name}();
-            {td.Name}1.ValueField = 5;
+            ArrangerTests.TestClass arrangerTests_TestClass1 = new ArrangerTests.TestClass();
+            arrangerTests_TestClass1.ValueField = 5;
             """;
 
             IModel input = NewModel();
@@ -242,11 +242,11 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
             TypeDef td = GetType(typeof(TestClass));
             MethodDef md = GetMethod(typeof(TestClass), nameof(TestClass.MethodWithManyArgs));
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange input model heap
-            {td.Name} {td.Name}1 = new {td.Name}();
-            typeof({td.Name}).GetField("ConstValueField", System.Reflection.BindingFlags.Public).SetValue({td.Name}1, 5);
+            ArrangerTests.TestClass arrangerTests_TestClass1 = new ArrangerTests.TestClass();
+            typeof(ArrangerTests.TestClass).GetField("ConstValueField", System.Reflection.BindingFlags.Public).SetValue(arrangerTests_TestClass1, 5);
             """;
 
             IModel input = NewModel();
@@ -274,12 +274,12 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             // some arguments will be dependent on each other
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange input model heap
-            {td.Name} {td.Name}1 = new {td.Name}();
-            {td.Name} {td.Name}2 = new {td.Name}();
-            {td.Name}2.Next = {td.Name}1;
+            ArrangerTests.TestClass arrangerTests_TestClass1 = new ArrangerTests.TestClass();
+            ArrangerTests.TestClass arrangerTests_TestClass2 = new ArrangerTests.TestClass();
+            arrangerTests_TestClass2.Next = arrangerTests_TestClass1;
             """;
 
 
@@ -309,15 +309,15 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             // some arguments will be dependent on each other
 
-            string Expected =
-            $"""
+            const string Expected =
+            """
             // Arrange input model heap
-            {td.Name} {td.Name}1 = new {td.Name}();
-            {td.Name} {td.Name}2 = new {td.Name}();
-            {td.Name} {td.Name}3 = new {td.Name}();
-            {td.Name}1.Next = {td.Name}2;
-            {td.Name}2.Next = {td.Name}3;
-            {td.Name}3.Next = {td.Name}1;
+            ArrangerTests.TestClass arrangerTests_TestClass1 = new ArrangerTests.TestClass();
+            ArrangerTests.TestClass arrangerTests_TestClass2 = new ArrangerTests.TestClass();
+            ArrangerTests.TestClass arrangerTests_TestClass3 = new ArrangerTests.TestClass();
+            arrangerTests_TestClass1.Next = arrangerTests_TestClass2;
+            arrangerTests_TestClass2.Next = arrangerTests_TestClass3;
+            arrangerTests_TestClass3.Next = arrangerTests_TestClass1;
             """;
 
 

@@ -74,7 +74,9 @@ namespace dnWalker.TestWriter.Generators.Arrange
                 {
                     TypeSig type = objNode.Type;
                     int cnt = IncreaseCounter(type, classCounters);
-                    return $"{type.GetNameOrAlias()}{cnt}";
+                    return $"{type.GetNameOrAlias()}{cnt}"
+                        .Replace('.', '_')
+                        .FirstCharToLower();
                 }
                 else if (node is IReadOnlyArrayHeapNode arrNode)
                 {

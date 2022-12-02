@@ -37,7 +37,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             const string Expected =
             $"""
-            TestClass.StaticMethod(x, y);
+            SimpleActPrimitivesTests.TestClass.StaticMethod(x, y);
             """;
 
             SimpleActWriter actWriter = new SimpleActWriter();
@@ -55,7 +55,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             const string Expected =
             $"""
-            int result = TestClass.StaticMethod(x, y);
+            int result = SimpleActPrimitivesTests.TestClass.StaticMethod(x, y);
             """;
 
             SimpleActWriter actWriter = new SimpleActWriter();
@@ -109,7 +109,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             const string Expected =
             """
-            Action act = () => TestClass.StaticMethod(x, y);
+            Action act = () => SimpleActPrimitivesTests.TestClass.StaticMethod(x, y);
             """;
 
             SimpleActWriter actWriter = new SimpleActWriter();
@@ -128,7 +128,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
             const string Expected =
             """
             int result = 0;
-            Action act = () => { result = TestClass.StaticMethod(x, y); };
+            Action act = () => { result = SimpleActPrimitivesTests.TestClass.StaticMethod(x, y); };
             """;
 
             SimpleActWriter actWriter = new SimpleActWriter();
