@@ -307,8 +307,8 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             const string Expected =
             $"""
-            Mock<MockArrangeTests.ConcreteTestClass> obj_mock = new Mock<MockArrangeTests.ConcreteTestClass>();
-            MockArrangeTests.ConcreteTestClass obj = obj_mock.Object;
+            Mock<MoqArrangeTests.ConcreteTestClass> obj_mock = new Mock<MoqArrangeTests.ConcreteTestClass>();
+            MoqArrangeTests.ConcreteTestClass obj = obj_mock.Object;
             """;
 
             TypeDef type = GetType(typeof(ConcreteTestClass));
@@ -331,8 +331,8 @@ namespace dnWalker.TestWriter.Moq.Tests
         {
             const string Expected =
             $"""
-            Mock<MockArrangeTests.AbstractTestClass> obj_mock = new Mock<MockArrangeTests.AbstractTestClass>();
-            MockArrangeTests.AbstractTestClass obj = obj_mock.Object;
+            Mock<MoqArrangeTests.AbstractTestClass> obj_mock = new Mock<MoqArrangeTests.AbstractTestClass>();
+            MoqArrangeTests.AbstractTestClass obj = obj_mock.Object;
             """;
 
             TypeDef type = GetType(typeof(AbstractTestClass));
@@ -351,8 +351,8 @@ namespace dnWalker.TestWriter.Moq.Tests
         {
             const string Expected =
             $"""
-            Mock<ITestInterface> obj_mock = new Mock<ITestInterface>();
-            ITestInterface obj = obj_mock.Object;
+            Mock<MoqArrangeTests.ITestInterface> obj_mock = new Mock<MoqArrangeTests.ITestInterface>();
+            MoqArrangeTests.ITestInterface obj = obj_mock.Object;
             """;
 
             TypeDef type = GetType(typeof(ITestInterface));

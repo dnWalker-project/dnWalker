@@ -56,7 +56,14 @@ namespace dnWalker.TestUtils
 
         protected TypeDef GetType(Type type)
         {
-            return GetType(type.Namespace ?? string.Empty, type.Name);
+            if (type.DeclaringType != null)
+            {
+                return GetType(type.DeclaringType.Namespace ?? string.Empty, type.DeclaringType.Name + "/" + type.Name);
+            }
+            else
+            {
+                return GetType(type.Namespace ?? string.Empty, type.Name);
+            }
         }
 
         protected IEnumerable<MethodDef> GetMethods(string ns, string typeName, string methodName)
@@ -71,7 +78,7 @@ namespace dnWalker.TestUtils
 
         protected MethodDef GetMethod(Type type, string methodName)
         {
-            return GetMethods(type.Namespace ?? string.Empty, type.Name, methodName).Single();
+            return GetType(type).FindMethods(methodName).Single();
         }
 
         protected ITestOutputHelper TextOutput
