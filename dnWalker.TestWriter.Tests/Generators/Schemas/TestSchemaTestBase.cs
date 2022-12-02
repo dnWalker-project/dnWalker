@@ -36,28 +36,14 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
             return new Model();
         }
 
-        protected ITestTemplate TestTemplate
-        {
-            get;
-        } = new TestTemplate(
-                new IArrangePrimitives[]
-                {
-                    //new MoqArrange(),
-                    new SimpleArrangePrimitives()
-                },
-                new IActPrimitives[]
-                {
-                    new SimpleActWriter(),
-                },
-                new IAssertPrimitives[]
-                {
-                    new XunitAssertions(),
-                    new SimpleAssertPrimitives()
-                });
 
-        protected ITestContext GetTestContext(IMethod method, Action<ConcolicExplorationIteration.Builder>? initialize = null)
+        
+        protected ITestContext GetTestContext(IMethod method, Action<ConcolicExplorationIteration.Builder>? initializeIteration = null, Action<ITestContext>? initializeTestContext = null)
         {
-            return new TestContext(GetIteration(method, initialize));
+            ConcolicExplorationIteration iteration = GetIteration(method, initializeIteration);
+            TestContext ctx = new TestContext(iteration);
+            initializeTestContext?.Invoke(ctx);
+            return ctx;
         }
 
         protected ConcolicExplorationIteration GetIteration(IMethod method, Action<ConcolicExplorationIteration.Builder>? initialize = null)
@@ -94,12 +80,23 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
             return builder.Build().Iterations[0];
         }
 
-        protected ITestContext GetTestContext(IMethod method, Action<ConcolicExplorationIteration.Builder>? initializeIteration = null, Action<ITestContext>? initializeTestContext = null)
+        protected ITestTemplate GetTestTemplate()
         {
-            ConcolicExplorationIteration iteration = GetIteration(method, initializeIteration);
-            TestContext ctx = new TestContext(iteration);
-            initializeTestContext?.Invoke(ctx);
-            return ctx;
+            return new TestTemplate(
+                new IArrangePrimitives[]
+                {
+                    //new MoqArrange(),
+                    new SimpleArrangePrimitives()
+                },
+                new IActPrimitives[]
+                {
+                    new SimpleActWriter(),
+                },
+                new IAssertPrimitives[]
+                {
+                    new XunitAssertions(),
+                    new SimpleAssertPrimitives()
+                });
         }
     }
 }

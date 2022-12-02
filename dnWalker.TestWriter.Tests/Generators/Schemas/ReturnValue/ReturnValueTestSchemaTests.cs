@@ -18,18 +18,19 @@ using Xunit.Abstractions;
 
 namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
 {
-    file class TestClass
-    {
-        public int ReturnInteger() { return 1; }
-        public static int StaticReturnInteger() { return 1; }
-
-
-        public string ReturnString() { return "Hello world"; }
-        public static string StaticReturnString() { return "Hello world"; }
-    }
 
     public class ReturnValueTestSchemaTests : TestSchemaTestBase
     {
+        private class TestClass
+        {
+            public int ReturnInteger() { return 1; }
+            public static int StaticReturnInteger() { return 1; }
+
+
+            public string ReturnString() { return "Hello world"; }
+            public static string StaticReturnString() { return "Hello world"; }
+        }
+
         public ReturnValueTestSchemaTests(ITestOutputHelper textOutput) : base(textOutput)
         {
         }
@@ -41,7 +42,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
 
             string expected =
             $"""
-            {testClassTD.Name} @this = new {testClassTD.Name}();
+            ReturnValueTestSchemaTests.TestClass @this = new ReturnValueTestSchemaTests.TestClass();
 
             int result = @this.ReturnInteger();
 
@@ -65,7 +66,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
             ReturnValueSchema schema = new ReturnValueSchema(new TestContext(it));
 
             Writer writer = new Writer();
-            schema.Write(TestTemplate, writer);
+            schema.Write(GetTestTemplate(), writer);
 
             writer.ToString().Trim().Should().Be(expected);
         }

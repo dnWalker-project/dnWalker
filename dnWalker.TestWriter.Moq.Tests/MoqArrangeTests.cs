@@ -27,23 +27,21 @@ namespace dnWalker.TestWriter.Moq.Tests
 
         protected abstract class AbstractTestClass
         {
-        public abstract int MethodNoArgs();
-        public abstract int MethodWithArgs(int a, string other, IDictionary<int, string> dict);
-        public abstract int GenericMethodWithGenericArgs<T>(T a);
+            public abstract int MethodNoArgs();
+            public abstract int MethodWithArgs(int a, string other, IDictionary<int, string> dict);
+            public abstract int GenericMethodWithGenericArgs<T>(T a);
 
-        public virtual int VirtualMethod() => -5;
-        public int ConcreteMethod() => 5;
-    }
+            public virtual int VirtualMethod() => -5;
+            public int ConcreteMethod() => 5;
+        }
 
         protected interface ITestInterface
-    {
-        int MethodNoArgs();
-    }
+        {
+            int MethodNoArgs();
+        }
 
         private ITestContext GetTestContext(TypeSig type)
-    {
-        private ITestContext GetTestContext()
-        {
+        { 
             Mock<ITestContext> ctxMock = new Mock<ITestContext>();
             ctxMock.Setup(o => o.SymbolMapping)
                 .Returns(new Dictionary<string, SymbolContext>()
