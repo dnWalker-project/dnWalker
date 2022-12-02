@@ -50,7 +50,7 @@ namespace dnWalker.TestWriter.Generators
         private static string GetFreeResultLikeSymbol(ITestContext context)
         {
             // TODO: some smart algorithm...
-            return "RESULT";
+            return "result";
         }
 
         public static SymbolContext? GetSymbolContext(this ITestContext context, string symbol)

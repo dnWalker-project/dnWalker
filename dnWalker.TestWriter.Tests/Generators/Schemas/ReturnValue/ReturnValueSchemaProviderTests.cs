@@ -15,19 +15,20 @@ using Xunit.Abstractions;
 
 namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
 {
-    file class TestClass
-    {
-        public void NoReturnValue()
-        {
-
-        }
-
-        public int WithReturnValue() => -1;
-    }
 
 
     public class ReturnValueSchemaProviderTests : TestSchemaTestBase
     {
+        private class TestClass
+        {
+            public void NoReturnValue()
+            {
+
+            }
+
+            public int WithReturnValue() => -1;
+        }
+
         public ReturnValueSchemaProviderTests(ITestOutputHelper textOutput) : base(textOutput)
         {
         }
