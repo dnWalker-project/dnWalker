@@ -14,8 +14,13 @@ namespace dnWalker.TestWriter.TestModels
     {
         public string? Name { get; set; }
         
-        public IDictionary<string, TestGroup> TestGroups { get; } = new Dictionary<string, TestGroup>();
+        public string? SoftwareUnderTest { get; set; }
 
-        // TODO nuget package model
+        public IDictionary<string, TestGroup> TestGroups { get; } = new Dictionary<string, TestGroup>(StringComparer.OrdinalIgnoreCase);
+
+        public IList<PackageReference> Packages { get; } = new List<PackageReference>();
+
+        public IDictionary<string, string> Properties { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
     }
 }

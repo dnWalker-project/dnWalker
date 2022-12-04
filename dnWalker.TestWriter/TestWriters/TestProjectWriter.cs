@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace dnWalker.TestWriter.TestWriters
 {
@@ -72,8 +73,10 @@ namespace dnWalker.TestWriter.TestWriters
         private void WriteProjectFile(TestProject testProject)
         {
             string projectFileLocation = Path.Combine(_directory, $"{testProject.Name}.csproj");
-            // just create the file for now...
-            File.Create(projectFileLocation).Close();
+            using (CsProjWriter writer = new CsProjWriter(projectFileLocation))
+            {
+                writer.Write(testProject);
+            }
         }
 
         public void Dispose()
