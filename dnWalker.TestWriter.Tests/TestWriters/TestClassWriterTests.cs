@@ -3,7 +3,7 @@ using dnWalker.TestWriter.TestWriters;
 
 using FluentAssertions;
 
-namespace dnWalker.TestWriter.Tests
+namespace dnWalker.TestWriter.Tests.TestWriters
 {
     public class TestClassWriterTests
     {
@@ -30,16 +30,16 @@ namespace dnWalker.TestWriter.Tests
             using XXX.YYY;
             """;
 
-            TestClass testClass = new TestClass()
+            var testClass = new TestClass()
             {
                 Usings = { "A.aabb", "XXX.YYY", "e", "F.G", "F", "aaa.aabb", "aa.aabb", "bbb.ccc.ddd", "bbb.ccc" },
                 //Namespace = "TestNamespace",
                 //Name = "TestClass"
             };
 
-            StringWriter output = new StringWriter();
+            var output = new StringWriter();
 
-            TestClassWriter writer = new TestClassWriter(output);
+            var writer = new TestClassWriter(output);
             writer.Write(testClass);
 
             output.ToString().Trim().Should().Be(Expected);
@@ -61,9 +61,9 @@ namespace dnWalker.TestWriter.Tests
             }
             """;
 
-            TestClass testClass = new TestClass()
+            var testClass = new TestClass()
             {
-                Usings = {  },
+                Usings = { },
                 Attributes = { new AttributeInfo
                 {
                     TypeName = "Fixture",
@@ -74,9 +74,9 @@ namespace dnWalker.TestWriter.Tests
                 Name = "TestClass"
             };
 
-            StringWriter output = new StringWriter();
+            var output = new StringWriter();
 
-            TestClassWriter writer = new TestClassWriter(output);
+            var writer = new TestClassWriter(output);
             writer.Write(testClass);
 
             output.ToString().Trim().Should().Be(Expected);
@@ -105,7 +105,7 @@ namespace dnWalker.TestWriter.Tests
             }
             """;
 
-            TestClass testClass = new TestClass()
+            var testClass = new TestClass()
             {
                 Usings = { },
                 Namespace = "TestNamespace",
@@ -120,7 +120,7 @@ namespace dnWalker.TestWriter.Tests
                         TypeName = "Fixture",
                         PositionalArguments = { "5" },
                         InitializerArguments = { { "Message", "\"hello world\"" } }
-                    } 
+                    }
                 },
                 Name = "TestClass",
                 Methods =
@@ -138,7 +138,7 @@ namespace dnWalker.TestWriter.Tests
                         ReturnTypeName = "void",
                         Name = "TestMethod",
                         Arguments= { new ArgumentInfo { TypeName = "int", Name = "x" } },
-                        Body = 
+                        Body =
                         """
                         int y = 10;
                         Assert.Equals(x * 2, y);
@@ -147,9 +147,9 @@ namespace dnWalker.TestWriter.Tests
                 }
             };
 
-            StringWriter output = new StringWriter();
+            var output = new StringWriter();
 
-            TestClassWriter writer = new TestClassWriter(output);
+            var writer = new TestClassWriter(output);
             writer.Write(testClass);
 
             output.ToString().Trim().Should().Be(Expected);

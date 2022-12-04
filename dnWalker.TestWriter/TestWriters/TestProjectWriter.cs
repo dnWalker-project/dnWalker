@@ -73,7 +73,8 @@ namespace dnWalker.TestWriter.TestWriters
         private void WriteProjectFile(TestProject testProject)
         {
             string projectFileLocation = Path.Combine(_directory, $"{testProject.Name}.csproj");
-            using (CsProjWriter writer = new CsProjWriter(projectFileLocation))
+            using (TextWriter output = new StreamWriter(projectFileLocation))
+            using (CsProjWriter writer = new CsProjWriter(output))
             {
                 writer.Write(testProject);
             }
