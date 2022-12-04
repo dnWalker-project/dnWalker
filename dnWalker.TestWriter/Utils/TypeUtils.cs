@@ -71,12 +71,13 @@ namespace dnWalker.TestWriter.Utils
                 case ElementType.Class:
                 case ElementType.Object:
                 case ElementType.ValueType:
-                    return type.TypeName;
+                    return GetName(type.ToClassOrValueTypeSig().TypeDefOrRef.ResolveTypeDefThrow());
 
                 case ElementType.GenericInst:
                     {
                         GenericInstSig genInst = type.ToGenericInstSig();
-                        return genInst.GenericType.GetNameOrAlias() + "<" + string.Join(", ", genInst.GenericArguments.Select(ga => ga.GetNameOrAlias())) + ">";
+                        // generic typename is finished by `XYZ, where XYZ is the gen arg count
+                        return genInst.GenericType.GetNameOrAlias().Split('`')[0] + "<" + string.Join(", ", genInst.GenericArguments.Select(ga => ga.GetNameOrAlias())) + ">";
                     }
 
                 case ElementType.Ptr:
@@ -91,6 +92,23 @@ namespace dnWalker.TestWriter.Utils
 
             }
             throw new NotSupportedException($"Unsupported type: '{type}'");
+        }
+
+        private static string GetName(TypeDef typeDef)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            TypeDef td = typeDef.DeclaringType;
+
+            if (td != null)
+            {
+                sb.Append(td.Name);
+                sb.Append('.');
+            }
+
+            sb.Append(typeDef.Name);
+
+            return sb.ToString();
         }
     }
 }

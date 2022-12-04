@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators
 {
-    internal class Writer : IWriter
+    public class Writer : IWriter
     {
         private readonly StringBuilder _sb = new StringBuilder();
         private string _currentIndent = string.Empty;
