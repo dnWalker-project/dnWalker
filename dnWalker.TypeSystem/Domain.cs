@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,8 @@ namespace dnWalker.TypeSystem
         private readonly ModuleContext _moduleContext = ModuleDef.CreateModuleContext();
 
         private readonly Dictionary<string, ModuleDef> _loadedModules = new Dictionary<string, ModuleDef>();
-        //private readonly Dictionary<string, AssemblyDef> _loadedAssemblies = new Dictionary<string, AssemblyDef>();
 
-        private ModuleDef _mainModule;
+        private ModuleDef? _mainModule;
 
         private readonly Resolver2 _typeResolver;
 
@@ -27,7 +27,7 @@ namespace dnWalker.TypeSystem
 
         public ModuleDef MainModule
         {
-            get { return _mainModule; }
+            get { return _mainModule ?? throw new InvalidOperationException("No module is loaded."); }
         }
 
         public ModuleContext ModuleContext
@@ -43,13 +43,26 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        //public IReadOnlyCollection<AssemblyDef> Assemblies
-        //{
-        //    get
-        //    {
-        //        return _loadedAssemblies.Values;
-        //    }
-        //}
+        public bool Load(AssemblyDef assemblyDef)
+        {
+            try
+            {
+                //Load(assemblyDef);
+                _mainModule ??= assemblyDef.ManifestModule;
+
+                foreach (ModuleDef module in assemblyDef.Modules)
+                {
+                    Load(module);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to resolve or load assembly: '{assemblyDef}'. Error: '{ex}'");
+                return false;
+            }
+        }
 
         private void Load(ModuleDef module)
         {
@@ -73,13 +86,13 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        private void Load(AssemblyDef assembly)
-        {
-            foreach (ModuleDef module in assembly.Modules)
-            {
-                Load(module);
-            }
-        }
+        //private void Load(AssemblyDef assembly)
+        //{
+        //    foreach (ModuleDef module in assembly.Modules)
+        //    {
+        //        Load(module);
+        //    }
+        //}
 
         public static IDomain LoadFromFile(string file)
         {
@@ -105,6 +118,11 @@ namespace dnWalker.TypeSystem
             domain._mainModule = mainModule;
             domain.Load(mainModule.Assembly);
             return domain;
+        }
+
+        public static IDomain Create()
+        {
+            return new Domain();
         }
 
         public IResolver Resolver => _moduleContext.Resolver;

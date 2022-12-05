@@ -3,11 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <StartupObject>MMC.MonoModelChecker</StartupObject>
+    <StartupObject>dnWalker.Interface.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
     <ProjectReference Include="..\dnWalker.Explorations\dnWalker.Explorations.csproj" />
     <ProjectReference Include="..\dnWalker.Symbolic\dnWalker.Symbolic.csproj" />
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
+    <ProjectReference Include="..\dnWalker.Z3\dnWalker.Z3.csproj" />
   </ItemGroup>
 
   <ItemGroup>

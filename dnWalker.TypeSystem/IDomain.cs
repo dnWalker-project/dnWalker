@@ -16,5 +16,16 @@ namespace dnWalker.TypeSystem
         ModuleContext ModuleContext { get; }
 
         IResolver Resolver { get; }
+
+        bool Load(AssemblyDef assembly);
+    }
+
+    public static class DomainExtensions
+    {
+        public static bool Load(this IDomain domain, string assemblyFile)
+        {
+            AssemblyDef assembly = AssemblyDef.Load(assemblyFile, domain.ModuleContext);
+            return domain.Load(assembly);
+        }
     }
 }

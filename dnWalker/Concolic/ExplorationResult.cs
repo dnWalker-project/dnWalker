@@ -157,13 +157,14 @@ namespace dnWalker.Concolic
             ConcolicExplorationIteration.Builder builder = new ConcolicExplorationIteration.Builder()
             {
                 StandardOutput = _output,
+                ErrorOutput = string.Empty,
                 Exception = _exception?.Type.ToTypeSig(),
                 InputModel = _symbolicContext.InputModel,
                 OutputModel = _symbolicContext.OutputModel,
                 IterationNumber = _iterationNumber,
                 PathConstraint = _postcondition.ToString(),
                 Start = _start,
-                End = _end
+                End = _end,
             };
 
 
