@@ -85,8 +85,8 @@ namespace dnWalker.TestWriter.Generators.Arrange
                 (false, true) => NonPublicStaticFlags,
             };
 
-            string typeName = testContext.GetSymbolContext(symbol).Type.GetNameOrAlias();
-            output.WriteLine($"typeof({typeName}).GetField(\"{field.Name}\", {bindingFlags}).SetValue({symbol}, {literal})");
+            string typeName = field.DeclaringType!.ToTypeSig().GetNameOrAlias();
+            output.WriteLine($"typeof({typeName}).GetField(\"{field.Name}\", {bindingFlags}).SetValue({symbol}, {literal});");
         }
 
         public bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals)
