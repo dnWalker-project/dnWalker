@@ -87,5 +87,13 @@ namespace dnWalker.TestWriter.Generators.Act
             output.Write(string.Join(", ", method.Parameters.Where(p => p.IsNormalMethodParameter).Select(p => p.Name)));
             output.Write($")");
         }
+
+        public IEnumerable<string> Namespaces
+        {
+            get
+            {
+                return Array.Empty<string>();
+            }
+        }
     }
 }

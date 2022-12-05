@@ -180,5 +180,9 @@ namespace dnWalker.TestWriter.Moq
         {
             return false;
         }
+
+        private static readonly string[] _ns = new[] { "Moq" };
+
+        public IEnumerable<string> Namespaces => _ns;
     }
 }

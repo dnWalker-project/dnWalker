@@ -86,5 +86,9 @@ namespace dnWalker.TestWriter.Xunit
         {
             return false;
         }
+
+        private static readonly string[] _ns = new[] { "Xunit" };
+
+        public IEnumerable<string> Namespaces => _ns;
     }
 }

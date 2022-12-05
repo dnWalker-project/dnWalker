@@ -1,6 +1,8 @@
 ﻿using dnlib.DotNet;
 
 using dnWalker.Explorations;
+using dnWalker.Symbolic;
+using dnWalker.Symbolic.Heap;
 using dnWalker.TestWriter.Generators.Schemas;
 using dnWalker.TestWriter.TestModels;
 
@@ -62,6 +64,14 @@ namespace dnWalker.TestWriter.Generators
             }
 
             TestClass testClass = framework.CreateTestClass(testProject, testGroup);
+            foreach (string ns in TestTemplate.GahterNamspaces())
+            {
+                testClass.Usings.Add(ns);
+            }
+            foreach (string ns in GatherNamespaces(concolicExploration))
+            {
+                testClass.Usings.Add(ns);
+            }
 
             foreach (ITestSchema testSchema in _testSchemaProvider.GetSchemas(concolicExploration))
             {
@@ -71,8 +81,25 @@ namespace dnWalker.TestWriter.Generators
             return testClass;
         }
 
+        private static IEnumerable<string> GatherNamespaces(ConcolicExploration concolicExploration)
+        {
+            return concolicExploration.Iterations.SelectMany(it => GatherNamespaces(it));
+        }
 
+        private static IEnumerable<string> GatherNamespaces(ConcolicExplorationIteration it)
+        {
+            foreach (IReadOnlyHeapNode n in it.InputModel.HeapInfo.Nodes)
+            {
+                TypeSig t = n is IReadOnlyArrayHeapNode ? n.Type.Next : n.Type;
+                yield return t.Namespace;
+            }
 
+            foreach (IReadOnlyHeapNode n in it.OutputModel.HeapInfo.Nodes)
+            {
+                TypeSig t = n is IReadOnlyArrayHeapNode ? n.Type.Next : n.Type;
+                yield return t.Namespace;
+            }
+        }
 
         private TestMethod GenerateTestMethod(ITestSchema testSchema, ITestFramework framework, TestClass testClass)
         {

@@ -141,6 +141,13 @@ namespace dnWalker.TestWriter.Generators
         {
             ExecutePrimitiveOrThrow(testTemplate.AssertWriters, assert => assert.TryWriteAssertNotOfType(context, output, objectSymbol, expectedType), $"Failed to write 'assert not of type'");
         }
+
+        public static IEnumerable<string> GahterNamspaces(this ITestTemplate testTemplate)
+        {
+            return testTemplate.ArrangeWriters.SelectMany(p => p.Namespaces)
+           .Concat(testTemplate.ActWriters.SelectMany(p => p.Namespaces))
+           .Concat(testTemplate.AssertWriters.SelectMany(p => p.Namespaces));
+        }
         #endregion Assert
     }
 }

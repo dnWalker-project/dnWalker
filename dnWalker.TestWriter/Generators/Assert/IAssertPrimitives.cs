@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Assert
 {
-    public interface IAssertPrimitives
+    public interface IAssertPrimitives : IPrimitives
     {
         bool TryWriteAssertNull(ITestContext context, IWriter output, string symbol);
         bool TryWriteAssertNotNull(ITestContext context, IWriter output, string symbol);

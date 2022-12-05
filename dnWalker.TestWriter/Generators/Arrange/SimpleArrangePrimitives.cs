@@ -131,5 +131,13 @@ namespace dnWalker.TestWriter.Generators.Arrange
         {
             return false;
         }
+
+        public IEnumerable<string> Namespaces
+        {
+            get
+            {
+                return Array.Empty<string>();
+            }
+        }
     }
 }

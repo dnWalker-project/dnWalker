@@ -12,7 +12,7 @@ namespace dnWalker.TestWriter.Generators.Arrange
     /// <summary>
     /// Writes the arrange part of the unit test.
     /// </summary>
-    public interface IArrangePrimitives
+    public interface IArrangePrimitives : IPrimitives
     {
         bool TryWriteArrangeCreateInstance(ITestContext testContext, IWriter output, string symbol);
 

@@ -120,5 +120,13 @@ namespace dnWalker.TestWriter.Generators.Assert
         {
             return false;
         }
+
+        public IEnumerable<string> Namespaces
+        {
+            get
+            {
+                return Array.Empty<string>();
+            }
+        }
     }
 }
