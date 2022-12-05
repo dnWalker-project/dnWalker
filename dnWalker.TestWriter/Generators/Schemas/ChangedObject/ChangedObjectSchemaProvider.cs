@@ -20,7 +20,7 @@ namespace dnWalker.TestWriter.Generators.Schemas.ChangedObject
             }
 
             List<ChangedObjectSchema> changes = new List<ChangedObjectSchema>();
-            foreach (IReadOnlyArrayHeapNode changedArray in GetChangedObjects(iteration.InputModel, iteration.OutputModel))
+            foreach (IReadOnlyObjectHeapNode changedArray in GetChangedObjects(iteration.InputModel, iteration.OutputModel))
             {
                 changes.Add(new ChangedObjectSchema(changedArray.Location, new TestContext(iteration)));
             }

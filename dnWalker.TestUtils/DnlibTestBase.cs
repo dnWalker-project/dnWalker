@@ -81,6 +81,11 @@ namespace dnWalker.TestUtils
             return GetType(type).FindMethods(methodName).Single();
         }
 
+        protected FieldDef GetField(Type type, string fieldName)
+        {
+            return GetType(type).FindField(fieldName);
+        }
+
         protected ITestOutputHelper TextOutput
         {
             get
