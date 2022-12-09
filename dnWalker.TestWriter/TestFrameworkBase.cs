@@ -1,4 +1,5 @@
-﻿using dnWalker.TestWriter.Generators.Schemas;
+﻿using dnWalker.Explorations;
+using dnWalker.TestWriter.Generators.Schemas;
 using dnWalker.TestWriter.TestModels;
 
 using System;
@@ -11,30 +12,30 @@ namespace dnWalker.TestWriter.Utils
 {
     public abstract class TestFrameworkBase : ITestFramework
     {
-        protected abstract void InitializeTestProject(TestProject testProject);
-        protected abstract void InitializeTestClass(TestClass testClass, TestGroup testGroup);
-        protected abstract void InitializeTestMethod(TestMethod testMethod, TestClass testClass, ITestSchema testSchema);
+        protected abstract void InitializeTestProject(TestProject testProject, IEnumerable<ConcolicExploration> explorations);
+        protected abstract void InitializeTestClass(TestClass testClass, TestGroup testGroup, ConcolicExploration exploration);
+        protected abstract void InitializeTestMethod(TestMethod testMethod, TestClass testClass, ConcolicExplorationIteration explorationIteration, ITestSchema testSchema);
 
-        public TestProject CreateTestProject(string name)
+        public TestProject CreateTestProject(string name, IEnumerable<ConcolicExploration> explorations)
         {
             TestProject newProject = new TestProject() { Name = name };
-            InitializeTestProject(newProject);
+            InitializeTestProject(newProject, explorations);
             return newProject;
         }
 
-        public TestClass CreateTestClass(TestProject testProject, TestGroup testGroup)
+        public TestClass CreateTestClass(TestProject testProject, TestGroup testGroup, ConcolicExploration exploration)
         {
             TestClass newClass = new TestClass();
             testGroup.TestClasses.Add(newClass);
-            InitializeTestClass(newClass, testGroup);
+            InitializeTestClass(newClass, testGroup, exploration);
             return newClass;
         }
 
-        public TestMethod CreateTestMethod(TestClass testClass, ITestSchema testSchema)
+        public TestMethod CreateTestMethod(TestClass testClass, ConcolicExplorationIteration explorationIteration, ITestSchema testSchema)
         {
             TestMethod newMethod = new TestMethod();
             testClass.Methods.Add(newMethod);
-            InitializeTestMethod(newMethod, testClass, testSchema);
+            InitializeTestMethod(newMethod, testClass, explorationIteration, testSchema);
             return newMethod;
         }
     }

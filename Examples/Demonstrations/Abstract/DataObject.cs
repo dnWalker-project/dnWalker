@@ -64,7 +64,7 @@ namespace Examples.Demonstrations.Abstract
                         return false;
                     }
                 }
-                if (dr.Name == "Author")
+                if (dr.Name == "Author" && !string.IsNullOrEmpty(dr.AsString()))
                 {
                     Author = dr.AsString();
                     continue;

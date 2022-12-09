@@ -232,7 +232,7 @@ namespace dnWalker.Input.Xml
             foreach(IGrouping<string, XElement> memberGroup in xml.Elements().GroupBy(mXml => mXml.Name.LocalName))
             {
                 string memberName = memberGroup.Key;
-                int nextInvocation = 0;
+                int nextInvocation = 1;
 
                 foreach (XElement memberXml in memberGroup)
                 {

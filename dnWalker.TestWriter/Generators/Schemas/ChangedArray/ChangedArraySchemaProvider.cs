@@ -38,9 +38,10 @@ namespace dnWalker.TestWriter.Generators.Schemas.ChangedArray
 
                 foreach (int index in outArr.Indeces)
                 {
-                    IValue outElemen = outArr.GetElementOrDefault(index);
+                    IValue inElem = inArr.GetElementOrDefault(index);
+                    IValue outElem = outArr.GetElementOrDefault(index);
 
-                    if (!inArr.TryGetElement(index, out IValue? inElem) || !outElemen.Equals(inElem))
+                    if (!outElem.Equals(inElem))
                     {
                         changedArrays.Add(outArr.Location);
                         break;

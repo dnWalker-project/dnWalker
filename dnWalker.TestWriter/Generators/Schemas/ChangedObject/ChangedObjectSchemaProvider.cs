@@ -37,9 +37,10 @@ namespace dnWalker.TestWriter.Generators.Schemas.ChangedObject
 
                 foreach (IField field in outObj.Fields)
                 {
+                    IValue inFieldVal = inObj.GetFieldOrDefault(field);
                     IValue outFieldVal = outObj.GetFieldOrDefault(field);
 
-                    if (!inObj.TryGetField(field, out IValue? inFieldVal) || !outFieldVal.Equals(inFieldVal))
+                    if (!outFieldVal.Equals(inFieldVal))
                     {
                         changedObjects.Add(outObj.Location);
                         break;

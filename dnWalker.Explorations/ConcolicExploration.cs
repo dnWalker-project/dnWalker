@@ -9,7 +9,7 @@ namespace dnWalker.Explorations
     {
         private readonly List<ConcolicExplorationIteration> _iterations = new List<ConcolicExplorationIteration>();
 
-        private ConcolicExploration(string assemblyName, string assemblyFileName, IMethod methodUnderTest, string solver, DateTime start, DateTime end, bool failed)
+        private ConcolicExploration(string assemblyName, string assemblyFileName, IMethod methodUnderTest, string solver, string strategy, DateTime start, DateTime end, bool failed)
         {
             AssemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
             AssemblyFileName = assemblyFileName ?? throw new ArgumentNullException(nameof(assemblyFileName));
@@ -18,6 +18,7 @@ namespace dnWalker.Explorations
             Start = start;
             End = end;
             Failed = failed;
+            Strategy = strategy;
         }
 
         public IReadOnlyList<ConcolicExplorationIteration> Iterations 
@@ -32,6 +33,7 @@ namespace dnWalker.Explorations
         public string AssemblyFileName { get; }
         public IMethod MethodUnderTest { get; }
         public string Solver { get; }
+        public string Strategy { get; }
         public DateTime Start { get; }
         public DateTime End { get; }
         public bool Failed { get; }

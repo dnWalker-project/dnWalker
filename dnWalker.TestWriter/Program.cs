@@ -46,13 +46,13 @@ ITestSchemaProvider testSchemaProvider = extensionsHelper.CreateTestSchemaProvid
 GeneratorEnvironment environment = new GeneratorEnvironment(testTemplate, testSchemaProvider);
 
 // generate the tests
-TestProject testProject = testFramework.CreateTestProject(Path.GetDirectoryName(outputDir)!);
+TestProject testProject = environment.GenerateTestProject(testFramework, data);
 
 environment.GenerateTestClass(testFramework, testProject, data);
 
 using (ITestProjectWriter testProjectWriter = new TestProjectWriter(outputDir, path => new TestClassWriter(path)))
 {
-    testProjectWriter.Write(testProject);
+    testProjectWriter.WriteTestClasses(testProject);
 }
 
 return 0;

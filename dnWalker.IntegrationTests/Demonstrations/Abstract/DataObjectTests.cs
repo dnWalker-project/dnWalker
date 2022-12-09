@@ -33,6 +33,34 @@ namespace dnWalker.IntegrationTests.Demonstrations.Abstract
         }
 
         [IntegrationTest]
+        public void ReadDataSomePreviousState(BuildInfo buildInfo)
+        {
+            Initialize(buildInfo);
+
+            const string ModelXml =
+            """
+            <UserModels>
+                <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
+                    <m-this>
+                        <Object>
+                            <Id>55</Id>
+                            <Created>113</Created>
+                            <LastAccess>225</LastAccess>
+                            <Author>John Doe</Author>
+                        </Object>
+                    </m-this>
+                </UserModel>
+            </UserModels>
+            """;
+
+            IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
+
+            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
+            TestProject testProject = GenerateTests(exploration);
+            IReadOnlyDictionary<string, string> files = WriteTests(testProject);
+        }
+
+        [IntegrationTest]
         public void ReadDataEnsureMaxRecordsLength(BuildInfo buildInfo)
         {
             Initialize(buildInfo);

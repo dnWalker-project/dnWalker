@@ -5,6 +5,7 @@ using dnWalker.Symbolic;
 using dnWalker.Symbolic.Heap;
 using dnWalker.TestWriter.Generators.Schemas;
 using dnWalker.TestWriter.TestModels;
+using dnWalker.TestWriter.Utils;
 
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ namespace dnWalker.TestWriter.Generators
 
         private readonly ITestTemplate _testTemplate;
         private readonly ITestSchemaProvider _testSchemaProvider;
+
+        // TODO inject these objects
+        private readonly ITestMethodNamingStrategy _testMethodNamingStrategy = new BasicTestMethodNamingStrategy();
+        private readonly ITestClassNamingStrategy _testClassNamingStrategy = new BasicTestClassNamingStrategy();
+        private readonly ITestProjectNamingStrategy _testProjectNamingStrategy = new BasicTestProjectNamingStrategy();
 
         public GeneratorEnvironment(ITestTemplate testTemplate, ITestSchemaProvider testSchemaProvider)
         {
@@ -43,14 +49,6 @@ namespace dnWalker.TestWriter.Generators
             }
         }
 
-        private static string GetNamespace(TypeDef td)
-        {
-            while (td.DeclaringType != null)
-            {
-                td = td.DeclaringType;
-            }
-            return td.Namespace;
-        }
         private static IEnumerable<string> GetNamespaces(TypeSig ts)
         {
             // type may be an array => get namespaces of the "next"
@@ -65,7 +63,7 @@ namespace dnWalker.TestWriter.Generators
                 GenericInstSig genInstSig = ts.ToGenericInstSig();
 
                 // create list of the namespaces & add the generic type namespace
-                List<string> ns = new List<string>() { GetNamespace(genInstSig.ToTypeDefOrRef().ResolveTypeDefThrow()) };
+                List<string> ns = new List<string>() { genInstSig.ToTypeDefOrRef().ResolveTypeDefThrow().GetNamespace() };
 
                 foreach(TypeSig genParam in genInstSig.GetGenericParameters())
                 {
@@ -76,41 +74,31 @@ namespace dnWalker.TestWriter.Generators
             }
 
             // type is just "normal type"
-            return new[] { GetNamespace(ts.ToTypeDefOrRef().ResolveTypeDefThrow()) };
+            return new[] { ts.ToTypeDefOrRef().ResolveTypeDefThrow().GetNamespace() };
         }
 
-        private static string GetName(MethodDef method)
+
+        public TestProject GenerateTestProject(ITestFramework framework, ConcolicExploration concolicExploration)
         {
-            // Nest1_Nest2_..._NestN_Name
-            Stack<TypeDef> declChain = new Stack<TypeDef>();
-            
-            TypeDef td = method.DeclaringType;
+            string testProjectName = _testProjectNamingStrategy.GetProjectName(concolicExploration.MethodUnderTest.Module);
 
-            while (td != null)
-            {
-                declChain.Push(td);
-                td = td.DeclaringType;
-            }
+            TestProject testProject = framework.CreateTestProject(testProjectName, new[] { concolicExploration });
 
-            StringBuilder sb = new StringBuilder();
-            while (declChain.TryPop(out td!))
-            {
-                sb.Append(td.Name);
-                sb.Append('_');
-            }
-            sb.Append(method.Name);
-            return sb.ToString();
+            return testProject;
+
         }
 
-
-        public TestClass GenerateTestClass(ITestFramework framework, TestProject testProject, ConcolicExploration concolicExploration)
+        public TestClass GenerateTestClass(ITestFramework framework, TestProject testProject, ConcolicExploration exploration)
         {
             // setup test group
-            MethodDef method = concolicExploration.MethodUnderTest.ResolveMethodDefThrow();
+            MethodDef method = exploration.MethodUnderTest.ResolveMethodDefThrow();
 
-            string methodNamespace = GetNamespace(method.DeclaringType);
+            // test class namespace and name
+            string testClassNamespace = _testClassNamingStrategy.GetNamespaceName(method);
+            string testClassName = _testClassNamingStrategy.GetClassName(method);
 
-            string testGroupName = methodNamespace.Replace('.', '/');
+            // test group name
+            string testGroupName = testClassNamespace.Substring(testProject.Name!.Length + 1).Replace('.','\\');
             if (string.IsNullOrWhiteSpace(testGroupName))
             {
                 testGroupName = ".";
@@ -122,25 +110,31 @@ namespace dnWalker.TestWriter.Generators
                 testProject.TestGroups.Add(testGroupName, testGroup);
             }
 
-            TestClass testClass = framework.CreateTestClass(testProject, testGroup);
+            TestClass testClass = framework.CreateTestClass(testProject, testGroup, exploration);
+            testClass.Name = testClassName;
+            testClass.Namespace = testClassNamespace;
             foreach (string ns in TestTemplate.GahterNamspaces())
             {
                 testClass.Usings.Add(ns);
             }
-            foreach (string ns in GatherNamespaces(concolicExploration))
+            foreach (string ns in GatherNamespaces(exploration))
             {
                 testClass.Usings.Add(ns);
             }
-            testClass.Name = GetName(method) + "Tests";
-            testClass.Namespace = methodNamespace + ".Tests";
 
 
             int methodIndex = 1;
-            foreach (ITestSchema testSchema in _testSchemaProvider.GetSchemas(concolicExploration))
+            foreach (ConcolicExplorationIteration explorationIteration in exploration.Iterations)
             {
-                TestMethod testMethod = GenerateTestMethod(testSchema, framework, testClass);
-                testMethod.Name = $"{testMethod.Name}_{methodIndex++}";
+                foreach (ITestSchema testSchema in _testSchemaProvider.GetSchemas(explorationIteration))
+                {
+                    string testMethodName = _testMethodNamingStrategy.GetMethodName(method, testSchema);
 
+                    TestMethod testMethod = framework.CreateTestMethod(testClass, explorationIteration, testSchema);
+                    testMethod.Body = GenerateMethodBody(testSchema);
+
+                    testMethod.Name ??= $"{testMethodName}_{methodIndex++}";
+                }
             }
 
             return testClass;
@@ -169,14 +163,6 @@ namespace dnWalker.TestWriter.Generators
             return ns;
         }
 
-        private TestMethod GenerateTestMethod(ITestSchema testSchema, ITestFramework framework, TestClass testClass)
-        {
-            TestMethod testMethod = framework.CreateTestMethod(testClass, testSchema);
-            testMethod.Body = GenerateMethodBody(testSchema);
-            testMethod.Name ??= testSchema.GetTestMethodName();
-
-            return testMethod;
-        }
 
         private string GenerateMethodBody(ITestSchema testSchema)
         {

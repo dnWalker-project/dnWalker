@@ -40,7 +40,6 @@ namespace dnWalker.TestWriter.Tests.Generators
         public void GenerateTestClassUsingsTests()
         {
             ITestFramework testFramework = new Xunit.XunitFramework();
-            TestProject testProject = testFramework.CreateTestProject("test");
             ITestTemplate testTemplate = GetTestTemplate();
             ITestSchemaProvider testSchemaProvider = new MergedTestSchemaProvider
                 (
@@ -79,6 +78,7 @@ namespace dnWalker.TestWriter.Tests.Generators
                         b.OutputModel = om;
                     }
                 });
+            TestProject testProject = testFramework.CreateTestProject("test", new[] { concolicExploration });
 
             TestClass testClass = env.GenerateTestClass(testFramework, testProject, concolicExploration);
 
@@ -99,7 +99,6 @@ namespace dnWalker.TestWriter.Tests.Generators
         public void GenerateTestClassMethodsTests()
         {
             ITestFramework testFramework = new Xunit.XunitFramework();
-            TestProject testProject = testFramework.CreateTestProject("test");
             ITestTemplate testTemplate = GetTestTemplate();
             ITestSchemaProvider testSchemaProvider = new MergedTestSchemaProvider
                 (
@@ -160,17 +159,11 @@ namespace dnWalker.TestWriter.Tests.Generators
                     }
                 });
 
+            TestProject testProject = testFramework.CreateTestProject("test", new[] { concolicExploration });
             TestClass testClass = env.GenerateTestClass(testFramework, testProject, concolicExploration);
 
             // 2 iterations and 1 test per iteration - exception and then return value
             testClass.Methods.Should().HaveCount(2);
-
-            // the methods should be created using ReturnValue and Exceptions schemas
-            testClass.Methods.Should().AllSatisfy(
-                tm => tm.Attributes.Any(a => a.TypeName == "Trait" &&
-                (a.PositionalArguments.SequenceEqual(new[] { "TestSchema", "ExceptionSchema" }) ||
-                 a.PositionalArguments.SequenceEqual(new[] { "TestSchema", "ReturnValueSchema" })))
-                .Should().BeTrue());
         }
     }
 }

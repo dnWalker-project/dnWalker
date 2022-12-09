@@ -10,6 +10,7 @@ namespace dnWalker.TestWriter.TestWriters
 {
     public interface ITestProjectWriter : IDisposable
     {
-        void Write(TestProject testProject);
+        void WriteTestClasses(TestProject testProject);
+        void WriteTestProject(TestProject testProject);
     }
 }

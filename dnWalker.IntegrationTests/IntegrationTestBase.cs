@@ -42,7 +42,7 @@ namespace dnWalker.IntegrationTests
 
         public void Dispose()
         {
-            //Directory.Delete(_outDir, true);
+            Directory.Delete(_outDir, true);
         }
 
         private ITestTemplate? _testTemplate;
@@ -105,12 +105,8 @@ namespace dnWalker.IntegrationTests
         {
             GeneratorEnvironment env = new GeneratorEnvironment(_testTemplate!, _testSchemaProvider!);
 
-            string moduleName = concolicExploration.MethodUnderTest.DeclaringType.Module.Name;
-            if (moduleName.EndsWith(".dll")) moduleName = moduleName.Substring(0, moduleName.Length - 4);
-            string projectName = moduleName + ".Tests";
-            TestProject testProject = _testFramework!.CreateTestProject(projectName);
-
-            env.GenerateTestClass(_testFramework, testProject, concolicExploration);
+            TestProject testProject = env.GenerateTestProject(_testFramework!, concolicExploration);
+            env.GenerateTestClass(_testFramework!, testProject, concolicExploration);
 
             return testProject;
         }
@@ -119,12 +115,9 @@ namespace dnWalker.IntegrationTests
         {
             string dirName = Path.Combine(_outDir, testProject.Name!);
 
-            using (ITestProjectWriter testProjectWriter = new TestProjectWriter(dirName, s =>
-                {
-                    return new TestClassWriter(s);
-                }))
+            using (ITestProjectWriter testProjectWriter = new TestProjectWriter(dirName, s => new TestClassWriter(s)))
             {
-                testProjectWriter.Write(testProject);
+                testProjectWriter.WriteTestClasses(testProject);
             }
 
             Dictionary<string, string> files = new Dictionary<string, string>();

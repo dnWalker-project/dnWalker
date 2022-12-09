@@ -11,13 +11,5 @@ namespace dnWalker.TestWriter.Generators.Schemas
         ITestContext TestContext { get; }
 
         void Write(ITestTemplate testTemplate, IWriter output);
-
-        string GetTestMethodName()
-        {
-            Type t = GetType();
-            string mutName = TestContext.Iteration.Exploration.MethodUnderTest.Name;
-
-            return $"Test_{mutName}";
-        }
     }
 }
