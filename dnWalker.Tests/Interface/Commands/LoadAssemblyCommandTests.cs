@@ -39,7 +39,7 @@ namespace dnWalker.Tests.Interface.Commands
 
             LoadAssemblyCommand cmd = new LoadAssemblyCommand("file1", "file2");
 
-            cmd.Execute(modelMock.Object).Should().Be(CommandResult.BreakFail(-1));
+            cmd.Execute(modelMock.Object).Should().Be(CommandResult.FailContinue(-1));
 
             modelMock.Verify(m => m.LoadAssembly("file1"), Times.Once());
             modelMock.Verify(m => m.LoadAssembly("file2"), Times.Never());

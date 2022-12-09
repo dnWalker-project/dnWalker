@@ -48,7 +48,7 @@ namespace dnWalker.Tests.Examples
             _output = output;
         }
 
-        protected IDefinitionProvider DefinitionProvider => _definitionProvider ?? throw new InvalidDataException("TEST IS NOT INITIALIZED");
+        protected IDefinitionProvider DefinitionProvider => _definitionProvider ?? throw new InvalidOperationException("TEST IS NOT INITIALIZED");
         protected ITestOutputHelper Output => _output;
 
 
