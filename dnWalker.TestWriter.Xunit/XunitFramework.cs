@@ -19,7 +19,7 @@ namespace dnWalker.TestWriter.Xunit
             testClass.Attributes.Add(new AttributeInfo
             {
                 TypeName = "Trait",
-                PositionalArguments = { "dnWalkerGenerated", "SUT name" }
+                PositionalArguments = { "\"dnWalkerGenerated\"", "\"SUT name\"" }
             });
             testClass.Usings.Add("Xunit");
         }
@@ -33,7 +33,7 @@ namespace dnWalker.TestWriter.Xunit
             testMethod.Attributes.Add(new AttributeInfo
             {
                 TypeName = "Trait",
-                PositionalArguments = { "TestSchema", testSchema.GetType().Name }
+                PositionalArguments = { "\"TestSchema\"", $"\"{testSchema.GetType().Name}\"" }
             });
         }
     }

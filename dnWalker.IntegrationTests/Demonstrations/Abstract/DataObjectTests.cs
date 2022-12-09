@@ -1,4 +1,7 @@
 ﻿using dnWalker.Concolic;
+using dnWalker.Concolic.Traversal;
+using dnWalker.Input;
+using dnWalker.Input.Xml;
 using dnWalker.Tests.Examples;
 using dnWalker.TestWriter.TestModels;
 
@@ -7,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using Xunit.Abstractions;
 
@@ -23,7 +27,35 @@ namespace dnWalker.IntegrationTests.Demonstrations.Abstract
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore("Examples.Demonstrations.Abstract.DataObject.ReadData");
+            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData");
+            TestProject testProject = GenerateTests(exploration);
+            IReadOnlyDictionary<string, string> files = WriteTests(testProject);
+        }
+
+        [IntegrationTest]
+        public void ReadDataEnsureMaxRecordsLength(BuildInfo buildInfo)
+        {
+            Initialize(buildInfo);
+
+            const string ModelXml =
+            """
+            <UserModels>
+                <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
+                    <m-this><Object/></m-this>
+                    <database>
+                        <Object>
+                            <GetRecords Invocation="1">
+                                <Array Length="2"/>
+                            </GetRecords>
+                        </Object>
+                    </database>
+                </UserModel>
+            </UserModels>
+            """;
+
+            IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
+
+            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }

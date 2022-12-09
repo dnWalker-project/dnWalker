@@ -95,6 +95,7 @@ namespace dnWalker.TestWriter.Generators
             {
                 Location l => l == Location.Null ? "null" : context.GetSymbolContext(l)?.Literal,
                 StringValue s => s == StringValue.Null ? "null" : $"\"{s.Content}\"",
+                PrimitiveValue<bool> b => b.Value ? "true" : "false",
                 _ => value.ToString()
             };
         }

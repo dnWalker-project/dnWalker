@@ -106,6 +106,19 @@ namespace dnWalker.TestWriter.Moq
 
             return false;
         }
+
+        private static string HandleNull(TypeSig returnType, string literal)
+        {
+            if (literal == "null")
+            {
+                return $"({returnType.GetNameOrAlias()})null";
+            }
+            else
+            {
+                return literal;
+            }
+        }
+
         public bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals)
         {
             if (CanArrange(method)) 
@@ -125,7 +138,7 @@ namespace dnWalker.TestWriter.Moq
                     output.Indent++;
 
                     output.WriteLine($".Setup({invokeExpression})");
-                    output.WriteLine($".Returns({literals[0]});");
+                    output.WriteLine($".Returns({HandleNull(method.MethodSig.RetType, literals[0])});");
 
                     output.Indent--;
                 }
@@ -147,7 +160,7 @@ namespace dnWalker.TestWriter.Moq
                     foreach (string literal in literals ) 
                     {
                         output.WriteLine(string.Empty);
-                        output.Write($".Returns({literal})");
+                        output.Write($".Returns({HandleNull(method.MethodSig.RetType, literal)})");
                     }
 
                     output.WriteLine(";");

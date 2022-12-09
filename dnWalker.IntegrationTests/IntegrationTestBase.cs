@@ -81,14 +81,19 @@ namespace dnWalker.IntegrationTests
             _testFramework = new XunitFramework();
         }
 
-        protected virtual ExplorationResult Explore(string methodName, IEnumerable<UserModel>? userModels = null)
+        protected virtual ExplorationResult Explore<TStrategy>(string methodName, IEnumerable<UserModel>? userModels = null)
+            where TStrategy : IExplorationStrategy
         {
             IExplorer explorer = CreateExplorer(configure: 
                 cfg =>
                 {
-                    cfg.SetStrategy<AllEdgesCoverage>();
+                    cfg.SetStrategy<TStrategy>();
                 });
             return explorer.Run(methodName, userModels);
+        }
+        protected virtual ExplorationResult Explore(string methodName, IEnumerable<UserModel>? userModels = null)
+        {
+            return Explore<AllPathsCoverage>(methodName, userModels);
         }
 
         protected TestProject GenerateTests(ExplorationResult explorationResult)

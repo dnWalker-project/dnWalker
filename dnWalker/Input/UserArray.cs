@@ -36,7 +36,13 @@ namespace dnWalker.Input
 
             // assert elementType is assignable to expectedType.Next!!!
 
-            int length = Elements.Keys.Count > 0 ? Elements.Keys.Max() + 1 : 0;
+            // from the attribute
+            int length = Length;
+
+            // from the elements
+            int elementsLength = Elements.Keys.Count > 0 ? Elements.Keys.Max() + 1 : 0;
+
+            length = elementsLength > length ? elementsLength : length;
 
             IArrayHeapNode arrayNode = model.HeapInfo.InitializeArray(elementType, length);
             SetReference(arrayNode.Location, references);

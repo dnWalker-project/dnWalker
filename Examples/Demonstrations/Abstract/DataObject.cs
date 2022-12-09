@@ -87,11 +87,11 @@ namespace Examples.Demonstrations.Abstract
 
         protected int GetCheckSum()
         {
-            return (Id +
-                    Created *
-                    LastAccess) % (2 << 31);
+            int b = Id + 1671941 + Created * 8329 + LastAccess * 4909;
+            int m = 1 << 30;
+            return (b) % (m);
         }
 
-        protected abstract bool SetValue(DataRecord record);
+        public abstract bool SetValue(DataRecord record);
     }
 }

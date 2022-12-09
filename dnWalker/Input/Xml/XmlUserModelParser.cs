@@ -135,7 +135,7 @@ namespace dnWalker.Input.Xml
 
                     Parameter thisParameter = method.Parameters[0];
 
-                    userModel.MethodArguments[thisParameter] = ParseUserDataFromValue(varXml, references);
+                    userModel.MethodArguments[thisParameter] = ParseUserDataFromValue(varXml, references, thisParameter.Type);
 
                     return true;
                 }
@@ -317,7 +317,7 @@ namespace dnWalker.Input.Xml
             {
                 int index = GetAndUpdateCounter(ref nextIndex, GetIndex(elementXml));
 
-                UserData elementData = ParseUserData(elementXml, references);
+                UserData elementData = ParseUserData(elementXml, references, array.ElementType);
                 array.Elements[index] = elementData;
             }
 

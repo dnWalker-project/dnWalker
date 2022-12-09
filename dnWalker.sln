@@ -66,7 +66,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestWriter.Moq.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.TestUtils", "dnWalker.TestUtils\dnWalker.TestUtils.csproj", "{98036666-DE07-4566-AD7C-D970EBFBFB7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnWalker.IntegrationTests", "dnWalker.IntegrationTests\dnWalker.IntegrationTests.csproj", "{88D3FE0F-9A71-4B9F-802F-5A43936ADFB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnWalker.IntegrationTests", "dnWalker.IntegrationTests\dnWalker.IntegrationTests.csproj", "{88D3FE0F-9A71-4B9F-802F-5A43936ADFB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
