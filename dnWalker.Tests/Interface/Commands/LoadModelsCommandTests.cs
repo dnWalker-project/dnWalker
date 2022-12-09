@@ -37,7 +37,7 @@ namespace dnWalker.Tests.Interface.Commands
 
             LoadModelsCommand cmd = new LoadModelsCommand("file1", "file2");
 
-            cmd.Execute(modelMock.Object).Should().Be(CommandResult.BreakFail(-1));
+            cmd.Execute(modelMock.Object).Should().Be(CommandResult.FailContinue(-1));
 
             modelMock.Verify(m => m.LoadModels("file1"), Times.Once());
             modelMock.Verify(m => m.LoadModels("file2"), Times.Never());
