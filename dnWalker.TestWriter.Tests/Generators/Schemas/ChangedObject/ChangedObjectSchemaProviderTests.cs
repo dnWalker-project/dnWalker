@@ -88,6 +88,8 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ChangedObject
                     IObjectHeapNode nextNode = input.HeapInfo.InitializeObject(GetType(typeof(TestClass)).ToTypeSig());
                     nextLocation = nextNode.Location;
 
+                    IObjectHeapNode unchangedNode = input.HeapInfo.InitializeObject(GetType(typeof(TestClass)).ToTypeSig());
+
                     Model output = input.Clone();
 
                     output.HeapInfo.TryGetNode(thisLocation, out var thisN);
