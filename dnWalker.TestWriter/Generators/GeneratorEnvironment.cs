@@ -43,15 +43,52 @@ namespace dnWalker.TestWriter.Generators
             }
         }
 
+        private static string GetNamespace(TypeDef td)
+        {
+            while (td.DeclaringType != null)
+            {
+                td = td.DeclaringType;
+            }
+            return td.Namespace;
+        }
+        private static IEnumerable<string> GetNamespaces(TypeSig ts)
+        {
+            // type may be an array => get namespaces of the "next"
+            if (ts.IsArray || ts.IsSZArray)
+            {
+                return GetNamespaces(ts.Next);
+            }
+
+            // type may be a generic instance => get namespacec of all of the arguments
+            if (ts.IsGenericInstanceType)
+            {
+                GenericInstSig genInstSig = ts.ToGenericInstSig();
+
+                // create list of the namespaces & add the generic type namespace
+                List<string> ns = new List<string>() { GetNamespace(genInstSig.ToTypeDefOrRef().ResolveTypeDefThrow()) };
+
+                foreach(TypeSig genParam in genInstSig.GetGenericParameters())
+                {
+                    ns.AddRange(GetNamespaces(genParam));
+                }
+
+                return ns;
+            }
+
+            // type is just "normal type"
+            return new[] { GetNamespace(ts.ToTypeDefOrRef().ResolveTypeDefThrow()) };
+        }
+
+
+
         public TestClass GenerateTestClass(ITestFramework framework, TestProject testProject, ConcolicExploration concolicExploration)
         {
             // setup test group
             MethodDef method = concolicExploration.MethodUnderTest.ResolveMethodDefThrow();
 
-            string moduleName = method.Module.Name;
-            string methodNamespace = method.DeclaringType.Namespace;
+            string methodNamespace = GetNamespace(method.DeclaringType);
 
-            string testGroupName = methodNamespace.Substring(moduleName.Length).Replace('.', '/');
+            string testGroupName = methodNamespace.Replace('.', '/');
             if (string.IsNullOrWhiteSpace(testGroupName))
             {
                 testGroupName = ".";
@@ -73,9 +110,12 @@ namespace dnWalker.TestWriter.Generators
                 testClass.Usings.Add(ns);
             }
 
+            int methodIndex = 1;
             foreach (ITestSchema testSchema in _testSchemaProvider.GetSchemas(concolicExploration))
             {
-                GenerateTestMethod(testSchema, framework, testClass);
+                TestMethod testMethod = GenerateTestMethod(testSchema, framework, testClass);
+                testMethod.Name = $"{testMethod.Name}_{methodIndex++}";
+
             }
 
             return testClass;
@@ -88,23 +128,27 @@ namespace dnWalker.TestWriter.Generators
 
         private static IEnumerable<string> GatherNamespaces(ConcolicExplorationIteration it)
         {
+            List<string> ns = new List<string>();
+
             foreach (IReadOnlyHeapNode n in it.InputModel.HeapInfo.Nodes)
             {
                 TypeSig t = n is IReadOnlyArrayHeapNode ? n.Type.Next : n.Type;
-                yield return t.Namespace;
+                ns.AddRange(GetNamespaces(t));
             }
 
             foreach (IReadOnlyHeapNode n in it.OutputModel.HeapInfo.Nodes)
             {
                 TypeSig t = n is IReadOnlyArrayHeapNode ? n.Type.Next : n.Type;
-                yield return t.Namespace;
+                ns.AddRange(GetNamespaces(t));
             }
+            return ns;
         }
 
         private TestMethod GenerateTestMethod(ITestSchema testSchema, ITestFramework framework, TestClass testClass)
         {
             TestMethod testMethod = framework.CreateTestMethod(testClass, testSchema);
             testMethod.Body = GenerateMethodBody(testSchema);
+            testMethod.Name ??= testSchema.GetTestMethodName();
 
             return testMethod;
         }

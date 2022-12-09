@@ -3,7 +3,6 @@
 using dnWalker.TestUtils;
 using dnWalker.TestWriter.Generators;
 using dnWalker.TestWriter.Generators.Act;
-using dnWalker.TestWriter.Tests.Generators.Schemas;
 
 using FluentAssertions;
 
@@ -18,7 +17,7 @@ using Xunit.Abstractions;
 namespace dnWalker.TestWriter.Tests.Generators.Act
 {
 
-    public class SimpleActPrimitivesTests : TestSchemaTestBase
+    public class SimpleActPrimitivesTests : TestWriterTestBase
     {
         private class TestClass
         {

@@ -153,7 +153,7 @@ namespace dnWalker.TestWriter.TestWriters
             return BeginScope();
         }
 
-        private void WriteUsings(IList<string> usings)
+        private void WriteUsings(IEnumerable<string> usings)
         {
             var groups = usings.GroupBy(s => GetFirstMember(s)).ToArray();
             Array.Sort(groups, (a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Key, b.Key));

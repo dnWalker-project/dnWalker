@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
 {
 
-    public class ReturnValueTestSchemaTests : TestSchemaTestBase
+    public class ReturnValueTestSchemaTests : TestWriterTestBase
     {
         private class TestClass
         {

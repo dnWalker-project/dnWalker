@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace dnWalker.TestWriter.Tests.Generators.Schemas.Exceptions
 {
-    public class ExceptionSchemaProviderTests : TestSchemaTestBase
+    public class ExceptionSchemaProviderTests : TestWriterTestBase
     {
         private class TestClass
         {

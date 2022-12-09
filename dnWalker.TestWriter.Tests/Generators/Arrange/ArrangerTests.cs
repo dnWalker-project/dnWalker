@@ -5,7 +5,6 @@ using dnWalker.Symbolic.Heap;
 using dnWalker.Symbolic.Variables;
 using dnWalker.TestWriter.Generators;
 using dnWalker.TestWriter.Generators.Arrange;
-using dnWalker.TestWriter.Tests.Generators.Schemas;
 
 using FluentAssertions;
 
@@ -20,7 +19,7 @@ using Xunit.Abstractions;
 namespace dnWalker.TestWriter.Tests.Generators.Arrange
 {
 
-    public class ArrangerTests : TestSchemaTestBase
+    public class ArrangerTests : TestWriterTestBase
     {
         private class TestClass
         {

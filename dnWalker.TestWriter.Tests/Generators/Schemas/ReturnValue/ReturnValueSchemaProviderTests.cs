@@ -17,7 +17,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
 {
 
 
-    public class ReturnValueSchemaProviderTests : TestSchemaTestBase
+    public class ReturnValueSchemaProviderTests : TestWriterTestBase
     {
         private class TestClass
         {

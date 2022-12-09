@@ -18,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace dnWalker.TestWriter.Tests.Generators.Schemas.ChangedObject
 {
-    public class ChangedObjectSchemaProviderTests : TestSchemaTestBase
+    public class ChangedObjectSchemaProviderTests : TestWriterTestBase
     {
         private class TestClass
         {

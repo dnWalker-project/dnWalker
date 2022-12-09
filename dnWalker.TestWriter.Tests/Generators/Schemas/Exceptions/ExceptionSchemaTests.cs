@@ -17,7 +17,7 @@ using FluentAssertions;
 
 namespace dnWalker.TestWriter.Tests.Generators.Schemas.Exceptions
 {
-    public class ExceptionSchemaTests : TestSchemaTestBase
+    public class ExceptionSchemaTests : TestWriterTestBase
     {
         private class TestClass
         {

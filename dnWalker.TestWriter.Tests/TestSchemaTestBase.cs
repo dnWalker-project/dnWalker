@@ -7,7 +7,7 @@ using dnWalker.TestWriter.Generators;
 using dnWalker.TestWriter.Generators.Act;
 using dnWalker.TestWriter.Generators.Arrange;
 using dnWalker.TestWriter.Generators.Assert;
-//using dnWalker.TestWriter.Moq;
+using dnWalker.TestWriter.Moq;
 using dnWalker.TestWriter.Xunit;
 
 using System;
@@ -18,11 +18,11 @@ using System.Threading.Tasks;
 
 using Xunit.Abstractions;
 
-namespace dnWalker.TestWriter.Tests.Generators.Schemas
+namespace dnWalker.TestWriter.Tests
 {
-    public abstract class TestSchemaTestBase : DnlibTestBase<TestSchemaTestBase>
+    public abstract class TestWriterTestBase : DnlibTestBase<TestWriterTestBase>
     {
-        protected TestSchemaTestBase(ITestOutputHelper textOutput) : base(textOutput)
+        protected TestWriterTestBase(ITestOutputHelper textOutput) : base(textOutput)
         {
         }
 
@@ -37,13 +37,47 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
         }
 
 
-        
+
         protected ITestContext GetTestContext(IMethod method, Action<ConcolicExplorationIteration.Builder>? initializeIteration = null, Action<ITestContext>? initializeTestContext = null)
         {
-            ConcolicExplorationIteration iteration = GetIteration(method, initializeIteration);
-            TestContext ctx = new TestContext(iteration);
+            var iteration = GetIteration(method, initializeIteration);
+            var ctx = new TestContext(iteration);
             initializeTestContext?.Invoke(ctx);
             return ctx;
+        }
+
+        protected ConcolicExploration GetExploration(IMethod method, Action<ConcolicExploration.Builder>? initialize = null, IEnumerable<Action<ConcolicExplorationIteration.Builder>>? initializeIterations = null)
+        {
+            var builder = new ConcolicExploration.Builder()
+            {
+                MethodUnderTest = method,
+                AssemblyFileName = "DUMMY",
+                AssemblyName = "DUMMY",
+                Failed = false,
+                Solver = "DUMMY"
+            };
+            initialize?.Invoke(builder);
+
+            if (initializeIterations != null)
+            {
+                foreach (var itInit in initializeIterations)
+                {
+                    var itBuilder = new ConcolicExplorationIteration.Builder()
+                    {
+                        StandardOutput = string.Empty,
+                        ErrorOutput = string.Empty,
+                        PathConstraint = "DUMMY",
+                        IterationNumber = 0,
+                        InputModel = EmptyModel,
+                        OutputModel = EmptyModel,
+                    };
+                    itInit.Invoke(itBuilder);
+                    builder.Iterations.Add(itBuilder);
+                }
+            }
+
+
+            return builder.Build();
         }
 
         protected ConcolicExplorationIteration GetIteration(IMethod method, Action<ConcolicExplorationIteration.Builder>? initialize = null)
@@ -58,11 +92,11 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
             }, initialize);
         }
 
-        protected ConcolicExplorationIteration GetIteration(Action<ConcolicExploration.Builder> initializeExploration, Action<ConcolicExplorationIteration.Builder>? initialize = null)
+        private ConcolicExplorationIteration GetIteration(Action<ConcolicExploration.Builder> initializeExploration = null, Action<ConcolicExplorationIteration.Builder>? initialize = null)
         {
-            ConcolicExploration.Builder builder = new ConcolicExploration.Builder();
+            var builder = new ConcolicExploration.Builder();
             initializeExploration(builder);
-            ConcolicExplorationIteration.Builder itBuilder = new ConcolicExplorationIteration.Builder()
+            var itBuilder = new ConcolicExplorationIteration.Builder()
             {
                 StandardOutput = string.Empty,
                 ErrorOutput = string.Empty,
@@ -85,7 +119,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas
             return new TestTemplate(
                 new IArrangePrimitives[]
                 {
-                    //new MoqArrange(),
+                    new MoqArrange(),
                     new SimpleArrangePrimitives()
                 },
                 new IActPrimitives[]
