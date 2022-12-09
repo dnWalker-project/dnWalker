@@ -55,6 +55,12 @@ namespace dnWalker.TestWriter.Generators.Arrange
             }
         }
 
+        private string TypeNameOrAliasToVarName(string nameOrAlias)
+        {
+            return nameOrAlias.Replace('.', '_')
+                .FirstCharToLower();
+        }
+
         private void SetupSymbolContext(IReadOnlyList<DependencyGroup> groups)
         {
             Dictionary<TypeSig, int> classCounters = new Dictionary<TypeSig, int>(TypeEqualityComparer.Instance);
@@ -70,19 +76,17 @@ namespace dnWalker.TestWriter.Generators.Arrange
 
             string GetSymbol(IReadOnlyHeapNode node)
             {
-                if (node is IReadOnlyHeapNode objNode)
+                if (node is IReadOnlyObjectHeapNode objNode)
                 {
                     TypeSig type = objNode.Type;
                     int cnt = IncreaseCounter(type, classCounters);
-                    return $"{type.GetNameOrAlias()}{cnt}"
-                        .Replace('.', '_')
-                        .FirstCharToLower();
+                    return $"{TypeNameOrAliasToVarName(type.GetNameOrAlias())}{cnt}";
                 }
                 else if (node is IReadOnlyArrayHeapNode arrNode)
                 {
                     TypeSig elementType = arrNode.ElementType;
                     int cnt = IncreaseCounter(elementType, arrayCounters);
-                    return $"{elementType.GetNameOrAlias()}Arr{cnt}";
+                    return $"{TypeNameOrAliasToVarName(elementType.GetNameOrAlias())}Arr{cnt}";
                 }
 
                 throw new NotSupportedException("Unexpected heap node type.");
