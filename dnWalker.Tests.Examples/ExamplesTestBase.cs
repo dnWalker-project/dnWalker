@@ -51,10 +51,36 @@ namespace dnWalker.Tests.Examples
         protected IDefinitionProvider DefinitionProvider => _definitionProvider ?? throw new InvalidDataException("TEST IS NOT INITIALIZED");
         protected ITestOutputHelper Output => _output;
 
+
+
+        protected virtual void Initialize(BuildInfo buildInfo)
+        {
+            _definitionProvider ??= GetDefinitionProvider(buildInfo.Configuration, buildInfo.Target);
+        }
+
+
         protected virtual IExplorer CreateExplorer(BuildInfo buildInfo, Action<IConfigurationBuilder>? configure = null, Action<Logger>? configureLogging = null, Func<ISolver>? buildSolver = null)
         {
-            _definitionProvider = GetDefinitionProvider(buildInfo.Configuration, buildInfo.Target);
+            Initialize(buildInfo);
 
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+                .InitializeDefaults();
+            SetupConfiguration(configBuilder);
+            configure?.Invoke(configBuilder);
+
+            IConfiguration config = configBuilder.Build();
+
+            Logger logger = new Logger();
+            SetupLogging(logger);
+            configureLogging?.Invoke(logger);
+
+            ISolver solver = buildSolver?.Invoke() ?? new Z3Solver();
+
+            return new ConcolicExplorer(_definitionProvider, config, logger, solver);
+        }
+
+        protected virtual IExplorer CreateExplorer(Action<IConfigurationBuilder>? configure = null, Action<Logger>? configureLogging = null, Func<ISolver>? buildSolver = null)
+        {
             IConfigurationBuilder configBuilder = new ConfigurationBuilder()
                 .InitializeDefaults();
             SetupConfiguration(configBuilder);

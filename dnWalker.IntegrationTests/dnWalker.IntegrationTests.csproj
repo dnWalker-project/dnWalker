@@ -29,4 +29,8 @@
     <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Demonstrations\Concrete\" />
+  </ItemGroup>
+
 </Project>

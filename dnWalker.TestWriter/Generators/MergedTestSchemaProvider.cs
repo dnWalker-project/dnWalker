@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators
 {
-    internal class MergedTestSchemaProvider : ITestSchemaProvider
+    public class MergedTestSchemaProvider : ITestSchemaProvider
     {
         private readonly IReadOnlyList<ITestSchemaProvider> _schemaProviders;
 

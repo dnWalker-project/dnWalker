@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators
 {
-    internal class TestTemplate : ITestTemplate
+    public class TestTemplate : ITestTemplate
     {
         public TestTemplate(IReadOnlyList<IArrangePrimitives> arrangeWriters, IReadOnlyList<IActPrimitives> actWriters, IReadOnlyList<IAssertPrimitives> assertWriters)
         {

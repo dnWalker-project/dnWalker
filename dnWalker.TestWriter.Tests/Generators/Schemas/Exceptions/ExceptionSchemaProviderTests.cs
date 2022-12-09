@@ -35,7 +35,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.Exceptions
 
             ConcolicExplorationIteration iteration = GetIteration(GetMethod(typeof(TestClass), nameof(TestClass.NoReturnValue)));
 
-            provider.GetSchemas(iteration).Should().HaveCount(1);
+            provider.GetSchemas(iteration).Should().BeEmpty();
         }
 
         [Fact]

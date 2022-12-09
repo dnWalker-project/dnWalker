@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators
 {
-    internal class GeneratorEnvironment
+    public class GeneratorEnvironment
     {
         private readonly Writer _writer = new Writer();
 
@@ -79,6 +79,28 @@ namespace dnWalker.TestWriter.Generators
             return new[] { GetNamespace(ts.ToTypeDefOrRef().ResolveTypeDefThrow()) };
         }
 
+        private static string GetName(MethodDef method)
+        {
+            // Nest1_Nest2_..._NestN_Name
+            Stack<TypeDef> declChain = new Stack<TypeDef>();
+            
+            TypeDef td = method.DeclaringType;
+
+            while (td != null)
+            {
+                declChain.Push(td);
+                td = td.DeclaringType;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            while (declChain.TryPop(out td!))
+            {
+                sb.Append(td.Name);
+                sb.Append('_');
+            }
+            sb.Append(method.Name);
+            return sb.ToString();
+        }
 
 
         public TestClass GenerateTestClass(ITestFramework framework, TestProject testProject, ConcolicExploration concolicExploration)
@@ -109,6 +131,9 @@ namespace dnWalker.TestWriter.Generators
             {
                 testClass.Usings.Add(ns);
             }
+            testClass.Name = GetName(method) + "Tests";
+            testClass.Namespace = methodNamespace + ".Tests";
+
 
             int methodIndex = 1;
             foreach (ITestSchema testSchema in _testSchemaProvider.GetSchemas(concolicExploration))

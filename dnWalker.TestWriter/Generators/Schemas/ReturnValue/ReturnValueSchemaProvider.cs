@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Schemas.ReturnValue
 {
-    internal class ReturnValueSchemaProvider : ITestSchemaProvider
+    public class ReturnValueSchemaProvider : ITestSchemaProvider
     {
         public IEnumerable<ITestSchema> GetSchemas(ConcolicExplorationIteration explorationIteration)
         {

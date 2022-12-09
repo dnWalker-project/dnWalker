@@ -53,7 +53,8 @@ namespace MMC.State
 		/// </summary>
 		public DynamicAllocation this[IReferenceType obj]
         {
-			get { return base[(int)obj.Location - 1]; }
+            get { return obj.Location <= 0 ? null : base[(int)obj.Location - 1]; }
+            //get { return base[(int)obj.Location - 1]; }
 			set { this[(int)obj.Location - 1] = value; }
 		}
 

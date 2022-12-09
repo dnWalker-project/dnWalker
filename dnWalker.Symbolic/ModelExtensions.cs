@@ -163,5 +163,13 @@ namespace dnWalker.Symbolic
         {
             return self.TryGetValue(new ReturnValueVariable(method), out value);
         }
+
+        public static void ClearDirtyHeap(this IModel self)
+        {
+            foreach (IHeapNode node in self.HeapInfo.Nodes)
+            {
+                node.SetDirty(false);
+            }
+        }
     }
 }

@@ -17,5 +17,7 @@ namespace dnWalker.Symbolic.Heap
         /// </summary>
         /// <returns></returns>
         new IHeapNode Clone();
+
+        void SetDirty(bool value = true);
     }
 }

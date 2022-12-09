@@ -107,6 +107,11 @@ namespace dnWalker.Symbolic
 
             Location parentLocation = (Location)parent;
 
+            if (parentLocation == Location.Null)
+            {
+                return false;
+            }
+
             AllocatedObject parentObject = (AllocatedObject)cur.DynamicArea.Allocations[(int)_symToConcrMapping[parentLocation]];
             IDataElement de = parentObject.Fields[index];
 

@@ -32,6 +32,8 @@ namespace dnWalker.TestWriter.TestWriters
 
         public const string TabString = "    ";
 
+        // bad way... why does not the indentedtextwriter dispose the inner writer???
+        private readonly TextWriter _realOutput;
         private readonly IndentedTextWriter _output;
 
         public TestClassWriter(string filePath, string tabString = TabString) : this(new StreamWriter(filePath), tabString)
@@ -40,6 +42,7 @@ namespace dnWalker.TestWriter.TestWriters
         public TestClassWriter(TextWriter output, string tabString = TabString)
         {
             _output = new IndentedTextWriter(output, tabString);
+            _realOutput = output;
         }
 
         public void Write(TestClass testClass)
@@ -199,7 +202,8 @@ namespace dnWalker.TestWriter.TestWriters
 
         public void Dispose()
         {
-            ((IDisposable)_output).Dispose();
+            _output.Dispose();
+            _realOutput.Dispose();
         }
     }
 }

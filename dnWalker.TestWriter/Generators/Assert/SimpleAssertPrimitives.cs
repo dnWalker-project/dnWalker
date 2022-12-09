@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Assert
 {
-    internal class SimpleAssertPrimitives : IAssertPrimitives
+    public class SimpleAssertPrimitives : IAssertPrimitives
     {
         public bool TryWriteAssertNull(ITestContext context, IWriter output, string symbol)
         {

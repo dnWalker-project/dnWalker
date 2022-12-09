@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Act
 {
-    internal class SimpleActWriter : IActPrimitives
+    public class SimpleActWriter : IActPrimitives
     {
         public bool TryWriteAct(ITestContext context, IWriter output, string? returnSymbol = null)
         {

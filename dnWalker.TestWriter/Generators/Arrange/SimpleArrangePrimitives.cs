@@ -4,7 +4,7 @@ using dnWalker.TestWriter.Utils;
 
 namespace dnWalker.TestWriter.Generators.Arrange
 {
-    internal class SimpleArrangePrimitives : IArrangePrimitives
+    public class SimpleArrangePrimitives : IArrangePrimitives
     {
         const string PublicInstanceFlags = "System.Reflection.BindingFlags.Public";
         const string NonPublicInstanceFlags = "System.Reflection.BindingFlags.NonPublic";

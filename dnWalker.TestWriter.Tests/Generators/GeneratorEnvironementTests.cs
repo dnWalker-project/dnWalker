@@ -154,15 +154,16 @@ namespace dnWalker.TestWriter.Tests.Generators
                         b.InputModel= im;
 
                         Model om = im.Clone();
-                        om.SetValue(new ReturnValueVariable(theMethod), ValueFactory.GetValue(4));
                         b.OutputModel = om;
+
+                        b.Exception = GetType(typeof(InvalidOperationException)).ToTypeSig();
                     }
                 });
 
             TestClass testClass = env.GenerateTestClass(testFramework, testProject, concolicExploration);
 
-            // 2 iterations and 2 tests per iteration
-            testClass.Methods.Should().HaveCount(4);
+            // 2 iterations and 1 test per iteration - exception and then return value
+            testClass.Methods.Should().HaveCount(2);
 
             // the methods should be created using ReturnValue and Exceptions schemas
             testClass.Methods.Should().AllSatisfy(
