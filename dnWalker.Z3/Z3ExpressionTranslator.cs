@@ -112,7 +112,7 @@ namespace dnWalker.Z3
                     break;
 
                 case Operator.Subtract:
-                    _operands.Push(_z3.MkAdd((ArithExpr)left, (ArithExpr)right));
+                    _operands.Push(_z3.MkSub((ArithExpr)left, (ArithExpr)right));
                     break;
 
                 case Operator.Multiply:

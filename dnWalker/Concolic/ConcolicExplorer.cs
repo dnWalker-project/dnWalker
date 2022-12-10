@@ -38,7 +38,8 @@ namespace dnWalker.Concolic
 
             IConfiguration configuration = Configuration;
 
-            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy(), userModels?.Select(userModel => userModel.Build()) ?? Array.Empty<IModel>());
+            IExplorationStrategy strategy = configuration.CreateStrategy();
+            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, strategy, userModels?.Select(userModel => userModel.Build()) ?? Array.Empty<IModel>());
 
             // TODO: make it as a explorer extension...
             if (!ControlFlowGraphWriter.TryWrite(ControlFlowGraph.Build(entryPoint), "cfg.dot")) Logger.Warning("CFG writer failed.");
@@ -46,9 +47,10 @@ namespace dnWalker.Concolic
             List<ExplorationIterationResult> iterationResults = new List<ExplorationIterationResult>();
             int currentIteration = 0;
             int maxIterations = GetMaxIterations(configuration);
-                
+
+            ISolver solver = Solver;
             DateTime iterationStarted = DateTime.Now;
-            while (constraintTrees.TryGetNextInputModel(Solver, out IModel inputModel))
+            while (constraintTrees.TryGetNextInputModel(solver, out IModel inputModel))
             {
                 NextIterationOrThrow(ref currentIteration, maxIterations);
 
@@ -102,7 +104,7 @@ namespace dnWalker.Concolic
             // TODO: make it as a explorer extension...
             if (!ConstraintTreeExplorerWriter.TryWrite(constraintTrees, $"constraintTree.dot")) Logger.Warning("ConstraintTree writer failed.");
 
-            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint), explorationStart, explorationFinished);
+            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint), solver, strategy, explorationStart, explorationFinished);
             return result;
 
             static void NextIterationOrThrow(ref int currentIteration, int maxIterations)

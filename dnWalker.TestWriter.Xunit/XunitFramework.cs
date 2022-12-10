@@ -28,7 +28,7 @@ namespace dnWalker.TestWriter.Xunit
             testClass.Attributes.Add(new AttributeInfo
             {
                 TypeName = "Trait",
-                PositionalArguments = { "\"ExplorationStrategy\"", $"\"TODO add ConcolicExploration.Strategy\"" }
+                PositionalArguments = { "\"ExplorationStrategy\"", $"\"{exploration.Strategy}\"" }
             });
 
             testClass.Usings.Add("Xunit");
@@ -50,6 +50,11 @@ namespace dnWalker.TestWriter.Xunit
                 TypeName = "Trait",
                 PositionalArguments = { "\"Iteration\"", $"\"{explorationIteration.IterationNumber}\"" }
             });
+            //testMethod.Attributes.Add(new AttributeInfo
+            //{
+            //    TypeName = "Trait",
+            //    PositionalArguments = { "\"Precondition\"", $"\"{explorationIteration.PathConstraint}\"" }
+            //});
         }
     }
 }

@@ -409,6 +409,9 @@ namespace dnWalker.Graphs.ControlFlow
                 case Code.Br_S:
                     return new SuccessorInfo[] { SuccessorInfo.Jump((Instruction)instruction.Operand) };
 
+                //case Code.Throw:
+                //    return new SuccessorInfo[] { SuccessorInfo.ExceptionHandler(null) };
+
                 default:
                     return SuccessorInfo.NextInstructionArray;
             }

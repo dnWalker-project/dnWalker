@@ -27,18 +27,24 @@ namespace dnWalker.Concolic
         private readonly Coverage _coverage;
         private readonly IReadOnlyList<ExplorationIterationResult> _iterations;
         private readonly MethodTracer _methodTracer;
+        private readonly ISolver _solver;
+        private readonly IExplorationStrategy _strategy;
         private readonly IReadOnlyList<ConstraintTree> _constraintTrees;
 
         internal ExplorationResult(MethodDef entryPoint,
             IReadOnlyList<ExplorationIterationResult> iterations,
             IReadOnlyList<ConstraintTree> constraintTrees,
             MethodTracer methodTracer,
+            ISolver solver,
+            IExplorationStrategy strategy,
             DateTime start,
             DateTime end)
         {
             _iterations = iterations ?? throw new ArgumentNullException(nameof(iterations));
             _constraintTrees = constraintTrees ?? throw new ArgumentNullException(nameof(constraintTrees));
             _methodTracer = methodTracer ?? throw new ArgumentNullException(nameof(methodTracer));
+            _solver = solver;
+            _strategy = strategy;
             _entryPoint = entryPoint ?? throw new ArgumentNullException(nameof(entryPoint));
             _coverage = methodTracer.GetCoverage();
             _start = start;
@@ -57,6 +63,10 @@ namespace dnWalker.Concolic
 
         public DateTime End => _end;
 
+        public ISolver Solver => _solver;
+
+        public IExplorationStrategy Strategy => _strategy;
+
         public ConcolicExploration.Builder ToExplorationData()
         {
             ConcolicExploration.Builder builder = new ConcolicExploration.Builder()
@@ -64,7 +74,8 @@ namespace dnWalker.Concolic
                 AssemblyFileName = _entryPoint.Module.Location,
                 AssemblyName = _entryPoint.Module.Name,
                 MethodUnderTest = _entryPoint,
-                Solver = "TODO: get the solver name",
+                Solver = _solver.GetType().Name,
+                Strategy = _strategy.GetType().Name,
                 Start = _start,
                 End = _end
             };

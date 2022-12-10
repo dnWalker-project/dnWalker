@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Examples.Demonstrations.Primitive
 {
-    public class Methods
+    public class MethodsWithPrimitiveArguments
     {
         public static int Pow(int a, int n)
         {

@@ -15,9 +15,7 @@ namespace Examples.Demonstrations.Abstract
 
     public class SimpleMethod
     {
-        private int _value;
-
-        public int Value => _value;
+        public int Value;
 
         public int Foo(IBar bar)
         {

@@ -56,6 +56,11 @@ namespace dnWalker.Traversal
 
             InstructionBlockNode executedNode = _graph.GetInstructionNode(instruction);
 
+            if (executedNode.Footer.OpCode == OpCodes.Throw)
+            {
+                return;
+            }
+
             foreach (ExceptionEdge exceptionEdge in executedNode.OutEdges.OfType<ExceptionEdge>())
             {
                 // TODO: better matching function, check inheritance etc...
@@ -65,6 +70,7 @@ namespace dnWalker.Traversal
                     return;
                 }
             }
+
 
             // we have not found any exception edge which matches this exception
             // - create the virtual exception handler?

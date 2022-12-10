@@ -7,15 +7,17 @@ using System.Xml.Linq;
 
 using Xunit;
 
-namespace Examples.Demonstrations.Abstract.Tests
+namespace Examples.Tests.Generated.Demonstrations.Abstract
 {
-    [Trait("dnWalkerGenerated", "SUT name")]
-    public class DataObject_ReadDataTests
+    [Trait("dnWalkerGenerated", "DataObject::ReadData")]
+    [Trait("ExplorationStrategy", "AllEdgesCoverage")]
+    public class DataObject_ReadData_Tests
     {
 
         [Fact]
         [Trait("TestSchema", "ExceptionSchema")]
-        public void Test_ReadData_1()
+        [Trait("Iteration", "1")]
+        public void ReadDataExceptionSchema_1()
         {
             // Arrange input model heap
             Mock<DataObject> dataObject1_mock = new Mock<DataObject>();
@@ -32,7 +34,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ExceptionSchema")]
-        public void Test_ReadData_2()
+        [Trait("Iteration", "2")]
+        public void ReadDataExceptionSchema_2()
         {
             // Arrange input model heap
             Mock<DataObject> dataObject1_mock = new Mock<DataObject>();
@@ -54,7 +57,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_3()
+        [Trait("Iteration", "3")]
+        public void ReadDataReturnValueSchema_3()
         {
             // Arrange input model heap
             DataRecord[] dataRecordArr1 = new DataRecord[0];
@@ -82,7 +86,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_4()
+        [Trait("Iteration", "4")]
+        public void ReadDataReturnValueSchema_4()
         {
             // Arrange input model heap
             DataRecord[] dataRecordArr1 = new DataRecord[0];
@@ -110,7 +115,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ExceptionSchema")]
-        public void Test_ReadData_5()
+        [Trait("Iteration", "5")]
+        public void ReadDataExceptionSchema_5()
         {
             // Arrange input model heap
             DataRecord[] dataRecordArr1 = new DataRecord[1];
@@ -134,7 +140,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_6()
+        [Trait("Iteration", "6")]
+        public void ReadDataReturnValueSchema_6()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -163,7 +170,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_7()
+        [Trait("Iteration", "7")]
+        public void ReadDataReturnValueSchema_7()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -196,8 +204,9 @@ namespace Examples.Demonstrations.Abstract.Tests
 
         }
         [Fact]
-        [Trait("TestSchema", "ChangedObjectSchema")]
-        public void Test_ReadData_8()
+        [Trait("TestSchema", "ReturnValueSchema")]
+        [Trait("Iteration", "8")]
+        public void ReadDataReturnValueSchema_8()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -208,8 +217,40 @@ namespace Examples.Demonstrations.Abstract.Tests
             Mock<DataObject> dataObject1_mock = new Mock<DataObject>();
             DataObject dataObject1 = dataObject1_mock.Object;
             dataObject1.Id = 0;
+            dataObject1_mock
+                .Setup(o => o.SetValue(It.IsAny<DataRecord>()))
+                .Returns(false);
+            Mock<IDatabase> iDatabase1_mock = new Mock<IDatabase>();
+            IDatabase iDatabase1 = iDatabase1_mock.Object;
+            iDatabase1_mock
+                .Setup(o => o.GetRecords(It.IsAny<int>()))
+                .Returns(dataRecordArr1);
+
+            // Arrange method arguments
+            DataObject @this = dataObject1;
+            IDatabase database = iDatabase1;
+
+            bool result = @this.ReadData(database);
+            Assert.Equal(false, result);
+
+        }
+        [Fact]
+        [Trait("TestSchema", "ChangedObjectSchema")]
+        [Trait("Iteration", "9")]
+        public void ReadDataChangedObjectSchema_9()
+        {
+            // Arrange input model heap
+            DataRecord dataRecord1 = new DataRecord();
+            dataRecord1.StrValue = "A";
+            dataRecord1.Name = "Author";
+            DataRecord[] dataRecordArr1 = new DataRecord[1];
+            dataRecordArr1[0] = dataRecord1;
+            Mock<DataObject> dataObject1_mock = new Mock<DataObject>();
+            DataObject dataObject1 = dataObject1_mock.Object;
+            dataObject1.Id = 0;
             dataObject1.Created = 0;
             dataObject1.LastAccess = 0;
+            dataObject1.Author = null;
             Mock<IDatabase> iDatabase1_mock = new Mock<IDatabase>();
             IDatabase iDatabase1 = iDatabase1_mock.Object;
             iDatabase1_mock
@@ -224,17 +265,18 @@ namespace Examples.Demonstrations.Abstract.Tests
             IDatabase database = iDatabase1;
 
             @this.ReadData(database);
-            Assert.Null(dataObject1.Author);
+            Assert.Equal("A", dataObject1.Author);
 
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_9()
+        [Trait("Iteration", "9")]
+        public void ReadDataReturnValueSchema_10()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
+            dataRecord1.StrValue = "A";
             dataRecord1.Name = "Author";
-            dataRecord1.StrValue = null;
             DataRecord[] dataRecordArr1 = new DataRecord[1];
             dataRecordArr1[0] = dataRecord1;
             Mock<DataObject> dataObject1_mock = new Mock<DataObject>();
@@ -242,6 +284,7 @@ namespace Examples.Demonstrations.Abstract.Tests
             dataObject1.Id = 0;
             dataObject1.Created = 0;
             dataObject1.LastAccess = 0;
+            dataObject1.Author = null;
             Mock<IDatabase> iDatabase1_mock = new Mock<IDatabase>();
             IDatabase iDatabase1 = iDatabase1_mock.Object;
             iDatabase1_mock
@@ -261,7 +304,39 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_10()
+        [Trait("Iteration", "10")]
+        public void ReadDataReturnValueSchema_11()
+        {
+            // Arrange input model heap
+            DataRecord dataRecord1 = new DataRecord();
+            dataRecord1.StrValue = "";
+            dataRecord1.Name = "Author";
+            DataRecord[] dataRecordArr1 = new DataRecord[1];
+            dataRecordArr1[0] = dataRecord1;
+            Mock<DataObject> dataObject1_mock = new Mock<DataObject>();
+            DataObject dataObject1 = dataObject1_mock.Object;
+            dataObject1.Id = 0;
+            dataObject1_mock
+                .Setup(o => o.SetValue(It.IsAny<DataRecord>()))
+                .Returns(false);
+            Mock<IDatabase> iDatabase1_mock = new Mock<IDatabase>();
+            IDatabase iDatabase1 = iDatabase1_mock.Object;
+            iDatabase1_mock
+                .Setup(o => o.GetRecords(It.IsAny<int>()))
+                .Returns(dataRecordArr1);
+
+            // Arrange method arguments
+            DataObject @this = dataObject1;
+            IDatabase database = iDatabase1;
+
+            bool result = @this.ReadData(database);
+            Assert.Equal(false, result);
+
+        }
+        [Fact]
+        [Trait("TestSchema", "ReturnValueSchema")]
+        [Trait("Iteration", "11")]
+        public void ReadDataReturnValueSchema_12()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -289,7 +364,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_11()
+        [Trait("Iteration", "12")]
+        public void ReadDataReturnValueSchema_13()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -318,7 +394,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ChangedObjectSchema")]
-        public void Test_ReadData_12()
+        [Trait("Iteration", "13")]
+        public void ReadDataChangedObjectSchema_14()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -350,7 +427,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_13()
+        [Trait("Iteration", "13")]
+        public void ReadDataReturnValueSchema_15()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -382,7 +460,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_14()
+        [Trait("Iteration", "14")]
+        public void ReadDataReturnValueSchema_16()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -410,7 +489,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ChangedObjectSchema")]
-        public void Test_ReadData_15()
+        [Trait("Iteration", "15")]
+        public void ReadDataChangedObjectSchema_17()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -442,7 +522,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_16()
+        [Trait("Iteration", "15")]
+        public void ReadDataReturnValueSchema_18()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();
@@ -474,7 +555,8 @@ namespace Examples.Demonstrations.Abstract.Tests
         }
         [Fact]
         [Trait("TestSchema", "ReturnValueSchema")]
-        public void Test_ReadData_17()
+        [Trait("Iteration", "16")]
+        public void ReadDataReturnValueSchema_19()
         {
             // Arrange input model heap
             DataRecord dataRecord1 = new DataRecord();

@@ -17,7 +17,7 @@ namespace dnWalker.Instructions.Extensions.NativePeers.Constructors
     {
         public override bool TryExecute(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
         {
-            return PushReturnValue(new Int4(((Int4)args[0]).Value), cur, out returnValue);
+            return PushReturnValue(new Int4(((Int4)args[1]).Value), cur, out returnValue);
         }
     }
 }
