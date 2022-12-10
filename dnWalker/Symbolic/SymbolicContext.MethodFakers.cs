@@ -185,7 +185,7 @@ namespace dnWalker.Symbolic
 
             IReadOnlyObjectHeapNode objNode = (IReadOnlyObjectHeapNode)n;
 
-            if (objNode.TryGetConstraintedMethodResults(method, out IEnumerable<KeyValuePair<Expression, IValue>> results))
+            if (objNode.TryGetConstrainedMethodResults(method, out IEnumerable<KeyValuePair<Expression, IValue>> results))
             {
                 return new ConstraintedMethodFaker(method, location, instanceVariable, results.Select(cr => cr.Key));
             }

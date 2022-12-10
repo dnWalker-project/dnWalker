@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
 using dnWalker.TestWriter.Generators.Arrange;
 
 using System;
@@ -49,12 +50,17 @@ namespace dnWalker.TestWriter.Generators
             ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeStaticField(testContext, output, field, literal));
         }
 
-        public static void WriteArrangeInitializeMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals)
+        public static void WriteArrangeInitializeMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<string> literals)
         {
             ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeMethod(testContext, output, symbol, method, literals));
         }
 
-        public static void WriteArrangeInitializeStaticMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, IMethod method, params string[] literals)
+        public static void WriteArrangeConstrainedInitializeMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<KeyValuePair<Expression, string>> constrainedLiterals, string fallbackLiteral)
+        {
+            ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeConstrainedMethod(testContext, output, symbol, method, constrainedLiterals, fallbackLiteral));
+        }
+
+        public static void WriteArrangeInitializeStaticMethod(this ITestTemplate testTemplate, ITestContext testContext, IWriter output, IMethod method, IReadOnlyList<string> literals)
         {
             ExecutePrimitiveOrThrow(testTemplate.ArrangeWriters, a => a.TryWriteArrangeInitializeStaticMethod(testContext, output, method, literals));
         }

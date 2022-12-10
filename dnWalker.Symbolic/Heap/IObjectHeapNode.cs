@@ -11,6 +11,6 @@ namespace dnWalker.Symbolic.Heap
     {
         void SetField(IField field, IValue value);
         void SetMethodResult(IMethod method, int invocation, IValue result);
-        void SetConditionalMethodResult(IMethod method, Expression condition, IValue result);
+        void SetConstrainedMethodResult(IMethod method, Expression condition, IValue result);
     }
 }

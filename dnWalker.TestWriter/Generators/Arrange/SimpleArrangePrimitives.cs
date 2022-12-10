@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
 using dnWalker.TestWriter.Utils;
 
 namespace dnWalker.TestWriter.Generators.Arrange
@@ -89,11 +90,6 @@ namespace dnWalker.TestWriter.Generators.Arrange
             output.WriteLine($"typeof({typeName}).GetField(\"{field.Name}\", {bindingFlags}).SetValue({symbol}, {literal});");
         }
 
-        public bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals)
-        {
-            return false;
-        }
-
         public bool TryWriteArrangeInitializeArrayElement(ITestContext testContext, IWriter output, string symbol, int index, string literal)
         {
             // symbol[index] = literal;
@@ -127,7 +123,7 @@ namespace dnWalker.TestWriter.Generators.Arrange
             output.WriteLine($"{td.ToTypeSig().GetNameOrAlias()}.{fd.Name} = {literal};");
         }
 
-        public bool TryWriteArrangeInitializeStaticMethod(ITestContext testContext, IWriter output, IMethod method, params string[] literals)
+        public bool TryWriteArrangeInitializeStaticMethod(ITestContext testContext, IWriter output, IMethod method, IReadOnlyList<string> literals)
         {
             return false;
         }
@@ -138,6 +134,16 @@ namespace dnWalker.TestWriter.Generators.Arrange
             {
                 return Array.Empty<string>();
             }
+        }
+
+        public bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<string> literals)
+        {
+            return false;
+        }
+
+        public bool TryWriteArrangeInitializeConstrainedMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<KeyValuePair<Expression, string>> constrainedLiterals, string fallbackLiteral)
+        {
+            return false;
         }
     }
 }

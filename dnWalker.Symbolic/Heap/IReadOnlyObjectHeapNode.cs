@@ -31,8 +31,8 @@ namespace dnWalker.Symbolic.Heap
         bool TryGetMethodResult(IMethod method, int invocation, [NotNullWhen(true)] out IValue? value);
 
 
-        bool TryGetConstraintedMethodResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value);
-        bool TryGetConstraintedMethodResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors);
+        bool TryGetConstrainedMethodResult(IMethod method, Expression condition, [NotNullWhen(true)] out IValue? value);
+        bool TryGetConstrainedMethodResults(IMethod method, [NotNullWhen(true)] out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors);
 
         IEnumerable<IField> Fields { get; }
         IEnumerable<(IMethod method, int invocation)> MethodInvocations { get; }
@@ -40,6 +40,7 @@ namespace dnWalker.Symbolic.Heap
 
         bool HasFields { get; }
         bool HasMethodInvocations { get; }
+        bool HasMethodConstraints { get; }
     }
 
     public static class ReadOnlyObjectHeapNodeExtensions

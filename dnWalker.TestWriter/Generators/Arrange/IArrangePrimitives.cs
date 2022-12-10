@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
 
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,11 @@ namespace dnWalker.TestWriter.Generators.Arrange
 
         bool TryWriteArrangeInitializeStaticField(ITestContext testContext, IWriter output, IField field, string literal);
 
-        bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals);
+        bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<string> literals);
+        
+        bool TryWriteArrangeInitializeConstrainedMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<KeyValuePair<Expression, string>> constrainedLiterals, string fallbackLiteral);
 
-        bool TryWriteArrangeInitializeStaticMethod(ITestContext testContext, IWriter output, IMethod method, params string[] literals);
+        bool TryWriteArrangeInitializeStaticMethod(ITestContext testContext, IWriter output, IMethod method, IReadOnlyList<string> literals);
 
         bool TryWriteArrangeInitializeArrayElement(ITestContext testContext, IWriter output, string symbol, int index, string literal);
     }
