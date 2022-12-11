@@ -1,0 +1,74 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #><#
+
+    string[] mathTypes = new string[]
+    {
+        "byte",
+        "ushort",
+        "uint",
+        // "ulong",
+        "sbyte",
+        "short",
+        "int",
+        "long",
+        "float",
+        "double",
+    };
+
+    string[] methods = new string[]
+    {
+        "Negate"
+    };
+
+    string[] ops = new string[]
+    {
+        "-"
+    };
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Symbolic.Expressions.Utils
+{
+    public partial class ExpressionEvaluator
+    {
+        private static class UnaryOperations
+        {
+
+<#
+    for (int i = 0; i < methods.Length; ++i)
+    {
+        string method = methods[i];
+        string op = ops[i];
+#>
+            public static IValue <#= method #>(IValue v)
+            {
+                switch (v)
+                {
+<#
+        foreach (string t in mathTypes)
+        {
+#>
+                    case PrimitiveValue<<#=  t #>> o:
+                        return ValueFactory.GetValue( <#= op #>o.Value);
+                
+<#
+        }
+#>
+                }
+                throw new NotSupportedException();
+            }
+
+<#
+    }
+#>
+        }
+    }
+}

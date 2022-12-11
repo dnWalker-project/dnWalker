@@ -7,12 +7,62 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Expressions\Utils\ExpressionEvaluator.UnaryOperations.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExpressionEvaluator.UnaryOperations.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="dnlib" Version="3.6.0" />
     <PackageReference Include="QuikGraph" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\dnWalker.TypeSystem\dnWalker.TypeSystem.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Expressions\Utils\ExpressionEvaluator.BinaryOperations.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ExpressionEvaluator.BinaryOperations.tt.cs</LastGenOutput>
+    </None>
+    <None Update="Expressions\Utils\ExpressionEvaluator.Constants.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ExpressionEvaluator.Constants.tt.cs</LastGenOutput>
+    </None>
+    <None Update="Expressions\Utils\ExpressionEvaluator.UnaryOperations.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ExpressionEvaluator.UnaryOperations.tt.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Expressions\Utils\ExpressionEvaluator.BinaryOperations.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExpressionEvaluator.BinaryOperations.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Expressions\Utils\ExpressionEvaluator.Constants.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExpressionEvaluator.Constants.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Expressions\Utils\ExpressionEvaluator.Operations.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExpressionEvaluator.Operations.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Expressions\Utils\ExpressionEvaluator.UnaryOperations.tt.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExpressionEvaluator.UnaryOperations.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

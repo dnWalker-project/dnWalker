@@ -88,13 +88,19 @@ namespace dnWalker.Symbolic
                 foreach (Expression condition in _conditions) 
                 {
                     Expression substituted = VariableSubstitutor.Substitute(condition, substition);
-                    Constraint selectTheCondition = currentConstraint.Clone();
-                    selectTheCondition.AddExpressionConstraint(substituted);
 
-                    if (solver.Solve(selectTheCondition) != null) 
+                    if (((PrimitiveValue<bool>)ExpressionEvaluator.Evaluate(substituted, ctx.OutputModel)).Value)
                     {
                         return ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, condition), cur);
                     }
+
+                    //Constraint selectTheCondition = currentConstraint.Clone();
+                    //selectTheCondition.AddExpressionConstraint(substituted);
+
+                    //if (solver.Solve(selectTheCondition) != null) 
+                    //{
+                    //    return ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, condition), cur);
+                    //}
                 }
 
                 return DataElement.GetNullValue(returnType);

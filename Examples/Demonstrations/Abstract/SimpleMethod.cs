@@ -11,6 +11,8 @@ namespace Examples.Demonstrations.Abstract
     public interface IBar
     {
         int GetValue();
+
+        int GetValueWithArgs(double x, double y);
     }
 
     public class SimpleMethod
@@ -27,5 +29,13 @@ namespace Examples.Demonstrations.Abstract
             return 5;
         }
 
+        public int ProveConstrainedBehavior(IBar bar, double x, double y) 
+        {
+            if (bar.GetValueWithArgs(x, y) != Value)
+            {
+                return 1;
+            }
+            return 0;
+        }
     }
 }
