@@ -2,6 +2,7 @@
 using dnlib.DotNet.MD;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Instructions.Extensions.Symbolic;
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Expressions.Utils;
 using dnWalker.Symbolic.Heap;
@@ -85,25 +86,26 @@ namespace dnWalker.Symbolic
 
                 Constraint currentConstraint = cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition();
 
-                foreach (Expression condition in _conditions) 
+                Expression[] substituted = new Expression[_conditions.Length];
+
+                for (int i = 0; i < substituted.Length; ++i)
                 {
-                    Expression substituted = VariableSubstitutor.Substitute(condition, substition);
-
-                    if (((PrimitiveValue<bool>)ExpressionEvaluator.Evaluate(substituted, ctx.OutputModel)).Value)
-                    {
-                        return ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, condition), cur);
-                    }
-
-                    //Constraint selectTheCondition = currentConstraint.Clone();
-                    //selectTheCondition.AddExpressionConstraint(substituted);
-
-                    //if (solver.Solve(selectTheCondition) != null) 
-                    //{
-                    //    return ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, condition), cur);
-                    //}
+                    substituted[i] = VariableSubstitutor.Substitute(_conditions[i], substition);
                 }
 
-                return DataElement.GetNullValue(returnType);
+                for (int i = 0; i < substituted.Length; ++i)
+                {
+                    if (((PrimitiveValue<bool>)ExpressionEvaluator.Evaluate(substituted[i], ctx.OutputModel)).Value)
+                    {
+                        IDataElement result = ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, _conditions[i]), cur);
+
+                        DecisionHelper.MakeDecision(cur, i, null, substituted);
+
+                        return result;
+                    }
+                }
+
+                throw new InvalidOperationException("The provided conditional method behavior is not complete.");
             }
         }
         private class InvocationBasedMethodFaker : IMethodFaker

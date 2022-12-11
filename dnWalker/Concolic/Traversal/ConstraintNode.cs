@@ -20,7 +20,7 @@ namespace dnWalker.Concolic.Traversal
     {
         private readonly ConstraintNode _parent;
         private readonly Constraint _constraint;
-        private readonly ControlFlowNode _location;
+        private readonly ControlFlowEdge _edge;
         private readonly ConstraintTree _tree;
         private readonly List<int> _iterations = new List<int>();
         private IReadOnlyList<ConstraintNode> _children = Array.Empty<ConstraintNode>();
@@ -30,11 +30,11 @@ namespace dnWalker.Concolic.Traversal
         private bool _unsatisfiable;
         private int _sourceNodeIteration;
 
-        public ConstraintNode(ConstraintTree tree, ConstraintNode parent, ControlFlowNode location, Constraint constraint)
+        public ConstraintNode(ConstraintTree tree, ConstraintNode parent, ControlFlowEdge edge, Constraint constraint)
         {
             _tree = tree ?? throw new ArgumentNullException(nameof(tree));
             _parent = parent;
-            _location = location;
+            _edge = edge;
             _constraint = constraint;
         }
 
@@ -85,7 +85,7 @@ namespace dnWalker.Concolic.Traversal
         public bool IsSatisfiable => !_unsatisfiable;
         public bool IsPreconditionSource => _sourceNodeIteration > 0;
 
-        public ControlFlowNode Location => _location;
+        public ControlFlowEdge Edge => _edge;
 
         public ConstraintTree Tree => _tree;
 
@@ -109,10 +109,12 @@ namespace dnWalker.Concolic.Traversal
 
         public IReadOnlyList<ConstraintNode> Expand(ControlFlowEdge[] paths, Constraint[] choices)
         {
+            paths ??= new ControlFlowEdge[choices.Length];
+
             ConstraintNode[] children = new ConstraintNode[choices.Length];
             for (int i = 0; i < choices.Length; ++i)
             {
-                ConstraintNode child = new ConstraintNode(_tree, this, paths[i].Target, choices[i]);
+                ConstraintNode child = new ConstraintNode(_tree, this, paths[i], choices[i]);
                 children[i] = child;
             }
             _children = children;

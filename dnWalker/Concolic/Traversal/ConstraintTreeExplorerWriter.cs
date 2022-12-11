@@ -97,7 +97,7 @@ namespace dnWalker.Concolic.Traversal
 
         static string GetLabel(ConstraintNode node)
         {
-            return $"{ToHtmlString(node.Constraint?.ToString())}<br/> {node.Location} <br/> ({string.Join(", ", node.Iterations)})";
+            return $"{ToHtmlString(node.Constraint?.ToString())}<br/> {node.Edge?.ToString() ?? "no-edge"} <br/> ({string.Join(", ", node.Iterations)})";
         }
 
         private static string ToHtmlString(string v)

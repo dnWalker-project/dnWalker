@@ -74,9 +74,18 @@ namespace Examples.Concolic.Features.Interfaces
                 return;
             }
 
-            if (instance.AbstractMethodWithArgs(x) == 5)
+            int r = instance.AbstractMethodWithArgs(x);
+            if (r == 5)
             {
                 Console.Out.WriteLine("instance.AbstractMethodWithArgs == 5, because the argument is less than 5");
+            }
+            else if (r == 10)
+            {
+                Console.Out.WriteLine("instance.AbstractMethodWithArgs == 10, because the argument is greater than or equal to 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("And this should never have happened.");
             }
         }
     }

@@ -11,10 +11,10 @@ namespace dnWalker.Symbolic
 {
     public static partial class ModelExtensions
     {
+        [ThreadStatic]
+        private static FormulaModelVisitor _instance;// = new FormulaModelVisitor();
         private class FormulaModelVisitor : ModelVisitorBase
         {
-            [ThreadStatic]
-            public static readonly FormulaModelVisitor Instance = new FormulaModelVisitor();
 
             private readonly Dictionary<Location, IVariable> _loc2var = new Dictionary<Location, IVariable>();
             private readonly List<Expression> _terms = new List<Expression>();
@@ -124,7 +124,8 @@ namespace dnWalker.Symbolic
 
         public static Expression GetFormula(this IReadOnlyModel model, ExpressionFactory? expressionFactory = null)
         {
-            return FormulaModelVisitor.Instance.GetFormula(model, expressionFactory);
+            _instance ??= new FormulaModelVisitor();
+            return _instance.GetFormula(model, expressionFactory);
         }
     }
 }

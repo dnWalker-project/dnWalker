@@ -72,7 +72,7 @@ namespace dnWalker.Tests.Examples.Features.InputModels
         {
             IExplorer explorer = CreateExplorer(buildInfo);
 
-            MethodDef entryPoint = DefinitionProvider.GetMethodDefinition("Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.InvokeInterfaceMethodWithArgs");
+            MethodDef entryPoint = DefinitionProvider.GetMethodDefinition("Examples.Concolic.Features.Interfaces.MethodsWithInterfaceParameter.InvokeInterfaceMethodWithArgsDynamic");
 
             TypeDef iMyInterfaceTD = DefinitionProvider.GetTypeDefinition("Examples.Concolic.Features.Interfaces.IMyInterface");
             MethodDef theMethod = iMyInterfaceTD.FindMethod("AbstractMethodWithArgs");
@@ -109,8 +109,9 @@ namespace dnWalker.Tests.Examples.Features.InputModels
             };
 
             var result = explorer.Run(entryPoint, new UserModel[] { model });
-            result.Iterations.Should().HaveCount(1);
-            result.Iterations[0].Output.Trim().Should().Be("instance.AbstractMethodWithArgs == 5, because the argument is less than 5\r\ninstance.AbstractMethodWithArgs == 10, because the argument is greater than or equal to 5");
+            result.Iterations.Should().HaveCount(2);
+            result.Iterations[0].Output.Trim().Should().Be("instance.AbstractMethodWithArgs == 5, because the argument is less than 5");
+            result.Iterations[1].Output.Trim().Should().Be("instance.AbstractMethodWithArgs == 10, because the argument is greater than or equal to 5");
         }
     }
 }
