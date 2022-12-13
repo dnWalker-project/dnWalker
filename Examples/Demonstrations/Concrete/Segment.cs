@@ -47,6 +47,41 @@ namespace Examples.Demonstrations.Concrete
             };
         }
 
+        public Segment Delete(int[] data)
+        {
+            if (data == Data)
+            {
+                // both the current data and the data to delete are null
+                // delete self => return Next
+                return Next;
+            }
+
+            if (Data != null && data != null &&
+                Data.Length == data.Length)
+            {
+                bool equals = true;
+                for (int i = 0; i < Data.Length; ++i) 
+                {
+                    equals = Data[i] == data[i];
+                    if (!equals)
+                    {
+                        break;
+                    }
+                }
+
+                if (equals)
+                {
+                    // the data sequences are equal
+                    // delete self => return Next
+                    return Next;
+                }
+            }
+
+            // pass the deletion to the next, if exists
+            Next = Next?.Delete(data);
+            return this;
+        }
+
         public int Count()
         {
             int cnt = Data?.Length ?? 0;

@@ -251,7 +251,7 @@ namespace dnWalker.Input.Xml
                     FieldDef fd = td.FindField(memberName);
                     if (fd != null)
                     {
-                        uObject.Fields[fd] = ParseUserDataFromValue(memberXml, references);
+                        uObject.Fields[fd] = ParseUserDataFromValue(memberXml, references, fd.FieldType);
                         return true;
                     }
                     return false;
@@ -264,7 +264,7 @@ namespace dnWalker.Input.Xml
                     {
                         // ignore inner working && ignore setter
                         int invocation = GetAndUpdateCounter(ref nextInvocation, GetInvocation(memberXml));
-                        UserData memberValue = ParseUserDataFromValue(memberXml, references);
+                        UserData memberValue = ParseUserDataFromValue(memberXml, references, pd.PropertySig.RetType);
                         uObject.MethodResults[(pd.GetMethod, invocation)] = memberValue;
                         return true;
                     }
@@ -276,7 +276,7 @@ namespace dnWalker.Input.Xml
                     MethodDef md = td.FindMethod(memberName);
                     if (md != null)
                     {
-                        UserData memberValue = ParseUserDataFromValue(memberXml, references);
+                        UserData memberValue = ParseUserDataFromValue(memberXml, references, md.ReturnType);
 
                         int invocation = GetInvocation(memberXml);
                         if (invocation < 0)

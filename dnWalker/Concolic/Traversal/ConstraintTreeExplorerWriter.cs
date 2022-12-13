@@ -57,8 +57,8 @@ namespace dnWalker.Concolic.Traversal
                     writer.Write($"\t{currentId}[");
 
                     writer.Write($"style=filled ");
-                    writer.Write($"label=<{GetLabel(node)}> ");
                     writer.Write($"fillcolor={GetColor(node)} ");
+                    writer.Write($"label=<{GetLabel(node)}> ");
 
                     writer.WriteLine("];");
                 }
@@ -97,7 +97,7 @@ namespace dnWalker.Concolic.Traversal
 
         static string GetLabel(ConstraintNode node)
         {
-            return $"{ToHtmlString(node.Constraint?.ToString())}<br/> {node.Edge?.ToString() ?? "no-edge"} <br/> ({string.Join(", ", node.Iterations)})";
+            return $"{ToHtmlString(node.Constraint?.ToString())}<br/> {ToHtmlString(node.Edge?.ToString() ?? "no-edge")} <br/> ({ToHtmlString(string.Join(", ", node.Iterations))})";
         }
 
         private static string ToHtmlString(string v)
