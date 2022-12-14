@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -82,6 +83,7 @@ namespace dnWalker.Symbolic.Expressions
         public virtual Expression MakeStringConstant(string value) => MakeConstant(GetStringSig(), value);
         public virtual Expression MakeBooleanConstant(bool value) => MakeConstant(GetBooleanSig(), value);
 
+        public virtual Expression MakeGeneric(TypeSig type, string operation, params Expression[] operands) => new GenericExpression(type, operation, operands);
 
         protected abstract TypeSig GetIntegerSig();
         protected abstract TypeSig GetBooleanSig();

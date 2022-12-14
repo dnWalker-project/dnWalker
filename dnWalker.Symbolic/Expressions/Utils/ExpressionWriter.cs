@@ -113,6 +113,22 @@ namespace dnWalker.Symbolic.Expressions.Utils
             return constant;
         }
 
+        protected internal override Expression VisitGeneric(GenericExpression genericExpression, StringBuilder context)
+        {
+            context.Append($"{genericExpression.Operation}(");
+            int cnt = genericExpression.Operands.Count();
+            for (int i = 0; i < cnt; ++i)
+            {
+                Visit(genericExpression.Operands[i], context);
+                if (i < cnt - 1)
+                {
+                    context.Append(", ");
+                }
+            }
+            context.Append(")");
+            return genericExpression;
+        }
+
         private static string GetUnaryOrBinarySymbol(Operator op)
         {
             return op switch

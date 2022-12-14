@@ -27,7 +27,8 @@ namespace dnWalker.IntegrationTests.Demonstrations.Abstract
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData");
+            ExplorationResult exploration = Explore<SmartAllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData");
+
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
