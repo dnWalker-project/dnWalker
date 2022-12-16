@@ -1,12 +1,15 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 
+using MMC;
 using MMC.State;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -14,19 +17,27 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Concolic.Traversal
 {
+
     public class SmartAllPathsCoverage : ExplorationStrategyBase
     {
         private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
         private readonly Stack<ConstraintNode> _delayed  = new Stack<ConstraintNode>();
 
         private readonly Dictionary<ControlFlowEdge, int> _counters = new Dictionary<ControlFlowEdge, int>();
+        private readonly List<IConstraintFilter> _filters = new List<IConstraintFilter>();
         private int _maxCounter = 1;
 
-        public override void Initialize(ExplicitActiveState activeState, MethodDef entryPoint)
-        {
-            base.Initialize(activeState, entryPoint);
+        private Logger _logger;
 
+        public override void Initialize(ExplicitActiveState activeState, MethodDef entryPoint, IConfiguration configuration)
+        {
+            base.Initialize(activeState, entryPoint, configuration);
+
+            _logger = activeState.Logger;
             _maxCounter = 1;
+
+            NewEdgeDiscoverer newEdgeDiscoverer = new NewEdgeDiscoverer(configuration.MaxIterationsWithoutNewEdge());
+            _filters.Add(newEdgeDiscoverer);
         }
 
         private int GetCounter(ControlFlowEdge edge)
@@ -56,16 +67,35 @@ namespace dnWalker.Concolic.Traversal
             }
         }
 
+        protected override bool HandleUnsatisfiableNode(ConstraintNode node)
+        {
+            Debug.WriteLine($"[STRATEGY|{CurrentIteration}] unsat node: {node}");
+            return base.HandleUnsatisfiableNode(node);
+        }
+
+        protected override bool HandleUndecidable(ConstraintNode node)
+        {
+            Debug.WriteLine($"[STRATEGY|{CurrentIteration}] dont know node: {node}");
+            return base.HandleUndecidable(node);
+        }
+
+        protected override bool HandleSatisfiableNode(ConstraintNode node, IModel model)
+        {
+            Debug.WriteLine($"[STRATEGY|{CurrentIteration}] sat node: {node}");
+            return base.HandleSatisfiableNode(node, model);
+        }
+
+
         private bool CheckSAT(ISolver solver, ConstraintNode node, [NotNullWhen(true)] out IModel inputModel)
         {
-            inputModel = solver.Solve(node.GetPrecondition());
-            return inputModel != null;
+            return TrySolve(solver, node, out inputModel);
         }
+
 
         public override bool TryGetNextSatisfiableNode(ISolver solver, [NotNullWhen(true)] out ConstraintNode node, [NotNullWhen(true)]out IModel inputModel)
         {
             // check the frontier first
-            while (_frontier.TryPeek(out node))
+            while (_frontier.TryPop(out node))
             {
                 int counter = GetCounter(node.Edge);
                 if (counter >= _maxCounter)
@@ -95,8 +125,27 @@ namespace dnWalker.Concolic.Traversal
             return false;
         }
 
+        protected override void NewIteration()
+        {
+            base.NewIteration();
+            foreach (IConstraintFilter filter in _filters)
+            {
+                filter.StartIteration(CurrentIteration);
+            }
+        }
+
         public override void AddDiscoveredNode(ConstraintNode node)
         {
+            foreach (IConstraintFilter filter in _filters)
+            {
+                if (!filter.UseConstraint(node))
+                {
+                    Debug.WriteLine($"[STRATEGY|{CurrentIteration}] node {node}:{node.Edge} denied by {filter}");
+                    return;
+                }
+            }
+
+            Debug.WriteLine($"[STRATEGY|{CurrentIteration}] new node: {node}");
             _frontier.Push(node);
         }
     }

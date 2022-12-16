@@ -1,6 +1,7 @@
 ﻿
 using dnlib.DotNet;
 
+using dnWalker.Configuration;
 using dnWalker.Graphs.ControlFlow;
 using dnWalker.Symbolic;
 using dnWalker.Symbolic.Expressions;
@@ -23,7 +24,7 @@ namespace dnWalker.Concolic.Traversal
         /// </summary>
         /// <param name="activeState"></param>
         /// <param name="entryPoint"></param>
-        void Initialize(ExplicitActiveState activeState, MethodDef entryPoint);
+        void Initialize(ExplicitActiveState activeState, MethodDef entryPoint, IConfiguration configuration);
 
         /// <summary>
         /// Produces next input model.

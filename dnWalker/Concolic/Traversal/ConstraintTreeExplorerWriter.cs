@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MMC;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,8 +18,12 @@ namespace dnWalker.Concolic.Traversal
 
         public static void Write(ConstraintTreeExplorer explorer, string file)
         {
-            ConstraintTree tree = explorer.Trees[0];
+            Write(explorer.Trees, file);
 
+        }
+
+        public static void Write(IEnumerable<ConstraintTree> trees, string file)
+        {
             // dirty way for setting node ids...
             Dictionary<ConstraintNode, int> idLookup = new Dictionary<ConstraintNode, int>();
             int lastId = 0;
@@ -28,24 +34,27 @@ namespace dnWalker.Concolic.Traversal
                 // header
                 writer.WriteLine(Begin);
 
-                Stack<ConstraintNode> frontier = new Stack<ConstraintNode>();
-                frontier.Push(tree.Root);
-                while (frontier.TryPop(out ConstraintNode node))
+                foreach (ConstraintTree tree in trees)
                 {
-                    currentId = lastId++;
-                    idLookup.Add(node, currentId);
-
-                    WriteNode(node);
-
-
-                    if (!node.IsRoot)
+                    Stack<ConstraintNode> frontier = new Stack<ConstraintNode>();
+                    frontier.Push(tree.Root);
+                    while (frontier.TryPop(out ConstraintNode node))
                     {
-                        writer.WriteLine(Edge, idLookup[node.Parent], currentId);
-                    }
+                        currentId = lastId++;
+                        idLookup.Add(node, currentId);
 
-                    foreach (ConstraintNode child in node.Children)
-                    {
-                        frontier.Push(child);
+                        WriteNode(node);
+
+
+                        if (!node.IsRoot)
+                        {
+                            writer.WriteLine(Edge, idLookup[node.Parent], currentId);
+                        }
+
+                        foreach (ConstraintNode child in node.Children)
+                        {
+                            frontier.Push(child);
+                        }
                     }
                 }
 
