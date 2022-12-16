@@ -52,7 +52,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddEqualConstraint(Expressions.MakeVariable(x), Expressions.MakeVariable(y));
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().NotBeNull();
             model.TryGetValue(x, out IValue? vx).Should().BeTrue();
@@ -78,7 +78,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddNotEqualConstraint(exprX, Expressions.NullExpression);
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().BeNull();
         }
@@ -99,7 +99,7 @@ namespace dnWalker.Z3.Tests
             
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().NotBeNull();
             model.TryGetValue(x, out IValue? vx).Should().BeTrue();
@@ -129,7 +129,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddNotEqualConstraint(exprZ, Expressions.NullExpression);
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().BeNull();
         }
@@ -154,7 +154,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddNotEqualConstraint(exprXA, exprYA);
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().BeNull();
         }
@@ -180,7 +180,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddEqualConstraint(exprXA, exprYA);
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model.Should().BeNull();
         }
@@ -205,7 +205,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddNotEqualConstraint(exprZ, Expressions.NullExpression);
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().NotBeNull();
 
@@ -235,7 +235,7 @@ namespace dnWalker.Z3.Tests
             constraint.AddEqualConstraint(exprY, exprZ);
 
             Z3Solver solver = new Z3Solver();
-            IModel? model = solver.Solve(constraint);
+            (_, IModel? model) = solver.Solve(constraint);
 
             model!.Should().NotBeNull();
 

@@ -1,0 +1,22 @@
+;PRIMITIVE ARGUMENTS
+Examples.Demonstrations.Primitive.PrimitiveArguments.Pow
+Examples.Demonstrations.Primitive.PrimitiveArguments.MixedNumbers
+Examples.Demonstrations.Primitive.PrimitiveArguments.UsePow
+Examples.Demonstrations.Primitive.PrimitiveArguments.UseSin
+Examples.Demonstrations.Primitive.PrimitiveArguments.UseCos
+Examples.Demonstrations.Primitive.PrimitiveArguments.DivideByZero
+Examples.Demonstrations.Primitive.PrimitiveArguments.RemainderByZero
+Examples.Demonstrations.Primitive.PrimitiveArguments.Min3
+
+;CONCRETE DATA
+Examples.Demonstrations.ConcreteData.Segment.Foo
+Examples.Demonstrations.ConcreteData.Segment.Append
+Examples.Demonstrations.ConcreteData.Segment.Insert
+Examples.Demonstrations.ConcreteData.Segment.Delete
+Examples.Demonstrations.ConcreteData.Segment.Count
+Examples.Demonstrations.ConcreteData.Arrays.IndexOf
+
+;ABSTRACT DATA
+Examples.Demonstrations.AbstractData.SimpleMethod.MethodNoArgs
+Examples.Demonstrations.AbstractData.SimpleMethod.MethodWithArgs
+Examples.Demonstrations.AbstractData.DataObject.ReadData

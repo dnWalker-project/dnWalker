@@ -23,24 +23,24 @@ namespace dnWalker.IntegrationTests.Demonstrations.Abstract
         }
 
         [IntegrationTest]
-        public void FooNoPrecondition(BuildInfo buildInfo)
+        public void NoPrecondition_MethodNoArgs(BuildInfo buildInfo)
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.SimpleMethod.Foo");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.AbstractData.SimpleMethod.MethodNoArgs");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
 
         [IntegrationTest]
-        public void ProveConstrainedBehaviorNoPrecondition(BuildInfo buildInfo)
+        public void FakedInterface_MethodWithArgs(BuildInfo buildInfo)
         {
             Initialize(buildInfo);
 
             const string ModelXml =
             """
             <UserModels>
-                <UserModel EntryPoint="Examples.Demonstrations.Abstract.SimpleMethod.ProveConstrainedBehavior">
+                <UserModel EntryPoint="Examples.Demonstrations.AbstractData.SimpleMethod.MethodWithArgs">
                     <m-this>
                         <Object />
                     </m-this>
@@ -56,7 +56,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Abstract
 
             IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
 
-            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.SimpleMethod.ProveConstrainedBehavior", userModels);
+            ExplorationResult exploration = Explore("Examples.Demonstrations.AbstractData.SimpleMethod.MethodWithArgs", userModels);
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }

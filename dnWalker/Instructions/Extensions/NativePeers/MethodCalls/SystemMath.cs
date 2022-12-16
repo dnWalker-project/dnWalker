@@ -98,5 +98,31 @@ namespace dnWalker.Instructions.Extensions.NativePeers.MethodCalls
             returnValue = InstructionExecBase.nextRetval;
             return true;
         }
+
+        private static bool Sin(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
+        {
+            INumericElement a = (INumericElement)args[0];
+
+            double aDbl = a.ToFloat8(false).Value;
+
+            IDataElement result = new Float8(Math.Sin(aDbl));
+            cur.EvalStack.Push(result);
+
+            returnValue = InstructionExecBase.nextRetval;
+            return true;
+        }
+
+        private static bool Cos(MethodDef method, DataElementList args, ExplicitActiveState cur, out IIEReturnValue returnValue)
+        {
+            INumericElement a = (INumericElement)args[0];
+
+            double aDbl = a.ToFloat8(false).Value;
+
+            IDataElement result = new Float8(Math.Cos(aDbl));
+            cur.EvalStack.Push(result);
+
+            returnValue = InstructionExecBase.nextRetval;
+            return true;
+        }
     }
 }

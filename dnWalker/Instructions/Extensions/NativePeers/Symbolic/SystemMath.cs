@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
 {
-    [NativePeer("System.Math", "Max", "Min", "Abs")]
+    [NativePeer("System.Math", "Max", "Min", "Abs", "Sin", "Cos")]
     public class SystemMath : SymbolicNativePeerBase
     {
         public override void Handle(MethodDef method, DataElementList args, ExplicitActiveState cur, IIEReturnValue returnValue)
@@ -38,6 +38,48 @@ namespace dnWalker.Instructions.Extensions.NativePeers.Symbolic
                 case "Pow":
                     Pow(method, args, cur, returnValue);
                     break;
+
+                case "Sin":
+                    Sin(method, args, cur, returnValue);
+                    break;
+
+                case "Cos":
+                    Cos(method, args, cur, returnValue);
+                    break;
+            }
+        }
+
+        private void Sin(MethodDef method, DataElementList args, ExplicitActiveState cur, IIEReturnValue returnValue)
+        {
+            if (TryGetExpressions(cur, args, out Expression[] ops))
+            {
+                ExpressionFactory ef = cur.GetExpressionFactory();
+
+                IDataElement result = cur.EvalStack.Peek();
+                result.SetExpression(cur, ef.MakeGeneric(method.ReturnType, "sin", ops));
+
+                // TODO add range constraint on the result
+
+                //int d = result.Equals(args[0]) ? 0 : 1;
+
+                //DecisionHelper.MakeDecision(cur, d, null, ef.MakeGreaterThanOrEqual(ops[0], ef.MakeIntegerConstant(0)), ef.MakeLessThan(ops[0], ef.MakeIntegerConstant(0)));
+            }
+        }
+
+        private void Cos(MethodDef method, DataElementList args, ExplicitActiveState cur, IIEReturnValue returnValue)
+        {
+            if (TryGetExpressions(cur, args, out Expression[] ops))
+            {
+                ExpressionFactory ef = cur.GetExpressionFactory();
+
+                IDataElement result = cur.EvalStack.Peek();
+                result.SetExpression(cur, ef.MakeGeneric(method.ReturnType, "cos", ops));
+
+                // TODO add range constraint on the result
+
+                //int d = result.Equals(args[0]) ? 0 : 1;
+
+                //DecisionHelper.MakeDecision(cur, d, null, ef.MakeGreaterThanOrEqual(ops[0], ef.MakeIntegerConstant(0)), ef.MakeLessThan(ops[0], ef.MakeIntegerConstant(0)));
             }
         }
 

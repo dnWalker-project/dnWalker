@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace dnWalker.Symbolic
 {
+    public record struct SolverResult (ResultType IsSat, IModel? Model);
+    public enum ResultType
+    { 
+        Satisfiable,
+        Unsatisfiable,
+        Undecidable
+    }
+
+
     public interface ISolver
     {
         /// <summary>
@@ -13,16 +22,16 @@ namespace dnWalker.Symbolic
         /// </summary>
         /// <param name="precondition">Represents the constraints which must be satisfied.</param>
         /// <returns>An instance of <see cref="IModel"/> which satisfies the precondition</returns>
-        IModel? Solve(Constraint constraint);
+        SolverResult Solve(Constraint constraint);
     }
 
     public static class SolverExtensions
     {
-        public static IModel? Solve(this ISolver solver, params Constraint[] constraints)
+        public static SolverResult Solve(this ISolver solver, params Constraint[] constraints)
         {
             return solver.Solve(Constraint.Merge(constraints));
         }
-        public static IModel? Solve(this ISolver solver, IEnumerable<Constraint> constraints)
+        public static SolverResult Solve(this ISolver solver, IEnumerable<Constraint> constraints)
         {
             return solver.Solve(Constraint.Merge(constraints));
         }

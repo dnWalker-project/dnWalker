@@ -27,7 +27,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Concrete
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Concrete.Segment.Foo");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.ConcreteData.Segment.Foo");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
@@ -37,7 +37,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Concrete
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Concrete.Segment.Append");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.ConcreteData.Segment.Append");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
@@ -48,7 +48,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Concrete
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Concrete.Segment.Insert");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.ConcreteData.Segment.Insert");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
@@ -58,7 +58,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Concrete
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Concrete.Segment.Count");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.ConcreteData.Segment.Count");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
@@ -68,50 +68,50 @@ namespace dnWalker.IntegrationTests.Demonstrations.Concrete
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Concrete.Segment.Delete");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.ConcreteData.Segment.Delete");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
 
-        [IntegrationTest]
-        public void ArrayLengthBound_Delete(BuildInfo buildInfo)
-        {
-            Initialize(buildInfo);
+        //[IntegrationTest]
+        //public void ArrayLengthBound_Delete(BuildInfo buildInfo)
+        //{
+        //    Initialize(buildInfo);
 
-            const string ModelXml =
-            """
-            <UserModels>
-                <SharedData>
-                    <Object Type="Examples.Demonstrations.Concrete.Segment" Id="length2">
-                        <Next>
-                            <Object>
-                                <Next>null</Next>
-                            </Object>
-                        </Next>
-                    </Object>
-                </SharedData>
-                <UserModel EntryPoint="Examples.Demonstrations.Concrete.Segment.Delete">
-                    <m-this>
-                        <Reference>length2</Reference>
-                    </m-this>
-                    <data>
-                        <Array  Length="2"/>
-                    </data>
-                </UserModel>
-                <UserModel EntryPoint="Examples.Demonstrations.Concrete.Segment.Delete">
-                    <m-this>
-                        <Reference>length2</Reference>
-                    </m-this>
-                    <data>null</data>
-                </UserModel>
-            </UserModels>
-            """;
+        //    const string ModelXml =
+        //    """
+        //    <UserModels>
+        //        <SharedData>
+        //            <Object Type="Examples.Demonstrations.Concrete.Segment" Id="length2">
+        //                <Next>
+        //                    <Object>
+        //                        <Next>null</Next>
+        //                    </Object>
+        //                </Next>
+        //            </Object>
+        //        </SharedData>
+        //        <UserModel EntryPoint="Examples.Demonstrations.Concrete.Segment.Delete">
+        //            <m-this>
+        //                <Reference>length2</Reference>
+        //            </m-this>
+        //            <data>
+        //                <Array  Length="2"/>
+        //            </data>
+        //        </UserModel>
+        //        <UserModel EntryPoint="Examples.Demonstrations.Concrete.Segment.Delete">
+        //            <m-this>
+        //                <Reference>length2</Reference>
+        //            </m-this>
+        //            <data>null</data>
+        //        </UserModel>
+        //    </UserModels>
+        //    """;
 
-            IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
+        //    IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Concrete.Segment.Delete", userModels);
-            TestProject testProject = GenerateTests(exploration);
-            IReadOnlyDictionary<string, string> files = WriteTests(testProject);
-        }
+        //    ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Concrete.Segment.Delete", userModels);
+        //    TestProject testProject = GenerateTests(exploration);
+        //    IReadOnlyDictionary<string, string> files = WriteTests(testProject);
+        //}
     }
 }

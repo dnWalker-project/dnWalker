@@ -22,18 +22,18 @@ namespace dnWalker.Concolic
             return ExtensibilityPointHelper.FromTypeIdentifier(configuration.GetValueOrDefault<string>("Strategy"));
         }
 
-        public static IConfiguration SetStrategy(this IConfigurationBuilder configuration, string assemblyName, string typeName)
+        public static IConfigurationBuilder SetStrategy(this IConfigurationBuilder configuration, string assemblyName, string typeName)
         {
             configuration.SetValue("Strategy", ExtensibilityPointHelper.ToTypeIdentifier(assemblyName, typeName));
             return configuration;
         }
-        public static IConfiguration SetStrategy(this IConfigurationBuilder configuration, Type type)
+        public static IConfigurationBuilder SetStrategy(this IConfigurationBuilder configuration, Type type)
         {
             configuration.SetValue("Strategy", ExtensibilityPointHelper.ToTypeIdentifier(type));
             return configuration;
         }
 
-        public static IConfiguration SetStrategy<TStrategy>(this IConfigurationBuilder configuration)
+        public static IConfigurationBuilder SetStrategy<TStrategy>(this IConfigurationBuilder configuration)
             where TStrategy : IExplorationStrategy
         {
             configuration.SetValue("Strategy", ExtensibilityPointHelper.ToTypeIdentifier(typeof(TStrategy)));
@@ -44,6 +44,16 @@ namespace dnWalker.Concolic
         {
             (string assemblyName, string typeName) = configuration.Strategy();
             return ExtensibilityPointHelper.Create<IExplorationStrategy>(assemblyName, typeName);
+        }
+
+        public static IConfigurationBuilder SetMaxIterationsWithoutNewEdge(this IConfigurationBuilder configuration, int maxIterations)
+        {
+            configuration.SetValue("MaxIterationsWithoutNewEdge", maxIterations);
+            return configuration;
+        }
+        public static int MaxIterationsWithoutNewEdge(this IConfiguration configuration)
+        {
+            return configuration.GetValueOrDefault("MaxIterationsWithoutNewEdge", 10);
         }
     }
 }

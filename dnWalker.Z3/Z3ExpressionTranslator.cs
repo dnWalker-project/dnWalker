@@ -227,7 +227,7 @@ namespace dnWalker.Z3
                 "max" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkITE(z3.MkGt(ops[0], ops[1]), ops[0], ops[1])),
                 "min" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkITE(z3.MkLt(ops[0], ops[1]), ops[0], ops[1])),
                 "abs" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkITE(z3.MkLt(ops[0], z3.MkInt(0)), z3.MkUnaryMinus(ops[0]), ops[0])),
-                _ => throw new NotSupportedException($"Unsupported operation: {genericExpression.Operation}")
+                _ => throw new UnsupportedExpressionException(genericExpression.ToString())
             };
         }
 

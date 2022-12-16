@@ -34,6 +34,8 @@ namespace dnWalker.Traversal
         public Path(ICache<MethodDef, MethodTracer> methodTracers)
         {
             _methodTracers = methodTracers ?? throw new ArgumentNullException(nameof(methodTracers));
+
+            
         }
 
         public void Extend(int toState)
@@ -177,6 +179,7 @@ namespace dnWalker.Traversal
 
         public IList<Segment> Segments => _segments;
         public IList<CILLocation> VisitedNodes => _visitedNodes;
+
 
         public void Terminate(MMC.State.ThreadState threadState)
         {

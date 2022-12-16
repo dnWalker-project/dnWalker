@@ -74,12 +74,22 @@ namespace dnWalker.Symbolic.Xml
             {
                 MethodArgumentVariable mav => MethodArgumentVariableToXml(mav),
                 StaticFieldVariable sfv => StaticFieldVariableToXml(sfv),
+                ReturnValueVariable rvv => ReturnValueVariableToXml(rvv),
                 _ => throw new NotSupportedException()
             };
 
             variableXml.SetAttributeValue(XmlTokens.Value, ValueToXml(model.GetValueOrDefault(variable)));
 
             return variableXml;
+        }
+
+        private XElement ReturnValueVariableToXml(ReturnValueVariable rvv)
+        {
+            var xml = new XElement(XmlTokens.ReturnValue);
+
+            xml.SetAttributeValue(XmlTokens.MethodSignature, rvv.Method.FullName);
+
+            return xml;
         }
 
         private XElement MethodArgumentVariableToXml(MethodArgumentVariable mav)

@@ -24,7 +24,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Primitive
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Primitive.MethodsWithPrimitiveArguments.Pow");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.Primitive.PrimitiveArguments.Pow");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
@@ -34,7 +34,7 @@ namespace dnWalker.IntegrationTests.Demonstrations.Primitive
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Primitive.MethodsWithPrimitiveArguments.Foo");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.Primitive.PrimitiveArguments.Foo");
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }

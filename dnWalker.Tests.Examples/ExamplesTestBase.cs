@@ -86,6 +86,7 @@ namespace dnWalker.Tests.Examples
             SetupConfiguration(configBuilder);
             configure?.Invoke(configBuilder);
 
+
             IConfiguration config = configBuilder.Build();
 
             Logger logger = new Logger();
@@ -100,7 +101,7 @@ namespace dnWalker.Tests.Examples
         protected virtual void SetupLogging(Logger logger) { }
         protected virtual void SetupConfiguration(IConfigurationBuilder configuration) 
         {
-            configuration.SetStrategy(typeof(Concolic.Traversal.AllPathsCoverage));
+            configuration.SetStrategy(typeof(Concolic.Traversal.SmartAllPathsCoverage));
         }
     }
 }

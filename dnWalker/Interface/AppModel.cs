@@ -155,7 +155,7 @@ namespace dnWalker.Interface
 
                 MethodDef md = definitionProvider.GetMethodDefinitionPartial(methodSpecification);
 
-                ExplorationResult explorationResult = explorer.Run(md);
+                ExplorationResult explorationResult = explorer.Run(md, _userModels.Where(m => MethodEqualityComparer.CompareDeclaringTypes.Equals(m.Method, md)));
 
                 // write the output
                 ConcolicExploration data = explorationResult.ToExplorationData().Build();

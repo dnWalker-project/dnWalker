@@ -27,101 +27,101 @@ namespace dnWalker.IntegrationTests.Demonstrations.Abstract
         {
             Initialize(buildInfo);
 
-            ExplorationResult exploration = Explore<SmartAllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData");
+            ExplorationResult exploration = Explore("Examples.Demonstrations.AbstractData.DataObject.ReadData");
 
             TestProject testProject = GenerateTests(exploration);
             IReadOnlyDictionary<string, string> files = WriteTests(testProject);
         }
 
-        [IntegrationTest]
-        public void ReadDataSomePreviousState(BuildInfo buildInfo)
-        {
-            Initialize(buildInfo);
+        //[IntegrationTest]
+        //public void ReadDataSomePreviousState(BuildInfo buildInfo)
+        //{
+        //    Initialize(buildInfo);
 
-            const string ModelXml =
-            """
-            <UserModels>
-                <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
-                    <m-this>
-                        <Object>
-                            <Id>55</Id>
-                            <Created>113</Created>
-                            <LastAccess>225</LastAccess>
-                            <Author>John Doe</Author>
-                        </Object>
-                    </m-this>
-                </UserModel>
-            </UserModels>
-            """;
+        //    const string ModelXml =
+        //    """
+        //    <UserModels>
+        //        <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
+        //            <m-this>
+        //                <Object>
+        //                    <Id>55</Id>
+        //                    <Created>113</Created>
+        //                    <LastAccess>225</LastAccess>
+        //                    <Author>John Doe</Author>
+        //                </Object>
+        //            </m-this>
+        //        </UserModel>
+        //    </UserModels>
+        //    """;
 
-            IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
+        //    IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
 
-            ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
-            TestProject testProject = GenerateTests(exploration);
-            IReadOnlyDictionary<string, string> files = WriteTests(testProject);
-        }
+        //    ExplorationResult exploration = Explore<AllEdgesCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
+        //    TestProject testProject = GenerateTests(exploration);
+        //    IReadOnlyDictionary<string, string> files = WriteTests(testProject);
+        //}
 
-        [IntegrationTest]
-        public void ReadDataEnsureMaxRecordsLength(BuildInfo buildInfo)
-        {
-            Initialize(buildInfo);
+        //[IntegrationTest]
+        //public void ReadDataEnsureMaxRecordsLength(BuildInfo buildInfo)
+        //{
+        //    Initialize(buildInfo);
 
-            const string ModelXml =
-            """
-            <UserModels>
-                <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
-                    <m-this><Object/></m-this>
-                    <database>
-                        <Object>
-                            <GetRecords>
-                                <Array Length="2"/>
-                            </GetRecords>
-                        </Object>
-                    </database>
-                </UserModel>
-            </UserModels>
-            """;
+        //    const string ModelXml =
+        //    """
+        //    <UserModels>
+        //        <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
+        //            <m-this><Object/></m-this>
+        //            <database>
+        //                <Object>
+        //                    <GetRecords>
+        //                        <Array Length="2"/>
+        //                    </GetRecords>
+        //                </Object>
+        //            </database>
+        //        </UserModel>
+        //    </UserModels>
+        //    """;
 
-            IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
+        //    IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
 
-            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
-            TestProject testProject = GenerateTests(exploration);
-            IReadOnlyDictionary<string, string> files = WriteTests(testProject);
-        }
+        //    ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
+        //    TestProject testProject = GenerateTests(exploration);
+        //    IReadOnlyDictionary<string, string> files = WriteTests(testProject);
+        //}
 
-        [IntegrationTest]
-        public void ReadDataEnsureMaxRecordsLengthAndSomeState(BuildInfo buildInfo)
-        {
-            Initialize(buildInfo);
+        //[IntegrationTest]
+        //public void ReadDataEnsureMaxRecordsLengthAndSomeState(BuildInfo buildInfo)
+        //{
+        //    Initialize(buildInfo);
 
-            const string ModelXml =
-            """
-            <UserModels>
-                <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
-                    <m-this>
-                        <Object>
-                            <Id>55</Id>
-                            <Created>113</Created>
-                            <LastAccess>225</LastAccess>
-                            <Author>John Doe</Author>
-                        </Object>
-                    </m-this>
-                    <database>
-                        <Object>
-                            <GetRecords>
-                                <Array Length="1"/>
-                            </GetRecords>
-                        </Object>
-                    </database>
-                </UserModel>
-            </UserModels>
-            """;
+        //    const string ModelXml =
+        //    """
+        //    <UserModels>
+        //        <UserModel EntryPoint="Examples.Demonstrations.Abstract.DataObject.ReadData">
+        //            <m-this>
+        //                <Object>
+        //                    <Id>55</Id>
+        //                    <Created>113</Created>
+        //                    <LastAccess>225</LastAccess>
+        //                    <Author>John Doe</Author>
+        //                </Object>
+        //            </m-this>
+        //            <database>
+        //                <Object>
+        //                    <GetRecords>
+        //                        <Array Length="1"/>
+        //                    </GetRecords>
+        //                </Object>
+        //            </database>
+        //        </UserModel>
+        //    </UserModels>
+        //    """;
 
-            IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
+        //    IEnumerable<UserModel> userModels = new XmlUserModelParser(DefinitionProvider).ParseModelCollection(XElement.Parse(ModelXml));
 
-            ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
-            TestProject testProject = GenerateTests(exploration);
-            IReadOnlyDictionary<string, string> files = WriteTests(testProject);
-        }
+        //    ExplorationResult exploration = Explore<AllPathsCoverage>("Examples.Demonstrations.Abstract.DataObject.ReadData", userModels);
+        //    TestProject testProject = GenerateTests(exploration);
+        //    IReadOnlyDictionary<string, string> files = WriteTests(testProject);
+        //}
     }
 }

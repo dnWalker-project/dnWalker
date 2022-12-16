@@ -12,7 +12,7 @@ namespace dnWalker.Symbolic
     public static partial class ModelExtensions
     {
         [ThreadStatic]
-        private static FormulaModelVisitor _instance;// = new FormulaModelVisitor();
+        private static FormulaModelVisitor? _instance;// = new FormulaModelVisitor();
         private class FormulaModelVisitor : ModelVisitorBase
         {
 

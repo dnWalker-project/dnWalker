@@ -25,7 +25,7 @@ namespace MMC.Util
     using dnlib.DotNet;
     using System;
 
-    public readonly struct CILLocation : IEquatable<CILLocation>
+    public readonly struct CILLocation : IEquatable<CILLocation>, IComparable<CILLocation>
     {
 
         private readonly Instruction m_instr;
@@ -95,6 +95,25 @@ namespace MMC.Util
             if (retval == 0)
                 retval = CILInstructionComparer.CompareInstructions(m_instr, other.Instruction);
             return retval == 0;
+        }
+
+        public int CompareTo(CILLocation other)
+        {
+            if (m_instr == null && other.m_instr == null) return  0;
+            if (m_instr == null && other.m_instr != null) return  1;
+            if (m_instr != null && other.m_instr == null) return -1;
+
+            int r = other.m_instr.Offset.CompareTo(m_instr.Offset);
+            if (r == 0)
+            {
+
+                if (m_meth == null && other.m_meth == null) return  0;
+                if (m_meth == null && other.m_meth != null) return  1;
+                if (m_meth != null && other.m_meth == null) return -1;
+
+                r = other.m_meth.FullName.CompareTo(m_meth.FullName);
+            }
+            return r;
         }
     }
 

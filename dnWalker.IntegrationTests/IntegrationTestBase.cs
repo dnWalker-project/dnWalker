@@ -2,6 +2,7 @@
 using dnWalker.Concolic.Traversal;
 using dnWalker.Explorations;
 using dnWalker.Input;
+using dnWalker.Symbolic;
 using dnWalker.Tests.Examples;
 using dnWalker.TestWriter.Generators;
 using dnWalker.TestWriter.Generators.Act;
@@ -81,20 +82,42 @@ namespace dnWalker.IntegrationTests
             _testFramework = new XunitFramework();
         }
 
-        protected virtual ExplorationResult Explore<TStrategy>(string methodName, IEnumerable<UserModel>? userModels = null)
-            where TStrategy : IExplorationStrategy
+        protected virtual ExplorationResult Explore<TStrategy>(string methodName)
+            where TStrategy : IExplorationStrategy, new()
         {
-            IExplorer explorer = CreateExplorer(configure: 
-                cfg =>
-                {
-                    cfg.SetStrategy<TStrategy>();
-                });
-            return explorer.Run(methodName, userModels);
+            IExplorer explorer = CreateExplorer();
+            return explorer.Run(DefinitionProvider.GetMethodDefinition(methodName), new TStrategy(), Array.Empty<Constraint>());
         }
-        protected virtual ExplorationResult Explore(string methodName, IEnumerable<UserModel>? userModels = null)
+
+        protected virtual ExplorationResult Explore<TStrategy>(string methodName, IEnumerable<Constraint> constraints)
+            where TStrategy : IExplorationStrategy, new()
         {
-            return Explore<AllPathsCoverage>(methodName, userModels);
+            IExplorer explorer = CreateExplorer();
+            return explorer.Run(DefinitionProvider.GetMethodDefinition(methodName), new TStrategy(), constraints);
         }
+
+        protected virtual ExplorationResult Explore<TStrategy>(string methodName, IEnumerable<UserModel> userModels)
+            where TStrategy : IExplorationStrategy, new()
+        {
+            IExplorer explorer = CreateExplorer();
+            return explorer.Run(methodName, new TStrategy(), userModels);
+        }
+
+
+        protected virtual ExplorationResult Explore(string methodName)
+        {
+            return Explore<SmartAllPathsCoverage>(methodName, Array.Empty<Constraint>());
+        }
+        protected virtual ExplorationResult Explore(string methodName, IEnumerable<UserModel> userModels)
+        {
+            return Explore<SmartAllPathsCoverage>(methodName, userModels);
+        }
+        protected virtual ExplorationResult Explore(string methodName, IEnumerable<Constraint> constraints)
+        {
+            return Explore<SmartAllPathsCoverage>(methodName, constraints);
+        }
+
+
 
         protected TestProject GenerateTests(ExplorationResult explorationResult)
         {

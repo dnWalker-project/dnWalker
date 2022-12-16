@@ -47,10 +47,16 @@ namespace dnWalker.Z3
                 return Z3.MkSymbol(_freeSymbol++);
             }
 
-            public bool CheckSat()
+            public ResultType CheckSat()
             {
                 Status status = Solver.Check();
-                return status == Status.SATISFIABLE;
+
+                return status switch
+                {
+                    Status.SATISFIABLE => ResultType.Satisfiable,
+                    Status.UNSATISFIABLE => ResultType.Unsatisfiable,
+                    _ => ResultType.Undecidable
+                };
             }
 
             public void Dispose()
@@ -60,33 +66,43 @@ namespace dnWalker.Z3
         }
 
 
-        public IModel? Solve(Constraint constraint)
+        public SolverResult Solve(Constraint constraint)
         {
-
-            using (SolverContext context = new SolverContext())
+            try
             {
-                // setup variables & their mapping
-                SetupVariableMapping(constraint, context);
-
-                // assert constraint from pure terms
-                AssertPureTerms(constraint, context);
-
-                // assert constraints from heap terms
-                AssertHeapTerms(constraint, context);
-                AssertMemberRootPointerEqualities(constraint, context);
-                AssertRootsWithMembersAreNotNull(constraint, context);
-
-                // assert constraints from types of location variables
-                AssertTypes(constraint, context);
-
-                if (context.CheckSat())
+                using (SolverContext context = new SolverContext())
                 {
-                    return BuildModel(constraint, context);
+                    // setup variables & their mapping
+                    SetupVariableMapping(constraint, context);
+
+                    // assert constraint from pure terms
+                    AssertPureTerms(constraint, context);
+
+                    // assert constraints from heap terms
+                    AssertHeapTerms(constraint, context);
+                    AssertMemberRootPointerEqualities(constraint, context);
+                    AssertRootsWithMembersAreNotNull(constraint, context);
+
+                    // assert constraints from types of location variables
+                    AssertTypes(constraint, context);
+
+                    ResultType type = context.CheckSat();
+                    if (type == ResultType.Satisfiable)
+                    {
+                        IModel model = BuildModel(constraint, context);
+                        return new SolverResult(type, model);
+                    }
+                    else
+                    {
+                        return new SolverResult(type, null);
+                    }
                 }
-                else
-                {
-                    return null;
-                }
+            }
+            catch (Z3SolverException e)
+            {
+                Debug.WriteLine($"ERROR During solve: {e.Message}");
+                Debug.WriteLine($"{e}");
+                return new SolverResult(ResultType.Undecidable, null);
             }
         }
     }

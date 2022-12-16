@@ -25,21 +25,21 @@ namespace dnWalker.Concolic
 
             cur.Services.RegisterService(constraintTree);
 
-            strategy.Initialize(cur, entryPoint);
+            //strategy.Initialize(cur, entryPoint);
 
             return constraintTree;
         }
-        public static ConstraintTreeExplorer InitializeConcolicExploration(this ExplicitActiveState cur, MethodDef entryPoint, IExplorationStrategy strategy, IEnumerable<IReadOnlyModel> inputModels)
+        public static ConstraintTreeExplorer InitializeConcolicExploration(this ExplicitActiveState cur, MethodDef entryPoint, IExplorationStrategy strategy, IEnumerable<Constraint> constraints)
         {
             ControlFlowGraph entryCfg = cur.PathStore.ControlFlowGraphProvider.Get(entryPoint);
 
             ExpressionFactory ef = cur.GetExpressionFactory();
-            IReadOnlyList<ConstraintTree> constraintTrees = ConstraintTree.UnfoldConstraints(entryPoint, entryCfg.EntryPoint, inputModels, ef);
+            IReadOnlyList<ConstraintTree> constraintTrees = ConstraintTree.UnfoldConstraints(entryPoint, entryCfg.EntryPoint, constraints);
             ConstraintTreeExplorer constraintTree = new ConstraintTreeExplorer(strategy, constraintTrees);
 
             cur.Services.RegisterService(constraintTree);
 
-            strategy.Initialize(cur, entryPoint);
+            //strategy.Initialize(cur, entryPoint);
 
             return constraintTree;
         }

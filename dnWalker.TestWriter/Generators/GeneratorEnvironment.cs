@@ -142,7 +142,7 @@ namespace dnWalker.TestWriter.Generators
 
         private static IEnumerable<string> GatherNamespaces(ConcolicExploration concolicExploration)
         {
-            return concolicExploration.Iterations.SelectMany(it => GatherNamespaces(it));
+            return concolicExploration.Iterations.SelectMany(it => GatherNamespaces(it)).Concat(GetNamespaces(concolicExploration.MethodUnderTest.DeclaringType.ToTypeSig()));
         }
 
         private static IEnumerable<string> GatherNamespaces(ConcolicExplorationIteration it)
