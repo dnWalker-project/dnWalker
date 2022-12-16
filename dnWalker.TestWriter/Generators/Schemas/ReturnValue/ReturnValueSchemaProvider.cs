@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Schemas.ReturnValue
 {
-    internal class ReturnValueSchemaProvider : ITestSchemaProvider
+    public class ReturnValueSchemaProvider : ITestSchemaProvider
     {
         public IEnumerable<ITestSchema> GetSchemas(ConcolicExplorationIteration explorationIteration)
         {
-            if (explorationIteration.Exception != null &&
+            if (explorationIteration.Exception == null &&
                 explorationIteration.Exploration.MethodUnderTest.HasReturnValue())
             {
                 return new ITestSchema[] { new ReturnValueSchema(new TestContext(explorationIteration)) };

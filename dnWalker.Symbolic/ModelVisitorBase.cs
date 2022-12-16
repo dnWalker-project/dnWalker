@@ -216,6 +216,7 @@ namespace dnWalker.Symbolic
                 IVariable itemVariable = Variable.ArrayElement(currentVar, index);
                 Visit(itemVariable);
             }
+            Visit(new ArrayLengthVariable(currentVar));
         }
 
         protected virtual void VisitObjectHeapNode(IReadOnlyObjectHeapNode node)

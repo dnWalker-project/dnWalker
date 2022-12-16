@@ -94,15 +94,15 @@ namespace dnWalker.TestWriter.Utils
             throw new NotSupportedException($"Unsupported type: '{type}'");
         }
 
-        private static string GetName(TypeDef typeDef)
+        public static string GetName(this ITypeDefOrRef typeDef)
         {
             StringBuilder sb = new StringBuilder();
 
-            TypeDef td = typeDef.DeclaringType;
+            ITypeDefOrRef td = typeDef.DeclaringType;
 
             if (td != null)
             {
-                sb.Append(td.Name);
+                sb.Append(td.GetName());
                 sb.Append('.');
             }
 
@@ -110,5 +110,16 @@ namespace dnWalker.TestWriter.Utils
 
             return sb.ToString();
         }
+
+        public static string GetNamespace(this ITypeDefOrRef typeDef)
+        {
+            while (typeDef.DeclaringType != null) 
+            {
+                typeDef = typeDef.DeclaringType;
+            }
+
+            return typeDef.Namespace;
+        }
+
     }
 }

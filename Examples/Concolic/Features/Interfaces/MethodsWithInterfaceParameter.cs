@@ -66,5 +66,27 @@ namespace Examples.Concolic.Features.Interfaces
                 Console.Out.WriteLine("instance.AbstractMethodWithArgs == 10, because the argument is greater than or equal to 5");
             }
         }
+        public static void InvokeInterfaceMethodWithArgsDynamic(IMyInterface instance, int x)
+        {
+            if (instance == null)
+            {
+                Console.Out.WriteLine("instance is null");
+                return;
+            }
+
+            int r = instance.AbstractMethodWithArgs(x);
+            if (r == 5)
+            {
+                Console.Out.WriteLine("instance.AbstractMethodWithArgs == 5, because the argument is less than 5");
+            }
+            else if (r == 10)
+            {
+                Console.Out.WriteLine("instance.AbstractMethodWithArgs == 10, because the argument is greater than or equal to 5");
+            }
+            else
+            {
+                Console.Out.WriteLine("And this should never have happened.");
+            }
+        }
     }
 }

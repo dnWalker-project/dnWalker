@@ -72,6 +72,20 @@ namespace dnWalker.Symbolic.Expressions
             }
             return convertExpression;
         }
+
+        internal protected virtual Expression VisitGeneric(GenericExpression genericExpression)
+        {
+            bool changed = false;
+            Expression[] operands = new Expression[genericExpression.Operands.Count];
+            for (int i = 0; i < operands.Length; ++i)
+            {
+                Expression old = genericExpression.Operands[i];
+                operands[i] = Visit(old);
+                changed |= !ReferenceEquals(old, operands[i]);
+            }
+            
+            return changed ? new GenericExpression(genericExpression.Type, genericExpression.Operation, operands) : genericExpression;
+        }
     }
 
     public abstract class ExpressionVisitor<T>
@@ -142,6 +156,21 @@ namespace dnWalker.Symbolic.Expressions
                 return new ConvertExpression(convertExpression.Type, inner);
             }
             return convertExpression;
+        }
+
+
+        internal protected virtual Expression VisitGeneric(GenericExpression genericExpression, T context)
+        {
+            bool changed = false;
+            Expression[] operands = new Expression[genericExpression.Operands.Count];
+            for (int i = 0; i < operands.Length; ++i)
+            {
+                Expression old = genericExpression.Operands[i];
+                operands[i] = Visit(old, context);
+                changed |= !ReferenceEquals(old, operands[i]);
+            }
+
+            return changed ? new GenericExpression(genericExpression.Type, genericExpression.Operation, operands) : genericExpression;
         }
     }
 }

@@ -46,18 +46,18 @@ namespace dnWalker.Concolic.Traversal
 
         public ConstraintNode Current
         {
-            //get
-            //{
-            //    return _current;
-            //}
             get
             {
-                if (_current == null)
-                {
-                    _current = _trees[0].Root;
-                }
                 return _current;
             }
+            //get
+            //{
+            //    if (_current == null)
+            //    {
+            //        _current = _trees[0].Root;
+            //    }
+            //    return _current;
+            //}
         }
 
         public IReadOnlyList<ConstraintTree> Trees
@@ -91,10 +91,10 @@ namespace dnWalker.Concolic.Traversal
         {
             if (_current == null) _current = _trees[0].Root;
 
-            Debug.Assert(decision >= 0 && decision < choicePaths.Length, "Decision must be greater than or equal to 0 and less than choiceTargets.Length.");
-            Debug.Assert(choicePaths.Length == choiceExpressions.Length, "choiceTargets must have same length as choiceExpressions.");
+            Debug.Assert(decision >= 0, "Decision must be greater than or equal to 0.");
+            // Debug.Assert(choicePaths.Length == choiceExpressions.Length, "choiceTargets must have same length as choiceExpressions.");
 
-            // we are making a decision from the current node => we can mark it covered
+            // we are making a decision from the current node => we can mark it covered ??
             _strategy.AddExploredNode(_current);
 
 
@@ -127,7 +127,7 @@ namespace dnWalker.Concolic.Traversal
             // set current node based on the decision
             else
             {
-                Debug.Assert(_current.Children.Count == choicePaths.Length);
+                Debug.Assert(_current.Children.Count == choiceExpressions.Length);
                 _current = _current.Children[decision];
             }
         }

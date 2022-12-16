@@ -22,6 +22,9 @@ namespace dnWalker.Symbolic
         {
             _inputModel = inputModel ?? throw new ArgumentNullException(nameof(inputModel));
             _outputModel = outputModel ?? throw new ArgumentNullException(nameof(outputModel));
+
+            _inputModel.ClearDirtyHeap();
+            _outputModel.ClearDirtyHeap();
         }
 
         public IModel InputModel => _inputModel;

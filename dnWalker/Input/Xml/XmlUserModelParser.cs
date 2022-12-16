@@ -135,7 +135,7 @@ namespace dnWalker.Input.Xml
 
                     Parameter thisParameter = method.Parameters[0];
 
-                    userModel.MethodArguments[thisParameter] = ParseUserDataFromValue(varXml, references);
+                    userModel.MethodArguments[thisParameter] = ParseUserDataFromValue(varXml, references, thisParameter.Type);
 
                     return true;
                 }
@@ -144,7 +144,7 @@ namespace dnWalker.Input.Xml
                     Parameter parameter = method.Parameters.FirstOrDefault(p => p.Name == varName);
                     if (parameter != null)
                     {
-                        userModel.MethodArguments[parameter] = ParseUserDataFromValue(varXml, references);
+                        userModel.MethodArguments[parameter] = ParseUserDataFromValue(varXml, references, parameter.Type);
                         return true;
                     }
                 }
@@ -175,14 +175,14 @@ namespace dnWalker.Input.Xml
         }
 
 
-        private UserData ParseUserData(XElement xml, IDictionary<string, UserData> references)
+        private UserData ParseUserData(XElement xml, IDictionary<string, UserData> references, TypeSig expectedType = null)
         {
             UserData userData = xml.Name.LocalName switch
             {
-                XmlTokens.Reference => ParseReference(xml, references),
-                XmlTokens.Object => ParseObject(xml, references),
-                XmlTokens.Array => ParseArray(xml, references),
-                XmlTokens.Literal => ParseLiteral(xml, references),
+                XmlTokens.Reference => ParseReference(xml, references, expectedType),
+                XmlTokens.Object => ParseObject(xml, references, expectedType),
+                XmlTokens.Array => ParseArray(xml, references, expectedType),
+                XmlTokens.Literal => ParseLiteral(xml, references, expectedType),
                 _ => null
             };
 
@@ -200,11 +200,11 @@ namespace dnWalker.Input.Xml
             throw new NotSupportedException($"Unsupported xml: {xml}");
         }
 
-        private UserData ParseUserDataFromValue(XElement xml, IDictionary<string, UserData> references)
+        private UserData ParseUserDataFromValue(XElement xml, IDictionary<string, UserData> references, TypeSig expectedType = null)
         {
             if (xml.HasElements)
             {
-                return ParseUserData(xml.Elements().First(), references);
+                return ParseUserData(xml.Elements().First(), references, expectedType);
             }
             else
             {
@@ -212,15 +212,14 @@ namespace dnWalker.Input.Xml
             }
         }
 
-        private UserReference ParseReference(XElement xml, IDictionary<string, UserData> references)
+        private UserReference ParseReference(XElement xml, IDictionary<string, UserData> references, TypeSig expectedType = null)
         {
             return new UserReference() { Reference = xml.Value.Trim() };
         }
 
-        private UserObject ParseObject(XElement xml, IDictionary<string, UserData> references)
+        private UserObject ParseObject(XElement xml, IDictionary<string, UserData> references, TypeSig expectedType = null)
         {
-            TypeSig type = GetType(xml, _definitionProvider);
-            Debug.Assert(type != null, "Object must have defined type.");
+            TypeSig type = GetType(xml, _definitionProvider) ?? expectedType ?? throw new InvalidOperationException("Object must have defined type.");
 
             UserObject uObject = new UserObject()
             {
@@ -233,7 +232,7 @@ namespace dnWalker.Input.Xml
             foreach(IGrouping<string, XElement> memberGroup in xml.Elements().GroupBy(mXml => mXml.Name.LocalName))
             {
                 string memberName = memberGroup.Key;
-                int nextInvocation = 0;
+                int nextInvocation = 1;
 
                 foreach (XElement memberXml in memberGroup)
                 {
@@ -252,7 +251,7 @@ namespace dnWalker.Input.Xml
                     FieldDef fd = td.FindField(memberName);
                     if (fd != null)
                     {
-                        uObject.Fields[fd] = ParseUserDataFromValue(memberXml, references);
+                        uObject.Fields[fd] = ParseUserDataFromValue(memberXml, references, fd.FieldType);
                         return true;
                     }
                     return false;
@@ -265,7 +264,7 @@ namespace dnWalker.Input.Xml
                     {
                         // ignore inner working && ignore setter
                         int invocation = GetAndUpdateCounter(ref nextInvocation, GetInvocation(memberXml));
-                        UserData memberValue = ParseUserDataFromValue(memberXml, references);
+                        UserData memberValue = ParseUserDataFromValue(memberXml, references, pd.PropertySig.RetType);
                         uObject.MethodResults[(pd.GetMethod, invocation)] = memberValue;
                         return true;
                     }
@@ -277,7 +276,7 @@ namespace dnWalker.Input.Xml
                     MethodDef md = td.FindMethod(memberName);
                     if (md != null)
                     {
-                        UserData memberValue = ParseUserDataFromValue(memberXml, references);
+                        UserData memberValue = ParseUserDataFromValue(memberXml, references, md.ReturnType);
 
                         int invocation = GetInvocation(memberXml);
                         if (invocation < 0)
@@ -306,11 +305,11 @@ namespace dnWalker.Input.Xml
         }
 
 
-        private UserArray ParseArray(XElement xml, IDictionary<string, UserData> references)
+        private UserArray ParseArray(XElement xml, IDictionary<string, UserData> references, TypeSig expectedType = null)
         {
             UserArray array = new UserArray()
             {
-                ElementType = GetElementType(xml, _definitionProvider),
+                ElementType = GetElementType(xml, _definitionProvider) ?? expectedType?.Next,
             };
 
             int nextIndex = 0;
@@ -318,7 +317,7 @@ namespace dnWalker.Input.Xml
             {
                 int index = GetAndUpdateCounter(ref nextIndex, GetIndex(elementXml));
 
-                UserData elementData = ParseUserData(elementXml, references);
+                UserData elementData = ParseUserData(elementXml, references, array.ElementType);
                 array.Elements[index] = elementData;
             }
 
@@ -332,7 +331,7 @@ namespace dnWalker.Input.Xml
             return array;
         }
 
-        private UserLiteral ParseLiteral(XElement xml, IDictionary<string, UserData> references)
+        private UserLiteral ParseLiteral(XElement xml, IDictionary<string, UserData> references, TypeSig expectedType = null)
         {
             TypeSig type = GetType(xml, _definitionProvider);
             return new UserLiteral() { Value = xml.Value.Trim(), Type = type };

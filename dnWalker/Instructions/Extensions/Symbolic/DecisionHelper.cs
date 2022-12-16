@@ -219,7 +219,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
             MakeDecision(cur, decision, choiceTargets, conditions);
         }
 
-        public static void MakeDecision(ExplicitActiveState cur, int decision, ControlFlowEdge[] choiceTargets, Expression[] choiceExpressions)
+        public static void MakeDecision(ExplicitActiveState cur, int decision, ControlFlowEdge[] choiceTargets, params Expression[] choiceExpressions)
         {
             cur.Services.GetService<ConstraintTreeExplorer>().MakeDecision(cur, decision, choiceTargets, choiceExpressions);
         }

@@ -112,7 +112,7 @@ namespace dnWalker.Z3
                     break;
 
                 case Operator.Subtract:
-                    _operands.Push(_z3.MkAdd((ArithExpr)left, (ArithExpr)right));
+                    _operands.Push(_z3.MkSub((ArithExpr)left, (ArithExpr)right));
                     break;
 
                 case Operator.Multiply:
@@ -217,6 +217,32 @@ namespace dnWalker.Z3
             }
 
             return stringOperation;
+        }
+
+        protected override Expression VisitGeneric(GenericExpression genericExpression)
+        {
+            return genericExpression.Operation switch
+            {
+                "pow" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkPower(ops[0], ops[1])),
+                "max" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkITE(z3.MkGt(ops[0], ops[1]), ops[0], ops[1])),
+                "min" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkITE(z3.MkLt(ops[0], ops[1]), ops[0], ops[1])),
+                "abs" => VisitMathFunction(genericExpression, (z3, ops) => z3.MkITE(z3.MkLt(ops[0], z3.MkInt(0)), z3.MkUnaryMinus(ops[0]), ops[0])),
+                _ => throw new UnsupportedExpressionException(genericExpression.ToString())
+            };
+        }
+
+        private Expression VisitMathFunction(GenericExpression expression, Func<Context, ArithExpr[], Expr> builder)
+        {
+            ArithExpr[] ops = new ArithExpr[expression.Operands.Count];
+            for (int i = 0; i < ops.Length; ++i)
+            {
+                Visit(expression.Operands[i]);
+                ops[i] = (ArithExpr)_operands.Pop();
+            }
+
+            _operands.Push(builder(_z3, ops));
+
+            return expression;
         }
     }
 }

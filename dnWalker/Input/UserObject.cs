@@ -80,7 +80,7 @@ namespace dnWalker.Input
             {
                 foreach (ConditionalResult r in beh.Results)
                 {
-                    objectNode.SetConditionalMethodResult(md, r.Condition, r.Result.Build(model, md.ReturnType, references));
+                    objectNode.SetConstrainedMethodResult(md, r.Condition, r.Result.Build(model, md.ReturnType, references));
                 }
             }
 

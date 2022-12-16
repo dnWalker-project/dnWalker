@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Schemas.ChangedArray
 {
-    internal class ChangedArraySchemaProvider : ITestSchemaProvider
+    public class ChangedArraySchemaProvider : ITestSchemaProvider
     {
         public IEnumerable<ITestSchema> GetSchemas(ConcolicExplorationIteration iteration)
         {
@@ -20,17 +20,35 @@ namespace dnWalker.TestWriter.Generators.Schemas.ChangedArray
             }
 
             List<ChangedArraySchema> changes = new List<ChangedArraySchema>();
-            foreach (IReadOnlyArrayHeapNode changedArray in GetChangedArrays(iteration.InputModel, iteration.OutputModel))
+            foreach (Location changedLocation in GetChangedArrays(iteration.InputModel, iteration.OutputModel))
             {
-                changes.Add(new ChangedArraySchema(changedArray.Location, new TestContext(iteration)));
+                changes.Add(new ChangedArraySchema(changedLocation, new TestContext(iteration)));
             }
             return changes;
         }
 
 
-        private static IEnumerable<IReadOnlyArrayHeapNode> GetChangedArrays(IReadOnlyModel inputModel, IReadOnlyModel outputModel)
+        private static IEnumerable<Location> GetChangedArrays(IReadOnlyModel inputModel, IReadOnlyModel outputModel)
         {
-            return outputModel.HeapInfo.Nodes.OfType<IReadOnlyArrayHeapNode>().Where(static n => n.IsDirty);
+            //return outputModel.HeapInfo.Nodes.OfType<IReadOnlyArrayHeapNode>().Where(static n => n.IsDirty);
+            List<Location> changedArrays = new List<Location>();
+            foreach (IReadOnlyArrayHeapNode inArr in inputModel.HeapInfo.Nodes.OfType<IReadOnlyArrayHeapNode>())
+            {
+                IReadOnlyArrayHeapNode outArr = (IReadOnlyArrayHeapNode) outputModel.HeapInfo.GetNode(inArr.Location);
+
+                foreach (int index in outArr.Indeces)
+                {
+                    IValue inElem = inArr.GetElementOrDefault(index);
+                    IValue outElem = outArr.GetElementOrDefault(index);
+
+                    if (!outElem.Equals(inElem))
+                    {
+                        changedArrays.Add(outArr.Location);
+                        break;
+                    }
+                }
+            }
+            return changedArrays;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Assert
 {
-    internal class SimpleAssertPrimitives : IAssertPrimitives
+    public class SimpleAssertPrimitives : IAssertPrimitives
     {
         public bool TryWriteAssertNull(ITestContext context, IWriter output, string symbol)
         {
@@ -119,6 +119,14 @@ namespace dnWalker.TestWriter.Generators.Assert
         public bool TryWriteAssertNotEquivalent(ITestContext context, IWriter output, string objectSymbol, string expetedSymbol)
         {
             return false;
+        }
+
+        public IEnumerable<string> Namespaces
+        {
+            get
+            {
+                return Array.Empty<string>();
+            }
         }
     }
 }

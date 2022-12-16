@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace dnWalker.TestWriter.TestWriters
 {
-    internal class CsProjWriter : IDisposable
+    public class CsProjWriter : IDisposable
     {
         private static readonly XmlWriterSettings _settings = new XmlWriterSettings()
         {

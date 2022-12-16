@@ -1,0 +1,56 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #><#
+
+    string[] mathTypes = new string[]
+    {
+        "byte",
+        "ushort",
+        "uint",
+        "ulong",
+        "sbyte",
+        "short",
+        "int",
+        "long",
+        "float",
+        "double",
+    };
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Symbolic.Expressions.Utils
+{
+    public partial class ExpressionEvaluator
+    {
+        private static class Constants
+        {
+
+            public static IValue HandleConstant(Object? v)
+            {
+                switch (v)
+                {
+<#
+        foreach (string t in mathTypes)
+        {
+#>
+                    case <#= t #> c:
+                        return ValueFactory.GetValue(c);
+                
+<#
+        }
+#>
+                    case null:
+                        return Location.Null;
+                }
+                throw new NotSupportedException();
+            }
+        }
+    }
+}

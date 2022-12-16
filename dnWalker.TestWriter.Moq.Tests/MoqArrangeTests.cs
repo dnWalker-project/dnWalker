@@ -1,5 +1,7 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
+using dnWalker.Symbolic.Variables;
 using dnWalker.TestUtils;
 using dnWalker.TestWriter.Generators;
 
@@ -29,6 +31,7 @@ namespace dnWalker.TestWriter.Moq.Tests
         {
             public abstract int MethodNoArgs();
             public abstract int MethodWithArgs(int a, string other, IDictionary<int, string> dict);
+            public abstract int AnotherMethodWithArgs(int a, int b, int c);
             public abstract int GenericMethodWithGenericArgs<T>(T a);
 
             public virtual int VirtualMethod() => -5;
@@ -41,7 +44,7 @@ namespace dnWalker.TestWriter.Moq.Tests
         }
 
         private ITestContext GetTestContext(TypeSig type)
-        {
+        { 
             Mock<ITestContext> ctxMock = new Mock<ITestContext>();
             ctxMock.Setup(o => o.SymbolMapping)
                 .Returns(new Dictionary<string, SymbolContext>()
@@ -71,7 +74,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "-123").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -93,7 +96,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "0", "1", "2", "3").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -112,7 +115,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "-123").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -134,7 +137,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "0", "1", "2", "3").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -153,7 +156,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "-123").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -175,7 +178,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "0", "1", "2", "3").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -195,7 +198,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "-123").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -218,7 +221,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "0", "1", "2", "3").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -230,7 +233,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "-123").Should().BeFalse();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeFalse();
             writer.ToString().Should().BeEmpty();
         }
 
@@ -242,7 +245,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "0", "1", "2", "3").Should().BeFalse();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeFalse();
             writer.ToString().Should().BeEmpty();
         }
 
@@ -261,7 +264,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "-123").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -283,7 +286,7 @@ namespace dnWalker.TestWriter.Moq.Tests
             MoqArrange moq = new MoqArrange();
 
             Writer writer = new Writer();
-            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, "0", "1", "2", "3").Should().BeTrue();
+            moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
 
@@ -362,6 +365,61 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeCreateInstance(testContext, writer, "obj").Should().BeTrue();
+            writer.ToString().Trim().Should().Be(Expected);
+        }
+
+        [Fact]
+        public void TestArrangeConstrainedMethod()
+        {
+            const string Expected =
+            """
+            obj_mock
+                .Setup(o => o.AnotherMethodWithArgs(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns<int, int, int>((a, b, c) =>
+                {
+                    if (((a < b) && (c == 5)))
+                    {
+                        return 123;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                });
+            """;
+
+            TypeDef type = GetType(typeof(AbstractTestClass));
+            IMethod method = GetMethod(typeof(AbstractTestClass), nameof(AbstractTestClass.AnotherMethodWithArgs));
+            ITestContext testContext = GetTestContext(type.ToTypeSig());
+
+            MoqArrange moq = new MoqArrange();
+
+            ExpressionFactory ef = new CustomModuleExpressionFactory(DefinitionProvider.Context.MainModule);
+
+            TypeSig tInt = DefinitionProvider.BaseTypes.Int32;
+
+            Expression constraint = ef.MakeAnd
+                (
+                    ef.MakeLessThan
+                    (
+                        ef.MakeVariable(new NamedVariable(tInt, "a")),
+                        ef.MakeVariable(new NamedVariable(tInt, "b"))
+                    ),
+                    ef.MakeEqual
+                    (
+                        ef.MakeVariable(new NamedVariable(tInt, "c")),
+                        ef.MakeIntegerConstant(5)
+                    )
+                );
+
+
+            KeyValuePair<Expression, string>[] constrainedLiterals = new[]
+            {
+                KeyValuePair.Create(constraint , "123")
+            };
+
+            Writer writer = new Writer();
+            moq.TryWriteArrangeInitializeConstrainedMethod(testContext, writer, "obj", method, constrainedLiterals, "0").Should().BeTrue();
             writer.ToString().Trim().Should().Be(Expected);
         }
     }

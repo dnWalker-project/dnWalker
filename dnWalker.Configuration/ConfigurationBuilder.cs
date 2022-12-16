@@ -9,19 +9,19 @@ namespace dnWalker.Configuration
 {
     public class ConfigurationBuilder : IConfigurationBuilder
     {
-        private readonly List<IConfigurationProvider> _providers = new List<IConfigurationProvider>();
+        private readonly Stack<IConfigurationProvider> _providers = new Stack<IConfigurationProvider>();
         private readonly InMemoryConfigurationProvider _inMemoryProvider;
 
         public ConfigurationBuilder()
         {
             _inMemoryProvider = new InMemoryConfigurationProvider();
-            _providers.Add(_inMemoryProvider);
+            _providers.Push(_inMemoryProvider);
         }
 
         public ConfigurationBuilder(IEnumerable<KeyValuePair<string, object>> values)
         {
             _inMemoryProvider = new InMemoryConfigurationProvider(values);
-            _providers.Add(_inMemoryProvider);
+            _providers.Push(_inMemoryProvider);
         }
         
 
@@ -37,7 +37,7 @@ namespace dnWalker.Configuration
 
         public void AddProvider(IConfigurationProvider provider)
         {
-            _providers.Add(provider);
+            _providers.Push(provider);
         }
 
         public bool TryGetValue(string key, Type type, [NotNullWhen(true)]out object? value)

@@ -49,6 +49,8 @@ namespace dnWalker.TestWriter.Generators.Schemas.ChangedObject
             {
                 TypeSig fieldType = field.FieldSig.Type;
 
+                // !!!! what if the field is private??? - the selector could be different...
+                // - based on the IArrangePrimitive - WriteArrangeSelect(instanceSymbol, field) - private object may do it nicely...
                 string selector = $"{baseName}.{field.Name}";
 
                 if (fieldType.IsString())

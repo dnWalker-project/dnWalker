@@ -13,6 +13,7 @@ namespace dnWalker.Explorations.Xml
         public const string AssemblyFileName = nameof(AssemblyFileName);
         public const string MethodSignature = nameof(MethodSignature);
         public const string Solver = nameof(Solver);
+        public const string Strategy = nameof(Strategy);
         public const string Start = nameof(Start);
         public const string End = nameof(End);
 

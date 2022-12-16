@@ -72,7 +72,7 @@ namespace dnWalker.Z3
                             break;
 
                         case ConditionalMethodResultVariable condMethodResult:
-                            ((IObjectHeapNode)parentNode).SetConditionalMethodResult(condMethodResult.Method, condMethodResult.Condition, value);
+                            ((IObjectHeapNode)parentNode).SetConstrainedMethodResult(condMethodResult.Method, condMethodResult.Condition, value);
                             break;
                     }
                 }

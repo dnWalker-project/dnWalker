@@ -17,11 +17,11 @@ namespace dnWalker.Explorations
             public IReadOnlyModel? OutputModel { get; set; }
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
-            public string? PathConstraint { get; set; }
+            public string? PathConstraint { get; set; } = string.Empty;
             public TypeSig? Exception { get; set; }
-            public string? StandardOutput { get; set; }
-            public string? ErrorOutput { get; set; }
-
+            public string? StandardOutput { get; set; } = string.Empty;
+            public string? ErrorOutput { get; set; } = string.Empty;
+                
             public ConcolicExplorationIteration Build()
             {
                 if (Exploration == null) throw new NullReferenceException("The Exploration is NULL");

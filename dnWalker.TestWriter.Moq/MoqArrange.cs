@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 
+using dnWalker.Symbolic.Expressions;
 using dnWalker.TestWriter.Generators;
 using dnWalker.TestWriter.Generators.Arrange;
 using dnWalker.TestWriter.Utils;
@@ -74,16 +75,58 @@ namespace dnWalker.TestWriter.Moq
 
             }
             throw new InvalidOperationException("Method should be method def or method spec.");
-
-            static string GetTypeName(GenericInstMethodSig ms, TypeSig typeSig) 
-            {
-                if (typeSig.IsGenericMethodParameter) 
-                {
-                    typeSig = ms.GenericArguments[(int)typeSig.ToGenericMVar().Number];
-                }
-                return typeSig.GetNameOrAlias();
-            }
         }
+
+        static string GetTypeName(GenericInstMethodSig ms, TypeSig typeSig)
+        {
+            if (typeSig.IsGenericMethodParameter)
+            {
+                typeSig = ms.GenericArguments[(int)typeSig.ToGenericMVar().Number];
+            }
+            return typeSig.GetNameOrAlias();
+        }
+
+        private static string GetReturnsExpression(IMethod method)
+        {
+            MethodDef md = method.ResolveMethodDefThrow();
+
+            if (method is MethodSpec ms)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(string.Join(", ", md.Parameters
+                    .Where(p => !p.IsHiddenThisParameter && !p.IsReturnTypeParameter)
+                    .Select(p => $"{GetTypeName(ms.GenericInstMethodSig, p.Type)}")));
+                sb.Append(">((");
+
+                sb.Append(string.Join(", ", md.Parameters
+                    .Where(p => !p.IsHiddenThisParameter && !p.IsReturnTypeParameter)
+                    .Select(p => p.Name)));
+
+                sb.Append(") =>");
+
+                return sb.ToString();
+            }
+            else //if (method is MethodDef md)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(string.Join(", ", md.Parameters
+                    .Where(p => !p.IsHiddenThisParameter && !p.IsReturnTypeParameter)
+                    .Select(p => $"{p.Type.GetNameOrAlias()}")));
+                sb.Append(">((");
+
+                sb.Append(string.Join(", ", md.Parameters
+                    .Where(p => !p.IsHiddenThisParameter && !p.IsReturnTypeParameter)
+                    .Select(p => p.Name)));
+
+                sb.Append(") =>");
+
+                return sb.ToString();
+            }
+
+
+            throw new InvalidOperationException("Method should be method def or method spec.");
+        }
+
 
         public bool TryWriteArrangeCreateInstance(ITestContext testContext, IWriter output, string symbol)
         {
@@ -106,14 +149,27 @@ namespace dnWalker.TestWriter.Moq
 
             return false;
         }
-        public bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, params string[] literals)
+
+        private static string HandleNull(TypeSig returnType, string literal)
+        {
+            if (literal == "null")
+            {
+                return $"({returnType.GetNameOrAlias()})null";
+            }
+            else
+            {
+                return literal;
+            }
+        }
+
+        public bool TryWriteArrangeInitializeMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<string> literals)
         {
             if (CanArrange(method)) 
             {
                 string mockSymbol = GetMockSymbol(symbol);
                 string invokeExpression = GetInvokeExpression(method);
 
-                if (literals.Length == 1)
+                if (literals.Count == 1)
                 {
                     // mock
                     //     .Setup(o => o.Foo(It.IsAny<Arg>()...)
@@ -125,11 +181,11 @@ namespace dnWalker.TestWriter.Moq
                     output.Indent++;
 
                     output.WriteLine($".Setup({invokeExpression})");
-                    output.WriteLine($".Returns({literals[0]});");
+                    output.WriteLine($".Returns({HandleNull(method.MethodSig.RetType, literals[0])});");
 
                     output.Indent--;
                 }
-                else if (literals.Length > 1)
+                else if (literals.Count > 1)
                 {
                     // mock
                     //     .SetupSequence(o => o.Foo(It.IsAny<Arg>()...)
@@ -147,7 +203,7 @@ namespace dnWalker.TestWriter.Moq
                     foreach (string literal in literals ) 
                     {
                         output.WriteLine(string.Empty);
-                        output.Write($".Returns({literal})");
+                        output.Write($".Returns({HandleNull(method.MethodSig.RetType, literal)})");
                     }
 
                     output.WriteLine(";");
@@ -157,6 +213,54 @@ namespace dnWalker.TestWriter.Moq
 
                 return true;
             }
+            return false;
+        }
+
+        public bool TryWriteArrangeInitializeConstrainedMethod(ITestContext testContext, IWriter output, string symbol, IMethod method, IReadOnlyList<KeyValuePair<Expression, string>> constrainedLiterals, string fallbackLiteral)
+        {
+            // mock.Setup(o => o.Foo(It.IsAny<T1>() ... ))
+            //     .Returns<T1, ...>((a1, ... ) =>
+            //     {
+            //         if (pred_1) return ...;
+            //         else if (pred_2) return ...;
+            //         ...
+            //         else return 0;
+            //     });
+
+            if (CanArrange(method))
+            {
+                string mockSymbol = GetMockSymbol(symbol);
+                string invokeExpression = GetInvokeExpression(method);
+
+                output.WriteLine($"{mockSymbol}");
+                output.Indent++;
+                output.WriteLine($".Setup({invokeExpression})");
+                output.WriteLine($".Returns<{GetReturnsExpression(method)}"); // .Returns<T1...>((arg1,... arg2) => 
+                output.WriteLine("{");
+                output.Indent++;
+                foreach((Expression e, string literal) in constrainedLiterals) 
+                {
+                    string predicate = CSharpExpressionWriter.GetCSharpExpression(e);
+                    output.WriteLine($"if ({predicate})");
+                    output.WriteLine("{");
+                    output.Indent++;
+                    output.WriteLine($"return {literal};");
+                    output.Indent--;
+                    output.WriteLine("}");
+                }
+                output.WriteLine("else");
+                output.WriteLine("{");
+                output.Indent++;
+                output.WriteLine($"return {fallbackLiteral};");
+                output.Indent--;
+                output.WriteLine("}");
+                output.Indent--;
+                output.WriteLine("});");
+                output.Indent--;
+
+                return true;
+            }
+
             return false;
         }
 
@@ -171,7 +275,7 @@ namespace dnWalker.TestWriter.Moq
         }
 
 
-        public bool TryWriteArrangeInitializeStaticMethod(ITestContext testContext, IWriter output, IMethod method, params string[] literals)
+        public bool TryWriteArrangeInitializeStaticMethod(ITestContext testContext, IWriter output, IMethod method, IReadOnlyList<string> literals)
         {
             return false;
         }
@@ -180,5 +284,9 @@ namespace dnWalker.TestWriter.Moq
         {
             return false;
         }
+
+        private static readonly string[] _ns = new[] { "Moq" };
+
+        public IEnumerable<string> Namespaces => _ns;
     }
 }

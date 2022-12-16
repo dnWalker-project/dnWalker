@@ -100,7 +100,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -132,7 +132,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -164,7 +164,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -200,7 +200,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -246,7 +246,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -288,7 +288,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 
@@ -330,7 +330,7 @@ namespace dnWalker.Symbolic.Tests.Heap.Graphs
 
             HeapInfo heap = new HeapInfo();
 
-            TypeDef testClassTD = mainModule.Find("dnWalker.TestGenerator.Tests.Heap.HeapGraphTests/TestClass", false);
+            TypeDef testClassTD = mainModule.Find("dnWalker.Symbolic.Tests.Heap.Graphs.HeapGraphTests/TestClass", false);
             TypeSig testClassSig = testClassTD
                 .ToTypeSig();
 

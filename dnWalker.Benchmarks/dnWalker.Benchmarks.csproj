@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+        <PackageReference Include="ConsoleTables" Version="2.4.2" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dnWalker.TestWriter.Moq\dnWalker.TestWriter.Moq.csproj" />
+    <ProjectReference Include="..\dnWalker.TestWriter.Xunit\dnWalker.TestWriter.Xunit.csproj" />
+    <ProjectReference Include="..\dnWalker.TestWriter\dnWalker.TestWriter.csproj" />
+    <ProjectReference Include="..\dnWalker\dnWalker.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -89,7 +89,7 @@ namespace dnWalker.Symbolic
                 }
                 else if (variable is ConditionalMethodResultVariable cmr)
                 {
-                    if (((IReadOnlyObjectHeapNode)parentNode).TryGetConstraintedMethodResult(cmr.Method, cmr.Condition, out value))
+                    if (((IReadOnlyObjectHeapNode)parentNode).TryGetConstrainedMethodResult(cmr.Method, cmr.Condition, out value))
                     {
                         return true;
                     }
@@ -144,7 +144,7 @@ namespace dnWalker.Symbolic
                 }
                 else if (variable is ConditionalMethodResultVariable cmrv)
                 {
-                    ((IObjectHeapNode)parentNode).SetConditionalMethodResult(cmrv.Method, cmrv.Condition, value);
+                    ((IObjectHeapNode)parentNode).SetConstrainedMethodResult(cmrv.Method, cmrv.Condition, value);
                     return true;
                 }
             }
@@ -162,6 +162,14 @@ namespace dnWalker.Symbolic
         public static bool TryGetReturnValue(this IReadOnlyModel self, dnlib.DotNet.IMethod method, [NotNullWhen(true)]out IValue? value)
         {
             return self.TryGetValue(new ReturnValueVariable(method), out value);
+        }
+
+        public static void ClearDirtyHeap(this IModel self)
+        {
+            foreach (IHeapNode node in self.HeapInfo.Nodes)
+            {
+                node.SetDirty(false);
+            }
         }
     }
 }

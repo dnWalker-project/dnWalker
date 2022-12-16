@@ -2,6 +2,7 @@
 using dnlib.DotNet.MD;
 
 using dnWalker.Concolic.Traversal;
+using dnWalker.Instructions.Extensions.Symbolic;
 using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Expressions.Utils;
 using dnWalker.Symbolic.Heap;
@@ -85,19 +86,26 @@ namespace dnWalker.Symbolic
 
                 Constraint currentConstraint = cur.Services.GetService<ConstraintTreeExplorer>().Current.GetPrecondition();
 
-                foreach (Expression condition in _conditions) 
-                {
-                    Expression substituted = VariableSubstitutor.Substitute(condition, substition);
-                    Constraint selectTheCondition = currentConstraint.Clone();
-                    selectTheCondition.AddExpressionConstraint(substituted);
+                Expression[] substituted = new Expression[_conditions.Length];
 
-                    if (solver.Solve(selectTheCondition) != null) 
+                for (int i = 0; i < substituted.Length; ++i)
+                {
+                    substituted[i] = VariableSubstitutor.Substitute(_conditions[i], substition);
+                }
+
+                for (int i = 0; i < substituted.Length; ++i)
+                {
+                    if (((PrimitiveValue<bool>)ExpressionEvaluator.Evaluate(substituted[i], ctx.OutputModel)).Value)
                     {
-                        return ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, condition), cur);
+                        IDataElement result = ctx.LazyInitialize(new ConditionalMethodResultVariable(_instanceVariable, _method, _conditions[i]), cur);
+
+                        DecisionHelper.MakeDecision(cur, i, null, substituted);
+
+                        return result;
                     }
                 }
 
-                return DataElement.GetNullValue(returnType);
+                throw new InvalidOperationException("The provided conditional method behavior is not complete.");
             }
         }
         private class InvocationBasedMethodFaker : IMethodFaker
@@ -185,7 +193,7 @@ namespace dnWalker.Symbolic
 
             IReadOnlyObjectHeapNode objNode = (IReadOnlyObjectHeapNode)n;
 
-            if (objNode.TryGetConstraintedMethodResults(method, out IEnumerable<KeyValuePair<Expression, IValue>> results))
+            if (objNode.TryGetConstrainedMethodResults(method, out IEnumerable<KeyValuePair<Expression, IValue>> results))
             {
                 return new ConstraintedMethodFaker(method, location, instanceVariable, results.Select(cr => cr.Key));
             }

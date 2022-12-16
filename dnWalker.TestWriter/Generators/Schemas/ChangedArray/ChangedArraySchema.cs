@@ -108,7 +108,7 @@ namespace dnWalker.TestWriter.Generators.Schemas.ChangedArray
                         testTemplate.WriteAssertNotNull(context, output, selector);
 
 
-                        IReadOnlyArrayHeapNode currentObject = (IReadOnlyArrayHeapNode)outputModel.HeapInfo.GetNode(currentLoc);
+                        IReadOnlyHeapNode currentObject = (IReadOnlyHeapNode)outputModel.HeapInfo.GetNode(currentLoc);
                         if (inputModel.HeapInfo.TryGetNode(currentLoc, out _))
                         {
                             testTemplate.WriteAssertSame(context, output, selector, context.GetLiteral(currentLoc)!);

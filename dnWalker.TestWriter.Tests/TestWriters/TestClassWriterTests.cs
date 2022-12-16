@@ -3,10 +3,15 @@ using dnWalker.TestWriter.TestWriters;
 
 using FluentAssertions;
 
+using Xunit.Abstractions;
+
 namespace dnWalker.TestWriter.Tests.TestWriters
 {
-    public class TestClassWriterTests
+    public class TestClassWriterTests : TestWriterTestBase
     {
+        public TestClassWriterTests(ITestOutputHelper textOutput) : base(textOutput)
+        {
+        }
 
         [Fact]
         public void WriteUsingsOnly()

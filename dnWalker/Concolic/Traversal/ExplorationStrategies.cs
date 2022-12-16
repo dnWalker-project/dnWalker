@@ -97,7 +97,7 @@ namespace dnWalker.Concolic.Traversal
     public class AllEdgesCoverage : ExplorationStrategyBase
     {
         private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
-        private readonly Dictionary<(ControlFlowNode src, ControlFlowNode trg), bool> _coverage = new Dictionary<(ControlFlowNode src, ControlFlowNode trg), bool>();
+        private readonly Dictionary<ControlFlowEdge, bool> _coverage = new Dictionary<ControlFlowEdge, bool>();
 
         public override void AddExploredNode(ConstraintNode node)
         {
@@ -144,38 +144,34 @@ namespace dnWalker.Concolic.Traversal
         private void SetEdgeCovered(ConstraintNode node)
         {
 
-            if (node.IsRoot) return;
-
-            ControlFlowNode src = node.Parent.Location;
-            ControlFlowNode trg = node.Location;
+            if (node.Edge == null) return;
 
             // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
-            _coverage[(src, trg)] = true;
+            _coverage[node.Edge] = true;
         }
 
         private bool GetEdgeCovered(ConstraintNode node)
         {
-            if (node.IsRoot)
+            if (node.Edge == null)
             {
                 // by default the root node is not covered this way, as it would disqualify it from the exploration
                 return false;
             }
 
-            ControlFlowNode src = node.Parent.Location;
-            ControlFlowNode trg = node.Location;
-
             // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
-            return _coverage.TryGetValue((src, trg), out bool covered) && covered;
+            return _coverage.TryGetValue(node.Edge, out bool covered) && covered;
         }
     }
 
     public class AllNodesCoverage : ExplorationStrategyBase
     {
         private readonly Stack<ConstraintNode> _frontier = new Stack<ConstraintNode>();
+        private readonly Dictionary<ControlFlowNode, bool> _coverage = new Dictionary<ControlFlowNode, bool>();
 
         public override void AddExploredNode(ConstraintNode node)
         {
             base.AddExploredNode(node);
+            SetNodeCovered(node);
         }
 
         public override void AddDiscoveredNode(ConstraintNode node)
@@ -194,11 +190,7 @@ namespace dnWalker.Concolic.Traversal
             {
                 if (node.IsExplored) continue;
 
-                if (node.Location.IsCovered)
-                {
-                    // use the global CFG tracing done by the MMC
-                    continue;
-                }
+                if (GetNodeCovered(node)) continue;
 
                 inputModel = solver.Solve(node.GetPrecondition());
                 if (inputModel != null)
@@ -217,5 +209,25 @@ namespace dnWalker.Concolic.Traversal
             return false;
         }
 
+        private void SetNodeCovered(ConstraintNode node)
+        {
+
+            if (node.Edge == null) return;
+
+            // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
+            _coverage[node.Edge.Target] = true;
+        }
+
+        private bool GetNodeCovered(ConstraintNode node)
+        {
+            if (node.Edge == null)
+            {
+                // by default the root node is not covered this way, as it would disqualify it from the exploration
+                return false;
+            }
+
+            // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
+            return _coverage.TryGetValue(node.Edge.Target, out bool covered) && covered;
+        }
     }
 }

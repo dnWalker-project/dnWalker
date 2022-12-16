@@ -147,6 +147,11 @@ namespace dnWalker.TestWriter.Generators.Schemas.ReturnValue
                         // input argument, assert same as
                         testTemplate.WriteAssertSame(context, output, selectorLiteral, fldSymbol.Literal);
                     }
+                    else if (fldLoc == Location.Null)
+                    {
+                        // assert null
+                        testTemplate.WriteAssertNull(context, output, selectorLiteral);
+                    }
                     else
                     {
                         // fresh value, we could arrange entire heap graph and do equivalence check - way too complex...

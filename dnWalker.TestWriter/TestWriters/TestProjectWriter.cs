@@ -26,13 +26,8 @@ namespace dnWalker.TestWriter.TestWriters
             _classWriterProvider = classWriterProvider ?? throw new ArgumentNullException(nameof(classWriterProvider));
         }
 
-        public void Write(TestProject testProject)
+        public void WriteTestClasses(TestProject testProject)
         {
-
-            Directory.CreateDirectory(_directory);
-
-            // write the project file
-            WriteProjectFile(testProject);
 
             // foreach each group create its subdirectory & write its test classes
             foreach ((string path, TestGroup group) in testProject.TestGroups)
@@ -70,8 +65,10 @@ namespace dnWalker.TestWriter.TestWriters
             return $"{name}.cs";
         }
 
-        private void WriteProjectFile(TestProject testProject)
+        public void WriteTestProject(TestProject testProject)
         {
+            Directory.CreateDirectory(_directory);
+
             string projectFileLocation = Path.Combine(_directory, $"{testProject.Name}.csproj");
             using (TextWriter output = new StreamWriter(projectFileLocation))
             using (CsProjWriter writer = new CsProjWriter(output))

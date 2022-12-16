@@ -2,6 +2,7 @@
 using dnlib.DotNet.Writer;
 
 using dnWalker.Symbolic;
+using dnWalker.Symbolic.Expressions;
 using dnWalker.Symbolic.Heap;
 using dnWalker.Symbolic.Heap.Graphs;
 using dnWalker.Symbolic.Variables;
@@ -55,6 +56,12 @@ namespace dnWalker.TestWriter.Generators.Arrange
             }
         }
 
+        private string TypeNameOrAliasToVarName(string nameOrAlias)
+        {
+            return nameOrAlias.Replace('.', '_')
+                .FirstCharToLower();
+        }
+
         private void SetupSymbolContext(IReadOnlyList<DependencyGroup> groups)
         {
             Dictionary<TypeSig, int> classCounters = new Dictionary<TypeSig, int>(TypeEqualityComparer.Instance);
@@ -70,19 +77,17 @@ namespace dnWalker.TestWriter.Generators.Arrange
 
             string GetSymbol(IReadOnlyHeapNode node)
             {
-                if (node is IReadOnlyHeapNode objNode)
+                if (node is IReadOnlyObjectHeapNode objNode)
                 {
                     TypeSig type = objNode.Type;
                     int cnt = IncreaseCounter(type, classCounters);
-                    return $"{type.GetNameOrAlias()}{cnt}"
-                        .Replace('.', '_')
-                        .FirstCharToLower();
+                    return $"{TypeNameOrAliasToVarName(type.GetNameOrAlias())}{cnt}";
                 }
                 else if (node is IReadOnlyArrayHeapNode arrNode)
                 {
                     TypeSig elementType = arrNode.ElementType;
                     int cnt = IncreaseCounter(elementType, arrayCounters);
-                    return $"{elementType.GetNameOrAlias()}Arr{cnt}";
+                    return $"{TypeNameOrAliasToVarName(elementType.GetNameOrAlias())}Arr{cnt}";
                 }
 
                 throw new NotSupportedException("Unexpected heap node type.");
@@ -145,6 +150,31 @@ namespace dnWalker.TestWriter.Generators.Arrange
                             }
 
                             _template.WriteArrangeInitializeMethod(_context, _output, symbol, method, literals);
+                        }
+                    }
+                    else if (objNode.HasMethodConstraints)
+                    {
+                        foreach (IMethod constrainedMethod in objNode.MethodConstraints
+                            .Select(t => t.method)
+                            .Distinct(MethodEqualityComparer.CompareDeclaringTypes)) 
+                        {
+                            if (objNode.TryGetConstrainedMethodResults(constrainedMethod, out IEnumerable<KeyValuePair<Expression, IValue>>? behaviors))
+                            {
+                                string defaultLiteral = _context.GetDefaultLiteral(constrainedMethod.MethodSig.RetType);
+
+                                List<KeyValuePair<Expression, string>> constrainedLiterals = behaviors
+                                    .Select(p => KeyValuePair.Create(p.Key, _context.GetLiteral(p.Value) ?? defaultLiteral))
+                                    .ToList();
+
+                                //// TODO: nicer detection of TRUE constraint
+                                //if (!constrainedLiterals.Any(p => p.Key is ConstantExpression c && c.Value?.Equals(true) == true))
+                                //{
+                                //    constrainedLiterals.Add(KeyValuePair.Create(Expression.MakeConstant(constrainedMethod.Module.CorLibTypes.Boolean, true), defaultLiteral));
+                                //}
+
+
+                                _template.WriteArrangeConstrainedInitializeMethod(_context, _output, symbol, constrainedMethod, constrainedLiterals, defaultLiteral);
+                            }
                         }
                     }
                 }

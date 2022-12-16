@@ -38,9 +38,9 @@ namespace dnWalker.Symbolic.Heap
 
         public TypeSig Type { get; }
 
-        protected virtual void SetDirty()
+        public virtual void SetDirty(bool value = true)
         {
-            _isDirty = true;
+            _isDirty = value;
         }
 
         public bool IsDirty => _isDirty;

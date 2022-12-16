@@ -11,7 +11,7 @@ namespace dnWalker.TestWriter.Generators.Act
     /// <summary>
     /// Writes the act part of the unit test.
     /// </summary>
-    public interface IActPrimitives
+    public interface IActPrimitives : IPrimitives
     {
         bool TryWriteAct(ITestContext context, IWriter output, string? returnSymbol = null);
         bool TryWriteActDelegate(ITestContext context, IWriter output, string? returnSymbol = null, string delegateSymbol = "act");

@@ -1534,13 +1534,14 @@ namespace dnWalker.Instructions
 
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
-            IReferenceType arrayRef = (IReferenceType)cur.EvalStack.Pop();
-            AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
-
-            if (theArray == null)
+            ObjectReference arrayRef = (ObjectReference)cur.EvalStack.Pop();
+            if (arrayRef.IsNull())
             {
                 return ThrowException(new NullReferenceException(), cur);
             }
+
+            AllocatedArray theArray = (AllocatedArray)cur.DynamicArea.Allocations[arrayRef];
+
 
             var length = new UnsignedInt4((uint)theArray.Fields.Length);
 
@@ -1745,7 +1746,12 @@ namespace dnWalker.Instructions
             switch (refVal)
             {
                 case ObjectReference or:
+
+                    // TODO: is this valid??
+                    if (or.IsNull()) return MemoryLocation.Null;
+
                     AllocatedObject ao = cur.DynamicArea.Allocations[or] as AllocatedObject;
+
                     int offset = GetFieldOffset(ao.Type);
                     return new MemoryLocation(offset, or, cur);
             }

@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet;
+﻿
+using dnlib.DotNet;
 
 using dnWalker.Concolic.Traversal;
 using dnWalker.Configuration;
@@ -13,6 +14,7 @@ using dnWalker.TypeSystem;
 using MMC;
 using MMC.InstructionExec;
 using MMC.State;
+using MMC.Util;
 
 using System;
 using System.Collections.Generic;
@@ -31,24 +33,24 @@ namespace dnWalker.Concolic
         public ConcolicExplorer(IDefinitionProvider definitionProvider, IConfiguration config, Logger logger, ISolver solver) : base(definitionProvider, config, logger, solver)
         {
         }
-        
-        protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IEnumerable<UserModel> userModels = null)
+
+
+        protected override ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IExplorationStrategy strategy, IEnumerable<Constraint> constraints = null)
         {
             DateTime explorationStart = DateTime.Now;
 
             IConfiguration configuration = Configuration;
 
-            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, configuration.CreateStrategy(), userModels?.Select(userModel => userModel.Build()) ?? Array.Empty<IModel>());
+            ConstraintTreeExplorer constraintTrees = cur.InitializeConcolicExploration(entryPoint, strategy, constraints ?? Array.Empty<Constraint>());
 
-            // TODO: make it as a explorer extension...
-            if (!ControlFlowGraphWriter.TryWrite(ControlFlowGraph.Build(entryPoint), "cfg.dot")) Logger.Warning("CFG writer failed.");
 
             List<ExplorationIterationResult> iterationResults = new List<ExplorationIterationResult>();
             int currentIteration = 0;
             int maxIterations = GetMaxIterations(configuration);
-                
+
+            ISolver solver = Solver;
             DateTime iterationStarted = DateTime.Now;
-            while (constraintTrees.TryGetNextInputModel(Solver, out IModel inputModel))
+            while (constraintTrees.TryGetNextInputModel(solver, out IModel inputModel))
             {
                 NextIterationOrThrow(ref currentIteration, maxIterations);
 
@@ -81,6 +83,7 @@ namespace dnWalker.Concolic
                 // the path may have changed??
                 currentPath = pathStore.CurrentPath;
                 OnPathExplored(currentPath);
+
                 
                 // build iteration result
                 ConstraintNode node = constraintTrees.Current;
@@ -99,10 +102,8 @@ namespace dnWalker.Concolic
 
             DateTime explorationFinished = DateTime.Now;
 
-            // TODO: make it as a explorer extension...
-            if (!ConstraintTreeExplorerWriter.TryWrite(constraintTrees, $"constraintTree.dot")) Logger.Warning("ConstraintTree writer failed.");
 
-            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint), explorationStart, explorationFinished);
+            ExplorationResult result = new ExplorationResult(entryPoint, iterationResults, constraintTrees.Trees, pathStore.MethodTracerProvider.Get(entryPoint), solver, strategy, explorationStart, explorationFinished);
             return result;
 
             static void NextIterationOrThrow(ref int currentIteration, int maxIterations)

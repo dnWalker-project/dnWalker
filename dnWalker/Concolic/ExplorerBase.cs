@@ -26,7 +26,6 @@ namespace dnWalker.Concolic
     {
         private readonly IDefinitionProvider _definitionProvider;
         private readonly IConfiguration _config;
-        private readonly List<IExplorationExtension> _extensions = new List<IExplorationExtension>();
         private readonly Logger _logger;
         private readonly ISolver _solver;
 
@@ -87,24 +86,8 @@ namespace dnWalker.Concolic
             _instructionExecProvider = InstructionExecProvider.Get(config, f);
         }
 
-        public void AddExtension(IExplorationExtension extension)
-        {
-            extension.Register(this);
-            _extensions.Add(extension);
-        }
 
-        public void RemoveExtension(IExplorationExtension extension)
-        {
-            if (_extensions.Remove(extension))
-            {
-                extension.Unregister(this);
-            }
-        }
-
-        public IReadOnlyCollection<IExplorationExtension> Extensions { get { return _extensions; } }
-
-
-        public ExplorationResult Run(MethodDef entryPoint, IEnumerable<UserModel> userModel = null)
+        public ExplorationResult Run(MethodDef entryPoint, IExplorationStrategy strategy, IEnumerable<Constraint> constraints = null)
         {
             ControlFlowGraphProvider _cfgProvider = new ControlFlowGraphProvider();
             PathStore pathStore = new PathStore(entryPoint, _cfgProvider);
@@ -117,8 +100,10 @@ namespace dnWalker.Concolic
                 };
                 cur.Services.RegisterService(_solver);
 
+                strategy.Initialize(cur, entryPoint, _config);
+
                 OnExplorationStarted(new ExplorationStartedEventArgs(_config.AssemblyToCheckFileName(), entryPoint, _solver?.GetType()));
-                ExplorationResult result = RunCore(entryPoint, pathStore, cur, userModel);
+                ExplorationResult result = RunCore(entryPoint, pathStore, cur, strategy, constraints);
                 OnExplorationFinished(new ExplorationFinishedEventArgs(result));
                 return result;
             }
@@ -130,7 +115,7 @@ namespace dnWalker.Concolic
             }
         }
 
-        protected abstract ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IEnumerable<UserModel> userModel = null);
+        protected abstract ExplorationResult RunCore(MethodDef entryPoint, PathStore pathStore, ExplicitActiveState cur, IExplorationStrategy strategy, IEnumerable<Constraint> constraints = null);
 
         public ISolver Solver
         {
@@ -168,10 +153,7 @@ namespace dnWalker.Concolic
             {
                 if (disposing)
                 {
-                    foreach (IExplorationExtension extension in Extensions)
-                    {
-                        extension.Unregister(this);
-                    }
+
                 }
 
                 _disposedValue = true;

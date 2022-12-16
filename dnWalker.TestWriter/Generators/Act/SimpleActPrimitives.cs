@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Generators.Act
 {
-    internal class SimpleActWriter : IActPrimitives
+    public class SimpleActWriter : IActPrimitives
     {
         public bool TryWriteAct(ITestContext context, IWriter output, string? returnSymbol = null)
         {
@@ -86,6 +86,14 @@ namespace dnWalker.TestWriter.Generators.Act
             output.Write($"@this.{method.Name}(");
             output.Write(string.Join(", ", method.Parameters.Where(p => p.IsNormalMethodParameter).Select(p => p.Name)));
             output.Write($")");
+        }
+
+        public IEnumerable<string> Namespaces
+        {
+            get
+            {
+                return Array.Empty<string>();
+            }
         }
     }
 }

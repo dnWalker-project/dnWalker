@@ -8,7 +8,10 @@ namespace dnWalker.TestWriter.TestModels
 {
     public class TestClass
     {
-        public IList<string> Usings { get; } = new List<string>();
+        public string? MethodUnderTest { get; set; }
+        public string? ClassUnderTest { get; set; }
+
+        public ICollection<string> Usings { get; } = new HashSet<string>();
         public string? Namespace { get; set; }
         public string? Name { get; set; }
         public IList<AttributeInfo> Attributes { get; } = new List<AttributeInfo>();

@@ -1,0 +1,125 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".tt.cs" #><#
+
+    string[] mathTypes = new string[]
+    {
+        "char",
+        "byte",
+        "ushort",
+        "uint",
+        "ulong",
+        "sbyte",
+        "short",
+        "int",
+        "long",
+        "float",
+        "double",
+    };
+
+    string[] methods = new string[]
+    {
+        "Add",
+        "Subtract",
+        "Multiply",
+        "Divide",
+        "Modulo",
+        "Equal",
+        "NotEqual",
+        "GreaterThan",
+        "GreaterThanOrEqual",
+        "LessThan",
+        "LessThanOrEqual"
+    };
+
+    string[] ops = new string[]
+    {
+        "+",
+        "-",
+        "*",
+        "/",
+        "%",
+        "==",
+        "!=",
+        ">=",
+        ">=",
+        "<",
+        "<="
+    };
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dnWalker.Symbolic.Expressions.Utils
+{
+    public partial class ExpressionEvaluator
+    {
+        private static class BinaryOperations
+        {
+
+<#
+    for (int i = 0; i < methods.Length; ++i)
+    {
+        string method = methods[i];
+        string op = ops[i];
+#>
+            public static IValue <#= method #>(IValue left, IValue right)
+            {
+                switch (left, right)
+                {
+<#
+        foreach (string lt in mathTypes)
+        {
+            foreach (string rt in mathTypes)
+            {
+#>
+                    case (PrimitiveValue<<#=  lt #>> l, PrimitiveValue<<#=  rt #>>  r):
+<#
+                if (lt == "ulong" && rt != "ulong")
+                {
+#>
+                        return ValueFactory.GetValue((<#= rt #>)l.Value <#= op #> r.Value);
+<#
+                }
+                else if (lt != "ulong" && rt == "ulong")
+                {
+#>
+                        return ValueFactory.GetValue(l.Value <#= op #> (<#= lt #>)r.Value);
+<#
+                }
+                else
+                {
+#>
+                        return ValueFactory.GetValue(l.Value <#= op #> r.Value);
+<#
+                }
+#>
+                
+<#
+            }
+        }
+
+        if (op == "==" || op == "!=")
+        {
+#>
+                    case (Location l, Location r):
+                        return ValueFactory.GetValue(l <#= op #> r);
+<#
+        }
+#>
+                }
+                throw new NotSupportedException();
+            }
+
+<#
+    }
+#>
+        }
+    }
+}

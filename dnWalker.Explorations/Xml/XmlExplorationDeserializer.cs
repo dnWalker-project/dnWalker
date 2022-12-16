@@ -44,6 +44,7 @@ namespace dnWalker.Explorations.Xml
             builder.MethodUnderTest = method;
             
             builder.Solver = xml.Attribute(XmlTokens.Solver)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Solver);
+            builder.Strategy = xml.Attribute(XmlTokens.Strategy)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Strategy);
             builder.Start = DateTime.ParseExact(xml.Attribute(XmlTokens.Start)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.End = DateTime.ParseExact(xml.Attribute(XmlTokens.End)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Start), XmlTokens.DateTimeFormat, CultureInfo.InvariantCulture);
             builder.Failed = bool.Parse(xml.Attribute(XmlTokens.Failed)?.Value ?? throw new MissingAttributeException(nameof(ConcolicExploration), XmlTokens.Failed));
