@@ -22,7 +22,10 @@ namespace dnWalker.Concolic.Traversal
         {
             ControlFlowEdge edge = node.Edge;
 
-            if (edge == null) return true;
+            if (edge == null)
+            {
+                return true;
+            }
 
             if (_knownEdges.Add(edge))
             {
@@ -30,10 +33,6 @@ namespace dnWalker.Concolic.Traversal
                 _newEdgeFound = true;
                 _counter = 0;
             }
-            //else
-            //{
-            //    _counter++;
-            //}
 
             return _counter < _maxValue;
         }

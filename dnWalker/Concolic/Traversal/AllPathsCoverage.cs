@@ -12,9 +12,15 @@ namespace dnWalker.Concolic.Traversal
         {
             while (_frontier.TryPop(out node))
             {
-                if (node.IsExplored) continue;
+                if (node.IsExplored)
+                {
+                    continue;
+                }
 
-                if (TrySolve(solver, node, out inputModel)) return true;
+                if (TrySolve(solver, node, out inputModel))
+                {
+                    return true;
+                }
             }
             inputModel = null;
             return false;

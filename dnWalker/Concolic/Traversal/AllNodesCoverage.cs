@@ -42,11 +42,20 @@ namespace dnWalker.Concolic.Traversal
         {
             while (_frontier.TryPop(out node))
             {
-                if (node.IsExplored) continue;
+                if (node.IsExplored)
+                {
+                    continue;
+                }
 
-                if (GetNodeCovered(node)) continue;
+                if (GetNodeCovered(node))
+                {
+                    continue;
+                }
 
-                if (TrySolve(solver, node, out inputModel)) return true;
+                if (TrySolve(solver, node, out inputModel))
+                {
+                    return true;
+                }
             }
             inputModel = null;
             return false;
@@ -55,7 +64,10 @@ namespace dnWalker.Concolic.Traversal
         private void SetNodeCovered(ConstraintNode node)
         {
 
-            if (node.Edge == null) return;
+            if (node.Edge == null)
+            {
+                return;
+            }
 
             // cfg nodes may be from different methods or the edge may not exist (for example with unconditional branching...)
             _coverage[node.Edge.Target] = true;
