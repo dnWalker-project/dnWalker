@@ -92,12 +92,12 @@ namespace dnWalker.TestWriter.Tests.TestWriters
                     new PackageReference
                     {
                         Name = "PREF1",
-                        Version = "1.0.0",
+                        Version = PackageVersion.Parse("1.0.0"),
                     },
                     new PackageReference
                     {
                         Name = "PREF2",
-                        Version = "1.0.5-beta",
+                        Version = PackageVersion.Parse("1.0.5-beta"),
                     }
                 }
             };
@@ -147,25 +147,25 @@ namespace dnWalker.TestWriter.Tests.TestWriters
                     new PackageReference
                     {
                         Name = "PREF1",
-                        Version = "1.0.0",
+                        Version = PackageVersion.Parse("1.0.0"),
                         IncludeAssets = {"ass1", "asset2", "contentfiles"}
                     },
                     new PackageReference
                     {
                         Name = "PREF2",
-                        Version = "1.0.5-beta",
+                        Version = PackageVersion.Parse("1.0.5-beta"),
                         ExcludeAssets = {"ass1", "asset2", "contentfiles"}
                     },
                     new PackageReference
                     {
                         Name = "PREF3",
-                        Version = "1.0.3-alpha",
+                        Version = PackageVersion.Parse("1.0.3-alpha"),
                         PrivateAssets = {"ass1", "asset2", "contentfiles"}
                     },
                     new PackageReference
                     {
                         Name = "PREF4",
-                        Version = "31.0.8874",
+                        Version = PackageVersion.Parse("31.0.8874"),
                         IncludeAssets = {"ass1", "asset2", "contentfiles"},
                         ExcludeAssets = {"all"},
                         PrivateAssets = {"ass1", "asset2", "contentfiles"}

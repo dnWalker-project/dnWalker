@@ -48,6 +48,26 @@ namespace dnWalker.TestWriter.Generators
             return packages;
         }
 
+        public static IEnumerable<string> GetNamespaces(this ITestTemplate testTemplate)
+        {
+            List<string> packages = new List<string>();
+
+            foreach (IPrimitives p in testTemplate
+                .ArrangeWriters.Cast<IPrimitives>()
+                .Concat(testTemplate.ActWriters)
+                .Concat(testTemplate.AssertWriters))
+            {
+                Type t = p.GetType();
+
+                foreach (AddNamespaceAttribute nsAtt in t.GetCustomAttributes<AddNamespaceAttribute>())
+                {
+                    packages.Add(nsAtt.NamespaceName);
+                }
+            }
+
+            return packages;
+        }
+
         #region Arrange
         public static void WriteArrange(this ITestTemplate testTemplate, ITestContext testContext, IWriter output)
         {
@@ -168,13 +188,6 @@ namespace dnWalker.TestWriter.Generators
         public static void WriteAssertNotOfType(this ITestTemplate testTemplate, ITestContext context, IWriter output, string objectSymbol, string expectedType)
         {
             ExecutePrimitiveOrThrow(testTemplate.AssertWriters, assert => assert.TryWriteAssertNotOfType(context, output, objectSymbol, expectedType), $"Failed to write 'assert not of type'");
-        }
-
-        public static IEnumerable<string> GahterNamspaces(this ITestTemplate testTemplate)
-        {
-            return testTemplate.ArrangeWriters.SelectMany(p => p.Namespaces)
-           .Concat(testTemplate.ActWriters.SelectMany(p => p.Namespaces))
-           .Concat(testTemplate.AssertWriters.SelectMany(p => p.Namespaces));
         }
         #endregion Assert
     }

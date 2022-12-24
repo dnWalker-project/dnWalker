@@ -50,34 +50,6 @@ namespace dnWalker.TestWriter.Generators
             }
         }
 
-        private static IEnumerable<string> GetNamespaces(TypeSig ts)
-        {
-            // type may be an array => get namespaces of the "next"
-            if (ts.IsArray || ts.IsSZArray)
-            {
-                return GetNamespaces(ts.Next);
-            }
-
-            // type may be a generic instance => get namespacec of all of the arguments
-            if (ts.IsGenericInstanceType)
-            {
-                GenericInstSig genInstSig = ts.ToGenericInstSig();
-
-                // create list of the namespaces & add the generic type namespace
-                List<string> ns = new List<string>() { genInstSig.ToTypeDefOrRef().ResolveTypeDefThrow().GetNamespace() };
-
-                foreach(TypeSig genParam in genInstSig.GetGenericParameters())
-                {
-                    ns.AddRange(GetNamespaces(genParam));
-                }
-
-                return ns;
-            }
-
-            // type is just "normal type"
-            return new[] { ts.ToTypeDefOrRef().ResolveTypeDefThrow().GetNamespace() };
-        }
-
 
         public TestProject GenerateTestProject(ITestFramework framework, ConcolicExploration concolicExploration)
         {
@@ -126,11 +98,11 @@ namespace dnWalker.TestWriter.Generators
             TestClass testClass = framework.CreateTestClass(testProject, testGroup, exploration);
             testClass.Name = testClassName;
             testClass.Namespace = testClassNamespace;
-            foreach (string ns in TestTemplate.GahterNamspaces())
+            foreach (string ns in TestTemplate.GetNamespaces())
             {
                 testClass.Usings.Add(ns);
             }
-            foreach (string ns in GatherNamespaces(exploration))
+            foreach (string ns in exploration.GetNamespaces())
             {
                 testClass.Usings.Add(ns);
             }
@@ -153,28 +125,7 @@ namespace dnWalker.TestWriter.Generators
             return testClass;
         }
 
-        private static IEnumerable<string> GatherNamespaces(ConcolicExploration concolicExploration)
-        {
-            return concolicExploration.Iterations.SelectMany(it => GatherNamespaces(it)).Concat(GetNamespaces(concolicExploration.MethodUnderTest.DeclaringType.ToTypeSig()));
-        }
 
-        private static IEnumerable<string> GatherNamespaces(ConcolicExplorationIteration it)
-        {
-            List<string> ns = new List<string>();
-
-            foreach (IReadOnlyHeapNode n in it.InputModel.HeapInfo.Nodes)
-            {
-                TypeSig t = n is IReadOnlyArrayHeapNode ? n.Type.Next : n.Type;
-                ns.AddRange(GetNamespaces(t));
-            }
-
-            foreach (IReadOnlyHeapNode n in it.OutputModel.HeapInfo.Nodes)
-            {
-                TypeSig t = n is IReadOnlyArrayHeapNode ? n.Type.Next : n.Type;
-                ns.AddRange(GetNamespaces(t));
-            }
-            return ns;
-        }
 
 
         private string GenerateMethodBody(ITestSchema testSchema)

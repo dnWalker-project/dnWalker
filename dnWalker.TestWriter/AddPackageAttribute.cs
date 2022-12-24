@@ -24,37 +24,12 @@ namespace dnWalker.TestWriter
 
         public PackageReference GetPackageReference()
         {
-            PackageReference pr = new PackageReference()
-            {
-                Name = PackageName,
-                Version = Version ?? "*"
-            };
+            string[] noAssets = Array.Empty<string>();
 
-            if (IncludeAssets != null)
-            {
-                foreach (string a in IncludeAssets)
-                {
-                    pr.IncludeAssets.Add(a);
-                }
-            }
-
-            if (PrivateAssets != null)
-            {
-                foreach (string a in PrivateAssets)
-                {
-                    pr.PrivateAssets.Add(a);
-                }
-            }
-
-            if (ExcludeAssets != null)
-            {
-                foreach (string a in ExcludeAssets)
-                {
-                    pr.ExcludeAssets.Add(a);
-                }
-            }
-
-            return pr;
+            return PackageReference.Create(PackageName, Version ?? "*")
+                .Include(IncludeAssets ?? noAssets)
+                .Private(PrivateAssets ?? noAssets)
+                .Exclude(ExcludeAssets ?? noAssets);
         }
     }
 }

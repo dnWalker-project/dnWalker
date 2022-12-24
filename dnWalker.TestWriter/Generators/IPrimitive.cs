@@ -8,6 +8,5 @@ namespace dnWalker.TestWriter.Generators
 {
     public interface IPrimitives
     {
-        IEnumerable<string> Namespaces { get; }
     }
 }

@@ -17,7 +17,7 @@ namespace dnWalker.Symbolic.Heap
             if (!src.TryGetValue(key, out IValue? value))
             {
                 value = ValueFactory.GetDefault(type);
-                src[key] = value;
+                //src[key] = value;
             }
             return value;
         }
