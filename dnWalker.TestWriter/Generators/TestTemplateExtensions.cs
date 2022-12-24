@@ -2,10 +2,12 @@
 
 using dnWalker.Symbolic.Expressions;
 using dnWalker.TestWriter.Generators.Arrange;
+using dnWalker.TestWriter.TestModels;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +26,26 @@ namespace dnWalker.TestWriter.Generators
             {
                 throw new InvalidOperationException(message);
             }
+        }
+
+        public static IEnumerable<PackageReference> GetPackages(this ITestTemplate testTemplate)
+        {
+            List<PackageReference> packages = new List<PackageReference>();
+
+            foreach (IPrimitives p in testTemplate
+                .ArrangeWriters.Cast<IPrimitives>()
+                .Concat(testTemplate.ActWriters)
+                .Concat(testTemplate.AssertWriters))
+            {
+                Type t = p.GetType();
+
+                foreach (AddPackageAttribute pAtt in t.GetCustomAttributes<AddPackageAttribute>()) 
+                {
+                    packages.Add(pAtt.GetPackageReference());
+                }
+            }
+
+            return packages;
         }
 
         #region Arrange

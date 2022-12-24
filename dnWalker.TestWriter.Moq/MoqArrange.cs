@@ -10,6 +10,8 @@ using System.Text;
 
 namespace dnWalker.TestWriter.Moq
 {
+    [AddPackage("Moq", Version = "4.18.3")]
+    [AddNamespace("Moq")]
     public class MoqArrange : IArrangePrimitives
     {
         private static bool CanArrange(IMemberRef memberRef)

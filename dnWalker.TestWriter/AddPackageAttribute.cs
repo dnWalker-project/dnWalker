@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dnWalker.TestWriter.TestModels;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +20,41 @@ namespace dnWalker.TestWriter
         public AddPackageAttribute(string packageName)
         {
             PackageName = packageName;
+        }
+
+        public PackageReference GetPackageReference()
+        {
+            PackageReference pr = new PackageReference()
+            {
+                Name = PackageName,
+                Version = Version ?? "*"
+            };
+
+            if (IncludeAssets != null)
+            {
+                foreach (string a in IncludeAssets)
+                {
+                    pr.IncludeAssets.Add(a);
+                }
+            }
+
+            if (PrivateAssets != null)
+            {
+                foreach (string a in PrivateAssets)
+                {
+                    pr.PrivateAssets.Add(a);
+                }
+            }
+
+            if (ExcludeAssets != null)
+            {
+                foreach (string a in ExcludeAssets)
+                {
+                    pr.ExcludeAssets.Add(a);
+                }
+            }
+
+            return pr;
         }
     }
 }

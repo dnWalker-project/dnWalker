@@ -10,6 +10,7 @@ using dnWalker.TestWriter.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -83,6 +84,18 @@ namespace dnWalker.TestWriter.Generators
             string testProjectName = _testProjectNamingStrategy.GetProjectName(concolicExploration.MethodUnderTest.Module);
 
             TestProject testProject = framework.CreateTestProject(testProjectName, new[] { concolicExploration });
+
+            // add packages from the test templates
+            foreach (PackageReference pr in TestTemplate.GetPackages())
+            {
+                testProject.Packages.Add(pr);
+            }
+
+            // add packages from the test framework
+            foreach (PackageReference pr in framework.GetPackages())
+            {
+                testProject.Packages.Add(pr);
+            }
 
             return testProject;
 
