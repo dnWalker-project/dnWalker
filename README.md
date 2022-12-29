@@ -6,5 +6,6 @@ A tool performing concolic execution on a .NET program. The project is based on 
 
 ## Libs used
 * dnlib https://github.com/0xd4d/dnlib
-* Echo https://github.com/Washi1337/Echo 
-* Linq.Expression.Optimizer https://github.com/Thorium/Linq.Expression.Optimizer
+* z3 https://github.com/Z3Prover/z3
+* C5 https://github.com/sestoft/C5
+* QuikGraph https://github.com/KeRNeLith/QuikGraph
