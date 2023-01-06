@@ -25,7 +25,8 @@ A tool performing concolic execution on a .NET program. The project is based on 
 ## Try it out
 Proper user friendly interface is not setup. Check out `dnWalker.IntegrationTests` and `dnWalker.Tests.Examples` for features. The script `build-examples.bat` should be run before to ensure all versions of the `Examples` library are built. 
 
-The project `dnWalker.Benchmarks` which can be run using script `run-benchmarks.ps1`, it consumes file `benchamrk_methods.txt` (specifies which methods should be explored). Run the `build-examples.bat` beforehand.
+### dnWalker.Benchmarks
+The project `dnWalker.Benchmarks` performs benchamarking of several methods. You can use script `run-benchmarks.ps1` runs the benchmark with default arguments and for methods specified within the file `benchamrk_methods.txt` and defined in the `Examples` library.
 
 ### dnWalker
 Runs in interactive and batch mode using the following commands:
