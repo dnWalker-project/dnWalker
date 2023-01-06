@@ -2,10 +2,12 @@
 
 using dnWalker.Symbolic.Expressions;
 using dnWalker.TestWriter.Generators.Arrange;
+using dnWalker.TestWriter.TestModels;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +26,46 @@ namespace dnWalker.TestWriter.Generators
             {
                 throw new InvalidOperationException(message);
             }
+        }
+
+        public static IEnumerable<PackageReference> GetPackages(this ITestTemplate testTemplate)
+        {
+            List<PackageReference> packages = new List<PackageReference>();
+
+            foreach (IPrimitives p in testTemplate
+                .ArrangeWriters.Cast<IPrimitives>()
+                .Concat(testTemplate.ActWriters)
+                .Concat(testTemplate.AssertWriters))
+            {
+                Type t = p.GetType();
+
+                foreach (AddPackageAttribute pAtt in t.GetCustomAttributes<AddPackageAttribute>()) 
+                {
+                    packages.Add(pAtt.GetPackageReference());
+                }
+            }
+
+            return packages;
+        }
+
+        public static IEnumerable<string> GetNamespaces(this ITestTemplate testTemplate)
+        {
+            List<string> packages = new List<string>();
+
+            foreach (IPrimitives p in testTemplate
+                .ArrangeWriters.Cast<IPrimitives>()
+                .Concat(testTemplate.ActWriters)
+                .Concat(testTemplate.AssertWriters))
+            {
+                Type t = p.GetType();
+
+                foreach (AddNamespaceAttribute nsAtt in t.GetCustomAttributes<AddNamespaceAttribute>())
+                {
+                    packages.Add(nsAtt.NamespaceName);
+                }
+            }
+
+            return packages;
         }
 
         #region Arrange
@@ -146,13 +188,6 @@ namespace dnWalker.TestWriter.Generators
         public static void WriteAssertNotOfType(this ITestTemplate testTemplate, ITestContext context, IWriter output, string objectSymbol, string expectedType)
         {
             ExecutePrimitiveOrThrow(testTemplate.AssertWriters, assert => assert.TryWriteAssertNotOfType(context, output, objectSymbol, expectedType), $"Failed to write 'assert not of type'");
-        }
-
-        public static IEnumerable<string> GahterNamspaces(this ITestTemplate testTemplate)
-        {
-            return testTemplate.ArrangeWriters.SelectMany(p => p.Namespaces)
-           .Concat(testTemplate.ActWriters.SelectMany(p => p.Namespaces))
-           .Concat(testTemplate.AssertWriters.SelectMany(p => p.Namespaces));
         }
         #endregion Assert
     }

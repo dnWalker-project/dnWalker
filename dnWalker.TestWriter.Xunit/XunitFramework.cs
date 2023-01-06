@@ -6,6 +6,9 @@ using dnWalker.TestWriter.Utils;
 
 namespace dnWalker.TestWriter.Xunit
 {
+    [AddPackage("xunit", Version = "2.4.2")]
+    [AddPackage("xunit.runner.visualstudio", Version = "2.4.5", IncludeAssets = new[] { "runtime", "build", "native", "contentfiles", "analyzers", "buildtransitive" }, PrivateAssets = new[] { "all" })]
+    [AddPackage("coverlet.collector", Version = "3.2.0", IncludeAssets = new[] {"runtime", "build", "native", "contentfiles", "analyzers", "buildtransitive"}, PrivateAssets = new[] { "all" })]
     public class XunitFramework : TestFrameworkBase
     {
         protected override void InitializeTestProject(TestProject testProject, IEnumerable<ConcolicExploration> explorations)

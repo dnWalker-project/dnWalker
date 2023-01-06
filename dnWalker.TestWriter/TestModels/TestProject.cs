@@ -18,7 +18,7 @@ namespace dnWalker.TestWriter.TestModels
 
         public IDictionary<string, TestGroup> TestGroups { get; } = new Dictionary<string, TestGroup>(StringComparer.OrdinalIgnoreCase);
 
-        public IList<PackageReference> Packages { get; } = new List<PackageReference>();
+        public ICollection<PackageReference> Packages { get; } = new PackageReferenceCollection<PackageReference>();
 
         public IDictionary<string, string> Properties { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 

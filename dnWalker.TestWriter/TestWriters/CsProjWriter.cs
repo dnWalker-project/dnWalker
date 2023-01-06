@@ -62,7 +62,7 @@ namespace dnWalker.TestWriter.TestWriters
                         _output.WriteStartElement(XmlTokens.PackageReference);
 
                         _output.WriteAttributeString(XmlTokens.Include, pr.Name);
-                        _output.WriteAttributeString(XmlTokens.Version, pr.Version);
+                        _output.WriteAttributeString(XmlTokens.Version, pr.Version?.ToString() ?? "*");
 
                         if (pr.IncludeAssets.Count > 0) 
                         {

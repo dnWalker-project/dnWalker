@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace dnWalker.TestWriter.Xunit
 {
+    [AddNamespace("xunit")]
     public class XunitAssertions : IAssertPrimitives
     {
         public bool TryWriteAssertNull(ITestContext context, IWriter output, string symbol)
