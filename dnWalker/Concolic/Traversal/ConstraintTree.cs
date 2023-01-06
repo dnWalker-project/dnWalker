@@ -54,14 +54,13 @@ namespace dnWalker.Concolic.Traversal
             return trees;
         }
 
-        public static IReadOnlyList<ConstraintTree> UnfoldConstraints(MethodDef entryPoint, ControlFlowNode entryNode, IEnumerable<IReadOnlyModel> inputModels, ExpressionFactory expressionFactory = null)
+        public static IReadOnlyList<ConstraintTree> UnfoldConstraints(MethodDef entryPoint, ControlFlowNode entryNode, IEnumerable<Constraint> constraints, ExpressionFactory expressionFactory = null)
         {
             ExpressionFactory ef = expressionFactory ?? ExpressionFactory.Default;
 
             List<ConstraintTree> unfolded = new List<ConstraintTree>();
-            foreach (Expression inputExpression in inputModels.Select(m => m.GetFormula(ef)))
+            foreach (Constraint constraint in constraints)
             {
-                Constraint constraint = new Constraint(new PureTerm[] { new BooleanExpressionTerm(inputExpression.AsBoolean()) }, Array.Empty<HeapTerm>());
                 unfolded.Add(new ConstraintTree(constraint, entryNode));
             }
 
@@ -71,6 +70,22 @@ namespace dnWalker.Concolic.Traversal
             }
 
             return unfolded;
+        }
+
+        public IEnumerable<ConstraintNode> EnumerateNodes()
+        {
+            Stack<ConstraintNode> frontier = new Stack<ConstraintNode>();
+            frontier.Push(_root);
+
+            while (frontier.TryPop(out ConstraintNode cn))
+            {
+                yield return cn;
+
+                foreach (ConstraintNode child in cn.Children)
+                {
+                    frontier.Push(child);
+                }
+            }
         }
     }
 }

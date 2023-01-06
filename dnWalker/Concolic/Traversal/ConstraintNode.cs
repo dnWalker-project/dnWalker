@@ -28,6 +28,7 @@ namespace dnWalker.Concolic.Traversal
         private Constraint? _precondition = null;
 
         private bool _unsatisfiable;
+        private bool _undecidable;
         private int _sourceNodeIteration;
 
         public ConstraintNode(ConstraintTree tree, ConstraintNode parent, ControlFlowEdge edge, Constraint constraint)
@@ -83,6 +84,7 @@ namespace dnWalker.Concolic.Traversal
 
         public bool IsExplored => _iterations.Count > 0;
         public bool IsSatisfiable => !_unsatisfiable;
+        public bool IsUndecidable => _undecidable;
         public bool IsPreconditionSource => _sourceNodeIteration > 0;
 
         public ControlFlowEdge Edge => _edge;
@@ -103,6 +105,11 @@ namespace dnWalker.Concolic.Traversal
             {
                 child.MarkUnsatisfiable();
             }
+        }
+
+        public void MarkUndecidable()
+        {
+            _undecidable = true;
         }
 
         public void MarkPreconditionSource(int iteration) => _sourceNodeIteration = iteration;
