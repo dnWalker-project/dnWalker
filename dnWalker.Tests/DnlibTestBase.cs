@@ -25,6 +25,9 @@ namespace dnWalker.Tests
         /// <param name="assemblyFileName"></param>
         protected DnlibTestBase(ITestOutputHelper textOutput, string assemblyFileName)
         {
+#if Linux
+            assemblyFileName = assemblyFileName.Replace("\\", Path.DirectorySeparatorChar.ToString());
+#endif        
             _textOutput = textOutput;
             _definitionProvider = new DefinitionProvider(Domain.LoadFromFile(assemblyFileName));
         }

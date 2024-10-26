@@ -8,7 +8,11 @@ namespace dnWalker.Tests.Interpreter
 {
     public abstract class InterpreterTestBase
     {
-        private const string AssemblyFileName = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll";
+#if Linux
+        private const string AssemblyFileName = @"../../../../extras/dnSpy.Debugger.DotNet.Interpreter.Tests.dll"; 
+#elif Windows
+        private const string AssemblyFileName = @"..\..\..\..\extras\dnSpy.Debugger.DotNet.Interpreter.Tests.dll"; 
+#endif
 
         private static readonly IDefinitionProvider _definitionProvider;
         private readonly ITestOutputHelper _output;
