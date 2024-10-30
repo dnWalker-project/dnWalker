@@ -24,5 +24,9 @@ jobs:
       run: dotnet restore dnWalker.sln
     - name: Build
       run: dotnet build --no-restore dnWalker.sln
+    - name: Build examples
+      run: |
+        dotnet build Examples\Examples.csproj --configuration Debug
+        dotnet build Examples\Examples.csproj --configuration Release
     - name: Test
       run: dotnet test --no-build --verbosity normal dnWalker.sln
