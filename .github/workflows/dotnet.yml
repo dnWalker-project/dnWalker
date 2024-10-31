@@ -23,7 +23,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore dnWalker.sln
     - name: Env
-      run: env | grep dotnet
+      run: |
+        env | grep dotnet
+        ls -Ral $DOTNET_ROOT
     - name: Build
       run: dotnet build --no-restore dnWalker.sln
     - name: Build examples (release mode)
