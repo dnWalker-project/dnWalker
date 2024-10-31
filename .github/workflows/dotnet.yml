@@ -27,7 +27,7 @@ jobs:
     - name: Build examples (release mode)
       run: dotnet build Examples/Examples.csproj --configuration Release
     - name: Test
-      run: dotnet test --no-build --logger trx --verbosity normal dnWalker.sln
+      run: dotnet test --no-build --logger trx --results-directory TestResults --verbosity normal dnWalker.sln
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v4
       with:
