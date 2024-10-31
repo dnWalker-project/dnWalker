@@ -22,6 +22,8 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore dnWalker.sln
+    - name: Env
+      run: env | grep dotnet
     - name: Build
       run: dotnet build --no-restore dnWalker.sln
     - name: Build examples (release mode)
