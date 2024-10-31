@@ -34,4 +34,4 @@ jobs:
       with:
         name: dotnet-results
         path: TestResults
-        if: ${{ always() }}
+      if: ${{ always() }}
