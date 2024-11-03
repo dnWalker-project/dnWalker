@@ -38,3 +38,9 @@ jobs:
         name: dotnet-results
         path: TestResults
       if: ${{ always() }}
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          TestResults/**/*.trx
