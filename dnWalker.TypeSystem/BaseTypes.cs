@@ -12,13 +12,24 @@ namespace dnWalker.TypeSystem
     {
         private readonly ICorLibTypes _corLibTypes;
 
-        public BaseTypes(IDefinitionProvider definitionProvider)//, ICorLibTypes corLibTypes)
+        public BaseTypes(IDefinitionProvider definitionProvider) //, ICorLibTypes corLibTypes)
         {
             _corLibTypes = definitionProvider.Context.MainModule.CorLibTypes;
 
-            Thread = definitionProvider.GetTypeDefinition("System.Threading.Thread").ToTypeSig().ToTypeDefOrRefSig();
-            Delegate = definitionProvider.GetTypeDefinition("System.Delegate").ToTypeSig();
-            Exception = definitionProvider.GetTypeDefinition("System.Exception").ToTypeSig().ToTypeDefOrRefSig();
+            _lazyThread = new Lazy<TypeDefOrRefSig>(() =>
+            {
+                return definitionProvider.GetTypeDefinition("System.Threading.Thread").ToTypeSig().ToTypeDefOrRefSig();
+            });
+
+            _lazyDelegate = new Lazy<TypeDefOrRefSig>(() =>
+            {
+                return definitionProvider.GetTypeDefinition("System.Delegate").ToTypeSig().ToTypeDefOrRefSig();
+            });
+            
+            _lazyException = new Lazy<TypeDefOrRefSig>(() =>
+            {
+                return definitionProvider.GetTypeDefinition("System.Exception").ToTypeSig().ToTypeDefOrRefSig();
+            });
         }
 
         public TypeRef GetTypeRef(string @namespace, string name)
@@ -170,12 +181,35 @@ namespace dnWalker.TypeSystem
             }
         }
 
+        private readonly Lazy<TypeDefOrRefSig> _lazyThread;
+
         public TypeDefOrRefSig Thread
         {
-            get;
+            get
+            {
+                return _lazyThread.Value;
+            }
         }
-        public TypeSig Delegate { get; }
-        public TypeDefOrRefSig Exception { get; }
+
+        private readonly Lazy<TypeDefOrRefSig> _lazyDelegate;
+
+        public TypeSig Delegate
+        {
+            get
+            {
+                return _lazyDelegate.Value;
+            }
+        }
+
+        private readonly Lazy<TypeDefOrRefSig> _lazyException;
+
+        public TypeDefOrRefSig Exception
+        {
+            get
+            {
+                return _lazyException.Value;
+            }
+        }
 
         public AssemblyRef AssemblyRef
         {
@@ -185,5 +219,4 @@ namespace dnWalker.TypeSystem
             }
         }
     }
-
 }
