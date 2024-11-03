@@ -21,8 +21,20 @@ namespace dnWalker.TypeSystem
             _assemblyResolver = assemblyResolver ?? throw new ArgumentNullException(nameof(assemblyResolver));
         }
 
+        public void AddPresearchPath(string preSearchPath)
+        {
+            if (_assemblyResolver is not AssemblyResolver resolver || resolver.PreSearchPaths.Contains(preSearchPath)) {return;} 
+            
+            resolver.PreSearchPaths.Add(preSearchPath);
+        }
+        
         public TypeDef Resolve(TypeRef typeRef, ModuleDef sourceModule)
         {
+            if (typeRef == null)
+            {
+                return null;
+            }
+            
             if (!_typeCache.TryGetValue(typeRef, out TypeDef result))
             {
                 result = _smartResolver.Resolve(typeRef, sourceModule);
@@ -30,8 +42,13 @@ namespace dnWalker.TypeSystem
                 {
                     result = DumpSearch(typeRef, sourceModule);
                 }
+                else
+                {
+                    //result = result ?? throw new NullReferenceException("Could not resolve type " + typeRef.FullName);
+                    _typeCache[typeRef] = result;
+                }
 
-                _typeCache[typeRef] = result;
+                return result;
             }
 
             return result;
@@ -44,7 +61,7 @@ namespace dnWalker.TypeSystem
 
             foreach (var a in ar.GetCachedAssemblies())
             {
-                TypeDef td = a.Find(typeRef);
+                TypeDef td = a?.Find(typeRef);
                 if (td != null)
                 {
                     return td;
