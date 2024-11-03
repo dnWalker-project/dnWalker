@@ -33,9 +33,9 @@ namespace dnWalker.Tests.TypeSystem
         }
 
 #if Linux
-        const string ExamplesAssembly_net48 = @"../../../../Examples\bin\Release\net48\Examples.dll";
-        const string ExamplesAssembly_net50 = @"../../../../Examples\bin\Release\net5.0\Examples.dll";
-        const string ExamplesAssembly_net60 = @"../../../../Examples\bin\Release\net6.0\Examples.dll"; 
+        const string ExamplesAssembly_net48 = @"../../../../Examples/bin/Release/net48/Examples.dll";
+        const string ExamplesAssembly_net50 = @"../../../../Examples/bin/Release/net5.0/Examples.dll";
+        const string ExamplesAssembly_net60 = @"../../../../Examples/bin/Release/net6.0/Examples.dll"; 
 #elif Windows
         const string ExamplesAssembly_net48 = @"..\..\..\..\Examples\bin\Release\net48\Examples.dll";
         const string ExamplesAssembly_net50 = @"..\..\..\..\Examples\bin\Release\net5.0\Examples.dll";
