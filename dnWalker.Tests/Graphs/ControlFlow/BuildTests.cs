@@ -174,7 +174,7 @@ namespace dnWalker.Tests.Graphs.ControlFlow
             graph.Nodes.OfType<InstructionBlockNode>().Should().HaveCount(2);
             graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().HaveCount(1);
 
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Single().ExceptionType.Should().BeEquivalentTo(GetType("System", "OverflowException"));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Single().ExceptionType.FullName.Should().Be("System.OverflowException");
 
             graph.Edges.Should().HaveCount(2);
             graph.Edges.OfType<NextEdge>().Should().HaveCount(1);
@@ -200,7 +200,7 @@ namespace dnWalker.Tests.Graphs.ControlFlow
             graph.Nodes.OfType<InstructionBlockNode>().Should().HaveCount(2);
             graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().HaveCount(1);
 
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Single().ExceptionType.Should().BeEquivalentTo(GetType("System", "DivideByZeroException"));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Single().ExceptionType.FullName.Should().Be("System.DivideByZeroException");
 
             graph.Edges.Should().HaveCount(2);
             graph.Edges.OfType<NextEdge>().Should().HaveCount(1);
@@ -225,7 +225,7 @@ namespace dnWalker.Tests.Graphs.ControlFlow
             graph.Nodes.Should().HaveCount(3);
             graph.Nodes.OfType<InstructionBlockNode>().Should().HaveCount(2);
             graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().HaveCount(1);
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Single().ExceptionType.Should().BeEquivalentTo(GetType("System", "NullReferenceException"));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Single().ExceptionType.FullName.Should().Be("System.NullReferenceException");
 
             graph.Edges.Should().HaveCount(2);
             graph.Edges.OfType<NextEdge>().Should().HaveCount(1);
