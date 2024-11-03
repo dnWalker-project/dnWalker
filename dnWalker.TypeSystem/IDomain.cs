@@ -18,6 +18,8 @@ namespace dnWalker.TypeSystem
         IResolver Resolver { get; }
 
         bool Load(AssemblyDef assembly);
+        
+        TypeDef ResolveType(string typeName);
     }
 
     public static class DomainExtensions

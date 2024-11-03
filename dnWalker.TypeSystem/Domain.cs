@@ -3,9 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dnWalker.TypeSystem
 {
@@ -23,6 +22,11 @@ namespace dnWalker.TypeSystem
         {
             _typeResolver = new Resolver2(_moduleContext.AssemblyResolver, _moduleContext.Resolver);
             _moduleContext.Resolver = _typeResolver;
+        }
+
+        private void AddPresearchPath(string preSearchPath)
+        {
+            _typeResolver.AddPresearchPath(preSearchPath);
         }
 
         public ModuleDef MainModule
@@ -47,7 +51,6 @@ namespace dnWalker.TypeSystem
         {
             try
             {
-                //Load(assemblyDef);
                 _mainModule ??= assemblyDef.ManifestModule;
 
                 foreach (ModuleDef module in assemblyDef.Modules)
@@ -74,6 +77,8 @@ namespace dnWalker.TypeSystem
 
             _loadedModules.Add(moduleName, module);
 
+            AddPresearchPath(Path.GetDirectoryName(module.Location));
+
             // load the referenced assemblies
             AssemblyRef[] refs = module.GetAssemblyRefs().ToArray();
             foreach (AssemblyRef ar in refs)
@@ -86,22 +91,50 @@ namespace dnWalker.TypeSystem
             }
         }
 
-        //private void Load(AssemblyDef assembly)
-        //{
-        //    foreach (ModuleDef module in assembly.Modules)
-        //    {
-        //        Load(module);
-        //    }
-        //}
+        public TypeDef ResolveType(string typeName)
+        {
+            if (typeName.StartsWith("System."))
+            {
+                var modules = Modules.ToList();
+                foreach (var moduleDef in modules)
+                {
+                    if (moduleDef.Name.StartsWith("System."))
+                    {
+                        var moduleLocation = Path.Combine(Path.GetDirectoryName(moduleDef.Location), typeName + ".dll");
+                        if (File.Exists(moduleLocation))
+                        {
+                            AssemblyDef mainAssembly = AssemblyDef.Load(moduleLocation, _moduleContext);
+                            Load(mainAssembly);
+                            var typeDef = mainAssembly.Modules.First().Types
+                                .FirstOrDefault(t => t.FullName == typeName);
+                            return typeDef;
+                        }
+                    }
+                }
+            }
+
+            return _typeResolver.Resolve(default(TypeRef));
+        }
 
         public static IDomain LoadFromFile(string file)
         {
             Domain domain = new Domain();
             AssemblyDef mainAssembly = AssemblyDef.Load(file, domain._moduleContext);
             domain._mainModule = mainAssembly.ManifestModule;
+            domain = InitDomain(domain);
             domain.Load(mainAssembly);
+            return domain;
+        }
 
+        private static Domain InitDomain(Domain domain)
+        {
+            System.Reflection.Module reflectionModule = typeof(void).Module;
+            ModuleDefMD module = ModuleDefMD.Load(reflectionModule, domain._moduleContext);
+            domain.Load(module);
 
+            reflectionModule = typeof(System.Threading.Thread).Module;
+            module = ModuleDefMD.Load(reflectionModule, domain._moduleContext);
+            domain.Load(module);
             return domain;
         }
 
@@ -116,6 +149,7 @@ namespace dnWalker.TypeSystem
 
             ModuleDef mainModule = ModuleDefMD.Load(loadedModule, domain._moduleContext);
             domain._mainModule = mainModule;
+            domain = InitDomain(domain);
             domain.Load(mainModule.Assembly);
             return domain;
         }
