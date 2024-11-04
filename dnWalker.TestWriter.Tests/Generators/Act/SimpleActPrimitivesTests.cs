@@ -44,7 +44,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteAct(GetTestContext(method), writer, null).Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteAct(GetTestContext(method), writer, "result").Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteAct(GetTestContext(method), writer, null).Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteAct(GetTestContext(method), writer, "result").Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteActDelegate(GetTestContext(method), writer, null, "act").Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteActDelegate(GetTestContext(method), writer, "result", "act").Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteActDelegate(GetTestContext(method), writer, null, "act").Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Act
 
             actWriter.TryWriteActDelegate(GetTestContext(method), writer, "result", "act").Should().BeTrue();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }

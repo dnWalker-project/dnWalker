@@ -19,12 +19,12 @@ namespace dnWalker.Tests.Examples.Features.Interfaces
             result.Iterations.Should().HaveCount(5);
             result.Iterations[0].Output.Trim().Should().Be("instance is null");
 
-            result.Iterations[1].Output.Trim().Should().Be("instance.AbstractMethod()|0| != 3\r\ninstance.AbstractMethod()|1| <= 134");
-            result.Iterations[2].Output.Trim().Should().Be("instance.AbstractMethod()|0| != 3\r\ninstance.AbstractMethod()|1| > 134");
+            result.Iterations[1].Output.Trim().Should().Be("instance.AbstractMethod()|0| != 3" + Environment.NewLine + "instance.AbstractMethod()|1| <= 134");
+            result.Iterations[2].Output.Trim().Should().Be("instance.AbstractMethod()|0| != 3" + Environment.NewLine + "instance.AbstractMethod()|1| > 134");
 
 
-            result.Iterations[3].Output.Trim().Should().Be("instance.AbstractMethod()|0| == 3\r\ninstance.AbstractMethod()|1| <= 134");
-            result.Iterations[4].Output.Trim().Should().Be("instance.AbstractMethod()|0| == 3\r\ninstance.AbstractMethod()|1| > 134");
+            result.Iterations[3].Output.Trim().Should().Be("instance.AbstractMethod()|0| == 3" + Environment.NewLine + "instance.AbstractMethod()|1| <= 134");
+            result.Iterations[4].Output.Trim().Should().Be("instance.AbstractMethod()|0| == 3" + Environment.NewLine + "instance.AbstractMethod()|1| > 134");
         }
     }
 }

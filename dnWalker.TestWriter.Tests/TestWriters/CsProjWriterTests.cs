@@ -35,7 +35,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
                 writer.Write(new TestProject());
             }
 
-            output.ToString().Should().Be(Expected);
+            output.ToString().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
                 writer.Write(project);
             }
 
-            output.ToString().Should().Be(Expected);
+            output.ToString().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
                 writer.Write(project);
             }
 
-            output.ToString().Should().Be(Expected);
+            output.ToString().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -179,7 +179,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
                 writer.Write(project);
             }
 
-            output.ToString().Should().Be(Expected);
+            output.ToString().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }

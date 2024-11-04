@@ -76,7 +76,7 @@ namespace dnWalker.Symbolic.Tests.Xml
             XmlModelSerializer serializer = new XmlModelSerializer(TypeParser, MethodParser);
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Theory]
@@ -128,7 +128,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(string.Format(XML, representation));
+            xml.Should().Be(string.Format(XML, representation).Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -152,7 +152,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Fact]
@@ -176,7 +176,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Fact]
@@ -200,7 +200,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Fact]
@@ -224,7 +224,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Fact]
@@ -252,7 +252,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
 
@@ -286,7 +286,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
 
@@ -325,7 +325,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace dnWalker.Symbolic.Tests.Xml
 
             string xml = serializer.ToXml(model).ToString();
 
-            xml.Should().Be(XML);
+            xml.Should().Be(XML.Replace("\r\n", Environment.NewLine));;
         }
 
     }

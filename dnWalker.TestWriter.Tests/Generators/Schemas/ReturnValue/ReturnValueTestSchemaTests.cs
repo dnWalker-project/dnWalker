@@ -44,7 +44,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
         {
             TypeDef testClassTD = GetType(typeof(TestClass));
 
-            const string expected =
+            const string Expected =
             """
             // Arrange input model heap
             ReturnValueTestSchemaTests.TestClass returnValueTestSchemaTests_TestClass1 = new ReturnValueTestSchemaTests.TestClass();
@@ -75,7 +75,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
             Writer writer = new Writer();
             schema.Write(GetTestTemplate(), writer);
 
-            writer.ToString().Trim().Should().Be(expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
         {
             TypeDef testClassTD = GetType(typeof(TestClass));
 
-            const string expected =
+            const string Expected =
             """
             // Arrange input model heap
             ReturnValueTestSchemaTests.TestClass returnValueTestSchemaTests_TestClass1 = new ReturnValueTestSchemaTests.TestClass();
@@ -114,7 +114,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
             Writer writer = new Writer();
             schema.Write(GetTestTemplate(), writer);
 
-            writer.ToString().Trim().Should().Be(expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
         {
             TypeDef testClassTD = GetType(typeof(TestClass));
 
-            const string expected =
+            const string Expected =
             """
             // Arrange input model heap
             ReturnValueTestSchemaTests.TestClass returnValueTestSchemaTests_TestClass1 = new ReturnValueTestSchemaTests.TestClass();
@@ -156,7 +156,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ReturnValue
             Writer writer = new Writer();
             schema.Write(GetTestTemplate(), writer);
 
-            writer.ToString().Trim().Should().Be(expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }

@@ -57,10 +57,10 @@ namespace dnWalker.Tests.Examples.Features.PrimitiveValues
             result.Iterations.Select(it => it.Output.Trim())
                 .Should().Contain(new string[]
                 {
-                    "(x <= 0)\r\n(x >= -3)",
-                    "(x <= 0)\r\n(x < -3)",
-                    "(x > 0)\r\n(x >= 5)",
-                    "(x > 0)\r\n(x < 5)" 
+                    "(x <= 0)" + Environment.NewLine + "(x >= -3)",
+                    "(x <= 0)" + Environment.NewLine + "(x < -3)",
+                    "(x > 0)" + Environment.NewLine + "(x >= 5)",
+                    "(x > 0)" + Environment.NewLine + "(x < 5)" 
                 });
         }
 
@@ -73,9 +73,9 @@ namespace dnWalker.Tests.Examples.Features.PrimitiveValues
             result.Iterations.Select(it => it.Output.Trim())
                 .Should().Contain(new string[] 
                 {
-                    "(x <= 0)\r\n(x >= -3)",
-                    "(x <= 0)\r\n(x < -3)",
-                    "(x > 0)\r\n(x >= -5)"
+                    "(x <= 0)" + Environment.NewLine + "(x >= -3)",
+                    "(x <= 0)" + Environment.NewLine + "(x < -3)",
+                    "(x > 0)" + Environment.NewLine + "(x >= -5)"
                 });
         }
 
@@ -90,8 +90,8 @@ namespace dnWalker.Tests.Examples.Features.PrimitiveValues
                 {
                     "x >= y",
                     "x < y",
-                    "x < 0 => x = x + 10\r\nx < y",
-                    "x < 0 => x = x + 10\r\nx >= y"
+                    "x < 0 => x = x + 10" + Environment.NewLine + "x < y",
+                    "x < 0 => x = x + 10" + Environment.NewLine + "x >= y"
                 });
         }
 
@@ -106,8 +106,8 @@ namespace dnWalker.Tests.Examples.Features.PrimitiveValues
                 {
                     "x >= y",
                     "x < y",
-                    "x < 0\r\nx < y",
-                    "x < 0\r\nx >= y" 
+                    "x < 0" + Environment.NewLine + "x < y",
+                    "x < 0" + Environment.NewLine + "x >= y" 
                 });
         }
 

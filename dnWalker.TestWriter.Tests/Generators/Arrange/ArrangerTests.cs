@@ -90,7 +90,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeMethodArguments();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeStaticFields();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -142,7 +142,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeStaticFields();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeHeap();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -202,7 +202,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeHeap();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -232,7 +232,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeHeap();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -262,7 +262,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeHeap();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -297,7 +297,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeHeap();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -338,7 +338,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Arrange
 
             arranger.WriteArrangeHeap();
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }
