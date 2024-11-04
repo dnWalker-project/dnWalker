@@ -63,7 +63,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.Exceptions
             Writer writer = new Writer();
             schema.Write(GetTestTemplate(), writer);
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.Exceptions
             Writer writer = new Writer();
             schema.Write(GetTestTemplate(), writer);
 
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }

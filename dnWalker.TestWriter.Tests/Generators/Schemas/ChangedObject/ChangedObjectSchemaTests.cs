@@ -77,7 +77,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ChangedObject
 
             Writer output = new Writer();
             schema.Write(testTemplate, output);
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
 
@@ -122,7 +122,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ChangedObject
 
             Writer output = new Writer();
             schema.Write(testTemplate, output);
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
 
@@ -169,7 +169,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ChangedObject
 
             Writer output = new Writer();
             schema.Write(testTemplate, output);
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -218,7 +218,7 @@ namespace dnWalker.TestWriter.Tests.Generators.Schemas.ChangedObject
 
             Writer output = new Writer();
             schema.Write(testTemplate, output);
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }

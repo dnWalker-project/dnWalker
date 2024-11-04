@@ -24,7 +24,12 @@ namespace dnWalker
 
         public static IList<TypeSig> GetGenericParameters(this TypeSig typeSig)
         {
-            return typeSig.ToGenericInstSig()?.GetGenericParameters() ?? Array.Empty<TypeSig>();
+            if (!typeSig.IsGenericInstanceType)
+            {
+                return Array.Empty<TypeSig>();
+            }
+            
+            return typeSig.ToGenericInstSig()?.GenericArguments ?? Array.Empty<TypeSig>();
         }
 
         public static IEnumerable<ITypeDefOrRef> InheritanceEnumerator(this ITypeDefOrRef type)

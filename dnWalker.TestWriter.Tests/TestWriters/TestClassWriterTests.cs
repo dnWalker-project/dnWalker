@@ -47,7 +47,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
             var writer = new TestClassWriter(output);
             writer.Write(testClass);
 
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
             var writer = new TestClassWriter(output);
             writer.Write(testClass);
 
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
             var writer = new TestClassWriter(output);
             writer.Write(testClass);
 
-            output.ToString().Trim().Should().Be(Expected);
+            output.ToString().Trim().Replace("\r\n", Environment.NewLine).Should().Be(Expected.Trim().Replace("\r\n", Environment.NewLine));
         }
     }
 }

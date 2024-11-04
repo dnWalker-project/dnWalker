@@ -75,7 +75,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -97,7 +97,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -179,7 +179,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -199,7 +199,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -222,7 +222,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -265,7 +265,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "-123" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -287,7 +287,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeMethod(GetTestContext(method.DeclaringType.ToTypeSig()), writer, "obj", method, new[] { "0", "1", "2", "3" }).Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -326,7 +326,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeCreateInstance(testContext, writer, "obj").Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -346,7 +346,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeCreateInstance(testContext, writer, "obj").Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeCreateInstance(testContext, writer, "obj").Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
 
         [Fact]
@@ -420,7 +420,7 @@ namespace dnWalker.TestWriter.Moq.Tests
 
             Writer writer = new Writer();
             moq.TryWriteArrangeInitializeConstrainedMethod(testContext, writer, "obj", method, constrainedLiterals, "0").Should().BeTrue();
-            writer.ToString().Trim().Should().Be(Expected);
+            writer.ToString().Trim().Should().Be(Expected.Replace("\r\n", Environment.NewLine));
         }
     }
 }
