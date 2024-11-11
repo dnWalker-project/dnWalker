@@ -46,7 +46,6 @@ namespace dnWalker.Tests.Examples.Features.Arrays
             }
 
             result.Iterations.Should().HaveCount(5);
-
             result.Iterations[0].Output.Trim().Should().Be("array is null");
             result.Iterations[1].Output.Trim().Should().Be("length is less than index");
             result.Iterations[2].Exception.Type.FullName.Should().Be("System.IndexOutOfRangeException");

@@ -253,8 +253,8 @@ namespace dnWalker.Tests.Graphs.ControlFlow
             graph.Nodes.Should().HaveCount(4);
             graph.Nodes.OfType<InstructionBlockNode>().Should().HaveCount(2);
             graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().HaveCount(2);
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.Equals(GetType("System", "NullReferenceException")));
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.Equals(GetType("System", "IndexOutOfRangeException")));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.FullName.Equals("System.NullReferenceException"));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.FullName.Equals("System.IndexOutOfRangeException"));
 
             graph.Edges.Should().HaveCount(3);
             graph.Edges.OfType<NextEdge>().Should().HaveCount(1);
@@ -283,8 +283,8 @@ namespace dnWalker.Tests.Graphs.ControlFlow
             graph.Nodes.Should().HaveCount(4);
             graph.Nodes.OfType<InstructionBlockNode>().Should().HaveCount(2);
             graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().HaveCount(2);
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.Equals(GetType("System", "NullReferenceException")));
-            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.Equals(GetType("System", "IndexOutOfRangeException")));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.FullName.Equals("System.NullReferenceException"));
+            graph.Nodes.OfType<VirtualExceptionHandlerNode>().Should().Contain(e => e.ExceptionType.FullName.Equals("System.IndexOutOfRangeException"));
 
             graph.Edges.Should().HaveCount(3);
             graph.Edges.OfType<NextEdge>().Should().HaveCount(1);

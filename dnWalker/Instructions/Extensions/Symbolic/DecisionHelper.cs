@@ -80,7 +80,7 @@ namespace dnWalker.Instructions.Extensions.Symbolic
                     break;
                 }
 
-                if (choiceTargets[i] is ExceptionEdge edge && GetCurrentException(cur)?.Equals(edge.ExceptionType) == true)
+                if (choiceTargets[i] is ExceptionEdge edge && GetCurrentException(cur)?.FullName.Equals(edge.ExceptionType.FullName) == true)
                 {
                     decision = i;
                     break;
