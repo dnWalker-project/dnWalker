@@ -195,13 +195,15 @@ namespace dnWalker.Symbolic.Expressions
         {
             switch (op)
             {
-                // logical
+                // arithmetic - must be integers or booleans
                 case Operator.And:
                 case Operator.Or:
                 case Operator.Xor:
-                    return op1.Type.IsBoolean() && op2.Type.IsBoolean();
-
-
+                    return (op1.Type.IsInteger() && op2.Type.IsInteger())
+                           || (op1.Type.IsBoolean() && op2.Type.IsInteger())
+                           || (op1.Type.IsInteger() && op2.Type.IsBoolean())
+                           || (op1.Type.IsBoolean() && op2.Type.IsBoolean());
+                
                 // arithmetic - do not care about the type
                 case Operator.Add:
                 case Operator.Subtract:
