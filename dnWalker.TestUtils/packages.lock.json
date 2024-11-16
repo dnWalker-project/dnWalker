@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0": {
+      "xunit.abstractions": {
+        "type": "Direct",
+        "requested": "[2.0.3, )",
+        "resolved": "2.0.3",
+        "contentHash": "pot1I4YOxlWjIb5jmwvvQNbTrZ3lJQ+jUGkGjWE3hEFM0l5gOnBWS+H3qsex68s5cO52g+44vpGzhAt+42vwKg=="
+      },
+      "dnlib": {
+        "type": "Transitive",
+        "resolved": "3.6.0",
+        "contentHash": "kFegKA+GR8a2mEzYH02TueIF1nNQ5lULAd9hgNwt6VBY2qNNZDYSwr63tMpKN0Lg+goDaZnaZczmP0/pDz2gaA==",
+        "dependencies": {
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.Emit.Lightweight": "4.7.0"
+        }
+      },
+      "System.Reflection.Emit": {
+        "type": "Transitive",
+        "resolved": "4.7.0",
+        "contentHash": "VR4kk8XLKebQ4MZuKuIni/7oh+QGFmZW3qORd1GvBq/8026OpW501SzT/oypwiQl4TvT8ErnReh/NzY9u+C6wQ=="
+      },
+      "System.Reflection.Emit.Lightweight": {
+        "type": "Transitive",
+        "resolved": "4.7.0",
+        "contentHash": "a4OLB4IITxAXJeV74MDx49Oq2+PsF6Sml54XAFv+2RyWwtDBcabzoxiiJRhdhx+gaohLh4hEGCLQyBozXoQPqA=="
+      },
+      "dnwalker.typesystem": {
+        "type": "Project",
+        "dependencies": {
+          "dnlib": "[3.6.0, )"
+        }
+      }
+    }
+  }
+}
