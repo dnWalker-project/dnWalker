@@ -3294,8 +3294,7 @@ namespace dnWalker.Instructions
         {
             IDataElement popped = cur.EvalStack.Pop();
             INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
-
-            cur.EvalStack.Push(a.ToInt4(false));
+            cur.EvalStack.Push(DataElement.CreateDataElement((IntPtr)a.ToInt8(false).Value, cur.DefinitionProvider));
             return nextRetval;
         }
     }
