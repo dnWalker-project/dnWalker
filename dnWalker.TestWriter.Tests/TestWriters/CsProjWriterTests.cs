@@ -23,7 +23,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
             """
             <Project Sdk="Microsoft.NET.Sdk">
                 <PropertyGroup>
-                    <TargetFramework>net7.0</TargetFramework>
+                    <TargetFramework>net8.0</TargetFramework>
                     <IsPackable>false</IsPackable>
                 </PropertyGroup>
             </Project>
@@ -75,7 +75,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
             """
             <Project Sdk="Microsoft.NET.Sdk">
                 <PropertyGroup>
-                    <TargetFramework>net7.0</TargetFramework>
+                    <TargetFramework>net8.0</TargetFramework>
                     <IsPackable>false</IsPackable>
                 </PropertyGroup>
                 <ItemGroup>
@@ -118,7 +118,7 @@ namespace dnWalker.TestWriter.Tests.TestWriters
             """
             <Project Sdk="Microsoft.NET.Sdk">
                 <PropertyGroup>
-                    <TargetFramework>net7.0</TargetFramework>
+                    <TargetFramework>net8.0</TargetFramework>
                     <IsPackable>false</IsPackable>
                 </PropertyGroup>
                 <ItemGroup>
