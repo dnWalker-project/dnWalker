@@ -27,4 +27,8 @@
     <ProjectReference Include="..\dnWalker.TestWriter.Xunit\dnWalker.TestWriter.Xunit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

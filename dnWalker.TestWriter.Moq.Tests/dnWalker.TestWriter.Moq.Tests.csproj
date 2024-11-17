@@ -28,4 +28,8 @@
     <ProjectReference Include="..\dnWalker.TestWriter.Moq\dnWalker.TestWriter.Moq.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

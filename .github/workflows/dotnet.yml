@@ -24,16 +24,12 @@ jobs:
         cache-dependency-path: '**/packages.lock.json'
     - name: Restore dependencies
       run: dotnet restore dnWalker.sln --locked-mode
-    - name: Env
-      run: |
-        env | grep dotnet
-        ls -Ral $DOTNET_ROOT
     - name: Build
       run: dotnet build --no-restore dnWalker.sln
     - name: Build examples (release mode)
       run: dotnet build Examples/Examples.csproj --configuration Release
     - name: Test
-      run: dotnet test --no-build --no-restore --logger trx --results-directory TestResults --verbosity normal --blame-hang-timeout 20s dnWalker.sln
+      run: dotnet test --no-build --logger trx --results-directory TestResults --verbosity normal -p:TestTfmsInParallel=false dnWalker.sln
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v4
       with:
@@ -46,3 +42,4 @@ jobs:
       with:
         files: |
           TestResults/**/*.trx
+          /tmp/MSBuildTemprunner/*.txt
