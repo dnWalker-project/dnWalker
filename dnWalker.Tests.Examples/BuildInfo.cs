@@ -15,14 +15,12 @@ namespace dnWalker.Tests.Examples
             "Debug", 
             "Release",
         };
+
         public static readonly string[] Targets = 
         { 
             "net48",
-            "net5.0", 
-            "net6.0", 
             "net7.0",
         };
-
 
         private string? _configuration;
         private string? _target;
