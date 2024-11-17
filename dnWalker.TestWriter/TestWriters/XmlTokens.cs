@@ -22,7 +22,7 @@ namespace dnWalker.TestWriter.TestWriters
         internal const string ExcludeAssets = nameof(ExcludeAssets);
         internal const string PrivateAssets = nameof(PrivateAssets);
 
-        internal const string FallbackTargetFrameworkValue = "net7.0";
+        internal const string FallbackTargetFrameworkValue = "net8.0";
         internal const string FallbackIsPackableValue = "false";
     }
 }

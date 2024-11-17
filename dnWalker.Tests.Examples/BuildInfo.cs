@@ -18,7 +18,7 @@ namespace dnWalker.Tests.Examples
 
         public static readonly string[] Targets = 
         { 
-            "net7.0",
+            "net8.0",
         };
 
         private string? _configuration;
