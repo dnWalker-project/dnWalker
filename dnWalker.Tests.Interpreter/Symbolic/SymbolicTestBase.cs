@@ -92,7 +92,7 @@ namespace dnWalker.Tests.Interpreter.Symbolic
             explorer.Run();
 
             ConstraintTreeExplorer cte = explorer.ActiveState.Services.GetService<ConstraintTreeExplorer>();
-            Constraint constraint = cte.Current.Constraint;
+            Constraint constraint = cte.Current?.Constraint ?? new Constraint();
 
             IDataElement resultDE = explorer.ActiveState.CurrentThread.RetValue;
 
