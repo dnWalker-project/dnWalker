@@ -13,11 +13,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Reflection.Emit;
 
 using MethodDefinition = dnlib.DotNet.MethodDef;
 using TypeDefinition = dnlib.DotNet.TypeDef;
 using FieldDefinition = dnlib.DotNet.FieldDef;
+using MethodAttributes = dnlib.DotNet.MethodAttributes;
+using MethodImplAttributes = dnlib.DotNet.MethodImplAttributes;
 using OpCode = System.Reflection.Emit.OpCode;
 using ParameterDefinition = dnlib.DotNet.Parameter;
 using ThreadState = MMC.State.ThreadState;
@@ -2109,73 +2112,40 @@ namespace dnWalker.Instructions
     #region Numeric Instructions
     public abstract class NumericInstructionExec : ExtendableInstructionExecBase
     {
-
+        protected OpCode _opCode;
+        
         public NumericInstructionExec(Instruction instr, object operand,
-                InstructionExecAttributes atr)
+                InstructionExecAttributes atr, OpCode opCode)
             : base(instr, operand, atr)
         {
+            _opCode = opCode;
         }
     }
 
-    public class ADD : NumericInstructionExec
+    public class ADD_OVF_UN : AbstractAdd
     {
-        public ADD(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+        public ADD_OVF_UN(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr, OpCodes.Add_Ovf_Un)
         {
         }
-
-        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
+    }
+    
+    public class ADD : AbstractAdd
+    {
+        public ADD(Instruction instr, object operand, InstructionExecAttributes atr)
+            : base(instr, operand, atr, OpCodes.Add)
         {
-            IDataElement b = cur.EvalStack.Pop();
-            IDataElement a = cur.EvalStack.Pop();
-
-            IAddElement left;
-            INumericElement right;
-
-            /*
-			 * Arithmetica on managed pointers is a little bit different.
-			 * The offset is represented in bytes. Each (object|static|array) field 
-			 * is seperated by 4 offset bytes, thus one integer
-			 */
-
-            if (a is IManagedPointer)
-            {
-                left = (IAddElement)a;
-                right = (INumericElement)b;
-            }
-            else
-            {
-                left = (INumericElement)b;
-                right = (INumericElement)a;
-            }
-
-            if (Unsigned)
-            {
-                left = ((ISignedIntegerElement)left).ToUnsigned();
-                right = ((ISignedIntegerElement)right).ToUnsigned();
-            }
-
-            try
-            {
-                IDataElement result = left.Add(right, CheckOverflow);
-                cur.EvalStack.Push(result);
-            }
-            catch (OverflowException e)
-            {
-                return ThrowException(e, cur);
-            }
-
-            return nextRetval;
+            // ADD_OVF_UN
         }
     }
 
     /// <summary>
     /// Adds two unsigned integer values, performs an overflow check, and pushes the result onto the evaluation stack.
     /// </summary>
-    public class ADD_OVF_UN : NumericInstructionExec
+    public abstract class AbstractAdd : NumericInstructionExec
     {
-        public ADD_OVF_UN(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+        public AbstractAdd(Instruction instr, object operand, InstructionExecAttributes atr, OpCode opCode)
+            : base(instr, operand, atr, opCode)
         {
         }
 
@@ -2184,61 +2154,94 @@ namespace dnWalker.Instructions
             IDataElement b = cur.EvalStack.Pop();
             IDataElement a = cur.EvalStack.Pop();
 
-            IAddElement left;
-            INumericElement right;
-
-            /*
-			 * Arithmetica on managed pointers is a little bit different.
-			 * The offset is represented in bytes. Each (object|static|array) field 
-			 * is seperated by 4 offset bytes, thus one integer
-			 */
-
-            if (a is IManagedPointer)
+            var (left, right) = (a, b) switch
             {
-                left = (IAddElement)a;
-                right = (INumericElement)b;
-            }
-            else
-            {
-                left = (INumericElement)b;
-                right = (INumericElement)a;
-            }
-
-            if (right is IRealElement && !(left is IRealElement))
-            {
-                IDataElement tmp = left;
-                left = right;
-                right = (INumericElement)tmp;
-            }
-
-            switch (left)
-            {
-                case Int4 i4:
-                    UnsignedInt4 res4 = (UnsignedInt4)i4.ToUnsignedInt4(false).Add(right.ToUnsignedInt4(false), CheckOverflow);
-                    cur.EvalStack.Push(res4.ToInt4(false));
-                    return nextRetval;
-                case Int8 i8:
-                    UnsignedInt8 res8 = (UnsignedInt8)i8.ToUnsignedInt8(false).Add(right.ToUnsignedInt8(false), CheckOverflow);
-                    cur.EvalStack.Push(res8.ToInt8(false));
-                    return nextRetval;
-            }
-
-            if (Unsigned && left is ISignedIntegerElement && right is ISignedIntegerElement)
-            {
-                left = ((ISignedIntegerElement)left).ToUnsigned();
-                right = ((ISignedIntegerElement)right).ToUnsigned();
-            }
+                (Float8, _) => (a, b),
+                (_, Float8) => (b, a),
+                (_, Int4 { IsIntPtr: true }) => (b, a),
+                (_, Int8 { IsIntPtr: true }) => (b, a),
+                (Int4 { IsIntPtr: true }, _) => (a, b),
+                (Int8 { IsIntPtr: true }, _) => (a, b),
+                (_, Int4) => (b, a),
+                (_, Int8) => (b, a),
+                _ => (a, b)
+            };
 
             try
             {
-                cur.EvalStack.Push(left.Add(right, CheckOverflow));
+                var result = (left, right) switch
+                {
+                    (Int4 { IsIntPtr: true } l, INumericElement r) => /*l.Add(r, true),*/ Compute4(l, r),
+                    (Int8 { IsIntPtr: true } l, INumericElement r) => /*l.Add(r, true),*/ Compute8(l, r),
+                    (IRealElement l, IRealElement r) => l.Add(r, true),
+                    (IRealElement l, IIntegerElement r) => l.Add(r, true),
+                    (IIntegerElement l, IIntegerElement r) =>
+                        (l, r) switch
+                        {
+                            (Int4 i1, _) => i1.Add(r, true),
+                            (Int8 i1, _) => i1.Add(r, true),
+                            _ => throw new NotImplementedException("1." + left.GetType().Name + " " +
+                                                                   right.GetType().Name)
+                        },
+                    _ => throw new NotImplementedException("2." + left.GetType().Name + " " + right.GetType().Name)
+                };
+
+                cur.EvalStack.Push(result);
+                return nextRetval;
+
+                /*
+                 * operand 	value1  value2 	result
+                   add 	    int32 	int32 	int32
+                   add 	    int32 	nint 	nint
+                   add 	    int32 	& 	    &
+                   add 	    int32 	* 	    *
+                   add 	    int64 	int64 	int64
+                   add 	    nint 	nint 	nint
+                   add 	    nint 	& 	    &
+                   add 	    nint 	* 	    *
+                   add 	    F 	    F 	    F
+                 */
+                IDataElement Compute8(Int8 l, INumericElement r)
+                {
+                    return DataElement.CreateDataElement(ExecuteIL<IntPtr>(
+                        new IntPtr(l.Value),
+                        r.ToInt8(true).Value
+                    ), cur.DefinitionProvider);
+                }
+
+                IDataElement Compute4(Int4 l, INumericElement r)
+                {
+                    return DataElement.CreateDataElement(ExecuteIL<IntPtr>(
+                        new IntPtr(l.Value),
+                        r.ToInt4(true).Value
+                    ), cur.DefinitionProvider);
+                }
             }
             catch (OverflowException e)
             {
                 return ThrowException(e, cur);
             }
+            catch (TargetInvocationException e) 
+            {
+                return ThrowException(e.InnerException, cur);
+            }
+        }
+        
+        private T ExecuteIL<T>(object left, object right)
+        {
+            var execute = new DynamicMethod(
+                $"{GetType().Name}_Execute",
+                typeof(T),
+                [left.GetType(), right.GetType()],
+                GetType().Module);
+            var il = execute.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(_opCode);
+            il.Emit(OpCodes.Ret);
 
-            return nextRetval;
+            var result = execute.Invoke(null, [left, right]);
+            return (T)result;
         }
     }
 
@@ -2249,7 +2252,7 @@ namespace dnWalker.Instructions
     public class DIV : NumericInstructionExec
     {
         public DIV(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Div)
         {
         }
 
@@ -2286,7 +2289,7 @@ namespace dnWalker.Instructions
 
         public MUL(Instruction instr, object operand,
                 InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Mul)
         {
         }
 
@@ -2319,7 +2322,7 @@ namespace dnWalker.Instructions
     public class REM : NumericInstructionExec
     {
         public REM(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Rem)
         {
         }
 
@@ -2354,7 +2357,7 @@ namespace dnWalker.Instructions
     public class SUB : NumericInstructionExec
     {
         public SUB(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Sub)
         {
         }
 
@@ -2391,7 +2394,7 @@ namespace dnWalker.Instructions
     public class SUB_OVF_UN : NumericInstructionExec
     {
         public SUB_OVF_UN(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Sub_Ovf_Un)
         {
         }
 
@@ -2434,7 +2437,7 @@ namespace dnWalker.Instructions
     public class NEG : NumericInstructionExec
     {
         public NEG(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Neg)
         {
         }
 
@@ -3131,12 +3134,14 @@ namespace dnWalker.Instructions
         protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
         {
             IDataElement popped = cur.EvalStack.Pop();
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
+            INumericElement a = popped is IManagedPointer pointer ? pointer.ToInt4() : (INumericElement)popped;
 
             try
             {
                 var result = a switch
                 {
+                    Int4 {IsIntPtr: true} int4 => ExecuteIL(new IntPtr(int4.Value)),
+                    Int8 {IsIntPtr: true} => throw new NotImplementedException("IntPtr long"),
                     Int4 int4 => ExecuteIL(int4.Value),
                     UnsignedInt4 uint4 => ExecuteIL(uint4.Value),
                     Int8 int8 => ExecuteIL(int8.Value),
@@ -3940,34 +3945,11 @@ namespace dnWalker.Instructions
     /// <summary>
     /// Converts the value on top of the evaluation stack to unsigned int64, and extends it to int64.
     /// </summary>
-    public class CONV_U8 : ConvertInstructionExec
+    public class CONV_U8 : ConvertInstructionExec<ulong>
     {
         public CONV_U8(Instruction instr, object operand, InstructionExecAttributes atr)
-            : base(instr, operand, atr)
+            : base(instr, operand, atr, OpCodes.Conv_U8)
         {
-        }
-
-        protected override IIEReturnValue ExecuteCore(ExplicitActiveState cur)
-        {
-            IDataElement popped = cur.EvalStack.Pop();
-            INumericElement a = (popped is IManagedPointer) ? (popped as IManagedPointer).ToInt4() : (INumericElement)popped;
-
-            UnsignedInt8 result;
-            if (a is Int4 i4)
-            {
-                result = new UnsignedInt8(U8PaddingMask & (uint)i4.Value);
-            }
-            else if (a is UnsignedInt4 ui4)
-            {
-                result = new UnsignedInt8(U8PaddingMask & ui4.Value);
-            }
-            else
-            {
-                result = a.ToUnsignedInt8(false);
-            }
-
-            cur.EvalStack.Push(result);
-            return nextRetval;
         }
     }
     #endregion Convert Instructions

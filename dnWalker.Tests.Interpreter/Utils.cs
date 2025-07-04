@@ -96,7 +96,9 @@ namespace dnWalker.Tests.Interpreter
                     case float f: return new Float4(f);
                     case double d: return new Float8(d);
                     case string s: return new ConstantString(s);
-                    case IntPtr iptr: return IntPtr.Size == 4 ? new Int4(iptr.ToInt32()) : new Int8(iptr.ToInt64());
+                    case IntPtr iptr: return iptr.ToInt64() <= int.MaxValue && iptr.ToInt64() >= int.MinValue ? 
+                        new Int4(iptr.ToInt32(), true) : 
+                        new Int8(iptr.ToInt64(), true);
                     case UIntPtr uiptr: return UIntPtr.Size == 4 ? new UnsignedInt4(uiptr.ToUInt32()) : new UnsignedInt8(uiptr.ToUInt64());
                     case null: return ObjectReference.Null;
                     default:

@@ -121,6 +121,8 @@ namespace MMC.Data
         UInt4,
         Int8,
         UInt8,
+        IntPtr,
+        UIntPtr
     }
 
     /* --------------------------------------------------------------
@@ -131,10 +133,13 @@ namespace MMC.Data
     public struct Int4 : IHasIntValue, IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
     {
         public IntKind Kind { get; }
+        
+        public bool IsIntPtr { get; }
 
         public int HashCode { get; }
 
         public static readonly Int4 Zero = new Int4(0);
+        
         public string WrapperName => Kind switch
         {
             IntKind.Int1 => "System.SByte",
@@ -152,12 +157,15 @@ namespace MMC.Data
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
             var op = other.ToInt4(checkOverflow).Value;
+            
+            if (IsIntPtr)
+            {
+                return checkOverflow ? 
+                    new Int4((int)checked(new IntPtr(Value) + op), true) : 
+                    new Int4((int)new IntPtr(Value) + op,true);
+            }
 
-            if (checkOverflow)
-                return new Int4(checked(Value + op));
-            else
-                return new Int4(Value + op);
-
+            return checkOverflow ? new Int4(checked(Value + op)) : new Int4(Value + op);
         }
 
         public INumericElement ToUnsigned()
@@ -315,7 +323,17 @@ namespace MMC.Data
 
         public int CompareTo(object obj)
         {
-            return Value.CompareTo(((Int4)obj).Value);
+            if (obj is Int4 int4)
+            {
+                return Value.CompareTo(int4.Value);
+            }
+
+            if (obj is Int8 int8)
+            {
+                return ToInt8(true).Value.CompareTo(int8.Value);
+            }
+            
+            throw new NotSupportedException(obj.GetType().FullName);
         }
 
         public override string ToString()
@@ -414,8 +432,9 @@ namespace MMC.Data
             return ((IConvertible)Value).ToType(conversionType, provider);
         }
 
-        public Int4(int val)
+        public Int4(int val, bool isIntPtr = false)
         {
+            IsIntPtr = isIntPtr;
             Kind = IntKind.Int4;
             Value = val;
             HashCode = 1;
@@ -435,293 +454,6 @@ namespace MMC.Data
         public static explicit operator Int4(short b) => new Int4(b, IntKind.Int2);
         public static explicit operator Int4(ushort b) => new Int4(b, IntKind.UInt2);
         public static explicit operator Int4(int b) => new Int4(b, IntKind.Int4);
-    }
-
-    public struct IntPtr4 : IIntegerElement, ISignedNumericElement, ISignedIntegerElement
-    {
-        public int HashCode { get; }
-        public static readonly IntPtr4 Zero = new IntPtr4(IntPtr.Zero);
-        public string WrapperName { get { return "System.IntPtr"; } }
-        public IntPtr Value { get; }
-
-        public IAddElement Add(INumericElement other, bool checkOverflow)
-        {
-            var op = other.ToInt4(checkOverflow).Value;
-
-            if (checkOverflow)
-                return new IntPtr4(checked(Value + op));
-            else
-                return new IntPtr4(Value + op);
-        }
-
-        public INumericElement ToUnsigned()
-        {
-            throw new NotImplementedException(); // return ToUnsignedIntPtr4(false);
-        }
-
-        public INumericElement Div(INumericElement other)
-        {
-            throw new NotImplementedException();
-            /*int op = other.ToInt4(false).Value;
-            return new IntPtr4(m_value / op);*/
-        }
-
-        public INumericElement Mul(INumericElement other, bool checkOverflow)
-        {
-            /*
-            int op = other.ToInt4(checkOverflow).Value;
-
-            if (checkOverflow)
-                return new IntPtr4(checked(m_value * op));
-            else
-                return new IntPtr4(m_value * op);*/
-            throw new NotImplementedException();
-        }
-
-        public INumericElement Rem(INumericElement other)
-        {
-            throw new NotImplementedException();
-            //int op = other.ToInt4(false).Value;
-            //return new IntPtr4(m_value % op);
-        }
-
-        public ISignedNumericElement Neg()
-        {
-            throw new NotImplementedException();
-            //return new IntPtr4(-m_value);
-        }
-
-        public ISubElement Sub(INumericElement other, bool checkOverflow)
-        {
-            var op = other.ToInt4(checkOverflow).Value;
-
-            if (checkOverflow)
-                return new IntPtr4(checked(Value - op));
-            else
-                return new IntPtr4(Value - op);
-        }
-
-        public IIntegerElement And(IIntegerElement other)
-        {
-            //int op = other.ToInt4(false).Value;
-            //return new IntPtr4(m_value & op);
-            throw new NotImplementedException();
-        }
-
-        public IIntegerElement Not()
-        {
-            throw new NotImplementedException();
-            //return new IntPtr4(~m_value);
-        }
-
-        public IIntegerElement Or(IIntegerElement other)
-        {
-            throw new NotImplementedException();
-            //int op = other.ToInt4(false).Value;
-            //return new IntPtr4(m_value | op);
-        }
-
-        public IIntegerElement Xor(IIntegerElement other)
-        {
-            throw new NotImplementedException();
-            //int op = other.ToInt4(false).Value;
-            //return new IntPtr4(m_value ^ op);
-        }
-
-        public IIntegerElement Shl(int x)
-        {
-            throw new NotImplementedException();
-            //return new IntPtr4(m_value << x);
-        }
-
-        public IIntegerElement Shr(int x)
-        {
-            throw new NotImplementedException();
-            //return new IntPtr4(m_value >> x);
-        }
-
-        public Int4 ToInt4(bool checkOverflow)
-        {
-            throw new NotImplementedException();
-        }
-
-        public UnsignedInt4 ToUnsignedInt4(bool checkOverflow)
-        {
-            /*if (checkOverflow)
-                return new UnsignedIntPtr4(checked((uint)m_value));
-            else
-                return new UnsignedIntPtr4((uint)m_value);*/
-            throw new NotImplementedException();
-        }
-
-        public Int8 ToInt8(bool checkOverflow)
-        {
-            if (checkOverflow)
-                return new Int8(checked((long)Value));
-            else
-                return new Int8((long)Value);
-        }
-
-        public UnsignedInt8 ToUnsignedInt8(bool checkOverflow)
-        {
-            if (checkOverflow)
-                return new UnsignedInt8(checked((ulong)Value));
-            else
-                return new UnsignedInt8((ulong)Value);
-        }
-
-        public Float4 ToFloat4(bool checkOverflow)
-        {
-            if (checkOverflow)
-                return new Float4(checked((float)Value));
-            else
-                return new Float4((float)Value);
-        }
-
-        public Float8 ToFloat8(bool checkOverflow)
-        {
-            if (checkOverflow)
-                return new Float8(checked((double)Value));
-            else
-                return new Float8((double)Value);
-        }
-
-        public IntPtr4 ToByte(bool checkOverflow)
-        {
-            /*if (checkOverflow)
-                return new IntPtr4(checked((sbyte)m_value));
-            else
-                return new IntPtr4((sbyte)m_value);*/
-            throw new NotImplementedException();
-        }
-
-        public IntPtr4 ToShort(bool checkOverflow)
-        {
-            throw new NotImplementedException();
-            /*if (checkOverflow)
-                return new IntPtr4(checked((short)m_value));
-            else
-                return new IntPtr4((short)m_value);*/
-        }
-
-        public bool ToBool() { return Value != IntPtr.Zero; }
-
-        public bool Equals(IDataElement other)
-        {
-            return (other is IntPtr4) && (((IntPtr4)other).Value == Value);
-        }
-
-        public int CompareTo(object obj)
-        {
-            return Value.ToInt32().CompareTo(((IntPtr4)obj).Value.ToInt32());
-        }
-
-        public override string ToString()
-        {
-
-            return Value.ToString();
-        }
-
-        public override int GetHashCode()
-        {
-
-            return (int)Value;
-        }
-
-        public TypeCode GetTypeCode()
-        {
-            throw new NotImplementedException();
-            //return m_value.GetTypeCode();
-        }/*
-
-        public bool ToBoolean(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToBoolean(provider);
-        }
-
-        public char ToChar(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToChar(provider);
-        }
-
-        public sbyte ToSByte(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToSByte(provider);
-        }
-
-        public byte ToByte(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToByte(provider);
-        }
-
-        public short ToInt16(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToInt16(provider);
-        }
-
-        public ushort ToUInt16(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToUInt16(provider);
-        }
-
-        public int ToInt32(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToInt32(provider);
-        }
-
-        public uint ToUInt32(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToUInt32(provider);
-        }
-
-        public long ToInt64(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToInt64(provider);
-        }
-
-        public ulong ToUInt64(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToUInt64(provider);
-        }
-
-        public float ToSingle(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToSingle(provider);
-        }
-
-        public double ToDouble(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToDouble(provider);
-        }
-
-        public decimal ToDecimal(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToDecimal(provider);
-        }
-
-        public DateTime ToDateTime(IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToDateTime(provider);
-        }
-
-        public string ToString(IFormatProvider provider)
-        {
-            return m_value.ToString(provider);
-        }
-
-        public object ToType(Type conversionType, IFormatProvider provider)
-        {
-            return ((IConvertible)m_value).ToType(conversionType, provider);
-        }*/
-
-        public IntPtr4(IntPtr val)
-        {
-            Value = val;
-            HashCode = 1;
-            HashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
-        }
-
-        //public static explicit operator IntPtr4(int b) => new IntPtr4(b);
     }
 
     /*public struct Int4G<T> : IIntegerElement, ISignedNumericElement, ISignedIntegerElement, IConvertible
@@ -1275,23 +1007,29 @@ namespace MMC.Data
         public static Int8 Zero = new Int8(0);
         long m_value;
         private int _hashCode;
+        private readonly bool _isIntPtr;
         public int HashCode => _hashCode;
 
         public IntKind Kind => IntKind.Int8;
 
+        public bool IsIntPtr { get; }
+        
         public string WrapperName { get { return "System.Int64"; } }
         public long Value { get { return m_value; } }
         // public DataElementKind Kind => DataElementKind.Int64;
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
-
             var op = other.ToInt8(checkOverflow).Value;
 
-            if (checkOverflow)
-                return new Int8(checked(m_value + op));
-            else
-                return new Int8(m_value + op);
+            if (IsIntPtr)
+            {
+                return checkOverflow ? 
+                    new Int8(checked(new IntPtr(m_value) + op), true) : 
+                    new Int8(new IntPtr(m_value) + op,true);
+            }
+            
+            return checkOverflow ? new Int8(checked(m_value + op)) : new Int8(m_value + op);
         }
 
         public INumericElement Div(INumericElement other)
@@ -1531,8 +1269,9 @@ namespace MMC.Data
             return ((IConvertible)m_value).ToType(conversionType, provider);
         }
 
-        public Int8(long val)
+        public Int8(long val, bool isIntPtr = false)
         {
+            IsIntPtr = isIntPtr;
             m_value = val;
             _hashCode = 1;
             _hashCode = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
@@ -1822,7 +1561,6 @@ namespace MMC.Data
 
         public IAddElement Add(INumericElement other, bool checkOverflow)
         {
-
             var op = other.ToFloat4(checkOverflow).Value;
 
             if (checkOverflow)
@@ -2288,6 +2026,9 @@ namespace MMC.Data
         }
     }
 
+    /// <summary>
+    /// System.IntPtr
+    /// </summary>
     struct IntPointer : IIntegerElement, ISignedIntegerElement
     {
         public string WrapperName { get { return "System.IntPtr"; } }

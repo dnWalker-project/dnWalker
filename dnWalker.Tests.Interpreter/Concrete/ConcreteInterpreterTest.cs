@@ -15,14 +15,55 @@ namespace dnWalker.Tests.Interpreter.Concrete
         {
         }
 
-
         [Theory]
-        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MinValue, int.MaxValue)] 
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(int.MinValue, long.MaxValue)] 
+        [InlineData(int.MaxValue, long.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
-        public void Test_ADD__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+        public void Test_ADD__Int32_IntPtr(int arg0, IntPtr arg1) { Test("Test_ADD__Int32_IntPtr", arg0, arg1); }
+
+        [Theory]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(long.MinValue, long.MaxValue)]
+        [InlineData(long.MaxValue, long.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_ADD__IntPtr_Int32(IntPtr arg0, IntPtr arg1) { Test("Test_ADD__IntPtr_Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(int.MinValue, long.MaxValue)]
+        [InlineData(int.MaxValue, long.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_ADD_OVF__Int32_IntPtr(int arg0, IntPtr arg1) { Test("Test_ADD_OVF__Int32_IntPtr", arg0, arg1); }
+
+        [Theory]
+        [InlineData(int.MinValue, int.MaxValue)] 
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(long.MinValue, int.MaxValue)] 
+        [InlineData(long.MaxValue, int.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(0, int.MinValue)]
+        public void Test_ADD_OVF__IntPtr_Int32(IntPtr arg0, int arg1) { Test("Test_ADD_OVF__IntPtr_Int32", arg0, arg1); }
+
+        [Theory]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(int.MinValue, long.MaxValue)]
+        [InlineData(int.MaxValue, long.MinValue)]
+        [InlineData(-5, 4)]
+        [InlineData(4, -5)]
+        [InlineData(int.MinValue, 0)]
+        public void Test_ADD_OVF_UN__Int32_IntPtr(int arg0, IntPtr arg1) { Test("Test_ADD_OVF_UN__Int32_IntPtr", arg0, arg1); }
 
         [Theory]
         [InlineData(int.MinValue, int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
@@ -30,39 +71,7 @@ namespace dnWalker.Tests.Interpreter.Concrete
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
-        public void Test_ADD__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD__IntPtr_Int32", new IntPtr(arg0), arg1); }
-
-        [Theory]
-        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        [InlineData(-5, 4)]
-        [InlineData(4, -5)]
-        [InlineData(int.MinValue, 0)]
-        public void Test_ADD_OVF__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD_OVF__Int32_IntPtr", arg0, new IntPtr(arg1)); }
-
-        [Theory]
-        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
-        [InlineData(-5, 4)]
-        [InlineData(4, -5)]
-        [InlineData(0, int.MinValue)]
-        public void Test_ADD_OVF__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD_OVF__IntPtr_Int32", new IntPtr(arg0), arg1); }
-
-        [Theory]
-        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
-        [InlineData(-5, 4)]
-        [InlineData(4, -5)]
-        [InlineData(int.MinValue, 0)]
-        public void Test_ADD_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_ADD_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
-
-        [Theory]
-        [InlineData(int.MinValue, int.MaxValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        [InlineData(int.MaxValue, int.MinValue)] // [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
-        [InlineData(-5, 4)]
-        [InlineData(4, -5)]
-        [InlineData(0, int.MinValue)]
-        public void Test_ADD_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_ADD_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+        public void Test_ADD_OVF_UN__IntPtr_Int32(IntPtr arg0, object arg1) { Test("Test_ADD_OVF_UN__IntPtr_Int32", arg0, arg1); }
 
         [Theory]
         [InlineData(int.MinValue, int.MaxValue)]
@@ -4378,12 +4387,14 @@ namespace dnWalker.Tests.Interpreter.Concrete
         public void Test_STLOC_S__128() { Test("Test_STLOC_S__128", 123); }
 
         [Theory]
-        [InlineData(int.MinValue, int.MaxValue)]// TODO [InlineData(int.MinValue, IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue))]
-        [InlineData(int.MaxValue, int.MinValue)]// TODO [InlineData(int.MaxValue, IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue))]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(int.MinValue, long.MaxValue)]
+        [InlineData(int.MaxValue, long.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
-        public void Test_SUB__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+        public void Test_SUB__Int32_IntPtr(object arg0, IntPtr arg1) { Test("Test_SUB__Int32_IntPtr", arg0, arg1); }
 
         [Theory]
         [InlineData(int.MinValue, int.MaxValue)]
@@ -4403,35 +4414,38 @@ namespace dnWalker.Tests.Interpreter.Concrete
         public void Test_SUB_OVF_UN__Int64(object arg0, object arg1) { Test("Test_SUB_OVF_UN__Int64", arg0, arg1); }
 
         [Theory]
-        [InlineData(int.MinValue, int.MaxValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
-        [InlineData(int.MaxValue, int.MinValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MaxValue) : new IntPtr(long.MaxValue), int.MinValue)]
+        [InlineData(int.MinValue, int.MaxValue)]
+        [InlineData(int.MaxValue, int.MinValue)]
+        [InlineData(long.MinValue, int.MaxValue)]
+        [InlineData(long.MaxValue, int.MinValue)]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
-        public void Test_SUB__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB__IntPtr_Int32", new IntPtr(arg0), arg1); }
+        public void Test_SUB__IntPtr_Int32(IntPtr arg0, object arg1) { Test("Test_SUB__IntPtr_Int32", arg0, arg1); }
 
         [Theory]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(int.MinValue, 0)]
-        public void Test_SUB_OVF__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB_OVF__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+        public void Test_SUB_OVF__Int32_IntPtr(object arg0, IntPtr arg1) { Test("Test_SUB_OVF__Int32_IntPtr", arg0, arg1); }
 
         [Theory]
         [InlineData(-5, 4)]
         [InlineData(4, -5)]
         [InlineData(0, int.MinValue)]
-        public void Test_SUB_OVF__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB_OVF__IntPtr_Int32", new IntPtr(arg0), arg1); }
+        public void Test_SUB_OVF__IntPtr_Int32(IntPtr arg0, object arg1) { Test("Test_SUB_OVF__IntPtr_Int32", arg0, arg1); }
 
         [Theory]
         [InlineData(-5, 4)]
         [InlineData(int.MinValue, 0)]
-        public void Test_SUB_OVF_UN__Int32_IntPtr(object arg0, int arg1) { Test("Test_SUB_OVF_UN__Int32_IntPtr", arg0, new IntPtr(arg1)); }
+        public void Test_SUB_OVF_UN__Int32_IntPtr(object arg0, IntPtr arg1) { Test("Test_SUB_OVF_UN__Int32_IntPtr", arg0, arg1); }
 
         [Theory]
-        [InlineData(int.MinValue, int.MinValue)]// TODO [InlineData(IntPtr.Size == 4 ? new IntPtr(int.MinValue) : new IntPtr(long.MinValue), int.MaxValue)]
+        [InlineData(int.MinValue, int.MinValue)]
+        [InlineData(long.MinValue, int.MaxValue)]
         [InlineData(-5, 4)]
         [InlineData(0, int.MinValue)]
-        public void Test_SUB_OVF_UN__IntPtr_Int32(int arg0, object arg1) { Test("Test_SUB_OVF_UN__IntPtr_Int32", new IntPtr(arg0), arg1); }
+        public void Test_SUB_OVF_UN__IntPtr_Int32(IntPtr arg0, object arg1) { Test("Test_SUB_OVF_UN__IntPtr_Int32", arg0, arg1); }
 
         [Theory]
         [InlineData(0)]
@@ -4587,6 +4601,5 @@ namespace dnWalker.Tests.Interpreter.Concrete
 
         [Fact]
         public void Test_XOR__IntPtr_Int32() { Test("Test_XOR__IntPtr_Int32", IntPtr.Size == 4 ? new IntPtr(0) : new IntPtr(0L), int.MinValue); }
-
     }
 }
