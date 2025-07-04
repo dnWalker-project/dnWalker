@@ -74,6 +74,12 @@ namespace dnWalker.Tests.Interpreter.Concrete
                 return;
             }
 
+            if (modelCheckerException != null)
+            {
+                modelCheckerException.Message.Should().BeNull("expected result is " + res2);
+                return;
+            }
+
             // return type
             if (methodInfo.ReturnType != typeof(void))
             {
@@ -93,15 +99,15 @@ namespace dnWalker.Tests.Interpreter.Concrete
                     return;
                 }
 
-                if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult.GetType() == typeof(IntPtr))
+                if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult is IntPtr intPtr)
                 {
-                    modelCheckerResult = ((IntPtr)modelCheckerResult).ToInt64();
+                    modelCheckerResult = intPtr.ToInt64();
                     res2 = ((IntPtr)res2).ToInt64();
                 }
 
-                if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult.GetType() == typeof(UIntPtr))
+                if (modelCheckerResult.GetType() == res2.GetType() && modelCheckerResult is UIntPtr uintPtr)
                 {
-                    modelCheckerResult = ((UIntPtr)modelCheckerResult).ToUInt64();
+                    modelCheckerResult = uintPtr.ToUInt64();
                     res2 = ((UIntPtr)res2).ToUInt64();
                 }
 
